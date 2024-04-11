@@ -1,0 +1,15 @@
+{
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"display": "NestJS",
+	"extends": "./base.json",
+	"compilerOptions": {
+		"module": "commonjs",
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"jsx": "react",
+		"target": "ES2021",
+		"paths": {
+			"@/*": ["./src/*"]
+		}
+	}
+}

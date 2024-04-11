@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>iForge</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.svg" /> <!-- Placeholder, will be overridden by script -->
+
+    <!-- Dynamic Favicon Script -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        function setFavicon() {
+          const link = document.createElement('link'),
+                  oldLink = document.getElementById('dynamic-favicon');
+          link.id = 'dynamic-favicon';
+          link.rel = 'icon';
+          link.href = window.matchMedia('(prefers-color-scheme: dark)').matches
+                  ? '/favicon-dark.svg'
+                  : '/favicon.svg';
+          if (oldLink) {
+            document.head.removeChild(oldLink);
+          }
+          document.head.appendChild(link);
+        }
+
+        setFavicon();
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setFavicon);
+      });
+    </script>
+
+    <!-- Meta Tags -->
+    <meta name="description" content="TODO" />
+    <meta name="author" content="iForge" />
+    <meta name="keywords" content="do, to, TODO" />
+
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:title" content="iForge" />
+    <meta property="og:description" content="TODO" />
+    <meta property="og:image" content="" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://forge.local" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

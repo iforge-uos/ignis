@@ -1,0 +1,66 @@
+import e from "@dbschema/edgeql-js";
+import { sign_in, std } from "@dbschema/interfaces";
+import { z } from "zod";
+import * as users from "./users";
+
+export type {
+  CreateSignInDto,
+  RegisterUserDto,
+  FinaliseSignInDto,
+  UpdateSignInDto,
+} from "@/sign-in/dto/sigs-in-dto";
+
+/** All the locations amiable to login to */
+export type Location = Lowercase<sign_in.SignInLocation>;
+export type ReasonCategory = sign_in.SignInReasonCategory;
+export type PartialReason = {
+  id: string;
+  name: string;
+  category: ReasonCategory;
+};
+export type SignInEntry = {
+  id: string;
+  user: users.PartialUser;
+  reason: PartialReason;
+  tools: string[];
+  ends_at: Date | null;
+  created_at: Date;
+};
+export type QueueEntry = {
+  id: string;
+  user: users.PartialUser;
+  position: number;
+  created_at: Date;
+};
+
+/** The type of the location/:location endpoint storing data on who's logged in for the dashboard  */
+export type List = {
+  id: string;
+  location: Location;
+  sign_ins: SignInEntry[];
+  queued: QueueEntry[];
+};
+
+/** The status of a space */
+export type LocationStatus = {
+  open: boolean;
+  count: number;
+  max: number;
+  needs_queue: boolean;
+  count_in_queue: number;
+  locationName: string;
+};
+
+//* Training for a user who's requesting to sign in */
+export type Training = Omit<users.Training, "locations" | "created_at" | "updated_at"> & {
+  selectable?: boolean;
+};
+
+export type User = users.UserWithInfractions & {
+  training: Training[];
+};
+
+export type Reason = PartialReason & {
+  created_at: Date;
+  agreement?: std.BaseObject;
+};

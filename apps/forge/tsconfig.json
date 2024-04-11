@@ -1,0 +1,15 @@
+{
+  "extends": "@ignis/ts-config/vite.json",
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@dbschema/*": ["../anvil/dbschema/*"],
+      "@ui/*": ["../../packages/ui/*"],
+      "@ui/components/*": ["../../packages/ui/components/*"],
+      "@ui/components/ui/*": ["../../packages/ui/components/ui/*"]
+    }
+  }
+}
+

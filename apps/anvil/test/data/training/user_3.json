@@ -1,0 +1,62 @@
+[
+  {
+    "name": "3D Printer",
+    "subject_area": ["2.1 3D Printers"]
+  },
+  {
+    "name": "Band Saw",
+    "subject_area": ["2.2 Band Saw"],
+    "completed_in_person_on": null
+  },
+  {
+    "name": "Scroll Saw",
+    "subject_area": ["2.8 Scroll Saw"],
+    "completed_in_person_on": null
+  },
+  {
+    "name": "Pillar Drill",
+    "subject_area": ["2.7 Pillar (Bench) Drills"],
+    "completed_in_person_on": null
+  },
+  {
+    "name": "Workshop health and safety and General Induction",
+    "subject_area": ["1.0 COMPULSORY"],
+    "compulsory": true
+  },
+  {
+    "name": "Sanding Machines",
+    "subject_area": ["2.4 Sanding Machines"],
+    "completed_in_person_on": null
+  },
+  {
+    "name": "Unpowered Handtools",
+    "subject_area": ["1.0 COMPULSORY"],
+    "compulsory": true
+  },
+  {
+    "name": "Handheld Power Tools",
+    "subject_area": ["2.0 Handheld power tools"]
+  },
+  {
+    "name": "Hot Tools",
+    "subject_area": ["2.5 Hot Tools"]
+  },
+  {
+    "name": "Water Jet Cutter",
+    "subject_area": ["2.9 Water Jet Cutter"],
+    "completed_in_person_on": null
+  },
+  {
+    "name": "Laser Cutter",
+    "subject_area": ["2.6 Laser Cutter"]
+  },
+  {
+    "name": "CNC Mill",
+    "subject_area": ["3.0 CNC Mill"],
+    "completed_in_person_on": null
+  },
+  {
+    "name": "Vacuum Former",
+    "subject_area": ["2.5 Hot Tools"]
+  }
+]

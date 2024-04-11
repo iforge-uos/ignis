@@ -1,0 +1,11 @@
+node_modules/**
+.vscode/**
+.idea/**
+.turbo/**
+
+.DS_Store
+Thumbs.db
+
+**/node_modules/**
+**/.turbo/**
+deploy/container-images/**

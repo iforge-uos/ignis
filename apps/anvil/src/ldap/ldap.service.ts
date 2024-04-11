@@ -1,0 +1,151 @@
+import { LdapUser } from "@/auth/interfaces/ldap-user.interface";
+import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
+import * as ldap from "ldapjs";
+
+@Injectable()
+export class LdapService implements OnModuleInit {
+  private readonly logger = new Logger(LdapService.name);
+  private client: ldap.Client | null;
+
+  constructor() {
+    this.client = null;
+  }
+
+  async onModuleInit() {
+    await this.connect();
+  }
+
+  async connect() {
+    if (!this.client) {
+      this.logger.debug("Attempting to create an LDAP client...");
+
+      this.client = ldap.createClient({
+        url: process.env.LDAP_HOST + ":" + process.env.LDAP_PORT,
+        connectTimeout: 1000, // Adjust this as per your needs
+      });
+
+      this.client.on("connect", () => {
+        this.logger.log("Successfully connected to LDAP server.");
+      });
+
+      this.client.on("error", (err) => {
+        this.logger.error(`LDAP connection error: ${err.message}`);
+        this.client = null; // Reset the client to reconnect later.
+      });
+    } else {
+      this.logger.warn(
+        "LDAP client already exists. Reusing existing connection.",
+      );
+    }
+  }
+
+  private bind(dn: string, password: string): Promise<void> {
+    this.logger.debug(`Binding to DN: ${dn}`);
+    return new Promise((resolve, reject) => {
+      this.client!.bind(dn, password, (err: any) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+
+  private search(
+    base: string,
+    options: ldap.SearchOptions,
+  ): Promise<ldap.SearchEntry[]> {
+    this.logger.debug(
+      `Performing search with base: ${base} and filter: ${options.filter}`,
+    );
+    return new Promise((resolve, reject) => {
+      this.client!.search(base, options, (err, res) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+
+        const results: ldap.SearchEntry[] = [];
+        res.on("searchEntry", (entry) => {
+          results.push(entry);
+        });
+        res.on("end", () => {
+          resolve(results);
+        });
+        res.on("error", (error) => {
+          reject(error);
+        });
+      });
+    });
+  }
+
+  async authenticate(uid: string, password: string): Promise<boolean> {
+    this.logger.debug(`Authenticating user with UID: ${uid}`);
+    const searchBase = process.env.LDAP_BASE!;
+    const options: ldap.SearchOptions = {
+      filter: `(&(objectclass=person)(uid=${uid}))`,
+      scope: "sub",
+      attributes: ["dn"],
+    };
+
+    try {
+      const results = await this.search(searchBase, options);
+      if (results.length === 0) {
+        return false;
+      }
+
+      const userDn = results[0].dn.toString();
+      await this.bind(userDn, password);
+      return true;
+    } catch (error) {
+      throw error; // or handle it more gracefully
+    }
+  }
+
+  // query params can go by mail, uid
+  async lookup(
+    searchFilter: string,
+    attributes: string[] | undefined = undefined,
+  ): Promise<ldap.SearchEntry[] | null> {
+    this.logger.debug(`Looking up entries with filter: ${searchFilter}`);
+    const searchBase = process.env.LDAP_BASE!;
+    const options: ldap.SearchOptions = {
+      filter: searchFilter,
+      scope: "sub",
+      attributes: attributes,
+      timeLimit: 1,
+    };
+
+    try {
+      const results = await this.search(searchBase, options);
+      return results.length > 0 ? results : null;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async lookupUsername(username: string): Promise<LdapUser | null> {
+    const users = await this.lookup(`(&(objectclass=person)(uid=${username}))`);
+    if (!users) {
+      return null;
+    }
+    return Object.fromEntries(
+      users[0].attributes.map((attr) => {
+        return [attr.type, attr.values[0]];
+      }),
+    ) as any;
+  }
+
+  async lookupEmail(email: string): Promise<LdapUser | null> {
+    const users = await this.lookup(`(&(objectclass=person)(mail=${email}))`);
+    if (!users) {
+      return null;
+    }
+    return Object.fromEntries(
+      users[0].attributes.map((attr) => {
+        return [attr.type, attr.values[0]];
+      }),
+    ) as any;
+  }
+}

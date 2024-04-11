@@ -1,0 +1,7 @@
+{
+  "name": "@ignis/ts-config",
+  "version": "0.0.0",
+  "private": true,
+  "files": [
+    "base.json", "nest.json", "react.json", "react-library.json", "vite.json", "vite.node.json"]
+}

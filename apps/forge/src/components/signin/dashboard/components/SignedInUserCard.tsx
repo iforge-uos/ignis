@@ -1,0 +1,344 @@
+import { UserAvatar } from "@/components/avatar";
+import { INFRACTION_TYPES, REP_ON_SHIFT } from "@/lib/constants";
+import { toTitleCase } from "@/lib/utils";
+import { AppRootState } from "@/redux/store";
+import { PostSignOut, PostSignOutProps } from "@/services/signin/signInService";
+import { getUserTraining } from "@/services/users/getUserTraining";
+import { getUserTrainingRemaining } from "@/services/users/getUserTrainingRemaining";
+import type { Location, PartialReason } from "@ignis/types/sign_in";
+import type { InfractionType, PartialUser, Rep } from "@ignis/types/users";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
+import { Badge } from "@ui/components/ui/badge.tsx";
+import { Button } from "@ui/components/ui/button.tsx";
+import { Calendar } from "@ui/components/ui/calendar";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card";
+import { Label } from "@ui/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@ui/components/ui/popover";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@ui/components/ui/select";
+import { Separator } from "@ui/components/ui/separator";
+import { Textarea } from "@ui/components/ui/textarea";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ui/components/ui/tooltip";
+import { cn } from "@ui/lib/utils";
+import { format } from "date-fns";
+import { CalendarIcon, LogOut, Plus } from "lucide-react";
+import React from "react";
+import { useSelector } from "react-redux";
+import { toast } from "sonner";
+
+type Addable = "Training" | "Infraction";
+const ADDABLE: Addable[] = ["Training", "Infraction"];
+const SECTION_DESCRIPTION = {
+  Training: "Add a new training entry to a user's profile.",
+  Infraction: "Add an infraction record to a user's profile.",
+};
+
+interface AddToUserProps {
+  user: PartialUser;
+  location: Location;
+  onShiftReps: PartialUser[];
+}
+
+const AddToUser: React.FC<AddToUserProps> = ({ user, location, onShiftReps }) => {
+  const [section, setSection] = React.useState<Addable>("Training");
+
+  const [date, setDate] = React.useState<Date>(new Date());
+  const [repSigningOff, setRepSigningOff] = React.useState<Rep>();
+  const [training, setTraining] = React.useState<string>();
+  const { data: remainingTrainings } = useQuery({
+    queryKey: ["userTrainingRemaining", user.id],
+    queryFn: () => getUserTrainingRemaining(user.id),
+  });
+
+  const [infractionType, setInfractionType] = React.useState<InfractionType>();
+  const [infractionTraining, setInfractionTraining] = React.useState<string>();
+  const { data: trainings } = useQuery({
+    queryKey: ["userTraining", user.id],
+    queryFn: () => getUserTraining(user.id),
+  });
+
+  let body;
+  if (section === "Training") {
+    body = (
+      <>
+        <div className="m-2">
+          <Label>Training</Label>
+          <Select required onValueChange={setTraining}>
+            <SelectTrigger className="w-[280px]">
+              <SelectValue placeholder="Choose in person training" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {remainingTrainings?.map((training) =>
+                  training.locations.includes(location.toUpperCase() as Uppercase<Location>) ? (
+                    <SelectItem value={training.id}>{training.name}</SelectItem>
+                  ) : undefined,
+                )}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="m-2">
+          <Label>Date Acquired</Label>
+          <br />
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant={"outline"}
+                className={cn("w-[280px] justify-start text-left font-normal", !date && "text-muted-foreground")}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {date ? format(date, "PPP") : <span>Pick a date</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={date}
+                onSelect={setDate}
+                disabled={(date) => date > new Date() || date < new Date("2015-01-01")} // a fun epoch
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+        <div className="m-2">
+          <Label>Verified by</Label>
+          <Select required onValueChange={setRepSigningOff}>
+            <SelectTrigger className="w-[280px]">
+              <SelectValue placeholder="Choose an on shift Rep" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {onShiftReps?.map((rep) => (
+                  <SelectItem value={rep.id}>{rep.display_name}</SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="flex justify-center">
+          <Button
+            type="submit"
+            onClick={() => {
+              console.log(training, date, repSigningOff);
+            }}
+            disabled={!(training && date && repSigningOff)}
+          >
+            Add
+          </Button>
+        </div>
+      </>
+    );
+  } else if (section === "Infraction") {
+    let extra_field = undefined;
+    if (infractionType === "TEMP_BAN") {
+      extra_field = (
+        <div className="m-2">
+          <Label>Duration</Label>
+          <Select onValueChange={setInfractionTraining}>
+            <SelectTrigger className="w-[280px]">
+              <SelectValue placeholder="Training to remove" />
+            </SelectTrigger>{" "}
+            {/* TODO duration picker */}
+            <SelectContent>
+              <SelectGroup>
+                {remainingTrainings?.map((training) =>
+                  training.locations.includes(location.toUpperCase() as Uppercase<Location>) ? (
+                    <SelectItem value={training.id}>{training.name}</SelectItem>
+                  ) : undefined,
+                )}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+      );
+    } else if (infractionType === "TRAINING_ISSUE") {
+      extra_field = (
+        <div className="m-2">
+          <Label>Training</Label>
+          <Select onValueChange={setInfractionTraining}>
+            <SelectTrigger className="w-[280px]">
+              <SelectValue placeholder="Training to remove" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {remainingTrainings?.map((training) =>
+                  training.locations.includes(location.toUpperCase() as Uppercase<Location>) ? (
+                    <SelectItem value={training.id}>{training.name}</SelectItem>
+                  ) : undefined,
+                )}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+      );
+    }
+    body = (
+      <>
+        <div className="m-2">
+          <Label>Type</Label>
+          <Select required onValueChange={setInfractionType}>
+            <SelectTrigger className="w-[280px]">
+              <SelectValue placeholder="Type of infraction" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {INFRACTION_TYPES.map((type) => (
+                  <SelectItem value={type}>{toTitleCase(type.split("_").join(" "))}</SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+        {extra_field}
+        <div className="m-2">
+          <Label htmlFor="message">Reason</Label>
+          <Textarea required placeholder="Please include a little summary of the issue." id="message" />
+        </div>
+        <div className="flex justify-center">
+          <Button
+            type="submit"
+            onClick={() => {
+              console.log();
+            }}
+            disabled={infractionType === "TRAINING_ISSUE" ? !(infractionType && infractionTraining) : !infractionType}
+          >
+            Add
+          </Button>
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <div className="rounded-sm flex mb-2">
+        {ADDABLE.map((title, idx) => {
+          let indexStyle = "rounded-none";
+          if (idx === 0) {
+            indexStyle = "rounded-none rounded-l-md";
+          } else if (idx === ADDABLE.length - 1) {
+            indexStyle = "rounded-none rounded-r-md";
+          }
+          return (
+            <Button
+              className={`w-full justify-center flex-grow ${indexStyle} ${
+                title !== section ? "bg-popover-background" : ""
+              }`}
+              onClick={() => setSection(title)}
+            >
+              <text className={`${title === section ? "font-bold" : ""}`}>Add {title}</text>
+            </Button>
+          );
+        })}
+      </div>
+      <Separator />
+      <div className="my-2">{SECTION_DESCRIPTION[section]}</div>
+      {body}
+    </>
+  );
+};
+
+interface SignInUserCardProps {
+  user: PartialUser;
+  tools?: string[];
+  reason?: PartialReason;
+  onSignOut?: () => void;
+  onShiftReps?: PartialUser[];
+}
+
+export const SignedInUserCard: React.FC<SignInUserCardProps> = ({ user, tools, reason, onSignOut, onShiftReps }) => {
+  const activeLocation = useSelector((state: AppRootState) => state.signin.active_location);
+  const abortController = new AbortController();
+  const onShift = reason?.name === REP_ON_SHIFT;
+
+  const signOutProps: PostSignOutProps = {
+    locationName: activeLocation,
+    uCardNumber: user.ucard_number,
+    signal: abortController.signal,
+  };
+
+  const { mutate } = useMutation({
+    mutationKey: ["postSignOut", signOutProps],
+    mutationFn: () => PostSignOut(signOutProps),
+    retry: 0,
+    onError: (error) => {
+      console.error("Error", error);
+      abortController.abort();
+    },
+    onSuccess: () => {
+      abortController.abort();
+      toast.success(`Successfully signed out ${user.display_name}`);
+      onSignOut?.();
+    },
+  });
+
+  const handleSignOut = () => {
+    if (window.confirm("Are you sure you want to sign out?")) {
+      mutate();
+    }
+  };
+
+  return (
+    <>
+      <Card className="w-[350px]">
+        <CardHeader>
+          <div className="flex justify-between">
+            <div className="m-1">
+              <CardTitle className="hover:underline">
+                <Link to={`/users/${user.id}` as string}>{user.display_name}</Link>
+              </CardTitle>
+              <CardDescription className="my-2 flex flex-wrap">
+                {user.roles.map((role) => (
+                  <Badge className="rounded-sm bg-accent m-0.5">
+                    <text className="text-accent-foreground">{role.name}</text>
+                  </Badge>
+                ))}
+              </CardDescription>
+            </div>
+            <UserAvatar user={user} className="h-16 w-16 " />
+          </div>
+        </CardHeader>
+        {!onShift ? (
+          <CardContent className="-my-2">
+            {reason && <CardDescription>Sign in reason: {reason.name}</CardDescription>}
+            {tools && <CardDescription>Tools: {tools.join(", ")}</CardDescription>}
+          </CardContent>
+        ) : undefined}
+        <CardFooter className="flex justify-between">
+          <Popover>
+            <TooltipProvider>
+              <Tooltip>
+                <PopoverTrigger asChild>
+                  <TooltipTrigger asChild>
+                    <Button className="bg-accent" disabled={!onShiftReps}>
+                      <Plus className="stroke-accent-foreground" />
+                    </Button>
+                  </TooltipTrigger>
+                </PopoverTrigger>
+                <TooltipContent>Add in-person training and infractions.</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <PopoverContent className="w-350">
+              {onShiftReps ? <AddToUser user={user} onShiftReps={onShiftReps} location={activeLocation} /> : undefined}
+            </PopoverContent>
+          </Popover>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button onClick={handleSignOut}>
+                  <LogOut />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Sign out user.</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </CardFooter>
+      </Card>
+    </>
+  );
+};

@@ -1,0 +1,14 @@
+{
+  "extends": "@ignis/ts-config/react.json",
+  "include": ["."],
+  "exclude": ["dist", "build", "node_modules"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@ui/*": ["./*"],
+      "@ui/components/ui*": ["./components/ui*"]
+    }
+  }
+}
+
