@@ -17,6 +17,9 @@ jobs:
       - name: Throw up the maintenance page
         run: touch /home/iforge/ignis-config/file_flags/maintenance_mode/enabled
 
+      - name: Sort out env for pnpm
+        run: echo "/home/iforge/.local/share/pnpm" >> $GITHUB_PATH
+
       - name: Build the project
         working-directory: /home/iforge/ignis/
         run: pnpm exec turbo build
