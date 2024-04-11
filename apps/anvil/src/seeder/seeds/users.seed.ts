@@ -1,6 +1,7 @@
 import { createHash } from "crypto";
 import { readFileSync } from "fs";
 import { EdgeDBService } from "@/edgedb/edgedb.service";
+import { REP_ON_SHIFT } from "@/sign-in/sign-in.service";
 import e from "@dbschema/edgeql-js";
 
 type MigratedUser = {
@@ -48,20 +49,30 @@ export async function seedUsers(dbService: EdgeDBService) {
     userAgreement.length > 0
       ? userAgreement[0]
       : await dbService.query(
-          e.insert(e.sign_in.Agreement, {
-            content: readFileSync(ua, { encoding: "utf-8" }),
-            content_hash: computeFileHash(ua),
-          }),
+          e.update(e.sign_in.SignInReason, (reason) => ({
+            filter_single: e.op(reason.category, "=", e.sign_in.SignInReasonCategory.PERSONAL_PROJECT),
+            set: {
+              agreement: e.insert(e.sign_in.Agreement, {
+                content: readFileSync(ua, { encoding: "utf-8" }),
+                content_hash: computeFileHash(ua),
+              }),
+            },
+          })),
         );
 
   const rep_agreement =
     repAgreement.length > 0
       ? repAgreement[0]
       : await dbService.query(
-          e.insert(e.sign_in.Agreement, {
-            content: readFileSync(ra, { encoding: "utf-8" }),
-            content_hash: computeFileHash(ra),
-          }),
+          e.update(e.sign_in.SignInReason, (reason) => ({
+            filter_single: e.op(reason.name, "=", REP_ON_SHIFT),
+            set: {
+              agreement: e.insert(e.sign_in.Agreement, {
+                content: readFileSync(ra, { encoding: "utf-8" }),
+                content_hash: computeFileHash(ra),
+              }),
+            },
+          })),
         );
 
   // Check if mailing list already exists before inserting

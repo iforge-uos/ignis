@@ -2,14 +2,19 @@ import { GoogleUser } from "@/auth/interfaces/google-user.interface";
 import { LdapUser } from "@/auth/interfaces/ldap-user.interface";
 import { EdgeDBService } from "@/edgedb/edgedb.service";
 import { LdapService } from "@/ldap/ldap.service";
-import { CreateUserSchema, UpdateUserSchema } from "@dbschema/edgedb-zod/modules/users";
 import e from "@dbschema/edgeql-js";
 import { users } from "@ignis/types";
 import { Location } from "@ignis/types/sign_in";
 import { RepStatus, SignInStat, Training, User } from "@ignis/types/users";
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
-import { CardinalityViolationError, ConstraintViolationError, InvalidValueError } from "edgedb";
-import { z } from "zod";
+import { CardinalityViolationError, ConstraintViolationError, Duration, InvalidValueError } from "edgedb";
+import {
+  AddInPersonTrainingDto,
+  CreateInfractionDto,
+  CreateUserDto,
+  RevokeTrainingDto,
+  UpdateUserDto,
+} from "./dto/users.dto";
 
 export const PartialUserProps = e.shape(e.users.User, () => ({
   // Fairly minimal, useful for templating
@@ -91,7 +96,7 @@ export class UsersService {
 
   /** Insert a user into the database. Take extra care that the ucard_number is a valid thing to insert */
   async create(
-    createUserDto: Omit<z.infer<typeof CreateUserSchema>, "ucard_number"> & {
+    createUserDto: Omit<CreateUserDto, "ucard_number"> & {
       ucard_number: any;
     },
   ): Promise<User> {
@@ -156,7 +161,7 @@ export class UsersService {
     );
   }
 
-  async update(id: string, updateUserDto: z.infer<typeof UpdateUserSchema>): Promise<void> {
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<void> {
     try {
       await this.dbService.query(
         e.assert_exists(
@@ -343,7 +348,7 @@ export class UsersService {
     );
   }
 
-  async addInPersonTraining(id: string, training_id: string, rep_id: string, created_at: Date) {
+  async addInPersonTraining(id: string, training_id: string, data: AddInPersonTrainingDto) {
     // pre-condition they must already have completed online training otherwise this is a no-op
     await this.dbService.query(
       e.assert_exists(
@@ -353,8 +358,8 @@ export class UsersService {
             training: e.select(u.training, (t) => ({
               filter_single: e.op(t.id, "=", training_id),
               "@created_at": t["@created_at"],
-              "@in_person_created_at": created_at,
-              "@in_person_signed_off_by": rep_id,
+              "@in_person_created_at": data.created_at,
+              "@in_person_signed_off_by": data.rep_id,
             })),
           },
         })),
@@ -362,7 +367,7 @@ export class UsersService {
     );
   }
 
-  async revokeTraining(id: string, training_id: string) {
+  async revokeTraining(id: string, training_id: string, data: RevokeTrainingDto) {
     await this.dbService.query(
       e.delete(e.training.UserTrainingSession, (session) => ({
         filter_single: e.all(
@@ -371,10 +376,18 @@ export class UsersService {
             e.op(
               session.user,
               "=",
-              e.update(e.users.User, () => ({
+              e.update(e.users.User, (user) => ({
                 set: {
                   training: {
                     "-=": e.assert_exists(e.select(e.users.User, UserTrainingEntry(id, training_id))).training,
+                  },
+                  infractions: {
+                    "+=": e.insert(e.users.Infraction, {
+                      user,
+                      reason: data.reason,
+                      resolved: true,
+                      type: e.users.InfractionType.TRAINING_ISSUE,
+                    }),
                   },
                 },
                 filter_single: { id },
@@ -382,6 +395,23 @@ export class UsersService {
             ),
           ),
         ),
+      })),
+    );
+  }
+
+  async addInfraction(id: string, data: CreateInfractionDto) {
+    await this.dbService.query(
+      e.update(e.users.User, (user) => ({
+        set: {
+          infractions: {
+            "+=": e.insert(e.users.Infraction, {
+              user,
+              ...data,
+              duration: Duration.from(data.duration!),
+            }),
+          },
+        },
+        filter_single: { id },
       })),
     );
   }
