@@ -195,7 +195,7 @@ const Component: React.FC = () => {
                               className="rounded-lg"
                               onClick={() => setAnswers([answer])}
                             />
-                            <Label htmlFor={answer.id}>
+                            <Label htmlFor={answer.id} className="hover:cursor-pointer">
                               <TrainingContent content={answer.content} />
                             </Label>
                             {answer.description ? ( // TODO think about how to show these
@@ -223,7 +223,7 @@ const Component: React.FC = () => {
                                 });
                               }}
                             />
-                            <Label htmlFor={answer.id}>
+                            <Label htmlFor={answer.id} className="hover:cursor-pointer">
                               <TrainingContent content={answer.content} />
                             </Label>
                           </div>
