@@ -11,7 +11,10 @@ import { GoogleUser } from "@/auth/interfaces/google-user.interface";
 export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
   private readonly integrationService: IntegrationsService;
 
-  constructor(private readonly dbService: EdgeDBService, private readonly userService: UsersService) {
+  constructor(
+    private readonly dbService: EdgeDBService,
+    private readonly userService: UsersService,
+  ) {
     super({
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -26,7 +29,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
     accessToken: string,
     refreshToken: string,
     profile: GoogleUser,
-    // eslint-disable-next-line @typescript-eslint/ban-types
+    // biome-ignore lint/complexity/noBannedTypes: <explanation>
     done: Function,
   ) {
     const user = await this.userService.createOrFindUser(profile);

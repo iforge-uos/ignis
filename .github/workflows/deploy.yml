@@ -1,0 +1,29 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-restart:
+    runs-on: iforge-prod-1
+
+    steps:
+      - name: Navigate to the project directory
+        run: cd /home/iforge/ignis
+
+      - name: Pull the latest changes
+        run: git pull
+
+      - name: Throw up the maintenance page
+        run: sudo touch /home/iforge/ignis-config/file_flags/maintenance_mode/enabled
+
+      - name: Build the project
+        run: turbo build
+
+      - name: Restart systemd service
+        run: sudo systemctl restart anvil.service
+
+      - name: Remove maintenance page
+        run: sudo rm /home/iforge/ignis-config/file_flags/maintenance_mode/enabled
