@@ -3,16 +3,21 @@ import { INFRACTION_TYPES, REP_ON_SHIFT } from "@/lib/constants";
 import { toTitleCase } from "@/lib/utils";
 import { AppRootState } from "@/redux/store";
 import { PostSignOut, PostSignOutProps } from "@/services/signin/signInService";
+import addInPersonTraining from "@/services/users/addInPersonTraining";
+import addInfraction from "@/services/users/addInfraction";
 import { getUserTraining } from "@/services/users/getUserTraining";
 import { getUserTrainingRemaining } from "@/services/users/getUserTrainingRemaining";
+import revokeTraining from "@/services/users/revokeTraining";
 import type { Location, PartialReason } from "@ignis/types/sign_in";
-import type { InfractionType, PartialUser, Rep } from "@ignis/types/users";
+import type { InfractionType, PartialUser } from "@ignis/types/users";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
+import DatePickerWithRange from "@ui/components/date-picker-with-range";
 import { Badge } from "@ui/components/ui/badge.tsx";
 import { Button } from "@ui/components/ui/button.tsx";
 import { Calendar } from "@ui/components/ui/calendar";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card";
+import { Checkbox } from "@ui/components/ui/checkbox";
 import { Label } from "@ui/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@ui/components/ui/popover";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@ui/components/ui/select";
@@ -20,9 +25,10 @@ import { Separator } from "@ui/components/ui/separator";
 import { Textarea } from "@ui/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ui/components/ui/tooltip";
 import { cn } from "@ui/lib/utils";
-import { format } from "date-fns";
+import { addDays, format } from "date-fns";
 import { CalendarIcon, LogOut, Plus } from "lucide-react";
-import React from "react";
+import * as React from "react";
+import { DateRange } from "react-day-picker";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
 
@@ -39,112 +45,150 @@ interface AddToUserProps {
   onShiftReps: PartialUser[];
 }
 
-const AddToUser: React.FC<AddToUserProps> = ({ user, location, onShiftReps }) => {
-  const [section, setSection] = React.useState<Addable>("Training");
-
-  const [date, setDate] = React.useState<Date>(new Date());
-  const [repSigningOff, setRepSigningOff] = React.useState<Rep>();
+const TrainingSection: React.FC<AddToUserProps> = ({ user, location, onShiftReps }) => {
+  const [date, setDate] = React.useState<Date | undefined>(new Date());
+  const [repSigningOff, setRepSigningOff] = React.useState<string>();
   const [training, setTraining] = React.useState<string>();
   const { data: remainingTrainings } = useQuery({
     queryKey: ["userTrainingRemaining", user.id],
     queryFn: () => getUserTrainingRemaining(user.id),
   });
 
-  const [infractionType, setInfractionType] = React.useState<InfractionType>();
-  const [infractionTraining, setInfractionTraining] = React.useState<string>();
+  return (
+    <>
+      <div className="m-2">
+        <Label>Training</Label>
+        <Select required onValueChange={setTraining}>
+          <SelectTrigger className="w-[280px]">
+            <SelectValue placeholder="Choose in person training" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {remainingTrainings?.map((training) =>
+                training.locations.includes(location.toUpperCase() as Uppercase<Location>) ? (
+                  <SelectItem value={training.id}>{training.name}</SelectItem>
+                ) : undefined,
+              )}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="m-2">
+        <Label>Date Acquired</Label>
+        <br />
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant={"outline"}
+              className={cn("w-[280px] justify-start text-left font-normal", !date && "text-muted-foreground")}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {date ? format(date, "PPP") : <span>Pick a date</span>}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0">
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={setDate}
+              disabled={(date) => date > new Date() || date < new Date("2015-01-01")} // a fun epoch
+              initialFocus
+            />
+          </PopoverContent>
+        </Popover>
+      </div>
+      <div className="m-2">
+        <Label>Verified by</Label>
+        <Select required onValueChange={setRepSigningOff}>
+          <SelectTrigger className="w-[280px]">
+            <SelectValue placeholder="Choose an on shift Rep" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {onShiftReps?.map((rep) => (
+                <SelectItem value={rep.id}>{rep.display_name}</SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="flex justify-center">
+        <Button
+          type="submit"
+          onClick={() => addInPersonTraining(user.id, training!, { rep_id: repSigningOff!, created_at: date! })}
+          disabled={!(training && date && repSigningOff)}
+        >
+          Add
+        </Button>
+      </div>
+    </>
+  );
+};
+
+const InfractionSection: React.FC<Omit<AddToUserProps, "onShiftReps">> = ({ user, location }) => {
+  const [type, setInfractionType] = React.useState<InfractionType>("WARNING");
+  const [reason, setReason] = React.useState<string>("");
+  const [resolved, setResolved] = React.useState<boolean>(true);
+
+  const [trainingToRevoke, setTrainingToRevoke] = React.useState<string>();
   const { data: trainings } = useQuery({
     queryKey: ["userTraining", user.id],
     queryFn: () => getUserTraining(user.id),
   });
+  const [date, setDate] = React.useState<DateRange | undefined>({
+    from: new Date(),
+    to: addDays(new Date(), 7),
+  });
 
-  let body;
-  if (section === "Training") {
-    body = (
-      <>
-        <div className="m-2">
-          <Label>Training</Label>
-          <Select required onValueChange={setTraining}>
-            <SelectTrigger className="w-[280px]">
-              <SelectValue placeholder="Choose in person training" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {remainingTrainings?.map((training) =>
-                  training.locations.includes(location.toUpperCase() as Uppercase<Location>) ? (
-                    <SelectItem value={training.id}>{training.name}</SelectItem>
-                  ) : undefined,
-                )}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="m-2">
-          <Label>Date Acquired</Label>
-          <br />
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant={"outline"}
-                className={cn("w-[280px] justify-start text-left font-normal", !date && "text-muted-foreground")}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {date ? format(date, "PPP") : <span>Pick a date</span>}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={setDate}
-                disabled={(date) => date > new Date() || date < new Date("2015-01-01")} // a fun epoch
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
-        <div className="m-2">
-          <Label>Verified by</Label>
-          <Select required onValueChange={setRepSigningOff}>
-            <SelectTrigger className="w-[280px]">
-              <SelectValue placeholder="Choose an on shift Rep" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {onShiftReps?.map((rep) => (
-                  <SelectItem value={rep.id}>{rep.display_name}</SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
+  let extra_field = (
+    <div className="flex items-center space-x-2">
+      <Checkbox id={"resolved-checkbox"} onCheckedChange={() => setResolved((oldValue) => !oldValue)} />
+      <Label htmlFor={"resolved-checkbox"} className="hover:cursor-pointer">
+        Is the issue resolved?
+      </Label>
+    </div>
+  );
+  let buttonDisabled = !type;
+  let buttonOnClick = () =>
+    addInfraction(user.id, {
+      type,
+      resolved,
+      reason,
+      created_at: date!.from!,
+      duration:
+        date!.from && date!.to
+          ? `${Math.round(date!.from!.getTime() - date!.to!.getTime() / 1000 / 60 / 60 / 24)}d`
+          : undefined,
+    });
 
-        <div className="flex justify-center">
-          <Button
-            type="submit"
-            onClick={() => {
-              console.log(training, date, repSigningOff);
-            }}
-            disabled={!(training && date && repSigningOff)}
-          >
-            Add
-          </Button>
-        </div>
-      </>
-    );
-  } else if (section === "Infraction") {
-    let extra_field = undefined;
-    if (infractionType === "TEMP_BAN") {
+  switch (type) {
+    case "TEMP_BAN":
+      buttonDisabled = !(type && date?.from && date?.to);
+      extra_field = (
+        <>
+          {extra_field}
+          <div className="m-2">
+            <Label>Duration</Label>
+            <DatePickerWithRange date={date} setDate={setDate} />
+          </div>
+        </>
+      );
+      break;
+    case "TRAINING_ISSUE":
+      buttonDisabled = !(type && trainingToRevoke);
+      buttonOnClick = () => revokeTraining(user.id, trainingToRevoke!, { reason });
+
       extra_field = (
         <div className="m-2">
-          <Label>Duration</Label>
-          <Select onValueChange={setInfractionTraining}>
+          <Label>Training</Label>
+          <Select onValueChange={setTrainingToRevoke}>
             <SelectTrigger className="w-[280px]">
               <SelectValue placeholder="Training to remove" />
-            </SelectTrigger>{" "}
-            {/* TODO duration picker */}
+            </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                {remainingTrainings?.map((training) =>
+                {trainings?.map((training) =>
                   training.locations.includes(location.toUpperCase() as Uppercase<Location>) ? (
                     <SelectItem value={training.id}>{training.name}</SelectItem>
                   ) : undefined,
@@ -154,62 +198,71 @@ const AddToUser: React.FC<AddToUserProps> = ({ user, location, onShiftReps }) =>
           </Select>
         </div>
       );
-    } else if (infractionType === "TRAINING_ISSUE") {
-      extra_field = (
-        <div className="m-2">
-          <Label>Training</Label>
-          <Select onValueChange={setInfractionTraining}>
-            <SelectTrigger className="w-[280px]">
-              <SelectValue placeholder="Training to remove" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {remainingTrainings?.map((training) =>
-                  training.locations.includes(location.toUpperCase() as Uppercase<Location>) ? (
-                    <SelectItem value={training.id}>{training.name}</SelectItem>
-                  ) : undefined,
-                )}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-      );
-    }
-    body = (
-      <>
-        <div className="m-2">
-          <Label>Type</Label>
-          <Select required onValueChange={setInfractionType}>
-            <SelectTrigger className="w-[280px]">
-              <SelectValue placeholder="Type of infraction" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {INFRACTION_TYPES.map((type) => (
-                  <SelectItem value={type}>{toTitleCase(type.split("_").join(" "))}</SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        {extra_field}
-        <div className="m-2">
-          <Label htmlFor="message">Reason</Label>
-          <Textarea required placeholder="Please include a little summary of the issue." id="message" />
-        </div>
-        <div className="flex justify-center">
-          <Button
-            type="submit"
-            onClick={() => {
-              console.log();
-            }}
-            disabled={infractionType === "TRAINING_ISSUE" ? !(infractionType && infractionTraining) : !infractionType}
-          >
-            Add
-          </Button>
-        </div>
-      </>
-    );
+      break;
+    default:
+      break;
+  }
+
+  return (
+    <>
+      <div className="m-2">
+        <Label>Type</Label>
+        {/* @ts-ignore: setInfractionType should always be safe */}
+        <Select required onValueChange={setInfractionType}>
+          <SelectTrigger className="w-[280px]">
+            <SelectValue placeholder="Type of infraction" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {INFRACTION_TYPES.map((type) => (
+                <SelectItem value={type}>{toTitleCase(type.split("_").join(" "))}</SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+      {extra_field}
+      <div className="m-2">
+        <Label htmlFor="message">Reason</Label>
+        <Textarea
+          required
+          placeholder="Please include a little summary of the issue."
+          id="message"
+          onChange={(e) => setReason(e.target.value)}
+        />
+      </div>
+      <div className="flex justify-center">
+        <Button
+          type="submit"
+          onClick={() => {
+            try {
+              buttonOnClick();
+            } catch (e) {
+              return toast.error(`Failed to submit contact the IT Team ${e}`);
+            }
+            toast.success("Successfully submitted");
+          }}
+          disabled={buttonDisabled}
+        >
+          Add
+        </Button>
+      </div>
+    </>
+  );
+};
+
+const sectionComponents: Record<Addable, (props: AddToUserProps) => React.ReactElement> = {
+  Training: ({ user, location, onShiftReps }) => (
+    <TrainingSection user={user} location={location} onShiftReps={onShiftReps} />
+  ),
+  Infraction: ({ user, location }) => <InfractionSection user={user} location={location} />,
+};
+
+const AddToUser: React.FC<AddToUserProps> = ({ user, location, onShiftReps }) => {
+  const [section, setSection] = React.useState<Addable>("Training");
+
+  if (!sectionComponents[section]) {
+    throw Error("unreachable");
   }
 
   return (
@@ -236,7 +289,7 @@ const AddToUser: React.FC<AddToUserProps> = ({ user, location, onShiftReps }) =>
       </div>
       <Separator />
       <div className="my-2">{SECTION_DESCRIPTION[section]}</div>
-      {body}
+      {sectionComponents[section]({ user, location, onShiftReps })}
     </>
   );
 };

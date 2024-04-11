@@ -1,23 +1,26 @@
 import { CheckAbilities } from "@/auth/authorization/decorators/check-abilities-decorator";
+import { IsAdmin } from "@/auth/authorization/decorators/check-roles-decorator";
 import { CaslAbilityGuard } from "@/auth/authorization/guards/casl-ability.guard";
-import { TrainingService } from "@/training/training.service";
 import type { UpdateUserSchema } from "@dbschema/edgedb-zod/modules/users";
+import { users } from "@ignis/types";
 import type { Training, User } from "@ignis/types/users";
 import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import type { z } from "zod";
 import { User as GetUser } from "../shared/decorators/user.decorator";
-import type { CreateUserDto, UpdateUserDto } from "./dto/users.dto";
+import type {
+  AddInPersonTrainingDto,
+  CreateInfractionDto,
+  CreateUserDto,
+  RevokeTrainingDto,
+  UpdateUserDto,
+} from "./dto/users.dto";
 import { UsersService } from "./users.service";
-import { users } from "@ignis/types";
 
 @Controller("users")
 @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
 export class UsersController {
-  constructor(
-    private readonly usersService: UsersService,
-    private readonly trainingService: TrainingService,
-  ) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Post()
   @CheckAbilities(["CREATE"], "USER")
@@ -32,7 +35,7 @@ export class UsersController {
   }
 
   @Get("me") // Get own user data
-  // @CheckAbilities(["READ"], "SELF")
+  @CheckAbilities(["READ"], "SELF")
   async findSelf(@GetUser() user: User) {
     return user;
   }
@@ -54,7 +57,7 @@ export class UsersController {
   }
 
   @Get(":id") // Get any user's data (admin/higher permission)
-  // @CheckAbilities(['READ'], 'USER')
+  @CheckAbilities(["READ"], "USER")
   async findOne(@Param("id") id: string) {
     const user = await this.usersService.findOne(id);
     if (!user) {
@@ -87,8 +90,34 @@ export class UsersController {
     return this.usersService.getUserTrainingInPersonTrainingRemaining(id);
   }
 
+  @Post(":id/training/:training_id")
+  @IsAdmin()
+  async addTraining(
+    @Param("id") id: string,
+    @Param("training_id") training_id: string,
+    @Body() data: AddInPersonTrainingDto,
+  ) {
+    return this.usersService.addInPersonTraining(id, training_id, data);
+  }
+
+  @Delete(":id/training/:training_id")
+  @CheckAbilities(["READ"], "USER")
+  async revokeTraining(
+    @Param("id") id: string,
+    @Param("training_id") training_id: string,
+    @Body() data: RevokeTrainingDto,
+  ) {
+    return this.usersService.revokeTraining(id, training_id, data);
+  }
+
+  @Post(":id/infractions")
+  @IsAdmin()
+  async addInfraction(@Param("id") id: string, @Body() data: CreateInfractionDto) {
+    return this.usersService.addInfraction(id, data);
+  }
+
   @Patch(":id/promote/:teamid")
-  @CheckAbilities(["UPDATE"], "USER")
+  @IsAdmin()
   async promoteUser(@Param("id") id: string, @Param("teamid") teamid: string) {
     return this.usersService.promoteUserToRep(id, teamid);
   }
