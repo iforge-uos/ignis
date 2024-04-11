@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-restart:
-    runs-on: iforge-prod-1
+    runs-on: self-hosted
 
     steps:
       - name: Navigate to the project directory
