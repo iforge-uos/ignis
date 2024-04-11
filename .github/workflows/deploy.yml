@@ -10,16 +10,15 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Navigate to the project directory
-        run: cd /home/iforge/ignis
-
       - name: Pull the latest changes
+        working-directory: /home/iforge/ignis/
         run: git pull
 
       - name: Throw up the maintenance page
         run: sudo touch /home/iforge/ignis-config/file_flags/maintenance_mode/enabled
 
       - name: Build the project
+        working-directory: /home/iforge/ignis/
         run: turbo build
 
       - name: Restart systemd service
