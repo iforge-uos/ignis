@@ -22,7 +22,7 @@ jobs:
 
       - name: Build the project
         working-directory: /home/iforge/ignis/
-        run: pnpm exec turbo build
+        run: turbo build
 
       - name: Restart systemd service
         run: /home/iforge/ignis-config/scripts/restart_ignis.sh
