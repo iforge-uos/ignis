@@ -49,15 +49,17 @@ export async function seedUsers(dbService: EdgeDBService) {
     userAgreement.length > 0
       ? userAgreement[0]
       : await dbService.query(
-          e.update(e.sign_in.SignInReason, (reason) => ({
-            filter_single: e.op(reason.category, "=", e.sign_in.SignInReasonCategory.PERSONAL_PROJECT),
-            set: {
-              agreement: e.insert(e.sign_in.Agreement, {
-                content: readFileSync(ua, { encoding: "utf-8" }),
-                content_hash: computeFileHash(ua),
-              }),
-            },
-          })),
+          e.assert_exists(
+            e.update(e.sign_in.SignInReason, (reason) => ({
+              filter_single: e.op(reason.category, "=", e.sign_in.SignInReasonCategory.PERSONAL_PROJECT),
+              set: {
+                agreement: e.insert(e.sign_in.Agreement, {
+                  content: readFileSync(ua, { encoding: "utf-8" }),
+                  content_hash: computeFileHash(ua),
+                }),
+              },
+            })).agreement,
+          ),
         );
 
   const rep_agreement =
