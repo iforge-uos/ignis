@@ -158,6 +158,7 @@ const Component: React.FC = () => {
                   {[
                     data.compulsory ? "Compulsory" : undefined,
                     data.in_person ? "In-Person Training Required" : undefined,
+                    data.rep ? undefined : "Rep Training",
                     ...data.locations.map((value) => toTitleCase(value.split("_").join(" "))),
                   ]
                     .filter(Boolean)
