@@ -169,8 +169,8 @@ const Component: React.FC = () => {
                 </div>
               </div>
               <div>
-                <div className="text-right">Created: {data.created_at.toLocaleString()}</div>
-                <div className="text-right">Last Updated: {data.updated_at.toLocaleString()}</div>
+                <div className="text-right">Created: {data.created_at.toLocaleDateString()}</div>
+                <div className="text-right">Last Updated: {data.updated_at.toLocaleDateString()}</div>
               </div>
             </div>
             <Separator />
