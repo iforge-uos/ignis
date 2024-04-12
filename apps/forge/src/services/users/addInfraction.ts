@@ -2,7 +2,7 @@ import axiosInstance from "@/api/axiosInstance";
 
 type CreateInfractionDto = {
   created_at: Date;
-  duration?: string;
+  duration?: number; // duration in days
   reason: string;
   resolved: boolean;
   type: string;
@@ -10,7 +10,7 @@ type CreateInfractionDto = {
 
 export default async function addInfraction(id: string, data: CreateInfractionDto) {
   try {
-    const { data: resp } = await axiosInstance.post(`/users/${id}/infractions`, { data });
+    const { data: resp } = await axiosInstance.post(`/users/${id}/infractions`, data);
     return resp;
   } catch (error) {
     console.error(`Error adding infraction for ${id}: ${error}`);

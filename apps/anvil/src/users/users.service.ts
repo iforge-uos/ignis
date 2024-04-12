@@ -3,11 +3,19 @@ import { LdapUser } from "@/auth/interfaces/ldap-user.interface";
 import { EdgeDBService } from "@/edgedb/edgedb.service";
 import { LdapService } from "@/ldap/ldap.service";
 import e from "@dbschema/edgeql-js";
+import { addInPersonTraining } from "@dbschema/queries/addInPersonTraining.query";
 import { users } from "@ignis/types";
 import { Location } from "@ignis/types/sign_in";
 import { RepStatus, SignInStat, Training, User } from "@ignis/types/users";
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
-import { CardinalityViolationError, ConstraintViolationError, Duration, InvalidValueError } from "edgedb";
+import {
+  CardinalityViolationError,
+  ConstraintViolationError,
+  Duration,
+  InvalidValueError,
+  RelativeDuration,
+} from "edgedb";
+import { parseHumanDurationString } from "edgedb/dist/datatypes/datetime";
 import {
   AddInPersonTrainingDto,
   CreateInfractionDto,
@@ -350,68 +358,58 @@ export class UsersService {
 
   async addInPersonTraining(id: string, training_id: string, data: AddInPersonTrainingDto) {
     // pre-condition they must already have completed online training otherwise this is a no-op
-    await this.dbService.query(
-      e.assert_exists(
-        e.update(e.users.User, (u) => ({
-          filter_single: { id },
-          set: {
-            training: e.select(u.training, (t) => ({
-              filter_single: e.op(t.id, "=", training_id),
-              "@created_at": t["@created_at"],
-              "@in_person_created_at": data.created_at,
-              "@in_person_signed_off_by": data.rep_id,
-            })),
-          },
-        })),
-      ),
-    );
+    await addInPersonTraining(this.dbService.client, {
+      id,
+      training_id,
+      ...data,
+      created_at: new Date(data.created_at),
+    });
   }
 
   async revokeTraining(id: string, training_id: string, data: RevokeTrainingDto) {
+    const user = e.assert_exists(e.select(e.users.User, () => ({ filter_single: { id } })));
+    await this.dbService.query(
+      e.update(user, () => ({
+        set: {
+          training: {
+            "-=": e.assert_exists(e.select(e.users.User, UserTrainingEntry(id, training_id))).training,
+          },
+          infractions: {
+            "+=": e.insert(e.users.Infraction, {
+              user,
+              reason: data.reason,
+              resolved: true,
+              type: e.users.InfractionType.TRAINING_ISSUE,
+            }),
+          },
+        },
+      })),
+    );
     await this.dbService.query(
       e.delete(e.training.UserTrainingSession, (session) => ({
         filter_single: e.all(
-          e.set(
-            e.op(session.training.id, "=", e.cast(e.uuid, training_id)),
-            e.op(
-              session.user,
-              "=",
-              e.update(e.users.User, (user) => ({
-                set: {
-                  training: {
-                    "-=": e.assert_exists(e.select(e.users.User, UserTrainingEntry(id, training_id))).training,
-                  },
-                  infractions: {
-                    "+=": e.insert(e.users.Infraction, {
-                      user,
-                      reason: data.reason,
-                      resolved: true,
-                      type: e.users.InfractionType.TRAINING_ISSUE,
-                    }),
-                  },
-                },
-                filter_single: { id },
-              })),
-            ),
-          ),
+          e.set(e.op(session.training.id, "=", e.cast(e.uuid, training_id)), e.op(session.user, "=", user)),
         ),
       })),
     );
   }
 
   async addInfraction(id: string, data: CreateInfractionDto) {
-    await this.dbService.query(
-      e.update(e.users.User, (user) => ({
+    const user = e.assert_exists(e.select(e.users.User, () => ({ filter_single: { id } })));
+    return await this.dbService.query(
+      e.update(user, () => ({
         set: {
           infractions: {
             "+=": e.insert(e.users.Infraction, {
               user,
-              ...data,
-              duration: Duration.from(data.duration!),
+              created_at: data.created_at,
+              reason: data.reason,
+              resolved: data.resolved,
+              type: data.type,
+              duration: data.duration ? new Duration(0, 0, 0, 0, data.duration) : undefined,
             }),
           },
         },
-        filter_single: { id },
       })),
     );
   }

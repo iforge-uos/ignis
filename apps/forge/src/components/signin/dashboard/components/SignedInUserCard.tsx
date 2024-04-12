@@ -25,7 +25,7 @@ import { Separator } from "@ui/components/ui/separator";
 import { Textarea } from "@ui/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ui/components/ui/tooltip";
 import { cn } from "@ui/lib/utils";
-import { addDays, format } from "date-fns";
+import { addDays, addMonths, format, startOfDay } from "date-fns";
 import { CalendarIcon, LogOut, Plus } from "lucide-react";
 import * as React from "react";
 import { DateRange } from "react-day-picker";
@@ -116,7 +116,14 @@ const TrainingSection: React.FC<AddToUserProps> = ({ user, location, onShiftReps
       <div className="flex justify-center">
         <Button
           type="submit"
-          onClick={() => addInPersonTraining(user.id, training!, { rep_id: repSigningOff!, created_at: date! })}
+          onClick={() => {
+            try {
+              addInPersonTraining(user.id, training!, { rep_id: repSigningOff!, created_at: date! });
+            } catch (e) {
+              return toast.error(`Failed to submit contact the IT Team ${e}`);
+            }
+            toast.success("Successfully submitted");
+          }}
           disabled={!(training && date && repSigningOff)}
         >
           Add
@@ -126,8 +133,9 @@ const TrainingSection: React.FC<AddToUserProps> = ({ user, location, onShiftReps
   );
 };
 
-const InfractionSection: React.FC<Omit<AddToUserProps, "onShiftReps">> = ({ user, location }) => {
-  const [type, setInfractionType] = React.useState<InfractionType>("WARNING");
+const InfractionSection: React.FC<AddToUserProps> = ({ user, location, onShiftReps }) => {
+  // TODO auto log onShiftReps
+  const [type, setType] = React.useState<InfractionType>("WARNING");
   const [reason, setReason] = React.useState<string>("");
   const [resolved, setResolved] = React.useState<boolean>(true);
 
@@ -136,16 +144,23 @@ const InfractionSection: React.FC<Omit<AddToUserProps, "onShiftReps">> = ({ user
     queryKey: ["userTraining", user.id],
     queryFn: () => getUserTraining(user.id),
   });
+
+  const now = new Date();
   const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(),
-    to: addDays(new Date(), 7),
+    from: now,
+    to: addDays(now, 7),
   });
 
   let extra_field = (
-    <div className="flex items-center space-x-2">
-      <Checkbox id={"resolved-checkbox"} onCheckedChange={() => setResolved((oldValue) => !oldValue)} />
+    <div className="m-2 flex items-center space-x-2">
+      <Checkbox
+        id={"resolved-checkbox"}
+        defaultChecked={true}
+        required
+        onCheckedChange={() => setResolved((oldValue) => !oldValue)}
+      />
       <Label htmlFor={"resolved-checkbox"} className="hover:cursor-pointer">
-        Is the issue resolved?
+        <text>Resolved? (untick if needs investigation)</text>
       </Label>
     </div>
   );
@@ -155,22 +170,20 @@ const InfractionSection: React.FC<Omit<AddToUserProps, "onShiftReps">> = ({ user
       type,
       resolved,
       reason,
-      created_at: date!.from!,
+      created_at: date?.from || new Date(),
       duration:
-        date!.from && date!.to
-          ? `${Math.round(date!.from!.getTime() - date!.to!.getTime() / 1000 / 60 / 60 / 24)}d`
-          : undefined,
+        type === "TEMP_BAN" ? Math.round((date!.to!.getTime() - date!.from!.getTime()) / 1000 / 60 / 60) : undefined,
     });
 
   switch (type) {
-    case "TEMP_BAN":
+    case "TEMP_BAN": // FIXME this insta break
       buttonDisabled = !(type && date?.from && date?.to);
       extra_field = (
         <>
           {extra_field}
           <div className="m-2">
             <Label>Duration</Label>
-            <DatePickerWithRange date={date} setDate={setDate} />
+            <DatePickerWithRange date={date} setDate={setDate} disabled={(date) => date < startOfDay(now)} />
           </div>
         </>
       );
@@ -207,8 +220,15 @@ const InfractionSection: React.FC<Omit<AddToUserProps, "onShiftReps">> = ({ user
     <>
       <div className="m-2">
         <Label>Type</Label>
-        {/* @ts-ignore: setInfractionType should always be safe */}
-        <Select required onValueChange={setInfractionType}>
+        <Select
+          required
+          onValueChange={(value) => {
+            setTrainingToRevoke(undefined);
+            setDate(undefined);
+            // @ts-ignore: setInfractionType should always be safe
+            setType(value);
+          }}
+        >
           <SelectTrigger className="w-[280px]">
             <SelectValue placeholder="Type of infraction" />
           </SelectTrigger>
@@ -226,6 +246,7 @@ const InfractionSection: React.FC<Omit<AddToUserProps, "onShiftReps">> = ({ user
         <Label htmlFor="message">Reason</Label>
         <Textarea
           required
+          className="w-[280px]"
           placeholder="Please include a little summary of the issue."
           id="message"
           onChange={(e) => setReason(e.target.value)}
@@ -255,7 +276,9 @@ const sectionComponents: Record<Addable, (props: AddToUserProps) => React.ReactE
   Training: ({ user, location, onShiftReps }) => (
     <TrainingSection user={user} location={location} onShiftReps={onShiftReps} />
   ),
-  Infraction: ({ user, location }) => <InfractionSection user={user} location={location} />,
+  Infraction: ({ user, location, onShiftReps }) => (
+    <InfractionSection user={user} location={location} onShiftReps={onShiftReps} />
+  ),
 };
 
 const AddToUser: React.FC<AddToUserProps> = ({ user, location, onShiftReps }) => {
