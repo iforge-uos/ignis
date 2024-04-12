@@ -22,15 +22,12 @@ jobs:
           echo "/home/iforge/.nvm/versions/node/v20.11.0/bin" >> $GITHUB_PATH
           echo "/home/iforge/.local/share/pnpm" >> $GITHUB_PATH
 
-      - name: Debug
-        run: node -v && pnpm -v
-
       - name: Build the project
         working-directory: /home/iforge/ignis/
         run: turbo build
 
       - name: Restart systemd service
-        run: /home/iforge/ignis-config/scripts/restart_ignis.sh
+        run: /home/iforge/ignis-config/scripts/start_or_restart.sh
 
       - name: Remove maintenance page
         run: rm /home/iforge/ignis-config/file_flags/maintenance_mode/enabled
