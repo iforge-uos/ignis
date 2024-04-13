@@ -181,9 +181,9 @@ export class TrainingService {
               on: e.tuple([session.user, session.training]), // must be kept in-line with UserTrainingSession constraint
               else: session,
             })),
-          (session: any) => ({
+          (session) => ({
             id: true,
-            sections: e.select(session.training.sections, (section: any) => ({
+            sections: e.select(session.training.sections, (section) => ({
               filter: e.op(section.enabled, "and", e.op(section.index, "<=", session.index)),
               order_by: section.index,
               ...TrainingSection(section),
