@@ -11,6 +11,7 @@ import {
 } from "@ui/components/ui/navigation-menu";
 import { PenLine, Printer, Share2 } from "lucide-react";
 import useCurrentApp from "@/hooks/useCurrentApp.ts";
+import { cn } from "@/lib/utils.ts";
 
 export default function AppSwitcher() {
   const currentapp = useCurrentApp();
@@ -27,7 +28,9 @@ export default function AppSwitcher() {
               <li className="row-span-3">
                 <NavigationMenuLink asChild>
                   <Link
-                    className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-primary/50 to-background p-6 no-underline outline-none focus:shadow-md"
+                    className={cn(
+                      "flex h-full w-full select-none flex-col justify-end rounded-md p-6 no-underline outline-none focus:shadow-md bg-gradient-to-b from-red-950 to-black",
+                    )}
                     to="/"
                   >
                     <div className="mb-2 mt-4 text-lg font-medium">iForge</div>
