@@ -111,7 +111,13 @@ export class TrainingService {
     }));
     const rest_of_training = e.select(e.training.Training, (training) => ({
       filter: e.op(
-        e.op(e.cast(TrainingLocation, location), "in", training.locations),
+        e.op(
+          e.op(e.cast(TrainingLocation, location), "in", training.locations),
+          "if",
+          e.op("exists", training.rep), // forward all rep trainings no-matter the location
+          "else",
+          true,
+        ),
         "and",
         e.op(training.id, "not in", sessions.training.id),
       ),
