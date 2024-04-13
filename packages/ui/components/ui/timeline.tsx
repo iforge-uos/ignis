@@ -1,78 +1,163 @@
-import React from 'react';
-import {cn} from "@ui/lib/utils";
+import React from "react";
+import { VariantProps, cva } from "class-variance-authority";
+import { Check, Circle, X } from "lucide-react";
 
-const TimelineContent: React.FC<{ children: React.ReactNode }> = ({children}) => (
-    <div className={cn("ml-4")}>{children}</div>
-);
+import { cn } from "@ui/lib/utils";
 
-const TimelineDot: React.FC<{ isCompleted: boolean }> = ({isCompleted}) => (
-    <div className={cn(
-        "h-3 w-3 rounded-full",
-        isCompleted ? "bg-ring" : "border-2 border-gray-700"
-    )}></div>
-);
+const timelineVariants = cva("flex flex-col items-stretch", {
+  variants: {
+    positions: {
+      left: "[&>li]:grid-cols-[0_min-content_1fr]",
+      right: "[&>li]:grid-cols-[1fr_min-content]",
+      center: "[&>li]:grid-cols-[1fr_min-content_1fr]",
+    },
+  },
+  defaultVariants: {
+    positions: "left",
+  },
+});
 
-type TimelineItemProps = {
-    children: React.ReactNode;
-    className?: string;
-    isCompleted?: boolean;
-    isCurrent?: boolean;
-    orientation?: 'horizontal' | 'vertical';
-};
+interface TimelineProps extends React.HTMLAttributes<HTMLUListElement>, VariantProps<typeof timelineVariants> {}
 
-const TimelineItem: React.FC<TimelineItemProps> = ({
-                                                       children,
-                                                       className,
-                                                       isCompleted,
-                                                       isCurrent,
-                                                       orientation = 'vertical'
-                                                   }) => (
-    <div className={cn("flex", {
-        "items-center": orientation === 'vertical',
-        "flex-col items-start": orientation === 'horizontal',
-    }, className, {
-        "text-gray-600 dark:text-gray-400 uppercase": !isCurrent,
-        "text-ring font-bold font-mono uppercase": isCurrent,
-    })}>
-        <TimelineDot isCompleted={!!isCompleted || !!isCurrent}/>
-        {orientation === 'vertical' ? <TimelineContent>{children}</TimelineContent> :
-            <div className="mt-2">{children}</div>}
-    </div>
-);
-
-TimelineItem.displayName = "TimelineItem";
-
-type TimelineProps = {
-    children: React.ReactNode;
-    orientation?: 'horizontal' | 'vertical';
-    currentStepIndex: number;
-};
-const Timeline: React.FC<TimelineProps> = ({children, orientation = 'vertical', currentStepIndex}) => {
-    const timelineItems = React.Children.toArray(children);
-
+const Timeline = React.forwardRef<HTMLUListElement, TimelineProps>(
+  ({ children, className, positions, ...props }, ref) => {
     return (
-        <div className={cn({
-            "flex flex-col items-start": orientation === 'vertical',
-            "flex flex-row items-center": orientation === 'horizontal',
-        })}>
-            {timelineItems.map((child, index) => (
-                <React.Fragment key={index}>
-                    {index > 0 && (
-                        orientation === 'vertical' ?
-                            <div
-                                className={cn("h-16 w-[3px]  self-stretch ml-[4px]", index <= currentStepIndex ? "bg-gray-700" : "bg-gray-400")}></div> :
-                            <div className={cn("w-16 h-[3px] bg-gray-400 self-stretch mt-[4px]")}></div>
-                    )}
-                    {React.cloneElement(child as React.ReactElement<any>, {
-                        orientation,
-                        isCompleted: index < currentStepIndex
-                    })}
-                </React.Fragment>
-            ))}
-        </div>
+      <ul className={cn(timelineVariants({ positions }), className)} ref={ref} {...props}>
+        {children}
+      </ul>
     );
-};
-
+  },
+);
 Timeline.displayName = "Timeline";
 
-export {Timeline, TimelineItem};
+const timelineItemVariants = cva("grid items-center gap-x-2", {
+  variants: {
+    status: {
+      done: "text-primary",
+      default: "text-muted-foreground",
+    },
+  },
+  defaultVariants: {
+    status: "default",
+  },
+});
+
+interface TimelineItemProps extends React.HTMLAttributes<HTMLLIElement>, VariantProps<typeof timelineItemVariants> {}
+
+const TimelineItem = React.forwardRef<HTMLLIElement, TimelineItemProps>(({ className, status, ...props }, ref) => (
+  <li className={cn(timelineItemVariants({ status }), className)} ref={ref} {...props} />
+));
+TimelineItem.displayName = "TimelineItem";
+
+const timelineDotVariants = cva(
+  "col-start-2 col-end-3 row-start-1 row-end-1 flex size-4 items-center justify-center rounded-full border border-current",
+  {
+    variants: {
+      status: {
+        default: "[&>svg]:hidden",
+        current: "[&>.lucide-circle]:fill-current [&>.lucide-circle]:text-current [&>svg:not(.lucide-circle)]:hidden",
+        done: "bg-primary [&>.lucide-check]:text-background [&>svg:not(.lucide-check)]:hidden",
+        error: "border-destructive bg-destructive [&>.lucide-x]:text-background [&>svg:not(.lucide-x)]:hidden",
+      },
+    },
+    defaultVariants: {
+      status: "default",
+    },
+  },
+);
+
+interface TimelineDotProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof timelineDotVariants> {
+  customIcon?: React.ReactNode;
+}
+
+const TimelineDot = React.forwardRef<HTMLDivElement, TimelineDotProps>(
+  ({ className, status, customIcon, ...props }, ref) => (
+    <div role="status" className={cn("timeline-dot", timelineDotVariants({ status }), className)} ref={ref} {...props}>
+      <Circle className="size-2.5" />
+      <Check className="size-3" />
+      <X className="size-3" />
+      {customIcon}
+    </div>
+  ),
+);
+TimelineDot.displayName = "TimelineDot";
+
+const timelineContentVariants = cva("row-start-2 row-end-2 pb-8 text-muted-foreground", {
+  variants: {
+    side: {
+      right: "col-start-3 col-end-4 mr-auto text-left",
+      left: "col-start-1 col-end-2 ml-auto text-right",
+    },
+  },
+  defaultVariants: {
+    side: "right",
+  },
+});
+
+interface TimelineConent
+  extends React.HTMLAttributes<HTMLParagraphElement>,
+    VariantProps<typeof timelineContentVariants> {}
+
+const TimelineContent = React.forwardRef<HTMLParagraphElement, TimelineConent>(({ className, side, ...props }, ref) => (
+  <p className={cn(timelineContentVariants({ side }), className)} ref={ref} {...props} />
+));
+TimelineContent.displayName = "TimelineContent";
+
+const timelineHeadingVariants = cva("row-start-1 row-end-1 line-clamp-1 max-w-full truncate", {
+  variants: {
+    side: {
+      right: "col-start-3 col-end-4 mr-auto text-left",
+      left: "col-start-1 col-end-2 ml-auto text-right",
+    },
+    variant: {
+      primary: "text-base font-medium text-primary",
+      secondary: "text-sm font-light text-muted-foreground",
+    },
+  },
+  defaultVariants: {
+    side: "right",
+    variant: "primary",
+  },
+});
+
+interface TimelineConent
+  extends React.HTMLAttributes<HTMLParagraphElement>,
+    VariantProps<typeof timelineHeadingVariants> {}
+
+const TimelineHeading = React.forwardRef<HTMLParagraphElement, TimelineConent>(
+  ({ className, side, variant, ...props }, ref) => (
+    <p
+      role="heading"
+      aria-level={variant === "primary" ? 2 : 3}
+      className={cn(timelineHeadingVariants({ side, variant }), className)}
+      ref={ref}
+      {...props}
+    />
+  ),
+);
+TimelineHeading.displayName = "TimelineHeading";
+
+interface TimelineLineProps extends React.HTMLAttributes<HTMLHRElement> {
+  done?: boolean;
+}
+
+const TimelineLine = React.forwardRef<HTMLHRElement, TimelineLineProps>(
+  ({ className, done = false, ...props }, ref) => {
+    return (
+      <hr
+        role="separator"
+        aria-orientation="vertical"
+        className={cn(
+          "col-start-2 col-end-3 row-start-2 row-end-2 mx-auto flex h-full min-h-16 w-0.5 justify-center rounded-full",
+          done ? "bg-primary" : "bg-muted",
+          className,
+        )}
+        ref={ref}
+        {...props}
+      />
+    );
+  },
+);
+TimelineLine.displayName = "TimelineLine";
+
+export { Timeline, TimelineDot, TimelineItem, TimelineContent, TimelineHeading, TimelineLine };
