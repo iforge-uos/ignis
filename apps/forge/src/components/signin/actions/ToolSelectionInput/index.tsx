@@ -1,7 +1,7 @@
 import { FlowStepComponent } from "@/components/signin/actions/SignInManager/types.ts";
 import { SelectedTrainingPipDisplay } from "@/components/signin/actions/ToolSelectionInput/SelectedTrainingPipDisplay.tsx";
 import ToolSelectionList from "@/components/signin/actions/ToolSelectionInput/TrainingSelectionList.tsx";
-import { signinActions } from "@/redux/signin/signin.slice.ts";
+import { signinActions } from "@/redux/signin.slice.ts";
 import { AppDispatch, AppRootState } from "@/redux/store.ts";
 import { GetSignIn, GetSignInProps } from "@/services/signin/signInService.ts";
 import { Training, User } from "@ignis/types/sign_in.ts";

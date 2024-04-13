@@ -1,6 +1,4 @@
 import axios from "axios";
-import { useDispatch } from "react-redux";
-import useLogout from "@/services/auth/useLogout.ts";
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -14,16 +12,14 @@ const RETRY_DELAY = 1000; // Starting retry delay in milliseconds
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const dispatch = useDispatch();
-    const logout = useLogout(dispatch);
     const originalRequest = error.config;
     if (error.response && error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       originalRequest._retryCount = originalRequest._retryCount || 0;
 
       if (originalRequest._retryCount >= RETRY_LIMIT) {
-        await logout;
         return Promise.reject("Retry limit reached. Logging out...");
+        //TODO WORK OUT HOW TO LOGOUT / WORK THIS BIT OUT IM NOT SURE EXACTLY WHAT IM DOING HERE RN
       }
 
       originalRequest._retryCount++;
@@ -34,11 +30,11 @@ axiosInstance.interceptors.response.use(
         await axiosInstance.post("/authentication/refresh");
         return axiosInstance(originalRequest);
       } catch (refreshError) {
-        await logout;
         return Promise.reject(refreshError);
       }
+    } else {
+      return Promise.reject(error);
     }
-    return Promise.reject(error);
   },
 );
 

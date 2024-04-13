@@ -1,10 +1,17 @@
-import { RESET_APP } from "@/redux/common/common.types";
-import { defaultSignInState } from "@/redux/signin/signin.defaults.ts";
-import { SignInSession } from "@/redux/signin/signin.types.ts";
-import { LocationStatus, Reason, Training } from "@ignis/types/sign_in.ts";
+import { RESET_APP } from "@/types/common.ts";
+import { SignInSession, SignInState } from "@/types/signin.ts";
+import { Location, LocationStatus, Reason, Training } from "@ignis/types/sign_in.ts";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 type SignInSessionFieldValue = number | null | boolean | Reason | string | Training[];
+
+const defaultSignInState: SignInState = {
+  active_location: "mainspace",
+  is_loading: false,
+  error: "",
+  locations: [],
+  session: null,
+};
 
 interface UpdateSignInSessionFieldPayload {
   field: keyof SignInSession;
@@ -17,7 +24,7 @@ const signinSlice = createSlice({
   name: "signin",
   initialState: initialState,
   reducers: {
-    setActiveLocation: (state, action: PayloadAction<string>) => {
+    setActiveLocation: (state, action: PayloadAction<Location>) => {
       state.active_location = action.payload;
     },
     setIsLoading: (state, action: PayloadAction<boolean>) => {

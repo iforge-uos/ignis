@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RESET_APP } from "@/redux/common/common.types";
-import { UserState } from "@/redux/user/user.types.ts";
-import { User } from "@ignis/types/users";
+import { RESET_APP } from "@/types/common.ts";
+import { UserState } from "@/types/user.ts";
+import { User } from "@ignis/types/users.ts";
 
 const initialState: UserState = {
   user: null,

@@ -9,7 +9,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@ui/compon
 import { Loader } from "@ui/components/ui/loader.tsx";
 import { Button } from "@ui/components/ui/button.tsx";
 import { useEffect, useState } from "react";
-import { signinActions } from "@/redux/signin/signin.slice.ts";
+import { signinActions } from "@/redux/signin.slice.ts";
 import { FlowStepComponent } from "@/components/signin/actions/SignInManager/types.ts";
 import { useNavigate } from "@tanstack/react-router";
 

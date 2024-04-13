@@ -1,26 +1,38 @@
-import {createFileRoute} from "@tanstack/react-router";
+import { useEffect } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import Title from "@/components/title";
-import {useDispatch} from "react-redux";
-import {AppDispatch} from "@/redux/store.ts";
-import {logoutService} from "@/services/auth/logoutService.ts";
+import { useLogout } from "@/hooks/useLogout.ts";
 
 const LogOutComponent = () => {
-    const dispatch: AppDispatch = useDispatch();
+  const logout = useLogout();
+  const navigate = useNavigate();
 
-    // Call the logout service
-    logoutService.logout(dispatch);
+  useEffect(() => {
+    const performLogout = async () => {
+      try {
+        await logout();
+      } catch (error) {
+        // handle errors if any
+        console.error("Failed to logout:", error);
+        navigate({ to: "/" });
+      }
+    };
 
+    performLogout();
+  }, [logout, navigate]);
 
-    return (
-        <>
-            <Title prompt="Logout"/>
-            <div className="p-2">
-                <h3>log out!!!!!!!</h3>
-            </div>
-        </>
-    )
-}
+  return (
+    <>
+      <Title prompt="Logout" />
+      <div className="p-2">
+        <h3>Logging out...</h3>
+      </div>
+    </>
+  );
+};
 
+export default LogOutComponent;
 
-export const Route = createFileRoute('/auth/logout/')({
-    component: LogOutComponent});
+export const Route = createFileRoute("/auth/logout/")({
+  component: LogOutComponent,
+});

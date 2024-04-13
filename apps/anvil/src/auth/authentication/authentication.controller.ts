@@ -5,6 +5,7 @@ import type { User } from "@ignis/types/users";
 import {
   BadRequestException,
   Body,
+  ConflictException,
   Controller,
   Get,
   Post,
@@ -19,6 +20,7 @@ import { Throttle } from "@nestjs/throttler";
 import { Request, Response } from "express";
 import { AuthenticationService } from "./authentication.service";
 import { BlacklistService } from "./blacklist/blacklist.service";
+import { CardinalityViolationError } from "edgedb";
 
 @Controller("authentication")
 export class AuthenticationController {
@@ -80,7 +82,11 @@ export class AuthenticationController {
 
     // Add the token to the blacklist
     const expiryDate = new Date();
-    await this.blacklistService.addToBlacklist(refreshToken, expiryDate);
+    try {
+      await this.blacklistService.addToBlacklist(refreshToken, expiryDate);
+    } catch (error) {
+      throw new ConflictException("Refresh token is invalid or expired");
+    }
 
     this.authService.clearAuthCookies(res);
 

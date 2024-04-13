@@ -1,7 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RESET_APP } from '@/redux/common/common.types';
-import { AuthState } from '@/redux/auth/auth.types';
-
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RESET_APP } from "@/types/common.ts";
+import { AuthState } from "@/types/auth.ts";
 
 // Define initial state based on persisted state or default values
 const initialState: AuthState = {
@@ -10,7 +9,7 @@ const initialState: AuthState = {
 };
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState: initialState,
   reducers: {
     setIsAuthenticated: (state, action: PayloadAction<boolean>) => {
@@ -20,7 +19,7 @@ const authSlice = createSlice({
       state.is_loading = action.payload;
     },
     setRedirect: (state, action: PayloadAction<string>) => {
-      state.redirect = action.payload
+      state.redirect = action.payload;
     },
     onLogin: (state) => {
       state.is_authenticated = true;

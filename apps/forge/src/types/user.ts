@@ -1,4 +1,4 @@
-import { User } from "@ignis/types/users";
+import { User } from "@ignis/types/users.ts";
 
 export interface UserState {
   user: User | null;

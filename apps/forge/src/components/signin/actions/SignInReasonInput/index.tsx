@@ -1,5 +1,5 @@
 import { FlowStepComponent } from "@/components/signin/actions/SignInManager/types";
-import { signinActions } from "@/redux/signin/signin.slice";
+import { signinActions } from "@/redux/signin.slice.ts";
 import { AppDispatch, AppRootState } from "@/redux/store";
 import { useSignInReasons } from "@/services/signin/signInReasonService";
 import type { Reason, ReasonCategory } from "@ignis/types/sign_in";

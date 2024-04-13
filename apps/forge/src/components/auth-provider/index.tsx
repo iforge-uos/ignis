@@ -1,43 +1,38 @@
 import * as React from "react";
-import {User} from "@ignis/types/users.ts";
-import {useVerifyAuthentication} from "@/hooks/useVerifyAuthentication.tsx";
-import {Loader} from "@ui/components/ui/loader.tsx";
+import { User } from "@ignis/types/users.ts";
+import { useVerifyAuthentication } from "@/hooks/useVerifyAuthentication.ts";
+import { Loader } from "@ui/components/ui/loader.tsx";
 
 export interface AuthContext {
-    isAuthenticated: boolean;
-    user: User | null;
-    logout: () => void;
+  isAuthenticated: boolean;
+  user: User | null;
+  logout: () => void;
 }
 
 const AuthContext = React.createContext<AuthContext | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const { user, loading, setUser } = useVerifyAuthentication();
+  const { user, loading, setUser } = useVerifyAuthentication();
 
-    if (loading) {
-        return <Loader />;
-    }
+  if (loading) {
+    return <Loader />;
+  }
 
-    const isAuthenticated = !!user;
+  const isAuthenticated = !!user;
 
+  const logout = () => {
+    setUser(null);
+  };
 
-    const logout = () => {
-        setUser(null)
-    }
+  const contextValue = { isAuthenticated, user, logout };
 
-    const contextValue = { isAuthenticated, user, logout };
-
-    return (
-        <AuthContext.Provider value={contextValue}>
-            {children}
-        </AuthContext.Provider>
-    );
+  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
-    const context = React.useContext(AuthContext);
-    if (!context) {
-        throw new Error("useAuth must be used within an AuthProvider");
-    }
-    return context;
+  const context = React.useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 }
