@@ -14,6 +14,8 @@ import {routeTree} from "@/routeTree.gen.ts";
 import {Toaster} from "@ui/components/ui/sonner.tsx";
 import {AuthProvider, useAuth} from "@/components/auth-provider";
 import LoadingView from "@/components/loading-view";
+import posthog from 'posthog-js'
+
 
 // Begin Router
 const queryClient = new QueryClient();
@@ -40,6 +42,7 @@ declare module "@tanstack/react-router" {
 
 function InnerApp() {
     const auth = useAuth()
+    posthog.init('phc_XIzxR3RXcdmcyMPJCCnQFtxoL0gRshzEXo4kM925LvA', {api_host: 'https://web-mkc4o00.sampiiiii.dev'})
     return <RouterProvider router={router} context={{auth}}/>
 }
 

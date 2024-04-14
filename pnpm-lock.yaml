@@ -360,6 +360,9 @@ importers:
       postcss:
         specifier: ^8.4.38
         version: 8.4.38
+      posthog-js:
+        specifier: ^1.121.2
+        version: 1.121.2
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -9451,6 +9454,10 @@ packages:
       bser: 2.1.1
     dev: true
 
+  /fflate@0.4.8:
+    resolution: {integrity: sha512-FJqqoDBR00Mdj9ppamLa/Y7vxm+PRmNWA67N846RvsoYVMKB4q3y/de5PA7gUmRMYK/8CMz2GDZQmCRN1wBcWA==}
+    dev: false
+
   /figures@3.2.0:
     resolution: {integrity: sha512-yaduQFRKLXYOGgEn6AZau90j3ggSOyiqXU0F9JZfeXYhNa+Jk4X+s45A2zg5jns87GAFa34BBm2kXw4XpNcbdg==}
     engines: {node: '>=8'}
@@ -13808,6 +13815,17 @@ packages:
       nanoid: 3.3.7
       picocolors: 1.0.0
       source-map-js: 1.2.0
+
+  /posthog-js@1.121.2:
+    resolution: {integrity: sha512-2rhPgzeOaSR7Ztf77fGxGnUavBJCV3+tR5O1UHsnygxKL+XIt+Vr9i/hYYgu9Gz9/eq2Y7sxpszjxSTDMZprRQ==}
+    dependencies:
+      fflate: 0.4.8
+      preact: 10.20.2
+    dev: false
+
+  /preact@10.20.2:
+    resolution: {integrity: sha512-S1d1ernz3KQ+Y2awUxKakpfOg2CEmJmwOP+6igPx6dgr6pgDvenqYviyokWso2rhHvGtTlWWnJDa7RaPbQerTg==}
+    dev: false
 
   /precond@0.2.3:
     resolution: {integrity: sha512-QCYG84SgGyGzqJ/vlMsxeXd/pgL/I94ixdNFyh1PusWmTCyVfPJjZ1K1jvHtsbfnXQs2TSkEP2fR7QiMZAnKFQ==}
