@@ -1,49 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>iForge</title>
 
     <!-- Favicon -->
-    <link rel="icon" href="/favicon.svg" /> <!-- Placeholder, will be overridden by script -->
+    <link rel="icon" href="/favicon.svg"/> <!-- Placeholder, will be overridden by script -->
 
     <!-- Dynamic Favicon Script -->
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        function setFavicon() {
-          const link = document.createElement('link'),
-                  oldLink = document.getElementById('dynamic-favicon');
-          link.id = 'dynamic-favicon';
-          link.rel = 'icon';
-          link.href = window.matchMedia('(prefers-color-scheme: dark)').matches
-                  ? '/favicon-dark.svg'
-                  : '/favicon.svg';
-          if (oldLink) {
-            document.head.removeChild(oldLink);
-          }
-          document.head.appendChild(link);
-        }
+        document.addEventListener('DOMContentLoaded', function () {
+            function setFavicon() {
+                const link = document.createElement('link'),
+                    oldLink = document.getElementById('dynamic-favicon');
+                link.id = 'dynamic-favicon';
+                link.rel = 'icon';
+                link.href = window.matchMedia('(prefers-color-scheme: dark)').matches
+                    ? '/favicon-dark.svg'
+                    : '/favicon.svg';
+                if (oldLink) {
+                    document.head.removeChild(oldLink);
+                }
+                document.head.appendChild(link);
+            }
 
-        setFavicon();
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setFavicon);
-      });
+            setFavicon();
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setFavicon);
+        });
     </script>
 
     <!-- Meta Tags -->
-    <meta name="description" content="TODO" />
-    <meta name="author" content="iForge" />
-    <meta name="keywords" content="do, to, TODO" />
+    <meta name="description" content="TODO"/>
+    <meta name="author" content="iForge"/>
+    <meta name="keywords" content="do, to, TODO"/>
 
     <!-- Open Graph / Social Media Meta Tags -->
-    <meta property="og:title" content="iForge" />
-    <meta property="og:description" content="TODO" />
-    <meta property="og:image" content="" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://forge.local" />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+    <meta property="og:title" content="iForge"/>
+    <meta property="og:description" content="TODO"/>
+    <meta property="og:image" content=""/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="https://iforge.sheffield.ac.uk"/>
+
+    <script>
+        !function (t, e) {
+            var o, n, p, r;
+            e.__SV || (window.posthog = e, e._i = [], e.init = function (i, s, a) {
+                function g(t, e) {
+                    var o = e.split(".");
+                    2 == o.length && (t = t[o[0]], e = o[1]), t[e] = function () {
+                        t.push([e].concat(Array.prototype.slice.call(arguments, 0)))
+                    }
+                }
+
+                (p = t.createElement("script")).type = "text/javascript", p.async = !0, p.src = s.api_host + "/static/array.js", (r = t.getElementsByTagName("script")[0]).parentNode.insertBefore(p, r);
+                var u = e;
+                for (void 0 !== a ? u = e[a] = [] : a = "posthog", u.people = u.people || [], u.toString = function (t) {
+                    var e = "posthog";
+                    return "posthog" !== a && (e += "." + a), t || (e += " (stub)"), e
+                }, u.people.toString = function () {
+                    return u.toString(1) + ".people (stub)"
+                }, o = "capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys onSessionId".split(" "), n = 0; n < o.length; n++) g(u, o[n]);
+                e._i.push([i, s, a])
+            }, e.__SV = 1)
+        }(document, window.posthog || []);
+        posthog.init('phc_XIzxR3RXcdmcyMPJCCnQFtxoL0gRshzEXo4kM925LvA', {api_host: 'https://web-mkc4o00.sampiiiii.dev'})
+    </script>
+
+
+</head>
+<body>
+<div id="root"></div>
+<script type="module" src="/src/main.tsx"></script>
+</body>
 </html>
