@@ -23,7 +23,11 @@ module sign_in {
         required reason: SignInReason;
         signed_out: bool {
             default := false;
-        };
+        }
+        # TODO
+        # required signed_out := {
+        #     exists .ends_at
+        # };
 
         constraint exclusive on (.user) except (.signed_out);
     }

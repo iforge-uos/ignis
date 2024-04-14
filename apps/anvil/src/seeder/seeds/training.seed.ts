@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from "fs";
+import { readFileSync } from "fs";
 import type { EdgeDBService } from "@/edgedb/edgedb.service";
 import e from "@dbschema/edgeql-js";
 import type { training } from "@dbschema/interfaces";
@@ -28,10 +28,10 @@ export const ParsedTrainingList = z.array(
       const subject_area = training["Subject Area"].split("; ").map((area) => area.trim());
       const rep = subject_area.some((area) => area.toLowerCase().includes("iforge rep training"));
       const lower_name = training["Training Course"].toLowerCase();
-      let name = training["Training Course"].replaceAll(/(\(Compulsory\)|In-Person)/gi, "").trim();
-      if (rep) {
-        name = name.replaceAll(/iForge Rep/gi, "").trimStart();
-      }
+      const name = training["Training Course"].replaceAll(/(\(Compulsory\)|In-Person)/gi, "").trim();
+      // if (rep) {
+      //   name = name.replaceAll(/iForge Rep/gi, "").trimStart();
+      // }
       const email = training.Email.slice(0, training.Email.length - "@sheffield.ac.uk".length);
       return {
         name,
@@ -83,64 +83,39 @@ export const seedTraining = async (dbService: EdgeDBService) => {
   // Filter out duplicate trainings based on name
   const uniqueTrainings = trainings.filter((training) => !existingTrainingNames.some((t) => t.name === training.name));
 
-  try {
-    // Insert unique trainings
-    await dbService.query(
-      e.for(e.json_array_unpack(e.json(trainings)), (item) => {
-        return e.insert(e.training.Training, {
-          name: e.cast(e.str, item.name),
-          description: e.cast(e.str, item.description),
-          compulsory: e.cast(e.bool, item.compulsory),
-          in_person: e.cast(e.bool, item.in_person),
-          locations: e.array_unpack(e.cast(e.array(e.training.TrainingLocation), item.locations)),
-        });
-      }),
-    );
-
-    // Update training with questions and pages
-    await dbService.query(
-      e.for(e.json_array_unpack(e.json(uniqueTrainings)), (item) => {
-        const training = e.select(e.training.Training, (training) => ({
-          filter_single: e.op(
-            e.op(training.name, "=", e.cast(e.str, item.name)),
-            "and",
-            e.op(training.description, "=", e.cast(e.str, item.description)),
-          ),
-        }));
-        return e.update(training, () => ({
-          set: {
-            questions: e.for(e.json_array_unpack(e.json_get(item, "questions")), (question) => {
-              return e.insert(e.training.Question, {
-                parent: training,
-                content: e.cast(e.str, question.content),
-                index: e.cast(e.int16, question.index),
-                type: e.cast(e.training.AnswerType, question.type),
-                answers: e.for(e.json_array_unpack(question.answers), (answer) => {
-                  return e.insert(e.training.Answer, {
-                    content: e.cast(e.str, answer.content),
-                    correct: e.op(e.cast(e.bool, e.json_get(answer, "correct")), "??", false),
-                  });
-                }),
+  // Insert unique trainings
+  await dbService.query(
+    e.for(e.json_array_unpack(e.json(uniqueTrainings)), (item) => {
+      return e.insert(e.training.Training, {
+        name: e.cast(e.str, item.name),
+        description: e.cast(e.str, item.description),
+        compulsory: e.cast(e.bool, item.compulsory),
+        in_person: e.cast(e.bool, item.in_person),
+        locations: e.array_unpack(e.cast(e.array(e.training.TrainingLocation), item.locations)),
+        questions: e.for(e.json_array_unpack(e.json_get(item, "questions")), (question) => {
+          return e.insert(e.training.Question, {
+            content: e.cast(e.str, question.content),
+            index: e.cast(e.int16, question.index),
+            type: e.cast(e.training.AnswerType, question.type),
+            answers: e.for(e.json_array_unpack(question.answers), (answer) => {
+              return e.insert(e.training.Answer, {
+                content: e.cast(e.str, answer.content),
+                correct: e.op(e.cast(e.bool, e.json_get(answer, "correct")), "??", false),
               });
             }),
-            pages: e.for(e.json_array_unpack(e.json_get(item, "pages")), (training_) => {
-              return e.insert(e.training.TrainingPage, {
-                parent: training,
-                name: e.cast(e.str, training_.name),
-                content: e.cast(e.str, training_.content),
-                index: e.cast(e.int16, training_.index),
-                duration: e.cast(e.duration, e.json_get(training_, "duration")),
-              });
-            }),
-          },
-        }));
-      }),
-    );
-  } catch (e) {
-    if (!(e instanceof ConstraintViolationError)) {
-      throw e;
-    }
-  }
+          });
+        }),
+        pages: e.for(e.json_array_unpack(e.json_get(item, "pages")), (training_) => {
+          return e.insert(e.training.TrainingPage, {
+            name: e.cast(e.str, training_.name),
+            content: e.cast(e.str, training_.content),
+            index: e.cast(e.int16, training_.index),
+            duration: e.cast(e.duration, e.json_get(training_, "duration")),
+          });
+        }),
+      });
+    }),
+  );
 
   const global_training = ParsedTrainingList.parse(
     parse(readFileSync("src/seeder/seeds/user_training.csv", { encoding: "utf-8" }), { columns: true }),
@@ -163,7 +138,7 @@ export const seedTraining = async (dbService: EdgeDBService) => {
   );
 
   const t = e.json(
-    Object.fromEntries( // FIXME needs to filter out invalid trainings
+    Object.fromEntries(
       Object.entries(parsed_training_by_user).map(([user, trainings]) => {
         const trainingMap = trainings.reduce(
           (acc, training) => {
@@ -190,6 +165,35 @@ export const seedTraining = async (dbService: EdgeDBService) => {
           })),
         },
       }));
+    }),
+  );
+
+  const repInduction = e.select(e.training.Training, (training) => ({
+    filter_single: e.op(training.name, "=", "iForge Rep Induction"),
+  }));
+
+  await dbService.query(
+    e.update(e.training.Training, (training) => {
+      const notIsRep = e.op(training.name, "not ilike", "iForge Rep%");
+      const repTraining = e.select(e.training.Training, (otherTraining) => ({
+        filter: e.re_test(e.op("iForge Rep .*", "++", training.name), otherTraining.name),
+      }));
+
+      return {
+        set: {
+          name: e.str_trim(
+            e.op(training.name, "if", notIsRep, "else", e.str_replace(training.name, "iForge Rep", "")),
+            " ",
+          ),
+          rep: e.op(
+            e.op(e.assert_single(repTraining), "if", e.op("exists", repTraining), "else", repInduction),
+            "if",
+            notIsRep,
+            "else",
+            e.cast(e.training.Training, e.set()),
+          ),
+        },
+      };
     }),
   );
 };

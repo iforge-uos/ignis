@@ -18,11 +18,8 @@ module training {
         multi questions: Question;
         # should be required multi
         multi sections := (  # polymorphism my beloved
-            select Interactable
-            filter .parent = __source__
+            select .pages union .questions
             order by .index
-            # select .pages union .questions  # ideal solution again
-            # order by .index
         );
 
         # things for the UI
@@ -51,13 +48,12 @@ module training {
         # required parent := (
         #     select assert_exists(Training filter __source__ in .sections)
         # );  # ideal solution which doesn't require hard link
-        required parent: Training;
         required index: int16;
         required content: str;
         required enabled: bool {
             default := true;
         }
-        constraint exclusive on ((.parent, .index));
+        # constraint exclusive on ((.parent, .index));  # FIXME open edgedb issue for this
         # TODO consider adding stats? e.g. failure rate
     }
 
