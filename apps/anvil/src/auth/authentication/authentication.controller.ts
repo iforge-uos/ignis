@@ -85,7 +85,7 @@ export class AuthenticationController {
     try {
       await this.blacklistService.addToBlacklist(refreshToken, expiryDate);
     } catch (error) {
-      throw new ConflictException({ message: "Refresh token is invalid or expired" }, { cause: error });
+      throw new ConflictException({ message: `Refresh token is invalid or expired\nCaused by\n${error}` });
     }
 
     this.authService.clearAuthCookies(res);
