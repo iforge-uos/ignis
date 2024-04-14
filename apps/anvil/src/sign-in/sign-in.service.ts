@@ -121,6 +121,7 @@ export class SignInService implements OnModuleInit {
           return e.update(sign_in, () => ({
             set: {
               ends_at: new Date(),
+              signed_out: true,
             },
           }));
         },

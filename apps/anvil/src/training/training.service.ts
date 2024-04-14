@@ -111,7 +111,13 @@ export class TrainingService {
     }));
     const rest_of_training = e.select(e.training.Training, (training) => ({
       filter: e.op(
-        e.op(e.cast(TrainingLocation, location), "in", training.locations),
+        e.op(
+          e.op(e.cast(TrainingLocation, location), "in", training.locations),
+          "if",
+          e.op("exists", training.rep), // forward all rep trainings no-matter the location
+          "else",
+          true,
+        ),
         "and",
         e.op(training.id, "not in", sessions.training.id),
       ),
@@ -175,9 +181,9 @@ export class TrainingService {
               on: e.tuple([session.user, session.training]), // must be kept in-line with UserTrainingSession constraint
               else: session,
             })),
-          (session: any) => ({
+          (session) => ({
             id: true,
-            sections: e.select(session.training.sections, (section: any) => ({
+            sections: e.select(session.training.sections, (section) => ({
               filter: e.op(section.enabled, "and", e.op(section.index, "<=", session.index)),
               order_by: section.index,
               ...TrainingSection(section),

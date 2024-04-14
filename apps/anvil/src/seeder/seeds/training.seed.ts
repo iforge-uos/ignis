@@ -163,7 +163,7 @@ export const seedTraining = async (dbService: EdgeDBService) => {
   );
 
   const t = e.json(
-    Object.fromEntries(
+    Object.fromEntries( // FIXME needs to filter out invalid trainings
       Object.entries(parsed_training_by_user).map(([user, trainings]) => {
         const trainingMap = trainings.reduce(
           (acc, training) => {
@@ -176,27 +176,6 @@ export const seedTraining = async (dbService: EdgeDBService) => {
         return [user, trainingMap];
       }),
     ),
-  );
-
-  writeFileSync(
-    "query.egdgeql",
-    e
-      .for(e.select(e.users.User), (user) => {
-        const trainings = e.json_get(t, user.email);
-        return e.update(user, () => ({
-          set: {
-            training: e.select(e.training.Training, (training) => ({
-              filter: e.op(training.name, "in", e.cast(e.str, trainings)),
-              "@created_at": e.cast(e.datetime, e.json_get(trainings, training.name, "completed_on")),
-              "@in_person_created_at": e.cast(
-                e.datetime,
-                e.json_get(trainings, training.name, "completed_in_person_on"),
-              ),
-            })),
-          },
-        }));
-      })
-      .toEdgeQL(),
   );
 
   await dbService.query(

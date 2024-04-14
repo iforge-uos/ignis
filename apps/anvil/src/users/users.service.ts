@@ -68,6 +68,7 @@ export const TrainingProps = e.shape(e.training.Training, () => ({
   // "@expires": true,
 }));
 const UserTrainingEntry = (id: string, training_id: string | undefined) => {
+  // TODO ignore trainings that are purely informational, needs a new flag adding to Training entry
   return e.shape(e.users.User, () => ({
     training: (training) => ({
       filter: e.all(
