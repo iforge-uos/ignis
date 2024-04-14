@@ -42,6 +42,6 @@ dbschema/edgeql-js
 dbschema/edgedb-zod
 
 # seed files!
-src/seeder/seeds/*.csv
-src/seeder/seeds/*.json
-src/seeder/seeds/*.md
+src/seeder/seeds/**/*.csv
+src/seeder/seeds/**/*.json
+src/seeder/seeds/**/*.md
