@@ -291,7 +291,7 @@ export class TrainingService {
                 "distinct",
                 e.for(user.training, (t) => {
                   // filter out the previous training if they had it
-                  return e.op(training, "if", e.op(t, "!=", training), "else", e.cast(e.training.Training, e.set()));
+                  return e.op(t, "if", e.op(t, "!=", training), "else", e.cast(e.training.Training, e.set()));
                 }),
               ),
               "union",
