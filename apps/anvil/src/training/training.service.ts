@@ -2,6 +2,7 @@ import { EdgeDBService } from "@/edgedb/edgedb.service";
 import { UsersService } from "@/users/users.service";
 import e from "@dbschema/edgeql-js";
 import { TrainingLocation } from "@dbschema/edgeql-js/modules/training";
+import { startTraining } from "@dbschema/queries/startTraining.query";
 import ErrorCodes from "@ignis/errors";
 import { training } from "@ignis/types";
 import { PartialTraining } from "@ignis/types/training";
@@ -152,45 +153,8 @@ export class TrainingService {
   }
 
   async startTraining(id: string, user_id: string) {
-    const training = e.assert_exists(e.select(e.training.Training, () => ({ filter_single: { id } })));
-    const user = e.assert_exists(e.select(e.users.User, () => ({ filter_single: { id: user_id } })));
     try {
-      return await this.dbService.query(
-        e.select(
-          e
-            .insert(e.training.UserTrainingSession, {
-              training,
-              user: e.op(
-                // check the user is a rep if they're doing rep training, otherwise insert invalid value (to raise)
-                user,
-                "if",
-                e.op("exists", training.rep),
-                "else",
-                e.op(
-                  user,
-                  "if",
-                  e.op(user.__type__.name, "=", "users::Rep"),
-                  // poor mans e.op(user, "is", e.users.Rep)
-                  "else",
-                  e.cast(e.users.User, e.set()), // intentionally invalid value
-                ),
-              ),
-            })
-            // return the current session if the user has one
-            .unlessConflict((session) => ({
-              on: e.tuple([session.user, session.training]), // must be kept in-line with UserTrainingSession constraint
-              else: session,
-            })),
-          (session) => ({
-            id: true,
-            sections: e.select(session.training.sections, (section) => ({
-              filter: e.op(section.enabled, "and", e.op(section.index, "<=", session.index)),
-              order_by: section.index,
-              ...TrainingSection(section),
-            })),
-          }),
-        ),
-      );
+      return await startTraining(this.dbService.client, { id, user_id });
     } catch (e) {
       if (e instanceof MissingRequiredError) {
         throw new BadRequestException({
