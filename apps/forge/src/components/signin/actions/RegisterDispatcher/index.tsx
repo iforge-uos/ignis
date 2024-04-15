@@ -38,7 +38,7 @@ const RegisterDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
       setTimeout(() => {
         console.log("Aborting request deadline exceeded");
         abortController.abort();
-      }, 10_000);
+      }, 20_000);
     },
     onError: (error) => {
       console.log("Error", error);
