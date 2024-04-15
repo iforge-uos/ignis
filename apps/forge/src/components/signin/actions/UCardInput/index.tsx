@@ -1,12 +1,12 @@
-import { useState } from "react";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card.tsx";
-import { Button } from "@ui/components/ui/button.tsx";
-import { toast } from "sonner";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/redux/store.ts";
-import { signinActions } from "@/redux/signin.slice.ts";
 import { FlowStepComponent } from "@/components/signin/actions/SignInManager/types.ts";
+import { signinActions } from "@/redux/signin.slice.ts";
+import { AppDispatch } from "@/redux/store.ts";
+import { Button } from "@ui/components/ui/button.tsx";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card.tsx";
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@ui/components/ui/input-otp";
+import { useEffect, useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+import { toast } from "sonner";
 
 const UCardInput: FlowStepComponent = ({ onPrimary }) => {
   const [otp, setOtp] = useState(""); // OTP is now handled as a string
@@ -27,19 +27,17 @@ const UCardInput: FlowStepComponent = ({ onPrimary }) => {
 
   const handleOnSubmit = () => {
     if (isOtpValid) {
-      console.log("Submitting UCard:", otp);
-      toast(`UCard Entered: ${otp}`, {
-        description: "This is feedback that lets you know what the card has in fact been entered woop woop",
-        action: {
-          label: "Woah",
-          onClick: () => console.log("ʕ •ᴥ• ʔ"),
-        },
-      });
       const parsedOtp = parseInt(otp.slice(-6), 10);
       dispatch(signinActions.updateSignInSessionField("ucard_number", parsedOtp));
       onPrimary?.();
     }
   };
+  const firstInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    firstInputRef.current?.focus();
+  }, []);
+
   return (
     <>
       <Card className="w-[700px]">
@@ -53,6 +51,7 @@ const UCardInput: FlowStepComponent = ({ onPrimary }) => {
             value={otp}
             onChange={(value) => handleOtpChange(value)}
             onComplete={() => handleOnSubmit()}
+            ref={firstInputRef}
           >
             <InputOTPGroup>
               <InputOTPSlot index={0} />
@@ -79,6 +78,9 @@ const UCardInput: FlowStepComponent = ({ onPrimary }) => {
           </Button>
         </CardFooter>
       </Card>
+      <script>
+        const element = document.getElementById("starting-pos").focus(); document.getElementById(frmObj.id).select();
+      </script>
     </>
   );
 };
