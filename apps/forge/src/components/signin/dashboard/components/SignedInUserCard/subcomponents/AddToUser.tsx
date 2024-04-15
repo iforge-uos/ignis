@@ -48,7 +48,7 @@ export const AddToUser: React.FC<AddToUserProps> = ({ user, location, onShiftRep
           }
           return (
             <Button
-              className={`w-full justify-center flex-grow ${indexStyle} ${
+              className={`w-full text-black dark:text-white justify-center flex-grow ${indexStyle} ${
                 title !== section ? "bg-popover-background" : ""
               }`}
               onClick={() => setSection(title)}
