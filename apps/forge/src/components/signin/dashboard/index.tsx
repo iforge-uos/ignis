@@ -12,6 +12,7 @@ import { Loader } from "@ui/components/ui/loader.tsx";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { SignInDrawer } from "@/components/signin/dashboard/components/SignInDrawer.tsx";
+import { REP_OFF_SHIFT } from "@/lib/constants";
 
 export default function SignInDashboard() {
   const queryClient = useQueryClient();
@@ -58,8 +59,7 @@ export default function SignInDashboard() {
       const offShiftRepsSignedIn: SignInEntry[] = [];
       for (const entry of locationList.sign_ins) {
         if (entry.reason.category === SignInReasonCategorySchema.Values.REP_SIGN_IN) {
-          console.log(entry.reason.name);
-          if (entry.reason.name === "Rep Off Shift") {
+          if (entry.reason.name === REP_OFF_SHIFT) {
             offShiftRepsSignedIn.push(entry);
           } else {
             repsSignedIn.push(entry);
