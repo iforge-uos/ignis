@@ -82,7 +82,7 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
               </h2>
             </Link>
             {user.teams?.map((team) => (
-              <Badge className="flex items-center justify-start rounded-sm bg-neutral-800 m-0.5 w-full">
+              <Badge className="flex items-center justify-start rounded-sm bg-neutral-800 m-0.5 w-full pt-1.5 pb-1.5">
                 <TeamIcon team={team.name} className="stroke-white mr-1" />
                 <text className="text-left ml-2 text-white">{team.name}</text>
               </Badge>
@@ -102,7 +102,7 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
                 <TooltipTrigger asChild>
                   <Button className="bg-neutral-800" disabled={!onShiftReps}>
                     <Plus className="stroke-white" />
-                    <span className="text-white">Add</span>
+                    <span className="text-white ml-1.5">Add</span>
                   </Button>
                 </TooltipTrigger>
               </PopoverTrigger>
@@ -118,7 +118,7 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
             <TooltipTrigger asChild>
               <Button onClick={handleSignOut} variant="destructive">
                 <LogOut />
-                <span>Sign Out</span>
+                <span className="ml-1.5">Sign Out</span>
               </Button>
             </TooltipTrigger>
             <TooltipContent>
