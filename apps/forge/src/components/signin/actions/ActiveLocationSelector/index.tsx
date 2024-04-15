@@ -1,5 +1,3 @@
-// @ts-ignore
-
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import { cn } from "@/lib/utils";
 import { Button } from "@ui/components/ui/button";
@@ -13,6 +11,8 @@ import { locationStatus } from "@/services/signin/locationService.ts";
 import { useQuery } from "@tanstack/react-query";
 import { Separator } from "@ui/components/ui/separator.tsx";
 import { PulseLoader } from "react-spinners";
+import { Location } from "@ignis/types/sign_in.ts";
+import { Moon } from "lucide-react";
 
 const ActiveLocationSelector = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -28,6 +28,7 @@ const ActiveLocationSelector = () => {
   } = useQuery({
     queryKey: ["locationStatus"],
     queryFn: locationStatus,
+    staleTime: 4_000,
     refetchInterval: value ? refetchInterval : false, // Only refetch if a location is selected
   });
 
@@ -44,16 +45,14 @@ const ActiveLocationSelector = () => {
       dispatch(signinActions.setError(error.message));
     }
 
-    if (activeLocation != "") {
-      setValue(activeLocation);
-    }
+    setValue(activeLocation);
   }, [locationStatuses, dispatch, isError, activeLocation, error]);
 
   const capitalizeFirstLetter = (string: string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
 
-  const handleLocationSelect = (selectedLocationName: string) => {
+  const handleLocationSelect = (selectedLocationName: Location) => {
     dispatch(signinActions.setActiveLocation(selectedLocationName));
   };
 
@@ -88,14 +87,14 @@ const ActiveLocationSelector = () => {
                   ) : (
                     <>
                       {locationStatuses &&
-                        locationStatuses!.map((location, index) => (
+                        locationStatuses!.map((location, _) => (
                           <CommandItem
-                            key={index}
+                            key={location.locationName}
                             value={location.locationName}
                             onSelect={(currentValue) => {
                               setValue(currentValue);
                               setOpen(false);
-                              handleLocationSelect(currentValue);
+                              handleLocationSelect(currentValue as Location);
                             }}
                           >
                             {capitalizeFirstLetter(location.locationName)}
@@ -124,6 +123,12 @@ const ActiveLocationSelector = () => {
             ) : (
               <span className="text-red-500">CLOSED</span>
             )}
+            {activeLocationStatus.out_of_hours ? (
+              <>
+                <Separator orientation="vertical" />
+                <Moon /> <span>Out of Hours</span>
+              </>
+            ) : undefined}
             <Separator orientation="vertical" />
             {/* Count and Max Count Status */}
 

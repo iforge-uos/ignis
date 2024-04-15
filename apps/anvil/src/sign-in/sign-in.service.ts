@@ -64,6 +64,7 @@ export class SignInService implements OnModuleInit {
       this.maxCount(location),
       this.canSignIn(location),
       this.countInQueue(location),
+      this.outOfHours(),
     ]);
 
     return {
@@ -71,6 +72,7 @@ export class SignInService implements OnModuleInit {
       open: on_shift_count > 0,
       count,
       max,
+      out_of_hours: this.outOfHours(),
       needs_queue: !can_sign_in,
       count_in_queue,
     };
