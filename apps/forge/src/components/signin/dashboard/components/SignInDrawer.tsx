@@ -1,12 +1,12 @@
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@ui/components/ui/collapsible.tsx";
+import { SignedInUserCard } from "@/components/signin/dashboard/components/SignedInUserCard.tsx";
+import type { SignInEntry } from "@ignis/types/sign_in.ts";
+import { PartialUser } from "@ignis/types/users.ts";
+import { InfoCircledIcon } from "@radix-ui/react-icons";
+import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert.tsx";
 import { Button } from "@ui/components/ui/button.tsx";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@ui/components/ui/collapsible.tsx";
 import { ArrowDownIcon, ArrowRightIcon } from "lucide-react";
 import { FC, useState } from "react";
-import type { SignInEntry } from "@ignis/types/sign_in.ts";
-import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert.tsx";
-import { InfoCircledIcon } from "@radix-ui/react-icons";
-import { SignedInUserCard } from "@/components/signin/dashboard/components/SignedInUserCard.tsx";
-import { PartialUser } from "@ignis/types/users.ts";
 
 // SignInDrawer Props
 interface SignInDrawerProps {
@@ -28,7 +28,7 @@ export const SignInDrawer: FC<SignInDrawerProps> = ({ title, entries, startExpan
         <div className="flex items-center justify-between space-x-4 px-4">
           <div className="flex items-center gap-2">
             <h4 className="text-lg font-bold">{title}</h4>
-            <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-gray-200 text-sm font-semibold text-gray-900">
+            <span className="inline-flex items-center justify-center h-6 w-6 rounded-sm bg-accent text-sm font-semibold dark:text-gray-100 text-gray-900">
               {entries.length}
             </span>
           </div>
