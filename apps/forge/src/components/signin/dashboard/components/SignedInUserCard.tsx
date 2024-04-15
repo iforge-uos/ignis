@@ -8,7 +8,7 @@ import addInfraction from "@/services/users/addInfraction";
 import { getUserTraining } from "@/services/users/getUserTraining";
 import { getUserTrainingRemaining } from "@/services/users/getUserTrainingRemaining";
 import revokeTraining from "@/services/users/revokeTraining";
-import type { Location, PartialReason } from "@ignis/types/sign_in";
+import type { Location, PartialReason, SignInEntry } from "@ignis/types/sign_in";
 import type { InfractionType, PartialUser } from "@ignis/types/users";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
@@ -31,6 +31,7 @@ import * as React from "react";
 import { DateRange } from "react-day-picker";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
+import TeamIcon from "./TeamIcon";
 
 type Addable = "Training" | "Infraction";
 const ADDABLE: Addable[] = ["Training", "Infraction"];
@@ -318,7 +319,7 @@ const AddToUser: React.FC<AddToUserProps> = ({ user, location, onShiftReps }) =>
 };
 
 interface SignInUserCardProps {
-  user: PartialUser;
+  user: SignInEntry["user"];
   tools?: string[];
   reason?: PartialReason;
   onSignOut?: () => void;
@@ -367,9 +368,10 @@ export const SignedInUserCard: React.FC<SignInUserCardProps> = ({ user, tools, r
                 <Link to={`/users/${user.id}` as string}>{user.display_name}</Link>
               </CardTitle>
               <CardDescription className="my-2 flex flex-wrap">
-                {user.roles.map((role) => (
+                {user.teams?.map((team) => (
                   <Badge className="rounded-sm bg-accent m-0.5">
-                    <text className="text-accent-foreground">{role.name}</text>
+                    <TeamIcon team={team.name} className="stroke-accent-foreground mr-1" />
+                    <text className="text-accent-foreground">{team.name}</text>
                   </Badge>
                 ))}
               </CardDescription>
