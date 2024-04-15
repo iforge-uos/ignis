@@ -66,7 +66,7 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
     }
   };
 
-  const shouldDisplayReason = true;
+  const shouldDisplayReason = !(reason?.name === REP_ON_SHIFT || reason?.name === REP_OFF_SHIFT);
 
   return (
     <Card
