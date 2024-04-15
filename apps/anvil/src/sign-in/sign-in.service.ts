@@ -344,7 +344,7 @@ export class SignInService implements OnModuleInit {
    */
   async signIn(location: Location, ucard_number: number, tools: string[], reason_id: string) {
     const { infractions } = await this.preSignInChecks(location, ucard_number);
-    if (infractions) {
+    if (infractions.length !== 0) {
       throw new BadRequestException({
         message: `User ${ucard_number} has active infractions ${infractions}`,
         code: ErrorCodes.user_has_active_infractions,
