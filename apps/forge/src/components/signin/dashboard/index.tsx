@@ -1,5 +1,5 @@
 import ActiveLocationSelector from "@/components/signin/actions/ActiveLocationSelector";
-import { SignedInUserCard } from "@/components/signin/dashboard/components/SignedInUserCard.tsx";
+import { SignedInUserCard } from "@/components/signin/dashboard/components/SignedInUserCard";
 import Title from "@/components/title";
 import { AppRootState } from "@/redux/store.ts";
 import { dataForLocation } from "@/services/signin/locationService.ts";
