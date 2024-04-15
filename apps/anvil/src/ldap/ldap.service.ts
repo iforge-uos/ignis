@@ -60,9 +60,22 @@ export class LdapService implements OnModuleInit {
     }
   }
 
+  async resetConnection() {
+    if (this.client) {
+      this.client.unbind((err) => {
+        if (err) {
+          this.logger.error(`Error unbinding LDAP client: ${err.message}`);
+        }
+        this.client = null;
+        this.logger.debug("LDAP client unbound and reset.");
+      });
+    }
+    await this.connect();
+  }
+
   private async search(base: string, options: ldap.SearchOptions): Promise<ldap.SearchEntry[]> {
     this.logger.debug(`Performing search with base: ${base} and filter: ${options.filter}`);
-    await this.ensureConnected();
+    await this.resetConnection(); // Reset connection before each search
     return new Promise((resolve, reject) => {
       this.client!.search(base, options, (err, res) => {
         if (err) {
