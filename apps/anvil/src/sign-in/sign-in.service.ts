@@ -416,17 +416,14 @@ export class SignInService implements OnModuleInit {
       e.select(e.sign_in.SignInReason, () => ({
         name: true,
         agreement: true,
+        category: true,
         filter_single: { id: reason_id },
       })),
     );
-    const { name, agreement } = await this.dbService.query(query);
+    const { name, agreement, category } = await this.dbService.query(query);
 
-    if ([REP_ON_SHIFT, REP_OFF_SHIFT].includes(name)) {
-      if (!is_rep) {
-        throw new BadRequestException("User has somehow passed a rep reason");
-      }
-    } else if (is_rep) {
-      throw new BadRequestException(`Invalid sign in reason passed ${name}`);
+    if (category === "REP_SIGN_IN" && !is_rep) {
+      throw new BadRequestException("User has somehow passed a rep reason");
     }
 
     if (agreement && !agreements_signed.some((agreement_) => agreement_.id === agreement.id)) {
