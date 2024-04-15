@@ -12,7 +12,7 @@ export type AppLink = {
 
 export const appLinks: AppLink[] = [
   { app: "Main", displayName: "Home", path: "/", index: 0, id: "home" },
-  { app: "Sign In", displayName: "Sign In Home", path: "/signin", index: 0, id: "signin_root" },
+  { app: "Sign In", displayName: "Sign In", path: "/signin", index: 0, id: "signin_root" },
   {
     app: "Sign In",
     displayName: "Agreements",
@@ -51,6 +51,8 @@ export const appLinks: AppLink[] = [
       },
     ],
   },
-  { app: "Sign In", displayName: "Dashboard", path: "/signin/dashboard", index: 1, id: "signin_status" },
+  { app: "Sign In", displayName: "Dashboard", path: "/signin/dashboard", index: 3, id: "signin_dashboard" },
+  { app: "Sign In", displayName: "Home", path: "/signin/home", index: 4, id: "signin_home" },
+
   { app: "Printing", displayName: "Printing", path: "/printing", id: "printing_root", index: 0 },
 ];
