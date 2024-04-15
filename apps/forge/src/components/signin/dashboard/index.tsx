@@ -3,7 +3,6 @@ import { SignedInUserCard } from "@/components/signin/dashboard/components/Signe
 import Title from "@/components/title";
 import { AppRootState } from "@/redux/store.ts";
 import { dataForLocation } from "@/services/signin/locationService.ts";
-import { SignInReasonCategorySchema } from "@dbschema/edgedb-zod/modules/sign_in.ts";
 import type { QueueEntry, SignInEntry } from "@ignis/types/sign_in";
 import { ExclamationTriangleIcon, InfoCircledIcon } from "@radix-ui/react-icons";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -12,7 +11,7 @@ import { Loader } from "@ui/components/ui/loader.tsx";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { SignInDrawer } from "@/components/signin/dashboard/components/SignInDrawer.tsx";
-import { REP_OFF_SHIFT } from "@/lib/constants";
+import { REP_ON_SHIFT } from "@/lib/constants";
 
 export default function SignInDashboard() {
   const queryClient = useQueryClient();
@@ -58,11 +57,11 @@ export default function SignInDashboard() {
       const repsSignedIn: SignInEntry[] = [];
       const offShiftRepsSignedIn: SignInEntry[] = [];
       for (const entry of locationList.sign_ins) {
-        if (entry.reason.category === SignInReasonCategorySchema.Values.REP_SIGN_IN) {
-          if (entry.reason.name === REP_OFF_SHIFT) {
-            offShiftRepsSignedIn.push(entry);
-          } else {
+        if (entry.user.teams !== undefined) {
+          if (entry.reason.name === REP_ON_SHIFT) {
             repsSignedIn.push(entry);
+          } else {
+            offShiftRepsSignedIn.push(entry);
           }
         } else {
           usersSignedIn.push(entry);
