@@ -52,6 +52,8 @@ const UCardInput: FlowStepComponent = ({ onPrimary }) => {
             onChange={(value) => handleOtpChange(value)}
             onComplete={() => handleOnSubmit()}
             ref={firstInputRef}
+            type="search" // I think this turns off 1password autocomplete which gets in the way of our actual auto-complete
+            autoComplete="off" // so does this
           >
             <InputOTPGroup>
               <InputOTPSlot index={0} />
