@@ -38,7 +38,9 @@ export class LdapService implements OnModuleInit {
     }
   }
 
-  private bind(dn: string, password: string): Promise<void> {
+  private async bind(dn: string, password: string): Promise<void> {
+    await this.ensureConnected();
+
     this.logger.debug(`Binding to DN: ${dn}`);
     return new Promise((resolve, reject) => {
       this.client!.bind(dn, password, (err: any) => {
@@ -51,8 +53,16 @@ export class LdapService implements OnModuleInit {
     });
   }
 
-  private search(base: string, options: ldap.SearchOptions): Promise<ldap.SearchEntry[]> {
-    this.logger.debug(`Performing search with base: ${base} and filter: ${options.filter}`);
+  async ensureConnected() {
+    if (!this.client?.connected) {
+      this.logger.debug("Re-establishing LDAP client connection...");
+      await this.connect();
+    }
+  }
+
+  private async search(base: string, options: ldap.SearchOptions): Promise<ldap.SearchEntry[]> {
+    this.logger.debug(`Performing search with base: ${base} and filter: ${options.filter?.toString() ?? ""}`);
+    await this.ensureConnected();
     return new Promise((resolve, reject) => {
       this.client!.search(base, options, (err, res) => {
         if (err) {
@@ -76,6 +86,7 @@ export class LdapService implements OnModuleInit {
 
   async authenticate(uid: string, password: string): Promise<boolean> {
     this.logger.debug(`Authenticating user with UID: ${uid}`);
+    await this.ensureConnected();
     const searchBase = process.env.LDAP_BASE!;
     const options: ldap.SearchOptions = {
       filter: `(&(objectclass=person)(uid=${uid}))`,
@@ -105,7 +116,7 @@ export class LdapService implements OnModuleInit {
       filter: searchFilter,
       scope: "sub",
       attributes: attributes,
-      timeLimit: 1,
+      timeLimit: 10,
     };
 
     try {
@@ -117,6 +128,7 @@ export class LdapService implements OnModuleInit {
   }
 
   async lookupUsername(username: string): Promise<LdapUser | null> {
+    await this.ensureConnected();
     this.logger.debug(`Starting LDAP search for username: ${username}`);
     const users = await this.lookup(`(&(objectclass=person)(uid=${username}))`);
     this.logger.debug(`LDAP search completed for username: ${username}`);
@@ -131,6 +143,7 @@ export class LdapService implements OnModuleInit {
   }
 
   async lookupEmail(email: string): Promise<LdapUser | null> {
+    await this.ensureConnected();
     const users = await this.lookup(`(&(objectclass=person)(mail=${email}))`);
     if (!users) {
       return null;
