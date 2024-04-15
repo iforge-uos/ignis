@@ -11,6 +11,7 @@ import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert.tsx
 import { Loader } from "@ui/components/ui/loader.tsx";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { SignInDrawer } from "@/components/signin/dashboard/components/SignInDrawer.tsx";
 
 export default function SignInDashboard() {
   const queryClient = useQueryClient();
@@ -18,6 +19,7 @@ export default function SignInDashboard() {
   const [signedInUsers, setSignedInUsers] = useState<SignInEntry[]>([]);
   const [queuedUsers, setQueuedUsers] = useState<QueueEntry[]>([]);
   const [signedInReps, setSignedInReps] = useState<SignInEntry[]>([]);
+  const [signInOffShiftReps, setSignInOffShiftReps] = useState<SignInEntry[]>([]);
 
   const handleRemoveSignedInUser = (userId: string) => {
     setSignedInUsers((currentUsers) => currentUsers.filter((user) => user.user.id !== userId));
@@ -48,13 +50,20 @@ export default function SignInDashboard() {
 
       const usersSignedIn: SignInEntry[] = [];
       const repsSignedIn: SignInEntry[] = [];
+      const offShiftRepsSignedIn: SignInEntry[] = [];
       for (const entry of locationList.sign_ins) {
         if (entry.reason.category === SignInReasonCategorySchema.Values.REP_SIGN_IN) {
-          repsSignedIn.push(entry);
+          console.log(entry.reason.name);
+          if (entry.reason.name === "Rep Off Shift") {
+            offShiftRepsSignedIn.push(entry);
+          } else {
+            repsSignedIn.push(entry);
+          }
         } else {
           usersSignedIn.push(entry);
         }
       }
+      setSignInOffShiftReps(offShiftRepsSignedIn);
       setSignedInUsers(usersSignedIn);
       setSignedInReps(repsSignedIn);
     }
@@ -68,56 +77,34 @@ export default function SignInDashboard() {
         <ActiveLocationSelector />
         <div className="border-2 p-4">
           <h1 className="text-2xl font-bold mb-4 text-center">Sign In Dashboard</h1>
-          {!isLoading && !isError && (
+          {!(isLoading || isError) && (
             <div className="flex flex-col">
-              <div id="rep-signin-shelf" className="flex-1 border-b-2">
-                <h2 className="text-xl font-bold mb-4">Reps on shift</h2>
-                <div className="flex flex-wrap gap-4 mb-4">
-                  {signedInReps.length === 0 && (
-                    <Alert variant="default">
-                      <InfoCircledIcon className="h-4 w-4" />
-                      <AlertTitle>Info</AlertTitle>
-                      <AlertDescription>There are no reps currently signed in.</AlertDescription>
-                    </Alert>
-                  )}
-                  {signedInReps.length > 0 &&
-                    signedInReps.map((entry) => {
-                      return (
-                        <SignedInUserCard
-                          key={entry.user.id}
-                          user={entry.user}
-                          reason={entry.reason}
-                          onSignOut={() => handleRemoveSignedInRep(entry.user.id)}
-                          onShiftReps={onShiftReps}
-                        />
-                      );
-                    })}
-                </div>
+              <div id="rep-signin-shelf" className="flex-1 border-b-2 pb-5">
+                <SignInDrawer
+                  title="On-Shift Reps"
+                  onSignOut={handleRemoveSignedInRep}
+                  entries={signedInReps}
+                  onShiftReps={onShiftReps}
+                  startExpanded={true}
+                />
               </div>
-              <div id="user-signin-shelf" className="mt-4 flex-1 border-b-2">
-                <h3 className="text-xl font-bold mb-4">Users Signed In</h3>
-                <div className="flex flex-wrap gap-4 mb-4">
-                  {signedInUsers.length === 0 && (
-                    <Alert variant="default">
-                      <InfoCircledIcon className="h-4 w-4" />
-                      <AlertTitle>Info</AlertTitle>
-                      <AlertDescription>There are no users currently signed in.</AlertDescription>
-                    </Alert>
-                  )}
-                  {signedInUsers.length > 0 &&
-                    signedInUsers.map((entry) => {
-                      return (
-                        <SignedInUserCard
-                          key={entry.user.id}
-                          user={entry.user}
-                          tools={entry.tools}
-                          reason={entry.reason}
-                          onSignOut={() => handleRemoveSignedInUser(entry.user.id)}
-                          onShiftReps={onShiftReps}
-                        />
-                      );
-                    })}
-                </div>
+              <div id="off-shift-rep-signin-shelf" className="flex-1 border-b-2 pb-5">
+                <SignInDrawer
+                  title="Off-Shift Reps"
+                  onSignOut={handleRemoveSignedInRep}
+                  entries={signInOffShiftReps}
+                  onShiftReps={onShiftReps}
+                  startExpanded={false}
+                />
+              </div>
+              <div id="user-signin-shelf" className="mt-4 flex-1 border-b-2 pb-5">
+                <SignInDrawer
+                  title="Users"
+                  onSignOut={handleRemoveSignedInUser}
+                  entries={signedInUsers}
+                  onShiftReps={onShiftReps}
+                  startExpanded={true}
+                />
               </div>
               <div id="queue-shelf" className="mt-4 flex-1">
                 <h4 className="text-xl font-bold mb-4">Queued</h4>

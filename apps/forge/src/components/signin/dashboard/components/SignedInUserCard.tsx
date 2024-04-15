@@ -25,7 +25,7 @@ import { Separator } from "@ui/components/ui/separator";
 import { Textarea } from "@ui/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ui/components/ui/tooltip";
 import { cn } from "@ui/lib/utils";
-import { addDays, addMonths, format, startOfDay } from "date-fns";
+import { addDays, format, startOfDay } from "date-fns";
 import { CalendarIcon, LogOut, Plus } from "lucide-react";
 import * as React from "react";
 import { DateRange } from "react-day-picker";
