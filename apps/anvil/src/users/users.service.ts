@@ -310,21 +310,24 @@ export class UsersService {
           location: true,
           ends_at: true,
           created_at: true,
-          duration: true,
+          duration_: e.select(e.duration_to_seconds(sign_in.duration)),
           by: { created_at: e.datetime_truncate(sign_in.created_at, "days") },
         }),
       ),
     );
     return groupings.map((group) => {
       const key = group.key.created_at!;
-      const day = `${key.getFullYear()}-${key.getMonth()}-${key.getDay()}`;
+      const year = key.getFullYear();
+      const month = (key.getMonth() + 1).toString().padStart(2, "0"); // getMonth() is zero-based
+      const day = key.getDate().toString().padStart(2, "0"); // getDate() returns the day of the month
+
       return {
-        day,
-        value: group.elements.reduce((previous_duration, visit) => previous_duration + visit.duration.seconds, 0),
+        day: `${year}-${month}-${day}`,
+        value: group.elements.reduce((previous_duration, visit) => previous_duration + parseInt(visit.duration_), 0),
         sign_ins: group.elements.map((sign_in) => ({
           ...sign_in,
           location: sign_in.location.toLowerCase() as unknown as Location,
-          duration: sign_in.duration.seconds,
+          duration: parseInt(sign_in.duration_),
         })),
       };
     });
