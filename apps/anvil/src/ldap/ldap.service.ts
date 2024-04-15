@@ -21,7 +21,8 @@ export class LdapService implements OnModuleInit {
 
       this.client = ldap.createClient({
         url: process.env.LDAP_HOST + ":" + process.env.LDAP_PORT,
-        connectTimeout: 1000, // Adjust this as per your needs
+        connectTimeout: 2_000,
+        timeout: 5000,
       });
 
       this.client.on("connect", () => {
@@ -33,9 +34,7 @@ export class LdapService implements OnModuleInit {
         this.client = null; // Reset the client to reconnect later.
       });
     } else {
-      this.logger.warn(
-        "LDAP client already exists. Reusing existing connection.",
-      );
+      this.logger.warn("LDAP client already exists. Reusing existing connection.");
     }
   }
 
@@ -52,13 +51,8 @@ export class LdapService implements OnModuleInit {
     });
   }
 
-  private search(
-    base: string,
-    options: ldap.SearchOptions,
-  ): Promise<ldap.SearchEntry[]> {
-    this.logger.debug(
-      `Performing search with base: ${base} and filter: ${options.filter}`,
-    );
+  private search(base: string, options: ldap.SearchOptions): Promise<ldap.SearchEntry[]> {
+    this.logger.debug(`Performing search with base: ${base} and filter: ${options.filter}`);
     return new Promise((resolve, reject) => {
       this.client!.search(base, options, (err, res) => {
         if (err) {
@@ -104,10 +98,7 @@ export class LdapService implements OnModuleInit {
   }
 
   // query params can go by mail, uid
-  async lookup(
-    searchFilter: string,
-    attributes: string[] | undefined = undefined,
-  ): Promise<ldap.SearchEntry[] | null> {
+  async lookup(searchFilter: string, attributes: string[] | undefined = undefined): Promise<ldap.SearchEntry[] | null> {
     this.logger.debug(`Looking up entries with filter: ${searchFilter}`);
     const searchBase = process.env.LDAP_BASE!;
     const options: ldap.SearchOptions = {
@@ -126,7 +117,9 @@ export class LdapService implements OnModuleInit {
   }
 
   async lookupUsername(username: string): Promise<LdapUser | null> {
+    this.logger.debug(`Starting LDAP search for username: ${username}`);
     const users = await this.lookup(`(&(objectclass=person)(uid=${username}))`);
+    this.logger.debug(`LDAP search completed for username: ${username}`);
     if (!users) {
       return null;
     }

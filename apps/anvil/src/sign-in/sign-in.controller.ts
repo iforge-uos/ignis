@@ -26,7 +26,7 @@ export class SignInController {
   @Get()
   @IsRep()
   async getList(@Param("location") location: Location) {
-    return await this.signInService.getList(location);
+    return this.signInService.getList(location);
   }
 
   @Throttle({ default: { limit: 1, ttl: 1000 } })
@@ -34,7 +34,7 @@ export class SignInController {
   @Post("register-user")
   async registerUser(@Param("location") location: Location, @Body() registerUser: RegisterUserDto) {
     // location here does nothing beyond just add extra analytics for us to track where people are registering
-    return await this.signInService.registerUser(location, registerUser);
+    return this.signInService.registerUser(location, registerUser);
   }
 
   @Get("sign-in/:ucard_number")
