@@ -66,7 +66,7 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
     }
   };
 
-  const shouldDisplayReason = !(reason?.name === REP_ON_SHIFT || reason?.name === REP_OFF_SHIFT);
+  const shouldDisplayReason = true;
 
   return (
     <Card
@@ -77,12 +77,14 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
         <div className="flex items-center justify-between mb-4">
           <div className="mt-1 ml-1">
             <Link to={`/users/${user.id}` as string}>
-              <h2 className="w-full text-center text-lg font-bold hover:underline">{user.display_name}</h2>
+              <h2 className="w-full text-center text-lg font-bold hover:underline text-black dark:text-white">
+                {user.display_name}
+              </h2>
             </Link>
             {user.teams?.map((team) => (
-              <Badge className="flex items-center justify-start rounded-sm bg-accent m-0.5 w-full">
-                <TeamIcon team={team.name} className="stroke-accent-foreground mr-1" />
-                <text className="text-left ml-2 text-accent-foreground">{team.name}</text>
+              <Badge className="flex items-center justify-start rounded-sm bg-neutral-800 m-0.5 w-full">
+                <TeamIcon team={team.name} className="stroke-white mr-1" />
+                <text className="text-left ml-2 text-white">{team.name}</text>
               </Badge>
             ))}
           </div>
@@ -98,9 +100,9 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
             <Tooltip>
               <PopoverTrigger asChild>
                 <TooltipTrigger asChild>
-                  <Button className="bg-accent" disabled={!onShiftReps}>
-                    <Plus className="stroke-accent-foreground" />
-                    <span>Add</span>
+                  <Button className="bg-neutral-800" disabled={!onShiftReps}>
+                    <Plus className="stroke-white" />
+                    <span className="text-white">Add</span>
                   </Button>
                 </TooltipTrigger>
               </PopoverTrigger>
