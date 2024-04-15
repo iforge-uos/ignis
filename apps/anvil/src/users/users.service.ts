@@ -107,6 +107,7 @@ export class UsersService {
   async create(
     createUserDto: Omit<CreateUserDto, "ucard_number"> & {
       ucard_number: any;
+      roles?: any;
     },
   ): Promise<User> {
     try {
@@ -257,6 +258,7 @@ export class UsersService {
       first_name: ldapUser.givenName,
       last_name: ldapUser.sn,
       organisational_unit: ldapUser.ou,
+      roles: e.select(e.auth.Role, () => ({ filter_single: { name: "User" } })),
       ucard_number: e.op(
         // atomically decrement this field for new inserts where we don't have it
         // to preserves the uniqueness.
