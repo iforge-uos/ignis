@@ -1,4 +1,4 @@
-import { SignedInUserCard } from "@/components/signin/dashboard/components/SignedInUserCard.tsx";
+import { SignedInUserCard } from "@/components/signin/dashboard/components/SignedInUserCard";
 import type { SignInEntry } from "@ignis/types/sign_in.ts";
 import { PartialUser } from "@ignis/types/users.ts";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
