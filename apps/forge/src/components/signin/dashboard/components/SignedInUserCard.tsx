@@ -10,7 +10,7 @@ import { getUserTrainingRemaining } from "@/services/users/getUserTrainingRemain
 import revokeTraining from "@/services/users/revokeTraining";
 import type { Location, PartialReason } from "@ignis/types/sign_in";
 import type { InfractionType, PartialUser } from "@ignis/types/users";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import DatePickerWithRange from "@ui/components/date-picker-with-range";
 import { Badge } from "@ui/components/ui/badge.tsx";
@@ -328,6 +328,7 @@ interface SignInUserCardProps {
 export const SignedInUserCard: React.FC<SignInUserCardProps> = ({ user, tools, reason, onSignOut, onShiftReps }) => {
   const activeLocation = useSelector((state: AppRootState) => state.signin.active_location);
   const abortController = new AbortController();
+  const queryClient = useQueryClient();
   const onShift = reason?.name === REP_ON_SHIFT;
 
   const signOutProps: PostSignOutProps = {
@@ -348,6 +349,7 @@ export const SignedInUserCard: React.FC<SignInUserCardProps> = ({ user, tools, r
       abortController.abort();
       toast.success(`Successfully signed out ${user.display_name}`);
       onSignOut?.();
+      queryClient.invalidateQueries({ queryKey: ["locationStatus", "locationList", { activeLocation }] });
     },
   });
 

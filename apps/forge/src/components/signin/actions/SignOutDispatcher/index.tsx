@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { signinActions } from "@/redux/signin.slice.ts";
 import { FlowStepComponent } from "@/components/signin/actions/SignInManager/types.ts";
 import { useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 
 const SignOutDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const queryClient = useQueryClient();
@@ -41,8 +42,10 @@ const SignOutDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
     onSuccess: () => {
       setCanContinue(true);
       abortController.abort();
-      redirectToActions(timeout);
+      dispatch(signinActions.resetSignInSession());
       queryClient.invalidateQueries({ queryKey: ["locationStatus"] });
+      toast.success("User signed out successfully!");
+      navigate({ to: "/signin/actions" });
     },
   });
 
@@ -58,13 +61,6 @@ const SignOutDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
       </Alert>
     </>
   );
-
-  const redirectToActions = (timeoutInMs: number) => {
-    setTimeout(() => {
-      dispatch(signinActions.resetSignInSession());
-      navigate({ to: "/signin/actions" });
-    }, timeoutInMs);
-  };
 
   const successDisplay = (
     <>
