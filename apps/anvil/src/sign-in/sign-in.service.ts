@@ -221,7 +221,6 @@ export class SignInService implements OnModuleInit {
     return await this.dbService.query(
       e.count(
         e.select(e.sign_in.List, () => ({
-          sign_ins: true,
           filter_single: {
             location: castLocation(location),
           },
@@ -257,8 +256,11 @@ export class SignInService implements OnModuleInit {
       e.count(
         e.select(e.sign_in.List, () => ({
           sign_ins: (sign_in) => ({
-            user: e.is(e.users.Rep, {}),
-            filter: e.op(sign_in.reason.name, "=", REP_OFF_SHIFT),
+            filter: e.op(
+              e.op(sign_in.user.__type__.name, "=", "users::Rep"),
+              "and",
+              e.op(sign_in.reason.name, "=", REP_OFF_SHIFT),
+            ),
           }),
           filter_single: {
             location: castLocation(location),
@@ -273,8 +275,11 @@ export class SignInService implements OnModuleInit {
       e.count(
         e.select(e.sign_in.List, () => ({
           sign_ins: (sign_in) => ({
-            user: e.is(e.users.Rep, {}),
-            filter: e.op(sign_in.reason.name, "=", REP_ON_SHIFT),
+            filter: e.op(
+              e.op(sign_in.user.__type__.name, "=", "users::Rep"),
+              "and",
+              e.op(sign_in.reason.name, "=", REP_ON_SHIFT),
+            ),
           }),
           filter_single: {
             location: castLocation(location),
@@ -288,7 +293,6 @@ export class SignInService implements OnModuleInit {
     return await this.dbService.query(
       e.count(
         e.select(e.sign_in.List, () => ({
-          queued: true,
           filter_single: {
             location: castLocation(location),
           },
@@ -400,7 +404,6 @@ export class SignInService implements OnModuleInit {
     const user_agreement = await this.dbService.query(
       e.assert_exists(
         e.select(e.sign_in.SignInReason, (reason) => ({
-          agreement: true,
           filter_single: e.op(reason.category, "=", e.sign_in.SignInReasonCategory.PERSONAL_PROJECT),
         })).agreement,
       ),
@@ -726,7 +729,6 @@ export class SignInService implements OnModuleInit {
       e.assert_exists(
         e.assert_single(
           e.select(e.sign_in.SignInReason, (sign_in) => ({
-            created_at: true,
             order_by: {
               expression: sign_in.created_at,
               direction: e.DESC,
