@@ -1,6 +1,3 @@
-import React from "react";
-import { Timeline, TimelineDot, TimelineHeading, TimelineItem, TimelineLine } from "@ui/components/ui/timeline.tsx";
-import { Card, CardContent, CardHeader } from "@ui/components/ui/card.tsx";
 import {
   AnyStep,
   EnqueueSteps,
@@ -9,6 +6,9 @@ import {
   SignInSteps,
   SignOutSteps,
 } from "@/components/signin/actions/SignInManager/types.ts";
+import { Card, CardContent, CardHeader } from "@ui/components/ui/card.tsx";
+import { Timeline, TimelineDot, TimelineHeading, TimelineItem, TimelineLine } from "@ui/components/ui/timeline.tsx";
+import React from "react";
 
 interface SignInProgressProps {
   currentStep: AnyStep;
@@ -54,7 +54,7 @@ const SignInFlowProgress: React.FC<SignInProgressProps> = ({ currentStep, flowTy
             return (
               <TimelineItem key={stepTitle} status={status}>
                 <TimelineHeading>{stepTitle}</TimelineHeading>
-                <TimelineDot status={status} />
+                <TimelineDot status={status} className="rounded-sm" />
                 {index < stepTitles.length - 1 && <TimelineLine done={isCompleted} />}
               </TimelineItem>
             );
