@@ -1,5 +1,7 @@
 import ContextMenuWrapper from "@/components/navbar/appSwitcher/ContextMenu.tsx";
 import ListItem from "@/components/navbar/appSwitcher/ListItem";
+import useCurrentApp from "@/hooks/useCurrentApp.ts";
+import { cn } from "@/lib/utils.ts";
 import { Link } from "@tanstack/react-router";
 import {
   NavigationMenu,
@@ -10,8 +12,6 @@ import {
   NavigationMenuTrigger,
 } from "@ui/components/ui/navigation-menu";
 import { PenLine, Printer, Share2 } from "lucide-react";
-import useCurrentApp from "@/hooks/useCurrentApp.ts";
-import { cn } from "@/lib/utils.ts";
 
 export default function AppSwitcher() {
   const currentapp = useCurrentApp();
@@ -29,7 +29,7 @@ export default function AppSwitcher() {
                 <NavigationMenuLink asChild>
                   <Link
                     className={cn(
-                      "flex h-full w-full select-none flex-col justify-end rounded-md p-6 no-underline outline-none focus:shadow-md bg-gradient-to-b from-red-950 to-black",
+                      "flex h-full w-full select-none flex-col justify-end rounded-md p-6 no-underline outline-none focus:shadow-md bg-gradient-to-b from-red-300 to-white dark:bg-gradient-to-b dark:from-red-950 dark:to-black",
                     )}
                     to="/"
                   >
