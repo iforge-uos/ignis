@@ -21,12 +21,12 @@ export default function SignInDashboard() {
 
   const handleRemoveSignedInUser = (userId: string) => {
     setSignedInUsers((currentUsers) => currentUsers.filter((user) => user.user.id !== userId));
-    queryClient.invalidateQueries({ queryKey: ["locationStatus"] });
+    queryClient.invalidateQueries({ queryKey: ["locationStatus", "locationList", { activeLocation }] });
   };
 
   const handleRemoveSignedInRep = (userId: string) => {
     setSignedInReps((currentReps) => currentReps.filter((rep) => rep.user.id !== userId));
-    queryClient.invalidateQueries({ queryKey: ["locationStatus"] });
+    queryClient.invalidateQueries({ queryKey: ["locationStatus", "locationList", { activeLocation }] });
   };
 
   const {
@@ -37,6 +37,9 @@ export default function SignInDashboard() {
   } = useQuery({
     queryKey: ["locationList", activeLocation],
     queryFn: () => dataForLocation(activeLocation),
+    staleTime: 5_000,
+    refetchInterval: 60_000,
+    refetchOnWindowFocus: true,
   });
 
   useEffect(() => {
