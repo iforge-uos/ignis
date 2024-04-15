@@ -20,9 +20,9 @@ export class LdapService implements OnModuleInit {
       this.logger.debug("Attempting to create an LDAP client...");
 
       this.client = ldap.createClient({
-        url: process.env.LDAP_HOST + ":" + process.env.LDAP_PORT,
+        url: `${process.env.LDAP_HOST}:${process.env.LDAP_PORT}`,
         connectTimeout: 2_000,
-        timeout: 5000,
+        timeout: 5_000,
       });
 
       this.client.on("connect", () => {
@@ -61,24 +61,33 @@ export class LdapService implements OnModuleInit {
   }
 
   private async search(base: string, options: ldap.SearchOptions): Promise<ldap.SearchEntry[]> {
-    this.logger.debug(`Performing search with base: ${base} and filter: ${options.filter?.toString() ?? ""}`);
+    this.logger.debug(`Performing search with base: ${base} and filter: ${options.filter}`);
     await this.ensureConnected();
     return new Promise((resolve, reject) => {
       this.client!.search(base, options, (err, res) => {
         if (err) {
+          this.logger.error(`Search initiation error: ${err.message}`);
           reject(err);
           return;
         }
 
         const results: ldap.SearchEntry[] = [];
         res.on("searchEntry", (entry) => {
+          this.logger.debug(`Received entry: ${entry.dn.toString()}`);
           results.push(entry);
         });
         res.on("end", () => {
+          this.logger.debug(`Search completed, found ${results.length} entries.`);
           resolve(results);
         });
         res.on("error", (error) => {
+          this.logger.error(`Search stream error: ${error.message}`);
           reject(error);
+        });
+        // Timeout handler to avoid hanging
+        res.on("timeout", () => {
+          this.logger.error("Search request timed out.");
+          reject(new Error("LDAP search request timed out"));
         });
       });
     });
