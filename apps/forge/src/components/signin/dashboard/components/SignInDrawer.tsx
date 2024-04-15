@@ -5,7 +5,7 @@ import { InfoCircledIcon } from "@radix-ui/react-icons";
 import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert.tsx";
 import { Button } from "@ui/components/ui/button.tsx";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@ui/components/ui/collapsible.tsx";
-import { ArrowDownIcon, ArrowRightIcon } from "lucide-react";
+import { ArrowDownIcon, ArrowRightIcon, Ban } from "lucide-react";
 import { FC, useState } from "react";
 
 // SignInDrawer Props
@@ -40,9 +40,15 @@ export const SignInDrawer: FC<SignInDrawerProps> = ({ title, entries, startExpan
               onClick={toggleOpen}
               disabled={entries.length === 0}
             >
-              {isOpen ? <ArrowDownIcon className="h-4 w-4" /> : <ArrowRightIcon className="h-4 w-4" />}
-              Toggle
-              <span className="sr-only">Toggle</span>
+              {entries.length === 0 ? (
+                <Ban className="h-4 w-4" />
+              ) : (
+                <>
+                  {isOpen ? "Hide" : "Show"}
+                  {isOpen ? <ArrowRightIcon className="h-4 w-4" /> : <ArrowDownIcon className="h-4 w-4" />}
+                  <span className="sr-only">{isOpen ? "Hide" : "Show"}</span>
+                </>
+              )}
             </Button>
           </CollapsibleTrigger>
         </div>

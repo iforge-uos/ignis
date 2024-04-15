@@ -41,8 +41,9 @@ const QueueDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
       console.log("Success");
       setCanContinue(true);
       abortController.abort();
-      redirectToActions(timeout);
+      dispatch(signinActions.resetSignInSession());
       toast.success("User added to queue successfully");
+      navigate({ to: "/signin/actions" });
     },
   });
 
@@ -68,13 +69,6 @@ const QueueDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
         </Alert>
       </>
     );
-  };
-
-  const redirectToActions = (timeoutInMs: number) => {
-    setTimeout(() => {
-      dispatch(signinActions.resetSignInSession());
-      navigate({ to: "/signin/actions" });
-    }, timeoutInMs);
   };
 
   const successDisplay = (

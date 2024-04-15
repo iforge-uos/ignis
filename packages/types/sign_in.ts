@@ -47,6 +47,7 @@ export type LocationStatus = {
   count: number;
   max: number;
   needs_queue: boolean;
+  out_of_hours: boolean;
   count_in_queue: number;
   locationName: string;
 };

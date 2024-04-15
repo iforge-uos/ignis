@@ -32,6 +32,11 @@ export default function SignInDashboard() {
     queryClient.invalidateQueries({ queryKey: ["locationStatus", "locationList", { activeLocation }] });
   };
 
+  const handleRemoveSignedInOffShiftRep = (userId: string) => {
+    setSignInOffShiftReps((currentOffShiftReps) => currentOffShiftReps.filter((rep) => rep.user.id !== userId));
+    queryClient.invalidateQueries({ queryKey: ["locationStatus", "locationList", { activeLocation }] });
+  };
+
   const {
     data: locationList,
     isLoading,
@@ -91,7 +96,7 @@ export default function SignInDashboard() {
               <div id="off-shift-rep-signin-shelf" className="flex-1 border-b-2 pb-5">
                 <SignInDrawer
                   title="Off-Shift Reps"
-                  onSignOut={handleRemoveSignedInRep}
+                  onSignOut={handleRemoveSignedInOffShiftRep}
                   entries={signInOffShiftReps}
                   onShiftReps={onShiftReps}
                   startExpanded={false}
