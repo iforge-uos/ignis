@@ -14,6 +14,12 @@ jobs:
         working-directory: /home/iforge/ignis/
         run: git pull
 
+      - name: Notify Discord Maintenance Start
+        uses: tsickert/discord-webhook@v6.0.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_ANNOUCE_WEBHOOK_URL }}
+          content: "Sign In System (Ignis) Entering Maintenance Mode"
+
       - name: Throw up the maintenance page
         run: touch /home/iforge/ignis-config/file_flags/maintenance_mode/enabled
 
@@ -35,3 +41,9 @@ jobs:
 
       - name: Remove maintenance page
         run: rm /home/iforge/ignis-config/file_flags/maintenance_mode/enabled
+
+      - name: Notify Discord Maintenance Start
+        uses: tsickert/discord-webhook@v6.0.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_ANNOUCE_WEBHOOK_URL }}
+          content: "Sign In System (Ignis) Exiting Maintenance Mode..."

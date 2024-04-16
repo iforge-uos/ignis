@@ -11,7 +11,7 @@ import { Loader } from "@ui/components/ui/loader.tsx";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { SignInDrawer } from "@/components/signin/dashboard/components/SignInDrawer.tsx";
-import { REP_ON_SHIFT } from "@/lib/constants";
+import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants";
 
 export default function SignInDashboard() {
   const queryClient = useQueryClient();
@@ -60,8 +60,10 @@ export default function SignInDashboard() {
         if (entry.user.teams !== undefined) {
           if (entry.reason.name === REP_ON_SHIFT) {
             repsSignedIn.push(entry);
-          } else {
+          } else if (entry.reason.name === REP_OFF_SHIFT) {
             offShiftRepsSignedIn.push(entry);
+          } else {
+            usersSignedIn.push(entry);
           }
         } else {
           usersSignedIn.push(entry);
