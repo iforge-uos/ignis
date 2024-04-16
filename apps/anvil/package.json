@@ -50,7 +50,7 @@
     "class-validator": "^0.14.1",
     "cookie-parser": "^1.4.6",
     "csv-parse": "^5.5.5",
-    "edgedb": "^1.5.2",
+    "edgedb": "^1.5.3",
     "edgedb-zod": "github:iforge-uos/edgedb-zod",
     "glob": "^10.3.12",
     "googleapis": "^133.0.0",
@@ -77,7 +77,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@edgedb/generate": "^0.5.2",
+    "@edgedb/generate": "^0.5.3",
     "@ignis/lint": "workspace:*",
     "@nestjs/cli": "^10.3.2",
     "@nestjs/schematics": "^10.1.1",
@@ -93,7 +93,7 @@
     "@types/passport-discord": "^0.1.13",
     "@types/passport-google-oauth2": "^0.1.8",
     "@types/passport-jwt": "^3.0.13",
-    "@types/react": "^18.2.78",
+    "@types/react": "^18.2.79",
     "@types/supertest": "^2.0.16",
     "@types/tough-cookie": "^4.0.5",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
