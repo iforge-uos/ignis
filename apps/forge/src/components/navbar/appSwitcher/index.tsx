@@ -11,7 +11,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@ui/components/ui/navigation-menu";
-import { PenLine, Printer, Share2 } from "lucide-react";
+import { BookOpen, PenLine, Printer } from "lucide-react";
 
 export default function AppSwitcher() {
   const currentapp = useCurrentApp();
@@ -41,13 +41,13 @@ export default function AppSwitcher() {
                 </NavigationMenuLink>
               </li>
               <ListItem to={"/signin"} title="Sign In" icon={<PenLine />}>
-                Remote queue and space access for easy sign-in.
+                iForge Sign In System
               </ListItem>
-              <ListItem to={"/training"} title="Training" icon={<Share2 />}>
+              <ListItem to={"/training"} title="Training" icon={<BookOpen />}>
                 Handle your iForge training here.
               </ListItem>
               <ListItem to={"/printing"} title="Printing" icon={<Printer />}>
-                3D Printing WIP
+                3D Printing (WIP)
               </ListItem>
             </ul>
           </NavigationMenuContent>
