@@ -1,15 +1,14 @@
-import { Module } from "@nestjs/common";
 import { BullModule } from "@nestjs/bull";
-import { EmailService } from "./email.service";
+import { Module } from "@nestjs/common";
 import { EmailController } from "./email.controller";
 import { EmailProcessor } from "./email.processor";
-import { FiltersModule } from "@/filters/filters.module";
+import { EmailService } from "./email.service";
 
 @Module({
   imports: [
     BullModule.registerQueueAsync({
       name: "email",
-      imports: [FiltersModule],
+      imports: [],
       useFactory: async () => {
         const redisConfig: any = {
           host: process.env.REDIS_HOST,
