@@ -6,7 +6,7 @@ user := (
     update users::User
     filter .id = <uuid>$id
     set {
-        training := (
+        training += (
             select .training {
                 @created_at := @created_at,
                 @in_person_created_at := <datetime>$created_at,

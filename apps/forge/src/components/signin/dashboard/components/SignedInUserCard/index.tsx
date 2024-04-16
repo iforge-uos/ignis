@@ -1,23 +1,23 @@
-import { Card } from "@ui/components/ui/card.tsx";
-import { LogOut, Plus } from "lucide-react";
-import { Button } from "@ui/components/ui/button.tsx";
+import { UserAvatar } from "@/components/avatar";
+import { AddToUser } from "@/components/signin/dashboard/components/SignedInUserCard/subcomponents/AddToUser.tsx";
+import { SignInReasonDisplay } from "@/components/signin/dashboard/components/SignedInUserCard/subcomponents/SignInReasonDisplay.tsx";
+import TeamIcon from "@/components/signin/dashboard/components/TeamIcon.tsx";
+import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants.ts";
+import { AppRootState } from "@/redux/store.ts";
+import { PostSignOut, PostSignOutProps } from "@/services/signin/signInService.ts";
 import type { PartialReason, SignInEntry } from "@ignis/types/sign_in.ts";
 import type { PartialUser } from "@ignis/types/users.ts";
-import { useSelector } from "react-redux";
-import { AppRootState } from "@/redux/store.ts";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants.ts";
-import { PostSignOut, PostSignOutProps } from "@/services/signin/signInService.ts";
-import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
-import * as React from "react";
-import TeamIcon from "@/components/signin/dashboard/components/TeamIcon.tsx";
-import { UserAvatar } from "@/components/avatar";
-import { SignInReasonDisplay } from "@/components/signin/dashboard/components/SignedInUserCard/subcomponents/SignInReasonDisplay.tsx";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ui/components/ui/tooltip.tsx";
-import { Popover, PopoverContent, PopoverTrigger } from "@ui/components/ui/popover.tsx";
 import { Badge } from "@ui/components/ui/badge.tsx";
-import { AddToUser } from "@/components/signin/dashboard/components/SignedInUserCard/subcomponents/AddToUser.tsx";
+import { Button } from "@ui/components/ui/button.tsx";
+import { Card } from "@ui/components/ui/card.tsx";
+import { Popover, PopoverContent, PopoverTrigger } from "@ui/components/ui/popover.tsx";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ui/components/ui/tooltip.tsx";
+import { LogOut, Plus } from "lucide-react";
+import * as React from "react";
+import { useSelector } from "react-redux";
+import { toast } from "sonner";
 
 interface SignInUserCardProps {
   user: SignInEntry["user"];
@@ -69,22 +69,17 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
   const shouldDisplayReason = !(reason?.name === REP_ON_SHIFT || reason?.name === REP_OFF_SHIFT);
 
   return (
-    <Card
-      className="bg-card w-[240px] md:w-[300px] p-4 rounded-lg flex
-  flex-col justify-between text-white"
-    >
+    <Card className="bg-card w-[240px] md:w-[300px] p-4 rounded-lg flex flex-col justify-between text-black dark:text-white">
       <div>
         <div className="flex items-center justify-between mb-4">
           <div className="mt-1 ml-1">
             <Link to={`/users/${user.id}` as string}>
-              <h2 className="w-full text-center text-lg font-bold hover:underline text-black dark:text-white">
-                {user.display_name}
-              </h2>
+              <h2 className="w-full text-center text-lg font-bold hover:underline">{user.display_name}</h2>
             </Link>
             {user.teams?.map((team) => (
-              <Badge className="flex items-center justify-start rounded-sm bg-neutral-800 m-0.5 w-full pt-1.5 pb-1.5">
-                <TeamIcon team={team.name} className="stroke-white mr-1 h-4 w-4" />
-                <text className="text-left ml-2  text-xs text-white">{team.name}</text>
+              <Badge className="flex items-center justify-start rounded-sm bg-accent dark:bg-neutral-800 m-0.5 w-full pt-1.5 pb-1.5 text-black dark:text-white">
+                <TeamIcon team={team.name} className="stroke-black dark:stroke-white mr-1 h-4 w-4" />
+                <text className="text-left ml-2 text-xs">{team.name}</text>
               </Badge>
             ))}
           </div>
