@@ -17,3 +17,7 @@ e.g.
 docker build . --target forge --tag forge:latest
 docker run -p 5000:5000 forge:latest
 ```
+
+## Manual Install
+
+Each [app](/apps) has installation instructions in its README.
