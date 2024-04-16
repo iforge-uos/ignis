@@ -6,6 +6,7 @@ import React, { Suspense } from "react";
 import { AuthContext } from "@/components/auth-provider";
 import { NotFound } from "@/components/routing/NotFound.tsx";
 import { GenericError } from "@/components/routing/GenericError.tsx";
+import { Loading } from "@/components/routing/Loading.tsx";
 
 const TanStackRouterDevtools =
   process.env.NODE_ENV === "production"
@@ -38,4 +39,5 @@ export const Route = createRootRouteWithContext<{
   component: RootComponent,
   notFoundComponent: NotFound,
   errorComponent: GenericError,
+  pendingComponent: Loading,
 });
