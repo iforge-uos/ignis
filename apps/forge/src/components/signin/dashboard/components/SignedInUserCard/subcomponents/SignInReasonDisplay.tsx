@@ -1,4 +1,5 @@
 import { PartialReason } from "@ignis/types/sign_in.ts";
+import { Badge } from "@ui/components/ui/badge.tsx";
 
 interface SignInReasonDisplayProps {
   tools: string[];
@@ -9,13 +10,19 @@ export const SignInReasonDisplay: React.FC<SignInReasonDisplayProps> = ({ tools,
   return (
     <>
       <div className="my-4 px-4 py-3 bg-neutral-800 rounded-lg">
-        <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-200">Sign In Reason:</span>
-          <span className="text-sm truncate max-w-[200px]">{reason.name}</span>
+        <div className="border-gray-500 p-2 rounded-lg mb-2">
+          <div className="border-b border-gray-500 pb-2 font-medium mb-1 text-center font-mono">Sign In Reason</div>
+          <div className="text-center font-mono ">{reason.name}</div>
         </div>
-        <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-200">Tools:</span>
-          <span className="text-sm truncate max-w-[200px]">{tools.join(", ")}</span>
+        <div className="border-gray-500 p-2 rounded-lg mb-4">
+          <div className="border-b border-gray-500 pb-2  font-medium mb-1 text-center font-mono">Tools Used</div>
+          <div className="flex flex-wrap gap-1">
+            {tools.map((tool) => (
+              <Badge variant="default" className="max-w-48">
+                {tool}
+              </Badge>
+            ))}
+          </div>
         </div>
       </div>
     </>
