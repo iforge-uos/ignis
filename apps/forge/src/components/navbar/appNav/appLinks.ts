@@ -53,6 +53,61 @@ export const appLinks: AppLink[] = [
   },
   { app: "Sign In", displayName: "Dashboard", path: "/signin/dashboard", index: 3, id: "signin_dashboard" },
   { app: "Sign In", displayName: "Home", path: "/signin/home", index: 4, id: "signin_home" },
-
+  { app: "Training", displayName: "Home", path: "/training", index: 0, id: "training_home" },
+  {
+    app: "Training",
+    displayName: "Locations",
+    path: "/training",
+    index: 1,
+    id: "training_locations_root",
+    children: [
+      {
+        app: "Training",
+        displayName: "Mainspace",
+        path: "/training/locations/mainspace",
+        index: 0,
+        id: "training_locations_mainspace",
+      },
+      {
+        app: "Training",
+        displayName: "Heartspace",
+        path: "/training/locations/heartspace",
+        id: "training_location_heartspace",
+        index: 1,
+      },
+      {
+        app: "Training",
+        displayName: "George Porter CCA Workshop",
+        path: "/training/locations/george-porter",
+        id: "training_location_george_porter",
+        index: 2,
+      },
+    ],
+  },
+  {
+    app: "Training",
+    displayName: "Useful Links",
+    path: "/training",
+    index: 2,
+    id: "training_useful_links_root",
+    children: [
+      {
+        app: "Training",
+        displayName: "Approved Materials",
+        path: "/training/approved-materials",
+        index: 0,
+        id: "training_useful_links_approved_materials",
+      },
+      {
+        app: "Training",
+        displayName: "Risk Assessments",
+        path: "/training/risk-assessments",
+        id: "training_useful_links_risk_assessments",
+        index: 1,
+      },
+    ],
+  },
   { app: "Printing", displayName: "Printing", path: "/printing", id: "printing_root", index: 0 },
+  { app: "Auth", displayName: "Login", path: "/auth/login", id: "auth_login", index: 0 },
+  { app: "Auth", displayName: "Logout", path: "/auth/logout", id: "auth_logout", index: 1 },
 ];
