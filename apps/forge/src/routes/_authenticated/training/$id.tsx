@@ -1,6 +1,6 @@
 import axiosInstance from "@/api/axiosInstance";
 import Title from "@/components/title";
-import { toTitleCase } from "@/lib/utils";
+import { extractError, toTitleCase } from "@/lib/utils";
 import { get } from "@/services/training/get";
 import type { InteractionResponse, Training } from "@ignis/types/training";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
@@ -85,7 +85,7 @@ const Component: React.FC = () => {
           <AlertTitle>Error</AlertTitle>
           <AlertDescription>
             There was an error <br />
-            Error: {error?.message ?? "Unknown"}
+            {extractError(error!)}
           </AlertDescription>
         </Alert>
       </>

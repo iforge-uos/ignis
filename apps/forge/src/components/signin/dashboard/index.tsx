@@ -1,6 +1,9 @@
 import ActiveLocationSelector from "@/components/signin/actions/ActiveLocationSelector";
+import { SignInDrawer } from "@/components/signin/dashboard/components/SignInDrawer.tsx";
 import { SignedInUserCard } from "@/components/signin/dashboard/components/SignedInUserCard";
 import Title from "@/components/title";
+import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants";
+import { extractError } from "@/lib/utils";
 import { AppRootState } from "@/redux/store.ts";
 import { dataForLocation } from "@/services/signin/locationService.ts";
 import type { QueueEntry, SignInEntry } from "@ignis/types/sign_in";
@@ -10,8 +13,6 @@ import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert.tsx
 import { Loader } from "@ui/components/ui/loader.tsx";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { SignInDrawer } from "@/components/signin/dashboard/components/SignInDrawer.tsx";
-import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants";
 
 export default function SignInDashboard() {
   const queryClient = useQueryClient();
@@ -137,7 +138,8 @@ export default function SignInDashboard() {
               <AlertTitle>Error</AlertTitle>
               <AlertDescription>
                 There was an error fetching the sign-in data. Please try again later...
-                {error?.message}
+                <br />
+                {extractError(error!)}
               </AlertDescription>
             </Alert>
           )}

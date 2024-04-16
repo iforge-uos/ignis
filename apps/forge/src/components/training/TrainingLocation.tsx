@@ -1,5 +1,5 @@
 import Title from "@/components/title";
-import { toTitleCase, useUser } from "@/lib/utils";
+import { extractError, toTitleCase, useUser } from "@/lib/utils";
 import { getLocation } from "@/services/training/getLocation";
 import { getStatus } from "@/services/training/getStatus";
 import { Location, PartialTrainingWithStatus } from "@ignis/types/training";
@@ -42,7 +42,13 @@ export default function TrainingLocation({ location, img, optionalTrainingText }
     return <Loader />;
   }
   if (error) {
-    return <>An error occurred fetching trainings {error.message}</>;
+    return (
+      <>
+        An error occurred fetching trainings
+        <br />
+        {extractError(error!)}
+      </>
+    );
   }
   const { compulsory, not_compulsory } = trainings!.reduce(
     (acc, training) => {

@@ -1,5 +1,5 @@
 /** If an error can feasibly be hit by the UI it should have an associated error code for checking against on the front end */
-export const enum ErrorCodes {
+export enum ErrorCodes {
   //#region sign in
   not_registered,
   already_registered,

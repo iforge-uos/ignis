@@ -1,6 +1,6 @@
 import axiosInstance from "@/api/axiosInstance";
 import Title from "@/components/title";
-import { useUser } from "@/lib/utils";
+import { extractError, useUser } from "@/lib/utils";
 import { getAgreement } from "@/services/root/getAgreement";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
@@ -20,7 +20,7 @@ export default function Component() {
   const {
     data: agreement,
     isLoading,
-    isError,
+    error,
   } = useQuery({
     queryKey: ["agreement", id],
     queryFn: () => getAgreement(id),
@@ -30,8 +30,13 @@ export default function Component() {
     return <div>Loading...</div>;
   }
 
-  if (isError) {
-    return <div>Error loading agreement</div>;
+  if (error) {
+    return (
+      <div>
+        Error loading agreement: <br />
+        {extractError(error!)}
+      </div>
+    );
   }
 
   return (
