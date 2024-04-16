@@ -2,6 +2,7 @@ import { EdgeDBService } from "@/edgedb/edgedb.service";
 import { UsersService } from "@/users/users.service";
 import e from "@dbschema/edgeql-js";
 import { TrainingLocation } from "@dbschema/edgeql-js/modules/training";
+import { getTrainingNextSection } from "@dbschema/queries/getTrainingNextSection.query";
 import { startTraining } from "@dbschema/queries/startTraining.query";
 import ErrorCodes from "@ignis/errors";
 import { training } from "@ignis/types";
@@ -233,17 +234,22 @@ export class TrainingService {
       }
     }
     const training = e.assert_exists(e.select(e.training.Training, () => ({ filter_single: session.training })));
-    const next_section = await this.dbService.query(
-      // might be useful to have as a compute at some point?
-      e.assert_single(
-        e.select(training.sections, (section) => ({
-          filter: e.op(section.enabled, "and", e.op(section.index, ">", session.index)),
-          order_by: section.index,
-          limit: 1,
-          ...TrainingSection(section),
-        })),
-      ),
-    );
+    // const next_section = await this.dbService.query(
+    //   // might be useful to have as a compute at some point?
+    //   e.assert_single(
+    //     e.select(training.sections, (section) => ({
+    //       filter: e.op(section.enabled, "and", e.op(section.index, ">", session.index)),
+    //       order_by: section.index,
+    //       limit: 1,
+    //       ...TrainingSection(section),
+    //     })),
+    //   ),
+    // );
+    const next_section = await getTrainingNextSection(this.dbService.client, {
+      // NOTE edgedb stopped working for these queries idk why
+      id: session.training.id,
+      session_index: session.index,
+    });
 
     if (next_section === null) {
       await this.dbService.query(
