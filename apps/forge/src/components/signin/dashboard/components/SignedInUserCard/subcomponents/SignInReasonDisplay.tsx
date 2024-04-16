@@ -9,7 +9,7 @@ interface SignInReasonDisplayProps {
 export const SignInReasonDisplay: React.FC<SignInReasonDisplayProps> = ({ tools, reason }) => {
   return (
     <>
-      <div className="my-4 px-4 py-3 bg-neutral-800 rounded-lg">
+      <div className="my-4 px-4 py-3 bg-accent dark:bg-neutral-800 rounded-lg">
         <div className="border-gray-500 p-2 rounded-lg mb-2">
           <div className="border-b border-gray-500 pb-2 font-medium mb-1 text-center font-mono">Sign In Reason</div>
           <div className="text-center font-mono ">{reason.name}</div>
@@ -18,7 +18,7 @@ export const SignInReasonDisplay: React.FC<SignInReasonDisplayProps> = ({ tools,
           <div className="border-b border-gray-500 pb-2  font-medium mb-1 text-center font-mono">Tools Used</div>
           <div className="flex flex-wrap gap-1">
             {tools.map((tool) => (
-              <Badge variant="default" className="max-w-48">
+              <Badge variant="default" className="max-w-48 rounded-sm">
                 {tool}
               </Badge>
             ))}

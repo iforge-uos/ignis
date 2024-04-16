@@ -8,14 +8,7 @@ import { users } from "@ignis/types";
 import { Location } from "@ignis/types/sign_in";
 import { RepStatus, SignInStat, Training, User } from "@ignis/types/users";
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
-import {
-  CardinalityViolationError,
-  ConstraintViolationError,
-  Duration,
-  InvalidValueError,
-  RelativeDuration,
-} from "edgedb";
-import { parseHumanDurationString } from "edgedb/dist/datatypes/datetime";
+import { CardinalityViolationError, ConstraintViolationError, Duration, InvalidValueError } from "edgedb";
 import {
   AddInPersonTrainingDto,
   CreateInfractionDto,

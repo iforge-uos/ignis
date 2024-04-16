@@ -1,10 +1,10 @@
-import type { PartialUser } from "@ignis/types/users.ts";
-import type { Location } from "@ignis/types/sign_in.ts";
-import * as React from "react";
-import { TrainingSection } from "@/components/signin/dashboard/components/SignedInUserCard/subcomponents/TrainingSection.tsx";
 import { InfractionSection } from "@/components/signin/dashboard/components/SignedInUserCard/subcomponents/InfractionSection.tsx";
+import { TrainingSection } from "@/components/signin/dashboard/components/SignedInUserCard/subcomponents/TrainingSection.tsx";
+import type { Location } from "@ignis/types/sign_in.ts";
+import type { PartialUser } from "@ignis/types/users.ts";
 import { Button } from "@ui/components/ui/button.tsx";
 import { Separator } from "@ui/components/ui/separator.tsx";
+import * as React from "react";
 
 type Addable = "Training" | "Infraction";
 
@@ -53,7 +53,7 @@ export const AddToUser: React.FC<AddToUserProps> = ({ user, location, onShiftRep
               }`}
               onClick={() => setSection(title)}
             >
-              <text className={`${title === section ? "font-bold" : ""}`}>Add {title}</text>
+              <text className={`${title === section ? "font-bold text-white" : ""}`}>Add {title}</text>
             </Button>
           );
         })}
