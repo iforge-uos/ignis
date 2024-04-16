@@ -4,8 +4,8 @@ import { Agreement } from "@ignis/types/root";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Badge } from "@ui/components/ui/badge";
+import { Loader } from "@ui/components/ui/loader";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@ui/components/ui/table";
-import { PulseLoader } from "react-spinners";
 
 export default function Component() {
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ export default function Component() {
   });
 
   if (isLoading) {
-    return <PulseLoader />;
+    return <Loader />;
   }
 
   if (isError || !agreements) {
