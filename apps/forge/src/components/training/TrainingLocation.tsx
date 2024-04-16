@@ -89,7 +89,9 @@ export default function TrainingLocation({ location, img, optionalTrainingText }
         <div className="container py-12 md:py-16">
           <div className="grid items-center gap-4 px-4 text-center lg:gap-6">
             <div className="space-y-3">
-              <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">Optional Training</h1>
+              <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
+                Machine & Equipment Training
+              </h1>
               <div className="mx-auto max-w-[600px] text-accent-foreground">
                 Extra trainings for machines/tools such as the {optionalTrainingText}.
               </div>
