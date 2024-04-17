@@ -50,7 +50,7 @@
     "class-validator": "^0.14.1",
     "cookie-parser": "^1.4.6",
     "csv-parse": "^5.5.5",
-    "edgedb": "^1.5.3",
+    "edgedb": "^1.4.1",
     "edgedb-zod": "github:iforge-uos/edgedb-zod",
     "glob": "^10.3.12",
     "googleapis": "^133.0.0",

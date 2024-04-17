@@ -90,7 +90,7 @@ importers:
         specifier: ^5.5.5
         version: 5.5.5
       edgedb:
-        specifier: ^1.5.3
+        specifier: ^1.4.1
         version: 1.5.3
       edgedb-zod:
         specifier: github:iforge-uos/edgedb-zod
@@ -12616,7 +12616,7 @@ snapshots:
       '@typescript-eslint/typescript-estree': 5.62.0(typescript@5.4.5)
       eslint: 8.56.0
       eslint-scope: 5.1.1
-      semver: 7.5.4
+      semver: 7.6.0
     transitivePeerDependencies:
       - supports-color
       - typescript
