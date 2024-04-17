@@ -22,7 +22,7 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({ user, className }) => {
   return (
     <Avatar className={cn("h-8 w-8 rounded-md", className)}>
       <AvatarImage src={user.profile_picture || getGravatarUrl(user.email)} alt={user.email} />
-      <AvatarFallback>{user_initials}</AvatarFallback>
+      <AvatarFallback className="text-black dark:text-white">{user_initials}</AvatarFallback>
     </Avatar>
   );
 };
