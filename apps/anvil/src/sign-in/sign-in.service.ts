@@ -8,7 +8,7 @@ import { SignInLocationSchema } from "@dbschema/edgedb-zod/modules/sign_in";
 import e from "@dbschema/edgeql-js";
 import { std } from "@dbschema/interfaces";
 import { getUserTrainingForSignIn } from "@dbschema/queries/getUserTrainingForSignIn.query";
-import ErrorCodes from "@ignis/errors";
+import { ErrorCodes } from "@/shared/constants/ErrorCodes";
 import type { Location, LocationStatus, Training } from "@ignis/types/sign_in";
 import type { PartialUser } from "@ignis/types/users";
 import {

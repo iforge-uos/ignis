@@ -1,7 +1,10 @@
 {
   "name": "forge",
+  "description": "Forge is the SPA for Ignis powered by React + Vite",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "author": "iForge IT team",
+  "license": "GPL-3.0-or-later",
   "type": "module",
   "scripts": {
     "dev": "vite --host",
@@ -17,6 +20,7 @@
     "@hookform/resolvers": "^3.3.4",
     "@ignis/ts-config": "workspace:*",
     "@ignis/types": "workspace:*",
+    "@ignis/errors": "workspace:*",
     "@ignis/ui": "workspace:*",
     "@nivo/calendar": "^0.85.1",
     "@radix-ui/react-dialog": "^1.0.5",

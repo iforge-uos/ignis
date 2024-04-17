@@ -1,40 +1,81 @@
-version: '3.8'
-
+version: "3.8"
 services:
-  redis:
-    image: redis
-    container_name: ignis-redis
-    networks:
-      - internal
-    ports:
-      - "6379:6379"
-
-  forge:
-    image: forge
-    container_name: forge
-    networks:
-      - internal
-    depends_on:
-      edgedb:
-        condition: service_healthy
-
-  anvil:
-    image: anvil
-    container_name: anvil
+  db:
+    image: edgedb/edgedb:5.0-beta.3
     env_file:
       - .env
+    environment:
+      EDGEDB_SERVER_SECURITY: insecure_dev_mode
+      EDGEDB_SERVER_ADMIN_UI: enabled
+    restart: unless-stopped
+    container_name: edgedb
+    volumes:
+      - db_data:/var/lib/edgedb/data
+      - ./apps/anvil/dbschema:/dbschema
+    ports:
+      - "5656:5656"
     networks:
       - internal
-    volumes:
-      - ./deploy/certs:/certs
-    depends_on:
-      edgedb:
-        condition: service_healthy
 
-volumes:
-  edgedb-data:
+  op-connect-api:
+    image: 1password/connect-api:latest
+    container_name: op-api
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - "./config/secret/1password-credentials.json:/home/opuser/.op/1password-credentials.json"
+      - "1p_data:/home/opuser/.op/data"
+    networks:
+      - internal
+
+  op-connect-sync:
+    image: 1password/connect-sync:latest
+    container_name: op-sync
+    restart: always
+    volumes:
+      - "./config/secret/1password-credentials.json:/home/opuser/.op/1password-credentials.json"
+      - "1p_data:/home/opuser/.op/data"
+    networks:
+      - internal
+
+  cache:
+    image: redis:latest
+    container_name: valkey
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - internal
+
+  anvil:
+    build:
+      dockerfile: ./apps/anvil/Dockerfile
+      context: .
+    container_name: anvil
+    ports:
+      - "3000:3000"
+
+  mine:
+    build:
+      dockerfile: ./apps/mine/Dockerfile
+      context: .
+    container_name: mine
+    ports:
+      - "4000:4000"
+
+  forge:
+    build:
+      dockerfile: ./apps/forge/Dockerfile
+      context: .
+    container_name: forge
+    ports:
+      - "80:80"
 
 networks:
   internal:
-    name: internal
-    driver: bridge
+
+volumes:
+  db_data:
+  redis_data:
+  1p_data:

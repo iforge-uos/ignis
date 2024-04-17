@@ -4,7 +4,7 @@ import e from "@dbschema/edgeql-js";
 import { TrainingLocation } from "@dbschema/edgeql-js/modules/training";
 import { getTrainingNextSection } from "@dbschema/queries/getTrainingNextSection.query";
 import { startTraining } from "@dbschema/queries/startTraining.query";
-import ErrorCodes from "@ignis/errors";
+import { ErrorCodes } from "@/shared/constants/ErrorCodes";
 import { training } from "@ignis/types";
 import { PartialTraining } from "@ignis/types/training";
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";

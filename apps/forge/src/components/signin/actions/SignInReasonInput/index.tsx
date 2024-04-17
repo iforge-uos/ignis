@@ -1,4 +1,5 @@
 import { FlowStepComponent } from "@/components/signin/actions/SignInManager/types";
+import { extractError } from "@/lib/utils";
 import { signinActions } from "@/redux/signin.slice.ts";
 import { AppDispatch, AppRootState } from "@/redux/store";
 import { useSignInReasons } from "@/services/signin/signInReasonService";
@@ -151,7 +152,13 @@ const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
         </CardHeader>
         <CardContent>
           {isLoading && <Loader />}
-          {isError && <div>Error: {(error as { message?: string }).message || "An unknown error occurred"}</div>}
+          {isError && (
+            <>
+              Error:
+              <br />
+              {extractError(error! as any)}
+            </>
+          )}
           {!isLoading && !isError && (
             <div className="relative">
               <Input

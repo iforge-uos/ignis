@@ -1,12 +1,9 @@
 {
   "name": "@ignis/lint",
-  "version": "0.0.0",
-  "files": [
-    "node.js",
-    "next.js",
-    "react-internal.js",
-    "vite.js"
-  ],
+  "version": "0.5.0",
+  "author": "iForge IT team",
+  "license": "GPL-3.0-or-later",
+  "files": ["node.js", "next.js", "react-internal.js", "vite.js"],
   "scripts": {
     "lint": "eslint ."
   },

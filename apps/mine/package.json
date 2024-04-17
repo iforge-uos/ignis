@@ -1,5 +1,9 @@
 {
   "name": "mine",
+  "description": "Mine is the Blazingly fast HTTP server providing Ignis with a CDN",
+  "version": "1.0.0",
+  "author": "iForge IT team",
+  "license": "GPL-3.0-or-later",
   "private": true,
   "scripts": {
     "build": "cargo build",

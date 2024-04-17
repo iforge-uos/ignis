@@ -1,4 +1,6 @@
 import { RootState } from "@/redux/store";
+import { ErrorCodes } from "@ignis/errors";
+import { isAxiosError } from "axios";
 import { type ClassValue, clsx } from "clsx";
 import md5 from "md5";
 import { useSelector } from "react-redux";
@@ -32,4 +34,14 @@ export function removeSuffix(str: string, suffix: string) {
     return str.slice(0, -suffix.length);
   }
   return str;
+}
+
+export function extractError(error: Error): string {
+  if (error === null) {
+    return undefined as never;
+  }
+  if (isAxiosError(error)) {
+    return `${ErrorCodes[error.response?.data.code]}: ${error.response?.data.message}`;
+  }
+  return error?.message || "Unknown Error. Contact the IT Team";
 }

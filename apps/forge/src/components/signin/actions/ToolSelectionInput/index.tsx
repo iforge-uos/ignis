@@ -1,6 +1,7 @@
 import { FlowStepComponent } from "@/components/signin/actions/SignInManager/types.ts";
 import { SelectedTrainingPipDisplay } from "@/components/signin/actions/ToolSelectionInput/SelectedTrainingPipDisplay.tsx";
 import ToolSelectionList from "@/components/signin/actions/ToolSelectionInput/TrainingSelectionList.tsx";
+import { extractError } from "@/lib/utils";
 import { signinActions } from "@/redux/signin.slice.ts";
 import { AppDispatch, AppRootState } from "@/redux/store.ts";
 import { GetSignIn, GetSignInProps } from "@/services/signin/signInService.ts";
@@ -140,8 +141,9 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
         <ExclamationTriangleIcon className="h-4 w-4" />
         <AlertTitle>Error</AlertTitle>
         <AlertDescription>
-          There was an error fetching the sign-in data. Please check uCard number and try again.
-          {error?.message}
+          There was an error fetching the sign-in data. Please check UCard number and try again.
+          <br />
+          {extractError(error!)}
         </AlertDescription>
       </Alert>
     </>
