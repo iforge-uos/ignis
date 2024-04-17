@@ -1,7 +1,10 @@
 {
   "name": "forge",
+  "description": "Forge is the SPA for Ignis powered by React + Vite",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "author": "iForge IT team",
+  "license": "GPL-3.0-or-later",
   "type": "module",
   "scripts": {
     "dev": "vite --host",

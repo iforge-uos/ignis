@@ -1,5 +1,5 @@
 import { RootState } from "@/redux/store";
-import ErrorCodes from "@ignis/errors";
+import { ErrorCodes } from "@ignis/errors";
 import { isAxiosError } from "axios";
 import { type ClassValue, clsx } from "clsx";
 import md5 from "md5";

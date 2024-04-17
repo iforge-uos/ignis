@@ -4,7 +4,7 @@ import { CaslAbilityGuard } from "@/auth/authorization/guards/casl-ability.guard
 import { User } from "@/shared/decorators/user.decorator";
 import { TrainingService } from "@/training/training.service";
 import { UsersService } from "@/users/users.service";
-import ErrorCodes from "@ignis/errors";
+import { ErrorCodes } from "@/shared/constants/ErrorCodes";
 import { sign_in as sign_in_, users } from "@ignis/types";
 import type { List, Location } from "@ignis/types/sign_in";
 import type { User as User_ } from "@ignis/types/users";

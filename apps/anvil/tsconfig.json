@@ -14,10 +14,10 @@
     "paths": {
       "@/": ["./src/*"],
       "@/*": ["./src/*"],
-      "@dbschema/*": ["./dbschema/*"],
+      "@dbschema/*": ["./dbschema/*"]
     },
     "incremental": true,
     "skipLibCheck": true,
-    "strict": true,
+    "strict": true
   },
 }

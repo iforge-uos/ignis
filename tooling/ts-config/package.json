@@ -1,7 +1,15 @@
 {
   "name": "@ignis/ts-config",
-  "version": "0.0.0",
+  "version": "0.5.0",
+  "author": "iForge IT team",
+  "license": "GPL-3.0-or-later",
   "private": true,
   "files": [
-    "base.json", "nest.json", "react.json", "react-library.json", "vite.json", "vite.node.json"]
+    "base.json",
+    "nest.json",
+    "react.json",
+    "react-library.json",
+    "vite.json",
+    "vite.node.json"
+  ]
 }

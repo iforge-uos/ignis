@@ -4,9 +4,7 @@ import { Injectable } from "@nestjs/common";
 import { auth } from "@dbschema/interfaces";
 import { EdgeDBService } from "@/edgedb/edgedb.service";
 
-type AppAbility = PureAbility<
-  [auth.PermissionAction | "READ_SELF", auth.PermissionSubject]
->;
+type AppAbility = PureAbility<[auth.PermissionAction | "READ_SELF", auth.PermissionSubject]>;
 
 @Injectable()
 export class AuthorizationService {
@@ -17,33 +15,31 @@ export class AuthorizationService {
 
     // Fetch user and their roles with permissions
     const fetchedUser = await this.dbService.query(
-        e.select(e.users.User, () => ({
-          roles: {
-            permissions: { subject: true, action: true },
-          },
-          filter_single: { id: user.id },
-        }))
+      e.select(e.users.User, () => ({
+        roles: {
+          permissions: { subject: true, action: true },
+        },
+        filter_single: { id: user.id },
+      })),
     );
 
     if (!fetchedUser) {
       return build();
     }
 
-
     // Flatten the permissions from all roles
-    const allPermissions = fetchedUser.roles.flatMap(role => role.permissions);
-
+    const allPermissions = fetchedUser.roles.flatMap((role) => role.permissions);
 
     // Define abilities based on combined permissions
-    allPermissions.forEach(permission => {
+    allPermissions.forEach((permission) => {
       can(permission.action, permission.subject);
     });
 
     return build();
   }
 }
-function AbilityFactory():
-  | import("@casl/ability/dist/types/types").AnyClass<AppAbility>
-  | ((rules?: any[] | undefined, options?: any) => AppAbility) {
-  throw new Error("Function not implemented.");
-}
+// function AbilityFactory():
+//   | import("@casl/ability/dist/types/types").AnyClass<AppAbility>
+//   | ((rules?: any[] | undefined, options?: any) => AppAbility) {
+//   throw new Error("Function not implemented.");
+// }
