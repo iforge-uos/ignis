@@ -156,10 +156,10 @@ const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
             <>
               Error:
               <br />
-              {extractError(error! as any)}
+              {extractError(error! as never)}
             </>
           )}
-          {!isLoading && !isError && (
+          {!(isLoading || isError) && (
             <div className="relative">
               <Input
                 autoFocus={true}
@@ -172,11 +172,17 @@ const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
                 className="mb-2"
               />
               {inputValue && (
-                <ul className="absolute top-full left-0 right-0 z-10 max-h-60 overflow-auto border border-gray-200 dark:border-gray-700 bg-navbar text-navbar-foreground">
+                <ul className="absolute top-full left-0 right-0 z-10 max-h-60 overflow-auto border border-gray-200 dark:border-gray-700 bg-card text-card-foreground">
                   {filteredReasons.slice(0, 10).map((result, index) => (
                     <li
                       key={result.item.id}
                       onClick={() => handleSelectReason(result.item)}
+                      onKeyUp={(event) => {
+                        // Handle the 'Enter' key to mimic mouse click interaction
+                        if (event.key === "Enter") {
+                          handleSelectReason(result.item);
+                        }
+                      }}
                       className={`cursor-pointer p-2 ${index === highlightedIndex ? "bg-accent" : "hover:bg-accent"}`}
                     >
                       <div className="flex">
@@ -191,6 +197,12 @@ const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
                       <li
                         key={result.item.id}
                         onClick={() => handleSelectReason(result.item)}
+                        onKeyUp={(event) => {
+                          // Handle the 'Enter' key to mimic mouse click interaction
+                          if (event.key === "Enter") {
+                            handleSelectReason(result.item);
+                          }
+                        }}
                         className={`cursor-pointer p-2 ${index === highlightedIndex ? "bg-accent" : "hover:bg-accent"}`}
                       >
                         <div className="flex">{result.item.name}</div>
@@ -200,9 +212,9 @@ const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
               )}
             </div>
           )}
-          {/* Display of selected option */}
+          {/* Display of a selected option */}
           {selectedReason && (
-            <div className="mt-2 p-2 border border-gray-200 dark:border-gray-700 bg-navbar text-navbar-foreground">
+            <div className="mt-2 p-2 border border-gray-200 dark:border-gray-700 bg-card text-card-foreground">
               <p className="flex">
                 Selected Reason:{" "}
                 <strong className="flex">

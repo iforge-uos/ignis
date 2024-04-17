@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import ActiveLocationSelector from "@/components/signin/actions/ActiveLocationSelector";
+import ActiveLocationSelector from "@/components/signin/ActiveLocationSelector";
 import SignInActionsManager from "@/components/signin/actions/SignInManager";
 import Title from "@/components/title";
 

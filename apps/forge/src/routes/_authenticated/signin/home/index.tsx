@@ -1,4 +1,4 @@
-import ActiveLocationSelector from "@/components/signin/actions/ActiveLocationSelector";
+import ActiveLocationSelector from "@/components/signin/ActiveLocationSelector";
 import Title from "@/components/title";
 import { useUser } from "@/lib/utils.ts";
 import { createFileRoute } from "@tanstack/react-router";

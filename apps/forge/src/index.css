@@ -5,105 +5,116 @@
 
 @layer base {
     :root {
+        /* Custom Colors */
         --heartspace: #3badbf;
         --mainspace: #ce5a4b;
         --george-porter: #2e3bad;
 
-        --background: #fefbfb;
-        --foreground: #0d0402;
-        --muted: #eef1f2;
-        --muted-foreground: #666666;
-        --popover: #fdf8f7;
-        --popover-foreground: #090202;
-        --card: #fdf8f7;
-        --card-foreground: #090202;
-        --border: #e9e7e7;
-        --input: #e9e7e7;
-        --primary: #ce5a4b;
-        --primary-foreground: #ffffff;
-        --secondary: #b1b1b1;
-        --secondary-foreground: #000000;
-        --accent: #f5f5f4;
-        --accent-foreground: #555351;
-        --destructive: #d63600;
-        --destructive-foreground: #ffffff;
-        --navbar: #fef9fa;
-        --navbar-foreground: #09090b;
-        --ring: #ce5a4b;
 
+        /* shadcn Colors (Generated from https://ui.jln.dev */
+
+        --background: 0 0% 99%;
+        --foreground: 60 2% 30%;
+        --muted: 0 12% 90%;
+        --muted-foreground: 0 12% 30%;
+        --popover: 0 0% 96%;
+        --popover-foreground: 60 2% 20%;
+        --card: 0 0% 97%;
+        --card-foreground: 60 2% 25%;
+        --border: 0 0% 94%;
+        --input: 0 0% 91%;
+        --primary: 7 82% 36%;
+        --primary-foreground: 7 82% 96%;
+        --secondary: 7 30% 75%;
+        --secondary-foreground: 7 30% 15%;
+        --accent: 0 0% 84%;
+        --accent-foreground: 0 0% 24%;
+        --destructive: 1 83% 35%;
+        --destructive-foreground: 1 83% 95%;
+        --ring: 7 82% 36%;
         --radius: 0.5rem;
 
         --font-sans: Roboto, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 
         /* SignInsChart.tsx specific stuff */
         /* The chart's background */
-        #sign-in-chart>div>div>svg>rect {
-            fill: var(--background) !important;
+
+        #sign-in-chart > div > div > svg > rect {
+            fill: hsl(var(--background)) !important;
         }
 
         /* Any text in the chart*/
-        #sign-in-chart>text {
-            fill: var(--foreground) !important;
-            font-family: var(--font-sans) !important;
+
+        #sign-in-chart > text {
+            fill: hsl(var(--foreground)) !important;
+            font-family: var(--font-sans), sans-serif !important;
         }
 
         /* The individual rectangles in the chart */
+
         #sign-in-chart g rect[x][y][width][height][style] {
             rx: var(--radius);
-            stroke: var(--background) !important;
+            stroke: hsl(var(--background)) !important;
         }
 
         /* The lines that bind months together */
-        #sign-in-chart>div>div>svg>g>path {
-            stroke: var(--background) !important;
+
+        #sign-in-chart > div > div > svg > g > path {
+            stroke: hsl(var(--background)) !important;
             stroke-width: 0px !important;
         }
 
         /* The legend text */
-        #sign-in-chart>div>div>svg>g>text {
-            fill: var(--foreground) !important;
-            font-family: var(--font-sans) !important;
+
+        #sign-in-chart > div > div > svg > g > text {
+            fill: hsl(var(--foreground)) !important;
+            font-family: var(--font-sans), sans-serif !important;
         }
 
         /* The on-hover pop-up */
-        #sign-in-chart>div>div>div>div {
-            background: var(--background) !important;
+
+        #sign-in-chart > div > div > div > div {
+            background: hsl(var(--background)) !important;
             color: var(--foreground) !important;
         }
 
         /* The text for the pop-up */
-        #sign-in-chart>div>div>div>div>div>span {
-            color: var(--foreground) !important;
-            font-family: var(--font-sans) !important;
+
+        #sign-in-chart > div > div > div > div > div > span {
+            color: hsl(var(--foreground)) !important;
+            font-family: var(--font-sans), sans-serif !important;
         }
 
         /* Otherwise this doesn't show as clickable */
+
         #training-content a {
-            color: var(--primary)
+            color: hsl(var(--primary))
         }
     }
 
     .dark {
-        --background: #080302;
-        --foreground: #faf9f9;
-        --muted: #0d1111;
-        --muted-foreground: #a6b3b5;
-        --popover: #0c0403;
-        --popover-foreground: #fdfcfc;
-        --card: #0c0403;
-        --card-foreground: #fdfcfc;
-        --border: #1e1b1a;
-        --input: #1e1b1a;
-        --primary: #ce5a4b;
-        --primary-foreground: #ffffff;
-        --secondary: #b1b1b1;
-        --secondary-foreground: #000000;
-        --accent: #292524;
-        --accent-foreground: #cfcfcf;
-        --destructive: #e63900;
-        --destructive-foreground: #ffffff;
-        --navbar: #171717;
-        --navbar-foreground: #f2f2f2;
+        /* shadcn Colors dark mode (Generated from https://ui.jln.dev */
+
+        --background: 220 11% 11%;
+        --foreground: 60 30% 96%;
+        --muted: 220 12% 15%;
+        --muted-foreground: 220 12% 65%;
+        --popover: 220 11% 8%;
+        --popover-foreground: 0 0% 100%;
+        --card: 220 11% 9%;
+        --card-foreground: 0 0% 100%;
+        --border: 220 1% 16%;
+        --input: 220 1% 19%;
+        --primary: 353 57% 45%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 353 30% 75%;
+        --secondary-foreground: 353 30% 15%;
+        --accent: 220 11% 26%;
+        --accent-foreground: 220 11% 86%;
+        --destructive: 9 97% 46%;
+        --destructive-foreground: 0 0% 100%;
+        --ring: 353 57% 45%;
+        
     }
 }
 

@@ -9,16 +9,24 @@ interface SignInReasonDisplayProps {
 export const SignInReasonDisplay: React.FC<SignInReasonDisplayProps> = ({ tools, reason }) => {
   return (
     <>
-      <div className="my-4 px-4 py-3 bg-accent dark:bg-neutral-800 rounded-lg">
+      <div className="my-4 px-4 py-3 bg-muted text-muted-foreground rounded-lg">
         <div className="border-gray-500 p-2 rounded-lg mb-2">
-          <div className="border-b border-gray-500 pb-2 font-medium mb-1 text-center font-mono">Sign In Reason</div>
-          <div className="text-center font-mono ">{reason.name}</div>
+          <div className="pb-2 bg-card w-2/3 mr-auto ml-auto rounded-lg p-2 font-medium mb-1 text-center font-mono">
+            Sign In Reason
+          </div>
+          <div className="text-center font-mono mt-2 justify-center">
+            <Badge variant="default" className="max-w-48 rounded-sm">
+              {reason.name}
+            </Badge>
+          </div>
         </div>
         <div className="border-gray-500 p-2 rounded-lg mb-4">
-          <div className="border-b border-gray-500 pb-2  font-medium mb-1 text-center font-mono">Tools Used</div>
-          <div className="flex flex-wrap gap-1">
+          <div className="pb-2 bg-card w-2/3 mr-auto ml-auto rounded-lg p-1 font-medium mb-1 text-center font-mono">
+            Tools Used
+          </div>
+          <div className="flex flex-wrap gap-1 mt-2 justify-center">
             {tools.map((tool) => (
-              <Badge variant="default" className="max-w-48 rounded-sm">
+              <Badge variant="default" className="max-w-48 rounded-lg">
                 {tool}
               </Badge>
             ))}

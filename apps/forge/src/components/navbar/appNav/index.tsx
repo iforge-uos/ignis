@@ -18,7 +18,7 @@ export default function AppNav() {
             <Link
               key={link.displayName}
               to={link.path ?? "#"}
-              className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-navbar-foreground hover:bg-accent"
+              className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-card-foreground hover:bg-accent"
             >
               {link.displayName}
             </Link>
