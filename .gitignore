@@ -9,3 +9,4 @@ Thumbs.db
 **/node_modules/**
 **/.turbo/**
 deploy/container-images/**
+**/secret/**
