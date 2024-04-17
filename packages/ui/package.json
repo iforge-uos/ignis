@@ -36,6 +36,8 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-toast": "^1.1.5",
     "@radix-ui/react-tooltip": "^1.0.7",
+    "@react-three/drei": "^9.105.4",
+    "@react-three/fiber": "^8.16.2",
     "@types/react": "^18.2.75",
     "autoprefixer": "^10.4.19",
     "class-variance-authority": "^0.7.0",
@@ -57,7 +59,12 @@
     "tailwind-merge": "^2.2.2",
     "tailwindcss": "^3.4.3",
     "tailwindcss-animate": "^1.0.7",
+    "three": "^0.163.0",
+    "three-globe": "^2.31.0",
     "vaul": "^0.9.0",
     "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/three": "^0.163.0"
   }
 }
