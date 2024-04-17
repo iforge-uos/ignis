@@ -276,6 +276,9 @@ importers:
       '@hookform/resolvers':
         specifier: ^3.3.4
         version: 3.3.4(react-hook-form@7.51.2)
+      '@ignis/errors':
+        specifier: workspace:*
+        version: link:../../packages/errors
       '@ignis/ts-config':
         specifier: workspace:*
         version: link:../../tooling/ts-config

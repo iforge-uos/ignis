@@ -4,8 +4,6 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import * as cookieParser from "cookie-parser";
 import helmet from "helmet";
 import { AppModule } from "./app.module";
-import { AllExceptionsFilter } from "./filters/all-exceptions/all-exceptions.filter";
-import { ResponseFormatService } from "./response-format/response-format.service";
 
 import type { users } from "@ignis/types";
 import * as Express from "express";
@@ -32,8 +30,6 @@ async function bootstrap() {
   });
   app.useGlobalPipes(new ValidationPipe());
   app.use(helmet());
-
-  app.useGlobalFilters(new AllExceptionsFilter(new ResponseFormatService()));
 
   // Open API
   const options = new DocumentBuilder()

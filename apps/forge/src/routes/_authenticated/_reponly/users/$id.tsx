@@ -2,6 +2,7 @@ import { UserAvatar } from "@/components/avatar";
 import { LocationIcon } from "@/components/icons";
 import SignInsChart from "@/components/signin/dashboard/components/SignInsChart.tsx";
 import Title from "@/components/title";
+import { extractError } from "@/lib/utils";
 import { getUser } from "@/services/users/getUser.ts";
 import getUserSignIns from "@/services/users/getUserSignIns.ts";
 import { getUserTraining } from "@/services/users/getUserTraining.ts";
@@ -35,7 +36,11 @@ export default function Component() {
     if (isAxiosError(error) && error.status === 404) {
       throw notFound();
     }
-    <>An error occurred fetching the user: {error.message}</>;
+    <>
+      An error occurred fetching the user:
+      <br />
+      {extractError(error!)}
+    </>;
   }
 
   if (isLoading) {
