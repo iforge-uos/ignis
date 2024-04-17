@@ -138,7 +138,7 @@ const ActiveLocationSelector = () => {
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>The space is marked as OPEN when there is at least one rep signed in.</p>
-                  <p>It is closed otherwise</p>
+                  <p>It is closed otherwise.</p>
                   <p>Current opening hours are: 12:00 - 20:00</p>
                 </TooltipContent>
               </Tooltip>
@@ -153,7 +153,7 @@ const ActiveLocationSelector = () => {
                   />
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Click to view a more detailed breakdown of the count</p>
+                  <p>Click to view a more detailed breakdown of the user count.</p>
                 </TooltipContent>
               </Tooltip>
               <Tooltip>
@@ -166,7 +166,7 @@ const ActiveLocationSelector = () => {
                 <TooltipContent>
                   <p>The Queue is only enabled when capacity is reached.</p>
                   <p>
-                    The view detailed queue status visit the{" "}
+                    To view detailed queue status visit the{" "}
                     <Link className="underline" to={"/signin/dashboard"}>
                       dashboard
                     </Link>
