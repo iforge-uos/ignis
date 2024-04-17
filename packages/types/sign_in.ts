@@ -44,7 +44,9 @@ export type List = {
 /** The status of a space */
 export type LocationStatus = {
   open: boolean;
-  count: number;
+  on_shift_rep_count: number;
+  off_shift_rep_count: number;
+  user_count: number;
   max: number;
   needs_queue: boolean;
   out_of_hours: boolean;

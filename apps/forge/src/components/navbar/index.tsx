@@ -5,7 +5,7 @@ import AppNav from "@/components/navbar/appNav";
 
 export default function NavBar() {
   return (
-    <div className="flex items-center justify-between h-[60px] p-3 w-full bg-navbar backdrop-filter shadow-lg dark:shadow-none">
+    <div className="flex items-center justify-between h-[60px] p-3 w-full bg-card text-card-foreground backdrop-filter shadow-lg dark:shadow-none">
       <div className="flex flex-1">
         <AppSwitcher />
       </div>

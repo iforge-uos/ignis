@@ -6,6 +6,7 @@ import React from "react";
 export const GenericError = () => {
   const navigate = useNavigate();
   const goToHome = () => navigate({ to: "/" });
+  const reload = () => navigate({ search: {} });
 
   return (
     <React.Fragment>
@@ -27,7 +28,10 @@ export const GenericError = () => {
           </div>
           <div className="flex justify-center">
             <Button variant="outline" onClick={goToHome}>
-              Or go to Homepage
+              Go to Homepage
+            </Button>
+            <Button variant="outline" onClick={reload}>
+              Reload
             </Button>
           </div>
         </div>

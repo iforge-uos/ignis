@@ -58,8 +58,9 @@ export class SignInService implements OnModuleInit {
   }
 
   async getStatusForLocation(location: Location): Promise<LocationStatus> {
-    const [on_shift_count, count, max, can_sign_in, count_in_queue] = await Promise.all([
+    const [on_shift_rep_count, off_shift_rep_count, total_count, max, can_sign_in, count_in_queue] = await Promise.all([
       this.onShiftReps(location),
+      this.offShiftReps(location),
       this.totalCount(location),
       this.maxCount(location),
       this.canSignIn(location),
@@ -67,10 +68,14 @@ export class SignInService implements OnModuleInit {
       this.outOfHours(),
     ]);
 
+    const user_count = total_count - off_shift_rep_count - on_shift_rep_count;
+
     return {
       locationName: location,
-      open: on_shift_count > 0,
-      count,
+      open: on_shift_rep_count > 0,
+      on_shift_rep_count,
+      off_shift_rep_count,
+      user_count,
       max,
       out_of_hours: this.outOfHours(),
       needs_queue: !can_sign_in,

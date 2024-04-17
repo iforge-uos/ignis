@@ -1,4 +1,4 @@
-import ActiveLocationSelector from "@/components/signin/actions/ActiveLocationSelector";
+import ActiveLocationSelector from "@/components/signin/ActiveLocationSelector";
 import { SignInDrawer } from "@/components/signin/dashboard/components/SignInDrawer.tsx";
 import { SignedInUserCard } from "@/components/signin/dashboard/components/SignedInUserCard";
 import Title from "@/components/title";

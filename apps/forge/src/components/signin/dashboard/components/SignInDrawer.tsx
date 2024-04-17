@@ -27,10 +27,10 @@ export const SignInDrawer: FC<SignInDrawerProps> = ({ title, entries, startExpan
       <Collapsible key="1" className="space-y-2 mt-2 mb-2" defaultOpen={startExpanded}>
         <div className="flex items-center justify-between space-x-4 px-4">
           <div className="flex items-center gap-2">
-            <h4 className="text-lg font-bold">{title}</h4>
-            <span className="inline-flex items-center justify-center h-6 w-6 rounded-sm bg-accent text-sm font-semibold dark:text-gray-100 text-gray-900">
+            <span className="inline-flex items-center justify-center h-6 w-6 rounded-sm bg-primary text-sm font-semibold text-primary-foreground">
               {entries.length}
             </span>
+            <h4 className="text-lg font-bold">{title}</h4>
           </div>
           <CollapsibleTrigger asChild>
             <Button
@@ -53,7 +53,7 @@ export const SignInDrawer: FC<SignInDrawerProps> = ({ title, entries, startExpan
           </CollapsibleTrigger>
         </div>
         <CollapsibleContent asChild>
-          <div className="rounded-md border border-stone-200 px-4 py-4 font-mono text-sm dark:border-stone-950 shadow-lg">
+          <div className="rounded-md border border-gray-100 px-4 py-4 font-mono text-sm dark:border-black dark:border-opacity-15 shadow-md">
             <div className="flex flex-wrap gap-4">
               {entries.length === 0 && (
                 <Alert variant="default">

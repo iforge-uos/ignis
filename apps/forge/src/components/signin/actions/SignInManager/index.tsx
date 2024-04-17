@@ -169,14 +169,13 @@ const SignInActionsManager: React.FC<SignInManagerProps> = ({ initialFlow }) => 
 
     if (StepComponent) {
       // This is to stop the case where a rep is backtracking and then step 3 auto navigates them forwards again
-      if (currentStep == SignInSteps.Step3) {
+      if (currentStep === SignInSteps.Step3) {
         dispatch(signinActions.updateSignInSessionField("navigation_is_backtracking", true));
       }
       return StepComponent ? <StepComponent onPrimary={moveToNextStep} onSecondary={moveToPreviousStep} /> : null;
-    } else {
-      // Handle the end of the flow or an invalid step
-      return <div>Flow completed or invalid step</div>;
     }
+    // Handle the end of the flow or an invalid step
+    return <div>Flow completed or invalid step</div>;
   };
 
   const getTotalSteps = (flow: FlowType): number => {
@@ -190,7 +189,7 @@ const SignInActionsManager: React.FC<SignInManagerProps> = ({ initialFlow }) => 
     <div className="border-2 p-4">
       <h1 className="text-xl font-bold mb-4 text-center">Sign In Actions</h1>
       {currentFlow && (
-        <div className="flex items-center justify-between p-3 space-x-4 bg-navbar text-navbar-foreground mt-4 mb-4 drop-shadow-lg dark:shadow-none flex-col md:flex-row">
+        <div className="flex items-center justify-between p-3 space-x-4 bg-card text-card-foreground mt-4 mb-4 drop-shadow-lg dark:shadow-none flex-col md:flex-row">
           <div className="flex items-center">
             <span className="text-lg font-bold mr-2">Current Flow:</span>
             <span className="text-ring uppercase text-xl">{flowTypeToPrintTable(currentFlow)}</span>
@@ -218,7 +217,7 @@ const SignInActionsManager: React.FC<SignInManagerProps> = ({ initialFlow }) => 
                 <Button variant="default" className="h-20" onClick={() => startFlow(FlowType.SignIn)}>
                   Start Sign In
                 </Button>
-                <Button variant="secondary" className="h-20" onClick={() => startFlow(FlowType.SignOut)}>
+                <Button variant="default" className="h-20" onClick={() => startFlow(FlowType.SignOut)}>
                   Start Sign Out
                 </Button>
                 <Button variant="outline" className="h-20" onClick={() => startFlow(FlowType.Register)}>

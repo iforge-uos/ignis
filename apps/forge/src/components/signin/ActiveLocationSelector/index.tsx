@@ -12,7 +12,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Separator } from "@ui/components/ui/separator.tsx";
 import { PulseLoader } from "react-spinners";
 import { Location } from "@ignis/types/sign_in.ts";
-import { Moon } from "lucide-react";
+import { UserCount } from "@/components/signin/ActiveLocationSelector/UserCount.tsx";
+import { StatusBadge } from "@/components/signin/ActiveLocationSelector/StatusBadge.tsx";
+import { QueueStatus } from "@/components/signin/ActiveLocationSelector/QueueStatus.tsx";
+import { Skeleton } from "@ui/components/ui/skeleton.tsx";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ui/components/ui/tooltip.tsx";
+import { Link } from "@tanstack/react-router";
 
 const ActiveLocationSelector = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -60,9 +65,9 @@ const ActiveLocationSelector = () => {
 
   return (
     <>
-      <div className="flex items-center justify-between p-3 space-x-4 bg-navbar text-navbar-foreground mt-4 mb-4 drop-shadow-lg dark:shadow-none flex-col md:flex-row">
+      <div className="flex items-center justify-between p-3 space-x-4 bg-card text-card-foreground mt-4 mb-4 drop-shadow-lg dark:shadow-none flex-col md:flex-row">
         <div>
-          <span className="text-gray-700 dark:text-white font-medium mr-2">Select Location</span>
+          <span className="font-medium mr-2">Select Location</span>
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <Button
@@ -87,7 +92,7 @@ const ActiveLocationSelector = () => {
                   ) : (
                     <>
                       {locationStatuses &&
-                        locationStatuses!.map((location, _) => (
+                        locationStatuses!.map((location) => (
                           <CommandItem
                             key={location.locationName}
                             value={location.locationName}
@@ -113,41 +118,63 @@ const ActiveLocationSelector = () => {
             </PopoverContent>
           </Popover>
         </div>
-        {isLoading && <PulseLoader color="#e11d48" size={10} />}
+        {isLoading && (
+          <div className="flex items-center gap-2 mt-2 lg:mt-0">
+            <Skeleton className="w-[110px] h-[40px]" />
+            <Separator orientation="vertical" />
+            <Skeleton className="w-[240px] h-[40px]" />
+            <Skeleton className="w-[250px] h-[40px]" />
+          </div>
+        )}
         {activeLocationStatus && !isLoading && (
           <div className="flex items-center gap-2 mt-2 lg:mt-0">
-            <span className="text-gray-500 dark:text-gray-400">Status</span>
-            {/* Open Status */}
-            {activeLocationStatus.open ? (
-              <span className="text-green-500">OPEN</span>
-            ) : (
-              <span className="text-red-500">CLOSED</span>
-            )}
-            {activeLocationStatus.out_of_hours ? (
-              <>
-                <Separator orientation="vertical" />
-                <Moon /> <span>Out of Hours</span>
-              </>
-            ) : undefined}
-            <Separator orientation="vertical" />
-            {/* Count and Max Count Status */}
-
-            <span className="text-gray-500 dark:text-gray-400">Current Users </span>
-            <span className="text-navbar-foreground">
-              {" "}
-              {activeLocationStatus.count}/{activeLocationStatus.max}
-            </span>
-            <span className="text-gray-500 dark:text-gray-400">Max Users </span>
-            {/* Queue Status */}
-
-            {activeLocationStatus.needs_queue ? (
-              <span className="text-red-500">Queue Needed</span>
-            ) : (
-              <span className="text-green-500">No Queue Needed</span>
-            )}
-            <Separator orientation="vertical" />
-            <span className="text-navbar-foreground"> {activeLocationStatus.count_in_queue}</span>
-            <span className="text-gray-500 dark:text-gray-400">in Queue</span>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <StatusBadge
+                    is_open={activeLocationStatus.open}
+                    is_out_of_hours={activeLocationStatus.out_of_hours}
+                  />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>The space is marked as OPEN when there is at least one rep signed in.</p>
+                  <p>It is closed otherwise</p>
+                  <p>Current opening hours are: 12:00 - 20:00</p>
+                </TooltipContent>
+              </Tooltip>
+              <Separator orientation="vertical" />
+              <Tooltip>
+                <TooltipTrigger>
+                  <UserCount
+                    rep_count={activeLocationStatus.on_shift_rep_count}
+                    off_shift_rep_count={activeLocationStatus.off_shift_rep_count}
+                    user_count={activeLocationStatus.user_count}
+                    max_count={activeLocationStatus.max}
+                  />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Click to view a more detailed breakdown of the count</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger>
+                  <QueueStatus
+                    queue_needed={activeLocationStatus.needs_queue}
+                    count_in_queue={activeLocationStatus.count_in_queue}
+                  />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>The Queue is only enabled when capacity is reached.</p>
+                  <p>
+                    The view detailed queue status visit the{" "}
+                    <Link className="underline" to={"/signin/dashboard"}>
+                      dashboard
+                    </Link>
+                    .
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         )}
       </div>
