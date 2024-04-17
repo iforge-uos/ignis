@@ -31,7 +31,7 @@ jobs:
 
       - name: Install Packages
         working-directory: /home/iforge/ignis
-        run: pnpm i
+        run: pnpm install --frozen-lockfile
 
       - name: Build the project
         working-directory: /home/iforge/ignis/
