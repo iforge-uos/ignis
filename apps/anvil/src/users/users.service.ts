@@ -441,6 +441,7 @@ export class UsersService {
             infractions: user.infractions,
             mailing_list_subscriptions: user.mailing_list_subscriptions,
             referrals: user.referrals,
+            training: user.training,
             status,
             teams: e.select(e.team.Team, () => ({ filter_single: { id: teamId } })),
           }),
