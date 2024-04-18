@@ -15,7 +15,6 @@ COPY tooling/ ./tooling
 COPY apps/anvil/package.json ./apps/anvil/package.json
 RUN pnpm install --frozen-lockfile
 COPY apps/anvil ./apps/anvil
-COPY .turbo ./turbo
 
 FROM deps AS build
 WORKDIR /app

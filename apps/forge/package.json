@@ -18,9 +18,9 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
+    "@ignis/errors": "workspace:*",
     "@ignis/ts-config": "workspace:*",
     "@ignis/types": "workspace:*",
-    "@ignis/errors": "workspace:*",
     "@ignis/ui": "workspace:*",
     "@nivo/calendar": "^0.85.1",
     "@radix-ui/react-dialog": "^1.0.5",

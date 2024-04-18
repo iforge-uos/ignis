@@ -2,17 +2,13 @@ import { InfractionSection } from "@/components/signin/dashboard/components/Sign
 import { TrainingSection } from "@/components/signin/dashboard/components/SignedInUserCard/subcomponents/TrainingSection.tsx";
 import type { Location } from "@ignis/types/sign_in.ts";
 import type { PartialUser } from "@ignis/types/users.ts";
-import { Button } from "@ui/components/ui/button.tsx";
-import { Separator } from "@ui/components/ui/separator.tsx";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui/components/ui/tabs";
 import * as React from "react";
+import { TeamManagementSection } from "@/components/signin/dashboard/components/SignedInUserCard/subcomponents/TeamManagementSection.tsx";
 
-type Addable = "Training" | "Infraction";
+type Addable = "Training" | "Infraction" | "Rep";
 
-const ADDABLE: Addable[] = ["Training", "Infraction"];
-const SECTION_DESCRIPTION = {
-  Training: "Add a new training entry to a user's profile.",
-  Infraction: "Add an infraction record to a user's profile.",
-};
+const ADDABLE: Addable[] = ["Training", "Infraction", "Rep"];
 
 export interface AddToUserProps {
   user: PartialUser;
@@ -27,40 +23,25 @@ const sectionComponents: Record<Addable, (props: AddToUserProps) => React.ReactE
   Infraction: ({ user, location, onShiftReps }) => (
     <InfractionSection user={user} location={location} onShiftReps={onShiftReps} />
   ),
+  Rep: ({ user, location, onShiftReps }) => (
+    // TODO COMPLETE
+    <TeamManagementSection user={user} location={location} onShiftReps={onShiftReps} />
+  ),
 };
 
 export const AddToUser: React.FC<AddToUserProps> = ({ user, location, onShiftReps }) => {
-  const [section, setSection] = React.useState<Addable>("Training");
-
-  if (!sectionComponents[section]) {
-    throw Error("unreachable");
-  }
-
   return (
     <>
-      <div className="rounded-sm flex mb-2">
-        {ADDABLE.map((title, idx) => {
-          let indexStyle = "rounded-none";
-          if (idx === 0) {
-            indexStyle = "rounded-none rounded-l-md";
-          } else if (idx === ADDABLE.length - 1) {
-            indexStyle = "rounded-none rounded-r-md";
-          }
-          return (
-            <Button
-              className={`w-full text-black dark:text-white justify-center flex-grow ${indexStyle} ${
-                title !== section ? "bg-popover-background" : ""
-              }`}
-              onClick={() => setSection(title)}
-            >
-              <text className={`${title === section ? "font-bold text-white" : ""}`}>Add {title}</text>
-            </Button>
-          );
+      <Tabs className="max-w-2xl min-w-2xl" defaultValue={ADDABLE[0]}>
+        <TabsList className="w-full">
+          {ADDABLE.map((title) => {
+            return <TabsTrigger value={title}>Add {title}</TabsTrigger>;
+          })}
+        </TabsList>
+        {ADDABLE.map((title) => {
+          return <TabsContent value={title}>{sectionComponents[title]({ user, location, onShiftReps })}</TabsContent>;
         })}
-      </div>
-      <Separator />
-      <div className="my-2">{SECTION_DESCRIPTION[section]}</div>
-      {sectionComponents[section]({ user, location, onShiftReps })}
+      </Tabs>
     </>
   );
 };

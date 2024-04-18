@@ -85,6 +85,7 @@ export class RootController {
   }
 
   @Get("teams")
+  @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
   @IsRep()
   async getTeams() {
     return await this.rootService.getTeams();

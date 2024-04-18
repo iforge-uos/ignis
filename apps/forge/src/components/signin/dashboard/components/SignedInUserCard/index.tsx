@@ -18,11 +18,14 @@ import { LogOut, Plus } from "lucide-react";
 import * as React from "react";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
+import { format } from "date-fns";
+import { iForgeEpoch } from "@/config/constants.ts";
 
 interface SignInUserCardProps {
   user: SignInEntry["user"];
   tools?: string[];
   reason?: PartialReason;
+  timeIn?: Date;
   onSignOut?: () => void;
   onShiftReps?: PartialUser[];
 }
@@ -31,6 +34,7 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
   user,
   tools,
   reason,
+  timeIn,
   onSignOut,
   onShiftReps,
 }) => {
@@ -68,6 +72,9 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
 
   const shouldDisplayReason = !(reason?.name === REP_ON_SHIFT || reason?.name === REP_OFF_SHIFT);
 
+  // Timezone for the output
+  const formattedTime = format(timeIn ?? iForgeEpoch, "HH:mm:ss");
+
   return (
     <Card className="bg-card w-[240px] md:w-[300px] p-4 rounded-lg flex flex-col justify-between text-black dark:text-white">
       <div>
@@ -93,12 +100,24 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
         {shouldDisplayReason ? <SignInReasonDisplay tools={tools!} reason={reason!} /> : undefined}
       </div>
       <div className="mt-4 pt-4 border-t border-gray-700 flex justify-between">
+        <div className="flex justify-between w-full">
+          <div className="flex">
+            <span className="font-bold">Time In: </span>
+          </div>
+          <div className="flex">
+            <Badge variant="info" className="rounded-sm shadow-md">
+              {formattedTime}
+            </Badge>
+          </div>
+        </div>
+      </div>
+      <div className="mt-4 pt-4 border-t border-gray-700 flex justify-between">
         <Popover>
           <TooltipProvider>
             <Tooltip>
               <PopoverTrigger asChild>
                 <TooltipTrigger asChild>
-                  <Button className="bg-neutral-800" disabled={!onShiftReps}>
+                  <Button variant="warning" disabled={!onShiftReps}>
                     <Plus className="stroke-white" />
                     <span className="text-white ml-1.5">Add</span>
                   </Button>
@@ -107,7 +126,7 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
               <TooltipContent>Add in-person training and infractions.</TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          <PopoverContent className="w-350">
+          <PopoverContent className="mt-2 ml-2 w-350 shadow-xl border-2 border-gray-200 dark:border-gray-700">
             {onShiftReps ? <AddToUser user={user} onShiftReps={onShiftReps} location={activeLocation} /> : undefined}
           </PopoverContent>{" "}
         </Popover>

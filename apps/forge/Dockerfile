@@ -15,7 +15,6 @@ COPY tooling/ ./tooling
 COPY apps/forge/package.json ./apps/forge/package.json
 RUN pnpm install --frozen-lockfile
 COPY apps/forge ./apps/forge
-COPY .turbo ./turbo
 
 FROM deps AS build
 WORKDIR /app

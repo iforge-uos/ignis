@@ -54,7 +54,7 @@ export const SignInDrawer: FC<SignInDrawerProps> = ({ title, entries, startExpan
         </div>
         <CollapsibleContent asChild>
           <div className="rounded-md border border-gray-100 px-4 py-4 font-mono text-sm dark:border-black dark:border-opacity-15 shadow-md">
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-4 mr-4">
               {entries.length === 0 && (
                 <Alert variant="default">
                   <InfoCircledIcon className="h-4 w-4" />
@@ -68,6 +68,7 @@ export const SignInDrawer: FC<SignInDrawerProps> = ({ title, entries, startExpan
                   user={entry.user}
                   tools={entry.tools}
                   reason={entry.reason}
+                  timeIn={entry.created_at}
                   onSignOut={() => onSignOut(entry.user.id)}
                   onShiftReps={onShiftReps}
                 />
