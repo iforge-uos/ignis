@@ -6,7 +6,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@ui/components/ui/input-otp";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import { toast } from "sonner";
 
 const UCardInput: FlowStepComponent = ({ onPrimary }) => {
   const [otp, setOtp] = useState(""); // OTP is now handled as a string
@@ -47,13 +46,15 @@ const UCardInput: FlowStepComponent = ({ onPrimary }) => {
         </CardHeader>
         <CardContent>
           <InputOTP
+            autoFocus
             maxLength={9}
             value={otp}
             onChange={(value) => handleOtpChange(value)}
             onComplete={() => handleOnSubmit()}
+            pushPasswordManagerStrategy="none"
             ref={firstInputRef}
-            type="search" // I think this turns off 1password autocomplete which gets in the way of our actual auto-complete
-            autoComplete="off" // so does this
+            data-lpignore="true"
+            data-1p-ignore="true"
           >
             <InputOTPGroup>
               <InputOTPSlot index={0} />
@@ -80,9 +81,6 @@ const UCardInput: FlowStepComponent = ({ onPrimary }) => {
           </Button>
         </CardFooter>
       </Card>
-      <script>
-        const element = document.getElementById("starting-pos").focus(); document.getElementById(frmObj.id).select();
-      </script>
     </>
   );
 };

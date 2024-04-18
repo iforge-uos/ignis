@@ -45,7 +45,12 @@ const TrainingSelectionList: React.FC<ToolSelectionListProps> = ({
   const scrollAreaHeightClass = trainings.length > 0 ? "h-[300px]" : "h-full";
 
   return (
-    <ScrollArea className={cn("w-full rounded-md border border-gray-900 dark:border-gray-400", scrollAreaHeightClass)}>
+    <ScrollArea
+      className={cn(
+        "w-full rounded-md border-2 border-gray-200 dark:border-black dark:border-opacity-15 shadow-md",
+        scrollAreaHeightClass,
+      )}
+    >
       <div className="p-4 space-y-2">
         <div className="flex items-center mb-4">
           <h4 className="mr-2 text-sm font-medium leading-none text-foreground">{title}</h4>

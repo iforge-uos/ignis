@@ -77,9 +77,12 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
               <h2 className="w-full text-center text-lg font-bold hover:underline">{user.display_name}</h2>
             </Link>
             {user.teams?.map((team) => (
-              <Badge className="flex items-center justify-start rounded-sm bg-accent dark:bg-neutral-800 m-0.5 w-full pt-1.5 pb-1.5 text-black dark:text-white">
+              <Badge
+                key={team.name}
+                className="flex items-center justify-start rounded-sm bg-accent dark:bg-neutral-800 m-0.5 w-full pt-1.5 pb-1.5 text-black dark:text-white"
+              >
                 <TeamIcon team={team.name} className="stroke-black dark:stroke-white mr-1 h-4 w-4" />
-                <text className="text-left ml-2 text-xs">{team.name}</text>
+                <p className="text-left ml-2 text-xs">{team.name}</p>
               </Badge>
             ))}
           </div>

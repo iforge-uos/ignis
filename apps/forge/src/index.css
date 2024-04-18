@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @layer base {
     :root {
         /* Custom Colors */
@@ -12,7 +11,6 @@
 
 
         /* shadcn Colors (Generated from https://ui.jln.dev */
-
         --background: 0 0% 99%;
         --foreground: 60 2% 30%;
         --muted: 0 12% 90%;
@@ -33,6 +31,16 @@
         --destructive-foreground: 1 83% 95%;
         --ring: 7 82% 36%;
         --radius: 0.5rem;
+
+        /* shadcn Warnings and Colors (Generated from https://ui.jln.dev/feedback-colors-generator-for-shadcn-ui */
+        --destructive: 3 45% 69%;
+        --destructive-foreground: 3 45% 9%;
+        --success: 101 45% 69%;
+        --success-foreground: 101 45% 9%;
+        --warning: 33 45% 69%;
+        --warning-foreground: 33 45% 9%;
+        --info: 220 45% 69%;
+        --info-foreground: 220 45% 9%;
 
         --font-sans: Roboto, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 
@@ -111,10 +119,19 @@
         --secondary-foreground: 353 30% 15%;
         --accent: 220 11% 26%;
         --accent-foreground: 220 11% 86%;
-        --destructive: 9 97% 46%;
-        --destructive-foreground: 0 0% 100%;
         --ring: 353 57% 45%;
-        
+
+        /* shadcn Warnings and Colors (Generated from https://ui.jln.dev/feedback-colors-generator-for-shadcn-ui */
+
+        --destructive: 12 45% 7%;
+        --destructive-foreground: 12 45% 67%;
+        --success: 142 45% 7%;
+        --success-foreground: 142 45% 47%;
+        --warning: 46 45% 7%;
+        --warning-foreground: 46 45% 47%;
+        --info: 201 45% 7%;
+        --info-foreground: 201 45% 67%;
+
     }
 }
 

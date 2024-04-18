@@ -53,7 +53,7 @@ const SignInFlowProgress: React.FC<SignInProgressProps> = ({ currentStep, flowTy
 
             return (
               <TimelineItem key={stepTitle} status={status}>
-                <TimelineHeading>{stepTitle}</TimelineHeading>
+                <TimelineHeading className="uppercase">{stepTitle}</TimelineHeading>
                 <TimelineDot status={status} className="rounded-sm" />
                 {index < stepTitles.length - 1 && <TimelineLine done={isCompleted} />}
               </TimelineItem>

@@ -81,10 +81,10 @@ export default function CommandMenu() {
           <CommandEmpty>No results found.</CommandEmpty>
           {[...groups].flatMap(([name, shortcuts]: [string, typeof SHORTCUTS], index, array) => {
             const group = (
-              <CommandGroup heading={name}>
+              <CommandGroup key={name} heading={name}>
                 {Object.entries(shortcuts).map(([key, [callback, name, icon]]) => {
                   return (
-                    <CommandItem onSelect={callback}>
+                    <CommandItem key={name} onSelect={callback}>
                       {icon}
                       <span>{name}</span>
                       <CommandShortcut>

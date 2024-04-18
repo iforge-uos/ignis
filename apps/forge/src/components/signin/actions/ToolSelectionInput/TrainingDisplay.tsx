@@ -24,11 +24,17 @@ const TrainingDisplay: React.FC<TrainingDisplayProps> = ({
 
   return (
     <div
-      className={`flex items-center justify-between w-full px-4 py-2 text-sm font-medium leading-none rounded-md shadow-sm
-                        ${selected ? "bg-primary dark:bg-primary" : "bg-white dark:bg-black"}
-                        ${wholeClickable ? "hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer" : ""}
+      className={`flex items-center border-2 justify-between w-full px-4 py-2 text-sm font-medium leading-none rounded-md
+                        ${selected ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"}
+                        ${wholeClickable ? "hover:bg-accent text-accent-foreground cursor-pointer" : ""}
                         dark:text-gray-300`}
       onClick={wholeClickable ? handleWholeClick : undefined} // Apply click handler if wholeClickable
+      onKeyUp={(event) => {
+        // Handle the 'Enter' key to mimic mouse click interaction
+        if (event.key === "Enter") {
+          wholeClickable ? handleWholeClick() : undefined;
+        }
+      }}
     >
       <div className="flex items-center space-x-4">
         <div className="flex-1 min-w-0">

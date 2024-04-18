@@ -11,7 +11,7 @@ export const SelectedTrainingPipDisplay: React.FC<SelectedTrainingPipDisplayProp
     <>
       <div>
         {selectedTrainings.map((training) => (
-          <Badge key={training.id} className="mr-2 mb-2">
+          <Badge key={training.id} className="mr-2 mb-2 rounded-md">
             {training.name}
           </Badge>
         ))}

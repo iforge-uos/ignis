@@ -1,14 +1,11 @@
 import { FlowStepComponent } from "@/components/signin/actions/SignInManager/types.ts";
 import { SelectedTrainingPipDisplay } from "@/components/signin/actions/ToolSelectionInput/SelectedTrainingPipDisplay.tsx";
 import ToolSelectionList from "@/components/signin/actions/ToolSelectionInput/TrainingSelectionList.tsx";
-import { extractError } from "@/lib/utils";
 import { signinActions } from "@/redux/signin.slice.ts";
 import { AppDispatch, AppRootState } from "@/redux/store.ts";
 import { GetSignIn, GetSignInProps } from "@/services/signin/signInService.ts";
 import { Training, User } from "@ignis/types/sign_in.ts";
-import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { useQuery } from "@tanstack/react-query";
-import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert.tsx";
 import { Button } from "@ui/components/ui/button.tsx";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card.tsx";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@ui/components/ui/collapsible.tsx";
@@ -16,6 +13,7 @@ import { Loader } from "@ui/components/ui/loader.tsx";
 import { ChevronsDownUp, ChevronsUpDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { errorDisplay } from "@/components/errors/ErrorDisplay";
 
 /*
 three categories of tools that can be selected:
@@ -33,7 +31,7 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const activeLocation = useSelector((state: AppRootState) => state.signin.active_location);
   const ucardNumber = useSelector((state: AppRootState) => state.signin.session?.ucard_number);
 
-  const [isOpen, setIsOpen] = useState<boolean>(true);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [trainingMap, setTrainingMap] = useState<CategoryTrainingMap>({
     SELECTABLE: [],
     UNSELECTABLE: [],
@@ -135,20 +133,6 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
     }
   };
 
-  const errorDisplay = (
-    <>
-      <Alert variant="destructive">
-        <ExclamationTriangleIcon className="h-4 w-4" />
-        <AlertTitle>Error</AlertTitle>
-        <AlertDescription>
-          There was an error fetching the sign-in data. Please check UCard number and try again.
-          <br />
-          {extractError(error!)}
-        </AlertDescription>
-      </Alert>
-    </>
-  );
-
   const toolSelectionDisplay = (
     <>
       <Collapsible open={isOpen} onOpenChange={setIsOpen} className="w-full space-y-2">
@@ -194,8 +178,8 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
         </CardHeader>
         <CardContent>
           {isLoading && <Loader />}
-          {!isLoading && error && errorDisplay}
-          {!isLoading && !error && toolSelectionDisplay}
+          {!isLoading && error && errorDisplay({ error })}
+          {!(isLoading || error) && toolSelectionDisplay}
         </CardContent>
         <CardFooter className="flex justify-between flex-row-reverse">
           <Button onClick={handlePrimaryClick} disabled={!canContinue}>

@@ -40,10 +40,18 @@ export const TrainingSection: React.FC<AddToUserProps> = ({ user, location, onSh
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              {remainingTrainings?.map((training) =>
-                training.locations.includes(location.toUpperCase() as Uppercase<Location>) ? (
-                  <SelectItem value={training.id}>{training.name}</SelectItem>
-                ) : undefined,
+              {remainingTrainings && remainingTrainings.length > 0 ? (
+                remainingTrainings.map((training) =>
+                  training.locations.includes(location.toUpperCase() as Uppercase<Location>) ? (
+                    <SelectItem key={training.id} value={training.id}>
+                      {training.name}
+                    </SelectItem>
+                  ) : null,
+                )
+              ) : (
+                <SelectItem value={"unselectable"} disabled>
+                  No available trainings
+                </SelectItem>
               )}
             </SelectGroup>
           </SelectContent>
@@ -94,11 +102,12 @@ export const TrainingSection: React.FC<AddToUserProps> = ({ user, location, onSh
           type="submit"
           onClick={() => {
             try {
-              addInPersonTraining(user.id, training!, { rep_id: repSigningOff!, created_at: date! });
+              addInPersonTraining(user.id, training!, { rep_id: repSigningOff!, created_at: date! }).then(() =>
+                toast.success("Successfully submitted"),
+              );
             } catch (e) {
               return toast.error(`Failed to submit contact the IT Team ${e}`);
             }
-            toast.success("Successfully submitted");
           }}
           disabled={!(training && date && repSigningOff)}
         >

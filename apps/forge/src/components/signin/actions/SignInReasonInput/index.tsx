@@ -1,5 +1,4 @@
 import { FlowStepComponent } from "@/components/signin/actions/SignInManager/types";
-import { extractError } from "@/lib/utils";
 import { signinActions } from "@/redux/signin.slice.ts";
 import { AppDispatch, AppRootState } from "@/redux/store";
 import { useSignInReasons } from "@/services/signin/signInReasonService";
@@ -13,7 +12,7 @@ import { Bot, Crown, GraduationCap, HelpCircle, PartyPopper, Rocket, UserRound }
 import memoizeOne from "memoize-one";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "sonner";
+import { errorDisplay, ErrorDisplayProps } from "@/components/errors/ErrorDisplay";
 
 const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const [inputValue, setInputValue] = useState<string>("");
@@ -128,18 +127,8 @@ const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const handlePrimaryClick = () => {
     if (canContinue) {
       onPrimary?.();
-      // Fire a toast notification
-      const reason = selectedReason as Reason;
-      toast(`Selected Reason: ${reason.name}`, {
-        description: `Reason ID: ${reason.id}, Category: ${reason.category}`,
-        action: {
-          label: "Woah",
-          onClick: () => console.log("Woah Selection"),
-        },
-      });
-
       // Dispatch the selected reason to the store
-      dispatch(signinActions.updateSignInSessionField("sign_in_reason", reason));
+      dispatch(signinActions.updateSignInSessionField("sign_in_reason", selectedReason as Reason));
     }
   };
 
@@ -152,13 +141,7 @@ const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
         </CardHeader>
         <CardContent>
           {isLoading && <Loader />}
-          {isError && (
-            <>
-              Error:
-              <br />
-              {extractError(error! as never)}
-            </>
-          )}
+          {isError && errorDisplay({ error } as ErrorDisplayProps)}
           {!(isLoading || isError) && (
             <div className="relative">
               <Input

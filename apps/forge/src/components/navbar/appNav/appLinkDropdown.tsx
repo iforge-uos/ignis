@@ -38,7 +38,13 @@ const DropdownLink: React.FC<DropdownLinkProps> = ({ link, onClick, activeId }) 
             <Link
               to={linkItem.path ?? "#"}
               className={linkClasses}
-              onClick={(event) => handleLinkClick(event, linkItem.id, linkItem.path ?? "#")}
+              onClick={(event) =>
+                handleLinkClick(
+                  event as unknown as React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+                  linkItem.id,
+                  linkItem.path ?? "#",
+                )
+              }
             >
               {linkItem.displayName}
             </Link>
@@ -73,7 +79,13 @@ const DropdownLink: React.FC<DropdownLinkProps> = ({ link, onClick, activeId }) 
         <Link
           to={linkItem.path ?? "#"}
           className={linkClasses}
-          onClick={(event) => handleLinkClick(event, linkItem.id, linkItem.path ?? "#")}
+          onClick={(event) =>
+            handleLinkClick(
+              event as unknown as React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+              linkItem.id,
+              linkItem.path ?? "#",
+            )
+          }
         >
           {linkItem.displayName}
         </Link>

@@ -18,6 +18,7 @@ import { QueueStatus } from "@/components/signin/ActiveLocationSelector/QueueSta
 import { Skeleton } from "@ui/components/ui/skeleton.tsx";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ui/components/ui/tooltip.tsx";
 import { Link } from "@tanstack/react-router";
+import { MessageCircleWarning } from "lucide-react";
 
 const ActiveLocationSelector = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -37,7 +38,7 @@ const ActiveLocationSelector = () => {
     refetchInterval: value ? refetchInterval : false, // Only refetch if a location is selected
   });
 
-  const borderColor = !locationStatuses || isError ? "border-red-500" : "border-transparent";
+  const borderColor = !locationStatuses || isError ? "border-destructive border-2 border-dashed" : "border-0";
 
   const dispatch: AppDispatch = useDispatch();
 
@@ -122,11 +123,17 @@ const ActiveLocationSelector = () => {
           <div className="flex items-center gap-2 mt-2 lg:mt-0">
             <Skeleton className="w-[110px] h-[40px]" />
             <Separator orientation="vertical" />
-            <Skeleton className="w-[240px] h-[40px]" />
-            <Skeleton className="w-[250px] h-[40px]" />
+            <Skeleton className="w-[170px] h-[40px]" />
+            <Skeleton className="w-[180px] h-[40px]" />
           </div>
         )}
-        {activeLocationStatus && !isLoading && (
+        {isError && (
+          <div className="flex items-center gap-2 p-2 rounded-md bg-destructive text-destructive-foreground">
+            <MessageCircleWarning />
+            <p> Error Fetching Location Status</p>
+          </div>
+        )}
+        {activeLocationStatus && !isLoading && !isError && (
           <div className="flex items-center gap-2 mt-2 lg:mt-0">
             <TooltipProvider>
               <Tooltip>
@@ -142,7 +149,6 @@ const ActiveLocationSelector = () => {
                   <p>Current opening hours are: 12:00 - 20:00</p>
                 </TooltipContent>
               </Tooltip>
-              <Separator orientation="vertical" />
               <Tooltip>
                 <TooltipTrigger>
                   <UserCount

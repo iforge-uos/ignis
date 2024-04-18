@@ -1,5 +1,3 @@
-import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert.tsx";
-import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { PostSignOut, PostSignOutProps } from "@/services/signin/signInService.ts";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AppDispatch, AppRootState } from "@/redux/store.ts";
@@ -13,6 +11,7 @@ import { signinActions } from "@/redux/signin.slice.ts";
 import { FlowStepComponent } from "@/components/signin/actions/SignInManager/types.ts";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { errorDisplay } from "@/components/errors/ErrorDisplay";
 
 const SignOutDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const queryClient = useQueryClient();
@@ -23,7 +22,6 @@ const SignOutDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const abortController = new AbortController(); // For gracefully cancelling the query
   const [canContinue, setCanContinue] = useState<boolean>(false);
   const navigate = useNavigate();
-  const timeout = 2000;
 
   const signOutProps: PostSignOutProps = {
     locationName: activeLocation,
@@ -49,24 +47,11 @@ const SignOutDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
     },
   });
 
-  const errorDisplay = (error: Error | null) => (
-    <>
-      <Alert variant="destructive">
-        <ExclamationTriangleIcon className="h-4 w-4" />
-        <AlertTitle>Error</AlertTitle>
-        <AlertDescription>
-          There was an error with your session, try again! <br />
-          Error: {error?.message ?? "Unknown"}
-        </AlertDescription>
-      </Alert>
-    </>
-  );
-
   const successDisplay = (
     <>
       <div className="flex justify-items-center justify-center">
         <h1 className="text-xl flex-auto">Success!</h1>
-        <p className="text-sm">Possibly redirecting to actions page in ~{timeout / 1000} seconds...</p>
+        <p className="text-sm">Redirecting...</p>
       </div>
     </>
   );
@@ -96,13 +81,13 @@ const SignOutDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
           <CardTitle>Signing Out</CardTitle>
         </CardHeader>
         <CardContent>
-          {!canContinue && !error && !isPending && (
+          {!(canContinue || error || isPending) && (
             <Button onClick={() => mutate()} autoFocus={true} variant="default" className="h-[200px] w-full">
               Sign Out
             </Button>
           )}
           {isPending && <Loader />}
-          {!isPending && error && !canContinue && errorDisplay(error)}
+          {!isPending && error && !canContinue && errorDisplay({ error })}
           {!isPending && canContinue && successDisplay}
         </CardContent>
         <CardFooter className="flex justify-between flex-row-reverse">
