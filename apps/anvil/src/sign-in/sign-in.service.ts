@@ -563,16 +563,11 @@ export class SignInService implements OnModuleInit {
       );
     } catch (error) {
       if (error instanceof CardinalityViolationError && error.code === 84017154) {
-        console.log(e, error.code);
-        throw e;
-      }
-      if (error instanceof QueryAssertionError) {
         throw new BadRequestException({
           message: `User ${ucard_number} was not signed in`,
           code: ErrorCodes.not_signed_in,
         });
       }
-      console.log(error);
       throw error;
     }
     if (await this.canSignIn(location)) {
