@@ -41,7 +41,7 @@ export function extractError(error: Error): string {
     return undefined as never;
   }
   if (isAxiosError(error)) {
-    return `${ErrorCodes[error.response?.data.code]}: ${error.response?.data.message}`;
+    return `${ErrorCodes[error.response?.data.code] || "unspecified_error"}: ${error.response?.data.message}`;
   }
   return error?.message || "Unknown Error. Contact the IT Team";
 }
