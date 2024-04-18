@@ -134,6 +134,7 @@ export class RootService {
       e.select(e.team.Team, (team) => ({
         name: true,
         description: true,
+        id: true,
         filter: e.op(team.name, "not in", unassignableTeams),
       })),
     );

@@ -19,9 +19,9 @@ import { format } from "date-fns";
 import { Calendar } from "@ui/components/ui/calendar.tsx";
 import addInPersonTraining from "@/services/users/addInPersonTraining.ts";
 import { toast } from "sonner";
-import { AddToUserProps } from "@/components/signin/dashboard/components/SignedInUserCard/subcomponents/AddToUser.tsx";
+import { ManageUserWidgetProps } from "@/components/signin/dashboard/components/SignedInUserCard/subcomponents/ManageUserWidget.tsx";
 
-export const TrainingSection: React.FC<AddToUserProps> = ({ user, location, onShiftReps }) => {
+export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, location, onShiftReps }) => {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [repSigningOff, setRepSigningOff] = React.useState<string>();
   const [training, setTraining] = React.useState<string>();
@@ -35,7 +35,7 @@ export const TrainingSection: React.FC<AddToUserProps> = ({ user, location, onSh
       <div className="m-2">
         <Label>Training</Label>
         <Select required onValueChange={setTraining}>
-          <SelectTrigger className="w-[280px]">
+          <SelectTrigger className="w-full mt-2">
             <SelectValue placeholder="Choose in person training" />
           </SelectTrigger>
           <SelectContent>
@@ -64,7 +64,7 @@ export const TrainingSection: React.FC<AddToUserProps> = ({ user, location, onSh
           <PopoverTrigger asChild>
             <Button
               variant={"outline"}
-              className={cn("w-[280px] justify-start text-left font-normal", !date && "text-muted-foreground")}
+              className={cn("w-full mt-2 justify-start text-left font-normal", !date && "text-muted-foreground")}
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
               {date ? format(date, "PPP") : <span>Pick a date</span>}
@@ -84,14 +84,20 @@ export const TrainingSection: React.FC<AddToUserProps> = ({ user, location, onSh
       <div className="m-2">
         <Label>Verified by</Label>
         <Select required onValueChange={setRepSigningOff}>
-          <SelectTrigger className="w-[280px]">
+          <SelectTrigger className="mt-2">
             <SelectValue placeholder="Choose an on shift Rep" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              {onShiftReps?.map((rep) => (
-                <SelectItem value={rep.id}>{rep.display_name}</SelectItem>
-              ))}
+              {onShiftReps && onShiftReps.length > 0 ? (
+                onShiftReps.map((rep) => <SelectItem value={rep.id}>{rep.display_name}</SelectItem>)
+              ) : (
+                <SelectItem className="w-fit" value={"unselectable"} disabled>
+                  <p>
+                    No reps on shift! <br /> Make sure there is a Rep signed in!
+                  </p>
+                </SelectItem>
+              )}
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -100,6 +106,7 @@ export const TrainingSection: React.FC<AddToUserProps> = ({ user, location, onSh
       <div className="flex justify-center">
         <Button
           type="submit"
+          className="w-1/2 mt-2 flex items-center justify-center"
           onClick={() => {
             try {
               addInPersonTraining(user.id, training!, { rep_id: repSigningOff!, created_at: date! }).then(() =>

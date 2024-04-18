@@ -1,5 +1,5 @@
 import * as React from "react";
-import type { InfractionType } from "@ignis/types/users.ts";
+import type { InfractionType, PartialUserWithTeams } from "@ignis/types/users.ts";
 import { useQuery } from "@tanstack/react-query";
 import { getUserTraining } from "@/services/users/getUserTraining.ts";
 import { DateRange } from "react-day-picker";
@@ -23,9 +23,13 @@ import { toTitleCase } from "@/lib/utils.ts";
 import { Textarea } from "@ui/components/ui/textarea.tsx";
 import { Button } from "@ui/components/ui/button.tsx";
 import { toast } from "sonner";
-import { AddToUserProps } from "@/components/signin/dashboard/components/SignedInUserCard/subcomponents/AddToUser.tsx";
 
-export const InfractionSection: React.FC<AddToUserProps> = ({ user, location, onShiftReps }) => {
+interface InfractionSectionProps {
+  user: PartialUserWithTeams;
+  location: Location;
+}
+
+export const InfractionSection: React.FC<InfractionSectionProps> = ({ user, location }) => {
   // TODO auto log onShiftReps
   const [type, setType] = React.useState<InfractionType>("WARNING");
   const [reason, setReason] = React.useState<string>("");
@@ -88,7 +92,7 @@ export const InfractionSection: React.FC<AddToUserProps> = ({ user, location, on
         <div className="m-2">
           <Label>Training</Label>
           <Select onValueChange={setTrainingToRevoke}>
-            <SelectTrigger className="w-[280px]">
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="Training to remove" />
             </SelectTrigger>
             <SelectContent>
@@ -121,7 +125,7 @@ export const InfractionSection: React.FC<AddToUserProps> = ({ user, location, on
             setType(value);
           }}
         >
-          <SelectTrigger className="w-[280px]">
+          <SelectTrigger className="w-full mt-2 mb-5">
             <SelectValue placeholder="Type of infraction" />
           </SelectTrigger>
           <SelectContent>
@@ -138,7 +142,7 @@ export const InfractionSection: React.FC<AddToUserProps> = ({ user, location, on
         <Label htmlFor="message">Reason</Label>
         <Textarea
           required
-          className="w-[280px]"
+          className="w-full mt-2 mb-2"
           placeholder="Please include a little summary of the issue."
           id="message"
           onChange={(e) => setReason(e.target.value)}
@@ -146,6 +150,7 @@ export const InfractionSection: React.FC<AddToUserProps> = ({ user, location, on
       </div>
       <div className="flex justify-center">
         <Button
+          className="w-1/2 mt-2 flex items-center justify-center"
           type="submit"
           onClick={() => {
             try {

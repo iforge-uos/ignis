@@ -6,7 +6,7 @@ import e from "@dbschema/edgeql-js";
 import { addInPersonTraining } from "@dbschema/queries/addInPersonTraining.query";
 import { users } from "@ignis/types";
 import { Location } from "@ignis/types/sign_in";
-import { RepStatus, SignInStat, Training, User } from "@ignis/types/users";
+import { Rep, RepStatus, SignInStat, Training, User } from "@ignis/types/users";
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { CardinalityViolationError, ConstraintViolationError, Duration, InvalidValueError } from "edgedb";
 import {
@@ -46,7 +46,7 @@ export const UserProps = e.shape(e.users.User, () => ({
 const RepProps = e.shape(e.users.Rep, (rep) => ({
   ...UserProps(rep),
   status: true,
-  team: { id: true, name: true },
+  teams: { id: true, name: true },
 }));
 export const TrainingProps = e.shape(e.training.Training, () => ({
   id: true,
@@ -395,7 +395,7 @@ export class UsersService {
 
   async addInfraction(id: string, data: CreateInfractionDto) {
     const user = e.assert_exists(e.select(e.users.User, () => ({ filter_single: { id } })));
-    return await this.dbService.query(
+    return this.dbService.query(
       e.update(user, () => ({
         set: {
           infractions: {
@@ -413,7 +413,7 @@ export class UsersService {
     );
   }
 
-  async promoteUserToRep(id: string, teamId: string, status: RepStatus = "ACTIVE") {
+  async promoteUserToRep(id: string, teamIds: string[], status: RepStatus = "ACTIVE"): Promise<Rep> {
     // Assuming you have a method to check if a user is already a Rep
     const isAlreadyRep = await this.isRep(id);
     if (isAlreadyRep) {
@@ -443,7 +443,9 @@ export class UsersService {
             referrals: user.referrals,
             training: user.training,
             status,
-            teams: e.select(e.team.Team, () => ({ filter_single: { id: teamId } })),
+            teams: e.select(e.team.Team, (team_) => ({
+              filter: e.op(team_.id, "in", e.cast(e.uuid, e.set(...teamIds))),
+            })),
           }),
           (rep) => RepProps(rep),
         ),
@@ -453,14 +455,14 @@ export class UsersService {
         throw new NotFoundException(`User with id ${id} not found`);
       }
       if (error instanceof InvalidValueError) {
-        throw new NotFoundException(`Team with id ${teamId} not found`);
+        throw new NotFoundException(`Team(s) with id ${teamIds} not found`);
       }
       throw error;
     }
   }
 
   async isRep(user_id: string): Promise<boolean> {
-    return await this.dbService.query(
+    return this.dbService.query(
       e.op(
         "exists",
         e.select(e.users.Rep, () => ({
@@ -469,4 +471,21 @@ export class UsersService {
       ),
     );
   }
+
+  // This is cursed and im not sure what to do but the idea is there will be an endpoint to handle updating things that will either do the promoto endpoints job(by calling old function) or it will update the existing reps teams (no idea how to edgedb tho (skill issue))
+  // async manageRepTeams(user_id: string, teamIds: string[]): Promise<Rep> {
+  //   const isCreatingNewRep = !(await this.isRep(user_id));
+  //
+  //   if (isCreatingNewRep) {
+  //     return this.promoteUserToRep(user_id, teamIds);
+  //   }
+  //
+  //   return this.dbService.query(
+  //     e.update(e.users.Rep, (rep) => ({
+  //       ...RepProps(rep),
+  //       filter_single: { id: user_id },
+  //       teams: teamIds.map((teamId) => ({ id: teamId })),
+  //     })),
+  //   );
+  // }
 }

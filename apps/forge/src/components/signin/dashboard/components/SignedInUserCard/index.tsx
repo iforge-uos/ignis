@@ -1,12 +1,12 @@
 import { UserAvatar } from "@/components/avatar";
-import { AddToUser } from "@/components/signin/dashboard/components/SignedInUserCard/subcomponents/AddToUser.tsx";
+import { ManageUserWidget } from "@/components/signin/dashboard/components/SignedInUserCard/subcomponents/ManageUserWidget.tsx";
 import { SignInReasonDisplay } from "@/components/signin/dashboard/components/SignedInUserCard/subcomponents/SignInReasonDisplay.tsx";
 import TeamIcon from "@/components/signin/dashboard/components/TeamIcon.tsx";
 import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants.ts";
 import { AppRootState } from "@/redux/store.ts";
 import { PostSignOut, PostSignOutProps } from "@/services/signin/signInService.ts";
-import type { PartialReason, SignInEntry } from "@ignis/types/sign_in.ts";
-import type { PartialUser } from "@ignis/types/users.ts";
+import type { PartialReason } from "@ignis/types/sign_in.ts";
+import type { PartialUserWithTeams } from "@ignis/types/users.ts";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Badge } from "@ui/components/ui/badge.tsx";
@@ -18,16 +18,16 @@ import { LogOut, Plus } from "lucide-react";
 import * as React from "react";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
-import { format } from "date-fns";
+import { format, intervalToDuration } from "date-fns";
 import { iForgeEpoch } from "@/config/constants.ts";
 
 interface SignInUserCardProps {
-  user: SignInEntry["user"];
+  user: PartialUserWithTeams;
   tools?: string[];
   reason?: PartialReason;
   timeIn?: Date;
   onSignOut?: () => void;
-  onShiftReps?: PartialUser[];
+  onShiftReps?: PartialUserWithTeams[];
 }
 
 export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
@@ -39,6 +39,7 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
   onShiftReps,
 }) => {
   const activeLocation = useSelector((state: AppRootState) => state.signin.active_location);
+  const [duration, setDuration] = React.useState<string>("");
   const abortController = new AbortController();
   const queryClient = useQueryClient();
 
@@ -64,6 +65,19 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
     },
   });
 
+  React.useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (timeIn) {
+        const now = new Date();
+        const durationObj = intervalToDuration({ start: timeIn, end: now });
+        const newDuration = `${durationObj.hours ?? 0}h ${durationObj.minutes ?? 0}m ${durationObj.seconds ?? 0}s`;
+        setDuration(newDuration);
+      }
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [timeIn]);
+
   const handleSignOut = () => {
     if (window.confirm("Are you sure you want to sign out?")) {
       mutate();
@@ -83,7 +97,7 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
             <Link to={`/users/${user.id}` as string}>
               <h2 className="w-full text-center text-lg font-bold hover:underline">{user.display_name}</h2>
             </Link>
-            {user.teams?.map((team) => (
+            {user.teams.map((team) => (
               <Badge
                 key={team.name}
                 className="flex items-center justify-start rounded-sm bg-accent dark:bg-neutral-800 m-0.5 w-full pt-1.5 pb-1.5 text-black dark:text-white"
@@ -102,11 +116,16 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
       <div className="mt-4 pt-4 border-t border-gray-700 flex justify-between">
         <div className="flex justify-between w-full">
           <div className="flex">
-            <span className="font-bold">Time In: </span>
+            <Badge variant="info" className="rounded-sm shadow-md flex-col">
+              <span className="text-accent-foreground">Time In:</span> <span>{formattedTime}</span>
+            </Badge>
           </div>
           <div className="flex">
-            <Badge variant="info" className="rounded-sm shadow-md">
-              {formattedTime}
+            <p className="px-5" />
+          </div>
+          <div className="flex">
+            <Badge variant="info" className="rounded-sm shadow-md flex-col">
+              <span className="text-accent-foreground">Time Spent In:</span> <span>{duration}</span>
             </Badge>
           </div>
         </div>
@@ -126,8 +145,8 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
               <TooltipContent>Add in-person training and infractions.</TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          <PopoverContent className="mt-2 ml-2 w-350 shadow-xl border-2 border-gray-200 dark:border-gray-700">
-            {onShiftReps ? <AddToUser user={user} onShiftReps={onShiftReps} location={activeLocation} /> : undefined}
+          <PopoverContent className="mt-2 ml-2 w-[350px] shadow-xl border-2 border-gray-200 dark:border-gray-700">
+            <ManageUserWidget user={user} onShiftReps={onShiftReps ?? []} location={activeLocation} />
           </PopoverContent>{" "}
         </Popover>
         <TooltipProvider>

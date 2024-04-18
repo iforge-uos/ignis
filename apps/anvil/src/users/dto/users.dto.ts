@@ -26,3 +26,9 @@ export const RevokeTrainingSchema = z.object({
 });
 
 export class RevokeTrainingDto extends createZodDto(RevokeTrainingSchema) {}
+
+export const PromoteUserSchema = z.object({
+  team_ids: z.array(z.string()),
+});
+
+export class PromoteUserDto extends createZodDto(PromoteUserSchema) {}

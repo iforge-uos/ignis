@@ -1,11 +1,15 @@
 import axiosInstance from "@/api/axiosInstance";
 
-export default async function promoteToRep(user_id: string, team_id: string) {
+type PromoteUserToRepDto = {
+  team_ids: string[];
+};
+
+export default async function promoteToRep(user_id: string, data: PromoteUserToRepDto): Promise<PromoteUserToRepDto[]> {
   try {
-    const { data: resp } = await axiosInstance.post(`/users/${user_id}/promote/${team_id}`);
+    const { data: resp } = await axiosInstance.patch(`/users/${user_id}/promote`, data);
     return resp;
   } catch (error) {
-    console.error(`Error promoting user ${user_id} to team ${team_id}: ${error}`);
+    console.error(`Error promoting user ${user_id}: ${error}`);
     throw error;
   }
 }

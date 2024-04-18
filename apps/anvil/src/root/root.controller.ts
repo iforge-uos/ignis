@@ -59,8 +59,8 @@ export class RootController {
   }
 
   @Post("agreements")
-  @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
   @IsAdmin()
+  @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
   async createAgreement(@Body() body: CreateAgreementDto) {
     return await this.rootService.createAgreement(body.reason_ids, body.content);
   }
@@ -78,15 +78,15 @@ export class RootController {
   }
 
   @Patch("agreements/:agreement_id")
-  @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
   @IsAdmin()
+  @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
   async updateAgreement(@Param("agreement_id") agreement_id: string, @Body() body: UpdateAgreementDto) {
     return await this.rootService.updateAgreement(agreement_id, body.reason_ids, body.content);
   }
 
   @Get("teams")
-  @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
   @IsRep()
+  @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
   async getTeams() {
     return await this.rootService.getTeams();
   }

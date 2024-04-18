@@ -13,6 +13,7 @@ import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert.tsx
 import { Loader } from "@ui/components/ui/loader.tsx";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { PartialUserWithTeams } from "@ignis/types/users.ts";
 
 export default function SignInDashboard() {
   const queryClient = useQueryClient();
@@ -125,7 +126,7 @@ export default function SignInDashboard() {
                   )}
                   {queuedUsers.length > 0 &&
                     queuedUsers.map((entry) => {
-                      return <SignedInUserCard key={entry.user.id} user={entry.user} />;
+                      return <SignedInUserCard key={entry.user.id} user={entry.user as PartialUserWithTeams} />;
                     })}
                 </div>
               </div>

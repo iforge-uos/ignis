@@ -1,4 +1,4 @@
-import {auth, helper, std, team, users} from "@dbschema/interfaces";
+import { auth, helper, std, users } from "@dbschema/interfaces";
 import { Location } from "./sign_in";
 export type { CreateUserDto, UpdateUserDto } from "@/users/dto/users.dto";
 import type { CalendarDatum } from "@nivo/calendar";
@@ -15,6 +15,17 @@ export type PartialUser = {
   created_at: Date;
   profile_picture?: string | null;
   roles: Omit<auth.Role, "permissions">[];
+};
+
+export type ShortTeam = {
+  id: string;
+  name: string;
+};
+
+export type ShortTeamWithDesc = ShortTeam & { description: string };
+
+export type PartialUserWithTeams = PartialUser & {
+  teams: ShortTeam[];
 };
 
 //** A fairly full user with everything resolved from the database. */
@@ -60,5 +71,5 @@ export type RepStatus = users.RepStatus;
 
 export type Rep = User & {
   status: RepStatus;
-  team: { id: string; name: string };
+  teams: { id: string; name: string }[];
 };

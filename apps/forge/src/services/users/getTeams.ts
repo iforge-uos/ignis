@@ -1,7 +1,7 @@
 import axiosInstance from "@/api/axiosInstance";
-import { team } from "@dbschema/interfaces.ts";
+import { ShortTeamWithDesc } from "@ignis/types/users.ts";
 
-export async function getTeams(): Promise<team.Team[]> {
+export async function getTeams(): Promise<ShortTeamWithDesc[]> {
   try {
     const { data } = await axiosInstance.get("/teams");
     return data;

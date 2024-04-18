@@ -14,6 +14,7 @@ import type {
   CreateUserDto,
   RevokeTrainingDto,
   UpdateUserDto,
+  PromoteUserDto,
 } from "./dto/users.dto";
 import { UsersService } from "./users.service";
 
@@ -116,15 +117,15 @@ export class UsersController {
     return this.usersService.addInfraction(id, data);
   }
 
-  @Patch(":id/promote/:teamid")
+  @Patch(":id/promote")
   @IsAdmin()
-  async promoteUser(@Param("id") id: string, @Param("teamid") teamid: string) {
-    return this.usersService.promoteUserToRep(id, teamid);
+  async promoteUser(@Param("id") id: string, @Body() data: PromoteUserDto) {
+    return this.usersService.promoteUserToRep(id, data.team_ids);
   }
 
   @Get(":id/sign-ins")
   @CheckAbilities(["READ"], "USER")
   async getSignIns(@Param("id") id: string) {
-    return await this.usersService.signInStats(id);
+    return this.usersService.signInStats(id);
   }
 }
