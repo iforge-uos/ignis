@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui/components/ui/tabs
 import * as React from "react";
 import { TeamManagementSection } from "@/components/signin/dashboard/components/SignedInUserCard/subcomponents/TeamManagementSection.tsx";
 import { useAuth } from "@/components/auth-provider";
+import posthog from "posthog-js";
 
 type ManageSections = "Training" | "Infraction" | "Teams";
 
@@ -23,12 +24,6 @@ const sectionHeadings: Record<ManageSections, string> = {
   Teams: "Rep Teams",
 };
 
-const sectionPermissions: Record<ManageSections, string> = {
-  Training: "Rep",
-  Infraction: "Rep",
-  Teams: "Admin",
-};
-
 const sectionComponents: Record<ManageSections, (props: ManageUserWidgetProps) => React.ReactElement> = {
   Training: ({ user, location, onShiftReps }) => (
     <TrainingSection user={user} location={location} onShiftReps={onShiftReps} />
@@ -43,6 +38,19 @@ export const ManageUserWidget: React.FC<ManageUserWidgetProps> = ({ user, locati
   const auth = useAuth();
 
   const roleNames = auth.user?.roles.map((role) => role.name).filter(Boolean) ?? ["Rep"];
+
+  const sectionPermissions: Record<ManageSections, string> = {
+    Training: "Rep",
+    Infraction: "Rep",
+    Teams: "Admin",
+  };
+
+  posthog.onFeatureFlags(() => {
+    // feature flags are guaranteed to be available at this point
+    if (!posthog.isFeatureEnabled("user-promotion-ui")) {
+      sectionPermissions.Teams = "noone";
+    }
+  });
 
   function canUserViewSection(roleNames: string[], section: ManageSections): boolean {
     const requiredRole = sectionPermissions[section];
