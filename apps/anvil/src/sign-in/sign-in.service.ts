@@ -2,13 +2,13 @@ import { EdgeDBService } from "@/edgedb/edgedb.service";
 import { EmailService } from "@/email/email.service";
 import { LdapService } from "@/ldap/ldap.service";
 import { CreateSignInReasonCategoryDto } from "@/root/dto/reason.dto";
+import { ErrorCodes } from "@/shared/constants/ErrorCodes";
 import { sleep } from "@/shared/functions/sleep";
 import { PartialUserProps, UsersService } from "@/users/users.service";
 import { SignInLocationSchema } from "@dbschema/edgedb-zod/modules/sign_in";
 import e from "@dbschema/edgeql-js";
 import { std } from "@dbschema/interfaces";
 import { getUserTrainingForSignIn } from "@dbschema/queries/getUserTrainingForSignIn.query";
-import { ErrorCodes } from "@/shared/constants/ErrorCodes";
 import type { Location, LocationStatus, Training } from "@ignis/types/sign_in";
 import type { PartialUser } from "@ignis/types/users";
 import {
@@ -99,7 +99,7 @@ export class SignInService implements OnModuleInit {
               user: {
                 ...PartialUserProps(user),
                 ...e.is(e.users.Rep, {
-                  teams: { name: true },
+                  teams: { name: true, description: true, id: true },
                 }),
               },
             },

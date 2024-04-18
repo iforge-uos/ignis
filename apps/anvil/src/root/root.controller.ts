@@ -1,11 +1,11 @@
-import { IsAdmin } from "@/auth/authorization/decorators/check-roles-decorator";
+import { IsAdmin, IsRep } from "@/auth/authorization/decorators/check-roles-decorator";
 import { CaslAbilityGuard } from "@/auth/authorization/guards/casl-ability.guard";
 import { EdgeDBService } from "@/edgedb/edgedb.service";
 import { GoogleService } from "@/google/google.service";
 import { User as GetUser } from "@/shared/decorators/user.decorator";
 import { SignInService } from "@/sign-in/sign-in.service";
 import type { User } from "@ignis/types/users";
-import { Body, Controller, Delete, Get, Options, Param, Patch, Post, Query, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Res, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { Response } from "express";
 import { CreateAgreementDto, UpdateAgreementDto } from "./dto/agreement.dto";
@@ -82,6 +82,12 @@ export class RootController {
   @IsAdmin()
   async updateAgreement(@Param("agreement_id") agreement_id: string, @Body() body: UpdateAgreementDto) {
     return await this.rootService.updateAgreement(agreement_id, body.reason_ids, body.content);
+  }
+
+  @Get("teams")
+  @IsRep()
+  async getTeams() {
+    return await this.rootService.getTeams();
   }
 
   @Get("autocomplete")

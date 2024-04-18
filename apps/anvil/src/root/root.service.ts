@@ -127,4 +127,15 @@ export class RootService {
       })),
     );
   }
+
+  async getTeams() {
+    const unassignableTeams = e.set("Staff", "?");
+    return await this.dbService.query(
+      e.select(e.team.Team, (team) => ({
+        name: true,
+        description: true,
+        filter: e.op(team.name, "not in", unassignableTeams),
+      })),
+    );
+  }
 }
