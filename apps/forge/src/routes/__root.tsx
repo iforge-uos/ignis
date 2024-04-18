@@ -7,6 +7,7 @@ import { AuthContext } from "@/components/auth-provider";
 import { NotFound } from "@/components/routing/NotFound.tsx";
 import { GenericError } from "@/components/routing/GenericError.tsx";
 import { Loading } from "@/components/routing/Loading.tsx";
+import { TailwindIndicator } from "@/components/dev/Tailwind-Indicator.tsx";
 
 const TanStackRouterDevtools =
   process.env.NODE_ENV === "production"
@@ -22,6 +23,7 @@ function RootComponent() {
   return (
     <>
       <NavBar />
+      <TailwindIndicator />
       <ScrollRestoration />
       <CommandMenu />
       <Outlet /> {/* This is where child routes will render */}

@@ -409,7 +409,7 @@ const SignInAppComponent = () => {
     items.push(
       {
         title: "Purchase Form",
-        description: "Discover the beauty of thoughtful and functional design.",
+        description: "Add Items that need to be purchased to the list via the purchase form!",
         icon: <Coins className="h-8 w-8 text-neutral-500" />,
         linkText: "Buy",
         externalLink:
@@ -430,28 +430,32 @@ const SignInAppComponent = () => {
       <Title prompt="Signin App Home" />
       <div className="p-4 mt-1">
         <ActiveLocationSelector />
-        <div className="border-2 p-4">
+        <div className="border-2 rounded-md p-4">
           <h1 className="text-xl font-bold mb-4 text-center">Sign in Home</h1>
-          <div className="flex flex-wrap-reverse">
-            <div className="w-1/2">
-              <div className="aspect-[1/1]">
+          <div className="flex flex-col-reverse md:flex-row">
+            <div className="md:w-1/2 flex justify-center items-center p-4">
+              <div className="aspect-square relative w-full h-full">
                 <World data={sampleArcs} globeConfig={globeConfig} />
               </div>
             </div>
-            <div className="w-1/2 justify-items-center">
-              <div className="space-x-1 space-y-1 grid grid-cols-1 gap-4">
+            <div className="md:w-1/2 flex justify-center items-center">
+              <div className="grid grid-cols-1 gap-4 mx-auto">
+                {" "}
+                {/* Use mx-auto for horizontal centering */}
                 {items.map((item) => (
-                  <Card className="max-w-xl">
+                  <Card key={item.title} className="shadow-md rounded-md p-4 max-w-md">
                     <CardHeader>
-                      <CardTitle className="flex flex-wrap">
+                      <CardTitle className="flex items-center">
+                        {" "}
+                        {/* Use items-center for vertical alignment */}
                         {item.icon}
-                        <span className={"ml-2"}>{item.title}</span>
+                        <span className="ml-2">{item.title}</span>
                       </CardTitle>
                     </CardHeader>
-                    <CardContent>{item.description}</CardContent>
+                    <CardContent className="text-balance">{item.description}</CardContent>
                     <CardFooter>
                       <a href={item.externalLink} target="_blank" rel="noopener noreferrer">
-                        <Button>{item.linkText}</Button>
+                        <Button>{item.title}</Button>
                       </a>
                     </CardFooter>
                   </Card>
