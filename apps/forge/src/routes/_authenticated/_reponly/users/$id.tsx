@@ -10,9 +10,10 @@ import { Training } from "@ignis/types/users.ts";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { Badge } from "@ui/components/ui/badge.tsx";
+import { Loader } from "@ui/components/ui/loader";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@ui/components/ui/table.tsx";
 import { isAxiosError } from "axios";
-import { Check, Loader, X } from "lucide-react";
+import { Check, X } from "lucide-react";
 
 async function getData(id: string) {
   const [user, trainings, signIns] = await Promise.all([getUser(id), getUserTraining(id), getUserSignIns(id)]);
