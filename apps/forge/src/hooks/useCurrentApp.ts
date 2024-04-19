@@ -8,7 +8,7 @@ const useCurrentApp = (): Apps | undefined => {
   const [currentApp, setCurrentApp] = useState<Apps | undefined>(undefined);
   const matchRoute = useMatchRoute();
 
-  const routerChanged = useRouterState().isTransitioning;
+  const routerChanged = useRouterState().resolvedLocation.pathname;
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: Needed to include router state or else this doesn't update quick enough (side effect is it updates too much)>
   useEffect(() => {
@@ -16,6 +16,7 @@ const useCurrentApp = (): Apps | undefined => {
       const route = routeSegment as appRoutes;
       const match = matchRoute({ to: `/${route}`, fuzzy: true });
       if (match) {
+        console.log("updating");
         setCurrentApp(app);
         return; // Stop the loop once a match is found
       }
