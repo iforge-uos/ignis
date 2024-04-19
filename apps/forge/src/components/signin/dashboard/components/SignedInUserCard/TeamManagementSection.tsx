@@ -1,8 +1,8 @@
 import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ManageUserWidgetProps } from "@/components/signin/dashboard/components/SignedInUserCard/subcomponents/ManageUserWidget.tsx";
+import { ManageUserWidgetProps } from "@/components/signin/dashboard/components/SignedInUserCard/ManageUserWidget.tsx";
 import { getTeams } from "@/services/users/getTeams.ts";
-import MultiSelectFormField from "@ui/components/ui/multi-select";
+import MultiSelectFormField from "@ui/components/ui/multi-select.tsx";
 import { Loader } from "@ui/components/ui/loader.tsx";
 import { toast } from "sonner";
 import { Button } from "@ui/components/ui/button.tsx";

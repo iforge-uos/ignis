@@ -1,10 +1,10 @@
-import { InfractionSection } from "@/components/signin/dashboard/components/SignedInUserCard/subcomponents/InfractionSection.tsx";
-import { TrainingSection } from "@/components/signin/dashboard/components/SignedInUserCard/subcomponents/TrainingSection.tsx";
+import { InfractionSection } from "@/components/signin/dashboard/components/SignedInUserCard/InfractionSection.tsx";
+import { TrainingSection } from "@/components/signin/dashboard/components/SignedInUserCard/TrainingSection.tsx";
 import type { Location } from "@ignis/types/sign_in.ts";
 import { PartialUserWithTeams } from "@ignis/types/users.ts";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui/components/ui/tabs.tsx";
 import * as React from "react";
-import { TeamManagementSection } from "@/components/signin/dashboard/components/SignedInUserCard/subcomponents/TeamManagementSection.tsx";
+import { TeamManagementSection } from "@/components/signin/dashboard/components/SignedInUserCard/TeamManagementSection.tsx";
 import { useAuth } from "@/components/auth-provider";
 import posthog from "posthog-js";
 
