@@ -1,9 +1,10 @@
 import { UserAvatar } from "@/components/avatar";
-import { getGravatarUrl, useUser } from "@/lib/utils";
+import { useUser } from "@/lib/utils";
 import { RootState } from "@/redux/store";
 import { Link } from "@tanstack/react-router";
-import { Avatar, AvatarFallback, AvatarImage } from "@ui/components/ui/avatar";
 import { Button } from "@ui/components/ui/button";
+import { Badge } from "@ui/components/ui/badge";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +25,8 @@ export function UserNav() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.is_authenticated);
   const user = useUser();
 
+  const isAdmin = user?.roles.some((role) => role.name === "Admin");
+
   if (isAuthenticated && user && isString(user.email) && isString(user.display_name)) {
     return (
       <DropdownMenu>
@@ -34,9 +37,14 @@ export function UserNav() {
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56" align="end" forceMount>
           <DropdownMenuLabel className="font-normal">
-            <div className="flex flex-col space-y-1">
+            <div className="flex flex-col space-y-1.5">
               <p className="text-sm font-medium leading-none">{user.display_name}</p>
-              <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+              <p className="text-xs leading-none text-muted-foreground">{user.email}@sheffield.ac.uk</p>
+              <div className="flex-wrap flex gap-2">
+                {user.roles.map((role) => (
+                  <Badge className="">{role.name}</Badge>
+                ))}
+              </div>
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
@@ -54,6 +62,19 @@ export function UserNav() {
               </DropdownMenuItem>
             </Link>
           </DropdownMenuGroup>
+          {isAdmin && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <Link to="/admin/dashboard">
+                  <DropdownMenuItem>
+                    Admin Dashboard
+                    <DropdownMenuShortcut>⇧⌘D</DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                </Link>
+              </DropdownMenuGroup>
+            </>
+          )}
           <DropdownMenuSeparator />
           <Link to="auth/logout">
             <DropdownMenuItem>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { AppLink } from "@/components/navbar/appNav/appLinks.ts";
+import { AppLink } from "@/config/appLinks.ts";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { Button } from "@ui/components/ui/button.tsx";
 
@@ -16,8 +16,8 @@ const DropdownLink: React.FC<DropdownLinkProps> = ({ link, onClick, activeId }) 
     const isActive = linkItem.id === activeId;
 
     // Link styles
-    const linkClasses = `block px-4 py-2 text-sm rounded-md text-card-foreground hover:bg-accent ${
-      isActive ? "border-2 border-accent" : ""
+    const linkClasses = `block p-2 text-sm rounded-md font-medium text-card-foreground hover:bg-accent/40 ${
+      isActive ? "border-2 border-accent/40" : ""
     }`;
 
     // Function to handle link click
@@ -52,7 +52,7 @@ const DropdownLink: React.FC<DropdownLinkProps> = ({ link, onClick, activeId }) 
           <DropdownMenu.Content
             align="start"
             sideOffset={5}
-            className="bg-card shadow-lg rounded-md border border-gray-200 z-50"
+            className="bg-card shadow-lg rounded-md border border-accent/40 z-50"
           >
             {/* Children links */}
             {linkItem.children!.map((child) => renderLink(child, level + 1))}
@@ -78,7 +78,7 @@ const DropdownLink: React.FC<DropdownLinkProps> = ({ link, onClick, activeId }) 
       <DropdownMenu.Item key={linkItem.id} asChild>
         <Link
           to={linkItem.path ?? "#"}
-          className={linkClasses}
+          className={`${linkClasses} p-3`}
           onClick={(event) =>
             handleLinkClick(
               event as unknown as React.MouseEvent<HTMLAnchorElement, MouseEvent>,

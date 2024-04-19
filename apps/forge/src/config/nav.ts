@@ -11,4 +11,5 @@ export const appNavMapping: AppNavMapping = {
   users: "User",
   printing: "Printing",
   signin: "Sign In",
+  admin: "Admin",
 };

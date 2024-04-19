@@ -313,8 +313,8 @@ importers:
         specifier: ^5.29.2
         version: 5.29.2(@tanstack/react-query@5.29.2(react@18.2.0))(react@18.2.0)
       '@tanstack/react-router':
-        specifier: ^1.28.8
-        version: 1.28.8(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^1.28.9
+        version: 1.28.9(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@tanstack/react-table':
         specifier: ^8.16.0
         version: 8.16.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -340,8 +340,8 @@ importers:
         specifier: ^3.6.0
         version: 3.6.0
       framer-motion:
-        specifier: ^11.1.5
-        version: 11.1.5(@emotion/is-prop-valid@0.8.8)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^11.1.7
+        version: 11.1.7(@emotion/is-prop-valid@0.8.8)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       fuse.js:
         specifier: ^7.0.0
         version: 7.0.0
@@ -412,8 +412,8 @@ importers:
         specifier: ^1.4.41
         version: 1.4.41(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       tailwind-merge:
-        specifier: ^2.2.2
-        version: 2.2.2
+        specifier: ^2.3.0
+        version: 2.3.0
       tailwindcss:
         specifier: ^3.4.3
         version: 3.4.3(ts-node@10.9.2(@swc/core@1.4.16(@swc/helpers@0.5.5))(@types/node@20.12.7)(typescript@5.4.5))
@@ -3246,8 +3246,8 @@ packages:
     resolution: {integrity: sha512-rjtAlYC/XfH0/nI9Cr/MX9thbajfOC97je36beXpzWDVQHpdyRUyrY1gdSjvT7DnfZyRB6l03cYDq3Dh2C4PKw==}
     engines: {node: '>=12'}
 
-  '@tanstack/history@1.28.8':
-    resolution: {integrity: sha512-rBruye0vfgA3IHIEiRegusQQvbbPL9xJWmnw1bRww9b3Z3M9UDV8dCBDjlMaf20PXfJgfezPuyeWhkx9C6UnRA==}
+  '@tanstack/history@1.28.9':
+    resolution: {integrity: sha512-WgTFJhHaZnGZPyt0H11xFhGGDj1MtA1mrUmdAjB/nhVpmsAYXsSB5O+hkF9N66u7MjbNb405wTb9diBsztvI5w==}
     engines: {node: '>=12'}
 
   '@tanstack/query-core@5.29.0':
@@ -3274,8 +3274,8 @@ packages:
       react: '>=16'
       react-dom: '>=16'
 
-  '@tanstack/react-router@1.28.8':
-    resolution: {integrity: sha512-uc1Y8byL0nVG3nDAf0LuHHurvEDpHyGoWYTUliyXpXeIgQXtNkji7d0/z03pJo/R1YAWPBpQR9jDFIBiC0LbGQ==}
+  '@tanstack/react-router@1.28.9':
+    resolution: {integrity: sha512-pwfLNHCsWg4qRZVnTidRcTWx16EAZBZr/fQAB5R5PZLpHTFKFozv64Jhi4SN7GLwhRqMoXpwiUDj1JJ+A5K1zA==}
     engines: {node: '>=12'}
     peerDependencies:
       react: '>=16.8'
@@ -5593,8 +5593,8 @@ packages:
       react-dom:
         optional: true
 
-  framer-motion@11.1.5:
-    resolution: {integrity: sha512-ogK5fc0GBUT3AjzMXPx7f74m5V1ByRqkKQARBVHpdkYTNDxb/WriANYD+5JBo1wklQQJ1HayDZtmofQLqZFcbw==}
+  framer-motion@11.1.7:
+    resolution: {integrity: sha512-cW11Pu53eDAXUEhv5hEiWuIXWhfkbV32PlgVISn7jRdcAiVrJ1S03YQQ0/DzoswGYYwKi4qYmHHjCzAH52eSdQ==}
     peerDependencies:
       '@emotion/is-prop-valid': '*'
       react: ^18.0.0
@@ -8698,6 +8698,9 @@ packages:
 
   tailwind-merge@2.2.2:
     resolution: {integrity: sha512-tWANXsnmJzgw6mQ07nE3aCDkCK4QdT3ThPMCzawoYA2Pws7vSTCvz3Vrjg61jVUGfFZPJzxEP+NimbcW+EdaDw==}
+
+  tailwind-merge@2.3.0:
+    resolution: {integrity: sha512-vkYrLpIP+lgR0tQCG6AP7zZXCTLc1Lnv/CCRT3BqJ9CZ3ui2++GPaGb1x/ILsINIMSYqqvrpqjUFsMNLlW99EA==}
 
   tailwindcss-animate@1.0.7:
     resolution: {integrity: sha512-bl6mpH3T7I3UFxuvDEXLxy/VuFxBk5bbzplh7tXI68mwMokNYd1t9qPBHlnyTwfa4JGC4zP516I1hYYtQ/vspA==}
@@ -12707,7 +12710,7 @@ snapshots:
 
   '@tanstack/history@1.0.0': {}
 
-  '@tanstack/history@1.28.8': {}
+  '@tanstack/history@1.28.9': {}
 
   '@tanstack/query-core@5.29.0': {}
 
@@ -12735,9 +12738,9 @@ snapshots:
       tiny-invariant: 1.3.3
       tiny-warning: 1.0.3
 
-  '@tanstack/react-router@1.28.8(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+  '@tanstack/react-router@1.28.9(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
-      '@tanstack/history': 1.28.8
+      '@tanstack/history': 1.28.9
       '@tanstack/react-store': 0.2.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
@@ -15635,7 +15638,7 @@ snapshots:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
 
-  framer-motion@11.1.5(@emotion/is-prop-valid@0.8.8)(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+  framer-motion@11.1.7(@emotion/is-prop-valid@0.8.8)(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
       tslib: 2.6.2
     optionalDependencies:
@@ -19748,6 +19751,10 @@ snapshots:
       tslib: 2.6.2
 
   tailwind-merge@2.2.2:
+    dependencies:
+      '@babel/runtime': 7.24.4
+
+  tailwind-merge@2.3.0:
     dependencies:
       '@babel/runtime': 7.24.4
 
