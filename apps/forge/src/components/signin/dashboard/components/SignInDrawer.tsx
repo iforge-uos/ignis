@@ -1,6 +1,6 @@
 import { SignedInUserCard } from "@/components/signin/dashboard/components/SignedInUserCard";
 import type { SignInEntry } from "@ignis/types/sign_in.ts";
-import { PartialUser } from "@ignis/types/users.ts";
+import { PartialUserWithTeams } from "@ignis/types/users.ts";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
 import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert.tsx";
 import { Button } from "@ui/components/ui/button.tsx";
@@ -12,12 +12,20 @@ import { FC, useState } from "react";
 interface SignInDrawerProps {
   title: string;
   entries: SignInEntry[];
-  onShiftReps: PartialUser[];
+  onShiftReps: PartialUserWithTeams[];
   onSignOut: (user_id: string) => void;
   startExpanded?: boolean;
+  isAdmin?: boolean;
 }
 
-export const SignInDrawer: FC<SignInDrawerProps> = ({ title, entries, startExpanded, onSignOut, onShiftReps }) => {
+export const SignInDrawer: FC<SignInDrawerProps> = ({
+  title,
+  entries,
+  startExpanded,
+  onSignOut,
+  onShiftReps,
+  isAdmin = false,
+}) => {
   const [isOpen, setIsOpen] = useState(startExpanded);
 
   const toggleOpen = () => setIsOpen(!isOpen);
@@ -65,12 +73,13 @@ export const SignInDrawer: FC<SignInDrawerProps> = ({ title, entries, startExpan
               {entries.map((entry) => (
                 <SignedInUserCard
                   key={entry.user.id}
-                  user={entry.user}
+                  user={entry.user as PartialUserWithTeams}
                   tools={entry.tools}
                   reason={entry.reason}
                   timeIn={entry.created_at}
                   onSignOut={() => onSignOut(entry.user.id)}
                   onShiftReps={onShiftReps}
+                  isAdmin={isAdmin}
                 />
               ))}
             </div>

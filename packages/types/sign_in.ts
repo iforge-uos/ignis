@@ -20,7 +20,7 @@ export type PartialReason = {
 };
 export type SignInEntry = {
   id: string;
-  user: users.PartialUser & { teams?: { name: string; description: string; id: string }[] };
+  user: users.PartialUserWithTeams;
   reason: PartialReason;
   tools: string[];
   ends_at: Date | null;

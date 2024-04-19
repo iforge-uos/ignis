@@ -33,14 +33,14 @@
         --radius: 0.5rem;
 
         /* shadcn Warnings and Colors (Generated from https://ui.jln.dev/feedback-colors-generator-for-shadcn-ui */
-        --destructive: 3 45% 69%;
-        --destructive-foreground: 3 45% 9%;
-        --success: 101 45% 69%;
-        --success-foreground: 101 45% 9%;
-        --warning: 33 45% 69%;
-        --warning-foreground: 33 45% 9%;
-        --info: 220 45% 69%;
-        --info-foreground: 220 45% 9%;
+        --destructive: 1 67% 88%;
+        --destructive-foreground: 1 67% 28%;
+        --success: 156 67% 88%;
+        --success-foreground: 156 67% 8%;
+        --warning: 41 67% 88%;
+        --warning-foreground: 41 67% 8%;
+        --info: 209 67% 88%;
+        --info-foreground: 209 67% 28%;
 
         --font-sans: Roboto, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 

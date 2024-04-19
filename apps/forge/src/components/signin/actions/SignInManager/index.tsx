@@ -212,7 +212,7 @@ const SignInActionsManager: React.FC<SignInManagerProps> = ({ initialFlow }) => 
 
         {!currentFlow && (
           <div className="flex flex-1 items-center justify-center">
-            <div className="p-6 space-y-4 w-full max-w-2xl  rounded-xl shadow-lg">
+            <div className="p-6 space-y-4 w-full max-w-2xl rounded-xl shadow-lg bg-card text-card-foreground">
               <div className="grid grid-cols-2 gap-10">
                 <Button variant="default" className="h-20" onClick={() => startFlow(FlowType.SignIn)}>
                   Start Sign In

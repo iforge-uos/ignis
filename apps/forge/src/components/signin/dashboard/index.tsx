@@ -14,6 +14,7 @@ import { Loader } from "@ui/components/ui/loader.tsx";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { PartialUserWithTeams } from "@ignis/types/users.ts";
+import { useAuth } from "@/components/auth-provider";
 
 export default function SignInDashboard() {
   const queryClient = useQueryClient();
@@ -22,6 +23,9 @@ export default function SignInDashboard() {
   const [queuedUsers, setQueuedUsers] = useState<QueueEntry[]>([]);
   const [signedInReps, setSignedInReps] = useState<SignInEntry[]>([]);
   const [signInOffShiftReps, setSignInOffShiftReps] = useState<SignInEntry[]>([]);
+  const auth = useAuth();
+
+  const isUserAdmin = !!auth.user?.roles.find((role) => role.name === "Admin");
 
   const handleRemoveSignedInUser = (userId: string) => {
     setSignedInUsers((currentUsers) => currentUsers.filter((user) => user.user.id !== userId));
@@ -94,6 +98,7 @@ export default function SignInDashboard() {
                   entries={signedInReps}
                   onShiftReps={onShiftReps}
                   startExpanded={true}
+                  isAdmin={isUserAdmin}
                 />
               </div>
               <div id="off-shift-rep-signin-shelf" className="flex-1 border-b-2 pb-5">
@@ -103,6 +108,7 @@ export default function SignInDashboard() {
                   entries={signInOffShiftReps}
                   onShiftReps={onShiftReps}
                   startExpanded={false}
+                  isAdmin={isUserAdmin}
                 />
               </div>
               <div id="user-signin-shelf" className="mt-4 flex-1 border-b-2 pb-5">
@@ -112,6 +118,7 @@ export default function SignInDashboard() {
                   entries={signedInUsers}
                   onShiftReps={onShiftReps}
                   startExpanded={true}
+                  isAdmin={isUserAdmin}
                 />
               </div>
               <div id="queue-shelf" className="mt-4 flex-1">
