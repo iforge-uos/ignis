@@ -110,9 +110,8 @@ export default function Component() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {/* sorting stably is for losers */}
                   {trainings
-                    .sort((a, b) => (a.name < b.name ? -1 : 1))
+                    .sort((a, b) => a.name.localeCompare(b.name))
                     .map((training) =>
                       training["@created_at"] ? (
                         <TableRow>

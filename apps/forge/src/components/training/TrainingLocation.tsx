@@ -57,6 +57,7 @@ export default function TrainingLocation({ location, img, optionalTrainingText }
     },
     { compulsory: [] as PartialTrainingWithStatus[], not_compulsory: [] as PartialTrainingWithStatus[] },
   );
+
   return (
     <>
       <Title prompt={`${name} Training`} />
@@ -83,9 +84,11 @@ export default function TrainingLocation({ location, img, optionalTrainingText }
               </div>
             </div>
             <div className="grid gap-4 align-middle w-full grid-cols-1 items-stretch justify-center md:grid-cols-2 lg:grid-cols-3">
-              {compulsory.map((training) => (
-                <TrainingCourseCard training={training} isRep={isRep} />
-              ))}
+              {compulsory
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((training) => (
+                  <TrainingCourseCard training={training} isRep={isRep} />
+                ))}
             </div>
           </div>
         </div>
@@ -103,9 +106,11 @@ export default function TrainingLocation({ location, img, optionalTrainingText }
               </div>
             </div>
             <div className="grid gap-4 align-middle w-full grid-cols-1 items-stretch justify-center md:grid-cols-2 lg:grid-cols-3">
-              {not_compulsory.map((training) => (
-                <TrainingCourseCard training={training} isRep={isRep} />
-              ))}
+              {not_compulsory
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((training) => (
+                  <TrainingCourseCard training={training} isRep={isRep} />
+                ))}
             </div>
           </div>
         </div>
