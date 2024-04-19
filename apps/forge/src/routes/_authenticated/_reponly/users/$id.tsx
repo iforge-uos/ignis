@@ -15,9 +15,7 @@ import { isAxiosError } from "axios";
 import { Check, Loader, X } from "lucide-react";
 
 async function getData(id: string) {
-  const user = await getUser(id);
-  const trainings = await getUserTraining(id);
-  const signIns = await getUserSignIns(id);
+  const [user, trainings, signIns] = await Promise.all([getUser(id), getUserTraining(id), getUserSignIns(id)]);
   return {
     user,
     trainings,
