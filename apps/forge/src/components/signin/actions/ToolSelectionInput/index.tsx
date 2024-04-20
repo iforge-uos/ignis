@@ -133,7 +133,7 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
     }
   };
 
-  const userHasCompulsoryTraining = trainingMap.DISABLED.some((training) => training.compulsory);
+  const userHasCompulsoryTraining = !trainingMap.DISABLED.some((training) => training.compulsory);
 
   const toolSelectionDisplay = (
     <>
