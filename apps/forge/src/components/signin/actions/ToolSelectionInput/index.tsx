@@ -151,7 +151,7 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
           title="Selectable Training"
           trainings={trainingMap.SELECTABLE}
           selectable={true}
-          userHasRequiredTraining={userHasCompulsoryTraining}
+          userHasCompulsoryTraining={userHasCompulsoryTraining}
           onTrainingSelect={handleOnTrainingSelect}
           toolTipContent="Tools that the user has training for, and reps are trained on the tool"
         />
