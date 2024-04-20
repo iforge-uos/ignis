@@ -13,7 +13,6 @@ interface ToolSelectionListProps {
   title: string;
   toolTipContent: string;
   selectable?: boolean;
-  userHasCompulsoryTraining?: boolean;
   onTrainingSelect?: (selectedTrainings: Training[]) => void;
 }
 
@@ -22,7 +21,6 @@ const TrainingSelectionList: React.FC<ToolSelectionListProps> = ({
   title,
   toolTipContent,
   selectable,
-  userHasCompulsoryTraining,
   onTrainingSelect,
 }) => {
   const [selectedTrainings, setSelectedTrainings] = useState<string[]>([]);
@@ -70,12 +68,6 @@ const TrainingSelectionList: React.FC<ToolSelectionListProps> = ({
             <ExclamationTriangleIcon className="h-4 w-4" />
             <AlertTitle>Warning</AlertTitle>
             <AlertDescription>No training available to select.</AlertDescription>
-          </Alert>
-        ) : userHasCompulsoryTraining === false ? (
-          <Alert variant="default">
-            <ExclamationTriangleIcon className="h-4 w-4" />
-            <AlertTitle>Warning</AlertTitle>
-            <AlertDescription>Compulsory trainings have not been completed.</AlertDescription>
           </Alert>
         ) : (
           trainings.map((training) => (

@@ -6,7 +6,9 @@ import { signinActions } from "@/redux/signin.slice.ts";
 import { AppDispatch, AppRootState } from "@/redux/store.ts";
 import { GetSignIn, GetSignInProps } from "@/services/signin/signInService.ts";
 import { Training, User } from "@ignis/types/sign_in.ts";
+import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { useQuery } from "@tanstack/react-query";
+import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert";
 import { Button } from "@ui/components/ui/button.tsx";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card.tsx";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@ui/components/ui/collapsible.tsx";
@@ -147,26 +149,35 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
             </Button>
           </CollapsibleTrigger>
         </div>
-        <ToolSelectionList // TODO honestly think this is best as a single list but with symbols for selectiblity, then we can have fulltextsearch
-          title="Selectable Training"
-          trainings={trainingMap.SELECTABLE}
-          selectable={true}
-          userHasCompulsoryTraining={userHasCompulsoryTraining}
-          onTrainingSelect={handleOnTrainingSelect}
-          toolTipContent="Tools that the user has training for, and reps are trained on the tool"
-        />
-        <CollapsibleContent className="space-y-2">
-          <ToolSelectionList
-            title="Un-selectable Training"
-            trainings={trainingMap.UNSELECTABLE}
-            toolTipContent="Tools that the user has training for, but reps are not trained on the tool"
-          />
-          <ToolSelectionList
-            title="Un-acquired Training"
-            trainings={trainingMap.DISABLED}
-            toolTipContent="Tools the user aren't trained to use"
-          />
-        </CollapsibleContent>
+        {userHasCompulsoryTraining ? (
+          <>
+            <ToolSelectionList // TODO honestly think this is best as a single list but with symbols for selectiblity, then we can have fulltextsearch
+              title="Selectable Training"
+              trainings={trainingMap.SELECTABLE}
+              selectable={true}
+              onTrainingSelect={handleOnTrainingSelect}
+              toolTipContent="Tools that the user has training for, and reps are trained on the tool"
+            />
+            <CollapsibleContent className="space-y-2">
+              <ToolSelectionList
+                title="Un-selectable Training"
+                trainings={trainingMap.UNSELECTABLE}
+                toolTipContent="Tools that the user has training for, but reps are not trained on the tool"
+              />
+              <ToolSelectionList
+                title="Un-acquired Training"
+                trainings={trainingMap.DISABLED}
+                toolTipContent="Tools the user aren't trained to use"
+              />{" "}
+            </CollapsibleContent>
+          </>
+        ) : (
+          <Alert variant="default">
+            <ExclamationTriangleIcon className="h-4 w-4" />
+            <AlertTitle>Warning</AlertTitle>
+            <AlertDescription>Compulsory trainings have not been completed.</AlertDescription>
+          </Alert>
+        )}
       </Collapsible>
     </>
   );
