@@ -135,7 +135,8 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
     }
   };
 
-  const userHasCompulsoryTraining = !trainingMap.DISABLED.some((training) => training.compulsory);
+  const missingCompulsoryTraining = trainingMap.DISABLED.filter((training) => training.compulsory);
+  const userHasCompulsoryTraining = missingCompulsoryTraining.length === 0;
 
   const toolSelectionDisplay = (
     <>
@@ -149,8 +150,8 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
             </Button>
           </CollapsibleTrigger>
         </div>
-        {userHasCompulsoryTraining ? (
-          <>
+        <>
+          {userHasCompulsoryTraining ? (
             <ToolSelectionList // TODO honestly think this is best as a single list but with symbols for selectiblity, then we can have fulltextsearch
               title="Selectable Training"
               trainings={trainingMap.SELECTABLE}
@@ -158,26 +159,30 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
               onTrainingSelect={handleOnTrainingSelect}
               toolTipContent="Tools that the user has training for, and reps are trained on the tool"
             />
-            <CollapsibleContent className="space-y-2">
-              <ToolSelectionList
-                title="Un-selectable Training"
-                trainings={trainingMap.UNSELECTABLE}
-                toolTipContent="Tools that the user has training for, but reps are not trained on the tool"
-              />
-              <ToolSelectionList
-                title="Un-acquired Training"
-                trainings={trainingMap.DISABLED}
-                toolTipContent="Tools the user aren't trained to use"
-              />{" "}
-            </CollapsibleContent>
-          </>
-        ) : (
-          <Alert variant="default">
-            <ExclamationTriangleIcon className="h-4 w-4" />
-            <AlertTitle>Warning</AlertTitle>
-            <AlertDescription>Compulsory trainings have not been completed.</AlertDescription>
-          </Alert>
-        )}
+          ) : (
+            <Alert variant="default">
+              <ExclamationTriangleIcon className="h-4 w-4" />
+              <AlertTitle>Warning</AlertTitle>
+              <AlertDescription>
+                Compulsory training {missingCompulsoryTraining.map((training) => `"${training.name}"`).join(", ")} has
+                not been completed.
+              </AlertDescription>
+            </Alert>
+          )}
+          <CollapsibleContent className="space-y-2">
+            <ToolSelectionList
+              title="Un-selectable Training"
+              trainings={trainingMap.UNSELECTABLE}
+              toolTipContent="Tools that the user has training for, but reps are not trained on the tool"
+            />
+            <ToolSelectionList
+              title="Un-acquired Training"
+              trainings={trainingMap.DISABLED}
+              toolTipContent="Tools the user aren't trained to use"
+            />{" "}
+          </CollapsibleContent>
+        </>
+        )
       </Collapsible>
     </>
   );
