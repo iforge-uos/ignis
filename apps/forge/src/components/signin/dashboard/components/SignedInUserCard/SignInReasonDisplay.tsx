@@ -20,11 +20,9 @@ export const SignInReasonDisplay: React.FC<SignInReasonDisplayProps> = ({ tools,
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Badge variant="default" className="max-w-48 rounded-sm shadow-lg">
-                    <div className="flex">
-                      {<Category category={reason.category} className="mr-1" />}
-                      {reason.category === "UNIVERSITY_MODULE" ? reason.name.split(" ")[0] : reason.name}
-                    </div>
+                  <Badge variant="default" className="max-w-48 rounded-sm shadow-lg flex items-center">
+                    {<Category category={reason.category} className="mr-1" />}
+                    {reason.category === "UNIVERSITY_MODULE" ? reason.name.split(" ")[0] : reason.name}
                   </Badge>
                 </TooltipTrigger>
                 <TooltipContent>{reason.name}</TooltipContent>
