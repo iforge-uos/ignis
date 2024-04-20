@@ -1,10 +1,10 @@
-import * as React from "react";
-import { useQuery } from "@tanstack/react-query";
+import TeamIcon from "@/components/icons/Team";
 import { ManageUserWidgetProps } from "@/components/signin/dashboard/components/SignedInUserCard/ManageUserWidget.tsx";
 import { getTeams } from "@/services/users/getTeams.ts";
-import MultiSelectFormField from "@ui/components/ui/multi-select.tsx";
-import { Loader } from "@ui/components/ui/loader.tsx";
-import { toast } from "sonner";
+import promoteToRep from "@/services/users/promoteToRep.ts";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ShortTeam } from "@ignis/types/users.ts";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@ui/components/ui/button.tsx";
 import {
   Form,
@@ -15,12 +15,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@ui/components/ui/form.tsx";
+import { Loader } from "@ui/components/ui/loader.tsx";
+import MultiSelectFormField from "@ui/components/ui/multi-select.tsx";
+import * as React from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 import { z } from "zod";
-import { ShortTeam } from "@ignis/types/users.ts";
-import TeamIcon from "@/components/signin/dashboard/components/TeamIcon.tsx";
-import promoteToRep from "@/services/users/promoteToRep.ts";
 
 const FormSchema = z.object({
   teams: z.array(z.string()).min(1).nonempty("Please select at least one team."),

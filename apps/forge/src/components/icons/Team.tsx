@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import * as React from "react";
 
-export default function TeamIcon({ team, ...props }: { team: string } & React.ComponentProps<LucideIcon>) {
+export default function Team({ team, ...props }: { team: string } & React.ComponentProps<LucideIcon>) {
   switch (removeSuffix(team, "Team").trim()) {
     case "IT":
       return <Computer {...props} />;
@@ -49,3 +49,5 @@ export default function TeamIcon({ team, ...props }: { team: string } & React.Co
       throw new Error("Sorry your team has been forgotten about... cry harder");
   }
 }
+
+export const TeamIcon = Team;

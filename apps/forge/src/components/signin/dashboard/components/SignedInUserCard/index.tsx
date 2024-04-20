@@ -1,7 +1,10 @@
 import { UserAvatar } from "@/components/avatar";
+import { TeamIcon } from "@/components/icons/Team";
+import { AdminDisplay } from "@/components/signin/dashboard/components/SignedInUserCard/AdminDisplay.tsx";
 import { ManageUserWidget } from "@/components/signin/dashboard/components/SignedInUserCard/ManageUserWidget.tsx";
 import { SignInReasonDisplay } from "@/components/signin/dashboard/components/SignedInUserCard/SignInReasonDisplay.tsx";
-import TeamIcon from "@/components/signin/dashboard/components/TeamIcon.tsx";
+import { TimeDisplay } from "@/components/signin/dashboard/components/SignedInUserCard/TimeDisplay.tsx";
+import { iForgeEpoch } from "@/config/constants.ts";
 import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants.ts";
 import { AppRootState } from "@/redux/store.ts";
 import { PostSignOut, PostSignOutProps } from "@/services/signin/signInService.ts";
@@ -18,9 +21,6 @@ import { LogOut, Plus } from "lucide-react";
 import * as React from "react";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
-import { AdminDisplay } from "@/components/signin/dashboard/components/SignedInUserCard/AdminDisplay.tsx";
-import { TimeDisplay } from "@/components/signin/dashboard/components/SignedInUserCard/TimeDisplay.tsx";
-import { iForgeEpoch } from "@/config/constants.ts";
 
 interface SignInUserCardProps {
   user: PartialUserWithTeams;

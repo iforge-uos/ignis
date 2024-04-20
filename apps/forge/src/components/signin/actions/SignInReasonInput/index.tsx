@@ -1,18 +1,17 @@
+import { ErrorDisplayProps, errorDisplay } from "@/components/errors/ErrorDisplay";
+import { Category } from "@/components/icons/SignInReason";
 import { FlowStepComponent } from "@/components/signin/actions/SignInManager/types";
 import { signinActions } from "@/redux/signin.slice.ts";
 import { AppDispatch, AppRootState } from "@/redux/store";
 import { useSignInReasons } from "@/services/signin/signInReasonService";
-import type { Reason, ReasonCategory } from "@ignis/types/sign_in";
+import type { Reason } from "@ignis/types/sign_in";
 import { Button } from "@ui/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card";
 import { Input } from "@ui/components/ui/input";
 import { Loader } from "@ui/components/ui/loader";
 import Fuse from "fuse.js";
-import { Bot, Crown, GraduationCap, HelpCircle, PartyPopper, Rocket, UserRound } from "lucide-react";
-import memoizeOne from "memoize-one";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { errorDisplay, ErrorDisplayProps } from "@/components/errors/ErrorDisplay";
 
 const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const [inputValue, setInputValue] = useState<string>("");
@@ -42,7 +41,7 @@ const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
         }),
       );
     }
-  }, [hasSessionError, signInReasons]);
+  }, [hasSessionError, signInReasons, selectedReason]);
 
   const handleSelectReason = (reason: Reason): void => {
     setInputValue(""); // Clear input value after selecting a reason
@@ -90,26 +89,6 @@ const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
       handleClearReason();
     }
   };
-
-  const iconForCategory = memoizeOne((category: ReasonCategory) => {
-    switch (category) {
-      case "UNIVERSITY_MODULE":
-        return <GraduationCap className="mr-1" />;
-      case "PERSONAL_PROJECT":
-        return <UserRound className="mr-1" />;
-      case "SOCIETY":
-        // ROBOTEERS PLUG WOOO
-        return <Bot className="mr-1" />;
-      case "REP_SIGN_IN":
-        return <Crown className="mr-1" />;
-      case "CO_CURRICULAR_GROUP":
-        return <Rocket className="mr-1" />;
-      case "EVENT":
-        return <PartyPopper className="mr-1" />;
-      default:
-        return <HelpCircle className="mr-1" />;
-    }
-  });
 
   const filteredReasons = inputValue ? fuse.search(inputValue, { limit: 20 }) : [];
 
@@ -169,7 +148,7 @@ const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
                       className={`cursor-pointer p-2 ${index === highlightedIndex ? "bg-accent" : "hover:bg-accent"}`}
                     >
                       <div className="flex">
-                        {iconForCategory(result.item.category)}
+                        {<Category category={result.item.category} className="mr-1" />}
                         {result.item.name}
                       </div>
                     </li>
@@ -199,9 +178,9 @@ const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
           {selectedReason && (
             <div className="mt-2 p-2 border border-gray-200 dark:border-gray-700 bg-card text-card-foreground">
               <p className="flex">
-                Selected Reason:{" "}
-                <strong className="flex">
-                  {iconForCategory(selectedReason.category)} {selectedReason.name}
+                Selected Reason:
+                <strong className="flex ml-1">
+                  {<Category category={selectedReason.category} className="mr-1" />} {selectedReason.name}
                 </strong>
               </p>
             </div>

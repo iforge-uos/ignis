@@ -1,5 +1,5 @@
 import { UserAvatar } from "@/components/avatar";
-import { LocationIcon } from "@/components/icons";
+import { LocationIcon } from "@/components/icons/Locations";
 import SignInsChart from "@/components/signin/dashboard/components/SignInsChart.tsx";
 import Title from "@/components/title";
 import { extractError } from "@/lib/utils";

@@ -1,4 +1,4 @@
-import { LocationIcon } from "@/components/icons";
+import { LocationIcon } from "@/components/icons/Locations";
 import { SignInStat } from "@ignis/types/users";
 import { Datum, ResponsiveCalendar } from "@nivo/calendar";
 import { useNavigate } from "@tanstack/react-router";

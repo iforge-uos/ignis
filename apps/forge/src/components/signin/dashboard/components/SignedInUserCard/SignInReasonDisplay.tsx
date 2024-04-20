@@ -1,5 +1,7 @@
+import { Category } from "@/components/icons/SignInReason";
 import { PartialReason } from "@ignis/types/sign_in.ts";
 import { Badge } from "@ui/components/ui/badge.tsx";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ui/components/ui/tooltip";
 
 interface SignInReasonDisplayProps {
   tools: string[];
@@ -15,9 +17,19 @@ export const SignInReasonDisplay: React.FC<SignInReasonDisplayProps> = ({ tools,
             Sign In Reason
           </div>
           <div className="text-center font-mono mt-2 justify-center">
-            <Badge variant="default" className="max-w-48 rounded-sm shadow-lg">
-              {reason.name}
-            </Badge>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Badge variant="default" className="max-w-48 rounded-sm shadow-lg">
+                    <div className="flex">
+                      {<Category category={reason.category} className="mr-1" />}
+                      {reason.category === "UNIVERSITY_MODULE" ? reason.name.split(" ")[0] : reason.name}
+                    </div>
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent>{reason.name}</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </div>
         <div className="border-gray-500 p-2 rounded-sm mb-4">

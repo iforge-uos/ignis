@@ -179,7 +179,7 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
               title="Un-acquired Training"
               trainings={trainingMap.DISABLED}
               toolTipContent="Tools the user aren't trained to use"
-            />{" "}
+            />
           </CollapsibleContent>
         </>
       </Collapsible>
