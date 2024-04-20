@@ -162,7 +162,7 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
           ) : (
             <Alert variant="default">
               <ExclamationTriangleIcon className="h-4 w-4" />
-              <AlertTitle>Warning</AlertTitle>
+              <AlertTitle>Cannot Sign In</AlertTitle>
               <AlertDescription>
                 Compulsory training {missingCompulsoryTraining.map((training) => `"${training.name}"`).join(", ")} has
                 not been completed.
@@ -182,7 +182,6 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
             />{" "}
           </CollapsibleContent>
         </>
-        )
       </Collapsible>
     </>
   );
