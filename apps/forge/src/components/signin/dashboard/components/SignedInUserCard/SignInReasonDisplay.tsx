@@ -18,15 +18,17 @@ export const SignInReasonDisplay: React.FC<SignInReasonDisplayProps> = ({ tools,
           </div>
           <TooltipProvider>
             <Tooltip>
-              <div className="text-center font-mono mt-2 flex justify-center">
-                <TooltipTrigger asChild>
+              <TooltipTrigger asChild>
+                <div className="text-center font-mono mt-2 flex justify-center">
                   <Badge variant="default" className="max-w-48 rounded-sm shadow-lg justify-center items-center">
                     {<Category category={reason.category} className="mr-1" />}
                     {reason.category === "UNIVERSITY_MODULE" ? reason.name.split(" ")[0] : reason.name}
                   </Badge>
-                </TooltipTrigger>
-                <TooltipContent>{reason.name}</TooltipContent>
-              </div>{" "}
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{reason.name}</p>
+              </TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </div>
