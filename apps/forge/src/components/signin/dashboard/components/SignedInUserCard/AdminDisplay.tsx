@@ -8,7 +8,7 @@ interface AdminDisplayProps {
 
 export const AdminDisplay: React.FC<AdminDisplayProps> = ({ user }) => {
   return (
-    <div className="flex mb-4 items-center justify-between w-full flex-col gap-2 border-2 border-accent/40 dark:border-accent/20 border-dashed p-2 ">
+    <div className="flex mb-4 items-center rounded-sm justify-between w-full flex-col gap-2 border-2 border-accent/40 dark:border-accent/20 border-dashed p-2 ">
       <div className="gap-2 flex">
         <Badge variant="outline" className="rounded-sm shadow-md flex-col">
           <span className="text-accent-foreground">UCard Number</span> <span>XXX-{user.ucard_number}</span>

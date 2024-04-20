@@ -4,7 +4,6 @@ import { UsersService } from "@/users/users.service";
 import type { User } from "@ignis/types/users";
 import {
   BadRequestException,
-  Body,
   ConflictException,
   Controller,
   Get,
@@ -20,7 +19,6 @@ import { Throttle } from "@nestjs/throttler";
 import { Request, Response } from "express";
 import { AuthenticationService } from "./authentication.service";
 import { BlacklistService } from "./blacklist/blacklist.service";
-import { CardinalityViolationError } from "edgedb";
 
 @Controller("authentication")
 export class AuthenticationController {

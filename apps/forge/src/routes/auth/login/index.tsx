@@ -14,7 +14,7 @@ const Index: React.FC = () => {
 
   useEffect(() => {
     dispatch(authActions.setRedirect(redirect));
-  }, []);
+  }, [dispatch, redirect]);
 
   return (
     <>

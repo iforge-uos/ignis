@@ -3,7 +3,6 @@ import { useDispatch } from "react-redux";
 import { User } from "@ignis/types/users.ts";
 import axiosInstance from "@/api/axiosInstance.ts";
 import { userActions } from "@/redux/user.slice.ts";
-import { authActions } from "@/redux/auth.slice.ts";
 
 export const useVerifyAuthentication = () => {
   const [loading, setLoading] = useState(true);
@@ -16,15 +15,12 @@ export const useVerifyAuthentication = () => {
       const response = await axiosInstance.get("/users/me");
       if (response.status === 200) {
         dispatch(userActions.setUser(response.data));
-        dispatch(authActions.onLogin());
         setUser(response.data);
       } else {
         setUser(null);
-        dispatch(authActions.onLogout());
       }
     } catch (error) {
       setUser(null);
-      dispatch(authActions.onLogout());
     } finally {
       setLoading(false);
     }
