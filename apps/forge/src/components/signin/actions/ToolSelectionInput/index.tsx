@@ -1,3 +1,4 @@
+import { errorDisplay } from "@/components/errors/ErrorDisplay";
 import { FlowStepComponent } from "@/components/signin/actions/SignInManager/types.ts";
 import { SelectedTrainingPipDisplay } from "@/components/signin/actions/ToolSelectionInput/SelectedTrainingPipDisplay.tsx";
 import ToolSelectionList from "@/components/signin/actions/ToolSelectionInput/TrainingSelectionList.tsx";
@@ -13,7 +14,6 @@ import { Loader } from "@ui/components/ui/loader.tsx";
 import { ChevronsDownUp, ChevronsUpDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { errorDisplay } from "@/components/errors/ErrorDisplay";
 
 /*
 three categories of tools that can be selected:
@@ -133,6 +133,8 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
     }
   };
 
+  const userHasCompulsoryTraining = trainingMap.DISABLED.some((training) => training.compulsory);
+
   const toolSelectionDisplay = (
     <>
       <Collapsible open={isOpen} onOpenChange={setIsOpen} className="w-full space-y-2">
@@ -149,6 +151,7 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
           title="Selectable Training"
           trainings={trainingMap.SELECTABLE}
           selectable={true}
+          userHasRequiredTraining={userHasCompulsoryTraining}
           onTrainingSelect={handleOnTrainingSelect}
           toolTipContent="Tools that the user has training for, and reps are trained on the tool"
         />
