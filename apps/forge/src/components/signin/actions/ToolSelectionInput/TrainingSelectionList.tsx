@@ -71,7 +71,7 @@ const TrainingSelectionList: React.FC<ToolSelectionListProps> = ({
             <AlertTitle>Warning</AlertTitle>
             <AlertDescription>No training available to select.</AlertDescription>
           </Alert>
-        ) : userHasCompulsoryTraining === true ? (
+        ) : userHasCompulsoryTraining === false ? (
           <Alert variant="default">
             <ExclamationTriangleIcon className="h-4 w-4" />
             <AlertTitle>Warning</AlertTitle>
