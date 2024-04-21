@@ -1,6 +1,6 @@
+import { appLinks } from "@/config/appLinks.ts";
 // NavBar.tsx
 import { Link } from "@tanstack/react-router";
-import { appLinks } from "@/config/appLinks.ts";
 import { AppLinkDropdown } from "./appLinkDropdown.tsx";
 
 import useCurrentApp from "@/hooks/useCurrentApp.ts";
@@ -18,7 +18,7 @@ export default function AppNav() {
             <Link
               key={link.displayName}
               to={link.path ?? "#"}
-              className="inline-flex items-center p-2 text-sm font-medium rounded-md text-card-foreground hover:bg-accent"
+              className="flex justify-center items-center p-2 text-sm font-medium rounded-md text-card-foreground hover:bg-accent"
             >
               {link.displayName}
             </Link>
