@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
 import { AppLink } from "@/config/appLinks.ts";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button.tsx";
+import React, { useState } from "react";
 
 type DropdownLinkProps = {
   link: AppLink;
@@ -16,7 +16,7 @@ const DropdownLink: React.FC<DropdownLinkProps> = ({ link, onClick, activeId }) 
     const isActive = linkItem.id === activeId;
 
     // Link styles
-    const linkClasses = `block p-2 text-sm rounded-md font-medium text-card-foreground hover:bg-accent/40 ${
+    const linkClasses = `flex justify-center items-center p-2 text-sm font-medium rounded-md text-card-foreground hover:bg-accent/40 ${
       isActive ? "border-2 border-accent/40" : ""
     }`;
 
