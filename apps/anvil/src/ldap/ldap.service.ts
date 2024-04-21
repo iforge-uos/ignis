@@ -1,9 +1,11 @@
 import { LdapUser } from "@/auth/interfaces/ldap-user.interface";
-import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import * as ldap from "ldapjs";
 
+const LdapUserFields = ["givenName", "sn", "mail", "uid", "shefLibraryNumber", "ou"];
+
 @Injectable()
-export class LdapService implements OnModuleInit {
+export class LdapService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(LdapService.name);
   private client: ldap.Client | null;
 
@@ -15,12 +17,15 @@ export class LdapService implements OnModuleInit {
     await this.connect();
   }
 
+  async onModuleDestroy() {
+    await this.unbind();
+  }
+
   async connect() {
     if (!this.client) {
       this.logger.debug("Attempting to create an LDAP client...");
-
       this.client = ldap.createClient({
-        url: `${process.env.LDAP_HOST}:${process.env.LDAP_PORT}`,
+        url: "ldaps://adldap.shef.ac.uk:636"!,
         connectTimeout: 2_000,
         timeout: 5_000,
       });
@@ -33,6 +38,8 @@ export class LdapService implements OnModuleInit {
         this.logger.error(`LDAP connection error: ${err.message}`);
         this.client = null; // Reset the client to reconnect later.
       });
+
+      await this.bind(process.env.LDAP_EMAIL!, process.env.LDAP_PASSWORD!);
     } else {
       this.logger.warn("LDAP client already exists. Reusing existing connection.");
     }
@@ -53,6 +60,18 @@ export class LdapService implements OnModuleInit {
     });
   }
 
+  private async unbind(): Promise<void> {
+    return new Promise((resolve, reject) =>
+      this.client!.unbind((err: any) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      }),
+    );
+  }
+
   async ensureConnected() {
     if (!this.client?.connected) {
       this.logger.debug("Re-establishing LDAP client connection...");
@@ -62,13 +81,15 @@ export class LdapService implements OnModuleInit {
 
   async resetConnection() {
     if (this.client) {
-      this.client.unbind((err) => {
+      try {
+        await this.unbind();
+      } catch (err) {
         if (err) {
-          this.logger.error(`Error unbinding LDAP client: ${err.message}`);
+          this.logger.error(`Error unbinding LDAP client: ${(err as any).message}`);
         }
         this.client = null;
         this.logger.debug("LDAP client unbound and reset.");
-      });
+      }
     }
     await this.connect();
   }
@@ -109,71 +130,55 @@ export class LdapService implements OnModuleInit {
   async authenticate(uid: string, password: string): Promise<boolean> {
     this.logger.debug(`Authenticating user with UID: ${uid}`);
     await this.ensureConnected();
-    const searchBase = process.env.LDAP_BASE!;
-    const options: ldap.SearchOptions = {
+
+    const results = await this.search(process.env.LDAP_BASE!, {
       filter: `(&(objectclass=person)(uid=${uid}))`,
       scope: "sub",
       attributes: ["dn"],
-    };
-
-    try {
-      const results = await this.search(searchBase, options);
-      if (results.length === 0) {
-        return false;
-      }
-
-      const userDn = results[0].dn.toString();
-      await this.bind(userDn, password);
-      return true;
-    } catch (error) {
-      throw error; // or handle it more gracefully
+    });
+    if (results.length === 0) {
+      return false;
     }
+
+    const userDn = results[0].dn.toString();
+    await this.bind(userDn, password);
+    return true;
   }
 
   // query params can go by mail, uid
-  async lookup(searchFilter: string, attributes: string[] | undefined = undefined): Promise<ldap.SearchEntry[] | null> {
+  async lookup(searchFilter: string, attributes: string[] | undefined = undefined): Promise<LdapUser | null> {
+    await this.ensureConnected();
     this.logger.debug(`Looking up entries with filter: ${searchFilter}`);
     const searchBase = process.env.LDAP_BASE!;
     const options: ldap.SearchOptions = {
       filter: searchFilter,
       scope: "sub",
-      attributes: attributes,
+      attributes: LdapUserFields,
       timeLimit: 10,
     };
 
-    try {
-      const results = await this.search(searchBase, options);
-      return results.length > 0 ? results : null;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async lookupUsername(username: string): Promise<LdapUser | null> {
-    await this.ensureConnected();
-    this.logger.debug(`Starting LDAP search for username: ${username}`);
-    const users = await this.lookup(`(&(objectclass=person)(uid=${username}))`);
-    this.logger.debug(`LDAP search completed for username: ${username}`);
-    if (!users) {
+    const results = await this.search(searchBase, options);
+    this.logger.debug(`LDAP search completed for ${searchFilter}`);
+    const result = results.length > 0 ? results[0] : null;
+    if (!result) {
       return null;
     }
     return Object.fromEntries(
-      users[0].attributes.map((attr) => {
+      result.attributes.map((attr) => {
         return [attr.type, attr.values[0]];
       }),
     ) as any;
+  }
+
+  async lookupUsername(username: string) {
+    return await this.lookup(`(&(objectclass=person)(uid=${username}))`);
   }
 
   async lookupEmail(email: string): Promise<LdapUser | null> {
-    await this.ensureConnected();
-    const users = await this.lookup(`(&(objectclass=person)(mail=${email}))`);
-    if (!users) {
-      return null;
-    }
-    return Object.fromEntries(
-      users[0].attributes.map((attr) => {
-        return [attr.type, attr.values[0]];
-      }),
-    ) as any;
+    return await this.lookup(`(&(objectclass=person)(mail=${email}))`);
+  }
+
+  async lookupUCard(ucard_number: number): Promise<LdapUser | null> {
+    return await this.lookup(`(&(objectclass=person)(sheflibrarynumber=${ucard_number.toString().padStart(9, "0")}))`);
   }
 }

@@ -1,17 +1,16 @@
-import { Module } from "@nestjs/common";
-import { AuthenticationService } from "./authentication.service";
-import { AuthenticationController } from "./authentication.controller";
-import { UsersModule } from "@/users/users.module";
-import { PassportModule } from "@nestjs/passport";
-import { LdapModule } from "@/ldap/ldap.module";
-import { DiscordStrategy } from "./strategies/discord.strategy";
-import { LdapAuthStrategy } from "./strategies/ldap.strategy";
-import { JwtModule } from "@nestjs/jwt";
-import { IntegrationsModule } from "@/users/integrations/integrations.module";
-import { BlacklistService } from "./blacklist/blacklist.service";
-import { JwtStrategy } from "./strategies/jwt.strategy";
 import { EdgeDBModule } from "@/edgedb/edgedb.module";
+import { LdapModule } from "@/ldap/ldap.module";
+import { IntegrationsModule } from "@/users/integrations/integrations.module";
+import { UsersModule } from "@/users/users.module";
+import { Module } from "@nestjs/common";
+import { JwtModule } from "@nestjs/jwt";
+import { PassportModule } from "@nestjs/passport";
+import { AuthenticationController } from "./authentication.controller";
+import { AuthenticationService } from "./authentication.service";
+import { BlacklistService } from "./blacklist/blacklist.service";
+import { DiscordStrategy } from "./strategies/discord.strategy";
 import { GoogleStrategy } from "./strategies/google.strategy";
+import { JwtStrategy } from "./strategies/jwt.strategy";
 
 @Module({
   imports: [
@@ -29,14 +28,7 @@ import { GoogleStrategy } from "./strategies/google.strategy";
       }),
     }),
   ],
-  providers: [
-    AuthenticationService,
-    DiscordStrategy,
-    GoogleStrategy,
-    LdapAuthStrategy,
-    BlacklistService,
-    JwtStrategy,
-  ],
+  providers: [AuthenticationService, DiscordStrategy, GoogleStrategy, BlacklistService, JwtStrategy],
   controllers: [AuthenticationController],
 })
 export class AuthenticationModule {}
