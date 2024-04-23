@@ -22,6 +22,10 @@ export class CaslAbilityGuard implements CanActivate {
     if (!user) {
       return false; // If there's no user attached, deny access
     }
+    // If the route includes /me, allow access
+    if (subject === "SELF" && request.path.endsWith("/me")) {
+      return true;
+    }
 
     const ability = await this.authorizationService.defineAbilitiesFor(user);
 
