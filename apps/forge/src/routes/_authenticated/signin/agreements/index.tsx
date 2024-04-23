@@ -45,8 +45,8 @@ export default function Component() {
       <p className="accent-accent text-center">The signable agreements in the iForge.</p>
 
       <div className="flex justify-center">
-        <Table>
-          <TableHeader className="bg-accent">
+        <Table className="max-w-xl mx-auto">
+          <TableHeader className="bg-accent rounded-md">
             <TableRow>
               <TableHead>Reasons</TableHead>
               <TableHead className="text-center">Status</TableHead>
@@ -64,7 +64,9 @@ export default function Component() {
                 <TableCell>{agreement.reasons.map((reason) => reason.name).join(", ")}</TableCell>
                 <TableCell>
                   <div className="flex justify-center">
-                    <Badge variant="outline">{getAgreementStatus(agreement)}</Badge>
+                    <Badge variant="outline" className="rounded-md">
+                      {getAgreementStatus(agreement)}
+                    </Badge>
                   </div>
                 </TableCell>
                 <TableCell className="text-center">{agreement.version}</TableCell>

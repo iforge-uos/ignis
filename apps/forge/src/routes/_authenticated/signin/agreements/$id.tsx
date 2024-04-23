@@ -3,19 +3,21 @@ import Title from "@/components/title";
 import { extractError, useUser } from "@/lib/utils";
 import { getAgreement } from "@/services/root/getAgreement";
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button";
 import { Checkbox } from "@ui/components/ui/checkbox";
 import { Label } from "@ui/components/ui/label";
 import { Separator } from "@ui/components/ui/separator";
 import { useState } from "react";
 import Markdown from "react-markdown";
+import { toast } from "sonner";
 
 export default function Component() {
   const { id } = Route.useParams();
 
   const [isChecked, setIsChecked] = useState<string | boolean>(false);
   const user = useUser()!;
+  const navigator = useNavigate();
 
   const {
     data: agreement,
@@ -71,11 +73,12 @@ export default function Component() {
           onClick={async () => {
             if (isChecked) {
               await axiosInstance.post(`/agreements/${id}`, { user });
-              user.agreements_signed.push({ id });
+              toast.success("Successfully signed agreement");
+              return navigator({ to: "/signin/agreements" });
             }
           }}
         >
-          Continue
+          Confirm
         </Button>
       </div>
     </>
