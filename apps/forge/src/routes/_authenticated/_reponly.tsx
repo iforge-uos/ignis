@@ -1,9 +1,11 @@
 // src/routes/_authenticated.tsx
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { Forbidden } from "@/components/routing/Forbidden";
+import { useUser } from "@/lib/utils";
+import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/_reponly")({
   beforeLoad: ({ context, location }) => {
-    if (!context.auth.user?.roles.find((role) => role.name === "Rep")) {
+    if (!context.auth.user) {
       throw redirect({
         to: "/auth/login",
         search: {
@@ -11,5 +13,11 @@ export const Route = createFileRoute("/_authenticated/_reponly")({
         },
       });
     }
+  },
+  component: () => {
+    if (!useUser()!.roles.find((role) => role.name === "Rep")) {
+      return <Forbidden />;
+    }
+    return <Outlet />;
   },
 });
