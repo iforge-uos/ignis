@@ -1,5 +1,5 @@
 import { auth } from "@dbschema/interfaces";
-import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
+import { CanActivate, ExecutionContext, HttpException, Injectable, InternalServerErrorException } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import type { Request } from "express";
 import { ACTIONS_KEY, SUBJECT_KEY } from "../decorators/check-abilities-decorator";
@@ -24,7 +24,7 @@ export class CaslAbilityGuard implements CanActivate {
     }
 
     const ability = await this.authorizationService.defineAbilitiesFor(user);
-    throw new Error(`${ability}, ${subject}, ${requiredActions}`);
+    throw new InternalServerErrorException({ message: `${ability}, ${subject}, ${requiredActions}` });
     return requiredActions.every((action) => ability.can(action, subject === "SELF" ? "USER" : subject));
   }
 }
