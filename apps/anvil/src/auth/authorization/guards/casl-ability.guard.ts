@@ -23,7 +23,7 @@ export class CaslAbilityGuard implements CanActivate {
       return false; // If there's no user attached, deny access
     }
     // If the route includes /me, allow access
-    if (subject === "SELF" && request.path.match(/\/me[^\w]/)) {
+    if (subject === "SELF" && request.path.endsWith("/me")) {
       return true;
     }
 
