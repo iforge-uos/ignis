@@ -47,10 +47,7 @@ export class UsersController {
     // TODO add multis here
     const EDITABLE_FIELDS = [
       // don't let users edit more than this
-      "first_name",
-      "last_name",
       "display_name",
-      "organisational_unit",
       "pronouns",
     ];
     const data = Object.fromEntries(Object.entries(updateUserDto).filter(([key]) => key in EDITABLE_FIELDS));
