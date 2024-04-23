@@ -17,15 +17,5 @@ const EnqueueComponent = () => {
 };
 
 export const Route = createFileRoute("/_authenticated/_reponly/signin/actions/enqueue")({
-  beforeLoad: ({ context, location }) => {
-    if (!context.auth.user?.roles.find((role) => role.name === "Rep")) {
-      throw redirect({
-        to: "/auth/login",
-        search: {
-          redirect: location.href,
-        },
-      });
-    }
-  },
   component: EnqueueComponent,
 });
