@@ -24,7 +24,7 @@ export class CaslAbilityGuard implements CanActivate {
     }
 
     const ability = await this.authorizationService.defineAbilitiesFor(user);
-
+    throw new Error(`${ability}, ${subject}, ${requiredActions}`);
     return requiredActions.every((action) => ability.can(action, subject === "SELF" ? "USER" : subject));
   }
 }
