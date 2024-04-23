@@ -1,5 +1,5 @@
 import { auth } from "@dbschema/interfaces";
-import { CanActivate, ExecutionContext, HttpException, Injectable, InternalServerErrorException } from "@nestjs/common";
+import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import type { Request } from "express";
 import { ACTIONS_KEY, SUBJECT_KEY } from "../decorators/check-abilities-decorator";
@@ -22,8 +22,8 @@ export class CaslAbilityGuard implements CanActivate {
     if (!user) {
       return false; // If there's no user attached, deny access
     }
-    // If the route is for the user's own id, allow access
-    if (subject === "SELF" && request.path.includes(user.id)) {
+    // If the route includes /me, allow access
+    if (subject === "SELF" && request.path.match(/\/me[^\w]/)) {
       return true;
     }
 
