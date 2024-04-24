@@ -468,30 +468,52 @@ export class SignInService implements OnModuleInit {
   async repSignIn(location: Location, ucard_number: number, reason_id: string) {
     const { reason, reason_name } = await this.verifySignInReason(reason_id, ucard_number, /* is_rep */ true);
 
-    if (reason_name !== REP_ON_SHIFT) {
+    if (reason_name !== REP_ON_SHIFT && !this.outOfHours()) {
       await this.preSignInChecks(location, ucard_number);
+    }
+
+    // TODO this should be client side?
+    const user = e.assert_exists(
+      e.select(e.users.Rep, () => ({
+        filter_single: { ucard_number },
+      })),
+    );
+
+    const compulsory = e.select(e.training.Training, (training) => ({
+      filter: e.op(
+        training.compulsory,
+        "and",
+        e.op(e.cast(e.training.TrainingLocation, location.toUpperCase()), "in", training.locations),
+      ),
+    }));
+
+    const missing = await this.dbService.query(
+      e.select(e.op(compulsory, "except", user.training), () => ({ name: true, id: true })),
+    );
+
+    if (missing) {
+      throw new BadRequestException({
+        message: `Rep hasn't completed compulsory on shift-trainings. Missing: ${missing
+          .map((training) => training.name)
+          .join(", ")}`,
+        code: ErrorCodes.compulsory_training_missing,
+      });
     }
 
     try {
       await this.dbService.query(
-        e.select(
-          e.insert(e.sign_in.SignIn, {
-            location: castLocation(location),
-            user: e.assert_exists(
-              e.select(e.users.Rep, () => ({
-                filter_single: { ucard_number },
-              })),
-            ),
-            tools: [],
-            reason,
-            signed_out: false,
-          }),
-        ),
+        e.insert(e.sign_in.SignIn, {
+          location: castLocation(location),
+          user,
+          tools: [],
+          reason,
+          signed_out: false,
+        }),
       );
     } catch (error) {
       if (error instanceof CardinalityViolationError) {
         throw new BadRequestException({
-          message: `User ${ucard_number} already signed in`,
+          message: `Rep ${ucard_number} already signed in`,
           code: ErrorCodes.already_signed_in_to_location,
         });
       }
