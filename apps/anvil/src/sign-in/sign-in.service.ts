@@ -491,7 +491,7 @@ export class SignInService implements OnModuleInit {
       e.select(e.op(compulsory, "except", user.training), () => ({ name: true, id: true })),
     );
 
-    if (missing) {
+    if (missing.length > 0) {
       throw new BadRequestException({
         message: `Rep hasn't completed compulsory on shift-trainings. Missing: ${missing
           .map((training) => training.name)
