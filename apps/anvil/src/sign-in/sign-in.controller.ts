@@ -21,7 +21,7 @@ export class SignInController {
     private readonly trainingService: TrainingService,
     private readonly signInService: SignInService,
     private readonly userService: UsersService,
-  ) {}
+  ) { }
 
   @Get()
   @IsRep()
@@ -50,6 +50,17 @@ export class SignInController {
         code: ErrorCodes.not_registered,
       });
     }
+
+    if (await this.signInService.isRep(ucard_number)) {
+      return {
+        // reasons,
+        training: await this.signInService.getTrainings(user.id, location),
+        ...user,
+        ...{ infractions: [] },
+      };
+    }
+
+
     const extras = await this.signInService.preSignInChecks(location, ucard_number);
 
     // const [trainings, reasons] = await Promise.all([
