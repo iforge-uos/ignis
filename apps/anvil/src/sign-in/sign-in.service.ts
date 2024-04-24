@@ -399,7 +399,7 @@ export class SignInService implements OnModuleInit {
   /** Verify that the user can use the sign in reason given by checking their signed agreements
    * Ideally this can be removed one day.
    */
-  async verifySignInReason(reason_id: string, ucard_number: number, is_rep: boolean = false) {
+  async verifySignInReason(reason_id: string, ucard_number: number, is_rep = false) {
     const agreements_signed = await this.dbService.query(
       e.select(e.users.User, () => ({
         filter_single: { ucard_number },
@@ -650,8 +650,9 @@ export class SignInService implements OnModuleInit {
     } catch (e) {
       if (e instanceof CardinalityViolationError && e.code === 84017154) {
         console.log(e, e.code);
-        throw e; // user already in queue
+        throw new HttpException("The user is already in the queue", HttpStatus.BAD_REQUEST);
       }
+      console.log(e);
       throw e;
     }
   }
