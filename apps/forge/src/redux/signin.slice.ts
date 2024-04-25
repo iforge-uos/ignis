@@ -2,8 +2,9 @@ import { RESET_APP } from "@/types/common.ts";
 import { SignInSession, SignInState } from "@/types/signin.ts";
 import { Location, LocationStatus, Reason, Training } from "@ignis/types/sign_in.ts";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-
-type SignInSessionFieldValue = number | null | boolean | Reason | string | Training[];
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "./store";
 
 const defaultSignInState: SignInState = {
   active_location: "mainspace",
@@ -15,7 +16,7 @@ const defaultSignInState: SignInState = {
 
 interface UpdateSignInSessionFieldPayload {
   field: keyof SignInSession;
-  value: SignInSessionFieldValue;
+  value: SignInSession[keyof SignInSession];
 }
 
 const initialState = defaultSignInState;
@@ -49,7 +50,7 @@ const signinSlice = createSlice({
           state.session[field] = value as never;
         }
       },
-      prepare: (field: keyof SignInSession, value: SignInSessionFieldValue) => ({
+      prepare: (field: UpdateSignInSessionFieldPayload["field"], value: UpdateSignInSessionFieldPayload["value"]) => ({
         payload: { field, value },
       }),
     },
@@ -63,3 +64,9 @@ const signinSlice = createSlice({
 });
 
 export const { actions: signinActions, reducer: signinReducer } = signinSlice;
+
+export const useSignInSessionField = <KeyT extends keyof SignInSession>(
+  field: KeyT,
+): SignInSession[KeyT] | undefined => {
+  return useSelector((state: RootState) => state.signin.session?.[field]) as any;
+};

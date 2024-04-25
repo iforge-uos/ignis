@@ -1,6 +1,7 @@
 import { FlowStepComponent } from "@/components/signin/actions/SignInManager/types.ts";
-import { signinActions } from "@/redux/signin.slice.ts";
-import { AppDispatch } from "@/redux/store.ts";
+import { selectSignInSessionField, signinActions } from "@/redux/signin.slice.ts";
+import { AppDispatch, RootState } from "@/redux/store.ts";
+import { SignInSession } from "@/types/signin";
 import { Button } from "@ui/components/ui/button.tsx";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card.tsx";
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@ui/components/ui/input-otp";
@@ -8,9 +9,9 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 
 const UCardInput: FlowStepComponent = ({ onPrimary }) => {
-  const [otp, setOtp] = useState(""); // OTP is now handled as a string
-  const [isOtpValid, setIsOtpValid] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
+  const [otp, setOtp] = useState(selectSignInSessionField("ucard_number")?.toString() ?? ""); // OTP is now handled as a string
+  const [isOtpValid, setIsOtpValid] = useState(false);
 
   const UCARD_LENGTH = 9; // Total length of the OTP
 
