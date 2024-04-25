@@ -1,3 +1,4 @@
+FROM 1password/op:2 as op
 FROM node:20-alpine AS deps
 WORKDIR /app
 
@@ -29,6 +30,17 @@ FROM node:20-slim AS anvil
 WORKDIR /app
 COPY --from=build /prod/forge ./
 COPY --from=build /app/apps/anvil/dist ./dist
+
+# Create iforge user and set ownership
+RUN useradd -m iforge
+RUN chown -R iforge:iforge /app
+
+# Copy 1Password home directory from the op image
+COPY --from=op --chown=iforge:iforge /home/opuser/ /home/iforge/
+COPY --from=op /usr/local/bin/op /usr/local/bin/op
+
+USER iforge
+
 EXPOSE 3000
 ENV NODE_PATH=/app/node_modules
-CMD node dist/src/main.js
+CMD ["/usr/local/bin/op", "run", "--env-file=/config/.env.production.tpl", "--", "node", "dist/src/main.js"]
