@@ -1,6 +1,7 @@
 import { Badge } from "@ui/components/ui/badge.tsx";
 import { PartialUserWithTeams } from "@ignis/types/users.ts";
 import * as React from "react";
+import { USER_EMAIL_DOMAIN } from "@/config/constants.ts";
 
 interface AdminDisplayProps {
   user: PartialUserWithTeams;
@@ -18,7 +19,10 @@ export const AdminDisplay: React.FC<AdminDisplayProps> = ({ user }) => {
         </Badge>
       </div>
       <Badge variant="outline" className="rounded-sm shadow-md flex-col">
-        <span className="text-accent-foreground">Email</span> <span>{user.email}@sheffield.ac.uk</span>
+        <span className="text-accent-foreground">Email</span>{" "}
+        <span>
+          {user.email}@{USER_EMAIL_DOMAIN}
+        </span>
       </Badge>
     </div>
   );

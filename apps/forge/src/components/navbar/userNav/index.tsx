@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@ui/components/ui/dropdown-menu";
 import { useSelector } from "react-redux";
+import { USER_EMAIL_DOMAIN } from "@/config/constants.ts";
 
 function isString(value: unknown): value is string {
   return typeof value === "string";
@@ -39,7 +40,9 @@ export function UserNav() {
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1.5">
               <p className="text-sm font-medium leading-none">{user.display_name}</p>
-              <p className="text-xs leading-none text-muted-foreground">{user.email}@sheffield.ac.uk</p>
+              <p className="text-xs leading-none text-muted-foreground">
+                {user.email}@{USER_EMAIL_DOMAIN}
+              </p>
               <div className="flex-wrap flex gap-2">
                 {user.roles.map((role) => (
                   <Badge className="">{role.name}</Badge>
