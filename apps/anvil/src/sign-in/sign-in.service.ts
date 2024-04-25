@@ -253,7 +253,7 @@ export class SignInService implements OnModuleInit {
       on_shift += await this.offShiftReps(location);
     }
     const factor = out_of_hours ? OUT_OF_HOURS_RATIO : IN_HOURS_RATIO;
-    return Math.min(on_shift * factor, this.maxUsersForLocation(location)) + on_shift;
+    return Math.min(on_shift * factor, this.maxPeopleForLocation(location));
   }
 
   async offShiftReps(location: Location): Promise<number> {
@@ -317,7 +317,7 @@ export class SignInService implements OnModuleInit {
       on_shift += off_shift;
     }
 
-    if (total_count - on_shift > this.maxUsersForLocation(location)) {
+    if (total_count >= this.maxPeopleForLocation(location)) {
       // the hard cap assuming you're signing in as a user, on shift reps skip this check
       return false;
     }
@@ -325,7 +325,7 @@ export class SignInService implements OnModuleInit {
     return (await this.maxCount(location)) + on_shift - total_count >= 0;
   }
 
-  maxUsersForLocation(location: Location) {
+  maxPeopleForLocation(location: Location) {
     switch (location.toLowerCase()) {
       case "mainspace":
         return 45;
@@ -610,7 +610,7 @@ export class SignInService implements OnModuleInit {
         limit: 1,
       })),
     );
-    return queuing.length !== 0;
+    return queuing.length >= 0;
   }
 
   async assertHasQueued(location: Location, ucard_number: number) {
