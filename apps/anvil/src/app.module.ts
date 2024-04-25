@@ -1,7 +1,7 @@
 import { EdgeDBModule } from "@/edgedb/edgedb.module";
 import { TrainingService } from "@/training/training.service";
 import { BullModule } from "@nestjs/bull";
-import { Module } from "@nestjs/common";
+import { Logger, Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { APP_PIPE } from "@nestjs/core";
 import { ScheduleModule } from "@nestjs/schedule";
@@ -59,6 +59,7 @@ import { UsersModule } from "./users/users.module";
     EmailService,
     RootService,
     GoogleService,
+    Logger,
   ],
   controllers: [SignInController, RootController, TrainingController],
 })
