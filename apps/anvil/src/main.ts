@@ -24,7 +24,14 @@ async function bootstrap() {
   const instance = winston.createLogger({
     transports: [
       new winston.transports.Console({
-        format: winston.format.combine(winston.format.timestamp(), nestWinstonModuleUtilities.format.nestLike()),
+        format: winston.format.combine(
+          winston.format.timestamp(),
+          winston.format.ms(),
+          nestWinstonModuleUtilities.format.nestLike("Anvil", {
+            colors: true,
+            prettyPrint: true,
+          }),
+        ),
       }),
       new winston.transports.DailyRotateFile({
         filename: "logs/anvil-%DATE%.log",

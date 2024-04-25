@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Logger, Module } from "@nestjs/common";
 import { AuthenticationService } from "./authentication.service";
 import { AuthenticationController } from "./authentication.controller";
 import { UsersModule } from "@/users/users.module";
@@ -36,6 +36,7 @@ import { GoogleStrategy } from "./strategies/google.strategy";
     LdapAuthStrategy,
     BlacklistService,
     JwtStrategy,
+    Logger,
   ],
   controllers: [AuthenticationController],
 })

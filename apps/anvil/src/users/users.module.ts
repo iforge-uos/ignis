@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Logger, Module } from "@nestjs/common";
 import { IntegrationsModule } from "./integrations/integrations.module";
 import { UsersService } from "./users.service";
 import { UsersController } from "./users.controller";
@@ -10,7 +10,7 @@ import { LdapModule } from "@/ldap/ldap.module";
 @Module({
   imports: [IntegrationsModule, AuthorizationModule, EdgeDBModule, LdapModule],
   controllers: [UsersController],
-  providers: [UsersService, TrainingService],
+  providers: [UsersService, TrainingService, Logger],
   exports: [UsersService],
 })
 export class UsersModule {}

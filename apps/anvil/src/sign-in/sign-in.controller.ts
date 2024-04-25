@@ -13,6 +13,7 @@ import { AuthGuard } from "@nestjs/passport";
 import { Throttle } from "@nestjs/throttler";
 import { FinaliseSignInDto, RegisterUserDto, UpdateSignInDto } from "./dto/sigs-in-dto";
 import { SignInService } from "./sign-in.service";
+import { Logger } from "@nestjs/common";
 
 @Controller("location/:location")
 @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
@@ -21,7 +22,8 @@ export class SignInController {
     private readonly trainingService: TrainingService,
     private readonly signInService: SignInService,
     private readonly userService: UsersService,
-  ) { }
+    private readonly logger: Logger,
+  ) {}
 
   @Get()
   @IsRep()
@@ -33,7 +35,7 @@ export class SignInController {
   @IsRep()
   @Post("register-user")
   async registerUser(@Param("location") location: Location, @Body() registerUser: RegisterUserDto) {
-    // location here does nothing beyond just add extra analytics for us to track where people are registering
+    this.logger.log(`Registering user at location: ${location}`, SignInController.name);
     return this.signInService.registerUser(location, registerUser);
   }
 
@@ -43,8 +45,13 @@ export class SignInController {
     @Param("location") location: Location,
     @Param("ucard_number", ParseIntPipe) ucard_number: number,
   ): Promise<sign_in_.User> {
+    this.logger.log(
+      `Retrieving sign-in options for UCard number: ${ucard_number} at location: ${location}`,
+      SignInController.name,
+    );
     const user = await this.userService.findByUcardNumber(ucard_number);
     if (!user) {
+      this.logger.warn(`User with UCard number ${ucard_number} is not registered`, SignInController.name);
       throw new NotFoundException({
         message: `User with UCard number ${ucard_number} is not registered`,
         code: ErrorCodes.not_registered,
@@ -59,7 +66,6 @@ export class SignInController {
         ...{ infractions: [] },
       };
     }
-
 
     const extras = await this.signInService.preSignInChecks(location, ucard_number);
 
@@ -82,6 +88,7 @@ export class SignInController {
     @Param("ucard_number", ParseIntPipe) ucard_number: number,
     @Body() finaliseSignInDto: FinaliseSignInDto,
   ) {
+    this.logger.log(`Signing in UCard number: ${ucard_number} at location: ${location}`, SignInController.name);
     if (await this.signInService.isRep(ucard_number)) {
       return await this.signInService.repSignIn(location, ucard_number, finaliseSignInDto.reason_id);
     }
@@ -101,6 +108,10 @@ export class SignInController {
     @Param("ucard_number", ParseIntPipe) ucard_number: number,
     @Body() updateSignInDto: UpdateSignInDto,
   ) {
+    this.logger.log(
+      `Updating visit purpose for UCard number: ${ucard_number} at location: ${location}`,
+      SignInController.name,
+    );
     return await this.signInService.updateVisitPurpose(
       location,
       ucard_number,
@@ -112,16 +123,22 @@ export class SignInController {
   @Post("sign-out/:ucard_number")
   @IsRep()
   async signOut(@Param("location") location: Location, @Param("ucard_number", ParseIntPipe) ucard_number: number) {
+    this.logger.log(`Signing out UCard number: ${ucard_number} at location: ${location}`, SignInController.name);
     return await this.signInService.signOut(location, ucard_number);
   }
 
   @Get("status")
   async getSignInStatus(@Param("location") location: Location) {
+    this.logger.log(`Retrieving sign-in status for location: ${location}`, SignInController.name);
     return await this.signInService.getStatusForLocation(location);
   }
 
   @Post("queue/remotely")
   async addToQueueRemotely(@Param("location") location: Location, @User() user: User_) {
+    this.logger.log(
+      `Adding user with ID: ${user.id} to queue remotely at location: ${location}`,
+      SignInController.name,
+    );
     await this.signInService.addToQueue(location, undefined, user.id);
   }
 
@@ -131,6 +148,10 @@ export class SignInController {
     @Param("location") location: Location,
     @Param("ucard_number", ParseIntPipe) ucard_number: number,
   ) {
+    this.logger.log(
+      `Adding UCard number: ${ucard_number} to queue in-person at location: ${location}`,
+      SignInController.name,
+    );
     await this.signInService.addToQueue(location, ucard_number);
   }
 
@@ -138,6 +159,7 @@ export class SignInController {
   @IsRep()
   @CheckAbilities(["READ"], "ALL") // FIXME: needs an any rather than all guard
   async removeFromQueue(@Param("location") location: Location, @Param("id") user_id: string) {
+    this.logger.log(`Removing user with ID: ${user_id} from queue at location: ${location}`, SignInController.name);
     await this.signInService.removeFromQueue(location, user_id);
   }
 

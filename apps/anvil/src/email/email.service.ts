@@ -11,12 +11,12 @@ import { z } from "zod";
 
 @Injectable()
 export class EmailService {
-  private readonly logger = new Logger(EmailService.name);
+  private readonly logger = Logger;
 
   constructor(@InjectQueue("email") private emailQueue: Queue) {}
 
   async sendEmail(dto: z.infer<typeof SendEmailSchema>) {
-    this.logger.debug("Adding email to queue...");
+    this.logger.debug("Adding email to queue...", EmailService.name);
 
     const priority = dto.priority || 2; // Default to medium priority if not specified
 
@@ -26,7 +26,7 @@ export class EmailService {
       backoff: 3000, // Delay where retries will be processed (in ms)
     });
 
-    this.logger.debug("Email added to queue successfully");
+    this.logger.debug("Email added to queue successfully", EmailService.name);
   }
 
   async sendHtml(
@@ -44,14 +44,14 @@ export class EmailService {
 
   async sendWelcomeEmail(recipient: PartialUser) {
     await this.sendHtml(WelcomeEmail({ ...recipient }), {
-      recipients: [recipient.email + "@sheffield.ac.uk"],
-      subject: `Welcome to the iForge`,
+      recipients: [`${recipient.email}@sheffield.ac.uk`],
+      subject: "Welcome to the iForge",
     });
   }
 
   async sendUnqueuedEmail(recipient: PartialUser, location: Location) {
     await this.sendHtml(Unqueued({ ...recipient, location }), {
-      recipients: [recipient.email + "@sheffield.ac.uk"],
+      recipients: [`${recipient.email}@sheffield.ac.uk`],
       subject: `Your place in the iForge ${location}`,
     });
   }

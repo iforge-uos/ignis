@@ -8,7 +8,7 @@ import { SignInService } from "@/sign-in/sign-in.service";
 import { TrainingService } from "@/training/training.service";
 import { UsersService } from "@/users/users.service";
 import { BullModule } from "@nestjs/bull";
-import { Module } from "@nestjs/common";
+import { Logger, Module } from "@nestjs/common";
 import { RootController } from "./root.controller";
 import { RootService } from "./root.service";
 
@@ -24,6 +24,7 @@ import { RootService } from "./root.service";
     TrainingService,
     GoogleService,
     AuthorizationService,
+    Logger,
   ],
   exports: [RootService],
 })

@@ -6,32 +6,33 @@ import { std } from "@dbschema/interfaces";
 import type { training } from "@ignis/types";
 import { PartialTraining } from "@ignis/types/training";
 import type { User } from "@ignis/types/users";
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Logger, Param, Post, Req, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { Request } from "express";
 
 @Controller("training")
 export class TrainingController {
-  constructor(private readonly trainingService: TrainingService) {}
+  constructor(
+    private readonly trainingService: TrainingService,
+    private readonly logger: Logger,
+  ) {}
 
   @Get()
   async getTrainingLocations() {
+    this.logger.log("Retrieving training locations", TrainingController.name);
     throw new Error("Not implemented yet"); // soon
   }
 
   @Get(":id")
   async getTraining(@Param("id") id: string): Promise<training.Training> {
+    this.logger.log(`Retrieving training with ID: ${id}`, TrainingController.name);
     return this.trainingService.getTraining(id);
   }
-
-  // @Get(":id/status")
-  // async getTrainingStatus(@Param("id") id: string): Promise<training.UserTrainingStatus> {
-  //   return this.trainingService.getTraining(id);
-  // }
 
   @Post(":id/start")
   @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
   async startTraining(@Param("id") id: string, @GetUser() user: User) {
+    this.logger.log(`Starting training with ID: ${id} for user with ID: ${user.id}`, TrainingController.name);
     return this.trainingService.startTraining(id, user.id);
   }
 
@@ -43,11 +44,16 @@ export class TrainingController {
     @Body("answers") answers: std.BaseObject[] | undefined,
     @GetUser() user: User,
   ) {
+    this.logger.log(
+      `Interacting with training session: ${session_id}, interaction: ${interaction_id}, user: ${user.id}`,
+      TrainingController.name,
+    );
     return this.trainingService.interactWithTraining(session_id, interaction_id, answers, user.id);
   }
 
   @Get("location/:location")
   async trainings(@Param("location") location: training.Location): Promise<PartialTraining[]> {
+    this.logger.log(`Retrieving trainings for location: ${location}`, TrainingController.name);
     return this.trainingService.getTrainings(location);
   }
 
@@ -57,8 +63,16 @@ export class TrainingController {
     try {
       const payload = verifyJWT(req.cookies.access_token);
       user_id = payload.sub as unknown as string;
+      this.logger.log(
+        `Retrieving training statuses for location: ${location}, user: ${user_id}`,
+        TrainingController.name,
+      );
     } catch (_) {
       user_id = undefined;
+      this.logger.log(
+        `Retrieving training statuses for location: ${location}, user not authenticated`,
+        TrainingController.name,
+      );
     }
 
     return Object.fromEntries(

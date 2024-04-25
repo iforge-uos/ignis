@@ -7,6 +7,7 @@ import {
   ConflictException,
   Controller,
   Get,
+  Logger,
   Post,
   Redirect,
   Req,
@@ -27,11 +28,13 @@ export class AuthenticationController {
     private readonly integrationsService: IntegrationsService,
     private readonly blacklistService: BlacklistService,
     private readonly usersService: UsersService,
+    private readonly logger: Logger,
   ) {}
 
   @UseGuards(AuthGuard("ldap"))
   @Post("ldap-login")
   async ldapLogin(@GetUser() user: User) {
+    this.logger.log(`LDAP login for user with ID: ${user.id}`, AuthenticationController.name);
     return this.authService.login(user);
   }
 
@@ -39,25 +42,25 @@ export class AuthenticationController {
   async refreshToken(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const refreshToken = req.cookies.refresh_token;
     if (!refreshToken) {
+      this.logger.warn("Refresh token is missing", AuthenticationController.name);
       throw new BadRequestException("Refresh token is missing");
     }
 
-    // Check if the token is blacklisted
     const isBlacklisted = await this.blacklistService.isTokenBlacklisted(refreshToken);
     if (isBlacklisted) {
+      this.logger.warn("The refresh token is blacklisted", AuthenticationController.name);
       this.authService.clearAuthCookies(res);
       throw new UnauthorizedException("The refresh token is no longer valid");
     }
 
     const payload = await this.authService.validateRefreshToken(refreshToken);
 
-    // Fetch the user based on the payload
     const user = await this.usersService.findOne(payload.sub);
     if (!user) {
+      this.logger.warn("User not found", AuthenticationController.name);
       throw new UnauthorizedException("User not found");
     }
 
-    // Add the token to the blacklist
     const expiryDate = new Date();
     await this.blacklistService.addToBlacklist(refreshToken, expiryDate);
 
@@ -65,29 +68,36 @@ export class AuthenticationController {
 
     this.authService.setAuthCookies(res, access_token, refresh_token);
 
+    this.logger.log("Tokens refreshed", AuthenticationController.name);
     return { message: "Tokens refreshed" };
   }
 
   @Throttle({ default: { limit: 1, ttl: 1000 } })
   @Post("logout")
   async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    // Extract the refresh token from cookies instead of the request body
     const refreshToken = req.cookies.refresh_token;
 
     if (!refreshToken) {
+      this.logger.warn("Refresh token is missing", AuthenticationController.name);
       throw new BadRequestException("Refresh token is missing");
     }
 
-    // Add the token to the blacklist
     const expiryDate = new Date();
     try {
       await this.blacklistService.addToBlacklist(refreshToken, expiryDate);
+      this.logger.log("Refresh token added to blacklist", AuthenticationController.name);
     } catch (error) {
+      this.logger.error(
+        "Error adding refresh token to blacklist",
+        (error as Error).stack,
+        AuthenticationController.name,
+      );
       throw new ConflictException("Refresh token is invalid or expired");
     }
 
     this.authService.clearAuthCookies(res);
 
+    this.logger.log("Successfully logged out", AuthenticationController.name);
     return { message: "Successfully logged out" };
   }
 
@@ -117,7 +127,9 @@ export class AuthenticationController {
 
   @UseGuards(AuthGuard("google"))
   @Get("login")
-  async googleLogin(@Req() req: Request) {}
+  async googleLogin(@Req() req: Request) {
+    this.logger.log("Google login initiated", AuthenticationController.name);
+  }
 
   @UseGuards(AuthGuard("google"))
   @Get("google/callback")
@@ -127,6 +139,7 @@ export class AuthenticationController {
 
     this.authService.setAuthCookies(res, access_token, refresh_token);
 
+    this.logger.log(`Google login successful for user with ID: ${req.user.id}`, AuthenticationController.name);
     return { url: `${process.env.FRONT_END_URL}/auth/login/complete` };
   }
 }

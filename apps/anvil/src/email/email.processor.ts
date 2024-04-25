@@ -10,7 +10,7 @@ import { z } from "zod";
 @Processor("email")
 export class EmailProcessor {
   private readonly transporter: nodemailer.Transporter<SentMessageInfo>;
-  private readonly logger = new Logger(EmailProcessor.name);
+  private readonly logger = new Logger();
 
   constructor() {
     this.transporter = nodemailer.createTransport({
@@ -27,7 +27,7 @@ export class EmailProcessor {
 
   @Process("sendEmail")
   async processEmail(job: Job<z.infer<typeof SendEmailSchema>>) {
-    this.logger.debug("Sending email...");
+    this.logger.debug("Sending email...", EmailProcessor.name);
 
     const { recipients, subject, message, plainTextMessage } = job.data;
 
@@ -41,9 +41,9 @@ export class EmailProcessor {
 
     try {
       await this.transporter.sendMail(mailOptions);
-      this.logger.debug("Email sent successfully");
+      this.logger.debug("Email sent successfully", EmailProcessor.name);
     } catch (error) {
-      this.logger.error("Email sending failed:", (error as any).message);
+      this.logger.error("Email sending failed:", (error as Error).stack, EmailProcessor.name);
       throw new Error("Failed to send email");
     }
   }
