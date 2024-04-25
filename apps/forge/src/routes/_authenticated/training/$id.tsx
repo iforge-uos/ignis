@@ -21,14 +21,16 @@ import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 
 const PROGRESS_BAR_SAMPLE_MS = 50;
-function TrainingContent({ content }: { content: string }) {
+
+export function TrainingContent({ content }: { content: string }) {
   return (
-    <div id="training-content">
+    <div id="training-content" className="text-lg">
       {/* We need special styling for <a> to show it's clickable */}
       <Markdown rehypePlugins={[rehypeRaw, remarkGfm]}>{content}</Markdown>
     </div>
   );
 }
+
 const Component: React.FC = () => {
   const { id } = Route.useParams();
   const navigate = useNavigate();
@@ -150,10 +152,10 @@ const Component: React.FC = () => {
       <div className="w-full py-6 space-y-4">
         <div className="container space-y-4 px-4 md:px-6">
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold text-center">{data.name}</h1>
+            <h1 className="text-4xl font-bold text-center">{data.name}</h1>
             <div className="space-y-2 flex justify-between">
               <div>
-                <h2 className="text-2xl font-semibold">Tags</h2>
+                <h2 className="text-2xl font-semibold mb-2">Tags</h2>
                 <div className="flex flex-wrap gap-2">
                   {[
                     data.compulsory ? "Compulsory" : undefined,
@@ -169,9 +171,9 @@ const Component: React.FC = () => {
                     ))}
                 </div>
               </div>
-              <div>
-                <div className="text-right">Created: {data.created_at.toLocaleDateString()}</div>
-                <div className="text-right">Last Updated: {data.updated_at.toLocaleDateString()}</div>
+              <div className="flex flex-col justify-end">
+                <div className="text-right text-lg">Created: {data.created_at.toLocaleDateString()}</div>
+                <div className="text-right text-lg">Last Updated: {data.updated_at.toLocaleDateString()}</div>
               </div>
             </div>
             <Separator />
@@ -181,7 +183,7 @@ const Component: React.FC = () => {
             {sections.map((section, idx) => (
               <>
                 <Separator />
-                <h2 className="text-xl font-semibold py-3">{(section as any)?.name ?? "Question"}</h2>
+                <h2 className="text-2xl font-semibold py-3">{(section as any)?.name ?? "Question"}</h2>
                 <>
                   <TrainingContent content={section.content} />
                   {section.type_name === "training::Question" ? (
