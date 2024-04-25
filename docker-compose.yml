@@ -10,7 +10,7 @@ services:
       - external
 
   db:
-    image: edgedb/edgedb:5.1
+    image: edgedb/edgedb:5.2
     env_file:
       - .env
     restart: unless-stopped

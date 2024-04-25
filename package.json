@@ -8,6 +8,7 @@
   "workspaces": ["packages/*", "apps/*", "tooling/*"],
   "scripts": {
     "dev": "turbo run dev",
+    "env:gen": "OP_ACCOUNT=iforge.1password.com op inject -f -i .env.tpl -o .env",
     "ui:add": "pnpm --filter ui ui:add",
     "ui:dev": "pnpm --filter ui ui:dev",
     "lint": "turbo lint --continue",
