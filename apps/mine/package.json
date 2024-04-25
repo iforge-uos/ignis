@@ -12,9 +12,5 @@
     "dev": "OP_ACCOUNT=iforge.1password.com op run --env-file=.env -- cargo watch -x run",
     "lint": "cargo clippy",
     "lint:fix": "cargo clippy --fix"
-  },
-  "devDependencies": {
-    "@ignis/lint": "workspace:*",
-    "eslint": "^8.57.0"
   }
 }
