@@ -610,7 +610,7 @@ export class SignInService implements OnModuleInit {
         limit: 1,
       })),
     );
-    return queuing.length >= 0;
+    return queuing.length > 0;
   }
 
   async assertHasQueued(location: Location, ucard_number: number) {
