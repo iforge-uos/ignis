@@ -16,7 +16,6 @@ import {
   SignInSteps,
   SignOutSteps,
 } from "@/components/signin/actions/SignInManager/types";
-import { Separator } from "@ui/components/ui/separator";
 import ToolSelectionInput from "@/components/signin/actions/ToolSelectionInput";
 import SignInDispatcher from "@/components/signin/actions/SignInDispatcher";
 import SignOutDispatcher from "@/components/signin/actions/SignOutDispatcher";
@@ -198,15 +197,14 @@ const SignInActionsManager: React.FC<SignInManagerProps> = ({ initialFlow }) => 
         </div>
       )}
 
-      <div className="flex flex-row">
+      <div className="flex flex-col lg:flex-row">
         {currentFlow && (
           <>
             <SignInFlowProgress currentStep={currentStep as AnyStep} flowType={currentFlow} totalSteps={totalSteps}>
               {/* Pass the current step's index and total steps */}
               <div>{`Current Step: ${currentStepIndex + 1} of ${totalSteps}`}</div>
             </SignInFlowProgress>
-            <Separator className="ml-2 mr-2" orientation="vertical" />
-            <div className="ml-4">{renderCurrentStep()}</div>
+            <div className="mt-4 lg:mt-0 lg:ml-4">{renderCurrentStep()}</div>
           </>
         )}
 
