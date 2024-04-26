@@ -1,10 +1,10 @@
 import { EdgeDBService } from "@/edgedb/edgedb.service";
+import { ErrorCodes } from "@/shared/constants/ErrorCodes";
 import { UsersService } from "@/users/users.service";
 import e from "@dbschema/edgeql-js";
 import { TrainingLocation } from "@dbschema/edgeql-js/modules/training";
 import { getTrainingNextSection } from "@dbschema/queries/getTrainingNextSection.query";
 import { startTraining } from "@dbschema/queries/startTraining.query";
-import { ErrorCodes } from "@/shared/constants/ErrorCodes";
 import { training } from "@ignis/types";
 import { PartialTraining } from "@ignis/types/training";
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
@@ -99,7 +99,7 @@ export class TrainingService {
         e.select(e.training.Training, (training) => ({
           filter: e.op(e.cast(TrainingLocation, location), "in", training.locations),
           id_: e.select(training.id),
-          status: e.select("Complete"),
+          status: e.select("Start"),
         })),
       );
     }
@@ -136,7 +136,7 @@ export class TrainingService {
               e.select(user.training, (training) => ({ filter: e.op(training, "=", training_or_session) })),
             ),
             "else",
-            "Complete",
+            "Start",
           ),
         );
         const session_training_id_selector = e.select(
