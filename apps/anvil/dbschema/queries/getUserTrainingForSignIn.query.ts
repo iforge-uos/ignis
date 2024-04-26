@@ -39,10 +39,10 @@ with list := (  # get the on-shift reps
 ),
 rep_training := (  # get the on-shift trainings
     select list.sign_ins.user.training
-    filter (
-        <training::TrainingLocation>$location_ in .locations
-        and not exists .rep
-    )
+    # filter (
+    #     <training::TrainingLocation>$location_ in .locations
+    #     and not exists .rep
+    # )
 ),
 # user_training := (  # get the user's trainings
 select assert_exists(
