@@ -1,14 +1,14 @@
 import { errorDisplay } from "@/components/errors/ErrorDisplay";
-import { FlowStepComponent } from "@/components/signin/actions/SignInManager/types.ts";
-import { SelectedTrainingPipDisplay } from "@/components/signin/actions/ToolSelectionInput/SelectedTrainingPipDisplay.tsx";
-import ToolSelectionList from "@/components/signin/actions/ToolSelectionInput/TrainingSelectionList.tsx";
+import { FlowStepComponent } from "@/types/signInActions.ts";
+import { SelectedTrainingPipDisplay } from "@/components/signin/actions/SelectedTrainingPipDisplay.tsx";
+import ToolSelectionList from "@/components/signin/actions/TrainingSelectionList.tsx";
 import { signinActions } from "@/redux/signin.slice.ts";
 import { AppDispatch, AppRootState } from "@/redux/store.ts";
 import { GetSignIn, GetSignInProps } from "@/services/signin/signInService.ts";
 import { Training, User } from "@ignis/types/sign_in.ts";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { useQuery } from "@tanstack/react-query";
-import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert.tsx";
 import { Button } from "@ui/components/ui/button.tsx";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card.tsx";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@ui/components/ui/collapsible.tsx";
@@ -16,6 +16,7 @@ import { Loader } from "@ui/components/ui/loader.tsx";
 import { ChevronsDownUp, ChevronsUpDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { fullUCardToDBRepresentation } from "@/lib/utils.ts";
 
 /*
 three categories of tools that can be selected:
@@ -51,7 +52,7 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
 
   const signInProps: GetSignInProps = {
     locationName: activeLocation,
-    uCardNumber: ucardNumber ?? 0,
+    uCardNumber: fullUCardToDBRepresentation(ucardNumber ?? "0"),
     signal: abortController.signal,
   };
 

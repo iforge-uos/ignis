@@ -89,6 +89,10 @@ function removeDomain(email: string): string {
   return email.slice(0, email.length - "@sheffield.ac.uk".length);
 }
 
+function ldapLibraryToUcardNumber(shefLibraryNumber: string): number {
+  return parseInt(shefLibraryNumber.slice(3));
+}
+
 @Injectable()
 export class UsersService {
   constructor(
@@ -237,13 +241,16 @@ export class UsersService {
       last_name: ldapUser.sn,
       organisational_unit: ldapUser.ou,
       roles: e.select(e.auth.Role, () => ({ filter_single: { name: "User" } })),
-      ucard_number: ldapUser.shefLibraryNumber.slice(3),
+      ucard_number: ldapLibraryToUcardNumber(ldapUser.shefLibraryNumber),
       profile_picture,
     });
   }
 
   async createOrFindLdapUser(ldapUser: LdapUser): Promise<User> {
-    return (await this.findByUsername(ldapUser.uid)) ?? (await this.insertLdapUser(ldapUser));
+    return (
+      (await this.findByUcardNumber(ldapLibraryToUcardNumber(ldapUser.shefLibraryNumber))) ??
+      (await this.insertLdapUser(ldapUser))
+    );
   }
 
   async idToUsername(id: string) {

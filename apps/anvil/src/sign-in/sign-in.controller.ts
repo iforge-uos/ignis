@@ -35,7 +35,7 @@ export class SignInController {
   @IsRep()
   @Post("register-user")
   async registerUser(@Param("location") location: Location, @Body() registerUser: RegisterUserDto) {
-    this.logger.log(`Registering user at location: ${location}`, SignInController.name);
+    this.logger.log(`Registering user: ${registerUser.ucard_number} at location: ${location}`, SignInController.name);
     return this.signInService.registerUser(location, registerUser);
   }
 

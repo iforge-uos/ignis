@@ -1,48 +1,48 @@
-import { PostSignOut, PostSignOutProps } from "@/services/signin/signInService.ts";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { AppDispatch, AppRootState } from "@/redux/store.ts";
 import { useDispatch, useSelector } from "react-redux";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card.tsx";
 
 import { Loader } from "@ui/components/ui/loader.tsx";
 import { Button } from "@ui/components/ui/button.tsx";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { signinActions } from "@/redux/signin.slice.ts";
-import { FlowStepComponent } from "@/components/signin/actions/SignInManager/types.ts";
+import { FlowStepComponent } from "@/types/signInActions.ts";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { PostQueueInPerson, PostQueueProps } from "@/services/signin/queueService.ts";
 import { errorDisplay } from "@/components/errors/ErrorDisplay";
+import { fullUCardToDBRepresentation } from "@/lib/utils.ts";
 
-const SignOutDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
-  const queryClient = useQueryClient();
-
+const QueueDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const dispatch: AppDispatch = useDispatch();
   const signInSession = useSelector((state: AppRootState) => state.signin.session);
   const activeLocation = useSelector((state: AppRootState) => state.signin.active_location);
   const abortController = new AbortController(); // For gracefully cancelling the query
   const [canContinue, setCanContinue] = useState<boolean>(false);
   const navigate = useNavigate();
+  const timeout = 3000;
 
-  const signOutProps: PostSignOutProps = {
+  const queueProps: PostQueueProps = {
     locationName: activeLocation,
-    uCardNumber: signInSession?.ucard_number ?? 0,
+    uCardNumber: fullUCardToDBRepresentation(signInSession?.ucard_number ?? "0"),
     signal: abortController.signal,
   };
 
   const { isPending, error, mutate } = useMutation({
-    mutationKey: ["postSignOut", signOutProps],
-    mutationFn: () => PostSignOut(signOutProps),
+    mutationKey: ["postQueueInPerson", queueProps],
+    mutationFn: () => PostQueueInPerson(queueProps),
     retry: 0,
     onError: (error) => {
       console.log("Error", error);
       abortController.abort();
     },
     onSuccess: () => {
+      console.log("Success");
       setCanContinue(true);
       abortController.abort();
       dispatch(signinActions.resetSignInSession());
-      queryClient.invalidateQueries({ queryKey: ["locationStatus"] });
-      toast.success("User signed out successfully!");
+      toast.success("User added to queue successfully");
       navigate({ to: "/signin/actions" });
     },
   });
@@ -51,7 +51,7 @@ const SignOutDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
     <>
       <div className="flex justify-items-center justify-center">
         <h1 className="text-xl flex-auto">Success!</h1>
-        <p className="text-sm">Redirecting...</p>
+        <p className="text-sm">Possibly redirecting to actions page in ~{timeout / 1000} seconds...</p>
       </div>
     </>
   );
@@ -70,20 +70,16 @@ const SignOutDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
     }
   };
 
-  useEffect(() => {
-    mutate();
-  }, [mutate]);
-
   return (
     <>
       <Card className="w-[700px]">
         <CardHeader>
-          <CardTitle>Signing Out</CardTitle>
+          <CardTitle>Adding User to Queue</CardTitle>
         </CardHeader>
         <CardContent>
           {!(canContinue || error || isPending) && (
-            <Button onClick={() => mutate()} autoFocus={true} variant="default" className="h-[200px] w-full">
-              Sign Out
+            <Button onClick={() => mutate()} autoFocus={true} variant="outline" className="h-[200px] w-full">
+              Join Queue
             </Button>
           )}
           {isPending && <Loader />}
@@ -103,4 +99,4 @@ const SignOutDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   );
 };
 
-export default SignOutDispatcher;
+export default QueueDispatcher;

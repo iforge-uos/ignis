@@ -45,3 +45,7 @@ export function extractError(error: Error): string {
   }
   return error?.message || "Unknown Error. Contact the IT Team";
 }
+
+export function fullUCardToDBRepresentation(ucard_number: string): number {
+  return parseInt(ucard_number.slice(3), 10);
+}

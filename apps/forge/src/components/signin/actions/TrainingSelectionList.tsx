@@ -1,10 +1,10 @@
-import TrainingDisplay from "@/components/signin/actions/ToolSelectionInput/TrainingDisplay.tsx";
+import TrainingDisplay from "@/components/signin/actions/TrainingDisplay.tsx";
 import { cn } from "@/lib/utils.ts";
-import { Training } from "@ignis/types/sign_in";
+import { Training } from "@ignis/types/sign_in.ts";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert.tsx";
 import { ScrollArea } from "@ui/components/ui/scroll-area.tsx";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ui/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ui/components/ui/tooltip.tsx";
 import { Info } from "lucide-react";
 import React, { useState } from "react";
 

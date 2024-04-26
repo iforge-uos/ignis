@@ -55,11 +55,8 @@ export class LdapService {
   private formatLdapUser(result: Record<string, string | string[]>): LdapUser {
     this.logger.log(`Formatting response ${JSON.stringify(result)}`);
     return {
-      dn: result.dn as string,
       uid: result.uid as string,
-      cn: result.cn as string,
       sn: result.sn as string,
-      initials: result.initials as string,
       ou: result.ou as string,
       mail: result.mail as string,
       givenName: result.givenName as string,

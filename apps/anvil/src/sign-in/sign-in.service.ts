@@ -148,7 +148,7 @@ export class SignInService implements OnModuleInit {
 
   async registerUser(location: Location, register_user: RegisterUserDto) {
     // There may be a way to do this in fewer, more atomic steps, just haven't figured out how
-    let user = await this.userService.findByUsername(register_user.username);
+    let user = await this.userService.findByUcardNumber(parseInt(register_user.ucard_number.slice(3)));
 
     if (user) {
       if (user.ucard_number > 0) {
@@ -159,10 +159,10 @@ export class SignInService implements OnModuleInit {
       }
     } else {
       // no user registered, fetch from ldap
-      const ldapUser = await this.ldapService.findUserByUsername(register_user.username);
+      const ldapUser = await this.ldapService.findUserByUcardNumber(register_user.ucard_number);
       if (!ldapUser) {
         throw new NotFoundException({
-          message: `User with username ${register_user.username} couldn't be found. Perhaps you made a typo? (it should look like fe6if)`,
+          message: `User with ucard no ${register_user.ucard_number} couldn't be found. Perhaps you made a typo? (it should look like 001739897)`,
           code: ErrorCodes.ldap_not_found,
         });
       }
@@ -173,7 +173,7 @@ export class SignInService implements OnModuleInit {
       e.insert(e.sign_in.UserRegistration, {
         location: castLocation(location),
         user: e.select(e.users.User, () => ({
-          filter_single: { username: register_user.username },
+          filter_single: { ucard_number: e.int64(parseInt(register_user.ucard_number.toString().slice(3))) },
         })),
       }),
     );

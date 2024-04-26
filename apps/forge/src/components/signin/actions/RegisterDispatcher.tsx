@@ -8,7 +8,7 @@ import { Loader } from "@ui/components/ui/loader.tsx";
 import { Button } from "@ui/components/ui/button.tsx";
 import { useState } from "react";
 import { signinActions } from "@/redux/signin.slice.ts";
-import { FlowStepComponent } from "@/components/signin/actions/SignInManager/types.ts";
+import { FlowStepComponent } from "@/types/signInActions.ts";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { errorDisplay } from "@/components/errors/ErrorDisplay";
@@ -24,9 +24,8 @@ const RegisterDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
 
   const registerProps: PostRegisterProps = {
     locationName: activeLocation,
-    uCardNumber: signInSession?.ucard_number ?? 0,
+    uCardNumber: signInSession?.ucard_number ?? "0",
     signal: abortController.signal,
-    username: signInSession?.username ?? "",
   };
 
   const { isPending, error, mutate } = useMutation({

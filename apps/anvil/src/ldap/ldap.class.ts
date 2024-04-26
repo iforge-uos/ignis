@@ -263,7 +263,7 @@ export class LdapClass extends EventEmitter implements OnModuleInit {
   ): Promise<Record<string, string | string[]> | null> {
     this.logger.log(`Looking up user by ucard number: ${ucardNumber}`, LdapClass.name);
 
-    const searchFilter = `(&(objectClass=person)(sheflibrarynumber=${ucardNumber}))`;
+    const searchFilter = `(&(objectClass=person)(shefLibraryNumber=${ucardNumber}))`;
     return this.lookup(searchFilter, attributes, true);
   }
 }

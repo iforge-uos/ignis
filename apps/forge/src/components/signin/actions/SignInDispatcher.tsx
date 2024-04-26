@@ -1,19 +1,21 @@
-import { useMutation } from "@tanstack/react-query";
+import { PostSignIn, PostSignInProps } from "@/services/signin/signInService.ts";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AppDispatch, AppRootState } from "@/redux/store.ts";
 import { useDispatch, useSelector } from "react-redux";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card.tsx";
 
 import { Loader } from "@ui/components/ui/loader.tsx";
 import { Button } from "@ui/components/ui/button.tsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { signinActions } from "@/redux/signin.slice.ts";
-import { FlowStepComponent } from "@/components/signin/actions/SignInManager/types.ts";
+import { FlowStepComponent } from "@/types/signInActions.ts";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { PostQueueInPerson, PostQueueProps } from "@/services/signin/queueService.ts";
 import { errorDisplay } from "@/components/errors/ErrorDisplay";
+import { fullUCardToDBRepresentation } from "@/lib/utils.ts";
 
-const QueueDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
+const SignInDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
+  const queryClient = useQueryClient();
   const dispatch: AppDispatch = useDispatch();
   const signInSession = useSelector((state: AppRootState) => state.signin.session);
   const activeLocation = useSelector((state: AppRootState) => state.signin.active_location);
@@ -22,15 +24,21 @@ const QueueDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const navigate = useNavigate();
   const timeout = 3000;
 
-  const queueProps: PostQueueProps = {
+  const signInProps: PostSignInProps = {
     locationName: activeLocation,
-    uCardNumber: signInSession?.ucard_number ?? 0,
+    uCardNumber: fullUCardToDBRepresentation(signInSession?.ucard_number ?? "0"),
     signal: abortController.signal,
+    postBody: {
+      ucard_number: fullUCardToDBRepresentation(signInSession?.ucard_number ?? "0"),
+      location: activeLocation,
+      reason_id: signInSession?.sign_in_reason?.id ?? "",
+      tools: signInSession?.training?.map((training) => training.name) ?? [],
+    },
   };
 
   const { isPending, error, mutate } = useMutation({
-    mutationKey: ["postQueueInPerson", queueProps],
-    mutationFn: () => PostQueueInPerson(queueProps),
+    mutationKey: ["postSignIn", signInProps],
+    mutationFn: () => PostSignIn(signInProps),
     retry: 0,
     onError: (error) => {
       console.log("Error", error);
@@ -41,7 +49,8 @@ const QueueDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
       setCanContinue(true);
       abortController.abort();
       dispatch(signinActions.resetSignInSession());
-      toast.success("User added to queue successfully");
+      queryClient.invalidateQueries({ queryKey: ["locationStatus"] });
+      toast.success("User signed in!");
       navigate({ to: "/signin/actions" });
     },
   });
@@ -50,7 +59,7 @@ const QueueDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
     <>
       <div className="flex justify-items-center justify-center">
         <h1 className="text-xl flex-auto">Success!</h1>
-        <p className="text-sm">Possibly redirecting to actions page in ~{timeout / 1000} seconds...</p>
+        <p className="text-sm">Redirecting to sign-in page in ~{timeout / 1000} seconds...</p>
       </div>
     </>
   );
@@ -69,16 +78,20 @@ const QueueDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
     }
   };
 
+  useEffect(() => {
+    mutate();
+  }, [mutate]);
+
   return (
     <>
       <Card className="w-[700px]">
         <CardHeader>
-          <CardTitle>Adding User to Queue</CardTitle>
+          <CardTitle>Signing In</CardTitle>
         </CardHeader>
         <CardContent>
           {!(canContinue || error || isPending) && (
             <Button onClick={() => mutate()} autoFocus={true} variant="outline" className="h-[200px] w-full">
-              Join Queue
+              Sign in
             </Button>
           )}
           {isPending && <Loader />}
@@ -98,4 +111,4 @@ const QueueDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   );
 };
 
-export default QueueDispatcher;
+export default SignInDispatcher;
