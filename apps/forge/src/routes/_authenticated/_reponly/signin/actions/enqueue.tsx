@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import ActiveLocationSelector from "@/components/signin/ActiveLocationSelector";
 import SignInActionsManager from "@/components/signin/actions/SignInManager";
 import { FlowType } from "@/components/signin/actions/SignInManager/types.ts";
