@@ -159,7 +159,7 @@ export class SignInService implements OnModuleInit {
       }
     } else {
       // no user registered, fetch from ldap
-      const ldapUser = await this.ldapService.lookupUsername(register_user.username);
+      const ldapUser = await this.ldapService.findUserByUsername(register_user.username);
       if (!ldapUser) {
         throw new NotFoundException({
           message: `User with username ${register_user.username} couldn't be found. Perhaps you made a typo? (it should look like fe6if)`,
@@ -168,17 +168,6 @@ export class SignInService implements OnModuleInit {
       }
       user = await this.userService.insertLdapUser(ldapUser);
     }
-
-    await this.dbService.query(
-      e.update(e.users.User, () => ({
-        filter_single: {
-          username: register_user.username,
-        },
-        set: {
-          ucard_number: register_user.ucard_number,
-        },
-      })),
-    );
 
     await this.dbService.query(
       e.insert(e.sign_in.UserRegistration, {

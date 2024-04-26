@@ -1,7 +1,11 @@
 # LDAP
-LDAP_HOST="ldap://auth.shef.ac.uk"
-LDAP_PORT=389
-LDAP_BASE="ou=Users,dc=sheffield,dc=ac,dc=uk"
+LDAP_HOST="op://IT/Active LDAP/Host/LDAP_HOST"
+LDAP_PORT="op://IT/Active LDAP/Host/LDAP_PORT"
+LDAP_BASE="dc=shefuniad,dc=shef,dc=ac,dc=uk"
+LDAP_USER="op://IT/Active LDAP/username"
+LDAP_PASS="op://IT/Active LDAP/password"
+LDAP_DEFAULT_ATTRIBUTES="givenName,sn,mail,uid,shefLibraryNumber,ou"
+LDAP_SSL=true
 
 # Google
 GOOGLE_CLIENT_ID="op://IT/Anvil OAuth2 Google/client id"
@@ -45,7 +49,3 @@ CDN_URL="http://[::]:4000"
 
 # Front End
 FRONT_END_URL="http://127.0.0.1:8000"
-
-# DB
-EDGEDB_DSN="op://IT/Ignis EdgeDB Docker Prod/EDGEDB_DSN"
-NODE_EXTRA_CA_CERTS="/ignis_certs/ignis_cert.pem"

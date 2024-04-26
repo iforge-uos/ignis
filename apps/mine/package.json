@@ -9,7 +9,7 @@
     "build": "cargo build",
     "format": "rustfmt src/*.rs --edition=2021",
     "start": "cargo run",
-    "dev": "OP_ACCOUNT=iforge.1password.com op run --env-file=../../config/env/mine/.env.development.tpl -- cargo watch -x run",
+    "dev": "OP_ACCOUNT=iforge.1password.com op run --env-file=../../config/mine/.env.development.tpl -- cargo watch -x run",
     "lint": "cargo clippy",
     "lint:fix": "cargo clippy --fix"
   }

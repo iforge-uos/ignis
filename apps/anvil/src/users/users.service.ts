@@ -207,7 +207,7 @@ export class UsersService {
   async createOrFindUser(googleUser: GoogleUser): Promise<User> {
     let user = await this.findByEmail(removeDomain(googleUser.email));
     if (!user) {
-      const ldapUser = await this.ldapService.lookupEmail(googleUser.email);
+      const ldapUser = await this.ldapService.findUserByEmail(googleUser.email);
       if (!ldapUser) {
         throw new Error("Failed to fetch a matching user on LDAP");
       }
@@ -230,21 +230,6 @@ export class UsersService {
   }
 
   async insertLdapUser(ldapUser: LdapUser, profile_picture: string | undefined = undefined): Promise<User> {
-    const minUcardNumber: any = e.min(
-      // TODO move back into create call when edgedb/edgedb-js#835 is resolved
-      e.set(
-        e.assert_single(
-          e.select(e.users.User, (user) => ({
-            order_by: {
-              expression: user.ucard_number,
-              direction: e.ASC,
-            },
-            limit: 1,
-          })),
-        ).ucard_number,
-        -1,
-      ),
-    );
     return await this.create({
       username: ldapUser.uid,
       email: removeDomain(ldapUser.mail),
@@ -252,13 +237,7 @@ export class UsersService {
       last_name: ldapUser.sn,
       organisational_unit: ldapUser.ou,
       roles: e.select(e.auth.Role, () => ({ filter_single: { name: "User" } })),
-      ucard_number: e.op(
-        // atomically decrement this field for new inserts where we don't have it
-        // to preserves the uniqueness.
-        minUcardNumber,
-        "-",
-        1,
-      ),
+      ucard_number: ldapUser.shefLibraryNumber.slice(3),
       profile_picture,
     });
   }
