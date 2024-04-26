@@ -1,8 +1,8 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
 import ActiveLocationSelector from "@/components/signin/ActiveLocationSelector";
 import SignInActionsManager from "@/components/signin/actions/SignInManager";
 import { FlowType } from "@/components/signin/actions/SignInManager/types.ts";
 import Title from "@/components/title";
+import { createFileRoute } from "@tanstack/react-router";
 
 const InComponent = () => {
   return (
@@ -17,15 +17,5 @@ const InComponent = () => {
 };
 
 export const Route = createFileRoute("/_authenticated/_reponly/signin/actions/in")({
-  beforeLoad: ({ context, location }) => {
-    if (!context.auth.user?.roles.find((role) => role.name === "Rep")) {
-      throw redirect({
-        to: "/auth/login",
-        search: {
-          redirect: location.href,
-        },
-      });
-    }
-  },
   component: InComponent,
 });

@@ -1,3 +1,4 @@
+import { TrainingContent } from "@/routes/_authenticated/training/$id";
 import { PartialTrainingWithStatus } from "@ignis/types/training";
 import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button";
@@ -17,9 +18,7 @@ export default function TrainingCourseCard({
       <div className="space-y-1 text-center md:text-left">
         <h3 className="text-lg font-bold">{training.name}</h3>
         <div className="text-sm text-accent-foreground">
-          <div id="training-content">
-            <Markdown>{training.description}</Markdown>
-          </div>
+          <TrainingContent content={training.description} />
         </div>
       </div>
       <div className="mt-auto flex gap-1 min-[200px]:flex-row w-full justify-between">
