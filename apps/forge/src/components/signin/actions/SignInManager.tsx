@@ -1,30 +1,29 @@
-import React, { ReactElement, useEffect, useLayoutEffect, useState } from "react";
-import UCardInput from "@/components/signin/actions/UCardInput";
-import SignInReasonInput from "@/components/signin/actions/SignInReasonInput";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, AppRootState } from "@/redux/store.ts";
+import QueueDispatcher from "@/components/signin/actions/QueueDispatcher.tsx";
+import RegisterDispatcher from "@/components/signin/actions/RegisterDispatcher.tsx";
+import SignInDispatcher from "@/components/signin/actions/SignInDispatcher.tsx";
+import SignInFlowProgress from "@/components/signin/actions/SignInFlowProgress.tsx";
+import SignInReasonInput from "@/components/signin/actions/SignInReasonInput.tsx";
+import SignOutDispatcher from "@/components/signin/actions/SignOutDispatcher.tsx";
+import ToolSelectionInput from "@/components/signin/actions/ToolSelectionInput.tsx";
+import UCardInput from "@/components/signin/actions/UCardInput.tsx";
+import useDoubleTapEscape from "@/hooks/useDoubleTapEscape.ts";
 import { signinActions } from "@/redux/signin.slice.ts";
-import { SignInSession } from "@/types/signin.ts";
+import { AppDispatch, AppRootState } from "@/redux/store.ts";
 import {
   AnyStep,
   EnqueueSteps,
   FlowConfiguration,
   FlowStepComponent,
   FlowType,
-  flowTypeToPrintTable,
   RegisterSteps,
   SignInSteps,
   SignOutSteps,
-} from "@/components/signin/actions/SignInManager/types";
-import ToolSelectionInput from "@/components/signin/actions/ToolSelectionInput";
-import SignInDispatcher from "@/components/signin/actions/SignInDispatcher";
-import SignOutDispatcher from "@/components/signin/actions/SignOutDispatcher";
-import SignInFlowProgress from "@/components/signin/actions/SignInFlowProgress";
+  flowTypeToPrintTable,
+} from "@/types/signInActions.ts";
+import { SignInSession } from "@/types/signin.ts";
 import { Button } from "@ui/components/ui/button.tsx";
-import useDoubleTapEscape from "@/components/signin/actions/SignInManager/useDoubleTapEscape.ts";
-import QueueDispatcher from "@/components/signin/actions/QueueDispatcher";
-import RegisterDispatcher from "@/components/signin/actions/RegisterDispatcher";
-import SignInRegisterForm from "@/components/signin/actions/SignInRegisterForm";
+import React, { ReactElement, useEffect, useLayoutEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const flowConfig: FlowConfiguration = {
   [FlowType.SignIn]: {
@@ -39,8 +38,7 @@ const flowConfig: FlowConfiguration = {
   },
   [FlowType.Register]: {
     [RegisterSteps.Step1]: UCardInput,
-    [RegisterSteps.Step2]: SignInRegisterForm,
-    [RegisterSteps.Step3]: RegisterDispatcher,
+    [RegisterSteps.Step2]: RegisterDispatcher,
   },
   [FlowType.Enqueue]: {
     [EnqueueSteps.Step1]: UCardInput,
@@ -49,7 +47,7 @@ const flowConfig: FlowConfiguration = {
 };
 
 const defaultSignInSession: SignInSession = {
-  ucard_number: 0,
+  ucard_number: "",
   is_rep: false,
   sign_in_reason: null,
   training: null,

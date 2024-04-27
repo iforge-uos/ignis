@@ -26,14 +26,13 @@ import { UsersModule } from "./users/users.module";
 
 @Module({
   imports: [
-    EdgeDBModule,
-    UsersModule,
-    AuthenticationModule,
-    LdapModule,
-    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       envFilePath: ".env.production",
     }),
+    EdgeDBModule,
+    UsersModule,
+    AuthenticationModule,
+    ScheduleModule.forRoot(),
     ThrottlerModule.forRoot([
       {
         name: "short",
@@ -47,6 +46,7 @@ import { UsersModule } from "./users/users.module";
     SignInModule,
     BullModule.registerQueue({ name: "email" }),
     RootModule,
+    LdapModule,
   ],
   providers: [
     {

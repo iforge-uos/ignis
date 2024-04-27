@@ -1,4 +1,4 @@
-import { Training } from "@ignis/types/sign_in";
+import { Training } from "@ignis/types/sign_in.ts";
 import { Button } from "@ui/components/ui/button.tsx";
 import React from "react";
 

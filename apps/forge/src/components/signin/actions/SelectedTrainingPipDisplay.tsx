@@ -1,5 +1,5 @@
-import { Training } from "@ignis/types/sign_in";
-import { Badge } from "@ui/components/ui/badge";
+import { Training } from "@ignis/types/sign_in.ts";
+import { Badge } from "@ui/components/ui/badge.tsx";
 import React from "react";
 
 interface SelectedTrainingPipDisplayProps {

@@ -1,8 +1,7 @@
 import { RESET_APP } from "@/types/common.ts";
 import { SignInSession, SignInState } from "@/types/signin.ts";
-import { Location, LocationStatus, Reason, Training } from "@ignis/types/sign_in.ts";
+import { Location, LocationStatus } from "@ignis/types/sign_in.ts";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "./store";
 

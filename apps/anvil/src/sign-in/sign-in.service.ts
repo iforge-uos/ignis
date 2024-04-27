@@ -10,7 +10,7 @@ import e from "@dbschema/edgeql-js";
 import { std } from "@dbschema/interfaces";
 import { getUserTrainingForSignIn } from "@dbschema/queries/getUserTrainingForSignIn.query";
 import type { Location, LocationStatus, Training } from "@ignis/types/sign_in";
-import type { PartialUser } from "@ignis/types/users";
+import type { PartialUser, User } from "@ignis/types/users";
 import {
   BadRequestException,
   HttpException,
@@ -19,9 +19,9 @@ import {
   NotFoundException,
   OnModuleInit,
 } from "@nestjs/common";
+import { Logger } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
-import { CardinalityViolationError, InvalidValueError, QueryAssertionError } from "edgedb";
-import { RegisterUserDto } from "./dto/sigs-in-dto";
+import { CardinalityViolationError, InvalidValueError } from "edgedb";
 
 export const REP_ON_SHIFT = "Rep On Shift";
 export const REP_OFF_SHIFT = "Rep Off Shift";
@@ -39,6 +39,7 @@ function castLocation(location: Location) {
 @Injectable()
 export class SignInService implements OnModuleInit {
   private readonly disabledQueue: Set<Location>;
+  private readonly logger: Logger;
 
   constructor(
     private readonly dbService: EdgeDBService,
@@ -47,6 +48,7 @@ export class SignInService implements OnModuleInit {
     private readonly emailService: EmailService,
   ) {
     this.disabledQueue = new Set();
+    this.logger = new Logger(SignInService.name);
   }
 
   async onModuleInit() {
@@ -146,50 +148,45 @@ export class SignInService implements OnModuleInit {
     await this.removeFromQueue(location, user.id);
   }
 
-  async registerUser(location: Location, register_user: RegisterUserDto) {
-    // There may be a way to do this in fewer, more atomic steps, just haven't figured out how
-    let user = await this.userService.findByUsername(register_user.username);
-
-    if (user) {
-      if (user.ucard_number > 0) {
-        throw new BadRequestException({
-          message: `User ${register_user.ucard_number} is already registered`,
-          code: ErrorCodes.already_registered,
-        });
-      }
-    } else {
-      // no user registered, fetch from ldap
-      const ldapUser = await this.ldapService.lookupUsername(register_user.username);
-      if (!ldapUser) {
-        throw new NotFoundException({
-          message: `User with username ${register_user.username} couldn't be found. Perhaps you made a typo? (it should look like fe6if)`,
-          code: ErrorCodes.ldap_not_found,
-        });
-      }
-      user = await this.userService.insertLdapUser(ldapUser);
-    }
-
-    await this.dbService.query(
-      e.update(e.users.User, () => ({
-        filter_single: {
-          username: register_user.username,
-        },
-        set: {
-          ucard_number: register_user.ucard_number,
-        },
+  async getUserForSignIn(
+    location: Location,
+    ucard_number: string,
+  ): Promise<User & { is_rep: boolean; registered: boolean }> {
+    let user = await this.dbService.query(
+      e.select(e.users.User, (user) => ({
+        filter_single: { ucard_number: ldapLibraryToUcardNumber(ucard_number) },
+        ...UserProps(user),
+        is_rep: e.select(e.op(user.__type__.name, "=", "users::Rep")),
+        registered: e.select(true as boolean),
       })),
     );
+    if (user) {
+      return user;
+    }
 
-    await this.dbService.query(
-      e.insert(e.sign_in.UserRegistration, {
-        location: castLocation(location),
-        user: e.select(e.users.User, () => ({
-          filter_single: { username: register_user.username },
-        })),
-      }),
+    this.logger.log(`Registering user: ${ucard_number} at location: ${location}`, SignInService.name);
+
+    // no user registered, fetch from ldap
+    const ldapUser = await this.ldapService.findUserByUcardNumber(ucard_number);
+    if (!ldapUser) {
+      throw new NotFoundException({
+        message: `User with ucard no ${ucard_number} couldn't be found. Perhaps you made a typo? (it should look like 001739897)`,
+        code: ErrorCodes.ldap_not_found,
+      });
+    }
+
+    user = await this.dbService.query(
+      e.select(
+        e.insert(e.sign_in.UserRegistration, {
+          location: castLocation(location),
+          user: e.insert(e.users.User, this.userService.ldapUserProps(ldapUser)),
+        }).user,
+        (user) => ({ ...UserProps(user), is_rep: e.select(false as boolean), registered: e.select(false as boolean) }),
+      ),
     );
 
     await this.emailService.sendWelcomeEmail(user);
+    return user;
   }
 
   async getTrainings(id: string, location: Location): Promise<Training[]> {
@@ -685,34 +682,37 @@ export class SignInService implements OnModuleInit {
       throw new HttpException("The queue is currently not in use", HttpStatus.SERVICE_UNAVAILABLE);
     }
 
-    await this.dbService.query(
-      e.delete(e.sign_in.QueuePlace, (queue_place) => ({
-        filter: e.op(queue_place.user.id, "=", e.cast(e.uuid, user_id)),
-      })),
-    );
+    await this.dbService.client.transaction(async (tx) => {
+      await e
+        .delete(e.sign_in.QueuePlace, (queue_place) => ({
+          filter: e.op(queue_place.user.id, "=", e.uuid(id)),
+        }))
+        .run(tx);
 
-    await this.dbService.query(
-      e.update(e.sign_in.QueuePlace, (queue_place) => ({
-        filter: e.op(queue_place.location, "=", castLocation(location)),
-        set: {
-          position: e.op(queue_place.position, "-", 1),
-        },
-      })),
-    );
+      await e
+        .update(e.sign_in.QueuePlace, (queue_place) => ({
+          filter: e.op(queue_place.location, "=", castLocation(location)),
+          set: {
+            position: e.op(queue_place.position, "-", 1),
+          },
+        }))
+        .run(tx);
+    });
   }
 
   async queuedUsersThatCanSignIn(location: Location) {
-    const queue_places = await this.dbService.query(
-      e.select(e.sign_in.QueuePlace, (queue_place) => ({
-        user: PartialUserProps(queue_place.user),
-        filter: e.op(
-          e.op(queue_place.location, "=", e.cast(e.sign_in.SignInLocation, castLocation(location))),
-          "and",
-          e.op(queue_place.can_sign_in, "=", true),
-        ),
-      })),
+    return await this.dbService.query(
+      e.select(
+        e.select(e.sign_in.QueuePlace, (queue_place) => ({
+          filter: e.op(
+            e.op(queue_place.location, "=", e.cast(e.sign_in.SignInLocation, castLocation(location))),
+            "and",
+            e.op(queue_place.can_sign_in, "=", true),
+          ),
+        })).user,
+        PartialUserProps,
+      ),
     );
-    return queue_places.map((queue_place) => queue_place.user);
   }
 
   async getSignInReasons() {

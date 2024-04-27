@@ -1,11 +1,8 @@
-import e from "@dbschema/edgeql-js";
 import { sign_in, std } from "@dbschema/interfaces";
-import { z } from "zod";
 import * as users from "./users";
 
 export type {
   CreateSignInDto,
-  RegisterUserDto,
   FinaliseSignInDto,
   UpdateSignInDto,
 } from "@/sign-in/dto/sigs-in-dto";
@@ -61,6 +58,8 @@ export type Training = Omit<users.Training, "locations" | "created_at" | "update
 
 export type User = users.UserWithInfractions & {
   training: Training[];
+  registered: boolean;
+  is_rep: boolean;
 };
 
 export type Reason = PartialReason & {

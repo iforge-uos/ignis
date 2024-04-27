@@ -10,7 +10,7 @@ export interface SignInState {
 
 // TODO IDEALLY THIS WOULD BE A SESSION PER FLOW TYPE BUT I DON'T WANT TO REFACTOR THE WHOLE THING RN
 export interface SignInSession {
-  ucard_number: number | null;
+  ucard_number: string;
   is_rep: boolean;
   sign_in_reason: Reason | null;
   training: Training[] | null;

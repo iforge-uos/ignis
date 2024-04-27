@@ -5,6 +5,7 @@ import { type ClassValue, clsx } from "clsx";
 import md5 from "md5";
 import { useSelector } from "react-redux";
 import { twMerge } from "tailwind-merge";
+import { UCARD_LENGTH } from "./constants";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -44,4 +45,8 @@ export function extractError(error: Error): string {
     return `${ErrorCodes[error.response?.data.code] || "unspecified_error"}: ${error.response?.data.message}`;
   }
   return error?.message || "Unknown Error. Contact the IT Team";
+}
+
+export function ucardNumberToString(ucard_number: number): string {
+  return ucard_number.toString().padStart(UCARD_LENGTH, "0");
 }

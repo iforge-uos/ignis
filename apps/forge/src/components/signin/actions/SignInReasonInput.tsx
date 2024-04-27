@@ -1,28 +1,26 @@
 import { ErrorDisplayProps, errorDisplay } from "@/components/errors/ErrorDisplay";
-import { Category } from "@/components/icons/SignInReason";
-import { FlowStepComponent } from "@/components/signin/actions/SignInManager/types";
-import { signinActions } from "@/redux/signin.slice.ts";
-import { AppDispatch, AppRootState } from "@/redux/store";
-import { useSignInReasons } from "@/services/signin/signInReasonService";
-import type { Reason } from "@ignis/types/sign_in";
-import { Button } from "@ui/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card";
-import { Input } from "@ui/components/ui/input";
-import { Loader } from "@ui/components/ui/loader";
+import { Category } from "@/components/icons/SignInReason.tsx";
+import { signinActions, useSignInSessionField } from "@/redux/signin.slice.ts";
+import { AppDispatch } from "@/redux/store.ts";
+import { useSignInReasons } from "@/services/signin/signInReasonService.ts";
+import { FlowStepComponent } from "@/types/signInActions.ts";
+import type { Reason } from "@ignis/types/sign_in.ts";
+import { Button } from "@ui/components/ui/button.tsx";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card.tsx";
+import { Input } from "@ui/components/ui/input.tsx";
+import { Loader } from "@ui/components/ui/loader.tsx";
 import Fuse from "fuse.js";
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const [inputValue, setInputValue] = useState<string>("");
-  const [selectedReason, setSelectedReason] = useState<Reason | null>(
-    useSelector((state: AppRootState) => state.signin.session?.sign_in_reason ?? null),
-  );
+  const [selectedReason, setSelectedReason] = useState<Reason | null>(useSignInSessionField("sign_in_reason") ?? null);
   const { data: signInReasons, isLoading, isError, error } = useSignInReasons();
   const [fuse, setFuse] = useState<Fuse<Reason>>(new Fuse([], { keys: ["name"] }));
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
   const [canContinue, setCanContinue] = useState<boolean>(false);
-  const hasSessionError = useSelector((state: AppRootState) => state.signin.session?.session_errored ?? false);
+  const hasSessionError = useSignInSessionField("session_errored") ?? false;
   const dispatch: AppDispatch = useDispatch();
 
   useEffect(() => {

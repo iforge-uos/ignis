@@ -1,14 +1,14 @@
 import { errorDisplay } from "@/components/errors/ErrorDisplay";
-import { FlowStepComponent } from "@/components/signin/actions/SignInManager/types.ts";
-import { SelectedTrainingPipDisplay } from "@/components/signin/actions/ToolSelectionInput/SelectedTrainingPipDisplay.tsx";
-import ToolSelectionList from "@/components/signin/actions/ToolSelectionInput/TrainingSelectionList.tsx";
-import { signinActions } from "@/redux/signin.slice.ts";
+import { SelectedTrainingPipDisplay } from "@/components/signin/actions/SelectedTrainingPipDisplay.tsx";
+import ToolSelectionList from "@/components/signin/actions/TrainingSelectionList.tsx";
+import { signinActions, useSignInSessionField } from "@/redux/signin.slice.ts";
 import { AppDispatch, AppRootState } from "@/redux/store.ts";
 import { GetSignIn, GetSignInProps } from "@/services/signin/signInService.ts";
+import { FlowStepComponent } from "@/types/signInActions.ts";
 import { Training, User } from "@ignis/types/sign_in.ts";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { useQuery } from "@tanstack/react-query";
-import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert.tsx";
 import { Button } from "@ui/components/ui/button.tsx";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card.tsx";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@ui/components/ui/collapsible.tsx";
@@ -31,7 +31,7 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const abortController = new AbortController(); // For gracefully cancelling the query
 
   const activeLocation = useSelector((state: AppRootState) => state.signin.active_location);
-  const ucardNumber = useSelector((state: AppRootState) => state.signin.session?.ucard_number);
+  const ucardNumber = useSignInSessionField("ucard_number");
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [trainingMap, setTrainingMap] = useState<CategoryTrainingMap>({
@@ -51,7 +51,7 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
 
   const signInProps: GetSignInProps = {
     locationName: activeLocation,
-    uCardNumber: ucardNumber ?? 0,
+    uCardNumber: ucardNumber ?? "",
     signal: abortController.signal,
   };
 

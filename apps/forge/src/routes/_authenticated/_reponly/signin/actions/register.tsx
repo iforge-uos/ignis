@@ -1,6 +1,6 @@
 import ActiveLocationSelector from "@/components/signin/ActiveLocationSelector";
-import SignInActionsManager from "@/components/signin/actions/SignInManager";
-import { FlowType } from "@/components/signin/actions/SignInManager/types.ts";
+import SignInActionsManager from "@/components/signin/actions/SignInManager.tsx";
+import { FlowType } from "@/types/signInActions.ts";
 import Title from "@/components/title";
 import { createFileRoute } from "@tanstack/react-router";
 

@@ -1,21 +1,36 @@
 version: "3.8"
 services:
+  proxy:
+    image: traefik:latest
+    container_name: proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./config/proxy/traefik.yml:/traefik.yml:ro
+    networks:
+      - web
+      - internal
+
   db:
-    image: edgedb/edgedb:5.0-beta.3
+    image: edgedb/edgedb:5.2
     env_file:
       - .env
-    environment:
-      EDGEDB_SERVER_SECURITY: insecure_dev_mode
-      EDGEDB_SERVER_ADMIN_UI: enabled
     restart: unless-stopped
-    container_name: edgedb
+    container_name: db
     volumes:
       - db_data:/var/lib/edgedb/data
-      - ./apps/anvil/dbschema:/dbschema
-    ports:
-      - "5656:5656"
+      - ./apps/anvil/dbschema:/dbschema:ro
+      - ./config/secret/db:/ignis_certs:ro
     networks:
       - internal
+    healthcheck:
+      test: curl --fail http://db:5656/server/status/ready || exit 1
+      interval: 8s
+      retries: 10
+      start_period: 6s
+      timeout: 10s
 
   op-connect-api:
     image: 1password/connect-api:latest
@@ -24,7 +39,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - "./config/secret/1password-credentials.json:/home/opuser/.op/1password-credentials.json"
+      - "./config/secret/op/1password-credentials.json:/home/opuser/.op/1password-credentials.json"
       - "1p_data:/home/opuser/.op/data"
     networks:
       - internal
@@ -34,48 +49,98 @@ services:
     container_name: op-sync
     restart: always
     volumes:
-      - "./config/secret/1password-credentials.json:/home/opuser/.op/1password-credentials.json"
+      - "./config/secret/op/1password-credentials.json:/home/opuser/.op/1password-credentials.json"
       - "1p_data:/home/opuser/.op/data"
     networks:
       - internal
 
   cache:
-    image: redis:latest
-    container_name: valkey
+    image: valkey/valkey:unstable
+    container_name: cache
     restart: unless-stopped
-    ports:
-      - "6379:6379"
     networks:
       - internal
+    volumes:
+      - cache_data:/data
 
   anvil:
     build:
       dockerfile: ./apps/anvil/Dockerfile
       context: .
     container_name: anvil
-    ports:
-      - "3000:3000"
+    restart: unless-stopped
+    user: iforge
+    env_file:
+      - .env
+    volumes:
+      - "./config/anvil:/config:ro"
+      - ./config/secret/db:/ignis_certs:ro
+    networks:
+      - internal
+      - data
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_started
+      op-connect-api:
+        condition: service_started
+      op-connect-sync:
+        condition: service_started
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.anvil.rule=Host(`api.iforge.sheffield.ac.uk`) || Host(`anvil.localhost`) || Host(`anvil.local`)"
+      - "traefik.http.routers.anvil.entrypoints=https"
+      - "traefik.http.routers.anvil.tls=true"
 
   mine:
     build:
       dockerfile: ./apps/mine/Dockerfile
       context: .
     container_name: mine
-    ports:
-      - "4000:4000"
+    restart: unless-stopped
+    user: iforge
+    env_file:
+      - .env
+    volumes:
+      - "./config/mine:/config:ro"
+    networks:
+      - internal
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_started
+      op-connect-api:
+        condition: service_started
+      op-connect-sync:
+        condition: service_started
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.anvil.rule=Host(`cdn.iforge.sheffield.ac.uk`) || Host(`mine.localhost`) || Host(`mine.local`)"
+      - "traefik.http.routers.anvil.entrypoints=https"
+      - "traefik.http.routers.anvil.tls=true"
 
   forge:
     build:
       dockerfile: ./apps/forge/Dockerfile
       context: .
     container_name: forge
-    ports:
-      - "80:80"
+    restart: unless-stopped
+    networks:
+      - internal
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.anvil.rule=Host(`iforge.sheffield.ac.uk`) || Host(`forge.localhost`) || Host(`forge.local`)"
+      - "traefik.http.routers.anvil.entrypoints=https"
+      - "traefik.http.routers.anvil.tls=true"
 
 networks:
   internal:
+  web:
+  data:
 
 volumes:
   db_data:
-  redis_data:
+  cache_data:
   1p_data:
