@@ -116,26 +116,10 @@ export class SignInController {
     return await this.signInService.getStatusForLocation(location);
   }
 
-  @Post("queue/remotely")
-  async addToQueueRemotely(@Param("location") location: Location, @User() user: User_) {
-    this.logger.log(
-      `Adding user with ID: ${user.id} to queue remotely at location: ${location}`,
-      SignInController.name,
-    );
-    await this.signInService.addToQueue(location, undefined, user.id);
-  }
-
-  @Post("queue/in-person/:ucard_number")
-  @IsRep()
-  async addToQueueInPerson(
-    @Param("location") location: Location,
-    @Param("ucard_number", ParseIntPipe) ucard_number: number,
-  ) {
-    this.logger.log(
-      `Adding UCard number: ${ucard_number} to queue in-person at location: ${location}`,
-      SignInController.name,
-    );
-    await this.signInService.addToQueue(location, ucard_number);
+  @Post("queue/add/:id")
+  async addToQueueInPerson(@Param("location") location: Location, @Param("id") id: string) {
+    this.logger.log(`Adding user ${id} to queue at location: ${location}`, SignInController.name);
+    return await this.signInService.addToQueue(location, id);
   }
 
   @Post("queue/remove/:id")

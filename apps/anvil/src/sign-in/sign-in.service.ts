@@ -4,7 +4,7 @@ import { LdapService } from "@/ldap/ldap.service";
 import { CreateSignInReasonCategoryDto } from "@/root/dto/reason.dto";
 import { ErrorCodes } from "@/shared/constants/ErrorCodes";
 import { sleep } from "@/shared/functions/sleep";
-import { PartialUserProps, UsersService } from "@/users/users.service";
+import { PartialUserProps, UserProps, UsersService, ldapLibraryToUcardNumber } from "@/users/users.service";
 import { SignInLocationSchema } from "@dbschema/edgedb-zod/modules/sign_in";
 import e from "@dbschema/edgeql-js";
 import { std } from "@dbschema/interfaces";
@@ -651,21 +651,21 @@ export class SignInService implements OnModuleInit {
     }
   }
 
-  async addToQueue(location: Location, ucard_number: number): Promise<void>;
-  async addToQueue(location: Location, ucard_number: undefined, user_id: string): Promise<void>;
-  async addToQueue(location: Location, ucard_number: number | undefined, user_id: string | undefined = undefined) {
+  async addToQueue(location: Location, id: string) {
     if (!(await this.queueInUse(location))) {
       throw new HttpException("The queue is currently not in use", HttpStatus.BAD_REQUEST);
     }
 
     try {
-      e.insert(e.sign_in.QueuePlace, {
-        user: e.select(e.users.User, () => ({
-          filter_single: ucard_number ? { ucard_number } : { id: user_id! }, // on the off chance the user hasn't been registered yet, use their ID
-        })),
-        location: castLocation(location),
-        position: e.op(e.count(e.select(e.sign_in.QueuePlace)), "+", 1),
-      });
+      return await this.dbService.query(
+        e.insert(e.sign_in.QueuePlace, {
+          user: e.select(e.users.User, () => ({
+            filter_single: { id },
+          })),
+          location: castLocation(location),
+          position: e.op(e.count(e.select(e.sign_in.QueuePlace)), "+", 1),
+        }),
+      );
     } catch (e) {
       if (e instanceof CardinalityViolationError && e.code === 84017154) {
         console.log(e, e.code);
@@ -676,7 +676,7 @@ export class SignInService implements OnModuleInit {
     }
   }
 
-  async removeFromQueue(location: Location, user_id: string) {
+  async removeFromQueue(location: Location, id: string) {
     // again, user_id because might not have ucard_number
     if (await this.queueInUse(location)) {
       throw new HttpException("The queue is currently not in use", HttpStatus.SERVICE_UNAVAILABLE);
@@ -756,6 +756,22 @@ export class SignInService implements OnModuleInit {
             limit: 1,
           })).created_at,
         ),
+      ),
+    );
+  }
+
+  async getPopularSignInReasons() {
+    return await this.dbService.query(
+      e.select(
+        e.group(
+          e.select(e.sign_in.SignIn, (sign_in) => ({
+            filter: e.op(sign_in.created_at, "<", e.op(e.datetime_current(), "-", e.cal.relative_duration("3d"))),
+          })),
+          (sign_in) => ({
+            by: { reason: sign_in.reason },
+          }),
+        ).elements.reason,
+        () => ({ limit: 5 }),
       ),
     );
   }
