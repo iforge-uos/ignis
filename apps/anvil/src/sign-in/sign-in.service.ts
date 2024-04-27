@@ -4,7 +4,7 @@ import { LdapService } from "@/ldap/ldap.service";
 import { CreateSignInReasonCategoryDto } from "@/root/dto/reason.dto";
 import { ErrorCodes } from "@/shared/constants/ErrorCodes";
 import { sleep } from "@/shared/functions/sleep";
-import { PartialUserProps, UsersService } from "@/users/users.service";
+import { ldapLibraryToUcardNumber, PartialUserProps, UserProps, UsersService } from "@/users/users.service";
 import { SignInLocationSchema } from "@dbschema/edgedb-zod/modules/sign_in";
 import e from "@dbschema/edgeql-js";
 import { std } from "@dbschema/interfaces";
@@ -685,7 +685,7 @@ export class SignInService implements OnModuleInit {
     await this.dbService.client.transaction(async (tx) => {
       await e
         .delete(e.sign_in.QueuePlace, (queue_place) => ({
-          filter: e.op(queue_place.user.id, "=", e.uuid(id)),
+          filter: e.op(queue_place.user.id, "=", e.uuid(user_id)),
         }))
         .run(tx);
 

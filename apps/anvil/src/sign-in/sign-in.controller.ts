@@ -3,6 +3,7 @@ import { IsRep } from "@/auth/authorization/decorators/check-roles-decorator";
 import { CaslAbilityGuard } from "@/auth/authorization/guards/casl-ability.guard";
 import { TrainingService } from "@/training/training.service";
 import { UsersService, ldapLibraryToUcardNumber } from "@/users/users.service";
+import { User } from "@/shared/decorators/user.decorator";
 import { sign_in as sign_in_ } from "@ignis/types";
 import type { List, Location, LocationStatus } from "@ignis/types/sign_in";
 import type { User as User_ } from "@ignis/types/users";
