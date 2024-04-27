@@ -682,34 +682,37 @@ export class SignInService implements OnModuleInit {
       throw new HttpException("The queue is currently not in use", HttpStatus.SERVICE_UNAVAILABLE);
     }
 
-    await this.dbService.query(
-      e.delete(e.sign_in.QueuePlace, (queue_place) => ({
-        filter: e.op(queue_place.user.id, "=", e.cast(e.uuid, user_id)),
-      })),
-    );
+    await this.dbService.client.transaction(async (tx) => {
+      await e
+        .delete(e.sign_in.QueuePlace, (queue_place) => ({
+          filter: e.op(queue_place.user.id, "=", e.uuid(id)),
+        }))
+        .run(tx);
 
-    await this.dbService.query(
-      e.update(e.sign_in.QueuePlace, (queue_place) => ({
-        filter: e.op(queue_place.location, "=", castLocation(location)),
-        set: {
-          position: e.op(queue_place.position, "-", 1),
-        },
-      })),
-    );
+      await e
+        .update(e.sign_in.QueuePlace, (queue_place) => ({
+          filter: e.op(queue_place.location, "=", castLocation(location)),
+          set: {
+            position: e.op(queue_place.position, "-", 1),
+          },
+        }))
+        .run(tx);
+    });
   }
 
   async queuedUsersThatCanSignIn(location: Location) {
-    const queue_places = await this.dbService.query(
-      e.select(e.sign_in.QueuePlace, (queue_place) => ({
-        user: PartialUserProps(queue_place.user),
-        filter: e.op(
-          e.op(queue_place.location, "=", e.cast(e.sign_in.SignInLocation, castLocation(location))),
-          "and",
-          e.op(queue_place.can_sign_in, "=", true),
-        ),
-      })),
+    return await this.dbService.query(
+      e.select(
+        e.select(e.sign_in.QueuePlace, (queue_place) => ({
+          filter: e.op(
+            e.op(queue_place.location, "=", e.cast(e.sign_in.SignInLocation, castLocation(location))),
+            "and",
+            e.op(queue_place.can_sign_in, "=", true),
+          ),
+        })).user,
+        PartialUserProps,
+      ),
     );
-    return queue_places.map((queue_place) => queue_place.user);
   }
 
   async getSignInReasons() {

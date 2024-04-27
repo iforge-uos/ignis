@@ -72,7 +72,7 @@ export const InfractionSection: React.FC<InfractionSectionProps> = ({ user, loca
     });
 
   switch (type) {
-    case "TEMP_BAN": // FIXME this insta break
+    case "TEMP_BAN":
       buttonDisabled = !(type && date?.from && date?.to);
       extra_field = (
         <>

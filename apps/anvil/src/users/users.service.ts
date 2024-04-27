@@ -252,31 +252,6 @@ export class UsersService {
     };
   }
 
-  async idToUsername(id: string) {
-    return await this.dbService.query(
-      e.select(e.users.User, () => ({
-        username: true,
-        filter_single: { id },
-      })).username,
-    );
-  }
-
-  async ucardNumberToUsername(ucard_number: number) {
-    return await this.dbService.query(
-      e.select(e.users.User, () => ({
-        filter_single: { ucard_number },
-      })).username,
-    );
-  }
-
-  async ucardNumberToID(ucard_number: number) {
-    return await this.dbService.query(
-      e.select(e.users.User, () => ({
-        filter_single: { ucard_number },
-      })).id,
-    );
-  }
-
   async signInStats(id: string): Promise<SignInStat[]> {
     const groupings = await this.dbService.query(
       e.group(
