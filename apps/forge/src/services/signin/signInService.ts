@@ -3,7 +3,7 @@ import { FinaliseSignInDto, User } from "@ignis/types/sign_in.ts";
 
 export interface GetSignInProps {
   locationName: string;
-  uCardNumber: number;
+  uCardNumber: string;
   signal: AbortSignal;
 }
 
@@ -20,7 +20,7 @@ export const GetSignIn = async ({ locationName, uCardNumber, signal }: GetSignIn
 export interface PostSignInProps {
   signal: AbortSignal;
   locationName: string;
-  uCardNumber: number;
+  uCardNumber: string;
   postBody: FinaliseSignInDto;
 }
 
@@ -39,7 +39,7 @@ export const PostSignIn = async ({ locationName, uCardNumber, signal, postBody }
 export interface PostSignOutProps {
   signal: AbortSignal;
   locationName: string;
-  uCardNumber: number;
+  uCardNumber: string;
 }
 
 export const PostSignOut = async ({ locationName, uCardNumber, signal }: PostSignOutProps): Promise<string> => {

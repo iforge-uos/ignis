@@ -1,10 +1,10 @@
 import { errorDisplay } from "@/components/errors/ErrorDisplay";
-import { FlowStepComponent } from "@/types/signInActions.ts";
 import { SelectedTrainingPipDisplay } from "@/components/signin/actions/SelectedTrainingPipDisplay.tsx";
 import ToolSelectionList from "@/components/signin/actions/TrainingSelectionList.tsx";
-import { signinActions } from "@/redux/signin.slice.ts";
+import { signinActions, useSignInSessionField } from "@/redux/signin.slice.ts";
 import { AppDispatch, AppRootState } from "@/redux/store.ts";
 import { GetSignIn, GetSignInProps } from "@/services/signin/signInService.ts";
+import { FlowStepComponent } from "@/types/signInActions.ts";
 import { Training, User } from "@ignis/types/sign_in.ts";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { useQuery } from "@tanstack/react-query";
@@ -16,7 +16,6 @@ import { Loader } from "@ui/components/ui/loader.tsx";
 import { ChevronsDownUp, ChevronsUpDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fullUCardToDBRepresentation } from "@/lib/utils.ts";
 
 /*
 three categories of tools that can be selected:
@@ -32,7 +31,7 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const abortController = new AbortController(); // For gracefully cancelling the query
 
   const activeLocation = useSelector((state: AppRootState) => state.signin.active_location);
-  const ucardNumber = useSelector((state: AppRootState) => state.signin.session?.ucard_number);
+  const ucardNumber = useSignInSessionField("ucard_number");
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [trainingMap, setTrainingMap] = useState<CategoryTrainingMap>({
@@ -52,7 +51,7 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
 
   const signInProps: GetSignInProps = {
     locationName: activeLocation,
-    uCardNumber: fullUCardToDBRepresentation(ucardNumber ?? "0"),
+    uCardNumber: ucardNumber ?? "",
     signal: abortController.signal,
   };
 

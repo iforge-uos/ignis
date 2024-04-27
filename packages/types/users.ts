@@ -25,7 +25,7 @@ export type ShortTeam = {
 export type ShortTeamWithDesc = ShortTeam & { description: string };
 
 export type PartialUserWithTeams = PartialUser & {
-  teams: ShortTeam[];
+  teams?: ShortTeam[] | null;
 };
 
 //** A fairly full user with everything resolved from the database. */

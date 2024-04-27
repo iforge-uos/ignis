@@ -1,18 +1,17 @@
+import { AppDispatch, AppRootState } from "@/redux/store.ts";
 import { PostSignIn, PostSignInProps } from "@/services/signin/signInService.ts";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { AppDispatch, AppRootState } from "@/redux/store.ts";
-import { useDispatch, useSelector } from "react-redux";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card.tsx";
+import { useDispatch, useSelector } from "react-redux";
 
-import { Loader } from "@ui/components/ui/loader.tsx";
-import { Button } from "@ui/components/ui/button.tsx";
-import { useEffect, useState } from "react";
+import { errorDisplay } from "@/components/errors/ErrorDisplay";
 import { signinActions } from "@/redux/signin.slice.ts";
 import { FlowStepComponent } from "@/types/signInActions.ts";
 import { useNavigate } from "@tanstack/react-router";
+import { Button } from "@ui/components/ui/button.tsx";
+import { Loader } from "@ui/components/ui/loader.tsx";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { errorDisplay } from "@/components/errors/ErrorDisplay";
-import { fullUCardToDBRepresentation } from "@/lib/utils.ts";
 
 const SignInDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const queryClient = useQueryClient();
@@ -26,10 +25,10 @@ const SignInDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
 
   const signInProps: PostSignInProps = {
     locationName: activeLocation,
-    uCardNumber: fullUCardToDBRepresentation(signInSession?.ucard_number ?? "0"),
+    uCardNumber: signInSession?.ucard_number ?? "",
     signal: abortController.signal,
     postBody: {
-      ucard_number: fullUCardToDBRepresentation(signInSession?.ucard_number ?? "0"),
+      ucard_number: signInSession?.ucard_number ?? "",
       location: activeLocation,
       reason_id: signInSession?.sign_in_reason?.id ?? "",
       tools: signInSession?.training?.map((training) => training.name) ?? [],

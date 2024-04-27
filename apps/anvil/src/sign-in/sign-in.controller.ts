@@ -1,19 +1,16 @@
 import { CheckAbilities } from "@/auth/authorization/decorators/check-abilities-decorator";
 import { IsRep } from "@/auth/authorization/decorators/check-roles-decorator";
 import { CaslAbilityGuard } from "@/auth/authorization/guards/casl-ability.guard";
-import { User } from "@/shared/decorators/user.decorator";
 import { TrainingService } from "@/training/training.service";
-import { UsersService } from "@/users/users.service";
-import { ErrorCodes } from "@/shared/constants/ErrorCodes";
-import { sign_in as sign_in_, users } from "@ignis/types";
-import type { List, Location } from "@ignis/types/sign_in";
+import { UsersService, ldapLibraryToUcardNumber } from "@/users/users.service";
+import { sign_in as sign_in_ } from "@ignis/types";
+import type { List, Location, LocationStatus } from "@ignis/types/sign_in";
 import type { User as User_ } from "@ignis/types/users";
-import { Body, Controller, Get, NotFoundException, Param, ParseIntPipe, Patch, Post, UseGuards } from "@nestjs/common";
-import { AuthGuard } from "@nestjs/passport";
-import { Throttle } from "@nestjs/throttler";
-import { FinaliseSignInDto, RegisterUserDto, UpdateSignInDto } from "./dto/sigs-in-dto";
-import { SignInService } from "./sign-in.service";
+import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from "@nestjs/common";
 import { Logger } from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
+import { FinaliseSignInDto, UpdateSignInDto } from "./dto/sigs-in-dto";
+import { SignInService } from "./sign-in.service";
 
 @Controller("location/:location")
 @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
@@ -27,38 +24,23 @@ export class SignInController {
 
   @Get()
   @IsRep()
-  async getList(@Param("location") location: Location) {
+  async getList(@Param("location") location: Location): Promise<List> {
     return this.signInService.getList(location);
-  }
-
-  @Throttle({ default: { limit: 1, ttl: 1000 } })
-  @IsRep()
-  @Post("register-user")
-  async registerUser(@Param("location") location: Location, @Body() registerUser: RegisterUserDto) {
-    this.logger.log(`Registering user: ${registerUser.ucard_number} at location: ${location}`, SignInController.name);
-    return this.signInService.registerUser(location, registerUser);
   }
 
   @Get("sign-in/:ucard_number")
   @IsRep()
   async signInOptions(
     @Param("location") location: Location,
-    @Param("ucard_number", ParseIntPipe) ucard_number: number,
+    @Param("ucard_number") ucard_number: string,
   ): Promise<sign_in_.User> {
     this.logger.log(
       `Retrieving sign-in options for UCard number: ${ucard_number} at location: ${location}`,
       SignInController.name,
     );
-    const user = await this.userService.findByUcardNumber(ucard_number);
-    if (!user) {
-      this.logger.warn(`User with UCard number ${ucard_number} is not registered`, SignInController.name);
-      throw new NotFoundException({
-        message: `User with UCard number ${ucard_number} is not registered`,
-        code: ErrorCodes.not_registered,
-      });
-    }
+    const user = await this.signInService.getUserForSignIn(location, ucard_number);
 
-    if (await this.signInService.isRep(ucard_number)) {
+    if (user?.is_rep) {
       return {
         // reasons,
         training: await this.signInService.getTrainings(user.id, location),
@@ -67,7 +49,7 @@ export class SignInController {
       };
     }
 
-    const extras = await this.signInService.preSignInChecks(location, ucard_number);
+    const extras = await this.signInService.preSignInChecks(location, user.ucard_number);
 
     // const [trainings, reasons] = await Promise.all([
     //   this.trainingService.getUserxxTrainingForLocation(user.username, location),
@@ -85,17 +67,18 @@ export class SignInController {
   @IsRep()
   async signIn(
     @Param("location") location: Location,
-    @Param("ucard_number", ParseIntPipe) ucard_number: number,
+    @Param("ucard_number") ucard_number: string,
     @Body() finaliseSignInDto: FinaliseSignInDto,
   ) {
     this.logger.log(`Signing in UCard number: ${ucard_number} at location: ${location}`, SignInController.name);
-    if (await this.signInService.isRep(ucard_number)) {
-      return await this.signInService.repSignIn(location, ucard_number, finaliseSignInDto.reason_id);
+    const ucard_number_ = ldapLibraryToUcardNumber(ucard_number);
+    if (await this.signInService.isRep(ucard_number_)) {
+      return await this.signInService.repSignIn(location, ucard_number_, finaliseSignInDto.reason_id);
     }
 
     return await this.signInService.signIn(
       location,
-      ucard_number,
+      ucard_number_,
       finaliseSignInDto.tools,
       finaliseSignInDto.reason_id,
     );
@@ -122,13 +105,13 @@ export class SignInController {
 
   @Post("sign-out/:ucard_number")
   @IsRep()
-  async signOut(@Param("location") location: Location, @Param("ucard_number", ParseIntPipe) ucard_number: number) {
+  async signOut(@Param("location") location: Location, @Param("ucard_number") ucard_number: string) {
     this.logger.log(`Signing out UCard number: ${ucard_number} at location: ${location}`, SignInController.name);
-    return await this.signInService.signOut(location, ucard_number);
+    return await this.signInService.signOut(location, ldapLibraryToUcardNumber(ucard_number));
   }
 
   @Get("status")
-  async getSignInStatus(@Param("location") location: Location) {
+  async getSignInStatus(@Param("location") location: Location): Promise<LocationStatus> {
     this.logger.log(`Retrieving sign-in status for location: ${location}`, SignInController.name);
     return await this.signInService.getStatusForLocation(location);
   }

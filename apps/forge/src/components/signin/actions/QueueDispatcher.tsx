@@ -1,18 +1,17 @@
-import { useMutation } from "@tanstack/react-query";
 import { AppDispatch, AppRootState } from "@/redux/store.ts";
-import { useDispatch, useSelector } from "react-redux";
+import { useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card.tsx";
+import { useDispatch, useSelector } from "react-redux";
 
-import { Loader } from "@ui/components/ui/loader.tsx";
-import { Button } from "@ui/components/ui/button.tsx";
-import { useState } from "react";
+import { errorDisplay } from "@/components/errors/ErrorDisplay";
 import { signinActions } from "@/redux/signin.slice.ts";
+import { PostQueueInPerson, PostQueueProps } from "@/services/signin/queueService.ts";
 import { FlowStepComponent } from "@/types/signInActions.ts";
 import { useNavigate } from "@tanstack/react-router";
+import { Button } from "@ui/components/ui/button.tsx";
+import { Loader } from "@ui/components/ui/loader.tsx";
+import { useState } from "react";
 import { toast } from "sonner";
-import { PostQueueInPerson, PostQueueProps } from "@/services/signin/queueService.ts";
-import { errorDisplay } from "@/components/errors/ErrorDisplay";
-import { fullUCardToDBRepresentation } from "@/lib/utils.ts";
 
 const QueueDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const dispatch: AppDispatch = useDispatch();
@@ -25,7 +24,7 @@ const QueueDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
 
   const queueProps: PostQueueProps = {
     locationName: activeLocation,
-    uCardNumber: fullUCardToDBRepresentation(signInSession?.ucard_number ?? "0"),
+    uCardNumber: signInSession?.ucard_number ?? "",
     signal: abortController.signal,
   };
 

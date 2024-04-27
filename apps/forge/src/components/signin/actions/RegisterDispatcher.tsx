@@ -24,7 +24,7 @@ const RegisterDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
 
   const registerProps: PostRegisterProps = {
     locationName: activeLocation,
-    uCardNumber: signInSession?.ucard_number ?? "0",
+    uCardNumber: signInSession?.ucard_number ?? "",
     signal: abortController.signal,
   };
 

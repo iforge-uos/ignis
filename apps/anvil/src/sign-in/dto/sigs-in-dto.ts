@@ -11,11 +11,6 @@ const UpdateSignInSchema = CreateSignInSchema.partial({
   tools: true,
 });
 
-const RegisterUser = z.object({
-  ucard_number: z.string(),
-});
-
 export class CreateSignInDto extends createZodDto(SignInSchema) {}
 export class FinaliseSignInDto extends createZodDto(CreateSignInSchema.omit({ location: true })) {}
 export class UpdateSignInDto extends createZodDto(UpdateSignInSchema.omit({ location: true })) {}
-export class RegisterUserDto extends createZodDto(RegisterUser) {}

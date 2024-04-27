@@ -2,6 +2,7 @@ import { GoogleUser } from "@/auth/interfaces/google-user.interface";
 import { LdapUser } from "@/auth/interfaces/ldap-user.interface";
 import { EdgeDBService } from "@/edgedb/edgedb.service";
 import { LdapService } from "@/ldap/ldap.service";
+import { ErrorCodes } from "@/shared/constants/ErrorCodes";
 import e from "@dbschema/edgeql-js";
 import { addInPersonTraining } from "@dbschema/queries/addInPersonTraining.query";
 import { users } from "@ignis/types";
@@ -89,7 +90,7 @@ function removeDomain(email: string): string {
   return email.slice(0, email.length - "@sheffield.ac.uk".length);
 }
 
-function ldapLibraryToUcardNumber(shefLibraryNumber: string): number {
+export function ldapLibraryToUcardNumber(shefLibraryNumber: string): number {
   return parseInt(shefLibraryNumber.slice(3));
 }
 
@@ -213,9 +214,14 @@ export class UsersService {
     if (!user) {
       const ldapUser = await this.ldapService.findUserByEmail(googleUser.email);
       if (!ldapUser) {
-        throw new Error("Failed to fetch a matching user on LDAP");
+        throw new NotFoundException({
+          message: `User with email ${googleUser.email} couldn't be found`,
+          code: ErrorCodes.ldap_not_found,
+        });
       }
-      user = await this.insertLdapUser(ldapUser, googleUser.picture);
+      user = await this.dbService.query(
+        e.assert_single(e.select(e.insert(e.users.User, this.ldapUserProps(ldapUser, googleUser.picture)), UserProps)),
+      );
     }
 
     if (user.profile_picture !== googleUser.picture) {
@@ -233,8 +239,8 @@ export class UsersService {
     return user;
   }
 
-  async insertLdapUser(ldapUser: LdapUser, profile_picture: string | undefined = undefined): Promise<User> {
-    return await this.create({
+  ldapUserProps(ldapUser: LdapUser, profile_picture: string | undefined = undefined) {
+    return {
       username: ldapUser.uid,
       email: removeDomain(ldapUser.mail),
       first_name: ldapUser.givenName,
@@ -243,14 +249,7 @@ export class UsersService {
       roles: e.select(e.auth.Role, () => ({ filter_single: { name: "User" } })),
       ucard_number: ldapLibraryToUcardNumber(ldapUser.shefLibraryNumber),
       profile_picture,
-    });
-  }
-
-  async createOrFindLdapUser(ldapUser: LdapUser): Promise<User> {
-    return (
-      (await this.findByUcardNumber(ldapLibraryToUcardNumber(ldapUser.shefLibraryNumber))) ??
-      (await this.insertLdapUser(ldapUser))
-    );
+    };
   }
 
   async idToUsername(id: string) {

@@ -1,29 +1,29 @@
-import React, { ReactElement, useEffect, useLayoutEffect, useState } from "react";
-import UCardInput from "@/components/signin/actions/UCardInput.tsx";
+import QueueDispatcher from "@/components/signin/actions/QueueDispatcher.tsx";
+import RegisterDispatcher from "@/components/signin/actions/RegisterDispatcher.tsx";
+import SignInDispatcher from "@/components/signin/actions/SignInDispatcher.tsx";
+import SignInFlowProgress from "@/components/signin/actions/SignInFlowProgress.tsx";
 import SignInReasonInput from "@/components/signin/actions/SignInReasonInput.tsx";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, AppRootState } from "@/redux/store.ts";
+import SignOutDispatcher from "@/components/signin/actions/SignOutDispatcher.tsx";
+import ToolSelectionInput from "@/components/signin/actions/ToolSelectionInput.tsx";
+import UCardInput from "@/components/signin/actions/UCardInput.tsx";
+import useDoubleTapEscape from "@/hooks/useDoubleTapEscape.ts";
 import { signinActions } from "@/redux/signin.slice.ts";
-import { SignInSession } from "@/types/signin.ts";
+import { AppDispatch, AppRootState } from "@/redux/store.ts";
 import {
   AnyStep,
   EnqueueSteps,
   FlowConfiguration,
   FlowStepComponent,
   FlowType,
-  flowTypeToPrintTable,
   RegisterSteps,
   SignInSteps,
   SignOutSteps,
+  flowTypeToPrintTable,
 } from "@/types/signInActions.ts";
-import ToolSelectionInput from "@/components/signin/actions/ToolSelectionInput.tsx";
-import SignInDispatcher from "@/components/signin/actions/SignInDispatcher.tsx";
-import SignOutDispatcher from "@/components/signin/actions/SignOutDispatcher.tsx";
-import SignInFlowProgress from "@/components/signin/actions/SignInFlowProgress.tsx";
+import { SignInSession } from "@/types/signin.ts";
 import { Button } from "@ui/components/ui/button.tsx";
-import useDoubleTapEscape from "@/hooks/useDoubleTapEscape.ts";
-import QueueDispatcher from "@/components/signin/actions/QueueDispatcher.tsx";
-import RegisterDispatcher from "@/components/signin/actions/RegisterDispatcher.tsx";
+import React, { ReactElement, useEffect, useLayoutEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const flowConfig: FlowConfiguration = {
   [FlowType.SignIn]: {
@@ -47,7 +47,7 @@ const flowConfig: FlowConfiguration = {
 };
 
 const defaultSignInSession: SignInSession = {
-  ucard_number: 0,
+  ucard_number: "",
   is_rep: false,
   sign_in_reason: null,
   training: null,
