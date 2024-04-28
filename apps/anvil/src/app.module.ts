@@ -31,7 +31,7 @@ import { GracefulShutdownModule } from 'nestjs-graceful-shutdown';
     ConfigModule.forRoot({
       envFilePath: ".env.production",
     }),
-    GracefulShutdownModule.forRoot(),
+    GracefulShutdownModule.forRoot({ gracefulShutdownTimeout: 300 }),
     EdgeDBModule,
     UsersModule,
     AuthenticationModule,

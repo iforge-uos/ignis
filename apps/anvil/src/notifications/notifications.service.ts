@@ -19,8 +19,12 @@ export class NotificationsService {
   //region Mailing Lists
   async findAllMailingLists(includeSubscribers = false): Promise<MailingList[]> {
     return await this.dbService.query(e.select(e.notification.MailingList, () => ({
-      ...e.notification.MailingList['*'],
-      subscribers: includeSubscribers ? e.notification.MailingList.subscribers : undefined
+      subscribers: includeSubscribers,
+      id: true,
+      name: true,
+      description: true,
+      updated_at: true,
+      created_at: true,
     })));
   }
 
