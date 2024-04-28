@@ -5,7 +5,11 @@
   "author": "iForge IT team",
   "license": "GPL-3.0-or-later",
   "private": true,
-  "workspaces": ["packages/*", "apps/*", "tooling/*"],
+  "workspaces": [
+    "packages/*",
+    "apps/*",
+    "tooling/*"
+  ],
   "scripts": {
     "dev": "turbo run dev",
     "env:gen": "OP_ACCOUNT=iforge.1password.com op inject -f -i .env.tpl -o .env",
@@ -19,7 +23,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.5.3",
-    "turbo": "^1.11.3"
+    "turbo": "^1.13.3"
   },
   "engines": {
     "pnpm": ">=8",

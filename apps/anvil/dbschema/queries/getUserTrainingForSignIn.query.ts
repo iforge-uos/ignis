@@ -5,8 +5,8 @@ import type {Executor} from "edgedb";
 export type GetUserTrainingForSignInArgs = {
   readonly "location": ("MAINSPACE" | "HEARTSPACE");
   readonly "on_shift_reasons": ReadonlyArray<string>;
-  readonly "location_": ("MAINSPACE" | "HEARTSPACE" | "GEORGE_PORTER");
   readonly "id": string;
+  readonly "location_": ("MAINSPACE" | "HEARTSPACE" | "GEORGE_PORTER");
 };
 
 export type GetUserTrainingForSignInReturns = {
