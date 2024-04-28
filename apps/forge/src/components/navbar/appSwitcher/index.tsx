@@ -1,7 +1,7 @@
 import ContextMenuWrapper from "@/components/navbar/appSwitcher/ContextMenu.tsx";
 import ListItem from "@/components/navbar/appSwitcher/ListItem";
 import useCurrentApp from "@/hooks/useCurrentApp.ts";
-import { cn } from "@/lib/utils.ts";
+import { cn, currentAppToColor } from "@/lib/utils.ts";
 import { Link } from "@tanstack/react-router";
 import {
   NavigationMenu,
@@ -21,7 +21,7 @@ export default function AppSwitcher() {
       <NavigationMenuList>
         <NavigationMenuItem>
           <ContextMenuWrapper>
-            <NavigationMenuTrigger className="bg-card">iForge | {currentapp}</NavigationMenuTrigger>
+            <NavigationMenuTrigger className="bg-card"><span className={`border-b-2 ${currentAppToColor(currentapp)} border-red-400z`}>iForge | {currentapp}</span></NavigationMenuTrigger>
           </ContextMenuWrapper>
           <NavigationMenuContent>
             <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">

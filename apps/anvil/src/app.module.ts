@@ -23,12 +23,15 @@ import { SignInModule } from "./sign-in/sign-in.module";
 import { SignInService } from "./sign-in/sign-in.service";
 import { TrainingController } from "./training/training.controller";
 import { UsersModule } from "./users/users.module";
+import { NotificationsModule } from './notifications/notifications.module';
+import { GracefulShutdownModule } from 'nestjs-graceful-shutdown';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: ".env.production",
     }),
+    GracefulShutdownModule.forRoot(),
     EdgeDBModule,
     UsersModule,
     AuthenticationModule,
@@ -47,6 +50,7 @@ import { UsersModule } from "./users/users.module";
     BullModule.registerQueue({ name: "email" }),
     RootModule,
     LdapModule,
+    NotificationsModule,
   ],
   providers: [
     {
@@ -63,4 +67,4 @@ import { UsersModule } from "./users/users.module";
   ],
   controllers: [SignInController, RootController, TrainingController],
 })
-export class AppModule {}
+export class AppModule { }

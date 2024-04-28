@@ -6,6 +6,7 @@ import md5 from "md5";
 import { useSelector } from "react-redux";
 import { twMerge } from "tailwind-merge";
 import { UCARD_LENGTH } from "./constants";
+import { Apps } from "@/types/app";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -49,4 +50,25 @@ export function extractError(error: Error): string {
 
 export function ucardNumberToString(ucard_number: number): string {
   return ucard_number.toString().padStart(UCARD_LENGTH, "0");
+}
+
+export function currentAppToColor(currentApp: Apps | undefined): string {
+  switch (currentApp) {
+    case "Admin":
+      return "border-purple-600";
+    case "Auth":
+      return "border-fuchisa-600";
+    case "Main":
+      return "border-red-700";
+    case "Printing":
+      return "border-orange-500";
+    case "Sign In":
+      return "border-rose-700";
+    case "Training":
+      return "border-green-700";
+    case "User":
+      return "border-indigo-600";
+    default:
+      return "";
+  }
 }

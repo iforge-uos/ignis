@@ -1,10 +1,11 @@
 import { ValidationPipe, VersioningType } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import { WINSTON_MODULE_NEST_PROVIDER, WinstonModule } from "nest-winston";
+import { WinstonModule } from "nest-winston";
 import * as cookieParser from "cookie-parser";
 import helmet from "helmet";
 import { AppModule } from "./app.module";
+import { setupGracefulShutdown } from 'nestjs-graceful-shutdown';
 
 import type { users } from "@ignis/types";
 import * as Express from "express";
@@ -15,7 +16,7 @@ import { utilities as nestWinstonModuleUtilities } from "nest-winston/dist/winst
 declare global {
   // biome-ignore lint/suspicious/noRedeclare: <explanation>
   namespace Express {
-    interface User extends users.User {}
+    interface User extends users.User { }
   }
 }
 
@@ -70,6 +71,7 @@ async function bootstrap() {
     .addTag("iForge")
     .build();
 
+  setupGracefulShutdown({ app });
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup("api", app, document);
   await app.listen(process.env.ANVIL_PORT || 3000);
