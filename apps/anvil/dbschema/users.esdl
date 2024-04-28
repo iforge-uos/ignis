@@ -44,6 +44,8 @@ module users {
         multi roles: auth::Role;
         multi infractions: Infraction;
 
+        multi notifications: UserNotification;
+
         multi mailing_list_subscriptions: notification::MailingList;
         multi referrals: User {
             created_at: datetime {
@@ -125,5 +127,14 @@ module users {
         index on ((.platform, .external_id));
         constraint exclusive on ((.platform, .user));
         constraint exclusive on ((.platform, .external_id));
+    }
+
+    type UserNotification extending default::Auditable {
+        required notification: notification::Notification;
+        required user: User;
+        required is_acknowledged: bool {
+            annotation description := "Whether the user has dismissed / marked as read / interacted with it (will be true if noti type is email & is delivered)";
+            default := false;
+        };
     }
 }

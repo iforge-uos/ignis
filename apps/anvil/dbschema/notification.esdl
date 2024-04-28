@@ -23,7 +23,8 @@ module notification {
         BANNER,
         EMAIL,
         TRAY,
-        POPUP
+        POPUP,
+        DISCORD
     >;
 
     scalar type NotificationStatus extending enum<

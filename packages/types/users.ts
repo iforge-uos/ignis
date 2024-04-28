@@ -32,7 +32,7 @@ export type PartialUserWithTeams = PartialUser & {
 export type User = helper.Props<users.User> &
   Omit<
     Record<NonNullable<helper.linkKeys<users.User>>, std.BaseObject[]>,
-    "infractions" | "roles" | "agreements_signed" | "training"
+    "infractions" | "roles" | "agreements_signed" | "training" | "notifications"
   > & {
     roles: Omit<auth.Role, "permissions">[];
     agreements_signed: {

@@ -1,6 +1,5 @@
 import { LdapUser } from "@/auth/interfaces/ldap-user.interface";
-import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
-import * as ldap from "ldapjs";
+import { Injectable, Logger } from "@nestjs/common";
 import { LdapClass } from "@/ldap/ldap.class";
 
 @Injectable()
