@@ -14,6 +14,10 @@ export interface LdapWrapperOptions {
   defaultAttributes?: string[];
 }
 
+function escapeLDAPFilterCharacters(str: string): string {
+  return str.replace(/([\\*\(\)\!\&\|\=><~])/g, "\\$1");
+}
+
 export class LdapClass extends EventEmitter implements OnModuleInit {
   private readonly logger: Logger;
   private client: ldap.Client | null = null;
@@ -192,7 +196,7 @@ export class LdapClass extends EventEmitter implements OnModuleInit {
   async authenticate(username: string, password: string): Promise<boolean> {
     this.logger.log(`Authenticating user: ${username}`, LdapClass.name);
 
-    const searchFilter = `(uid=${username})`;
+    const searchFilter = `(uid=${escapeLDAPFilterCharacters(username)})`;
     const dn = await this.getDN(searchFilter, ["dn"]);
 
     try {
@@ -237,13 +241,14 @@ export class LdapClass extends EventEmitter implements OnModuleInit {
     this.logger.log(`Lookup completed. Found attributes: ${JSON.stringify(attributesDict)}`, LdapClass.name);
     return attributesDict;
   }
+
   async lookupByUsername(
     username: string,
     attributes: string[] = this.defaultAttributes,
   ): Promise<Record<string, string | string[]> | null> {
     this.logger.log(`Looking up user by username: ${username}`, LdapClass.name);
 
-    const searchFilter = `(&(objectClass=person)(uid=${username}))`;
+    const searchFilter = `(&(objectClass=person)(uid=${escapeLDAPFilterCharacters(username)}))`;
     return this.lookup(searchFilter, attributes, true);
   }
 
@@ -253,7 +258,7 @@ export class LdapClass extends EventEmitter implements OnModuleInit {
   ): Promise<Record<string, string | string[]> | null> {
     this.logger.log(`Looking up user by email: ${email}`, LdapClass.name);
 
-    const searchFilter = `(&(objectClass=person)(mail=${email}))`;
+    const searchFilter = `(&(objectClass=person)(mail=${escapeLDAPFilterCharacters(email)}))`;
     return this.lookup(searchFilter, attributes, true);
   }
 
@@ -263,7 +268,7 @@ export class LdapClass extends EventEmitter implements OnModuleInit {
   ): Promise<Record<string, string | string[]> | null> {
     this.logger.log(`Looking up user by ucard number: ${ucardNumber}`, LdapClass.name);
 
-    const searchFilter = `(&(objectClass=person)(shefLibraryNumber=${ucardNumber}))`;
+    const searchFilter = `(&(objectClass=person)(shefLibraryNumber=${escapeLDAPFilterCharacters(ucardNumber)}))`;
     return this.lookup(searchFilter, attributes, true);
   }
 }
