@@ -59,7 +59,6 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["getSignIn", signInProps],
     queryFn: () => GetSignIn(signInProps),
-    retry: 1,
   });
 
   const handleOnTrainingSelect = (selectedTrainings: Training[]) => {
