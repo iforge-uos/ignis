@@ -1,5 +1,4 @@
 import { UCARD_LENGTH } from "@/lib/constants";
-import { ucardNumberToString } from "@/lib/utils";
 import { signinActions, useSignInSessionField } from "@/redux/signin.slice.ts";
 import { AppDispatch } from "@/redux/store.ts";
 import { FlowStepComponent } from "@/types/signInActions.ts";
@@ -11,7 +10,7 @@ import { useDispatch } from "react-redux";
 
 const UCardInput: FlowStepComponent = ({ onPrimary }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const [otp, setOtp] = useState(useSignInSessionField("ucard_number")); // OTP is now handled as a string
+  const [otp, setOtp] = useState(useSignInSessionField("ucard_number")!); // OTP is now handled as a string
   const [isOtpValid, setIsOtpValid] = useState(otp.length === UCARD_LENGTH);
 
   const handleOtpChange = (value: string) => {
@@ -30,11 +29,6 @@ const UCardInput: FlowStepComponent = ({ onPrimary }) => {
       onPrimary?.();
     }
   };
-  const firstInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    firstInputRef.current?.focus();
-  }, []);
 
   return (
     <>
@@ -51,7 +45,6 @@ const UCardInput: FlowStepComponent = ({ onPrimary }) => {
             onChange={(value) => handleOtpChange(value)}
             onComplete={() => handleOnSubmit()}
             pushPasswordManagerStrategy="none"
-            ref={firstInputRef}
             data-lpignore="true"
             data-1p-ignore="true"
           >
