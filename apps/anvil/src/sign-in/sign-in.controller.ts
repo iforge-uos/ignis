@@ -1,5 +1,5 @@
 import { CheckAbilities } from "@/auth/authorization/decorators/check-abilities-decorator";
-import { IsRep } from "@/auth/authorization/decorators/check-roles-decorator";
+import { IsAdmin, IsRep } from "@/auth/authorization/decorators/check-roles-decorator";
 import { CaslAbilityGuard } from "@/auth/authorization/guards/casl-ability.guard";
 import { TrainingService } from "@/training/training.service";
 import { UsersService, ldapLibraryToUcardNumber } from "@/users/users.service";
@@ -111,7 +111,7 @@ export class SignInController {
   }
 
   @Get("status")
-  async getSignInStatus(@Param("location") location: Location): Promise<LocationStatus> {
+  async getLocationStatus(@Param("location") location: Location): Promise<LocationStatus> {
     this.logger.log(`Retrieving sign-in status for location: ${location}`, SignInController.name);
     return await this.signInService.getStatusForLocation(location);
   }

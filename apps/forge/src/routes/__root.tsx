@@ -1,13 +1,13 @@
-import { createRootRouteWithContext, Outlet, ScrollRestoration } from "@tanstack/react-router";
-import { QueryClient } from "@tanstack/react-query";
-import NavBar from "@/components/navbar";
-import CommandMenu from "@/components/command-menu";
-import React, { Suspense } from "react";
 import { AuthContext } from "@/components/auth-provider";
-import { NotFound } from "@/components/routing/NotFound.tsx";
+import CommandMenu from "@/components/command-menu";
+import { TailwindIndicator } from "@/components/dev/Tailwind-Indicator.tsx";
+import NavBar from "@/components/navbar";
 import { GenericError } from "@/components/routing/GenericError.tsx";
 import { Loading } from "@/components/routing/Loading.tsx";
-import { TailwindIndicator } from "@/components/dev/Tailwind-Indicator.tsx";
+import { NotFound } from "@/components/routing/NotFound.tsx";
+import { QueryClient } from "@tanstack/react-query";
+import { Outlet, ScrollRestoration, createRootRouteWithContext } from "@tanstack/react-router";
+import React, { Suspense } from "react";
 
 const TanStackRouterDevtools =
   process.env.NODE_ENV === "production"

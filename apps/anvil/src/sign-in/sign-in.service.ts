@@ -151,13 +151,37 @@ export class SignInService implements OnModuleInit {
   async getUserForSignIn(
     location: Location,
     ucard_number: string,
-  ): Promise<User & { is_rep: boolean; registered: boolean }> {
-    let user = await this.dbService.query(
+  ): Promise<User & { is_rep: boolean; registered: boolean; signed_in: boolean }> {
+    const sign_in = e.select(e.sign_in.SignIn, (sign_in) => ({
+      filter_single: e.op(sign_in.user.ucard_number, "=", ldapLibraryToUcardNumber(ucard_number)),
+    }));
+    let user:
+      | (User & { is_rep: boolean; registered: boolean; signed_in: boolean; location?: Uppercase<Location> })
+      | null = await this.dbService.query(
+      e.select(sign_in.user, (user) => ({
+        ...UserProps(user),
+        is_rep: e.select(e.op(user.__type__.name, "=", "users::Rep")),
+        registered: e.select(true as boolean),
+        signed_in: e.select(true as boolean),
+        location: e.assert_exists(sign_in.location),
+      })),
+    );
+    if (user?.location && user.location.toLowerCase() !== location) {
+      throw new BadRequestException({
+        message: `User ${ucard_number} is already signed in at a different location, please sign out there before signing in.`,
+        code: ErrorCodes.already_signed_in_to_location,
+      });
+    }
+    if (user) {
+      return user;
+    }
+    user = await this.dbService.query(
       e.select(e.users.User, (user) => ({
         filter_single: { ucard_number: ldapLibraryToUcardNumber(ucard_number) },
         ...UserProps(user),
         is_rep: e.select(e.op(user.__type__.name, "=", "users::Rep")),
         registered: e.select(true as boolean),
+        signed_in: e.select(false as boolean),
       })),
     );
     if (user) {
@@ -181,7 +205,12 @@ export class SignInService implements OnModuleInit {
           location: castLocation(location),
           user: e.insert(e.users.User, this.userService.ldapUserProps(ldapUser)),
         }).user,
-        (user) => ({ ...UserProps(user), is_rep: e.select(false as boolean), registered: e.select(false as boolean) }),
+        (user) => ({
+          ...UserProps(user),
+          is_rep: e.select(false as boolean),
+          registered: e.select(false as boolean),
+          signed_in: e.select(false as boolean),
+        }),
       ),
     );
 

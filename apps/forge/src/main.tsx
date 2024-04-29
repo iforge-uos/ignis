@@ -1,20 +1,21 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
 import "@/index.css";
+import { ThemeProvider } from "@/providers/themeProvider";
+import { persistor, store } from "@/redux/store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { ThemeProvider } from "@/providers/themeProvider";
-import { createRouter, RouterProvider } from "@tanstack/react-router";
+import { RouterProvider, createRouter } from "@tanstack/react-router";
+import React from "react";
+import ReactDOM from "react-dom/client";
 import { HelmetProvider } from "react-helmet-async";
 import { Provider } from "react-redux";
-import { persistor, store } from "@/redux/store";
 
-import { PersistGate } from "redux-persist/integration/react";
+import { AuthProvider, useAuth } from "@/components/auth-provider";
+import { Loading } from "@/components/routing/Loading.tsx";
 import { routeTree } from "@/routeTree.gen.ts";
 import { Toaster } from "@ui/components/ui/sonner.tsx";
-import { AuthProvider, useAuth } from "@/components/auth-provider";
 import posthog from "posthog-js";
-import { Loading } from "@/components/routing/Loading.tsx";
+import { PersistGate } from "redux-persist/integration/react";
+import UCardReader from "./components/ucard-reader";
 
 // Begin Router
 const queryClient = new QueryClient();
@@ -56,6 +57,7 @@ if (rootElement) {
                 <AuthProvider>
                   <InnerApp />
                   <Toaster />
+                  <UCardReader />
                 </AuthProvider>
               </PersistGate>
             </Provider>
