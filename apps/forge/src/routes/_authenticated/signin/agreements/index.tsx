@@ -2,7 +2,7 @@ import { useUser } from "@/lib/utils";
 import { getAgreements } from "@/services/root/getAgreements";
 import { Agreement } from "@ignis/types/root";
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Badge } from "@ui/components/ui/badge";
 import { Loader } from "@ui/components/ui/loader";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@ui/components/ui/table";
@@ -56,22 +56,20 @@ export default function Component() {
           </TableHeader>
           <TableBody>
             {agreements.map((agreement) => (
-              <TableRow
-                key={agreement.id}
-                className="hover:bg-accent hover:cursor-pointer"
-                onClick={() => navigate({ to: "/signin/agreements/$id", params: agreement })}
-              >
-                <TableCell>{agreement.reasons.map((reason) => reason.name).join(", ")}</TableCell>
-                <TableCell>
-                  <div className="flex justify-center">
-                    <Badge variant="outline" className="rounded-md">
-                      {getAgreementStatus(agreement)}
-                    </Badge>
-                  </div>
-                </TableCell>
-                <TableCell className="text-center">{agreement.version}</TableCell>
-                <TableCell>{new Date(agreement.created_at).toLocaleDateString()}</TableCell>
-              </TableRow>
+              <Link to="/signin/agreements/$id" params={agreement}>
+                <TableRow key={agreement.id} className="hover:bg-accent hover:cursor-pointer">
+                  <TableCell>{agreement.reasons.map((reason) => reason.name).join(", ")}</TableCell>
+                  <TableCell>
+                    <div className="flex justify-center">
+                      <Badge variant="outline" className="rounded-md">
+                        {getAgreementStatus(agreement)}
+                      </Badge>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-center">{agreement.version}</TableCell>
+                  <TableCell>{new Date(agreement.created_at).toLocaleDateString()}</TableCell>
+                </TableRow>
+              </Link>
             ))}
           </TableBody>
         </Table>

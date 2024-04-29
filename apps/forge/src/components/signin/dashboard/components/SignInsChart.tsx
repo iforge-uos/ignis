@@ -1,7 +1,7 @@
 import { LocationIcon } from "@/components/icons/Locations";
 import { SignInStat } from "@ignis/types/users";
 import { Datum, ResponsiveCalendar } from "@nivo/calendar";
-import { useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@ui/components/ui/dialog";
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from "@ui/components/ui/drawer";
@@ -12,8 +12,6 @@ import MediaQuery from "react-responsive";
 type SignInDatum = Omit<Datum, "data"> & { data: Datum["data"] & SignInStat };
 
 function SignInTable({ datum }: { datum: SignInDatum | null }) {
-  const navigate = useNavigate();
-
   return (
     <Table>
       <TableHeader>
@@ -32,19 +30,20 @@ function SignInTable({ datum }: { datum: SignInDatum | null }) {
           const minutes_string = `${minutes} minute${minutes !== 1 ? "s" : ""}`;
 
           return (
-            <TableRow
-              className="hover:bg-accent hover:cursor-pointer"
-              onClick={() => navigate({ to: `/sign-ins/${sign_in.id}` as string })}
-            >
-              <TableCell className="flex justify-center">
-                <LocationIcon location={sign_in.location} />
-              </TableCell>
-              <TableCell>{sign_in.created_at.toLocaleTimeString()}</TableCell>
-              <TableCell>{sign_in.ends_at?.toLocaleTimeString() || "-"}</TableCell>
-              <TableCell>
-                {hours && minutes ? `${hours_string} and ${minutes_string}` : hours ? hours_string : minutes_string}
-              </TableCell>
-            </TableRow>
+            <>
+              <Link to="/sign-ins/$id" params={{ id: sign_in.id }}>
+                <TableRow className="hover:bg-accent hover:cursor-pointer">
+                  <TableCell className="flex justify-center">
+                    <LocationIcon location={sign_in.location} />
+                  </TableCell>
+                  <TableCell>{sign_in.created_at.toLocaleTimeString()}</TableCell>
+                  <TableCell>{sign_in.ends_at?.toLocaleTimeString() || "-"}</TableCell>
+                  <TableCell>
+                    {hours && minutes ? `${hours_string} and ${minutes_string}` : hours ? hours_string : minutes_string}
+                  </TableCell>
+                </TableRow>
+              </Link>
+            </>
           );
         })}
       </TableBody>
