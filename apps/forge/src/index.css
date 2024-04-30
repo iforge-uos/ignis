@@ -100,11 +100,13 @@
         }
 
         #training-content li {
-            list-style-type: circle;
+            list-style-type: disc;
+            list-style-position: inside;
         }
 
         #training-content ol {
             list-style-type: decimal;
+            list-style-position: inside;
         }
     }
 
