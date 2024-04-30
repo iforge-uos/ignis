@@ -47,13 +47,13 @@
         /* SignInsChart.tsx specific stuff */
         /* The chart's background */
 
-        #sign-in-chart > div > div > svg > rect {
+        #sign-in-chart>div>div>svg>rect {
             fill: hsl(var(--background)) !important;
         }
 
         /* Any text in the chart*/
 
-        #sign-in-chart > text {
+        #sign-in-chart>text {
             fill: hsl(var(--foreground)) !important;
             font-family: var(--font-sans), sans-serif !important;
         }
@@ -67,28 +67,28 @@
 
         /* The lines that bind months together */
 
-        #sign-in-chart > div > div > svg > g > path {
+        #sign-in-chart>div>div>svg>g>path {
             stroke: hsl(var(--background)) !important;
             stroke-width: 0px !important;
         }
 
         /* The legend text */
 
-        #sign-in-chart > div > div > svg > g > text {
+        #sign-in-chart>div>div>svg>g>text {
             fill: hsl(var(--foreground)) !important;
             font-family: var(--font-sans), sans-serif !important;
         }
 
         /* The on-hover pop-up */
 
-        #sign-in-chart > div > div > div > div {
+        #sign-in-chart>div>div>div>div {
             background: hsl(var(--background)) !important;
             color: var(--foreground) !important;
         }
 
         /* The text for the pop-up */
 
-        #sign-in-chart > div > div > div > div > div > span {
+        #sign-in-chart>div>div>div>div>div>span {
             color: hsl(var(--foreground)) !important;
             font-family: var(--font-sans), sans-serif !important;
         }
@@ -97,6 +97,14 @@
 
         #training-content a {
             color: hsl(var(--primary))
+        }
+
+        #training-content li {
+            list-style-type: circle;
+        }
+
+        #training-content ol {
+            list-style-type: decimal;
         }
     }
 
