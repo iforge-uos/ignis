@@ -31,18 +31,15 @@ EMAIL_USER="op://Private/Mailtrap Email Account/SMTP/username"
 EMAIL_PASS="op://Private/Mailtrap Email Account/SMTP/password"
 EMAIL_FROM="iforge@sheffield.ac.uk"
 EMAIL_SMTP_REQUIRE_TLS=true
-EMAIL_RATE_MAX=50  # Max number of emails per processor per EMAIL_RATE_DURATION
-EMAIL_RATE_DURATION=1000  # Milliseconds
+EMAIL_RATE_MAX="50"  # Max number of emails per processor per EMAIL_RATE_DURATION
+EMAIL_RATE_DURATION="1000"  # Milliseconds
 
 # Redis
 REDIS_HOST="127.0.0.1"
-REDIS_PORT=6379
+REDIS_PORT="6379"
 REDIS_DB="0"
+REDIS_PASSWORD="op://IT/Ignis Redis Password/password"
 
-# Training
-TRAINING_URL="https://training.iforge.sheffield.ac.uk"
-TRAINING_SITE_USERNAME="op://IT/Sheffield Login/username"
-TRAINING_SITE_PASSWORD="op://IT/Sheffield Login/password"
 
 # CDN
 CDN_URL="http://[::]:4000"

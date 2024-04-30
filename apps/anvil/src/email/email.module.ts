@@ -14,12 +14,9 @@ import { EmailService } from "./email.service";
           host: process.env.REDIS_HOST,
           port: process.env.REDIS_PORT,
           db: process.env.REDIS_DB,
+          password: process.env.REDIS_PASSWORD
         };
 
-        const password = process.env.REDIS_PASSWORD;
-        if (password) {
-          redisConfig.password = password;
-        }
         const limiter: any = {
           max: parseInt(process.env.EMAIL_RATE_MAX!),
           duration: parseInt(process.env.EMAIL_RATE_DURATION!),
@@ -35,4 +32,4 @@ import { EmailService } from "./email.service";
   controllers: [EmailController],
   providers: [EmailService, EmailProcessor, Logger],
 })
-export class EmailModule {}
+export class EmailModule { }
