@@ -31,7 +31,7 @@ const SignInDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
       ucard_number: signInSession?.ucard_number ?? "",
       location: activeLocation,
       reason_id: signInSession?.sign_in_reason?.id ?? "",
-      tools: signInSession?.training?.map((training) => training.name) ?? [],
+      tools: signInSession?.user?.training?.map((training) => training.name) ?? [],
     },
   };
 
@@ -50,7 +50,7 @@ const SignInDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
       dispatch(signinActions.resetSignInSession());
       queryClient.invalidateQueries({ queryKey: ["locationStatus"] });
       toast.success("User signed in!");
-      navigate({ to: "/signin/actions" });
+      navigate({ to: "/signin" });
     },
   });
 

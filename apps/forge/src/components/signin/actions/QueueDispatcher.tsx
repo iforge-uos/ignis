@@ -43,7 +43,7 @@ const QueueDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
       abortController.abort();
       dispatch(signinActions.resetSignInSession());
       toast.success("User added to queue successfully");
-      navigate({ to: "/signin/actions" });
+      navigate({ to: "/signin" });
     },
   });
 

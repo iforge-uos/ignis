@@ -15,7 +15,6 @@ import { routeTree } from "@/routeTree.gen.ts";
 import { Toaster } from "@ui/components/ui/sonner.tsx";
 import posthog from "posthog-js";
 import { PersistGate } from "redux-persist/integration/react";
-import UCardReader from "./components/ucard-reader";
 
 // Begin Router
 const queryClient = new QueryClient();
@@ -57,7 +56,6 @@ if (rootElement) {
                 <AuthProvider>
                   <InnerApp />
                   <Toaster />
-                  <UCardReader />
                 </AuthProvider>
               </PersistGate>
             </Provider>

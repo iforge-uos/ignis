@@ -61,6 +61,7 @@ export type User = users.UserWithInfractions & {
   registered: boolean;
   is_rep: boolean;
   signed_in: boolean;
+  teams?: users.ShortTeam[];
 };
 
 export type Reason = PartialReason & {

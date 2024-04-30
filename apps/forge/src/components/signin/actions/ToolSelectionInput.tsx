@@ -31,7 +31,8 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const abortController = new AbortController(); // For gracefully cancelling the query
 
   const activeLocation = useSelector((state: AppRootState) => state.signin.active_location);
-  const ucardNumber = useSignInSessionField("ucard_number");
+  const uCardNumber = useSignInSessionField("ucard_number");
+  const user = useSignInSessionField("user");
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [trainingMap, setTrainingMap] = useState<CategoryTrainingMap>({
@@ -51,14 +52,18 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
 
   const signInProps: GetSignInProps = {
     locationName: activeLocation,
-    uCardNumber: ucardNumber ?? "",
+    uCardNumber: uCardNumber ?? "",
     signal: abortController.signal,
   };
-
   // Using the useQuery hook to fetch the sign-in data
   const { data, isLoading, error } = useQuery({
     queryKey: ["getSignIn", signInProps],
-    queryFn: () => GetSignIn(signInProps),
+    queryFn: () => {
+      if (user) {
+        return user;
+      }
+      return GetSignIn(signInProps);
+    },
     retry: 1,
   });
 
@@ -106,6 +111,7 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
         }
       }
     }
+    dispatch(signinActions.updateSignInSessionField("user", data));
     setTrainingMap({
       SELECTABLE: selectAbleTraining,
       UNSELECTABLE: unselectAbleTraining,

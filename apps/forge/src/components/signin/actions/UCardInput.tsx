@@ -5,7 +5,7 @@ import { FlowStepComponent } from "@/types/signInActions.ts";
 import { Button } from "@ui/components/ui/button.tsx";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card.tsx";
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@ui/components/ui/input-otp.tsx";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 
 const UCardInput: FlowStepComponent = ({ onPrimary }) => {
@@ -21,6 +21,7 @@ const UCardInput: FlowStepComponent = ({ onPrimary }) => {
   const handleClear = () => {
     console.log("Clearing OTP");
     setOtp(""); // Clear the OTP by resetting the state
+    dispatch(signinActions.updateSignInSessionField("ucard_number", ""));
   };
 
   const handleOnSubmit = () => {

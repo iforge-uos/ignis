@@ -9,6 +9,7 @@ import { SignInLocationSchema } from "@dbschema/edgedb-zod/modules/sign_in";
 import e from "@dbschema/edgeql-js";
 import { std } from "@dbschema/interfaces";
 import { getUserTrainingForSignIn } from "@dbschema/queries/getUserTrainingForSignIn.query";
+import { users } from "@ignis/types";
 import type { Location, LocationStatus, Training } from "@ignis/types/sign_in";
 import type { PartialUser, User } from "@ignis/types/users";
 import {
@@ -153,10 +154,20 @@ export class SignInService implements OnModuleInit {
     ucard_number: string,
   ): Promise<User & { is_rep: boolean; registered: boolean; signed_in: boolean }> {
     const sign_in = e.select(e.sign_in.SignIn, (sign_in) => ({
-      filter_single: e.op(sign_in.user.ucard_number, "=", ldapLibraryToUcardNumber(ucard_number)),
+      filter_single: e.op(
+        e.op(sign_in.user.ucard_number, "=", ldapLibraryToUcardNumber(ucard_number)),
+        "and",
+        e.op("not", sign_in.signed_out),
+      ),
     }));
     let user:
-      | (User & { is_rep: boolean; registered: boolean; signed_in: boolean; location?: Uppercase<Location> })
+      | (User & {
+          is_rep: boolean;
+          registered: boolean;
+          signed_in: boolean;
+          location?: Uppercase<Location>;
+          teams?: users.ShortTeam[] | null;
+        })
       | null = await this.dbService.query(
       e.select(sign_in.user, (user) => ({
         ...UserProps(user),
@@ -164,6 +175,9 @@ export class SignInService implements OnModuleInit {
         registered: e.select(true as boolean),
         signed_in: e.select(true as boolean),
         location: e.assert_exists(sign_in.location),
+        ...e.is(e.users.Rep, {
+          teams: { name: true, description: true, id: true },
+        }),
       })),
     );
     if (user?.location && user.location.toLowerCase() !== location) {
@@ -182,6 +196,9 @@ export class SignInService implements OnModuleInit {
         is_rep: e.select(e.op(user.__type__.name, "=", "users::Rep")),
         registered: e.select(true as boolean),
         signed_in: e.select(false as boolean),
+        ...e.is(e.users.Rep, {
+          teams: { name: true, description: true, id: true },
+        }),
       })),
     );
     if (user) {

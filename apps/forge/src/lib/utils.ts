@@ -47,6 +47,6 @@ export function extractError(error: Error): string {
   return error?.message || "Unknown Error. Contact the IT Team";
 }
 
-export function ucardNumberToString(ucard_number: number): string {
+export function uCardNumberToString(ucard_number: number): string {
   return ucard_number.toString().padStart(UCARD_LENGTH, "0");
 }

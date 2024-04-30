@@ -5,6 +5,7 @@ import NavBar from "@/components/navbar";
 import { GenericError } from "@/components/routing/GenericError.tsx";
 import { Loading } from "@/components/routing/Loading.tsx";
 import { NotFound } from "@/components/routing/NotFound.tsx";
+import UCardReader from "@/components/ucard-reader";
 import { QueryClient } from "@tanstack/react-query";
 import { Outlet, ScrollRestoration, createRootRouteWithContext } from "@tanstack/react-router";
 import React, { Suspense } from "react";
@@ -26,6 +27,7 @@ function RootComponent() {
       <TailwindIndicator />
       <ScrollRestoration />
       <CommandMenu />
+      <UCardReader />
       <Outlet /> {/* This is where child routes will render */}
       <Suspense>
         <TanStackRouterDevtools />

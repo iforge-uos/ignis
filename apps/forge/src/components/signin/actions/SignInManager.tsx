@@ -7,7 +7,7 @@ import SignOutDispatcher from "@/components/signin/actions/SignOutDispatcher.tsx
 import ToolSelectionInput from "@/components/signin/actions/ToolSelectionInput.tsx";
 import UCardInput from "@/components/signin/actions/UCardInput.tsx";
 import useDoubleTapEscape from "@/hooks/useDoubleTapEscape.ts";
-import { signinActions } from "@/redux/signin.slice.ts";
+import { signinActions, useSignInSessionField } from "@/redux/signin.slice.ts";
 import { AppDispatch, AppRootState } from "@/redux/store.ts";
 import {
   AnyStep,
@@ -21,9 +21,12 @@ import {
   flowTypeToPrintTable,
 } from "@/types/signInActions.ts";
 import { SignInSession } from "@/types/signin.ts";
+import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button.tsx";
 import React, { ReactElement, useEffect, useLayoutEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { SignedInUserCard } from "../dashboard/components/SignedInUserCard";
+import SigningInUserCard from "./SigningInUserCard";
 
 const flowConfig: FlowConfiguration = {
   [FlowType.SignIn]: {
@@ -48,16 +51,14 @@ const flowConfig: FlowConfiguration = {
 
 const defaultSignInSession: SignInSession = {
   ucard_number: "",
-  is_rep: false,
+  user: undefined,
   sign_in_reason: null,
-  training: null,
   navigation_is_backtracking: false,
-  session_errored: false,
-  username: null,
 };
 
-interface SignInManagerProps {
-  initialFlow?: FlowType;
+interface SignInManagerProps<FlowT extends FlowType | undefined = undefined> {
+  initialFlow: FlowT;
+  initialStep?: FlowT extends FlowType ? keyof FlowConfiguration[FlowT] : undefined;
 }
 
 export const getStepComponent = (
@@ -80,12 +81,17 @@ export const getStepComponent = (
 };
 
 // SignInActionsManager Component
-const SignInActionsManager: React.FC<SignInManagerProps> = ({ initialFlow }) => {
+export default function SignInActionsManager<FlowT extends FlowType | undefined = undefined>({
+  initialFlow,
+  initialStep,
+}: SignInManagerProps<FlowT>): React.ReactElement {
   const [currentFlow, setCurrentFlow] = useState<FlowType | null>(null);
   const [currentStep, setCurrentStep] = useState<AnyStep | null>(null);
   const activeLocation = useSelector((state: AppRootState) => state.signin.active_location);
+  const user = useSignInSessionField("user");
 
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
   const handleDoubleTapEscape = () => {
     setCurrentFlow(null);
@@ -132,7 +138,7 @@ const SignInActionsManager: React.FC<SignInManagerProps> = ({ initialFlow }) => 
 
   // Make new Session
   useEffect(() => {
-    dispatch(signinActions.setSignInSession(defaultSignInSession));
+    if (!initialStep) dispatch(signinActions.setSignInSession(defaultSignInSession));
   }, []);
 
   useEffect(() => {
@@ -144,19 +150,23 @@ const SignInActionsManager: React.FC<SignInManagerProps> = ({ initialFlow }) => 
   useLayoutEffect(() => {
     if (initialFlow) {
       setCurrentFlow(initialFlow);
-      // Dynamically set the initial step for the initialFlow
-      const initialStep = Object.keys(flowConfig[initialFlow])[0] as AnyStep;
-      setCurrentStep(initialStep);
+      if (!initialStep) {
+        // Dynamically set the initial step for the initialFlow
+        initialStep = Object.keys(flowConfig[initialFlow])[0] as any;
+      }
+      setCurrentStep(initialStep!);
     }
-  }, [initialFlow]);
+  }, []);
 
   // Function to initialize the flow
   const startFlow = (flowType: FlowType) => {
     setCurrentFlow(flowType);
-    // Dynamically set the initial step based on the flowType
-    const initialStep = Object.keys(flowConfig[flowType])[0] as AnyStep;
-    setCurrentStep(initialStep);
-    dispatch(signinActions.setSignInSession(defaultSignInSession));
+    if (!initialStep) {
+      // Dynamically set the initial step based on the flowType
+      const initialStep: AnyStep = Object.keys(flowConfig[flowType])[0] as AnyStep;
+      setCurrentStep(initialStep);
+      dispatch(signinActions.setSignInSession(defaultSignInSession));
+    }
   };
 
   const renderCurrentStep = (): ReactElement | null => {
@@ -181,17 +191,23 @@ const SignInActionsManager: React.FC<SignInManagerProps> = ({ initialFlow }) => 
 
   const totalSteps = currentFlow ? getTotalSteps(currentFlow) : 0;
   const currentStepIndex = currentStep ? getStepIndex(Object.values(SignInSteps), currentStep) : 0;
-
+  console.log(currentFlow, currentStepIndex, currentStep);
   return (
-    <div className="border-2 p-4">
-      <h1 className="text-xl font-bold mb-4 text-center">Sign In Actions</h1>
+    <div className="p-4">
       {currentFlow && (
         <div className="flex items-center justify-between p-3 space-x-4 bg-card text-card-foreground mt-4 mb-4 drop-shadow-lg dark:shadow-none flex-col md:flex-row">
           <div className="flex items-center">
             <span className="text-lg font-bold mr-2">Current Flow:</span>
             <span className="text-ring uppercase text-xl">{flowTypeToPrintTable(currentFlow)}</span>
           </div>
-          <Button onClick={() => setCurrentFlow(null)}>Clear Flow</Button>
+          <Button
+            onClick={() => {
+              setCurrentFlow(null);
+              navigate({ to: "/signin" });
+            }}
+          >
+            Clear Flow
+          </Button>
         </div>
       )}
 
@@ -202,7 +218,10 @@ const SignInActionsManager: React.FC<SignInManagerProps> = ({ initialFlow }) => 
               {/* Pass the current step's index and total steps */}
               <div>{`Current Step: ${currentStepIndex + 1} of ${totalSteps}`}</div>
             </SignInFlowProgress>
-            <div className="mt-4 lg:mt-0 lg:ml-4">{renderCurrentStep()}</div>
+            <div className="mt-4 lg:mt-0 lg:ml-4 columns-1 ">
+              {user ? <SigningInUserCard user={user} /> : undefined}
+              <div className="lg:mt-4">{renderCurrentStep()}</div>
+            </div>
           </>
         )}
 
@@ -229,6 +248,4 @@ const SignInActionsManager: React.FC<SignInManagerProps> = ({ initialFlow }) => 
       </div>
     </div>
   );
-};
-
-export default SignInActionsManager;
+}
