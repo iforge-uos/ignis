@@ -23,11 +23,20 @@ import { SignInModule } from "./sign-in/sign-in.module";
 import { SignInService } from "./sign-in/sign-in.service";
 import { TrainingController } from "./training/training.controller";
 import { UsersModule } from "./users/users.module";
+import * as process from "node:process";
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: ".env.production",
+    }),
+    BullModule.forRoot({
+      redis: {
+        host: process.env.REDIS_HOST,
+        port: process.env.REDIS_PORT as unknown as number,
+        db: process.env.REDIS_DB as unknown as number,
+        password: process.env.REDIS_PASSWORD,
+      },
     }),
     EdgeDBModule,
     UsersModule,
