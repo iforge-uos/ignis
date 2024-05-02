@@ -20,15 +20,15 @@ DISCORD_CLIENT_SECRET="op://IT/Anvil OAuth2 Discord/client secret"
 DISCORD_CLIENT_CALLBACK_URL="http://127.0.0.1:3000/v1/authentication/discord/callback"
 
 # AUTH
-JWT_SECRET="op://Private/JWT Secret Key/password"
+JWT_SECRET="op://Employee/JWT Secret Key/password"
 ACCESS_TOKEN_EXPIRES_IN="1h"
 REFRESH_TOKEN_EXPIRES_IN="7d"
 
 # Email
-EMAIL_HOST="op://Private/Mailtrap Email Account/SMTP/SMTP server"
-EMAIL_PORT="op://Private/Mailtrap Email Account/SMTP/port number"
-EMAIL_USER="op://Private/Mailtrap Email Account/SMTP/username"
-EMAIL_PASS="op://Private/Mailtrap Email Account/SMTP/password"
+EMAIL_HOST="op://Employee/Mailtrap Email Account/SMTP/SMTP server"
+EMAIL_PORT="op://Employee/Mailtrap Email Account/SMTP/port number"
+EMAIL_USER="op://Employee/Mailtrap Email Account/SMTP/username"
+EMAIL_PASS="op://Employee/Mailtrap Email Account/SMTP/password"
 EMAIL_FROM="iforge@sheffield.ac.uk"
 EMAIL_SMTP_REQUIRE_TLS=true
 EMAIL_RATE_MAX="50"  # Max number of emails per processor per EMAIL_RATE_DURATION
