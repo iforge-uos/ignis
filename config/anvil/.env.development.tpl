@@ -21,6 +21,8 @@ DISCORD_CLIENT_CALLBACK_URL="http://127.0.0.1:3000/v1/authentication/discord/cal
 
 # AUTH
 JWT_SECRET="op://Employee/JWT Secret Key/password"
+CSRF_SECRET="op://Employee/CSRF Secret Key/password"
+CSRF_EXCLUDE_ROUTES=auth/login,POST;auth/refresh,POST
 ACCESS_TOKEN_EXPIRES_IN="1h"
 REFRESH_TOKEN_EXPIRES_IN="7d"
 
@@ -38,7 +40,7 @@ EMAIL_RATE_DURATION="1000"  # Milliseconds
 REDIS_HOST="127.0.0.1"
 REDIS_PORT="6379"
 REDIS_DB="0"
-REDIS_PASSWORD="op://IT/Ignis Redis Password/password"
+REDIS_PASSWORD="op://Employee/Ignis Redis Password/password"
 
 
 # CDN
