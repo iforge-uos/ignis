@@ -441,7 +441,7 @@ const SignInIndexAppComponent = () => {
               <div className="mb-2">
                 <SignInActionsManager />
               </div>
-              <Separator />
+              <Separator className="mb-2" />
             </>
           )}
           <div className="flex flex-col-reverse md:flex-row">
