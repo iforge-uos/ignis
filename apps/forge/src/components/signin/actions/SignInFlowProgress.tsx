@@ -37,9 +37,6 @@ const SignInFlowProgress: React.FC<SignInProgressProps> = ({ currentStep, flowTy
     case FlowType.SignOut:
       stepTitles = Object.values(SignOutSteps);
       break;
-    case FlowType.Register:
-      stepTitles = Object.values(RegisterSteps);
-      break;
     case FlowType.Enqueue:
       stepTitles = Object.values(EnqueueSteps);
       break;

@@ -1,5 +1,4 @@
 import QueueDispatcher from "@/components/signin/actions/QueueDispatcher.tsx";
-import RegisterDispatcher from "@/components/signin/actions/RegisterDispatcher.tsx";
 import SignInDispatcher from "@/components/signin/actions/SignInDispatcher.tsx";
 import SignInFlowProgress from "@/components/signin/actions/SignInFlowProgress.tsx";
 import SignInReasonInput from "@/components/signin/actions/SignInReasonInput.tsx";
@@ -15,7 +14,6 @@ import {
   FlowConfiguration,
   FlowStepComponent,
   FlowType,
-  RegisterSteps,
   SignInSteps,
   SignOutSteps,
   flowTypeToPrintTable,
@@ -37,10 +35,6 @@ const flowConfig: FlowConfiguration = {
   [FlowType.SignOut]: {
     [SignOutSteps.Step1]: UCardInput,
     [SignOutSteps.Step2]: SignOutDispatcher,
-  },
-  [FlowType.Register]: {
-    [RegisterSteps.Step1]: UCardInput,
-    [RegisterSteps.Step2]: RegisterDispatcher,
   },
   [FlowType.Enqueue]: {
     [EnqueueSteps.Step1]: UCardInput,
@@ -72,8 +66,6 @@ export const getStepComponent = (
       return flowConfig[currentFlow][currentStep as SignInSteps];
     case FlowType.SignOut:
       return flowConfig[currentFlow][currentStep as SignOutSteps];
-    case FlowType.Register:
-      return flowConfig[currentFlow][currentStep as RegisterSteps];
     case FlowType.Enqueue:
       return flowConfig[currentFlow][currentStep as EnqueueSteps];
     default:
@@ -192,7 +184,9 @@ export default function SignInActionsManager<FlowT extends FlowType | undefined 
 
   const totalSteps = currentFlow ? getTotalSteps(currentFlow) : 0;
   const currentStepIndex = currentStep ? getStepIndex(Object.values(SignInSteps), currentStep) : 0;
-  console.log(currentFlow, currentStepIndex, currentStep);
+
+  const buttonStyles = "h-20 w-64";
+
   return (
     <div className="p-4">
       {currentFlow && (
@@ -228,18 +222,15 @@ export default function SignInActionsManager<FlowT extends FlowType | undefined 
 
         {!currentFlow && (
           <div className="flex flex-1 items-center justify-center">
-            <div className="p-6 space-y-4 w-full max-w-2xl rounded-xl shadow-lg bg-card text-card-foreground">
-              <div className="grid grid-cols-2 gap-10">
-                <Button variant="default" className="h-20" onClick={() => startFlow(FlowType.SignIn)}>
+            <div className="p-6 space-y-4 w-full rounded-xl shadow-lg bg-card text-card-foreground">
+              <div className="flex flex-row space-x-4 justify-center">
+                <Button variant="success" className={buttonStyles} onClick={() => startFlow(FlowType.SignIn)}>
                   Start Sign In
                 </Button>
-                <Button variant="default" className="h-20" onClick={() => startFlow(FlowType.SignOut)}>
+                <Button variant="destructive" className={buttonStyles} onClick={() => startFlow(FlowType.SignOut)}>
                   Start Sign Out
                 </Button>
-                <Button variant="outline" className="h-20" onClick={() => startFlow(FlowType.Register)}>
-                  Start Register
-                </Button>
-                <Button variant="outline" className="h-20" onClick={() => startFlow(FlowType.Enqueue)}>
+                <Button variant="warning" className={buttonStyles} onClick={() => startFlow(FlowType.Enqueue)}>
                   Enqueue User
                 </Button>
               </div>
