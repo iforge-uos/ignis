@@ -25,7 +25,6 @@ import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button.tsx";
 import React, { ReactElement, useEffect, useLayoutEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { SignedInUserCard } from "../dashboard/components/SignedInUserCard";
 import SigningInUserCard from "./SigningInUserCard";
 
 const flowConfig: FlowConfiguration = {
@@ -51,13 +50,15 @@ const flowConfig: FlowConfiguration = {
 
 const defaultSignInSession: SignInSession = {
   ucard_number: "",
-  user: undefined,
+  user: null,
+  training: null,
   sign_in_reason: null,
+  session_errored: false,
   navigation_is_backtracking: false,
 };
 
 interface SignInManagerProps<FlowT extends FlowType | undefined = undefined> {
-  initialFlow: FlowT;
+  initialFlow?: FlowT;
   initialStep?: FlowT extends FlowType ? keyof FlowConfiguration[FlowT] : undefined;
 }
 
@@ -219,7 +220,7 @@ export default function SignInActionsManager<FlowT extends FlowType | undefined 
               <div>{`Current Step: ${currentStepIndex + 1} of ${totalSteps}`}</div>
             </SignInFlowProgress>
             <div className="mt-4 lg:mt-0 lg:ml-4 columns-1 ">
-              {user ? <SigningInUserCard user={user} /> : undefined}
+              {user && <SigningInUserCard user={user} />}
               <div className="lg:mt-4">{renderCurrentStep()}</div>
             </div>
           </>
