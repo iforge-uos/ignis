@@ -1,9 +1,11 @@
 # LDAP
 LDAP_HOST="op://IT/Active LDAP/Host/LDAP_HOST"
 LDAP_PORT="op://IT/Active LDAP/Host/LDAP_PORT"
-LDAP_BASE="ou=Users,dc=sheffield,dc=ac,dc=uk"
+LDAP_BASE="dc=shefuniad,dc=shef,dc=ac,dc=uk"
 LDAP_USER="op://IT/Active LDAP/username"
 LDAP_PASS="op://IT/Active LDAP/password"
+LDAP_DEFAULT_ATTRIBUTES="givenName,sn,mail,uid,shefLibraryNumber,ou"
+LDAP_SSL=true
 
 # Google
 GOOGLE_CLIENT_ID="op://IT/Anvil OAuth2 Google/client id"
@@ -19,6 +21,8 @@ DISCORD_CLIENT_CALLBACK_URL="http://127.0.0.1:3000/api/v1/authentication/discord
 
 # AUTH
 JWT_SECRET="op://IT/Anvil JWT Signing Key/credential"
+CSRF_SECRET="op://IT/Anvil CSRF Secret Key/credential"
+CSRF_EXCLUDE_ROUTES=auth/login,POST;auth/refresh,POST
 ACCESS_TOKEN_EXPIRES_IN="1h"
 REFRESH_TOKEN_EXPIRES_IN="7d"
 
@@ -36,6 +40,7 @@ EMAIL_RATE_DURATION="1000" # Milliseconds
 REDIS_HOST="127.0.0.1"
 REDIS_PORT="6379"
 REDIS_DB="0"
+REDIS_PASSWORD="op://IT/Ignis Redis Password/password"
 
 # CDN
 CDN_URL="https://cdn.iforge.sheffield.ac.uk"

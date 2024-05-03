@@ -16,8 +16,8 @@ export type WrongAnswers = {
 export type InteractionResponse = TrainingPageInteraction | QuestionInteraction | WrongAnswers | undefined;
 
 /** {id -> status} The text shown to a user on the button for the course */
-export type UserTrainingStatus = "Complete" | "Resume" | "Retake";
-export type UserTrainingStatuses = { [K in string]: "Complete" | "Resume" | "Retake" };
+export type UserTrainingStatus = "Start" | "Resume" | "Retake";
+export type UserTrainingStatuses = { [K in string]: "Start" | "Resume" | "Retake" };
 
 export type Location = training.TrainingLocation;
 

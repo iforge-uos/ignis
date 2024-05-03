@@ -1,7 +1,6 @@
 import { LdapUser } from "@/auth/interfaces/ldap-user.interface";
-import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
-import * as ldap from "ldapjs";
 import { LdapClass } from "@/ldap/ldap.class";
+import { Injectable, Logger } from "@nestjs/common";
 
 @Injectable()
 export class LdapService {
@@ -21,7 +20,7 @@ export class LdapService {
     const result = await this.ldapClass.lookupByUsername(username);
     if (result) {
       const user = this.formatLdapUser(result);
-      this.logger.log(`Found user by username ${username}:`, user);
+      this.logger.log(`Found user by username ${username}:`, LdapService.name);
       return user;
     }
     this.logger.log(`User not found by username: ${username}`);
@@ -33,10 +32,10 @@ export class LdapService {
     const result = await this.ldapClass.lookupByEmail(email);
     if (result) {
       const user = this.formatLdapUser(result);
-      this.logger.log(`Found user by email ${email}:`, user);
+      this.logger.log(`Found user by email ${email}:`, LdapService.name);
       return user;
     }
-    this.logger.log(`User not found by email: ${email}`);
+    this.logger.log(`User not found by email: ${email}`, LdapService.name);
     return null;
   }
 
@@ -45,15 +44,15 @@ export class LdapService {
     const result = await this.ldapClass.lookupByUcardNumber(ucardNumber);
     if (result) {
       const user = this.formatLdapUser(result);
-      this.logger.log(`Found user by ucard number ${ucardNumber}:`, user);
+      this.logger.log(`Found user by ucard number ${ucardNumber}:`, LdapService.name);
       return user;
     }
-    this.logger.log(`User not found by ucard number: ${ucardNumber}`);
+    this.logger.log(`User not found by ucard number: ${ucardNumber}`, LdapService.name);
     return null;
   }
 
   private formatLdapUser(result: Record<string, string | string[]>): LdapUser {
-    this.logger.log(`Formatting response ${JSON.stringify(result)}`);
+    this.logger.log(`Formatting response ${JSON.stringify(result)}`, LdapService.name);
     return {
       uid: result.uid as string,
       sn: result.sn as string,

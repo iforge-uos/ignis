@@ -1,7 +1,7 @@
 import Cookies from 'js-cookie';
 
 const setCookie = (name: string, value: string, expires?: number) => {
-    Cookies.set(name, value, { expires: expires || 1, secure: true, sameSite: 'Strict' });
+    Cookies.set(name, value, {expires: expires || 1, secure: true, sameSite: 'Strict'});
 };
 
 const getCookie = (name: string) => {
@@ -12,5 +12,4 @@ const removeCookie = (name: string) => {
     Cookies.remove(name);
 };
 
-export { setCookie, getCookie, removeCookie };
-1
+export {setCookie, getCookie, removeCookie};

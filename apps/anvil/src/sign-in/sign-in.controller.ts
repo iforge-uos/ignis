@@ -2,7 +2,8 @@ import { CheckAbilities } from "@/auth/authorization/decorators/check-abilities-
 import { IsAdmin, IsRep } from "@/auth/authorization/decorators/check-roles-decorator";
 import { CaslAbilityGuard } from "@/auth/authorization/guards/casl-ability.guard";
 import { TrainingService } from "@/training/training.service";
-import { UsersService, ldapLibraryToUcardNumber } from "@/users/users.service";
+import { UsersService } from "@/users/users.service";
+import { User } from "@/shared/decorators/user.decorator";
 import { sign_in as sign_in_ } from "@ignis/types";
 import type { List, Location, LocationStatus } from "@ignis/types/sign_in";
 import type { User as User_ } from "@ignis/types/users";
@@ -11,6 +12,7 @@ import { Logger } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { FinaliseSignInDto, UpdateSignInDto } from "./dto/sigs-in-dto";
 import { SignInService } from "./sign-in.service";
+import { ldapLibraryToUcardNumber } from "@/shared/functions/utils";
 
 @Controller("location/:location")
 @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)

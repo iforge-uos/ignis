@@ -30,7 +30,7 @@ select assert_exists(
             @in_person_created_at,
             expired := assert_exists((@created_at + .expires_after) < datetime_of_statement()) if exists .expires_after else false,
             selectable := users::User is users::Rep or .rep.id in rep_training.id,
-        } filter exists .rep and <training::TrainingLocation>$location_ in .locations and .rep.locations
+        } filter exists .rep and <training::TrainingLocation>$location_ in .locations
         # if they're a rep they can sign in off shift to use the machines they want even if the reps aren't trained
         # ideally first comparison should be `__source__ is users::Rep`
     }

@@ -4,7 +4,7 @@ import { LdapService } from "@/ldap/ldap.service";
 import { CreateSignInReasonCategoryDto } from "@/root/dto/reason.dto";
 import { ErrorCodes } from "@/shared/constants/ErrorCodes";
 import { sleep } from "@/shared/functions/sleep";
-import { PartialUserProps, UserProps, UsersService, ldapLibraryToUcardNumber } from "@/users/users.service";
+import { PartialUserProps, UserProps, UsersService } from "@/users/users.service";
 import { SignInLocationSchema } from "@dbschema/edgedb-zod/modules/sign_in";
 import e from "@dbschema/edgeql-js";
 import { std } from "@dbschema/interfaces";
@@ -23,6 +23,7 @@ import {
 import { Logger } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
 import { CardinalityViolationError, InvalidValueError } from "edgedb";
+import {ldapLibraryToUcardNumber} from "@/shared/functions/utils";
 
 export const REP_ON_SHIFT = "Rep On Shift";
 export const REP_OFF_SHIFT = "Rep Off Shift";
