@@ -91,7 +91,7 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
                   variant="team"
                   className="flex items-center justify-start rounded-sm pt-1.5 pb-1.5 mt-2"
                 >
-                  <div className="flex gap-1 w-full text-center">
+                  <div className="flex gap-1 w-full text-center items-center">
                     <TeamIcon team={team.name} className="stroke-black dark:stroke-white mr-1 h-4 w-4" />
                     <p className="w-full text-xs">{team.name}</p>
                   </div>
