@@ -48,15 +48,17 @@ export const SignInDrawer: FC<SignInDrawerProps> = ({
               </span>
               <h4 className="text-lg font-bold">{title}</h4>
             </div>
-            {entries.length === 0 ? (
-              <Ban className="h-4 w-4" />
-            ) : (
-              <>
-                {isOpen ? "Hide" : "Show"}
-                {isOpen ? <ArrowRightIcon className="h-4 w-4" /> : <ArrowDownIcon className="h-4 w-4" />}
-                <span className="sr-only">{isOpen ? "Hide" : "Show"}</span>
-              </>
-            )}
+            <div className="flex items-center gap-2">
+              {entries.length === 0 ? (
+                <Ban className="h-4 w-4" />
+              ) : (
+                <>
+                  {isOpen ? "Hide" : "Show"}
+                  {isOpen ? <ArrowRightIcon className="h-4 w-4" /> : <ArrowDownIcon className="h-4 w-4" />}
+                  <span className="sr-only">{isOpen ? "Hide" : "Show"}</span>
+                </>
+              )}
+            </div>
           </Button>
         </CollapsibleTrigger>
         <CollapsibleContent asChild>
