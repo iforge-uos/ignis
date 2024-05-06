@@ -3,7 +3,7 @@ import { TrainingService } from "@/training/training.service";
 import { BullModule } from "@nestjs/bull";
 import { Logger, MiddlewareConsumer, Module, NestModule, RequestMethod } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
-import { APP_INTERCEPTOR, APP_PIPE } from "@nestjs/core";
+import { APP_PIPE } from "@nestjs/core";
 import { ScheduleModule } from "@nestjs/schedule";
 import { ThrottlerModule } from "@nestjs/throttler";
 import { ZodValidationPipe } from "nestjs-zod";
@@ -26,7 +26,6 @@ import { UsersModule } from "./users/users.module";
 import * as process from "node:process";
 import { CsrfMiddleware } from "@/auth/authentication/middleware/csrf.middleware";
 import { IdempotencyMiddleware } from "@/shared/middleware/idempotency.middleware";
-import { IdempotencyCacheInterceptor } from "@/shared/interceptors/idempotency-cache.interceptor";
 
 @Module({
   imports: [
