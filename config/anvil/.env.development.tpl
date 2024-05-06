@@ -48,3 +48,6 @@ CDN_URL="http://[::]:4000"
 
 # Front End
 FRONT_END_URL="http://127.0.0.1:8000"
+
+# Logging
+LOG_LEVEL=debug

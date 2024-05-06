@@ -52,3 +52,6 @@ FRONT_END_URL="https://iforge.sheffield.ac.uk"
 # DB
 EDGEDB_DSN="op://IT/Ignis EdgeDB Docker Prod/EDGEDB_DSN"
 NODE_EXTRA_CA_CERTS="/ignis_certs/ignis_cert.pem"
+
+# Logging
+LOG_LEVEL=info

@@ -1,5 +1,6 @@
 import axios from "axios";
 import {getCookie} from "@/services/cookies/cookieService.ts";
+import {v4 as uuidV4} from "uuid";
 
 const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_API_URL as string,
@@ -9,18 +10,38 @@ const axiosInstance = axios.create({
 // Add a request retry limit
 const RETRY_LIMIT = 3;
 const RETRY_DELAY = 1000; // Starting retry delay in milliseconds
+const IDEMPOTENCY_KEY_INTERVAL = 100; // Generate a new idempotency key every 100ms
 
-axiosInstance.interceptors.request.use(config => {
-    // Assuming your CSRF token is in a cookie accessible by JavaScript
-    const csrfToken = getCookie("csrf_token")
-    if (csrfToken && ['post', 'put', 'delete', 'patch'].includes(config.method!.toLowerCase())) {
-        config.headers['X-CSRF-Token'] = csrfToken;
+let lastIdempotencyKey = "";
+let lastIdempotencyKeyTimestamp = 0;
+
+const generateIdempotencyKey = () => {
+    const currentTimestamp = Date.now();
+    if (currentTimestamp - lastIdempotencyKeyTimestamp >= IDEMPOTENCY_KEY_INTERVAL) {
+        lastIdempotencyKey = uuidV4();
+        lastIdempotencyKeyTimestamp = currentTimestamp;
     }
-    return config;
-}, error => {
-    return Promise.reject(error);
-});
+    return lastIdempotencyKey;
+};
 
+axiosInstance.interceptors.request.use(
+    (config) => {
+        const csrfToken = getCookie("csrf_token");
+        if (csrfToken && ["post", "put", "delete", "patch"].includes(config.method!.toLowerCase())) {
+            config.headers["X-CSRF-Token"] = csrfToken;
+        }
+
+        // Generate and add the idempotency key for POST requests
+        if (config.method === "post") {
+            config.headers["X-Idempotency-Key"] = generateIdempotencyKey();
+        }
+
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    },
+);
 
 axiosInstance.interceptors.response.use(
     (response) => response,
@@ -32,7 +53,6 @@ axiosInstance.interceptors.response.use(
 
             if (originalRequest._retryCount >= RETRY_LIMIT) {
                 return Promise.reject("Retry limit reached. Logging out...");
-                //TODO WORK OUT HOW TO LOGOUT / WORK THIS BIT OUT IM NOT SURE EXACTLY WHAT IM DOING HERE RN
             }
 
             originalRequest._retryCount++;

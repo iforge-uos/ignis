@@ -1,7 +1,7 @@
 import { ValidationPipe, VersioningType } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import { WINSTON_MODULE_NEST_PROVIDER, WinstonModule } from "nest-winston";
+import { WinstonModule } from "nest-winston";
 import * as cookieParser from "cookie-parser";
 import helmet from "helmet";
 import { AppModule } from "./app.module";
@@ -21,7 +21,9 @@ declare global {
 
 async function bootstrap() {
   // Setup Logger
+  const logLevel = process.env.LOG_LEVEL || "info";
   const instance = winston.createLogger({
+    level: logLevel,
     transports: [
       new winston.transports.Console({
         format: winston.format.combine(
