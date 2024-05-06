@@ -1,5 +1,5 @@
 import {CheckAbilities} from "@/auth/authorization/decorators/check-abilities-decorator";
-import {IsRep} from "@/auth/authorization/decorators/check-roles-decorator";
+import {IsAdmin,IsRep} from "@/auth/authorization/decorators/check-roles-decorator";
 import {CaslAbilityGuard} from "@/auth/authorization/guards/casl-ability.guard";
 import {TrainingService} from "@/training/training.service";
 import {UsersService} from "@/users/users.service";
@@ -119,34 +119,17 @@ export class SignInController {
     }
 
     @Get("status")
-    async getSignInStatus(@Param("location") location: Location): Promise<LocationStatus> {
+    async getLocationStatus(@Param("location") location: Location): Promise<LocationStatus> {
         this.logger.log(`Retrieving sign-in status for location: ${location}`, SignInController.name);
         return await this.signInService.getStatusForLocation(location);
     }
 
-    @Post("queue/remotely")
-    @IdempotencyCache(60)
-    async addToQueueRemotely(@Param("location") location: Location, @User() user: User_) {
-        this.logger.log(
-            `Adding user with ID: ${user.id} to queue remotely at location: ${location}`,
-            SignInController.name,
-        );
-        await this.signInService.addToQueue(location, undefined, user.id);
-    }
-
-    @Post("queue/in-person/:ucard_number")
-    @IsRep()
-    @IdempotencyCache(60)
-    async addToQueueInPerson(
-        @Param("location") location: Location,
-        @Param("ucard_number", ParseIntPipe) ucard_number: number,
-    ) {
-        this.logger.log(
-            `Adding UCard number: ${ucard_number} to queue in-person at location: ${location}`,
-            SignInController.name,
-        );
-        await this.signInService.addToQueue(location, ucard_number);
-    }
+  @Post("queue/add/:id")
+  @IdempotencyCache(60)
+  async addToQueueInPerson(@Param("location") location: Location, @Param("id") id: string) {
+    this.logger.log(`Adding user ${id} to queue at location: ${location}`, SignInController.name);
+    return await this.signInService.addToQueue(location, id);
+  }
 
     @Post("queue/remove/:id")
     @IsRep()

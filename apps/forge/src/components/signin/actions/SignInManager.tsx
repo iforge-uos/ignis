@@ -1,5 +1,4 @@
 import QueueDispatcher from "@/components/signin/actions/QueueDispatcher.tsx";
-import RegisterDispatcher from "@/components/signin/actions/RegisterDispatcher.tsx";
 import SignInDispatcher from "@/components/signin/actions/SignInDispatcher.tsx";
 import SignInFlowProgress from "@/components/signin/actions/SignInFlowProgress.tsx";
 import SignInReasonInput from "@/components/signin/actions/SignInReasonInput.tsx";
@@ -7,7 +6,7 @@ import SignOutDispatcher from "@/components/signin/actions/SignOutDispatcher.tsx
 import ToolSelectionInput from "@/components/signin/actions/ToolSelectionInput.tsx";
 import UCardInput from "@/components/signin/actions/UCardInput.tsx";
 import useDoubleTapEscape from "@/hooks/useDoubleTapEscape.ts";
-import { signinActions } from "@/redux/signin.slice.ts";
+import { signinActions, useSignInSessionField } from "@/redux/signin.slice.ts";
 import { AppDispatch, AppRootState } from "@/redux/store.ts";
 import {
   AnyStep,
@@ -15,15 +14,16 @@ import {
   FlowConfiguration,
   FlowStepComponent,
   FlowType,
-  RegisterSteps,
   SignInSteps,
   SignOutSteps,
   flowTypeToPrintTable,
 } from "@/types/signInActions.ts";
 import { SignInSession } from "@/types/signin.ts";
+import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button.tsx";
 import React, { ReactElement, useEffect, useLayoutEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import SigningInUserCard from "./SigningInUserCard";
 
 const flowConfig: FlowConfiguration = {
   [FlowType.SignIn]: {
@@ -36,10 +36,6 @@ const flowConfig: FlowConfiguration = {
     [SignOutSteps.Step1]: UCardInput,
     [SignOutSteps.Step2]: SignOutDispatcher,
   },
-  [FlowType.Register]: {
-    [RegisterSteps.Step1]: UCardInput,
-    [RegisterSteps.Step2]: RegisterDispatcher,
-  },
   [FlowType.Enqueue]: {
     [EnqueueSteps.Step1]: UCardInput,
     [EnqueueSteps.Step2]: QueueDispatcher,
@@ -48,16 +44,16 @@ const flowConfig: FlowConfiguration = {
 
 const defaultSignInSession: SignInSession = {
   ucard_number: "",
-  is_rep: false,
-  sign_in_reason: null,
+  user: null,
   training: null,
-  navigation_is_backtracking: false,
+  sign_in_reason: null,
   session_errored: false,
-  username: null,
+  navigation_is_backtracking: false,
 };
 
-interface SignInManagerProps {
-  initialFlow?: FlowType;
+interface SignInManagerProps<FlowT extends FlowType | undefined = undefined> {
+  initialFlow?: FlowT;
+  initialStep?: FlowT extends FlowType ? keyof FlowConfiguration[FlowT] : undefined;
 }
 
 export const getStepComponent = (
@@ -70,8 +66,6 @@ export const getStepComponent = (
       return flowConfig[currentFlow][currentStep as SignInSteps];
     case FlowType.SignOut:
       return flowConfig[currentFlow][currentStep as SignOutSteps];
-    case FlowType.Register:
-      return flowConfig[currentFlow][currentStep as RegisterSteps];
     case FlowType.Enqueue:
       return flowConfig[currentFlow][currentStep as EnqueueSteps];
     default:
@@ -80,12 +74,17 @@ export const getStepComponent = (
 };
 
 // SignInActionsManager Component
-const SignInActionsManager: React.FC<SignInManagerProps> = ({ initialFlow }) => {
+export default function SignInActionsManager<FlowT extends FlowType | undefined = undefined>({
+  initialFlow,
+  initialStep,
+}: SignInManagerProps<FlowT>): React.ReactElement {
   const [currentFlow, setCurrentFlow] = useState<FlowType | null>(null);
   const [currentStep, setCurrentStep] = useState<AnyStep | null>(null);
   const activeLocation = useSelector((state: AppRootState) => state.signin.active_location);
+  const user = useSignInSessionField("user");
 
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
   const handleDoubleTapEscape = () => {
     setCurrentFlow(null);
@@ -132,7 +131,7 @@ const SignInActionsManager: React.FC<SignInManagerProps> = ({ initialFlow }) => 
 
   // Make new Session
   useEffect(() => {
-    dispatch(signinActions.setSignInSession(defaultSignInSession));
+    if (!initialStep) dispatch(signinActions.setSignInSession(defaultSignInSession));
   }, []);
 
   useEffect(() => {
@@ -144,19 +143,23 @@ const SignInActionsManager: React.FC<SignInManagerProps> = ({ initialFlow }) => 
   useLayoutEffect(() => {
     if (initialFlow) {
       setCurrentFlow(initialFlow);
-      // Dynamically set the initial step for the initialFlow
-      const initialStep = Object.keys(flowConfig[initialFlow])[0] as AnyStep;
-      setCurrentStep(initialStep);
+      if (!initialStep) {
+        // Dynamically set the initial step for the initialFlow
+        initialStep = Object.keys(flowConfig[initialFlow])[0] as any;
+      }
+      setCurrentStep(initialStep!);
     }
-  }, [initialFlow]);
+  }, []);
 
   // Function to initialize the flow
   const startFlow = (flowType: FlowType) => {
     setCurrentFlow(flowType);
-    // Dynamically set the initial step based on the flowType
-    const initialStep = Object.keys(flowConfig[flowType])[0] as AnyStep;
-    setCurrentStep(initialStep);
-    dispatch(signinActions.setSignInSession(defaultSignInSession));
+    if (!initialStep) {
+      // Dynamically set the initial step based on the flowType
+      const initialStep: AnyStep = Object.keys(flowConfig[flowType])[0] as AnyStep;
+      setCurrentStep(initialStep);
+      dispatch(signinActions.setSignInSession(defaultSignInSession));
+    }
   };
 
   const renderCurrentStep = (): ReactElement | null => {
@@ -182,16 +185,24 @@ const SignInActionsManager: React.FC<SignInManagerProps> = ({ initialFlow }) => 
   const totalSteps = currentFlow ? getTotalSteps(currentFlow) : 0;
   const currentStepIndex = currentStep ? getStepIndex(Object.values(SignInSteps), currentStep) : 0;
 
+  const buttonStyles = "h-20 w-64";
+
   return (
-    <div className="border-2 p-4">
-      <h1 className="text-xl font-bold mb-4 text-center">Sign In Actions</h1>
+    <div className="p-4">
       {currentFlow && (
         <div className="flex items-center justify-between p-3 space-x-4 bg-card text-card-foreground mt-4 mb-4 drop-shadow-lg dark:shadow-none flex-col md:flex-row">
           <div className="flex items-center">
             <span className="text-lg font-bold mr-2">Current Flow:</span>
             <span className="text-ring uppercase text-xl">{flowTypeToPrintTable(currentFlow)}</span>
           </div>
-          <Button onClick={() => setCurrentFlow(null)}>Clear Flow</Button>
+          <Button
+            onClick={() => {
+              setCurrentFlow(null);
+              navigate({ to: "/signin" });
+            }}
+          >
+            Clear Flow
+          </Button>
         </div>
       )}
 
@@ -202,24 +213,24 @@ const SignInActionsManager: React.FC<SignInManagerProps> = ({ initialFlow }) => 
               {/* Pass the current step's index and total steps */}
               <div>{`Current Step: ${currentStepIndex + 1} of ${totalSteps}`}</div>
             </SignInFlowProgress>
-            <div className="mt-4 lg:mt-0 lg:ml-4">{renderCurrentStep()}</div>
+            <div className="mt-4 lg:mt-0 lg:ml-4 columns-1 ">
+              {user && <SigningInUserCard user={user} />}
+              <div className="lg:mt-4">{renderCurrentStep()}</div>
+            </div>
           </>
         )}
 
         {!currentFlow && (
           <div className="flex flex-1 items-center justify-center">
-            <div className="p-6 space-y-4 w-full max-w-2xl rounded-xl shadow-lg bg-card text-card-foreground">
-              <div className="grid grid-cols-2 gap-10">
-                <Button variant="default" className="h-20" onClick={() => startFlow(FlowType.SignIn)}>
+            <div className="p-6 space-y-4 w-full rounded-xl shadow-lg bg-card text-card-foreground">
+              <div className="flex flex-row space-x-4 justify-center">
+                <Button variant="success" className={buttonStyles} onClick={() => startFlow(FlowType.SignIn)}>
                   Start Sign In
                 </Button>
-                <Button variant="default" className="h-20" onClick={() => startFlow(FlowType.SignOut)}>
+                <Button variant="destructive" className={buttonStyles} onClick={() => startFlow(FlowType.SignOut)}>
                   Start Sign Out
                 </Button>
-                <Button variant="outline" className="h-20" onClick={() => startFlow(FlowType.Register)}>
-                  Start Register
-                </Button>
-                <Button variant="outline" className="h-20" onClick={() => startFlow(FlowType.Enqueue)}>
+                <Button variant="warning" className={buttonStyles} onClick={() => startFlow(FlowType.Enqueue)}>
                   Enqueue User
                 </Button>
               </div>
@@ -229,6 +240,4 @@ const SignInActionsManager: React.FC<SignInManagerProps> = ({ initialFlow }) => 
       </div>
     </div>
   );
-};
-
-export default SignInActionsManager;
+}

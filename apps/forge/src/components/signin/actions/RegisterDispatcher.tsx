@@ -48,7 +48,7 @@ const RegisterDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
       abortController.abort();
       dispatch(signinActions.resetSignInSession());
       toast.success("User registered successfully");
-      navigate({ to: "/signin/actions" });
+      navigate({ to: "/signin" });
     },
   });
 
