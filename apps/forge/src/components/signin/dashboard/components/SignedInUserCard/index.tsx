@@ -6,7 +6,7 @@ import { SignInReasonDisplay } from "@/components/signin/dashboard/components/Si
 import { TimeDisplay } from "@/components/signin/dashboard/components/SignedInUserCard/TimeDisplay.tsx";
 import { iForgeEpoch } from "@/config/constants.ts";
 import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants.ts";
-import { ucardNumberToString } from "@/lib/utils";
+import { uCardNumberToString } from "@/lib/utils";
 import { AppRootState } from "@/redux/store.ts";
 import { PostSignOut, PostSignOutProps } from "@/services/signin/signInService.ts";
 import type { PartialReason } from "@ignis/types/sign_in.ts";
@@ -48,7 +48,7 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
 
   const signOutProps: PostSignOutProps = {
     locationName: activeLocation,
-    uCardNumber: ucardNumberToString(user.ucard_number),
+    uCardNumber: uCardNumberToString(user.ucard_number),
     signal: abortController.signal,
   };
 
@@ -91,7 +91,7 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
                   variant="team"
                   className="flex items-center justify-start rounded-sm pt-1.5 pb-1.5 mt-2"
                 >
-                  <div className="flex gap-1 w-full text-center">
+                  <div className="flex gap-1 w-full text-center items-center">
                     <TeamIcon team={team.name} className="stroke-black dark:stroke-white mr-1 h-4 w-4" />
                     <p className="w-full text-xs">{team.name}</p>
                   </div>

@@ -1,9 +1,8 @@
 import { TrainingContent } from "@/routes/_authenticated/training/$id";
 import { PartialTrainingWithStatus } from "@ignis/types/training";
-import { useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button";
 import { Card } from "@ui/components/ui/card";
-import Markdown from "react-markdown";
 
 export default function TrainingCourseCard({
   training,
@@ -12,7 +11,6 @@ export default function TrainingCourseCard({
   training: PartialTrainingWithStatus;
   isRep: boolean;
 }) {
-  const navigate = useNavigate();
   return (
     <Card className="flex flex-col gap-2.5 p-4 border rounded-lg md:gap-4 md:p-8 hover:bg-accent">
       <div className="space-y-1 text-center md:text-left">
@@ -22,19 +20,15 @@ export default function TrainingCourseCard({
         </div>
       </div>
       <div className="mt-auto flex gap-1 min-[200px]:flex-row w-full justify-between">
-        <Button
-          className="flex h-8 rounded-md border text-xs md:h-10 md:px-4 md:text-sm"
-          onClick={() => navigate({ to: "/training/$id", params: training })}
-        >
-          {training.status}
-        </Button>
+        <Link to="/training/$id" params={training}>
+          <Button className="flex h-8 rounded-md border text-xs md:h-10 md:px-4 md:text-sm">{training.status}</Button>
+        </Link>
         {isRep && training.rep !== null ? (
-          <Button
-            className="flex h-8 rounded-md border text-xs md:h-10 md:px-4 md:text-sm"
-            onClick={() => navigate({ to: "/training/$id", params: training.rep! })}
-          >
-            {`${training.rep.status} Rep Training`}
-          </Button>
+          <Link to="/training/$id" params={training.rep!}>
+            <Button className="flex h-8 rounded-md border text-xs md:h-10 md:px-4 md:text-sm">
+              {`${training.rep.status} Rep Training`}
+            </Button>
+          </Link>
         ) : undefined}
       </div>
     </Card>

@@ -22,7 +22,9 @@ declare global {
 
 async function bootstrap() {
   // Setup Logger
+  const logLevel = process.env.LOG_LEVEL || "info";
   const instance = winston.createLogger({
+    level: logLevel,
     transports: [
       new winston.transports.Console({
         format: winston.format.combine(

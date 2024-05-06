@@ -48,7 +48,7 @@ export type LocationStatus = {
   needs_queue: boolean;
   out_of_hours: boolean;
   count_in_queue: number;
-  locationName: string;
+  locationName: Location;
 };
 
 //* Training for a user who's requesting to sign in */
@@ -60,6 +60,8 @@ export type User = users.UserWithInfractions & {
   training: Training[];
   registered: boolean;
   is_rep: boolean;
+  signed_in: boolean;
+  teams?: users.ShortTeam[];
 };
 
 export type Reason = PartialReason & {

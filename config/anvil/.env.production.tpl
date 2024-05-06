@@ -21,6 +21,8 @@ DISCORD_CLIENT_CALLBACK_URL="http://127.0.0.1:3000/api/v1/authentication/discord
 
 # AUTH
 JWT_SECRET="op://IT/Anvil JWT Signing Key/credential"
+CSRF_SECRET="op://IT/Anvil CSRF Secret Key/credential"
+CSRF_EXCLUDE_ROUTES=auth/login,POST;auth/refresh,POST
 ACCESS_TOKEN_EXPIRES_IN="1h"
 REFRESH_TOKEN_EXPIRES_IN="7d"
 
@@ -50,3 +52,6 @@ FRONT_END_URL="https://iforge.sheffield.ac.uk"
 # DB
 EDGEDB_DSN="op://IT/Ignis EdgeDB Docker Prod/EDGEDB_DSN"
 NODE_EXTRA_CA_CERTS="/ignis_certs/ignis_cert.pem"
+
+# Logging
+LOG_LEVEL=info

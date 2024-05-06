@@ -31,7 +31,8 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const abortController = new AbortController(); // For gracefully cancelling the query
 
   const activeLocation = useSelector((state: AppRootState) => state.signin.active_location);
-  const ucardNumber = useSignInSessionField("ucard_number");
+  const uCardNumber = useSignInSessionField("ucard_number");
+  const user = useSignInSessionField("user");
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [trainingMap, setTrainingMap] = useState<CategoryTrainingMap>({
@@ -51,14 +52,18 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
 
   const signInProps: GetSignInProps = {
     locationName: activeLocation,
-    uCardNumber: ucardNumber ?? "",
+    uCardNumber: uCardNumber ?? "",
     signal: abortController.signal,
   };
-
   // Using the useQuery hook to fetch the sign-in data
   const { data, isLoading, error } = useQuery({
     queryKey: ["getSignIn", signInProps],
-    queryFn: () => GetSignIn(signInProps),
+    queryFn: () => {
+      if (user) {
+        return user;
+      }
+      return GetSignIn(signInProps);
+    },
     retry: 1,
   });
 
@@ -106,6 +111,7 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
         }
       }
     }
+    dispatch(signinActions.updateSignInSessionField("user", data));
     setTrainingMap({
       SELECTABLE: selectAbleTraining,
       UNSELECTABLE: unselectAbleTraining,
@@ -141,15 +147,13 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const toolSelectionDisplay = (
     <>
       <Collapsible open={isOpen} onOpenChange={setIsOpen} className="w-full space-y-2">
-        <div className="flex items-center justify-between space-x-4 px-4">
-          <h4 className="text-sm font-semibold">Select Training</h4>
-          <CollapsibleTrigger asChild>
-            <Button variant="ghost" size="sm">
-              {isOpen ? <ChevronsDownUp className="h-4 w-4" /> : <ChevronsUpDown className="h-4 w-4" />}
-              <span className="sr-only">Toggle</span>
-            </Button>
-          </CollapsibleTrigger>
-        </div>
+        <CollapsibleTrigger asChild>
+          <Button variant="ghost" className="flex items-center justify-between space-x-4 px-4 w-full">
+            <h4 className="text-sm font-semibold">Select Training</h4>
+            {isOpen ? <ChevronsDownUp className="h-4 w-4" /> : <ChevronsUpDown className="h-4 w-4" />}
+            <span className="sr-only">Toggle</span>
+          </Button>
+        </CollapsibleTrigger>
         <>
           {userHasCompulsoryTraining ? (
             <ToolSelectionList // TODO honestly think this is best as a single list but with symbols for selectiblity, then we can have fulltextsearch

@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { errorDisplay } from "@/components/errors/ErrorDisplay";
 import { signinActions } from "@/redux/signin.slice.ts";
-import { PostQueueInPerson, PostQueueProps } from "@/services/signin/queueService.ts";
+import { PostQueue, PostQueueProps } from "@/services/signin/queueService.ts";
 import { FlowStepComponent } from "@/types/signInActions.ts";
 import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button.tsx";
@@ -23,14 +23,15 @@ const QueueDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const timeout = 3000;
 
   const queueProps: PostQueueProps = {
+    // FIXME
     locationName: activeLocation,
     uCardNumber: signInSession?.ucard_number ?? "",
     signal: abortController.signal,
   };
 
   const { isPending, error, mutate } = useMutation({
-    mutationKey: ["postQueueInPerson", queueProps],
-    mutationFn: () => PostQueueInPerson(queueProps),
+    mutationKey: ["postQueue", queueProps],
+    mutationFn: () => PostQueue(queueProps),
     retry: 0,
     onError: (error) => {
       console.log("Error", error);
@@ -42,7 +43,7 @@ const QueueDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
       abortController.abort();
       dispatch(signinActions.resetSignInSession());
       toast.success("User added to queue successfully");
-      navigate({ to: "/signin/actions" });
+      navigate({ to: "/signin" });
     },
   });
 

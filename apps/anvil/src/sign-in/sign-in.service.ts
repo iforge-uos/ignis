@@ -4,11 +4,12 @@ import { LdapService } from "@/ldap/ldap.service";
 import { CreateSignInReasonCategoryDto } from "@/root/dto/reason.dto";
 import { ErrorCodes } from "@/shared/constants/ErrorCodes";
 import { sleep } from "@/shared/functions/sleep";
-import { ldapLibraryToUcardNumber, PartialUserProps, UserProps, UsersService } from "@/users/users.service";
+import { PartialUserProps, UserProps, UsersService } from "@/users/users.service";
 import { SignInLocationSchema } from "@dbschema/edgedb-zod/modules/sign_in";
 import e from "@dbschema/edgeql-js";
 import { std } from "@dbschema/interfaces";
 import { getUserTrainingForSignIn } from "@dbschema/queries/getUserTrainingForSignIn.query";
+import { users } from "@ignis/types";
 import type { Location, LocationStatus, Training } from "@ignis/types/sign_in";
 import type { PartialUser, User } from "@ignis/types/users";
 import {
@@ -22,6 +23,7 @@ import {
 import { Logger } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
 import { CardinalityViolationError, InvalidValueError } from "edgedb";
+import {ldapLibraryToUcardNumber} from "@/shared/functions/utils";
 
 export const REP_ON_SHIFT = "Rep On Shift";
 export const REP_OFF_SHIFT = "Rep Off Shift";
@@ -151,13 +153,53 @@ export class SignInService implements OnModuleInit {
   async getUserForSignIn(
     location: Location,
     ucard_number: string,
-  ): Promise<User & { is_rep: boolean; registered: boolean }> {
-    let user = await this.dbService.query(
+  ): Promise<User & { is_rep: boolean; registered: boolean; signed_in: boolean }> {
+    const sign_in = e.select(e.sign_in.SignIn, (sign_in) => ({
+      filter_single: e.op(
+        e.op(sign_in.user.ucard_number, "=", ldapLibraryToUcardNumber(ucard_number)),
+        "and",
+        e.op("not", sign_in.signed_out),
+      ),
+    }));
+    let user:
+      | (User & {
+          is_rep: boolean;
+          registered: boolean;
+          signed_in: boolean;
+          location?: Uppercase<Location>;
+          teams?: users.ShortTeam[] | null;
+        })
+      | null = await this.dbService.query(
+      e.select(sign_in.user, (user) => ({
+        ...UserProps(user),
+        is_rep: e.select(e.op(user.__type__.name, "=", "users::Rep")),
+        registered: e.select(true as boolean),
+        signed_in: e.select(true as boolean),
+        location: e.assert_exists(sign_in.location),
+        ...e.is(e.users.Rep, {
+          teams: { name: true, description: true, id: true },
+        }),
+      })),
+    );
+    if (user?.location && user.location.toLowerCase() !== location) {
+      throw new BadRequestException({
+        message: `User ${ucard_number} is already signed in at a different location, please sign out there before signing in.`,
+        code: ErrorCodes.already_signed_in_to_location,
+      });
+    }
+    if (user) {
+      return user;
+    }
+    user = await this.dbService.query(
       e.select(e.users.User, (user) => ({
         filter_single: { ucard_number: ldapLibraryToUcardNumber(ucard_number) },
         ...UserProps(user),
         is_rep: e.select(e.op(user.__type__.name, "=", "users::Rep")),
         registered: e.select(true as boolean),
+        signed_in: e.select(false as boolean),
+        ...e.is(e.users.Rep, {
+          teams: { name: true, description: true, id: true },
+        }),
       })),
     );
     if (user) {
@@ -181,7 +223,12 @@ export class SignInService implements OnModuleInit {
           location: castLocation(location),
           user: e.insert(e.users.User, this.userService.ldapUserProps(ldapUser)),
         }).user,
-        (user) => ({ ...UserProps(user), is_rep: e.select(false as boolean), registered: e.select(false as boolean) }),
+        (user) => ({
+          ...UserProps(user),
+          is_rep: e.select(false as boolean),
+          registered: e.select(false as boolean),
+          signed_in: e.select(false as boolean),
+        }),
       ),
     );
 
@@ -651,21 +698,21 @@ export class SignInService implements OnModuleInit {
     }
   }
 
-  async addToQueue(location: Location, ucard_number: number): Promise<void>;
-  async addToQueue(location: Location, ucard_number: undefined, user_id: string): Promise<void>;
-  async addToQueue(location: Location, ucard_number: number | undefined, user_id: string | undefined = undefined) {
+  async addToQueue(location: Location, id: string) {
     if (!(await this.queueInUse(location))) {
       throw new HttpException("The queue is currently not in use", HttpStatus.BAD_REQUEST);
     }
 
     try {
-      e.insert(e.sign_in.QueuePlace, {
-        user: e.select(e.users.User, () => ({
-          filter_single: ucard_number ? { ucard_number } : { id: user_id! }, // on the off chance the user hasn't been registered yet, use their ID
-        })),
-        location: castLocation(location),
-        position: e.op(e.count(e.select(e.sign_in.QueuePlace)), "+", 1),
-      });
+      return await this.dbService.query(
+        e.insert(e.sign_in.QueuePlace, {
+          user: e.select(e.users.User, () => ({
+            filter_single: { id },
+          })),
+          location: castLocation(location),
+          position: e.op(e.count(e.select(e.sign_in.QueuePlace)), "+", 1),
+        }),
+      );
     } catch (e) {
       if (e instanceof CardinalityViolationError && e.code === 84017154) {
         console.log(e, e.code);
@@ -676,7 +723,7 @@ export class SignInService implements OnModuleInit {
     }
   }
 
-  async removeFromQueue(location: Location, user_id: string) {
+  async removeFromQueue(location: Location, id: string) {
     // again, user_id because might not have ucard_number
     if (await this.queueInUse(location)) {
       throw new HttpException("The queue is currently not in use", HttpStatus.SERVICE_UNAVAILABLE);
@@ -685,7 +732,7 @@ export class SignInService implements OnModuleInit {
     await this.dbService.client.transaction(async (tx) => {
       await e
         .delete(e.sign_in.QueuePlace, (queue_place) => ({
-          filter: e.op(queue_place.user.id, "=", e.uuid(user_id)),
+          filter: e.op(queue_place.user.id, "=", e.uuid(id)),
         }))
         .run(tx);
 
@@ -756,6 +803,22 @@ export class SignInService implements OnModuleInit {
             limit: 1,
           })).created_at,
         ),
+      ),
+    );
+  }
+
+  async getPopularSignInReasons() {
+    return await this.dbService.query(
+      e.select(
+        e.group(
+          e.select(e.sign_in.SignIn, (sign_in) => ({
+            filter: e.op(sign_in.created_at, "<", e.op(e.datetime_current(), "-", e.cal.relative_duration("3d"))),
+          })),
+          (sign_in) => ({
+            by: { reason: sign_in.reason },
+          }),
+        ).elements.reason,
+        () => ({ limit: 5 }),
       ),
     );
   }

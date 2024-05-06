@@ -33,21 +33,22 @@ export const SignInDrawer: FC<SignInDrawerProps> = ({
   return (
     <>
       <Collapsible key="1" className="space-y-2 mt-2 mb-2" defaultOpen={startExpanded}>
-        <div className="flex items-center justify-between space-x-4 px-4">
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center justify-center h-6 w-6 rounded-sm bg-primary text-sm font-semibold text-primary-foreground">
-              {entries.length}
-            </span>
-            <h4 className="text-lg font-bold">{title}</h4>
-          </div>
-          <CollapsibleTrigger asChild>
-            <Button
-              className="flex items-center gap-2"
-              size="sm"
-              variant="outline"
-              onClick={toggleOpen}
-              disabled={entries.length === 0}
-            >
+        <CollapsibleTrigger asChild>
+          <Button
+            className="flex items-center justify-between space-x-4 py-7 w-full"
+            style={{ paddingLeft: "18px", paddingRight: "18px" }}
+            size="sm"
+            variant="outline"
+            onClick={toggleOpen}
+            disabled={entries.length === 0}
+          >
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center justify-center h-6 w-6 rounded-sm bg-primary text-sm font-semibold text-primary-foreground">
+                {entries.length}
+              </span>
+              <h4 className="text-lg font-bold">{title}</h4>
+            </div>
+            <div className="flex items-center gap-2">
               {entries.length === 0 ? (
                 <Ban className="h-4 w-4" />
               ) : (
@@ -57,9 +58,9 @@ export const SignInDrawer: FC<SignInDrawerProps> = ({
                   <span className="sr-only">{isOpen ? "Hide" : "Show"}</span>
                 </>
               )}
-            </Button>
-          </CollapsibleTrigger>
-        </div>
+            </div>
+          </Button>
+        </CollapsibleTrigger>
         <CollapsibleContent asChild>
           <div className="rounded-md border border-gray-100 px-4 py-4 font-mono text-sm dark:border-black dark:border-opacity-15 shadow-md">
             <div className="flex flex-wrap gap-4 mr-4">

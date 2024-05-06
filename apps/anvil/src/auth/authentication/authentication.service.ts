@@ -4,6 +4,7 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { Response } from "express";
 import { JwtPayload } from "../interfaces/jwtpayload.interface";
+
 const ms = require("ms");
 
 @Injectable()
@@ -29,10 +30,13 @@ export class AuthenticationService {
     const refresh_token = this.jwtService.sign(payload, {
       expiresIn: refreshTokenExpiresIn,
     });
+    // Couple the CSRF token to the auth token expiry (each ''session'')
+    const csrf_token = this.jwtService.sign({}, { expiresIn: jwtExpiresIn });
 
     return {
       access_token,
       refresh_token,
+      csrf_token,
       user,
     };
   }
@@ -45,9 +49,10 @@ export class AuthenticationService {
     }
   }
 
-  setAuthCookies(res: Response, access_token: string, refresh_token: string) {
+  setAuthCookies(res: Response, access_token: string, refresh_token: string, csrf_token: string) {
     const accessTokenExpiresIn = new Date(Date.now() + ms(process.env.ACCESS_TOKEN_EXPIRES_IN ?? "1h"));
     const refreshTokenExpiresIn = new Date(Date.now() + ms(process.env.REFRESH_TOKEN_EXPIRES_IN ?? "7d"));
+    const csrfTokenExpiresIn = new Date(Date.now() + ms(process.env.REFRESH_TOKEN_EXPIRES_IN ?? "1h"));
 
     res.cookie("access_token", access_token, {
       httpOnly: true,
@@ -62,6 +67,14 @@ export class AuthenticationService {
       path: "/",
       sameSite: "strict",
       expires: refreshTokenExpiresIn,
+    });
+    res.cookie("csrf_token", csrf_token, {
+      httpOnly: false, // needs to be accessible via JS, so we can add it to the Headers
+      // (if its was HTTP only it would achieve nothing)
+      secure: true,
+      path: "/",
+      sameSite: "strict",
+      expires: csrfTokenExpiresIn,
     });
   }
 

@@ -1,7 +1,7 @@
 import { EdgeDBModule } from "@/edgedb/edgedb.module";
 import { TrainingService } from "@/training/training.service";
 import { BullModule } from "@nestjs/bull";
-import { Logger, Module } from "@nestjs/common";
+import { Logger, MiddlewareConsumer, Module, NestModule, RequestMethod } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { APP_PIPE } from "@nestjs/core";
 import { ScheduleModule } from "@nestjs/schedule";
@@ -23,6 +23,9 @@ import { SignInModule } from "./sign-in/sign-in.module";
 import { SignInService } from "./sign-in/sign-in.service";
 import { TrainingController } from "./training/training.controller";
 import { UsersModule } from "./users/users.module";
+import * as process from "node:process";
+import { CsrfMiddleware } from "@/auth/authentication/middleware/csrf.middleware";
+import { IdempotencyMiddleware } from "@/shared/middleware/idempotency.middleware";
 import { NotificationsModule } from './notifications/notifications.module';
 import { GracefulShutdownModule } from 'nestjs-graceful-shutdown';
 
@@ -30,6 +33,14 @@ import { GracefulShutdownModule } from 'nestjs-graceful-shutdown';
   imports: [
     ConfigModule.forRoot({
       envFilePath: ".env.production",
+    }),
+    BullModule.forRoot({
+      redis: {
+        host: process.env.REDIS_HOST,
+        port: process.env.REDIS_PORT as unknown as number,
+        db: process.env.REDIS_DB as unknown as number,
+        password: process.env.REDIS_PASSWORD,
+      },
     }),
     GracefulShutdownModule.forRoot({ gracefulShutdownTimeout: 300 }),
     EdgeDBModule,
@@ -67,4 +78,24 @@ import { GracefulShutdownModule } from 'nestjs-graceful-shutdown';
   ],
   controllers: [SignInController, RootController, TrainingController],
 })
-export class AppModule { }
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    const csrfExclusions = this.getCsrfExclusions();
+
+    consumer
+      .apply(CsrfMiddleware)
+      .exclude(...csrfExclusions)
+      .forRoutes({ path: "*", method: RequestMethod.ALL });
+
+    consumer.apply(IdempotencyMiddleware).forRoutes({ path: "*", method: RequestMethod.POST });
+  }
+
+  private getCsrfExclusions(): { path: string; method: RequestMethod }[] {
+    // Example: Parse a CSV from environment variables or a config
+    const routes = process.env.CSRF_EXCLUDE_ROUTES || "auth/login,POST;auth/refresh,POST";
+    return routes.split(";").map((route) => {
+      const [path, method] = route.split(",");
+      return { path, method: RequestMethod[method as keyof typeof RequestMethod] };
+    });
+  }
+}

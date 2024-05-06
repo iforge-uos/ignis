@@ -52,6 +52,7 @@
     "googleapis": "^133.0.0",
     "handlebars": "^4.7.8",
     "helmet": "^7.1.0",
+    "ioredis": "^5.4.1",
     "http-terminator": "^3.2.0",
     "jsonwebtoken": "^9.0.2",
     "jsx-email": "1.10.12",

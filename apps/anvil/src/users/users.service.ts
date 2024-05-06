@@ -17,6 +17,7 @@ import {
   RevokeTrainingDto,
   UpdateUserDto,
 } from "./dto/users.dto";
+import { removeDomain, ldapLibraryToUcardNumber } from "@/shared/functions/utils";
 
 export const PartialUserProps = e.shape(e.users.User, () => ({
   // Fairly minimal, useful for templating
@@ -85,14 +86,6 @@ const UserTrainingEntry = (id: string, training_id: string | undefined) => {
     filter_single: { id },
   }));
 };
-
-function removeDomain(email: string): string {
-  return email.slice(0, email.length - "@sheffield.ac.uk".length);
-}
-
-export function ldapLibraryToUcardNumber(shefLibraryNumber: string): number {
-  return parseInt(shefLibraryNumber.slice(3));
-}
 
 @Injectable()
 export class UsersService {
