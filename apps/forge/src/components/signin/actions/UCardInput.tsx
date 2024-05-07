@@ -10,7 +10,7 @@ import { useDispatch } from "react-redux";
 
 const UCardInput: FlowStepComponent = ({ onPrimary }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const [otp, setOtp] = useState(useSignInSessionField("ucard_number")!); // OTP is now handled as a string
+  const [otp, setOtp] = useState(useSignInSessionField("ucard_number") ?? ""); // OTP is now handled as a string
   const [isOtpValid, setIsOtpValid] = useState(otp.length === UCARD_LENGTH);
 
   const handleOtpChange = (value: string) => {
