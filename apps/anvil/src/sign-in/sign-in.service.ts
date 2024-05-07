@@ -422,7 +422,7 @@ export class SignInService implements OnModuleInit {
     const { infractions } = await this.preSignInChecks(location, ucard_number);
     if (infractions.length !== 0) {
       throw new BadRequestException({
-        message: `User ${ucard_number} has active infractions ${infractions.map(formatInfraction).join(",")}`,
+        message: `User ${ucard_number} has active infraction(s):\n${infractions.map(formatInfraction).join("\n")}`,
         code: ErrorCodes.user_has_active_infractions,
       });
     }
