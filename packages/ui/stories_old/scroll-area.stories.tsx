@@ -1,18 +1,18 @@
-import React from "react"
-import { Meta, StoryObj } from "@storybook/react"
+import React from "react";
+import { Meta, StoryObj } from "@storybook/react";
 
-import { ScrollArea } from "../default/ui/scroll-area"
-import { Separator } from "../default/ui/separator"
+import { ScrollArea } from "../default/ui/scroll-area";
+import { Separator } from "../default/ui/separator";
 
 const meta: Meta<typeof ScrollArea> = {
   title: "ui/ScrollArea",
   component: ScrollArea,
   tags: ["autodocs"],
   argTypes: {},
-}
-export default meta
+};
+export default meta;
 
-type Story = StoryObj<typeof ScrollArea>
+type Story = StoryObj<typeof ScrollArea>;
 
 export const Base: Story = {
   render: (args) => (
@@ -33,4 +33,4 @@ export const Base: Story = {
     </ScrollArea>
   ),
   args: {},
-}
+};

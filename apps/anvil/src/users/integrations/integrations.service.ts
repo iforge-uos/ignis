@@ -1,8 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from "@nestjs/common";
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import e from "@dbschema/edgeql-js";
 import { Platform } from "@dbschema/edgeql-js/modules/users";
 import { EdgeDBService } from "@/edgedb/edgedb.service";

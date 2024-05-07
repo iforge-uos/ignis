@@ -1,1 +1,1 @@
-module.exports = require('@ignis/ui/tailwind.config');
+module.exports = require("@ignis/ui/tailwind.config");

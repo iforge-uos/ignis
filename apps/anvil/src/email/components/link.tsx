@@ -1,12 +1,7 @@
 import type { JsxEmailComponent, LinkProps } from "jsx-email";
 import * as React from "react";
 
-export const Link: JsxEmailComponent<LinkProps> = ({
-  disableDefaultStyle,
-  style,
-  target,
-  ...props
-}) => (
+export const Link: JsxEmailComponent<LinkProps> = ({ disableDefaultStyle, style, target, ...props }) => (
   <a
     {...props}
     data-id="jsx-email/link"

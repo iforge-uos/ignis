@@ -1,18 +1,18 @@
-import { Meta, StoryObj } from "@storybook/react"
-import { Plus } from "lucide-react"
+import { Meta, StoryObj } from "@storybook/react";
+import { Plus } from "lucide-react";
 
-import { Button } from "../default/ui/button"
-import { Tooltip, TooltipContent, TooltipTrigger } from "../default/ui/tooltip"
+import { Button } from "../default/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../default/ui/tooltip";
 
 const meta: Meta<typeof Tooltip> = {
   title: "ui/Tooltip",
   component: Tooltip,
   tags: ["autodocs"],
   argTypes: {},
-}
-export default meta
+};
+export default meta;
 
-type Story = StoryObj<typeof Tooltip>
+type Story = StoryObj<typeof Tooltip>;
 
 export const Base: Story = {
   render: (args) => (
@@ -29,4 +29,4 @@ export const Base: Story = {
     </Tooltip>
   ),
   args: {},
-}
+};

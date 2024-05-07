@@ -23,7 +23,7 @@ import {
 import { Logger } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
 import { CardinalityViolationError, InvalidValueError } from "edgedb";
-import {ldapLibraryToUcardNumber} from "@/shared/functions/utils";
+import { ldapLibraryToUcardNumber } from "@/shared/functions/utils";
 
 export const REP_ON_SHIFT = "Rep On Shift";
 export const REP_OFF_SHIFT = "Rep Off Shift";

@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from "@storybook/react"
+import { Meta, StoryObj } from "@storybook/react";
 
 import {
   ContextMenu,
@@ -14,17 +14,17 @@ import {
   ContextMenuSubContent,
   ContextMenuSubTrigger,
   ContextMenuTrigger,
-} from "../default/ui/context-menu"
+} from "../default/ui/context-menu";
 
 const meta: Meta<typeof ContextMenu> = {
   title: "ui/ContextMenu",
   component: ContextMenu,
   tags: ["autodocs"],
   argTypes: {},
-}
-export default meta
+};
+export default meta;
 
-type Story = StoryObj<typeof ContextMenu>
+type Story = StoryObj<typeof ContextMenu>;
 
 export const Base: Story = {
   render: (args) => (
@@ -68,13 +68,11 @@ export const Base: Story = {
         <ContextMenuRadioGroup value="pedro">
           <ContextMenuLabel inset>People</ContextMenuLabel>
           <ContextMenuSeparator />
-          <ContextMenuRadioItem value="pedro">
-            Pedro Duarte
-          </ContextMenuRadioItem>
+          <ContextMenuRadioItem value="pedro">Pedro Duarte</ContextMenuRadioItem>
           <ContextMenuRadioItem value="colm">Colm Tuite</ContextMenuRadioItem>
         </ContextMenuRadioGroup>
       </ContextMenuContent>
     </ContextMenu>
   ),
   args: {},
-}
+};

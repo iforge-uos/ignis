@@ -1,13 +1,4 @@
-import {
-  Column,
-  Head,
-  Heading,
-  Html,
-  Img,
-  Preview,
-  Row,
-  Tailwind,
-} from "jsx-email";
+import { Column, Head, Heading, Html, Img, Preview, Row, Tailwind } from "jsx-email";
 import * as React from "react";
 import { Footer } from "./footer";
 

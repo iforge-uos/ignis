@@ -8,10 +8,6 @@ export class CleanupService implements OnModuleInit {
 
   onModuleInit() {
     // Schedule the job to run every day at 2AM
-    this.cleanupQueue.add(
-      "removeExpiredTokens",
-      {},
-      { repeat: { cron: "0 2 * * *" } },
-    );
+    this.cleanupQueue.add("removeExpiredTokens", {}, { repeat: { cron: "0 2 * * *" } });
   }
 }

@@ -1,6 +1,6 @@
-import { Meta, StoryObj } from "@storybook/react"
+import { Meta, StoryObj } from "@storybook/react";
 
-import { Button } from "../default/ui/button"
+import { Button } from "../default/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,19 +9,19 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../default/ui/dialog"
-import { Input } from "../default/ui/input"
-import { Label } from "../default/ui/label"
+} from "../default/ui/dialog";
+import { Input } from "../default/ui/input";
+import { Label } from "../default/ui/label";
 
 const meta: Meta<typeof Dialog> = {
   title: "ui/Dialog",
   component: Dialog,
   tags: ["autodocs"],
   argTypes: {},
-}
-export default meta
+};
+export default meta;
 
-type Story = StoryObj<typeof Dialog>
+type Story = StoryObj<typeof Dialog>;
 
 export const Base: Story = {
   render: (args) => (
@@ -32,9 +32,7 @@ export const Base: Story = {
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Edit profile</DialogTitle>
-          <DialogDescription>
-            Make changes to your profile here. Click save when you're done.
-          </DialogDescription>
+          <DialogDescription>Make changes to your profile here. Click save when you're done.</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
@@ -57,4 +55,4 @@ export const Base: Story = {
     </Dialog>
   ),
   args: {},
-}
+};

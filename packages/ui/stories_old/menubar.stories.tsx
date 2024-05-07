@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from "@storybook/react"
+import { Meta, StoryObj } from "@storybook/react";
 
 import {
   Menubar,
@@ -14,17 +14,17 @@ import {
   MenubarSubContent,
   MenubarSubTrigger,
   MenubarTrigger,
-} from "../default/ui/menubar"
+} from "../default/ui/menubar";
 
 const meta: Meta<typeof Menubar> = {
   title: "ui/Menubar",
   component: Menubar,
   tags: ["autodocs"],
   argTypes: {},
-}
-export default meta
+};
+export default meta;
 
-type Story = StoryObj<typeof Menubar>
+type Story = StoryObj<typeof Menubar>;
 
 export const Base: Story = {
   render: (args) => (
@@ -84,9 +84,7 @@ export const Base: Story = {
         <MenubarTrigger>View</MenubarTrigger>
         <MenubarContent>
           <MenubarCheckboxItem>Always Show Bookmarks Bar</MenubarCheckboxItem>
-          <MenubarCheckboxItem checked>
-            Always Show Full URLs
-          </MenubarCheckboxItem>
+          <MenubarCheckboxItem checked>Always Show Full URLs</MenubarCheckboxItem>
           <MenubarSeparator />
           <MenubarItem inset>
             Reload <MenubarShortcut>⌘R</MenubarShortcut>
@@ -117,4 +115,4 @@ export const Base: Story = {
     </Menubar>
   ),
   args: {},
-}
+};

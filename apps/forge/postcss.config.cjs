@@ -1,1 +1,1 @@
-module.exports = require('@ignis/ui/postcss.config');
+module.exports = require("@ignis/ui/postcss.config");

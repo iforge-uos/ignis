@@ -9,9 +9,7 @@ export class EdgeDBService implements OnModuleInit {
     await this.client.ensureConnected();
   }
 
-  public async query<Expr extends T.Expression>(
-    expression: Expr,
-  ): Promise<$infer<Expr>> {
+  public async query<Expr extends T.Expression>(expression: Expr): Promise<$infer<Expr>> {
     return await expression.run(this.client);
   }
 }

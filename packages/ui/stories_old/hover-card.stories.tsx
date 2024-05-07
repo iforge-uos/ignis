@@ -1,23 +1,19 @@
-import { Meta, StoryObj } from "@storybook/react"
-import { CalendarDays } from "lucide-react"
+import { Meta, StoryObj } from "@storybook/react";
+import { CalendarDays } from "lucide-react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "../default/ui/avatar"
-import { Button } from "../default/ui/button"
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "../default/ui/hover-card"
+import { Avatar, AvatarFallback, AvatarImage } from "../default/ui/avatar";
+import { Button } from "../default/ui/button";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "../default/ui/hover-card";
 
 const meta: Meta<typeof HoverCard> = {
   title: "ui/HoverCard",
   component: HoverCard,
   tags: ["autodocs"],
   argTypes: {},
-}
-export default meta
+};
+export default meta;
 
-type Story = StoryObj<typeof HoverCard>
+type Story = StoryObj<typeof HoverCard>;
 
 export const Base: Story = {
   render: (args) => (
@@ -33,14 +29,10 @@ export const Base: Story = {
           </Avatar>
           <div className="space-y-1">
             <h4 className="text-sm font-semibold">@nextjs</h4>
-            <p className="text-sm">
-              The React Framework – created and maintained by @vercel.
-            </p>
+            <p className="text-sm">The React Framework – created and maintained by @vercel.</p>
             <div className="flex items-center pt-2">
               <CalendarDays className="mr-2 h-4 w-4 opacity-70" />{" "}
-              <span className="text-xs text-slate-500 dark:text-slate-400">
-                Joined December 2021
-              </span>
+              <span className="text-xs text-slate-500 dark:text-slate-400">Joined December 2021</span>
             </div>
           </div>
         </div>
@@ -48,4 +40,4 @@ export const Base: Story = {
     </HoverCard>
   ),
   args: {},
-}
+};
