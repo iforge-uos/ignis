@@ -11,7 +11,7 @@ import { std } from "@dbschema/interfaces";
 import { getUserTrainingForSignIn } from "@dbschema/queries/getUserTrainingForSignIn.query";
 import { users } from "@ignis/types";
 import type { Location, LocationStatus, Training } from "@ignis/types/sign_in";
-import type { PartialUser, User } from "@ignis/types/users";
+import type { Infraction, InfractionType, PartialUser, User, UserWithInfractions } from "@ignis/types/users";
 import {
   BadRequestException,
   HttpException,
@@ -38,6 +38,22 @@ function castLocation(location: Location) {
   return e.cast(e.sign_in.SignInLocation, location.toUpperCase());
 }
 
+function formatInfraction(infraction: Infraction) {
+  switch (infraction.type) {
+    case "PERM_BAN":
+      return `User is permanently banned from the iForge. Reason: ${infraction.reason}`
+    case "TEMP_BAN":
+      return `User is banned from the iForge for ${infraction.duration}. Reason: ${infraction.reason}`
+    case "WARNING":
+      return `User has an unresolved warning. Reason: ${infraction.reason}`
+    case "RESTRICTION":
+      return `User has an unresolved restriction. Reason: ${infraction.reason}`
+    case "TRAINING_ISSUE":
+    return `User has an unresolved training issue. Reason: ${infraction.reason}`
+    default:
+      throw new Error(`Unknown infraction type: ${infraction.type}`);
+  }
+}
 @Injectable()
 export class SignInService implements OnModuleInit {
   private readonly disabledQueue: Set<Location>;
@@ -406,7 +422,7 @@ export class SignInService implements OnModuleInit {
     const { infractions } = await this.preSignInChecks(location, ucard_number);
     if (infractions.length !== 0) {
       throw new BadRequestException({
-        message: `User ${ucard_number} has active infractions ${infractions}`,
+        message: `User ${ucard_number} has active infractions ${infractions.map(formatInfraction).join(",")}`,
         code: ErrorCodes.user_has_active_infractions,
       });
     }
