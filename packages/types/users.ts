@@ -45,7 +45,7 @@ export type User = helper.Props<users.User> &
 
 export type Infraction = Omit<users.Infraction, "user">
 export type UserWithInfractions = User & {
-  infractions: Infraction;
+  infractions: Infraction[];
 };
 export type InfractionType = users.InfractionType;
 
