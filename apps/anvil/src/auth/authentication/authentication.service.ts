@@ -58,7 +58,7 @@ export class AuthenticationService {
         throw new UnauthorizedException("User not found");
       }
 
-      if (requiredRole && !user.roles.some((role) => role.id === requiredRole)) {
+      if (requiredRole && !user.roles.some((role) => role.name === requiredRole)) {
         throw new UnauthorizedException("User does not have the required role");
       }
 

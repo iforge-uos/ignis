@@ -146,6 +146,7 @@ export class AuthenticationController {
 
   @Get("validate-access")
   async validateToken(@Req() req: Request, @Query("role") requiredRole: string) {
+    this.logger.log(`Validating access token for role: ${requiredRole}`, AuthenticationController.name);
     const token = req.cookies.access_token;
     if (!token) {
       throw new UnauthorizedException("Access token is missing");
