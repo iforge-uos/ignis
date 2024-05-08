@@ -58,7 +58,7 @@ interface SignInManagerProps<FlowT extends FlowType | undefined = undefined> {
 
 export const getStepComponent = (
   currentFlow: FlowType,
-  currentStep: SignInSteps | SignOutSteps | RegisterSteps | EnqueueSteps,
+  currentStep: SignInSteps | SignOutSteps | EnqueueSteps,
   flowConfig: FlowConfiguration,
 ): FlowStepComponent => {
   switch (currentFlow) {

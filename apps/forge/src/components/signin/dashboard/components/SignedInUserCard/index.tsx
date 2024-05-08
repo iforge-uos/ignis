@@ -85,7 +85,7 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
               <h2 className="text-center text-lg font-bold hover:underline">{user.display_name}</h2>
             </Link>
             <div>
-              {user.teams.map((team) => (
+              {user.teams?.map((team) => (
                 <Badge
                   key={team.name}
                   variant="team"

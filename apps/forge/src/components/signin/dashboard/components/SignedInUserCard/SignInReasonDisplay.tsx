@@ -37,8 +37,8 @@ export const SignInReasonDisplay: React.FC<SignInReasonDisplayProps> = ({ tools,
             Tools Used
           </div>
           <div className="flex flex-wrap gap-1 mt-2 justify-center">
-            {tools.map((tool) => (
-              <Badge variant="default" className="max-w-48 rounded-sm shadow-lg">
+            {tools.sort().map((tool) => (
+              <Badge variant="default" className="max-w-48 rounded-sm shadow-lg text-center">
                 {tool}
               </Badge>
             ))}
