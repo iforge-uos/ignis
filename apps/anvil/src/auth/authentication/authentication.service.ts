@@ -77,7 +77,7 @@ export class AuthenticationService {
       httpOnly: true,
       secure: true,
       path: "/",
-      sameSite: "strict",
+      sameSite: "lax",
       expires: accessTokenExpiresIn,
     };
 
@@ -100,7 +100,7 @@ export class AuthenticationService {
       httpOnly: true,
       secure: true,
       path: "/",
-      sameSite: "strict",
+      sameSite: "lax",
       expires: new Date(0),
     };
 
