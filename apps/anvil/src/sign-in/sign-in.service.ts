@@ -23,7 +23,7 @@ import {
 import { Logger } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
 import { CardinalityViolationError, InvalidValueError } from "edgedb";
-import {ldapLibraryToUcardNumber} from "@/shared/functions/utils";
+import { ldapLibraryToUcardNumber } from "@/shared/functions/utils";
 
 export const REP_ON_SHIFT = "Rep On Shift";
 export const REP_OFF_SHIFT = "Rep Off Shift";
@@ -41,15 +41,15 @@ function castLocation(location: Location) {
 function formatInfraction(infraction: Infraction) {
   switch (infraction.type) {
     case "PERM_BAN":
-      return `User is permanently banned from the iForge. Reason: ${infraction.reason}`
+      return `User is permanently banned from the iForge. Reason: ${infraction.reason}`;
     case "TEMP_BAN":
-      return `User is banned from the iForge for ${infraction.duration}. Reason: ${infraction.reason}`
+      return `User is banned from the iForge for ${infraction.duration}. Reason: ${infraction.reason}`;
     case "WARNING":
-      return `User has an unresolved warning. Reason: ${infraction.reason}`
+      return `User has an unresolved warning. Reason: ${infraction.reason}`;
     case "RESTRICTION":
-      return `User has an unresolved restriction. Reason: ${infraction.reason}`
+      return `User has an unresolved restriction. Reason: ${infraction.reason}`;
     case "TRAINING_ISSUE":
-    return `User has an unresolved training issue. Reason: ${infraction.reason}`
+      return `User has an unresolved training issue. Reason: ${infraction.reason}`;
     default:
       throw new Error(`Unknown infraction type: ${infraction.type}`);
   }
@@ -823,18 +823,22 @@ export class SignInService implements OnModuleInit {
     );
   }
 
-  async getPopularSignInReasons() {
+  async getPopularSignInReasons(location: Location) {
     return await this.dbService.query(
       e.select(
         e.group(
           e.select(e.sign_in.SignIn, (sign_in) => ({
-            filter: e.op(sign_in.created_at, "<", e.op(e.datetime_current(), "-", e.cal.relative_duration("3d"))),
+            filter: e.op(
+              e.op(sign_in.created_at, "<", e.op(e.datetime_current(), "-", e.cal.relative_duration("3d"))),
+              "and",
+              e.op(sign_in.location, "=", castLocation(location)),
+            ),
           })),
           (sign_in) => ({
             by: { reason: sign_in.reason },
           }),
         ).elements.reason,
-        () => ({ limit: 5 }),
+        () => ({ limit: 5, id: true, name: true, category: true }),
       ),
     );
   }

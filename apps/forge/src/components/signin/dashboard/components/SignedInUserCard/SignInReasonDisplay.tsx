@@ -1,14 +1,13 @@
-import { Category } from "@/components/icons/SignInReason";
+import { SignInReason } from "@/components/signin/actions/SignInReason";
 import { PartialReason } from "@ignis/types/sign_in.ts";
 import { Badge } from "@ui/components/ui/badge.tsx";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ui/components/ui/tooltip";
 
-interface SignInReasonDisplayProps {
+interface SignInReasonWithToolsDisplayProps {
   tools: string[];
   reason: PartialReason;
 }
 
-export const SignInReasonDisplay: React.FC<SignInReasonDisplayProps> = ({ tools, reason }) => {
+export const SignInReasonWithToolsDisplay: React.FC<SignInReasonWithToolsDisplayProps> = ({ tools, reason }) => {
   return (
     <>
       <div className="my-4 p-4 bg-muted text-muted-foreground rounded-sm h-[90%]">
@@ -16,21 +15,7 @@ export const SignInReasonDisplay: React.FC<SignInReasonDisplayProps> = ({ tools,
           <div className="pb-2 bg-card h-full w-2/3 mr-auto ml-auto rounded-lg p-2 font-medium mb-1 text-center font-mono">
             Sign In Reason
           </div>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="text-center font-mono mt-2 flex justify-center">
-                  <Badge variant="default" className="max-w-48 rounded-sm shadow-lg justify-center items-center">
-                    {<Category category={reason.category} className="mr-1" />}
-                    {reason.category === "UNIVERSITY_MODULE" ? reason.name.split(" ")[0] : reason.name}
-                  </Badge>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{reason.name}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <SignInReason reason={reason}></SignInReason>
         </div>
         <div className="border-gray-500 p-2 rounded-sm mb-4">
           <div className="pb-2 bg-card w-2/3 mr-auto ml-auto rounded-sm p-1 font-medium mb-1 text-center font-mono">

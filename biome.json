@@ -39,20 +39,19 @@
       "style": {
         "noNonNullAssertion": "off",
         "useCollapsedElseIf": "warn",
-        "useShorthandArrayType": "error"
+        "useShorthandArrayType": "error",
+        "useImportType": "off"
       },
       "complexity": {
-        "useSimplifiedLogicExpression": "warn"
+        "useSimplifiedLogicExpression": "warn",
+        "noUselessTernary": "warn"
       },
       "correctness": {
         "useHookAtTopLevel": "error",
         "noUnusedVariables": "warn"
       },
       "nursery": {
-        "noDuplicateJsonKeys": "warn",
-        "useGroupedTypeImport": "off",
-        "useImportType": "off",
-        "noUselessTernary": "warn"
+        "noDuplicateJsonKeys": "warn"
       }
     }
   }

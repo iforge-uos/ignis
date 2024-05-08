@@ -1,27 +1,43 @@
-import { ErrorDisplayProps, errorDisplay } from "@/components/errors/ErrorDisplay";
-import { Category } from "@/components/icons/SignInReason.tsx";
-import { signinActions, useSignInSessionField } from "@/redux/signin.slice.ts";
-import { AppDispatch } from "@/redux/store.ts";
-import { useSignInReasons } from "@/services/signin/signInReasonService.ts";
-import { FlowStepComponent } from "@/types/signInActions.ts";
-import type { Reason } from "@ignis/types/sign_in.ts";
-import { Button } from "@ui/components/ui/button.tsx";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card.tsx";
-import { Input } from "@ui/components/ui/input.tsx";
-import { Loader } from "@ui/components/ui/loader.tsx";
-import Fuse from "fuse.js";
-import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import Fuse from 'fuse.js';
+import React, { useEffect, useState } from 'react';
+import { AppDispatch, AppRootState } from '@/redux/store.ts';
+import { Button } from '@ui/components/ui/button.tsx';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@ui/components/ui/card.tsx';
+import { Category } from '@/components/icons/SignInReason.tsx';
+import { errorDisplay, ErrorDisplayProps } from '@/components/errors/ErrorDisplay';
+import { extractError } from '@/lib/utils';
+import { FlowStepComponent } from '@/types/signInActions.ts';
+import { getCommonReasons, useSignInReasons } from '@/services/signin/signInReasonService.ts';
+import { Input } from '@ui/components/ui/input.tsx';
+import { Loader } from '@ui/components/ui/loader.tsx';
+import type { PartialReason, Reason } from '@ignis/types/sign_in.ts';
+import { signinActions, useSignInSessionField } from '@/redux/signin.slice.ts';
+import { SignInReason } from './SignInReason';
+import { useDispatch, useSelector } from 'react-redux';
+import { useQuery } from '@tanstack/react-query';
 
 const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const [inputValue, setInputValue] = useState<string>("");
-  const [selectedReason, setSelectedReason] = useState<Reason | null>(useSignInSessionField("sign_in_reason") ?? null);
+
+  const [selectedReason, setSelectedReason] = useState<PartialReason | null>(
+    useSignInSessionField("sign_in_reason") ?? null,
+  );
   const { data: signInReasons, isLoading, isError, error } = useSignInReasons();
-  const [fuse, setFuse] = useState<Fuse<Reason>>(new Fuse([], { keys: ["name"] }));
+  const [fuse, setFuse] = useState<Fuse<PartialReason>>(new Fuse([], { keys: ["name"] }));
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
   const [canContinue, setCanContinue] = useState<boolean>(false);
   const hasSessionError = useSignInSessionField("session_errored") ?? false;
   const dispatch: AppDispatch = useDispatch();
+  const activeLocation = useSelector((state: AppRootState) => state.signin.active_location);
+
+  const {
+    data: commonReasons,
+    error: commonReasonsError,
+    isLoading: commonReasonsIsLoading,
+  } = useQuery({
+    queryKey: ["getCommonReasons", activeLocation],
+    queryFn: () => getCommonReasons(activeLocation),
+  });
 
   useEffect(() => {
     // Initialize or update Fuse with the list of signInReasons when they change
@@ -41,7 +57,7 @@ const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
     }
   }, [hasSessionError, signInReasons, selectedReason]);
 
-  const handleSelectReason = (reason: Reason): void => {
+  const handleSelectReason = (reason: PartialReason): void => {
     setInputValue(""); // Clear input value after selecting a reason
     setSelectedReason(reason); // Set the selected reason
     setHighlightedIndex(-1); // Reset highlighted index
@@ -114,7 +130,21 @@ const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
       <Card className="w-[700px]">
         <CardHeader>
           <CardTitle>Sign-In Reason Input</CardTitle>
-          <CardDescription>Start Typing to match your Sign-In Reason</CardDescription>
+          <CardDescription>Start typing to match your sign-in reason or pick a recent common reasons:</CardDescription>
+          {commonReasonsError ? (
+            `Failed to fetch common reasons: ${extractError(commonReasonsError)}`
+          ) : commonReasonsIsLoading ? (
+            <Loader />
+          ) : (
+            <div className="flex">
+            {commonReasons?.map((reason) => (
+              <div onClick={() => setSelectedReason(reason)} className="flex hover:cursor-pointer m-1">
+                <SignInReason reason={reason} />
+              </div>
+            ))}
+            </div>
+          )
+          }
         </CardHeader>
         <CardContent>
           {isLoading && <Loader />}
