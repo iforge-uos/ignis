@@ -1,5 +1,5 @@
 import TrainingLocation from "@/components/training/TrainingLocation";
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 
 const GeorgePorter = () => (
   <TrainingLocation location={"GEORGE_PORTER"} optionalTrainingText={"carbon fibre layup station"} />
@@ -7,7 +7,7 @@ const GeorgePorter = () => (
 
 export const Route = createFileRoute("/training/locations/george-porter")({
   beforeLoad: () => {
-    return redirect({to: "https://training.iforge.shef.ac.uk/subject-areas/george-porter-cca-rep/online"})
+    window.location.href = "https://training.iforge.shef.ac.uk/subject-areas/george-porter-cca-rep/online";
   },
   component: GeorgePorter,
 });
