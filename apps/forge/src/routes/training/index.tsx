@@ -63,8 +63,8 @@ export default function Component() {
             </Link>
           </Card>
           <Card className="w-full hover:bg-accent">
-            <Link to="locations/george-porter">
-              <CardContent className="m-4">
+            {/* <Link to="locations/george-porter"> */}
+              <CardContent className="m-4" onClick={() => window.location.href = "https://training.iforge.shef.ac.uk/subject-areas/george-porter-cca-rep/online"}>
                 <img
                   alt="George Porter CCA Workshop"
                   src="/placeholder.svg"
@@ -79,7 +79,7 @@ export default function Component() {
                   Training appropriate for CCA members looking to gain access to the iTec and its training.
                 </CardDescription>
               </CardContent>
-            </Link>
+            {/* </Link> */}
           </Card>
         </div>
         <br />

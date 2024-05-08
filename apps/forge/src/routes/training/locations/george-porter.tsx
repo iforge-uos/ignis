@@ -6,8 +6,5 @@ const GeorgePorter = () => (
 );
 
 export const Route = createFileRoute("/training/locations/george-porter")({
-  beforeLoad: () => {
-    window.location.href = "https://training.iforge.shef.ac.uk/subject-areas/george-porter-cca-rep/online";
-  },
   component: GeorgePorter,
 });
