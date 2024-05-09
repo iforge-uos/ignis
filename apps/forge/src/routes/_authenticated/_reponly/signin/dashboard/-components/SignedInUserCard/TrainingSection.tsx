@@ -19,7 +19,7 @@ import { format } from "date-fns";
 import { Calendar } from "@ui/components/ui/calendar.tsx";
 import addInPersonTraining from "@/services/users/addInPersonTraining.ts";
 import { toast } from "sonner";
-import { ManageUserWidgetProps } from "@/components/signin/dashboard/components/SignedInUserCard/ManageUserWidget.tsx";
+import { ManageUserWidgetProps } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/ManageUserWidget.tsx";
 
 export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, location, onShiftReps }) => {
   const [date, setDate] = React.useState<Date | undefined>(new Date());

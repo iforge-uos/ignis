@@ -1,21 +1,20 @@
-import { useAuth } from "@/components/auth-provider";
-import ActiveLocationSelector from "@/components/signin/ActiveLocationSelector";
-import { SignInDrawer } from "@/components/signin/dashboard/components/SignInDrawer.tsx";
-import { SignedInUserCard } from "@/components/signin/dashboard/components/SignedInUserCard";
-import Title from "@/components/title";
-import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants";
-import { extractError } from "@/lib/utils";
-import { AppRootState } from "@/redux/store.ts";
-import { dataForLocation } from "@/services/signin/locationService.ts";
-import type { QueueEntry, SignInEntry } from "@ignis/types/sign_in";
-import { PartialUserWithTeams } from "@ignis/types/users.ts";
-import { ExclamationTriangleIcon, InfoCircledIcon } from "@radix-ui/react-icons";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert.tsx";
-import { Loader } from "@ui/components/ui/loader.tsx";
-import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { QueuedUserCard } from "./components/QueuedUserCard";
+import { AppRootState } from "@/redux/store.ts";
+import { useEffect, useState } from "react";
+import type { QueueEntry, SignInEntry } from "@ignis/types/sign_in.ts";
+import { useAuth } from "@/components/auth-provider";
+import { dataForLocation } from "@/services/signin/locationService.ts";
+import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants.ts";
+import Title from "@/components/title";
+import ActiveLocationSelector from "@/components/signin/ActiveLocationSelector";
+import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert.tsx";
+import { ExclamationTriangleIcon, InfoCircledIcon } from "@radix-ui/react-icons";
+import { Loader } from "@ui/components/ui/loader.tsx";
+import { extractError } from "@/lib/utils.ts";
+import {QueuedUserCard} from "@/routes/_authenticated/_reponly/signin/dashboard/-components/QueuedUserCard.tsx";
+import {SignInDrawer} from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignInDrawer.tsx";
 
 export default function SignInDashboard() {
   const queryClient = useQueryClient();
@@ -155,3 +154,7 @@ export default function SignInDashboard() {
     </>
   );
 }
+
+export const Route = createFileRoute("/_authenticated/_reponly/signin/dashboard/")({
+  component: SignInDashboard,
+});

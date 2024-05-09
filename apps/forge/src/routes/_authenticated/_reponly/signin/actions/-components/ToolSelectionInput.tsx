@@ -1,6 +1,6 @@
 import { errorDisplay } from "@/components/errors/ErrorDisplay";
-import { SelectedTrainingPipDisplay } from "@/components/signin/actions/SelectedTrainingPipDisplay.tsx";
-import ToolSelectionList from "@/components/signin/actions/TrainingSelectionList.tsx";
+import { SelectedTrainingPipDisplay } from "@/routes/_authenticated/_reponly/signin/actions/-components/SelectedTrainingPipDisplay.tsx";
+import ToolSelectionList from "@/routes/_authenticated/_reponly/signin/actions/-components/TrainingSelectionList.tsx";
 import { signinActions, useSignInSessionField } from "@/redux/signin.slice.ts";
 import { AppDispatch, AppRootState } from "@/redux/store.ts";
 import { GetSignIn, GetSignInProps } from "@/services/signin/signInService.ts";

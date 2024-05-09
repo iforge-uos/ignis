@@ -1,12 +1,12 @@
 import { UserAvatar } from "@/components/avatar";
-import { TeamIcon } from "@/components/icons/Team";
-import { AdminDisplay } from "@/components/signin/dashboard/components/SignedInUserCard/AdminDisplay.tsx";
-import { ManageUserWidget } from "@/components/signin/dashboard/components/SignedInUserCard/ManageUserWidget.tsx";
-import { SignInReasonWithToolsDisplay } from "@/components/signin/dashboard/components/SignedInUserCard/SignInReasonDisplay.tsx";
-import { TimeDisplay } from "@/components/signin/dashboard/components/SignedInUserCard/TimeDisplay.tsx";
+import { TeamIcon } from "@/components/icons/Team.tsx";
+import { AdminDisplay } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/AdminDisplay.tsx";
+import { ManageUserWidget } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/ManageUserWidget.tsx";
+import { SignInReasonWithToolsDisplay } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/SignInReasonDisplay.tsx";
+import { TimeDisplay } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/TimeDisplay.tsx";
 import { iForgeEpoch } from "@/config/constants.ts";
 import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants.ts";
-import { uCardNumberToString } from "@/lib/utils";
+import { uCardNumberToString } from "@/lib/utils.ts";
 import { AppRootState } from "@/redux/store.ts";
 import { PostSignOut, PostSignOutProps } from "@/services/signin/signInService.ts";
 import type { PartialReason } from "@ignis/types/sign_in.ts";

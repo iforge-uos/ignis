@@ -1,6 +1,6 @@
 import { UserAvatar } from "@/components/avatar";
 import { LocationIcon } from "@/components/icons/Locations";
-import SignInsChart from "@/components/signin/dashboard/components/SignInsChart.tsx";
+import SignInsChart from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignInsChart.tsx";
 import Title from "@/components/title";
 import { extractError } from "@/lib/utils";
 import { getUser } from "@/services/users/getUser.ts";

@@ -1,20 +1,20 @@
-import Fuse from 'fuse.js';
-import React, { useEffect, useState } from 'react';
-import { AppDispatch, AppRootState } from '@/redux/store.ts';
-import { Button } from '@ui/components/ui/button.tsx';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@ui/components/ui/card.tsx';
-import { Category } from '@/components/icons/SignInReason.tsx';
-import { errorDisplay, ErrorDisplayProps } from '@/components/errors/ErrorDisplay';
-import { extractError } from '@/lib/utils';
-import { FlowStepComponent } from '@/types/signInActions.ts';
-import { getCommonReasons, useSignInReasons } from '@/services/signin/signInReasonService.ts';
-import { Input } from '@ui/components/ui/input.tsx';
-import { Loader } from '@ui/components/ui/loader.tsx';
-import type { PartialReason, Reason } from '@ignis/types/sign_in.ts';
-import { signinActions, useSignInSessionField } from '@/redux/signin.slice.ts';
-import { SignInReason } from './SignInReason';
-import { useDispatch, useSelector } from 'react-redux';
-import { useQuery } from '@tanstack/react-query';
+import Fuse from "fuse.js";
+import React, { useEffect, useState } from "react";
+import { AppDispatch, AppRootState } from "@/redux/store.ts";
+import { Button } from "@ui/components/ui/button.tsx";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card.tsx";
+import { Category } from "@/components/icons/SignInReason.tsx";
+import { errorDisplay, ErrorDisplayProps } from "@/components/errors/ErrorDisplay";
+import { extractError } from "@/lib/utils.ts";
+import { FlowStepComponent } from "@/types/signInActions.ts";
+import { getCommonReasons, useSignInReasons } from "@/services/signin/signInReasonService.ts";
+import { Input } from "@ui/components/ui/input.tsx";
+import { Loader } from "@ui/components/ui/loader.tsx";
+import type { PartialReason, Reason } from "@ignis/types/sign_in.ts";
+import { signinActions, useSignInSessionField } from "@/redux/signin.slice.ts";
+import { SignInReason } from "./SignInReason.tsx";
+import { useDispatch, useSelector } from "react-redux";
+import { useQuery } from "@tanstack/react-query";
 
 const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const [inputValue, setInputValue] = useState<string>("");
@@ -137,14 +137,13 @@ const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
             <Loader />
           ) : (
             <div className="flex">
-            {commonReasons?.map((reason) => (
-              <div onClick={() => setSelectedReason(reason)} className="flex hover:cursor-pointer m-1">
-                <SignInReason reason={reason} />
-              </div>
-            ))}
+              {commonReasons?.map((reason) => (
+                <div onClick={() => setSelectedReason(reason)} className="flex hover:cursor-pointer m-1">
+                  <SignInReason reason={reason} />
+                </div>
+              ))}
             </div>
-          )
-          }
+          )}
         </CardHeader>
         <CardContent>
           {isLoading && <Loader />}

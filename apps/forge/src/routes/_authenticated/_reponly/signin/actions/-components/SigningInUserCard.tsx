@@ -1,9 +1,9 @@
 import { UserAvatar } from "@/components/avatar";
-import { TeamIcon } from "@/components/icons/Team";
+import { TeamIcon } from "@/components/icons/Team.tsx";
 import { sign_in } from "@ignis/types";
 import { Link } from "@tanstack/react-router";
-import { Badge } from "@ui/components/ui/badge";
-import { Card } from "@ui/components/ui/card";
+import { Badge } from "@ui/components/ui/badge.tsx";
+import { Card } from "@ui/components/ui/card.tsx";
 
 export default function SigningInUserCard({ user }: { user: sign_in.User }) {
   return (

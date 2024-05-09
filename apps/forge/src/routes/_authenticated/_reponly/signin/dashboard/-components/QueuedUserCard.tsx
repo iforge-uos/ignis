@@ -1,19 +1,19 @@
 import { UserAvatar } from "@/components/avatar";
-import { iForgeEpoch } from "@/config/constants";
-import { useUser } from "@/lib/utils";
-import { AppRootState } from "@/redux/store";
-import { DeleteQueue } from "@/services/signin/queueService";
-import { QueueEntry } from "@ignis/types/sign_in";
+import { iForgeEpoch } from "@/config/constants.ts";
+import { useUser } from "@/lib/utils.ts";
+import { AppRootState } from "@/redux/store.ts";
+import { DeleteQueue } from "@/services/signin/queueService.ts";
+import { QueueEntry } from "@ignis/types/sign_in.ts";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { Button } from "@ui/components/ui/button";
-import { Card } from "@ui/components/ui/card";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ui/components/ui/tooltip";
+import { Button } from "@ui/components/ui/button.tsx";
+import { Card } from "@ui/components/ui/card.tsx";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ui/components/ui/tooltip.tsx";
 import { Delete } from "lucide-react";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
-import { AdminDisplay } from "./SignedInUserCard/AdminDisplay";
-import { TimeDisplay } from "./SignedInUserCard/TimeDisplay";
+import { AdminDisplay } from "./SignedInUserCard/AdminDisplay.tsx";
+import { TimeDisplay } from "./SignedInUserCard/TimeDisplay.tsx";
 
 interface QueuedUserCardProps {
   place: QueueEntry;

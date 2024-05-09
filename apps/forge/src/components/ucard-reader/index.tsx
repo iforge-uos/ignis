@@ -1,9 +1,8 @@
 import { signinActions } from "@/redux/signin.slice";
 import { AppDispatch, AppRootState } from "@/redux/store";
 import { GetSignIn, PostSignOut } from "@/services/signin/signInService";
-import { User } from "@ignis/types/sign_in";
 import { useQueryClient } from "@tanstack/react-query";
-import { Link, useNavigate } from "@tanstack/react-router";
+import {  useNavigate } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";

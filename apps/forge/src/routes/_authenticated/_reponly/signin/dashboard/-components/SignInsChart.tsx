@@ -1,11 +1,11 @@
-import { LocationIcon } from "@/components/icons/Locations";
-import { SignInStat } from "@ignis/types/users";
+import { LocationIcon } from "@/components/icons/Locations.tsx";
+import { SignInStat } from "@ignis/types/users.ts";
 import { Datum, ResponsiveCalendar } from "@nivo/calendar";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Button } from "@ui/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@ui/components/ui/dialog";
-import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from "@ui/components/ui/drawer";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@ui/components/ui/table";
+import { Button } from "@ui/components/ui/button.tsx";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@ui/components/ui/dialog.tsx";
+import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from "@ui/components/ui/drawer.tsx";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@ui/components/ui/table.tsx";
 import * as React from "react";
 import MediaQuery from "react-responsive";
 

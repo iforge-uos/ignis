@@ -1,4 +1,4 @@
-import TrainingDisplay from "@/components/signin/actions/TrainingDisplay.tsx";
+import TrainingDisplay from "@/routes/_authenticated/_reponly/signin/actions/-components/TrainingDisplay.tsx";
 import { cn } from "@/lib/utils.ts";
 import { Training } from "@ignis/types/sign_in.ts";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";

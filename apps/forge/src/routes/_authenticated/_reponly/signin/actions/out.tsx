@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import ActiveLocationSelector from "@/components/signin/ActiveLocationSelector";
-import SignInActionsManager from "@/components/signin/actions/SignInManager.tsx";
+import SignInActionsManager from "@/routes/_authenticated/_reponly/signin/actions/-components/SignInManager.tsx";
 import { FlowType } from "@/types/signInActions.ts";
 import Title from "@/components/title";
 
