@@ -11,3 +11,4 @@ Thumbs.db
 deploy/container-images/**
 **/secret/**
 .env
+*.rdb
