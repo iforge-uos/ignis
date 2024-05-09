@@ -296,11 +296,10 @@ export class UsersService {
   }
 
   async getUserTrainingInPersonTrainingRemaining(id: string): Promise<users.UserInPersonTrainingRemaining[]> {
-    const { training } = e.assert_exists(e.select(e.users.User, UserTrainingEntry(id, undefined)));
     // TODO send out emails when training is about to expire.
 
     return await this.dbService.query(
-      e.select(e.op(e.select(e.training.Training), "except", training), (training) => ({
+      e.select(e.assert_exists(e.select(e.users.User, UserTrainingEntry(id, undefined))).training, (training) => ({
         name: true,
         id: true,
         locations: true,
