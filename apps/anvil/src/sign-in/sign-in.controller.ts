@@ -1,9 +1,12 @@
 import { CheckAbilities } from "@/auth/authorization/decorators/check-abilities-decorator";
 import { IsAdmin, IsRep } from "@/auth/authorization/decorators/check-roles-decorator";
 import { CaslAbilityGuard } from "@/auth/authorization/guards/casl-ability.guard";
+import { IdempotencyCache } from "@/shared/decorators/idempotency.decorator";
+import { User } from "@/shared/decorators/user.decorator";
+import { ldapLibraryToUcardNumber } from "@/shared/functions/utils";
+import { IdempotencyCacheInterceptor } from "@/shared/interceptors/idempotency-cache.interceptor";
 import { TrainingService } from "@/training/training.service";
 import { UsersService } from "@/users/users.service";
-import { User } from "@/shared/decorators/user.decorator";
 import { sign_in as sign_in_ } from "@ignis/types";
 import type { List, Location, LocationStatus } from "@ignis/types/sign_in";
 import type { User as User_ } from "@ignis/types/users";
@@ -12,9 +15,6 @@ import { Logger } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { FinaliseSignInDto, UpdateSignInDto } from "./dto/sigs-in-dto";
 import { SignInService } from "./sign-in.service";
-import { ldapLibraryToUcardNumber } from "@/shared/functions/utils";
-import { IdempotencyCache } from "@/shared/decorators/idempotency.decorator";
-import { IdempotencyCacheInterceptor } from "@/shared/interceptors/idempotency-cache.interceptor";
 
 @Controller("location/:location")
 @UseInterceptors(IdempotencyCacheInterceptor)
@@ -123,11 +123,25 @@ export class SignInController {
     return await this.signInService.getStatusForLocation(location);
   }
 
-  @Post("queue/add/:id")
+  // @Post("queue/remotely")
+  // @IdempotencyCache(60)
+  // async addToQueueRemotely(@Param("location") location: Location, @User() user: User_) {
+  //   this.logger.log(
+  //     `Adding user with ID: ${user.id} to queue remotely at location: ${location}`,
+  //     SignInController.name,
+  //   );
+  //   await this.signInService.addToQueue(location, undefined, user.id);
+  // }
+
+  @Post("queue/in-person/:ucard_number")
+  @IsRep()
   @IdempotencyCache(60)
-  async addToQueueInPerson(@Param("location") location: Location, @Param("id") id: string) {
-    this.logger.log(`Adding user ${id} to queue at location: ${location}`, SignInController.name);
-    return await this.signInService.addToQueue(location, id);
+  async addToQueueInPerson(@Param("location") location: Location, @Param("ucard_number") ucard_number: string) {
+    this.logger.log(
+      `Adding UCard number: ${ucard_number} to queue in-person at location: ${location}`,
+      SignInController.name,
+    );
+    await this.signInService.addToQueue(location, ucard_number);
   }
 
   @Post("queue/remove/:id")

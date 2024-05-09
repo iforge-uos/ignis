@@ -4,6 +4,7 @@ import { LdapService } from "@/ldap/ldap.service";
 import { CreateSignInReasonCategoryDto } from "@/root/dto/reason.dto";
 import { ErrorCodes } from "@/shared/constants/ErrorCodes";
 import { sleep } from "@/shared/functions/sleep";
+import { ldapLibraryToUcardNumber } from "@/shared/functions/utils";
 import { PartialUserProps, UserProps, UsersService } from "@/users/users.service";
 import { SignInLocationSchema } from "@dbschema/edgedb-zod/modules/sign_in";
 import e from "@dbschema/edgeql-js";
@@ -23,7 +24,6 @@ import {
 import { Logger } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
 import { CardinalityViolationError, InvalidValueError } from "edgedb";
-import { ldapLibraryToUcardNumber } from "@/shared/functions/utils";
 
 export const REP_ON_SHIFT = "Rep On Shift";
 export const REP_OFF_SHIFT = "Rep Off Shift";
@@ -388,7 +388,7 @@ export class SignInService implements OnModuleInit {
   maxPeopleForLocation(location: Location) {
     switch (location.toLowerCase()) {
       case "mainspace":
-        return 45;
+        return 0;
       case "heartspace":
         return 12;
       default:
@@ -665,12 +665,14 @@ export class SignInService implements OnModuleInit {
       throw new HttpException("Queue has been manually disabled", HttpStatus.SERVICE_UNAVAILABLE);
     }
     const queuing = await this.dbService.query(
-      e.select(e.sign_in.QueuePlace, (place) => ({
-        filter: e.op(place.location, "=", castLocation(location)),
-        limit: 1,
-      })),
+      e.count(
+        e.select(e.sign_in.QueuePlace, (place) => ({
+          filter: e.op(place.location, "=", castLocation(location)),
+          limit: 1,
+        })),
+      ),
     );
-    return queuing.length > 0;
+    return queuing > 0 || !(await this.canSignIn(location)); // TODO double check this conditional when less brain fried
   }
 
   async assertHasQueued(location: Location, ucard_number: number) {
@@ -714,7 +716,7 @@ export class SignInService implements OnModuleInit {
     }
   }
 
-  async addToQueue(location: Location, id: string) {
+  async addToQueue(location: Location, ucard_number: string) {
     if (!(await this.queueInUse(location))) {
       throw new HttpException("The queue is currently not in use", HttpStatus.BAD_REQUEST);
     }
@@ -723,7 +725,7 @@ export class SignInService implements OnModuleInit {
       return await this.dbService.query(
         e.insert(e.sign_in.QueuePlace, {
           user: e.select(e.users.User, () => ({
-            filter_single: { id },
+            filter_single: { ucard_number: ldapLibraryToUcardNumber(ucard_number) },
           })),
           location: castLocation(location),
           position: e.op(e.count(e.select(e.sign_in.QueuePlace)), "+", 1),
@@ -742,7 +744,7 @@ export class SignInService implements OnModuleInit {
   async removeFromQueue(location: Location, id: string) {
     // again, user_id because might not have ucard_number
     if (await this.queueInUse(location)) {
-      throw new HttpException("The queue is currently not in use", HttpStatus.SERVICE_UNAVAILABLE);
+      throw new HttpException("The queue is currently not in use", HttpStatus.BAD_REQUEST);
     }
 
     await this.dbService.client.transaction(async (tx) => {
