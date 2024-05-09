@@ -1,13 +1,14 @@
-import { Injectable, Logger } from "@nestjs/common";
-import { InjectQueue } from "@nestjs/bull";
-import type { Location } from "@ignis/types/sign_in";
+import type { Location, QueueEntry } from "@ignis/types/sign_in";
 import type { PartialUser } from "@ignis/types/users";
+import { InjectQueue } from "@nestjs/bull";
+import { Injectable, Logger } from "@nestjs/common";
 import { Queue } from "bull";
 import { render } from "jsx-email";
+import { z } from "zod";
 import { SendEmailSchema } from "./dto/send-email.dto";
+import Queued from "./templates/queued";
 import { Unqueued } from "./templates/unqueued";
 import { WelcomeEmail } from "./templates/welcome";
-import { z } from "zod";
 
 @Injectable()
 export class EmailService {
@@ -49,9 +50,16 @@ export class EmailService {
     });
   }
 
-  async sendUnqueuedEmail(recipient: PartialUser, location: Location) {
-    await this.sendHtml(Unqueued({ ...recipient, location }), {
-      recipients: [`${recipient.email}@sheffield.ac.uk`],
+  async sendUnqueuedEmail(place: QueueEntry, location: Location) {
+    await this.sendHtml(Unqueued({ ...place, location }), {
+      recipients: [`${place.user.email}@sheffield.ac.uk`],
+      subject: `Your place in the iForge ${location}`,
+    });
+  }
+
+  async sendQueuedEmail(place: QueueEntry, location: Location) {
+    await this.sendHtml(Queued({ ...place, location }), {
+      recipients: [`${place.user.email}@sheffield.ac.uk`],
       subject: `Your place in the iForge ${location}`,
     });
   }

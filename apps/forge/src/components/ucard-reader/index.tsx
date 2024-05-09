@@ -2,6 +2,7 @@ import { signinActions } from "@/redux/signin.slice";
 import { AppDispatch, AppRootState } from "@/redux/store";
 import { GetSignIn, PostSignOut } from "@/services/signin/signInService";
 import { User } from "@ignis/types/sign_in";
+import { useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button";
 import { useEffect, useState } from "react";
@@ -13,6 +14,7 @@ export default function UCardReader() {
   const activeLocation = useSelector((state: AppRootState) => state.signin.active_location);
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -76,6 +78,8 @@ export default function UCardReader() {
                   description: (e as any).toString(),
                 });
               }
+
+              queryClient.invalidateQueries({ queryKey: ["locationStatus", "locationList", { activeLocation }] });
               toast.success(`Successfully signed out ${uCardNumber}`);
             }),
           );

@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { errorDisplay } from "@/components/errors/ErrorDisplay";
 import { signinActions } from "@/redux/signin.slice.ts";
-import { PostQueueInPerson, PostQueueProps } from "@/services/signin/queueService.ts";
+import { PostQueue, PostQueueProps } from "@/services/signin/queueService.ts";
 import { FlowStepComponent } from "@/types/signInActions.ts";
 import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button.tsx";
@@ -31,7 +31,7 @@ const QueueDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
 
   const { isPending, error, mutate } = useMutation({
     mutationKey: ["postQueueInPerson", queueProps],
-    mutationFn: () => PostQueueInPerson(queueProps),
+    mutationFn: () => PostQueue(queueProps),
     retry: 0,
     onError: (error) => {
       console.log("Error", error);

@@ -81,7 +81,7 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
       <div>
         <div className="flex items-center justify-between mb-4 w-full space-x-2">
           <div className="w-2/3 p-1 flex-col">
-            <Link to={`/users/${user.id}` as string}>
+            <Link to="/users/$id" params={user}>
               <h2 className="text-center text-lg font-bold hover:underline">{user.display_name}</h2>
             </Link>
             <div>

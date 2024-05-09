@@ -1,3 +1,4 @@
+import { useAuth } from "@/components/auth-provider";
 import ActiveLocationSelector from "@/components/signin/ActiveLocationSelector";
 import { SignInDrawer } from "@/components/signin/dashboard/components/SignInDrawer.tsx";
 import { SignedInUserCard } from "@/components/signin/dashboard/components/SignedInUserCard";
@@ -7,14 +8,14 @@ import { extractError } from "@/lib/utils";
 import { AppRootState } from "@/redux/store.ts";
 import { dataForLocation } from "@/services/signin/locationService.ts";
 import type { QueueEntry, SignInEntry } from "@ignis/types/sign_in";
+import { PartialUserWithTeams } from "@ignis/types/users.ts";
 import { ExclamationTriangleIcon, InfoCircledIcon } from "@radix-ui/react-icons";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert.tsx";
 import { Loader } from "@ui/components/ui/loader.tsx";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { PartialUserWithTeams } from "@ignis/types/users.ts";
-import { useAuth } from "@/components/auth-provider";
+import { QueuedUserCard } from "./components/QueuedUserCard";
 
 export default function SignInDashboard() {
   const queryClient = useQueryClient();
@@ -132,9 +133,7 @@ export default function SignInDashboard() {
                     </Alert>
                   )}
                   {queuedUsers.length > 0 &&
-                    queuedUsers.map((entry) => {
-                      return <SignedInUserCard key={entry.user.id} user={entry.user as PartialUserWithTeams} />;
-                    })}
+                    queuedUsers.map((entry) => <QueuedUserCard place={entry} key={entry.user.id} />)}
                 </div>
               </div>
             </div>

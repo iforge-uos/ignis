@@ -133,24 +133,24 @@ export class SignInController {
   //   await this.signInService.addToQueue(location, undefined, user.id);
   // }
 
-  @Post("queue/in-person/:ucard_number")
+  @Post("queue")
   @IsRep()
   @IdempotencyCache(60)
-  async addToQueueInPerson(@Param("location") location: Location, @Param("ucard_number") ucard_number: string) {
+  async addToQueueInPerson(@Param("location") location: Location, @Body("ucard_number") ucard_number: string) {
     this.logger.log(
       `Adding UCard number: ${ucard_number} to queue in-person at location: ${location}`,
       SignInController.name,
     );
-    await this.signInService.addToQueue(location, ucard_number);
+    return await this.signInService.addToQueue(location, ucard_number);
   }
 
-  @Post("queue/remove/:id")
+  @Delete("queue/:id")
   @IsRep()
   @CheckAbilities(["READ"], "ALL") // FIXME: needs an any rather than all guard also allows for users to remove themselves
   @IdempotencyCache(60)
-  async removeFromQueue(@Param("location") location: Location, @Param("id") user_id: string) {
-    this.logger.log(`Removing user with ID: ${user_id} from queue at location: ${location}`, SignInController.name);
-    await this.signInService.removeFromQueue(location, user_id);
+  async removeFromQueue(@Param("location") location: Location, @Param("id") id: string) {
+    this.logger.log(`Removing queue request with ID: ${id} from queue at location: ${location}`, SignInController.name);
+    return await this.signInService.removeFromQueue(location, id);
   }
 
   // FIXME: events sign in
