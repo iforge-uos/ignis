@@ -705,7 +705,6 @@ export class SignInService implements OnModuleInit {
   async dequeueTop(location: Location) {
     const queuedUsers = await this.dbService.query(
       e.select(e.sign_in.QueuePlace, (queue_place) => ({
-        user: PartialUserProps(queue_place.user),
         filter: e.op(
           e.op(queue_place.location, "=", castLocation(location)),
           "and",
@@ -716,6 +715,7 @@ export class SignInService implements OnModuleInit {
           expression: queue_place.position,
           direction: e.ASC,
         },
+        ...QueuePlaceProps(queue_place),
       })),
     );
     if (queuedUsers.length !== 0) {
