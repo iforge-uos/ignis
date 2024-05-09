@@ -4,7 +4,7 @@ import * as React from "react";
 import { Email } from "../components/heading";
 import { Link } from "../components/link";
 
-export function Queued({ id = "0000-0000-0000-0000", location = "{location}" }: QueueEntry & { location: Location }) {
+export function Queued({ id = "0000-0000-0000-0000", location = "{location}" }: QueueEntry & { location: string }) {
   return (
     <Email
       preview="You're in the queue for the iForge"
