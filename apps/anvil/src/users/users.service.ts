@@ -80,7 +80,7 @@ const UserTrainingEntry = (id: string, training_id: string | undefined) => {
               false,
             ),
           ),
-          e.op(training.in_person, "and", e.op("exists", training["@in_person_created_at"])),
+          e.op(e.op("exists", training["@in_person_created_at"]), "if", training.in_person, "else", true),
         ),
       ),
     }),
