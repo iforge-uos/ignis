@@ -389,7 +389,7 @@ export class SignInService implements OnModuleInit {
     maxPeopleForLocation(location: Location) {
         switch (location.toLowerCase()) {
             case "mainspace":
-                return 15;
+                return 45;
             case "heartspace":
                 return 12;
             default:
