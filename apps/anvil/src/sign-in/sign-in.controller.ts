@@ -11,16 +11,16 @@ import { sign_in as sign_in_ } from "@ignis/types";
 import type { List, Location, LocationStatus } from "@ignis/types/sign_in";
 import type { User as User_ } from "@ignis/types/users";
 import {
-    Body,
-    Controller,
-    Delete,
-    Get,
-    Param,
-    ParseIntPipe,
-    Patch,
-    Post,
-    UseGuards,
-    UseInterceptors
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  UseGuards,
+  UseInterceptors,
 } from "@nestjs/common";
 import { Logger } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
