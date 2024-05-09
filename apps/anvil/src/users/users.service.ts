@@ -62,13 +62,18 @@ export const TrainingProps = e.shape(e.training.Training, () => ({
   rep: true,
   // "@expires": true,
 }));
-const UserTrainingEntry = (id: string, training_id: string | undefined) => {
+
+interface UserTrainingEntryPropsOptions {
+  include_fully_complete?: boolean;
+  training_id?: string;
+}
+const UserTrainingEntry = (id: string, options: UserTrainingEntryPropsOptions) => {
   // TODO ignore trainings that are purely informational, needs a new flag adding to Training entry
   return e.shape(e.users.User, () => ({
     training: (training) => ({
       filter: e.all(
         e.set(
-          training_id ? e.op(training.id, "=", e.cast(e.uuid, training_id)) : true,
+          options.training_id ? e.op(training.id, "=", e.uuid(options.training_id)) : true,
           e.op(
             "not",
             e.op(
@@ -80,7 +85,9 @@ const UserTrainingEntry = (id: string, training_id: string | undefined) => {
               false,
             ),
           ),
-          e.op(e.op("exists", training["@in_person_created_at"]), "if", training.in_person, "else", true),
+          options.include_fully_complete
+            ? true
+            : e.op(e.op("exists", training["@in_person_created_at"]), "if", training.in_person, "else", true),
         ),
       ),
     }),
@@ -299,12 +306,15 @@ export class UsersService {
     // TODO send out emails when training is about to expire.
 
     return await this.dbService.query(
-      e.select(e.assert_exists(e.select(e.users.User, UserTrainingEntry(id, undefined))).training, (training) => ({
-        name: true,
-        id: true,
-        locations: true,
-        filter: training.in_person,
-      })),
+      e.select(
+        e.assert_exists(e.select(e.users.User, UserTrainingEntry(id, { include_fully_complete: false }))).training,
+        (training) => ({
+          name: true,
+          id: true,
+          locations: true,
+          filter: training.in_person,
+        }),
+      ),
     );
   }
 
@@ -324,7 +334,7 @@ export class UsersService {
       e.update(user, () => ({
         set: {
           training: {
-            "-=": e.assert_exists(e.select(e.users.User, UserTrainingEntry(id, training_id))).training,
+            "-=": e.assert_exists(e.select(e.users.User, UserTrainingEntry(id, { training_id }))).training,
           },
           infractions: {
             "+=": e.insert(e.users.Infraction, {
