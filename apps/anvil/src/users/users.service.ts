@@ -3,6 +3,7 @@ import { LdapUser } from "@/auth/interfaces/ldap-user.interface";
 import { EdgeDBService } from "@/edgedb/edgedb.service";
 import { LdapService } from "@/ldap/ldap.service";
 import { ErrorCodes } from "@/shared/constants/ErrorCodes";
+import { ldapLibraryToUcardNumber, removeDomain } from "@/shared/functions/utils";
 import e from "@dbschema/edgeql-js";
 import { addInPersonTraining } from "@dbschema/queries/addInPersonTraining.query";
 import { users } from "@ignis/types";
@@ -17,7 +18,6 @@ import {
   RevokeTrainingDto,
   UpdateUserDto,
 } from "./dto/users.dto";
-import { removeDomain, ldapLibraryToUcardNumber } from "@/shared/functions/utils";
 
 export const PartialUserProps = e.shape(e.users.User, () => ({
   // Fairly minimal, useful for templating
@@ -80,6 +80,7 @@ const UserTrainingEntry = (id: string, training_id: string | undefined) => {
               false,
             ),
           ),
+          e.op(training.in_person, "and", e.op("exists", training["@in_person_created_at"])),
         ),
       ),
     }),
