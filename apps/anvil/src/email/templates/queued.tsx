@@ -1,15 +1,15 @@
-import { QueueEntry } from "@ignis/types/sign_in";
+import { Location, QueueEntry } from "@ignis/types/sign_in";
 import { Container, Hr, Text } from "jsx-email";
 import * as React from "react";
 import { Email } from "../components/heading";
 import { Link } from "../components/link";
 
-export function Unqueued({ id = "0000-0000-0000-0000", location = "{location}" }: QueueEntry & { location: string }) {
+export function Queued({ id = "0000-0000-0000-0000", location = "{location}" }: QueueEntry & { location: Location }) {
   return (
     <Email
-      preview="You're able to sign in to the iForge"
-      title="iForge place available"
-      heading={`A place in the iForge ${location} is available`}
+      preview="You're in the queue for the iForge"
+      title="iForge queue request received"
+      heading={`You're in the queue for the iForge ${location} is available`}
     >
       <Hr />
       <Container>
@@ -33,4 +33,4 @@ export function Unqueued({ id = "0000-0000-0000-0000", location = "{location}" }
   );
 }
 
-export default Unqueued;
+export default Queued;

@@ -15,7 +15,7 @@ export const SignInReasonWithToolsDisplay: React.FC<SignInReasonWithToolsDisplay
           <div className="pb-2 bg-card h-full w-2/3 mr-auto ml-auto rounded-lg p-2 font-medium mb-1 text-center font-mono">
             Sign In Reason
           </div>
-          <SignInReason reason={reason}></SignInReason>
+          <SignInReason reason={reason} />
         </div>
         <div className="border-gray-500 p-2 rounded-sm mb-4">
           <div className="pb-2 bg-card w-2/3 mr-auto ml-auto rounded-sm p-1 font-medium mb-1 text-center font-mono">
