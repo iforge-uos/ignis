@@ -87,7 +87,17 @@ const UserTrainingEntry = (id: string, options: UserTrainingEntryPropsOptions) =
           ),
           options.include_fully_complete
             ? true
-            : e.op(e.op("exists", training["@in_person_created_at"]), "if", training.in_person, "else", true),
+            : e.op(
+                e.op(
+                  e.op("not", e.op("exists", training["@in_person_created_at"])),
+                  "and",
+                  e.op("exists", training["@created_at"]),
+                ),
+                "if",
+                training.in_person,
+                "else",
+                true,
+              ),
         ),
       ),
     }),

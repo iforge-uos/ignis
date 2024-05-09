@@ -1,8 +1,8 @@
 import { errorDisplay } from "@/components/errors/ErrorDisplay";
-import { SelectedTrainingPipDisplay } from "@/routes/_authenticated/_reponly/signin/actions/-components/SelectedTrainingPipDisplay.tsx";
-import ToolSelectionList from "@/routes/_authenticated/_reponly/signin/actions/-components/TrainingSelectionList.tsx";
 import { signinActions, useSignInSessionField } from "@/redux/signin.slice.ts";
 import { AppDispatch, AppRootState } from "@/redux/store.ts";
+import { SelectedTrainingPipDisplay } from "@/routes/_authenticated/_reponly/signin/actions/-components/SelectedTrainingPipDisplay.tsx";
+import ToolSelectionList from "@/routes/_authenticated/_reponly/signin/actions/-components/TrainingSelectionList.tsx";
 import { GetSignIn, GetSignInProps } from "@/services/signin/signInService.ts";
 import { FlowStepComponent } from "@/types/signInActions.ts";
 import { Training, User } from "@ignis/types/sign_in.ts";
@@ -176,8 +176,8 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
           <CollapsibleContent className="space-y-2">
             <ToolSelectionList
               title="Un-selectable Training"
-              trainings={trainingMap.UNSELECTABLE}
-              toolTipContent="Tools that the user has training for, but reps are not trained on the tool"
+              trainings={trainingMap.UNSELECTABLE} // TODO allow these to be SELECTABLE but pop a warning saying that they need to be trained (only if the reps are trained to give it.)
+              toolTipContent="Tools that the user has training for, but reps are not trained on the tool or the tools that the user hasn't completed the in-person training for yet."
             />
             <ToolSelectionList
               title="Un-acquired Training"

@@ -1,5 +1,5 @@
-import TrainingDisplay from "@/routes/_authenticated/_reponly/signin/actions/-components/TrainingDisplay.tsx";
 import { cn } from "@/lib/utils.ts";
+import TrainingDisplay from "@/routes/_authenticated/_reponly/signin/actions/-components/TrainingDisplay.tsx";
 import { Training } from "@ignis/types/sign_in.ts";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert.tsx";
@@ -70,16 +70,18 @@ const TrainingSelectionList: React.FC<ToolSelectionListProps> = ({
             <AlertDescription>No training available to select.</AlertDescription>
           </Alert>
         ) : (
-          trainings.map((training) => (
-            <React.Fragment key={training.id}>
-              <TrainingDisplay
-                training={training}
-                selected={selectedTrainings.includes(training.id)}
-                selectable={selectable}
-                onClick={() => handleTrainingClick(training)}
-              />
-            </React.Fragment>
-          ))
+          trainings
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map((training) => (
+              <React.Fragment key={training.id}>
+                <TrainingDisplay
+                  training={training}
+                  selected={selectedTrainings.includes(training.id)}
+                  selectable={selectable}
+                  onClick={() => handleTrainingClick(training)}
+                />
+              </React.Fragment>
+            ))
         )}
       </div>
     </ScrollArea>
