@@ -25,7 +25,6 @@ import {IdempotencyCacheInterceptor} from "@/shared/interceptors/idempotency-cac
 import {IdempotencyCache} from "@/shared/decorators/idempotency.decorator";
 
 @Controller("authentication")
-@UseInterceptors(IdempotencyCacheInterceptor)
 export class AuthenticationController {
     constructor(
         private readonly authService: AuthenticationService,
@@ -42,7 +41,7 @@ export class AuthenticationController {
         this.logger.log(`LDAP login for user with ID: ${user.id}`, AuthenticationController.name);
         return this.authService.login(user);
     }
-    
+
     @Post("refresh")
     async refreshToken(@Req() req: Request, @Res({passthrough: true}) res: Response) {
         const refreshToken = req.cookies.refresh_token;
