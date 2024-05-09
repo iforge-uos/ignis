@@ -86,7 +86,7 @@ export default function Component() {
               </div>
               <div className="mt-2">
                 <div className="font-medium">UCard Number</div>
-                <div className="text-gray-500 dark:text-gray-400">{user.ucard_number}</div>
+                <div className="text-gray-500 dark:text-gray-400">XXX-{user.ucard_number}</div>
               </div>
               <div className="mt-2">
                 <div className="font-medium">Department</div>
