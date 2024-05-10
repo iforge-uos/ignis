@@ -843,7 +843,7 @@ export class SignInService implements OnModuleInit {
   }
 
   async getPopularSignInReasons(location: Location) {
-    return await this.dbService.query(
+    const reasons: any = await this.dbService.query(
       e.select(
         e.group(
           e.select(e.sign_in.SignIn, (sign_in) => ({
@@ -856,9 +856,24 @@ export class SignInService implements OnModuleInit {
           (sign_in) => ({
             by: { reason: sign_in.reason },
           }),
-        ).elements.reason,
-        () => ({ limit: 5, id: true, name: true, category: true }),
+        ),
+        (group) => ({
+          name: e.assert_single(group.elements.reason.name),
+          category: e.assert_single(group.elements.reason.category),
+          id_: e.assert_single(group.elements.reason.id),
+          count: e.count(group.elements),
+          order_by: {
+            expression: e.count(group.elements),
+            direction: e.DESC,
+          },
+          limit: 5,
+        }),
       ),
     );
+    return reasons.map((reason: any) => {
+      reason.id = reason.id_; // rename id field
+      reason.id_ = undefined;
+      return reason;
+    });
   }
 }
