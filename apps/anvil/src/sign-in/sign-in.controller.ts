@@ -1,6 +1,7 @@
 import { CheckAbilities } from "@/auth/authorization/decorators/check-abilities-decorator";
 import { IsAdmin, IsRep } from "@/auth/authorization/decorators/check-roles-decorator";
 import { CaslAbilityGuard } from "@/auth/authorization/guards/casl-ability.guard";
+import { ErrorCodes } from "@/shared/constants/ErrorCodes";
 import { IdempotencyCache } from "@/shared/decorators/idempotency.decorator";
 import { User } from "@/shared/decorators/user.decorator";
 import { ldapLibraryToUcardNumber } from "@/shared/functions/utils";
@@ -11,6 +12,7 @@ import { sign_in as sign_in_ } from "@ignis/types";
 import type { List, Location, LocationStatus } from "@ignis/types/sign_in";
 import type { User as User_ } from "@ignis/types/users";
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -54,6 +56,12 @@ export class SignInController {
       SignInController.name,
     );
     const user = await this.signInService.getUserForSignIn(location, ucard_number);
+    if (user.signed_in) {
+      throw new BadRequestException({
+        message: "User is already signed in",
+        code: ErrorCodes.already_signed_in_to_location,
+      });
+    }
 
     if (user?.is_rep) {
       return {

@@ -23,7 +23,7 @@ import {
 } from "@nestjs/common";
 import { Logger } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
-import { CardinalityViolationError, InvalidValueError } from "edgedb";
+import { CardinalityViolationError, ConstraintViolationError, InvalidValueError } from "edgedb";
 
 export const REP_ON_SHIFT = "Rep On Shift";
 export const REP_OFF_SHIFT = "Rep Off Shift";
@@ -453,7 +453,7 @@ export class SignInService implements OnModuleInit {
         }).user,
       );
     } catch (error) {
-      if (error instanceof CardinalityViolationError) {
+      if (error instanceof ConstraintViolationError) {
         throw new BadRequestException({
           message: `User ${ucard_number} already signed in`,
           code: ErrorCodes.already_signed_in_to_location,
@@ -580,7 +580,7 @@ export class SignInService implements OnModuleInit {
         }),
       );
     } catch (error) {
-      if (error instanceof CardinalityViolationError) {
+      if (error instanceof ConstraintViolationError) {
         throw new BadRequestException({
           message: `Rep ${ucard_number} already signed in`,
           code: ErrorCodes.already_signed_in_to_location,
@@ -610,19 +610,21 @@ export class SignInService implements OnModuleInit {
 
     try {
       await this.dbService.query(
-        e.update(e.sign_in.SignIn, (sign_in) => {
-          const isCorrectLocation = e.op(sign_in.location, "=", castLocation(location));
-          const userMatches = e.op(sign_in.user.ucard_number, "=", ucard_number);
-          const doesNotExist = e.op("not", e.op("exists", sign_in.ends_at));
+        e.assert_exists(
+          e.update(e.sign_in.SignIn, (sign_in) => {
+            const isCorrectLocation = e.op(sign_in.location, "=", castLocation(location));
+            const userMatches = e.op(sign_in.user.ucard_number, "=", ucard_number);
+            const doesNotExist = e.op("not", e.op("exists", sign_in.ends_at));
 
-          return {
-            filter_single: e.all(e.set(isCorrectLocation, userMatches, doesNotExist)),
-            set: {
-              tools,
-              reason,
-            },
-          };
-        }),
+            return {
+              filter_single: e.all(e.set(isCorrectLocation, userMatches, doesNotExist)),
+              set: {
+                tools,
+                reason,
+              },
+            };
+          }),
+        ),
       );
     } catch (e) {
       if (e instanceof CardinalityViolationError && e.code === 84017154) {
@@ -746,7 +748,7 @@ export class SignInService implements OnModuleInit {
         ),
       );
     } catch (e) {
-      if (e instanceof CardinalityViolationError && e.code === 84017154) {
+      if (e instanceof ConstraintViolationError && e.code === 84017154) {
         console.log(e, e.code);
         throw new HttpException("The user is already in the queue", HttpStatus.BAD_REQUEST);
       }
