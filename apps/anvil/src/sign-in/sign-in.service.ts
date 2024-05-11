@@ -79,10 +79,15 @@ export class SignInService implements OnModuleInit {
   }
 
   async onModuleInit() {
-    for (const location of LOCATIONS) {
-      if ((await this.canSignIn(location)) && (await this.queueInUse(location))) {
-        this.dequeueTop(location);
-      }
+    const places = await this.dbService.query(
+      e.select(e.sign_in.QueuePlace, (place) => ({
+        filter: place.can_sign_in,
+        user: PartialUserProps,
+        location: true,
+      })),
+    );
+    for (const place of places) {
+      this.removeUserFromQueueTask(place.location.toLowerCase() as Location, place.user).catch();
     }
   }
 
@@ -783,6 +788,7 @@ export class SignInService implements OnModuleInit {
   }
 
   async queuedUsersThatCanSignIn(location: Location) {
+    // TODO add a field for the time that they can sign in from and check if that time has past.
     return await this.dbService.query(
       e.select(
         e.select(e.sign_in.QueuePlace, (queue_place) => ({
