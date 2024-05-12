@@ -83,6 +83,7 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
     const selectAbleTraining: Training[] = [];
     const unselectAbleTraining: Training[] = [];
     const disabledTraining: Training[] = [];
+    dispatch(signinActions.updateSignInSessionField("user", data));
     const isRep = data.roles.some((role) => role.name === "Rep");
 
     if (isRep && !isBackTracking) {
@@ -111,7 +112,6 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
         }
       }
     }
-    dispatch(signinActions.updateSignInSessionField("user", data));
     setTrainingMap({
       SELECTABLE: selectAbleTraining,
       UNSELECTABLE: unselectAbleTraining,
