@@ -22,11 +22,13 @@ const UCardInput: FlowStepComponent = ({ onPrimary }) => {
     console.log("Clearing OTP");
     setOtp(""); // Clear the OTP by resetting the state
     dispatch(signinActions.updateSignInSessionField("ucard_number", ""));
+    dispatch(signinActions.updateSignInSessionField("user", null));
   };
 
   const handleOnSubmit = () => {
     if (isOtpValid) {
       dispatch(signinActions.updateSignInSessionField("ucard_number", otp));
+      dispatch(signinActions.updateSignInSessionField("user", null));
       onPrimary?.();
     }
   };
