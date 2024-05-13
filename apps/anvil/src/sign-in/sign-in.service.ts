@@ -8,6 +8,7 @@ import { ldapLibraryToUcardNumber } from "@/shared/functions/utils";
 import { PartialUserProps, UserProps, UsersService } from "@/users/users.service";
 import { SignInLocationSchema } from "@dbschema/edgedb-zod/modules/sign_in";
 import e from "@dbschema/edgeql-js";
+import { QueuePlace } from "@dbschema/edgeql-js/modules/sign_in";
 import { std } from "@dbschema/interfaces";
 import { getUserTrainingForSignIn } from "@dbschema/queries/getUserTrainingForSignIn.query";
 import { users } from "@ignis/types";
@@ -57,10 +58,10 @@ function formatInfraction(infraction: Infraction) {
 
 const QueuePlaceProps = e.shape(e.sign_in.QueuePlace, () => ({
   user: PartialUserProps,
-  position: true,
   created_at: true,
   id: true,
-  can_sign_in: true,
+  notified_at: true,
+  can_sign_in_until: true,
 }));
 
 @Injectable()
@@ -79,16 +80,16 @@ export class SignInService implements OnModuleInit {
   }
 
   async onModuleInit() {
-    const places = await this.dbService.query(
-      e.select(e.sign_in.QueuePlace, (place) => ({
-        filter: place.can_sign_in,
-        user: PartialUserProps,
-        location: true,
-      })),
-    );
-    for (const place of places) {
-      this.removeUserFromQueueTask(place.location.toLowerCase() as Location, place.user).catch();
-    }
+    // const places = await this.dbService.query(
+    //   e.select(e.sign_in.QueuePlace, (place) => ({
+    //     filter: place.can_sign_in,
+    //     user: PartialUserProps,
+    //     location: true,
+    //   })),
+    // );
+    // for (const place of places) {
+    //   this.removeUserFromQueueTask(place.location.toLowerCase() as Location, place.user).catch();
+    // }
   }
 
   async getStatusForLocation(location: Location): Promise<LocationStatus> {
@@ -193,24 +194,24 @@ export class SignInService implements OnModuleInit {
     }));
     let user:
       | (User & {
-          is_rep: boolean;
-          registered: boolean;
-          signed_in: boolean;
-          location?: Uppercase<Location>;
-          teams?: users.ShortTeam[] | null;
-        })
+        is_rep: boolean;
+        registered: boolean;
+        signed_in: boolean;
+        location?: Uppercase<Location>;
+        teams?: users.ShortTeam[] | null;
+      })
       | null = await this.dbService.query(
-      e.select(sign_in.user, (user) => ({
-        ...UserProps(user),
-        is_rep: e.select(e.op(user.__type__.name, "=", "users::Rep")),
-        registered: e.select(true as boolean),
-        signed_in: e.select(true as boolean),
-        location: e.assert_exists(sign_in.location),
-        ...e.is(e.users.Rep, {
-          teams: { name: true, description: true, id: true },
-        }),
-      })),
-    );
+        e.select(sign_in.user, (user) => ({
+          ...UserProps(user),
+          is_rep: e.select(e.op(user.__type__.name, "=", "users::Rep")),
+          registered: e.select(true as boolean),
+          signed_in: e.select(true as boolean),
+          location: e.assert_exists(sign_in.location),
+          ...e.is(e.users.Rep, {
+            teams: { name: true, description: true, id: true },
+          }),
+        })),
+      );
     if (user?.location && user.location.toLowerCase() !== location) {
       throw new BadRequestException({
         message: `User ${ucard_number} is already signed in at a different location, please sign out there before signing in.`,
@@ -514,6 +515,7 @@ export class SignInService implements OnModuleInit {
 
   async preSignInChecks(location: Location, ucard_number: number) {
     if (await this.queueInUse(location)) {
+      this.logger.log(`Queue in use, Checking if user : ${ucard_number} has queued at location: ${location}`, SignInService.name);
       await this.assertHasQueued(location, ucard_number);
     } else if (!(await this.canSignIn(location))) {
       throw new HttpException(
@@ -678,6 +680,7 @@ export class SignInService implements OnModuleInit {
   /* Are there people queuing currently or has it been manually disabled */
   async queueInUse(location: Location) {
     if (this.disabledQueue.has(location)) {
+      this.logger.debug(`Queue Disabled at location: ${location}`, SignInService.name);
       throw new HttpException("Queue has been manually disabled", HttpStatus.SERVICE_UNAVAILABLE);
     }
     const queuing = await this.dbService.query(
@@ -688,6 +691,7 @@ export class SignInService implements OnModuleInit {
         })),
       ),
     );
+    this.logger.debug(`Queue Enabled: ${queuing as unknown as boolean}`, SignInService.name);
     return queuing > 0 || !(await this.canSignIn(location));
   }
 
@@ -699,6 +703,7 @@ export class SignInService implements OnModuleInit {
         return user.ucard_number === ucard_number;
       })
     ) {
+      this.logger.warn(`User ${ucard_number} has not queued at location: ${location}`, SignInService.name);
       throw new HttpException(
         {
           message: "Failed to sign in, we are still waiting for people who have been queued to show up",
@@ -707,33 +712,60 @@ export class SignInService implements OnModuleInit {
         HttpStatus.BAD_REQUEST,
       );
     }
+    this.logger.debug(`User ${ucard_number} has queued at location: ${location}`, SignInService.name);
+  }
+
+  async getAvailableCapacity(location: Location): Promise<number> {
+    const maxCapacity = this.maxPeopleForLocation(location);
+    const currentCount = await this.totalCount(location);
+    const availableCapacity = maxCapacity - currentCount;
+    this.logger.debug(`Available capacity for ${location}: ${availableCapacity}`, SignInService.name);
+    return availableCapacity;
   }
 
   async dequeueTop(location: Location) {
-    const queuedUsers = await this.dbService.query(
-      e.select(e.sign_in.QueuePlace, (queue_place) => ({
-        filter: e.op(
-          e.op(queue_place.location, "=", castLocation(location)),
-          "and",
-          e.op(queue_place.can_sign_in, "=", false),
-        ),
-        limit: 1,
-        order_by: {
-          expression: queue_place.position,
-          direction: e.ASC,
-        },
-        ...QueuePlaceProps(queue_place),
-      })),
-    );
-    if (queuedUsers.length !== 0) {
-      const topUser = queuedUsers[0];
-      await this.emailService.sendUnqueuedEmail(topUser, location);
-      this.removeUserFromQueueTask(location, topUser.user).catch();
+    const availableCapacity = await this.getAvailableCapacity(location);
+
+    if (availableCapacity > 0) {
+      const queuedUsers = await this.dbService.query(
+        e.select(e.sign_in.QueuePlace, (queue_place) => ({
+          filter: e.op(
+            e.op(queue_place.location, "=", castLocation(location)),
+            "and",
+            e.op("not", e.op("exists", queue_place.notified_at)),
+          ),
+          order_by: {
+            expression: queue_place.created_at,
+            direction: e.ASC,
+          },
+          limit: availableCapacity,
+          ...QueuePlaceProps(queue_place),
+        })),
+      );
+
+      this.logger.debug(`Dequeuing ${queuedUsers.length} users for ${location}`, SignInService.name);
+
+      for (const queuedUser of queuedUsers) {
+        await this.dbService.query(
+          e.update(e.sign_in.QueuePlace, (queue_place) => ({
+            filter: e.op(queue_place.id, "=", e.uuid(queuedUser.id)),
+            set: {
+              notified_at: new Date(),
+            },
+          })),
+        );
+
+        await this.emailService.sendUnqueuedEmail(queuedUser, location);
+        this.logger.debug(`Sent unqueued email to user ${queuedUser.user.display_name} (${queuedUser.user.ucard_number})`, SignInService.name);
+      }
+    } else {
+      this.logger.debug(`No available capacity to dequeue users for ${location}`, SignInService.name);
     }
   }
 
   async addToQueue(location: Location, ucard_number: string) {
     if (!(await this.queueInUse(location))) {
+      this.logger.warn(`Attempt to add user ${ucard_number} to queue at ${location}, but queue is not in use`, SignInService.name);
       throw new HttpException("The queue is currently not in use", HttpStatus.BAD_REQUEST);
     }
 
@@ -747,60 +779,48 @@ export class SignInService implements OnModuleInit {
               filter_single: { ucard_number: ldapLibraryToUcardNumber(ucard_number) },
             })),
             location: castLocation(location),
-            position: e.op(e.count(e.select(e.sign_in.QueuePlace)), "+", 1),
           }),
           QueuePlaceProps,
         ),
       );
+      this.logger.debug(`Added user ${ucard_number} to queue at ${location}`, SignInService.name);
     } catch (e) {
       if (e instanceof ConstraintViolationError && e.code === 84017154) {
-        console.log(e, e.code);
+        this.logger.warn(`Attempt to add user ${ucard_number} to queue at ${location}, but user is already in the queue`, SignInService.name);
         throw new HttpException("The user is already in the queue", HttpStatus.BAD_REQUEST);
       }
-      console.log(e);
+      this.logger.error(`Error adding user ${ucard_number} to queue at ${location}: ${(e as Error).message}`, SignInService.name);
       throw e;
     }
     await this.emailService.sendQueuedEmail(place, location);
+    this.logger.debug(`Sent queued email to user ${place.user.display_name} (${place.user.ucard_number})`, SignInService.name);
     return place;
   }
 
   async removeFromQueue(location: Location, id: string) {
-    if (await this.queueInUse(location)) {
-      throw new HttpException("The queue is currently not in use", HttpStatus.BAD_REQUEST);
-    }
-
-    await this.dbService.client.transaction(async (tx) => {
-      await e
-        .delete(e.sign_in.QueuePlace, () => ({
-          filter_single: { id },
-        }))
-        .run(tx);
-
-      await e
-        .update(e.sign_in.QueuePlace, (queue_place) => ({
-          filter: e.op(queue_place.location, "=", castLocation(location)),
-          set: {
-            position: e.op(queue_place.position, "-", 1),
-          },
-        }))
-        .run(tx);
-    });
+    await this.dbService.query(
+      e.delete(e.sign_in.QueuePlace, () => ({
+        filter_single: { id },
+      })),
+    );
+    this.logger.debug(`Removed queue entry with ID ${id} from ${location}`, SignInService.name);
   }
 
   async queuedUsersThatCanSignIn(location: Location) {
-    // TODO add a field for the time that they can sign in from and check if that time has past.
-    return await this.dbService.query(
+    const users = await this.dbService.query(
       e.select(
         e.select(e.sign_in.QueuePlace, (queue_place) => ({
           filter: e.op(
             e.op(queue_place.location, "=", e.cast(e.sign_in.SignInLocation, castLocation(location))),
             "and",
-            e.op(queue_place.can_sign_in, "=", true),
+            e.op(queue_place.can_sign_in_until, ">", e.datetime_of_statement()),
           ),
         })).user,
         PartialUserProps,
       ),
     );
+    this.logger.debug(`Found ${users.length} users that can sign in at ${location}`, SignInService.name);
+    return users;
   }
 
   async getSignInReasons() {

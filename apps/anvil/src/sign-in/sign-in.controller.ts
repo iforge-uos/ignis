@@ -168,7 +168,7 @@ export class SignInController {
   @Delete("queue/:id")
   @IsRep()
   @UseInterceptors(IdempotencyCacheInterceptor)
-  @CheckAbilities(["READ"], "ALL") // FIXME: needs an any rather than all guard also allows for users to remove themselves
+  //@CheckAbilities(["READ"], "ALL") // FIXME: needs an any rather than all guard also allows for users to remove themselves
   @IdempotencyCache(60)
   async removeFromQueue(@Param("location") location: Location, @Param("id") id: string) {
     this.logger.log(`Removing queue request with ID: ${id} from queue at location: ${location}`, SignInController.name);
