@@ -51,7 +51,7 @@ module sign_in {
         notified_at: datetime {
             annotation description := "The time the user was emailed that they have a slot."
         }
-        can_sign_in_until := .notified_at + <cal::relative_duration>"15m";
+        ends_at := .notified_at + <cal::relative_duration>"15m";
     }
 
     scalar type SignInReasonCategory extending enum<

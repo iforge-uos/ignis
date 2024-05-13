@@ -61,7 +61,7 @@ const QueuePlaceProps = e.shape(e.sign_in.QueuePlace, () => ({
   created_at: true,
   id: true,
   notified_at: true,
-  can_sign_in_until: true,
+  ends_at: true,
 }));
 
 @Injectable()
@@ -194,24 +194,24 @@ export class SignInService implements OnModuleInit {
     }));
     let user:
       | (User & {
-        is_rep: boolean;
-        registered: boolean;
-        signed_in: boolean;
-        location?: Uppercase<Location>;
-        teams?: users.ShortTeam[] | null;
-      })
+          is_rep: boolean;
+          registered: boolean;
+          signed_in: boolean;
+          location?: Uppercase<Location>;
+          teams?: users.ShortTeam[] | null;
+        })
       | null = await this.dbService.query(
-        e.select(sign_in.user, (user) => ({
-          ...UserProps(user),
-          is_rep: e.select(e.op(user.__type__.name, "=", "users::Rep")),
-          registered: e.select(true as boolean),
-          signed_in: e.select(true as boolean),
-          location: e.assert_exists(sign_in.location),
-          ...e.is(e.users.Rep, {
-            teams: { name: true, description: true, id: true },
-          }),
-        })),
-      );
+      e.select(sign_in.user, (user) => ({
+        ...UserProps(user),
+        is_rep: e.select(e.op(user.__type__.name, "=", "users::Rep")),
+        registered: e.select(true as boolean),
+        signed_in: e.select(true as boolean),
+        location: e.assert_exists(sign_in.location),
+        ...e.is(e.users.Rep, {
+          teams: { name: true, description: true, id: true },
+        }),
+      })),
+    );
     if (user?.location && user.location.toLowerCase() !== location) {
       throw new BadRequestException({
         message: `User ${ucard_number} is already signed in at a different location, please sign out there before signing in.`,
@@ -515,7 +515,10 @@ export class SignInService implements OnModuleInit {
 
   async preSignInChecks(location: Location, ucard_number: number) {
     if (await this.queueInUse(location)) {
-      this.logger.log(`Queue in use, Checking if user : ${ucard_number} has queued at location: ${location}`, SignInService.name);
+      this.logger.log(
+        `Queue in use, Checking if user : ${ucard_number} has queued at location: ${location}`,
+        SignInService.name,
+      );
       await this.assertHasQueued(location, ucard_number);
     } else if (!(await this.canSignIn(location))) {
       throw new HttpException(
@@ -716,7 +719,7 @@ export class SignInService implements OnModuleInit {
   }
 
   async getAvailableCapacity(location: Location): Promise<number> {
-    const maxCapacity = this.maxPeopleForLocation(location);
+    const maxCapacity = await this.maxCount(location);
     const currentCount = await this.totalCount(location);
     const availableCapacity = maxCapacity - currentCount;
     this.logger.debug(`Available capacity for ${location}: ${availableCapacity}`, SignInService.name);
@@ -756,7 +759,10 @@ export class SignInService implements OnModuleInit {
         );
 
         await this.emailService.sendUnqueuedEmail(queuedUser, location);
-        this.logger.debug(`Sent unqueued email to user ${queuedUser.user.display_name} (${queuedUser.user.ucard_number})`, SignInService.name);
+        this.logger.debug(
+          `Sent unqueued email to user ${queuedUser.user.display_name} (${queuedUser.user.ucard_number})`,
+          SignInService.name,
+        );
       }
     } else {
       this.logger.debug(`No available capacity to dequeue users for ${location}`, SignInService.name);
@@ -765,7 +771,10 @@ export class SignInService implements OnModuleInit {
 
   async addToQueue(location: Location, ucard_number: string) {
     if (!(await this.queueInUse(location))) {
-      this.logger.warn(`Attempt to add user ${ucard_number} to queue at ${location}, but queue is not in use`, SignInService.name);
+      this.logger.warn(
+        `Attempt to add user ${ucard_number} to queue at ${location}, but queue is not in use`,
+        SignInService.name,
+      );
       throw new HttpException("The queue is currently not in use", HttpStatus.BAD_REQUEST);
     }
 
@@ -786,14 +795,23 @@ export class SignInService implements OnModuleInit {
       this.logger.debug(`Added user ${ucard_number} to queue at ${location}`, SignInService.name);
     } catch (e) {
       if (e instanceof ConstraintViolationError && e.code === 84017154) {
-        this.logger.warn(`Attempt to add user ${ucard_number} to queue at ${location}, but user is already in the queue`, SignInService.name);
+        this.logger.warn(
+          `Attempt to add user ${ucard_number} to queue at ${location}, but user is already in the queue`,
+          SignInService.name,
+        );
         throw new HttpException("The user is already in the queue", HttpStatus.BAD_REQUEST);
       }
-      this.logger.error(`Error adding user ${ucard_number} to queue at ${location}: ${(e as Error).message}`, SignInService.name);
+      this.logger.error(
+        `Error adding user ${ucard_number} to queue at ${location}: ${(e as Error).message}`,
+        SignInService.name,
+      );
       throw e;
     }
     await this.emailService.sendQueuedEmail(place, location);
-    this.logger.debug(`Sent queued email to user ${place.user.display_name} (${place.user.ucard_number})`, SignInService.name);
+    this.logger.debug(
+      `Sent queued email to user ${place.user.display_name} (${place.user.ucard_number})`,
+      SignInService.name,
+    );
     return place;
   }
 
@@ -813,7 +831,7 @@ export class SignInService implements OnModuleInit {
           filter: e.op(
             e.op(queue_place.location, "=", e.cast(e.sign_in.SignInLocation, castLocation(location))),
             "and",
-            e.op(queue_place.can_sign_in_until, ">", e.datetime_of_statement()),
+            e.op(queue_place.ends_at, ">", e.datetime_of_statement()),
           ),
         })).user,
         PartialUserProps,

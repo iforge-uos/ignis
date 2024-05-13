@@ -14,6 +14,8 @@ export function Unqueued({ id = "0000-0000-0000-0000", location = "{location}" }
       <Hr />
       <Container>
         <Text>
+          Hey there!
+          <br />
           Please sign in in the next 15 minutes (by{" "}
           {new Date(new Date().getTime() + 1000 * 60 * 15).toLocaleTimeString()}
           ). Otherwise, your place will be given to the next person in the queue.

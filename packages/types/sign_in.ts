@@ -28,7 +28,7 @@ export type QueueEntry = {
   user: users.PartialUser;
   notified_at: Date | null;
   created_at: Date;
-  can_sign_in_until: Date | null;
+  ends_at: Date | null;
 };
 
 /** The type of the location/:location endpoint storing data on who's logged in for the dashboard  */

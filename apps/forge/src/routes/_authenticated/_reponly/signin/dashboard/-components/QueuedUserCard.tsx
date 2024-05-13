@@ -49,6 +49,9 @@ export const QueuedUserCard: React.FC<QueuedUserCardProps> = ({ place }) => {
       mutate();
     }
   };
+
+  const canSignIn = place.ends_at?.getTime() ?? Number.NEGATIVE_INFINITY > new Date().getTime();
+
   return (
     <Card className="bg-card w-[240px] md:w-[300px] p-4 rounded-sm flex flex-col justify-between text-black dark:text-white">
       <div>
@@ -69,10 +72,10 @@ export const QueuedUserCard: React.FC<QueuedUserCardProps> = ({ place }) => {
           <div className="border-gray-500 p-2 rounded-sm mb-2">
             <div
               className={`pb-2 h-full w-2/3 mr-auto ml-auto rounded-lg p-2 font-medium mb-1 text-center font-mono ${
-                place.can_sign_in ? "bg-green-500" : "bg-red-500"
+                canSignIn ? "bg-green-500" : "bg-red-500"
               }`}
             >
-              {place.can_sign_in ? "Can" : "Cannot"} sign in
+              {canSignIn ? "Can" : "Cannot"} sign in
             </div>
           </div>
         </div>
