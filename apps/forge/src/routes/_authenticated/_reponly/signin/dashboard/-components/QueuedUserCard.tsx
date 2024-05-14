@@ -17,9 +17,10 @@ import { TimeDisplay } from "./SignedInUserCard/TimeDisplay.tsx";
 
 interface QueuedUserCardProps {
   place: QueueEntry;
+  onDequeue?: (user_id: string) => void;
 }
 
-export const QueuedUserCard: React.FC<QueuedUserCardProps> = ({ place }) => {
+export const QueuedUserCard: React.FC<QueuedUserCardProps> = ({ place, onDequeue }) => {
   const isAdmin = useUser()!.roles.find((role) => role.name === "Admin");
   const activeLocation = useSelector((state: AppRootState) => state.signin.active_location);
   const abortController = new AbortController();
@@ -40,6 +41,7 @@ export const QueuedUserCard: React.FC<QueuedUserCardProps> = ({ place }) => {
     onSuccess: () => {
       abortController.abort();
       toast.success(`Successfully signed out ${place.user.display_name}`);
+      onDequeue?.(place.user.id);
       queryClient.invalidateQueries({ queryKey: ["locationStatus", "locationList", { activeLocation }] });
     },
   });

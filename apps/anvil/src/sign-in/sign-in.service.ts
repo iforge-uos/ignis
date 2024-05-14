@@ -93,12 +93,12 @@ export class SignInService implements OnModuleInit {
   }
 
   async getStatusForLocation(location: Location): Promise<LocationStatus> {
-    const [on_shift_rep_count, off_shift_rep_count, total_count, max, can_sign_in, count_in_queue] = await Promise.all([
+    const [on_shift_rep_count, off_shift_rep_count, total_count, max, needs_queue, count_in_queue] = await Promise.all([
       this.onShiftReps(location),
       this.offShiftReps(location),
       this.totalCount(location),
       this.maxCount(location),
-      this.canSignIn(location),
+      this.queueInUse(location),
       this.countInQueue(location),
       this.outOfHours(),
     ]);
@@ -113,7 +113,7 @@ export class SignInService implements OnModuleInit {
       user_count,
       max,
       out_of_hours: this.outOfHours(),
-      needs_queue: !can_sign_in,
+      needs_queue,
       count_in_queue,
     };
   }
@@ -434,7 +434,7 @@ export class SignInService implements OnModuleInit {
    * [![](https://mermaid.ink/img/pako:eNqNlEFvozAQhf_KyOdGveewqzSQhjZBaYC2KenBgklilRjWNl1VJP99bbAD2V7KiYE3730zFjQkK3MkY7IXtDpA7G056GuSRooKNYYooxySKRX5O4xGv-CuCWT3MKqzDKXc1cXvc9d0ZxSnDcoTTNMZquwAiUQBsaCMM76H21tIIn8NQej5Kz_0JmH8PmwNyxO8pb4QpbDJM8oKzK1o2hJ4hqD1XeOeSYUCc0fg9QS-kT3VWCNMMsU-EXalgCX9QCErmuF1i0neuOTWPCzVIMAS-L3_7ILBeJfjHP2L433aCiIsMFNSh2cHxlFas1lv9hOhMXz9hujCrfS-XdG88Uq0dHOqR1_jn5rpMfqj6JbRxTjweQ8UmOmemWQKVrWoSonwTAuWX0sN0otDCvinUTjXS5QlC1qyh8vWJoVAmn9BxPZcgwUc_ELi34PetgsJLiGPzZzaPqtfUIVSWau9QDwiV67xoR8kudrYt1AL99g3LNJpeawKVNiqRv9pDE187enS2_PonG3Lop15mVqjwSdjBctWEKY-z10arERpRFbx1im6YjMsXofFy7BIhkXcFeSGHFEcKcv1t96YV1uiDpp7S8b6NqfiY0u2_Kx1tFZl9MUzMlaixhtSV7letseo_kUcyXhH9Tmd_wHhkVOk?type=png)](https://mermaid.live/edit#pako:eNqNlEFvozAQhf_KyOdGveewqzSQhjZBaYC2KenBgklilRjWNl1VJP99bbAD2V7KiYE3730zFjQkK3MkY7IXtDpA7G056GuSRooKNYYooxySKRX5O4xGv-CuCWT3MKqzDKXc1cXvc9d0ZxSnDcoTTNMZquwAiUQBsaCMM76H21tIIn8NQej5Kz_0JmH8PmwNyxO8pb4QpbDJM8oKzK1o2hJ4hqD1XeOeSYUCc0fg9QS-kT3VWCNMMsU-EXalgCX9QCErmuF1i0neuOTWPCzVIMAS-L3_7ILBeJfjHP2L433aCiIsMFNSh2cHxlFas1lv9hOhMXz9hujCrfS-XdG88Uq0dHOqR1_jn5rpMfqj6JbRxTjweQ8UmOmemWQKVrWoSonwTAuWX0sN0otDCvinUTjXS5QlC1qyh8vWJoVAmn9BxPZcgwUc_ELi34PetgsJLiGPzZzaPqtfUIVSWau9QDwiV67xoR8kudrYt1AL99g3LNJpeawKVNiqRv9pDE187enS2_PonG3Lop15mVqjwSdjBctWEKY-z10arERpRFbx1im6YjMsXofFy7BIhkXcFeSGHFEcKcv1t96YV1uiDpp7S8b6NqfiY0u2_Kx1tFZl9MUzMlaixhtSV7letseo_kUcyXhH9Tmd_wHhkVOk)
    */
   async signIn(location: Location, ucard_number: number, tools: string[], reason_id: string) {
-    const { infractions } = await this.preSignInChecks(location, ucard_number);
+    const { infractions } = await this.preSignInChecks(location, ucard_number, /* post */ true);
     if (infractions.length !== 0) {
       throw new BadRequestException({
         message: `User ${ucard_number} has active infraction(s):\n${infractions.map(formatInfraction).join("\n")}`,
@@ -513,13 +513,20 @@ export class SignInService implements OnModuleInit {
     return { reason: query, reason_name: name };
   }
 
-  async preSignInChecks(location: Location, ucard_number: number) {
+  async preSignInChecks(location: Location, ucard_number: number, post: boolean = false) {
     if (await this.queueInUse(location)) {
       this.logger.log(
-        `Queue in use, Checking if user : ${ucard_number} has queued at location: ${location}`,
+        `Queue in use, Checking if user: ${ucard_number} has queued at location: ${location}`,
         SignInService.name,
       );
       await this.assertHasQueued(location, ucard_number);
+      if (post) {
+        await this.dbService.query(
+          e.delete(e.sign_in.QueuePlace, (place) => ({
+            filter_single: e.op(place.user.ucard_number, "=", ucard_number),
+          })),
+        );
+      }
     } else if (!(await this.canSignIn(location))) {
       throw new HttpException(
         "Failed to sign in, we are at max capacity. Consider using the queue",
@@ -548,7 +555,7 @@ export class SignInService implements OnModuleInit {
     const { reason, reason_name } = await this.verifySignInReason(reason_id, ucard_number, /* is_rep */ true);
 
     if (reason_name !== REP_ON_SHIFT && !this.outOfHours()) {
-      await this.preSignInChecks(location, ucard_number);
+      await this.preSignInChecks(location, ucard_number, /* post */ true);
     }
 
     // TODO this should be client side?
@@ -721,7 +728,8 @@ export class SignInService implements OnModuleInit {
   async getAvailableCapacity(location: Location): Promise<number> {
     const maxCapacity = await this.maxCount(location);
     const currentCount = await this.totalCount(location);
-    const availableCapacity = maxCapacity - currentCount;
+    const queued = await this.queuedUsersThatCanSignIn(location);
+    const availableCapacity = maxCapacity - currentCount - queued.length;
     this.logger.debug(`Available capacity for ${location}: ${availableCapacity}`, SignInService.name);
     return availableCapacity;
   }
@@ -829,7 +837,7 @@ export class SignInService implements OnModuleInit {
       e.select(
         e.select(e.sign_in.QueuePlace, (queue_place) => ({
           filter: e.op(
-            e.op(queue_place.location, "=", e.cast(e.sign_in.SignInLocation, castLocation(location))),
+            e.op(queue_place.location, "=", castLocation(location)),
             "and",
             e.op(queue_place.ends_at, ">", e.datetime_of_statement()),
           ),

@@ -1,20 +1,20 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useSelector } from "react-redux";
-import { AppRootState } from "@/redux/store.ts";
-import { useEffect, useState } from "react";
-import type { QueueEntry, SignInEntry } from "@ignis/types/sign_in.ts";
 import { useAuth } from "@/components/auth-provider";
-import { dataForLocation } from "@/services/signin/locationService.ts";
-import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants.ts";
-import Title from "@/components/title";
 import ActiveLocationSelector from "@/components/signin/ActiveLocationSelector";
-import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert.tsx";
-import { ExclamationTriangleIcon, InfoCircledIcon } from "@radix-ui/react-icons";
-import { Loader } from "@ui/components/ui/loader.tsx";
+import Title from "@/components/title";
+import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants.ts";
 import { extractError } from "@/lib/utils.ts";
-import {QueuedUserCard} from "@/routes/_authenticated/_reponly/signin/dashboard/-components/QueuedUserCard.tsx";
-import {SignInDrawer} from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignInDrawer.tsx";
+import { AppRootState } from "@/redux/store.ts";
+import { QueuedUserCard } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/QueuedUserCard.tsx";
+import { SignInDrawer } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignInDrawer.tsx";
+import { dataForLocation } from "@/services/signin/locationService.ts";
+import type { QueueEntry, SignInEntry } from "@ignis/types/sign_in.ts";
+import { ExclamationTriangleIcon, InfoCircledIcon } from "@radix-ui/react-icons";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert.tsx";
+import { Loader } from "@ui/components/ui/loader.tsx";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 export default function SignInDashboard() {
   const queryClient = useQueryClient();
@@ -28,20 +28,23 @@ export default function SignInDashboard() {
   const isUserAdmin = !!auth.user?.roles.find((role) => role.name === "Admin");
 
   const handleRemoveSignedInUser = (userId: string) => {
-    setSignedInUsers((currentUsers) => currentUsers.filter((user) => user.user.id !== userId));
+    setSignedInUsers((currentUsers) => currentUsers.filter((signIn) => signIn.user.id !== userId));
     queryClient.invalidateQueries({ queryKey: ["locationStatus", "locationList", { activeLocation }] });
   };
 
   const handleRemoveSignedInRep = (userId: string) => {
-    setSignedInReps((currentReps) => currentReps.filter((rep) => rep.user.id !== userId));
+    setSignedInReps((currentReps) => currentReps.filter((signIn) => signIn.user.id !== userId));
     queryClient.invalidateQueries({ queryKey: ["locationStatus", "locationList", { activeLocation }] });
   };
 
   const handleRemoveSignedInOffShiftRep = (userId: string) => {
-    setSignInOffShiftReps((currentOffShiftReps) => currentOffShiftReps.filter((rep) => rep.user.id !== userId));
+    setSignInOffShiftReps((currentOffShiftReps) => currentOffShiftReps.filter((signIn) => signIn.user.id !== userId));
     queryClient.invalidateQueries({ queryKey: ["locationStatus", "locationList", { activeLocation }] });
   };
-
+  const handleDequeue = (userId: string) => {
+    setQueuedUsers((currentQueuedUsers) => currentQueuedUsers.filter((place) => place.user.id !== userId));
+    queryClient.invalidateQueries({ queryKey: ["locationStatus", "locationList", { activeLocation }] });
+  };
   const {
     data: locationList,
     isLoading,
@@ -132,7 +135,9 @@ export default function SignInDashboard() {
                     </Alert>
                   )}
                   {queuedUsers.length > 0 &&
-                    queuedUsers.map((entry) => <QueuedUserCard place={entry} key={entry.user.id} />)}
+                    queuedUsers.map((entry) => (
+                      <QueuedUserCard place={entry} key={entry.user.id} onDequeue={handleDequeue} />
+                    ))}
                 </div>
               </div>
             </div>
