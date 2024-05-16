@@ -32,6 +32,7 @@ EMAIL_PORT="op://Employee/Mailtrap Email Account/SMTP/port number"
 EMAIL_USER="op://Employee/Mailtrap Email Account/SMTP/username"
 EMAIL_PASS="op://Employee/Mailtrap Email Account/SMTP/password"
 EMAIL_FROM="iforge@sheffield.ac.uk"
+EMAIL_LOCAL_DOMAIN="127.0.0.1"
 EMAIL_SMTP_REQUIRE_TLS=true
 EMAIL_RATE_MAX="50"  # Max number of emails per processor per EMAIL_RATE_DURATION
 EMAIL_RATE_DURATION="1000"  # Milliseconds

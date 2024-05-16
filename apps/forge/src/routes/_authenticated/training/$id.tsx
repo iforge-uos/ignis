@@ -7,6 +7,7 @@ import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert";
+import { Badge } from "@ui/components/ui/badge";
 import { Button } from "@ui/components/ui/button";
 import { Checkbox } from "@ui/components/ui/checkbox";
 import { Label } from "@ui/components/ui/label";
@@ -165,9 +166,9 @@ const Component: React.FC = () => {
                   ]
                     .filter(Boolean)
                     .map((tag) => (
-                      <Button size="sm" variant="outline" className="hover:cursor-default" key={tag}>
+                      <Badge variant="outline" key={tag}>
                         {tag}
-                      </Button>
+                      </Badge>
                     ))}
                 </div>
               </div>

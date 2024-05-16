@@ -1,25 +1,33 @@
-import { LocationIcon } from "@/components/icons/Locations";
-import { SignInStat } from "@ignis/types/users";
+import { LocationIcon } from "@/components/icons/Locations.tsx";
+import { SignInStat } from "@ignis/types/users.ts";
 import { Datum, ResponsiveCalendar } from "@nivo/calendar";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Button } from "@ui/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@ui/components/ui/dialog";
-import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from "@ui/components/ui/drawer";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@ui/components/ui/table";
+import { Button } from "@ui/components/ui/button.tsx";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@ui/components/ui/dialog.tsx";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@ui/components/ui/drawer.tsx";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@ui/components/ui/table.tsx";
 import * as React from "react";
 import MediaQuery from "react-responsive";
 
 type SignInDatum = Omit<Datum, "data"> & { data: Datum["data"] & SignInStat };
 
 function SignInTable({ datum }: { datum: SignInDatum | null }) {
+  const navigate = useNavigate();
   return (
     <Table>
-      <TableHeader>
+      <TableHeader className="bg-accent rounded-md">
         <TableRow className="bg-accent rounded">
-          <TableHead>Location</TableHead>
-          <TableHead>Entered</TableHead>
-          <TableHead>Left</TableHead>
-          <TableHead>Duration</TableHead>
+          <TableHead className="text-center">Location</TableHead>
+          <TableHead className="text-center">Entered</TableHead>
+          <TableHead className="text-center">Left</TableHead>
+          <TableHead className="text-center">Duration</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -30,20 +38,20 @@ function SignInTable({ datum }: { datum: SignInDatum | null }) {
           const minutes_string = `${minutes} minute${minutes !== 1 ? "s" : ""}`;
 
           return (
-            <>
-              <Link to="/sign-ins/$id" params={{ id: sign_in.id }}>
-                <TableRow className="hover:bg-accent hover:cursor-pointer">
-                  <TableCell className="flex justify-center">
-                    <LocationIcon location={sign_in.location} />
-                  </TableCell>
-                  <TableCell>{sign_in.created_at.toLocaleTimeString()}</TableCell>
-                  <TableCell>{sign_in.ends_at?.toLocaleTimeString() || "-"}</TableCell>
-                  <TableCell>
-                    {hours && minutes ? `${hours_string} and ${minutes_string}` : hours ? hours_string : minutes_string}
-                  </TableCell>
-                </TableRow>
-              </Link>
-            </>
+            <TableRow
+              className="hover:bg-accent hover:cursor-pointer"
+              key={sign_in.id}
+              onClick={() => navigate({ to: "/sign-ins/$id", params: sign_in })} // cannot use Link here as it breaks table formatting
+            >
+              <TableCell className="flex justify-center">
+                <LocationIcon location={sign_in.location} />
+              </TableCell>
+              <TableCell className="text-center">{sign_in.created_at.toLocaleTimeString()}</TableCell>
+              <TableCell className="text-center">{sign_in.ends_at?.toLocaleTimeString() || "-"}</TableCell>
+              <TableCell className="text-center">
+                {hours && minutes ? `${hours_string} and ${minutes_string}` : hours ? hours_string : minutes_string}
+              </TableCell>
+            </TableRow>
           );
         })}
       </TableBody>

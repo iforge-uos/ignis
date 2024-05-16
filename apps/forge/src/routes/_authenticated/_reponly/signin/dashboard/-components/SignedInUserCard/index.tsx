@@ -1,12 +1,12 @@
 import { UserAvatar } from "@/components/avatar";
-import { TeamIcon } from "@/components/icons/Team";
-import { AdminDisplay } from "@/components/signin/dashboard/components/SignedInUserCard/AdminDisplay.tsx";
-import { ManageUserWidget } from "@/components/signin/dashboard/components/SignedInUserCard/ManageUserWidget.tsx";
-import { SignInReasonDisplay } from "@/components/signin/dashboard/components/SignedInUserCard/SignInReasonDisplay.tsx";
-import { TimeDisplay } from "@/components/signin/dashboard/components/SignedInUserCard/TimeDisplay.tsx";
+import { TeamIcon } from "@/components/icons/Team.tsx";
+import { AdminDisplay } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/AdminDisplay.tsx";
+import { ManageUserWidget } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/ManageUserWidget.tsx";
+import { SignInReasonWithToolsDisplay } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/SignInReasonDisplay.tsx";
+import { TimeDisplay } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/TimeDisplay.tsx";
 import { iForgeEpoch } from "@/config/constants.ts";
 import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants.ts";
-import { uCardNumberToString } from "@/lib/utils";
+import { uCardNumberToString } from "@/lib/utils.ts";
 import { AppRootState } from "@/redux/store.ts";
 import { PostSignOut, PostSignOutProps } from "@/services/signin/signInService.ts";
 import type { PartialReason } from "@ignis/types/sign_in.ts";
@@ -81,11 +81,11 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
       <div>
         <div className="flex items-center justify-between mb-4 w-full space-x-2">
           <div className="w-2/3 p-1 flex-col">
-            <Link to={`/users/${user.id}` as string}>
+            <Link to="/users/$id" params={user}>
               <h2 className="text-center text-lg font-bold hover:underline">{user.display_name}</h2>
             </Link>
             <div>
-              {user.teams.map((team) => (
+              {user.teams?.map((team) => (
                 <Badge
                   key={team.name}
                   variant="team"
@@ -106,7 +106,7 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
       </div>
       {isAdmin && <AdminDisplay user={user} />}
       <div className="flex-grow">
-        {shouldDisplayReason ? <SignInReasonDisplay tools={tools!} reason={reason!} /> : undefined}
+        {shouldDisplayReason ? <SignInReasonWithToolsDisplay tools={tools!} reason={reason!} /> : undefined}
       </div>
       <TimeDisplay timeIn={timeIn ?? iForgeEpoch} />
       <div className="pt-4 border-t border-gray-700 flex justify-between">

@@ -26,8 +26,9 @@ export type SignInEntry = {
 export type QueueEntry = {
   id: string;
   user: users.PartialUser;
-  position: number;
+  notified_at: Date | null;
   created_at: Date;
+  ends_at: Date | null;
 };
 
 /** The type of the location/:location endpoint storing data on who's logged in for the dashboard  */

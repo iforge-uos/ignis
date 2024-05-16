@@ -3,6 +3,7 @@ import { LdapUser } from "@/auth/interfaces/ldap-user.interface";
 import { EdgeDBService } from "@/edgedb/edgedb.service";
 import { LdapService } from "@/ldap/ldap.service";
 import { ErrorCodes } from "@/shared/constants/ErrorCodes";
+import { ldapLibraryToUcardNumber, removeDomain } from "@/shared/functions/utils";
 import e from "@dbschema/edgeql-js";
 import { addInPersonTraining } from "@dbschema/queries/addInPersonTraining.query";
 import { users } from "@ignis/types";
@@ -17,7 +18,6 @@ import {
   RevokeTrainingDto,
   UpdateUserDto,
 } from "./dto/users.dto";
-import { removeDomain, ldapLibraryToUcardNumber } from "@/shared/functions/utils";
 
 export const PartialUserProps = e.shape(e.users.User, () => ({
   // Fairly minimal, useful for templating
@@ -62,13 +62,18 @@ export const TrainingProps = e.shape(e.training.Training, () => ({
   rep: true,
   // "@expires": true,
 }));
-const UserTrainingEntry = (id: string, training_id: string | undefined) => {
+
+interface UserTrainingEntryPropsOptions {
+  include_fully_complete?: boolean;
+  training_id?: string;
+}
+const UserTrainingEntry = (id: string, options: UserTrainingEntryPropsOptions) => {
   // TODO ignore trainings that are purely informational, needs a new flag adding to Training entry
   return e.shape(e.users.User, () => ({
     training: (training) => ({
       filter: e.all(
         e.set(
-          training_id ? e.op(training.id, "=", e.cast(e.uuid, training_id)) : true,
+          options.training_id ? e.op(training.id, "=", e.uuid(options.training_id)) : true,
           e.op(
             "not",
             e.op(
@@ -80,6 +85,19 @@ const UserTrainingEntry = (id: string, training_id: string | undefined) => {
               false,
             ),
           ),
+          options.include_fully_complete
+            ? true
+            : e.op(
+                e.op(
+                  e.op("not", e.op("exists", training["@in_person_created_at"])),
+                  "and",
+                  e.op("exists", training["@created_at"]),
+                ),
+                "if",
+                training.in_person,
+                "else",
+                true,
+              ),
         ),
       ),
     }),
@@ -295,16 +313,18 @@ export class UsersService {
   }
 
   async getUserTrainingInPersonTrainingRemaining(id: string): Promise<users.UserInPersonTrainingRemaining[]> {
-    const { training } = e.assert_exists(e.select(e.users.User, UserTrainingEntry(id, undefined)));
     // TODO send out emails when training is about to expire.
 
     return await this.dbService.query(
-      e.select(e.op(e.select(e.training.Training), "except", training), (training) => ({
-        name: true,
-        id: true,
-        locations: true,
-        filter: training.in_person,
-      })),
+      e.select(
+        e.assert_exists(e.select(e.users.User, UserTrainingEntry(id, { include_fully_complete: false }))).training,
+        (training) => ({
+          name: true,
+          id: true,
+          locations: true,
+          filter: training.in_person,
+        }),
+      ),
     );
   }
 
@@ -324,7 +344,7 @@ export class UsersService {
       e.update(user, () => ({
         set: {
           training: {
-            "-=": e.assert_exists(e.select(e.users.User, UserTrainingEntry(id, training_id))).training,
+            "-=": e.assert_exists(e.select(e.users.User, UserTrainingEntry(id, { training_id }))).training,
           },
           infractions: {
             "+=": e.insert(e.users.Infraction, {

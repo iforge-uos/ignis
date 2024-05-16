@@ -9,17 +9,20 @@ import {
     Get,
     Logger,
     Post,
+    Query,
     Redirect,
     Req,
     Res,
     UnauthorizedException,
-    UseGuards,
+    UseGuards, UseInterceptors,
 } from "@nestjs/common";
 import {AuthGuard} from "@nestjs/passport";
 import {Throttle} from "@nestjs/throttler";
 import {Request, Response} from "express";
 import {AuthenticationService} from "./authentication.service";
 import {BlacklistService} from "./blacklist/blacklist.service";
+import {IdempotencyCacheInterceptor} from "@/shared/interceptors/idempotency-cache.interceptor";
+import {IdempotencyCache} from "@/shared/decorators/idempotency.decorator";
 
 @Controller("authentication")
 export class AuthenticationController {
@@ -73,6 +76,8 @@ export class AuthenticationController {
         return {message: "Tokens refreshed"};
     }
 
+    @UseInterceptors(IdempotencyCacheInterceptor)
+    @IdempotencyCache(60)
     @Throttle({default: {limit: 1, ttl: 1000}})
     @Post("logout")
     async logout(@Req() req: Request, @Res({passthrough: true}) res: Response) {
@@ -142,5 +147,17 @@ export class AuthenticationController {
 
         this.logger.log(`Google login successful for user with ID: ${req.user.id}`, AuthenticationController.name);
         return {url: `${process.env.FRONT_END_URL}/auth/login/complete`};
+    }
+
+    @Get("validate-access")
+    async validateToken(@Req() req: Request, @Query("role") requiredRole: string) {
+        this.logger.log(`Validating access token for role: ${requiredRole}`, AuthenticationController.name);
+        const token = req.cookies.access_token;
+        if (!token) {
+            throw new UnauthorizedException("Access token is missing");
+        }
+
+        await this.authService.validateAccessToken(token, requiredRole);
+        return {status: "ok"};
     }
 }

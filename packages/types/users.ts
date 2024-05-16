@@ -42,8 +42,10 @@ export type User = helper.Props<users.User> &
     }[];
     profile_picture?: string | null;
   };
+
+export type Infraction = Omit<users.Infraction, "user">
 export type UserWithInfractions = User & {
-  infractions: Omit<users.Infraction, "user">[];
+  infractions: Infraction[];
 };
 export type InfractionType = users.InfractionType;
 

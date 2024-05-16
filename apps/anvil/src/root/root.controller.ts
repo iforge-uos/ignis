@@ -1,23 +1,38 @@
 import { IsAdmin, IsRep } from "@/auth/authorization/decorators/check-roles-decorator";
 import { CaslAbilityGuard } from "@/auth/authorization/guards/casl-ability.guard";
-import { EdgeDBService } from "@/edgedb/edgedb.service";
 import { GoogleService } from "@/google/google.service";
 import { User as GetUser } from "@/shared/decorators/user.decorator";
 import { SignInService } from "@/sign-in/sign-in.service";
 import type { User } from "@ignis/types/users";
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Res, UseGuards } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Res,
+  UseGuards,
+  UseInterceptors,
+} from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { Response } from "express";
 import { CreateAgreementDto, UpdateAgreementDto } from "./dto/agreement.dto";
 import { CreateSignInReasonCategoryDto } from "./dto/reason.dto";
 import { RootService } from "./root.service";
 import { Logger } from "@nestjs/common";
+import { EmailService } from "@/email/email.service";
+import { IdempotencyCacheInterceptor } from "@/shared/interceptors/idempotency-cache.interceptor";
+import { IdempotencyCache } from "@/shared/decorators/idempotency.decorator";
 
 @Controller()
+@UseInterceptors(IdempotencyCacheInterceptor)
 export class RootController {
   constructor(
     private readonly signInService: SignInService,
-    private readonly dbService: EdgeDBService,
+    private readonly emailService: EmailService,
     private readonly rootService: RootService,
     private readonly googleService: GoogleService,
     private readonly logger: Logger,
@@ -45,6 +60,7 @@ export class RootController {
   }
 
   @Post("sign-in-reasons")
+  @IdempotencyCache(60)
   @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
   async addSignInReason(@Body() reason: CreateSignInReasonCategoryDto) {
     this.logger.log("Adding sign-in reason", RootController.name);
@@ -68,6 +84,7 @@ export class RootController {
   @Post("agreements")
   @IsAdmin()
   @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
+  @IdempotencyCache(60)
   async createAgreement(@Body() body: CreateAgreementDto) {
     this.logger.log("Creating agreement", RootController.name);
     return await this.rootService.createAgreement(body.reason_ids, body.content);
@@ -81,6 +98,7 @@ export class RootController {
   }
 
   @Post("agreements/:agreement_id")
+  @IdempotencyCache(60)
   @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
   async signAgreement(@Param("agreement_id") agreement_id: string, @GetUser() user: User) {
     this.logger.log(`Signing agreement with ID: ${agreement_id} by user with ID: ${user.id}`, RootController.name);
@@ -93,6 +111,15 @@ export class RootController {
   async updateAgreement(@Param("agreement_id") agreement_id: string, @Body() body: UpdateAgreementDto) {
     this.logger.log(`Updating agreement with ID: ${agreement_id}`, RootController.name);
     return await this.rootService.updateAgreement(agreement_id, body.reason_ids, body.content);
+  }
+
+  @Post("test_email")
+  @IsAdmin()
+  @IdempotencyCache(60)
+  @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
+  async testEmail(@GetUser() user: User) {
+    this.logger.log(`Sending email to ${user.email}`, RootController.name);
+    return await this.emailService.sendWelcomeEmail(user);
   }
 
   @Get("teams")

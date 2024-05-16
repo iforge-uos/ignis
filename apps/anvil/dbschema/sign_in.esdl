@@ -47,11 +47,11 @@ module sign_in {
         required user: users::User {
             constraint exclusive;
         }
-        required position: int16;
         required location: SignInLocation;
-        required can_sign_in: bool {
-            default := false;
-        };
+        notified_at: datetime {
+            annotation description := "The time the user was emailed that they have a slot."
+        }
+        ends_at := .notified_at + <cal::relative_duration>"15m";
     }
 
     scalar type SignInReasonCategory extending enum<

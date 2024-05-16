@@ -30,7 +30,7 @@ const QueueDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   };
 
   const { isPending, error, mutate } = useMutation({
-    mutationKey: ["postQueue", queueProps],
+    mutationKey: ["postQueueInPerson", queueProps],
     mutationFn: () => PostQueue(queueProps),
     retry: 0,
     onError: (error) => {

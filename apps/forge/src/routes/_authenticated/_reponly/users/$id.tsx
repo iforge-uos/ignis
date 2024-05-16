@@ -1,8 +1,8 @@
 import { UserAvatar } from "@/components/avatar";
 import { LocationIcon } from "@/components/icons/Locations";
-import SignInsChart from "@/components/signin/dashboard/components/SignInsChart.tsx";
 import Title from "@/components/title";
 import { extractError } from "@/lib/utils";
+import SignInsChart from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignInsChart.tsx";
 import { getUser } from "@/services/users/getUser.ts";
 import getUserSignIns from "@/services/users/getUserSignIns.ts";
 import { getUserTraining } from "@/services/users/getUserTraining.ts";
@@ -86,7 +86,7 @@ export default function Component() {
               </div>
               <div className="mt-2">
                 <div className="font-medium">UCard Number</div>
-                <div className="text-gray-500 dark:text-gray-400">{user.ucard_number}</div>
+                <div className="text-gray-500 dark:text-gray-400">XXX-{user.ucard_number}</div>
               </div>
               <div className="mt-2">
                 <div className="font-medium">Department</div>
@@ -102,7 +102,7 @@ export default function Component() {
                     <TableHead>Name</TableHead>
                     <TableHead className="text-center">Location</TableHead>
                     <TableHead className="text-center">Compulsory</TableHead>
-                    {rep ? <TableHead className="text-center">Rep Training</TableHead> : undefined}
+                    {rep && <TableHead className="text-center">Rep Training</TableHead>}
                     <TableHead className="text-center">Completed On</TableHead>
                     <TableHead className="text-center">Completed In Person On</TableHead>
                     <TableHead className="text-center">Renewal Due</TableHead>
@@ -113,7 +113,7 @@ export default function Component() {
                     .sort((a, b) => a.name.localeCompare(b.name))
                     .map((training) =>
                       training["@created_at"] ? (
-                        <TableRow>
+                        <TableRow key={training.id}>
                           <TableCell>
                             <div className="text-sm">{training.name}</div>
                           </TableCell>
@@ -125,13 +125,13 @@ export default function Component() {
                               {training.compulsory ? <Check stroke="green" /> : <X stroke="red" />}
                             </div>
                           </TableCell>
-                          {rep ? ( // FIXME this is mostly broken
+                          {rep && ( // TODO if user training is a pre-req to rep training we can collapse the 2 into one entry.
                             <TableCell>
                               <div className="flex justify-center">
                                 {training.rep ? <Check stroke="green" /> : <X stroke="red" />}
                               </div>
                             </TableCell>
-                          ) : undefined}
+                          )}
                           <TableCell>
                             <div className="text-sm text-center">
                               {new Date(training["@created_at"]).toLocaleDateString()}

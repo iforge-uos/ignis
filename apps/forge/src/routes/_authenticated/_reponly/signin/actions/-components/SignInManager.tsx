@@ -1,10 +1,10 @@
-import QueueDispatcher from "@/components/signin/actions/QueueDispatcher.tsx";
-import SignInDispatcher from "@/components/signin/actions/SignInDispatcher.tsx";
-import SignInFlowProgress from "@/components/signin/actions/SignInFlowProgress.tsx";
-import SignInReasonInput from "@/components/signin/actions/SignInReasonInput.tsx";
-import SignOutDispatcher from "@/components/signin/actions/SignOutDispatcher.tsx";
-import ToolSelectionInput from "@/components/signin/actions/ToolSelectionInput.tsx";
-import UCardInput from "@/components/signin/actions/UCardInput.tsx";
+import QueueDispatcher from "@/routes/_authenticated/_reponly/signin/actions/-components/QueueDispatcher.tsx";
+import SignInDispatcher from "@/routes/_authenticated/_reponly/signin/actions/-components/SignInDispatcher.tsx";
+import SignInFlowProgress from "@/routes/_authenticated/_reponly/signin/actions/-components/SignInFlowProgress.tsx";
+import SignInReasonInput from "@/routes/_authenticated/_reponly/signin/actions/-components/SignInReasonInput.tsx";
+import SignOutDispatcher from "@/routes/_authenticated/_reponly/signin/actions/-components/SignOutDispatcher.tsx";
+import ToolSelectionInput from "@/routes/_authenticated/_reponly/signin/actions/-components/ToolSelectionInput.tsx";
+import UCardInput from "@/routes/_authenticated/_reponly/signin/actions/-components/UCardInput.tsx";
 import useDoubleTapEscape from "@/hooks/useDoubleTapEscape.ts";
 import { signinActions, useSignInSessionField } from "@/redux/signin.slice.ts";
 import { AppDispatch, AppRootState } from "@/redux/store.ts";
@@ -23,7 +23,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button.tsx";
 import React, { ReactElement, useEffect, useLayoutEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import SigningInUserCard from "./SigningInUserCard";
+import SigningInUserCard from "./SigningInUserCard.tsx";
 
 const flowConfig: FlowConfiguration = {
   [FlowType.SignIn]: {
@@ -58,7 +58,7 @@ interface SignInManagerProps<FlowT extends FlowType | undefined = undefined> {
 
 export const getStepComponent = (
   currentFlow: FlowType,
-  currentStep: SignInSteps | SignOutSteps | RegisterSteps | EnqueueSteps,
+  currentStep: SignInSteps | SignOutSteps | EnqueueSteps,
   flowConfig: FlowConfiguration,
 ): FlowStepComponent => {
   switch (currentFlow) {

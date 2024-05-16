@@ -1,9 +1,9 @@
 import { UserAvatar } from "@/components/avatar";
-import { TeamIcon } from "@/components/icons/Team";
+import { TeamIcon } from "@/components/icons/Team.tsx";
 import { sign_in } from "@ignis/types";
 import { Link } from "@tanstack/react-router";
-import { Badge } from "@ui/components/ui/badge";
-import { Card } from "@ui/components/ui/card";
+import { Badge } from "@ui/components/ui/badge.tsx";
+import { Card } from "@ui/components/ui/card.tsx";
 
 export default function SigningInUserCard({ user }: { user: sign_in.User }) {
   return (
@@ -11,7 +11,7 @@ export default function SigningInUserCard({ user }: { user: sign_in.User }) {
       <div className="m-2">
         <div className="flex items-center justify-between  w-full space-x-2">
           <div className="w-2/3 p-1 flex-col">
-            <Link to={`/users/${user.id}` as string}>
+            <Link to="/users/$id" params={user}>
               <h2 className="text-center text-lg font-bold hover:underline">{user.display_name}</h2>
             </Link>
             <div>

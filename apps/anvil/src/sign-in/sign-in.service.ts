@@ -4,14 +4,16 @@ import { LdapService } from "@/ldap/ldap.service";
 import { CreateSignInReasonCategoryDto } from "@/root/dto/reason.dto";
 import { ErrorCodes } from "@/shared/constants/ErrorCodes";
 import { sleep } from "@/shared/functions/sleep";
+import { ldapLibraryToUcardNumber } from "@/shared/functions/utils";
 import { PartialUserProps, UserProps, UsersService } from "@/users/users.service";
 import { SignInLocationSchema } from "@dbschema/edgedb-zod/modules/sign_in";
 import e from "@dbschema/edgeql-js";
+import { QueuePlace } from "@dbschema/edgeql-js/modules/sign_in";
 import { std } from "@dbschema/interfaces";
 import { getUserTrainingForSignIn } from "@dbschema/queries/getUserTrainingForSignIn.query";
 import { users } from "@ignis/types";
-import type { Location, LocationStatus, Training } from "@ignis/types/sign_in";
-import type { PartialUser, User } from "@ignis/types/users";
+import type { Location, LocationStatus, QueueEntry, Training } from "@ignis/types/sign_in";
+import type { Infraction, InfractionType, PartialUser, User, UserWithInfractions } from "@ignis/types/users";
 import {
   BadRequestException,
   HttpException,
@@ -22,8 +24,7 @@ import {
 } from "@nestjs/common";
 import { Logger } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
-import { CardinalityViolationError, InvalidValueError } from "edgedb";
-import {ldapLibraryToUcardNumber} from "@/shared/functions/utils";
+import { CardinalityViolationError, ConstraintViolationError, InvalidValueError } from "edgedb";
 
 export const REP_ON_SHIFT = "Rep On Shift";
 export const REP_OFF_SHIFT = "Rep Off Shift";
@@ -37,6 +38,31 @@ export const LOCATIONS = Object.keys(SignInLocationSchema.Values).map((location)
 function castLocation(location: Location) {
   return e.cast(e.sign_in.SignInLocation, location.toUpperCase());
 }
+
+function formatInfraction(infraction: Infraction) {
+  switch (infraction.type) {
+    case "PERM_BAN":
+      return `User is permanently banned from the iForge. Reason: ${infraction.reason}`;
+    case "TEMP_BAN":
+      return `User is banned from the iForge for ${infraction.duration}. Reason: ${infraction.reason}`;
+    case "WARNING":
+      return `User has an unresolved warning. Reason: ${infraction.reason}`;
+    case "RESTRICTION":
+      return `User has an unresolved restriction. Reason: ${infraction.reason}`;
+    case "TRAINING_ISSUE":
+      return `User has an unresolved training issue. Reason: ${infraction.reason}`;
+    default:
+      throw new Error(`Unknown infraction type: ${infraction.type}`);
+  }
+}
+
+const QueuePlaceProps = e.shape(e.sign_in.QueuePlace, () => ({
+  user: PartialUserProps,
+  created_at: true,
+  id: true,
+  notified_at: true,
+  ends_at: true,
+}));
 
 @Injectable()
 export class SignInService implements OnModuleInit {
@@ -54,20 +80,25 @@ export class SignInService implements OnModuleInit {
   }
 
   async onModuleInit() {
-    for (const location of LOCATIONS) {
-      if ((await this.canSignIn(location)) && (await this.queueInUse(location))) {
-        this.unqueueTop(location);
-      }
-    }
+    // const places = await this.dbService.query(
+    //   e.select(e.sign_in.QueuePlace, (place) => ({
+    //     filter: place.can_sign_in,
+    //     user: PartialUserProps,
+    //     location: true,
+    //   })),
+    // );
+    // for (const place of places) {
+    //   this.removeUserFromQueueTask(place.location.toLowerCase() as Location, place.user).catch();
+    // }
   }
 
   async getStatusForLocation(location: Location): Promise<LocationStatus> {
-    const [on_shift_rep_count, off_shift_rep_count, total_count, max, can_sign_in, count_in_queue] = await Promise.all([
+    const [on_shift_rep_count, off_shift_rep_count, total_count, max, needs_queue, count_in_queue] = await Promise.all([
       this.onShiftReps(location),
       this.offShiftReps(location),
       this.totalCount(location),
       this.maxCount(location),
-      this.canSignIn(location),
+      this.queueInUse(location),
       this.countInQueue(location),
       this.outOfHours(),
     ]);
@@ -82,7 +113,7 @@ export class SignInService implements OnModuleInit {
       user_count,
       max,
       out_of_hours: this.outOfHours(),
-      needs_queue: !can_sign_in,
+      needs_queue,
       count_in_queue,
     };
   }
@@ -403,10 +434,10 @@ export class SignInService implements OnModuleInit {
    * [![](https://mermaid.ink/img/pako:eNqNlEFvozAQhf_KyOdGveewqzSQhjZBaYC2KenBgklilRjWNl1VJP99bbAD2V7KiYE3730zFjQkK3MkY7IXtDpA7G056GuSRooKNYYooxySKRX5O4xGv-CuCWT3MKqzDKXc1cXvc9d0ZxSnDcoTTNMZquwAiUQBsaCMM76H21tIIn8NQej5Kz_0JmH8PmwNyxO8pb4QpbDJM8oKzK1o2hJ4hqD1XeOeSYUCc0fg9QS-kT3VWCNMMsU-EXalgCX9QCErmuF1i0neuOTWPCzVIMAS-L3_7ILBeJfjHP2L433aCiIsMFNSh2cHxlFas1lv9hOhMXz9hujCrfS-XdG88Uq0dHOqR1_jn5rpMfqj6JbRxTjweQ8UmOmemWQKVrWoSonwTAuWX0sN0otDCvinUTjXS5QlC1qyh8vWJoVAmn9BxPZcgwUc_ELi34PetgsJLiGPzZzaPqtfUIVSWau9QDwiV67xoR8kudrYt1AL99g3LNJpeawKVNiqRv9pDE187enS2_PonG3Lop15mVqjwSdjBctWEKY-z10arERpRFbx1im6YjMsXofFy7BIhkXcFeSGHFEcKcv1t96YV1uiDpp7S8b6NqfiY0u2_Kx1tFZl9MUzMlaixhtSV7letseo_kUcyXhH9Tmd_wHhkVOk?type=png)](https://mermaid.live/edit#pako:eNqNlEFvozAQhf_KyOdGveewqzSQhjZBaYC2KenBgklilRjWNl1VJP99bbAD2V7KiYE3730zFjQkK3MkY7IXtDpA7G056GuSRooKNYYooxySKRX5O4xGv-CuCWT3MKqzDKXc1cXvc9d0ZxSnDcoTTNMZquwAiUQBsaCMM76H21tIIn8NQej5Kz_0JmH8PmwNyxO8pb4QpbDJM8oKzK1o2hJ4hqD1XeOeSYUCc0fg9QS-kT3VWCNMMsU-EXalgCX9QCErmuF1i0neuOTWPCzVIMAS-L3_7ILBeJfjHP2L433aCiIsMFNSh2cHxlFas1lv9hOhMXz9hujCrfS-XdG88Uq0dHOqR1_jn5rpMfqj6JbRxTjweQ8UmOmemWQKVrWoSonwTAuWX0sN0otDCvinUTjXS5QlC1qyh8vWJoVAmn9BxPZcgwUc_ELi34PetgsJLiGPzZzaPqtfUIVSWau9QDwiV67xoR8kudrYt1AL99g3LNJpeawKVNiqRv9pDE187enS2_PonG3Lop15mVqjwSdjBctWEKY-z10arERpRFbx1im6YjMsXofFy7BIhkXcFeSGHFEcKcv1t96YV1uiDpp7S8b6NqfiY0u2_Kx1tFZl9MUzMlaixhtSV7letseo_kUcyXhH9Tmd_wHhkVOk)
    */
   async signIn(location: Location, ucard_number: number, tools: string[], reason_id: string) {
-    const { infractions } = await this.preSignInChecks(location, ucard_number);
+    const { infractions } = await this.preSignInChecks(location, ucard_number, /* post */ true);
     if (infractions.length !== 0) {
       throw new BadRequestException({
-        message: `User ${ucard_number} has active infractions ${infractions}`,
+        message: `User ${ucard_number} has active infraction(s):\n${infractions.map(formatInfraction).join("\n")}`,
         code: ErrorCodes.user_has_active_infractions,
       });
     }
@@ -428,7 +459,7 @@ export class SignInService implements OnModuleInit {
         }).user,
       );
     } catch (error) {
-      if (error instanceof CardinalityViolationError) {
+      if (error instanceof ConstraintViolationError) {
         throw new BadRequestException({
           message: `User ${ucard_number} already signed in`,
           code: ErrorCodes.already_signed_in_to_location,
@@ -482,9 +513,20 @@ export class SignInService implements OnModuleInit {
     return { reason: query, reason_name: name };
   }
 
-  async preSignInChecks(location: Location, ucard_number: number) {
+  async preSignInChecks(location: Location, ucard_number: number, post: boolean = false) {
     if (await this.queueInUse(location)) {
+      this.logger.log(
+        `Queue in use, Checking if user: ${ucard_number} has queued at location: ${location}`,
+        SignInService.name,
+      );
       await this.assertHasQueued(location, ucard_number);
+      if (post) {
+        await this.dbService.query(
+          e.delete(e.sign_in.QueuePlace, (place) => ({
+            filter_single: e.op(place.user.ucard_number, "=", ucard_number),
+          })),
+        );
+      }
     } else if (!(await this.canSignIn(location))) {
       throw new HttpException(
         "Failed to sign in, we are at max capacity. Consider using the queue",
@@ -513,7 +555,7 @@ export class SignInService implements OnModuleInit {
     const { reason, reason_name } = await this.verifySignInReason(reason_id, ucard_number, /* is_rep */ true);
 
     if (reason_name !== REP_ON_SHIFT && !this.outOfHours()) {
-      await this.preSignInChecks(location, ucard_number);
+      await this.preSignInChecks(location, ucard_number, /* post */ true);
     }
 
     // TODO this should be client side?
@@ -555,7 +597,7 @@ export class SignInService implements OnModuleInit {
         }),
       );
     } catch (error) {
-      if (error instanceof CardinalityViolationError) {
+      if (error instanceof ConstraintViolationError) {
         throw new BadRequestException({
           message: `Rep ${ucard_number} already signed in`,
           code: ErrorCodes.already_signed_in_to_location,
@@ -585,19 +627,21 @@ export class SignInService implements OnModuleInit {
 
     try {
       await this.dbService.query(
-        e.update(e.sign_in.SignIn, (sign_in) => {
-          const isCorrectLocation = e.op(sign_in.location, "=", castLocation(location));
-          const userMatches = e.op(sign_in.user.ucard_number, "=", ucard_number);
-          const doesNotExist = e.op("not", e.op("exists", sign_in.ends_at));
+        e.assert_exists(
+          e.update(e.sign_in.SignIn, (sign_in) => {
+            const isCorrectLocation = e.op(sign_in.location, "=", castLocation(location));
+            const userMatches = e.op(sign_in.user.ucard_number, "=", ucard_number);
+            const doesNotExist = e.op("not", e.op("exists", sign_in.ends_at));
 
-          return {
-            filter_single: e.all(e.set(isCorrectLocation, userMatches, doesNotExist)),
-            set: {
-              tools,
-              reason,
-            },
-          };
-        }),
+            return {
+              filter_single: e.all(e.set(isCorrectLocation, userMatches, doesNotExist)),
+              set: {
+                tools,
+                reason,
+              },
+            };
+          }),
+        ),
       );
     } catch (e) {
       if (e instanceof CardinalityViolationError && e.code === 84017154) {
@@ -637,7 +681,7 @@ export class SignInService implements OnModuleInit {
       throw error;
     }
     if (await this.canSignIn(location)) {
-      await this.unqueueTop(location);
+      await this.dequeueTop(location);
     }
   }
 
@@ -646,15 +690,19 @@ export class SignInService implements OnModuleInit {
   /* Are there people queuing currently or has it been manually disabled */
   async queueInUse(location: Location) {
     if (this.disabledQueue.has(location)) {
+      this.logger.debug(`Queue Disabled at location: ${location}`, SignInService.name);
       throw new HttpException("Queue has been manually disabled", HttpStatus.SERVICE_UNAVAILABLE);
     }
     const queuing = await this.dbService.query(
-      e.select(e.sign_in.QueuePlace, (place) => ({
-        filter: e.op(place.location, "=", castLocation(location)),
-        limit: 1,
-      })),
+      e.count(
+        e.select(e.sign_in.QueuePlace, (place) => ({
+          filter: e.op(place.location, "=", castLocation(location)),
+          limit: 1,
+        })),
+      ),
     );
-    return queuing.length > 0;
+    this.logger.debug(`Queue Enabled: ${queuing as unknown as boolean}`, SignInService.name);
+    return queuing > 0 || !(await this.canSignIn(location));
   }
 
   async assertHasQueued(location: Location, ucard_number: number) {
@@ -665,101 +713,140 @@ export class SignInService implements OnModuleInit {
         return user.ucard_number === ucard_number;
       })
     ) {
+      this.logger.warn(`User ${ucard_number} has not queued at location: ${location}`, SignInService.name);
       throw new HttpException(
         {
           message: "Failed to sign in, we are still waiting for people who have been queued to show up",
           code: ErrorCodes.not_in_queue,
         },
-        HttpStatus.SERVICE_UNAVAILABLE,
+        HttpStatus.BAD_REQUEST,
       );
     }
+    this.logger.debug(`User ${ucard_number} has queued at location: ${location}`, SignInService.name);
   }
 
-  async unqueueTop(location: Location) {
-    const queuedUsers = await this.dbService.query(
-      e.select(e.sign_in.QueuePlace, (queue_place) => ({
-        user: PartialUserProps(queue_place.user),
-        filter: e.op(
-          e.op(queue_place.location, "=", castLocation(location)),
-          "and",
-          e.op(queue_place.can_sign_in, "=", false),
-        ),
-        limit: 1,
-        order_by: {
-          expression: queue_place.position,
-          direction: e.ASC,
-        },
-      })),
-    );
-    if (queuedUsers.length !== 0) {
-      const topUser = queuedUsers[0];
-      await this.emailService.sendUnqueuedEmail(topUser.user, location);
-      this.removeUserFromQueueTask(location, topUser.user).catch();
+  async getAvailableCapacity(location: Location): Promise<number> {
+    const maxCapacity = await this.maxCount(location);
+    const currentCount = await this.totalCount(location);
+    const queued = await this.queuedUsersThatCanSignIn(location);
+    const availableCapacity = maxCapacity - currentCount - queued.length;
+    this.logger.debug(`Available capacity for ${location}: ${availableCapacity}`, SignInService.name);
+    return availableCapacity;
+  }
+
+  async dequeueTop(location: Location) {
+    const availableCapacity = await this.getAvailableCapacity(location);
+
+    if (availableCapacity > 0) {
+      const queuedUsers = await this.dbService.query(
+        e.select(e.sign_in.QueuePlace, (queue_place) => ({
+          filter: e.op(
+            e.op(queue_place.location, "=", castLocation(location)),
+            "and",
+            e.op("not", e.op("exists", queue_place.notified_at)),
+          ),
+          order_by: {
+            expression: queue_place.created_at,
+            direction: e.ASC,
+          },
+          limit: availableCapacity,
+          ...QueuePlaceProps(queue_place),
+        })),
+      );
+
+      this.logger.debug(`Dequeuing ${queuedUsers.length} users for ${location}`, SignInService.name);
+
+      for (const queuedUser of queuedUsers) {
+        await this.dbService.query(
+          e.update(e.sign_in.QueuePlace, (queue_place) => ({
+            filter: e.op(queue_place.id, "=", e.uuid(queuedUser.id)),
+            set: {
+              notified_at: new Date(),
+            },
+          })),
+        );
+
+        await this.emailService.sendUnqueuedEmail(queuedUser, location);
+        this.logger.debug(
+          `Sent unqueued email to user ${queuedUser.user.display_name} (${queuedUser.user.ucard_number})`,
+          SignInService.name,
+        );
+      }
+    } else {
+      this.logger.debug(`No available capacity to dequeue users for ${location}`, SignInService.name);
     }
   }
 
-  async addToQueue(location: Location, id: string) {
+  async addToQueue(location: Location, ucard_number: string) {
     if (!(await this.queueInUse(location))) {
+      this.logger.warn(
+        `Attempt to add user ${ucard_number} to queue at ${location}, but queue is not in use`,
+        SignInService.name,
+      );
       throw new HttpException("The queue is currently not in use", HttpStatus.BAD_REQUEST);
     }
 
+    let place: QueueEntry;
+
     try {
-      return await this.dbService.query(
-        e.insert(e.sign_in.QueuePlace, {
-          user: e.select(e.users.User, () => ({
-            filter_single: { id },
-          })),
-          location: castLocation(location),
-          position: e.op(e.count(e.select(e.sign_in.QueuePlace)), "+", 1),
-        }),
+      place = await this.dbService.query(
+        e.select(
+          e.insert(e.sign_in.QueuePlace, {
+            user: e.select(e.users.User, () => ({
+              filter_single: { ucard_number: ldapLibraryToUcardNumber(ucard_number) },
+            })),
+            location: castLocation(location),
+          }),
+          QueuePlaceProps,
+        ),
       );
+      this.logger.debug(`Added user ${ucard_number} to queue at ${location}`, SignInService.name);
     } catch (e) {
-      if (e instanceof CardinalityViolationError && e.code === 84017154) {
-        console.log(e, e.code);
+      if (e instanceof ConstraintViolationError && e.code === 84017154) {
+        this.logger.warn(
+          `Attempt to add user ${ucard_number} to queue at ${location}, but user is already in the queue`,
+          SignInService.name,
+        );
         throw new HttpException("The user is already in the queue", HttpStatus.BAD_REQUEST);
       }
-      console.log(e);
+      this.logger.error(
+        `Error adding user ${ucard_number} to queue at ${location}: ${(e as Error).message}`,
+        SignInService.name,
+      );
       throw e;
     }
+    await this.emailService.sendQueuedEmail(place, location);
+    this.logger.debug(
+      `Sent queued email to user ${place.user.display_name} (${place.user.ucard_number})`,
+      SignInService.name,
+    );
+    return place;
   }
 
   async removeFromQueue(location: Location, id: string) {
-    // again, user_id because might not have ucard_number
-    if (await this.queueInUse(location)) {
-      throw new HttpException("The queue is currently not in use", HttpStatus.SERVICE_UNAVAILABLE);
-    }
-
-    await this.dbService.client.transaction(async (tx) => {
-      await e
-        .delete(e.sign_in.QueuePlace, (queue_place) => ({
-          filter: e.op(queue_place.user.id, "=", e.uuid(id)),
-        }))
-        .run(tx);
-
-      await e
-        .update(e.sign_in.QueuePlace, (queue_place) => ({
-          filter: e.op(queue_place.location, "=", castLocation(location)),
-          set: {
-            position: e.op(queue_place.position, "-", 1),
-          },
-        }))
-        .run(tx);
-    });
+    await this.dbService.query(
+      e.delete(e.sign_in.QueuePlace, () => ({
+        filter_single: { id },
+      })),
+    );
+    this.logger.debug(`Removed queue entry with ID ${id} from ${location}`, SignInService.name);
   }
 
   async queuedUsersThatCanSignIn(location: Location) {
-    return await this.dbService.query(
+    const users = await this.dbService.query(
       e.select(
         e.select(e.sign_in.QueuePlace, (queue_place) => ({
           filter: e.op(
-            e.op(queue_place.location, "=", e.cast(e.sign_in.SignInLocation, castLocation(location))),
+            e.op(queue_place.location, "=", castLocation(location)),
             "and",
-            e.op(queue_place.can_sign_in, "=", true),
+            e.op(queue_place.ends_at, ">", e.datetime_of_statement()),
           ),
         })).user,
         PartialUserProps,
       ),
     );
+    this.logger.debug(`Found ${users.length} users that can sign in at ${location}`, SignInService.name);
+    return users;
   }
 
   async getSignInReasons() {
@@ -807,19 +894,38 @@ export class SignInService implements OnModuleInit {
     );
   }
 
-  async getPopularSignInReasons() {
-    return await this.dbService.query(
+  async getPopularSignInReasons(location: Location) {
+    const reasons: any = await this.dbService.query(
       e.select(
         e.group(
           e.select(e.sign_in.SignIn, (sign_in) => ({
-            filter: e.op(sign_in.created_at, "<", e.op(e.datetime_current(), "-", e.cal.relative_duration("3d"))),
+            filter: e.op(
+              e.op(sign_in.created_at, "<", e.op(e.datetime_current(), "-", e.cal.relative_duration("3d"))),
+              "and",
+              e.op(sign_in.location, "=", castLocation(location)),
+            ),
           })),
           (sign_in) => ({
             by: { reason: sign_in.reason },
           }),
-        ).elements.reason,
-        () => ({ limit: 5 }),
+        ),
+        (group) => ({
+          name: e.assert_single(group.elements.reason.name),
+          category: e.assert_single(group.elements.reason.category),
+          id_: e.assert_single(group.elements.reason.id),
+          count: e.count(group.elements),
+          order_by: {
+            expression: e.count(group.elements),
+            direction: e.DESC,
+          },
+          limit: 5,
+        }),
       ),
     );
+    return reasons.map((reason: any) => {
+      reason.id = reason.id_; // rename id field
+      reason.id_ = undefined;
+      return reason;
+    });
   }
 }

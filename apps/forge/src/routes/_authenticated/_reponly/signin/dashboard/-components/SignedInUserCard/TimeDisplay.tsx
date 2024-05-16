@@ -1,13 +1,15 @@
-import { Badge } from "@ui/components/ui/badge.tsx";
-import * as React from "react";
-import { format, intervalToDuration } from "date-fns";
 import { iForgeEpoch } from "@/config/constants.ts";
+import { Badge } from "@ui/components/ui/badge.tsx";
+import { format, intervalToDuration } from "date-fns";
+import * as React from "react";
 
 interface TimeDisplayProps {
   timeIn: Date;
+  inText?: string;
+  durationText?: string;
 }
 
-export const TimeDisplay: React.FC<TimeDisplayProps> = ({ timeIn }) => {
+export const TimeDisplay: React.FC<TimeDisplayProps> = ({ timeIn, inText, durationText }) => {
   const [duration, setDuration] = React.useState<string>("");
   React.useEffect(() => {
     const intervalId = setInterval(() => {
@@ -29,12 +31,14 @@ export const TimeDisplay: React.FC<TimeDisplayProps> = ({ timeIn }) => {
       <div className="flex justify-between w-full gap-2">
         <div className="flex">
           <Badge variant="outline" className="rounded-sm shadow-md flex-col w-[90px]">
-            <span className="text-accent-foreground">Time In:</span> <span className="italic">{formattedTime}</span>
+            <span className="text-accent-foreground">{inText ?? "Time In:"}</span>{" "}
+            <span className="italic">{formattedTime}</span>
           </Badge>
         </div>
         <div className="flex">
           <Badge variant="outline" className="rounded-sm shadow-md flex-col w-[120px]">
-            <span className="text-accent-foreground text-xs">Duration:</span> <span className="italic">{duration}</span>
+            <span className="text-accent-foreground text-xs">{durationText ?? "Duration:"}</span>{" "}
+            <span className="italic">{duration}</span>
           </Badge>
         </div>
       </div>

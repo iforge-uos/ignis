@@ -32,6 +32,7 @@ EMAIL_PORT="op://IT/Anvil MailServer Credentials/port number"
 EMAIL_USER="op://IT/Sheffield Login/email"
 EMAIL_PASS="op://IT/Sheffield Login/App Password"
 EMAIL_FROM="iforge@sheffield.ac.uk"
+EMAIL_LOCAL_DOMAIN="iforge.sheffield.ac.uk"
 EMAIL_SMTP_REQUIRE_TLS=true
 EMAIL_RATE_MAX="50"        # Max number of emails per processor per EMAIL_RATE_DURATION
 EMAIL_RATE_DURATION="1000" # Milliseconds

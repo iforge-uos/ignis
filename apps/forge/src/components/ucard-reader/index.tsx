@@ -1,7 +1,9 @@
 import { signinActions } from "@/redux/signin.slice";
 import { AppDispatch, AppRootState } from "@/redux/store";
 import { GetSignIn, PostSignOut } from "@/services/signin/signInService";
-import { useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import {  useNavigate } from "@tanstack/react-router";
+import { Button } from "@ui/components/ui/button";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
@@ -11,6 +13,7 @@ export default function UCardReader() {
   const activeLocation = useSelector((state: AppRootState) => state.signin.active_location);
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -41,22 +44,44 @@ export default function UCardReader() {
         const userProps = { uCardNumber, locationName: activeLocation, signal: undefined as any };
         const matchingUser = await GetSignIn(userProps);
 
+        const PopUp = (action: string, onClick: () => Promise<any>) => {
+          return (
+            <div className="flex justify-between items-center">
+              <div>
+                <div className="pr-3">
+                  {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+                  <text // TODO this should be a Link element, no idea why tanstack breaks
+                    className="font-bold hover:underline hover:cursor-pointer"
+                    onClick={() => navigate({ to: "/users/$id", params: matchingUser })}
+                  >
+                    {matchingUser.display_name}
+                  </text>{" "}
+                  would like to sign {action}.
+                </div>
+                <div>Sign {action} this user?</div>
+              </div>
+              <Button size={"sm"} onClick={() => onClick()}>
+                Yes
+              </Button>
+            </div>
+          );
+        };
+
         if (matchingUser.signed_in) {
-          toast(`User ${uCardNumber} would like to sign out`, {
-            description: "Sign out this user?",
-            action: {
-              label: "Yes",
-              onClick: () => {
-                (async () => {
-                  try {
-                    await PostSignOut(userProps);
-                  } catch (e) {
-                    toast.error(`Failed to sign out user ${uCardNumber}`, { description: (e as any).toString() });
-                  }
-                })();
-              },
-            },
-          });
+          toast(
+            PopUp("out", async () => {
+              try {
+                await PostSignOut(userProps);
+              } catch (e) {
+                return toast.error(`Failed to sign out user ${uCardNumber}`, {
+                  description: (e as any).toString(),
+                });
+              }
+
+              queryClient.invalidateQueries({ queryKey: ["locationStatus", "locationList", { activeLocation }] });
+              toast.success(`Successfully signed out ${uCardNumber}`);
+            }),
+          );
         } else {
           dispatch(
             signinActions.setSignInSession({
@@ -68,15 +93,7 @@ export default function UCardReader() {
               navigation_is_backtracking: false,
             }),
           );
-          toast(`User ${uCardNumber} would like to sign in`, {
-            description: "Sign in this user?",
-            action: {
-              label: "Go to sign in",
-              onClick: () => {
-                navigate({ to: "/signin/actions/in-faster" });
-              },
-            },
-          });
+          toast(PopUp("in", () => navigate({ to: "/signin/actions/in-faster" })));
         }
       }
     })();

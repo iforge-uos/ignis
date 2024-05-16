@@ -4,6 +4,7 @@ import { BullModule } from "@nestjs/bull";
 import { Logger, MiddlewareConsumer, Module, NestModule, RequestMethod } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { APP_PIPE } from "@nestjs/core";
+import { APP_PIPE } from "@nestjs/core";
 import { ScheduleModule } from "@nestjs/schedule";
 import { ThrottlerModule } from "@nestjs/throttler";
 import { ZodValidationPipe } from "nestjs-zod";

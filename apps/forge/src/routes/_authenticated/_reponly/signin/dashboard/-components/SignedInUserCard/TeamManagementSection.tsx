@@ -1,5 +1,5 @@
-import TeamIcon from "@/components/icons/Team";
-import { ManageUserWidgetProps } from "@/components/signin/dashboard/components/SignedInUserCard/ManageUserWidget.tsx";
+import TeamIcon from "@/components/icons/Team.tsx";
+import { ManageUserWidgetProps } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/ManageUserWidget.tsx";
 import { getTeams } from "@/services/users/getTeams.ts";
 import promoteToRep from "@/services/users/promoteToRep.ts";
 import { zodResolver } from "@hookform/resolvers/zod";

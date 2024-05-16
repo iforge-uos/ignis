@@ -2,7 +2,7 @@ import { UsersService } from "@/users/users.service";
 import type { User } from "@ignis/types/users";
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { Response } from "express";
+import { CookieOptions, Response } from "express";
 import { JwtPayload } from "../interfaces/jwtpayload.interface";
 
 const ms = require("ms");
@@ -49,50 +49,67 @@ export class AuthenticationService {
     }
   }
 
+  async validateAccessToken(accessToken: string, requiredRole?: string): Promise<User> {
+    try {
+      const payload = await this.jwtService.verifyAsync(accessToken);
+      const user = await this.usersService.findOne(payload.sub);
+
+      if (!user) {
+        throw new UnauthorizedException("User not found");
+      }
+
+      if (requiredRole && !user.roles.some((role) => role.name === requiredRole)) {
+        throw new UnauthorizedException("User does not have the required role");
+      }
+
+      return user;
+    } catch (_error) {
+      throw new UnauthorizedException("Invalid access token");
+    }
+  }
+
   setAuthCookies(res: Response, access_token: string, refresh_token: string, csrf_token: string) {
     const accessTokenExpiresIn = new Date(Date.now() + ms(process.env.ACCESS_TOKEN_EXPIRES_IN ?? "1h"));
     const refreshTokenExpiresIn = new Date(Date.now() + ms(process.env.REFRESH_TOKEN_EXPIRES_IN ?? "7d"));
     const csrfTokenExpiresIn = new Date(Date.now() + ms(process.env.REFRESH_TOKEN_EXPIRES_IN ?? "1h"));
 
-    res.cookie("access_token", access_token, {
+    const cookieOptions: CookieOptions = {
       httpOnly: true,
       secure: true,
       path: "/",
-      sameSite: "strict",
+      sameSite: "lax",
       expires: accessTokenExpiresIn,
-    });
-    res.cookie("refresh_token", refresh_token, {
-      httpOnly: true,
-      secure: true,
-      path: "/",
-      sameSite: "strict",
-      expires: refreshTokenExpiresIn,
-    });
-    res.cookie("csrf_token", csrf_token, {
-      httpOnly: false, // needs to be accessible via JS, so we can add it to the Headers
-      // (if its was HTTP only it would achieve nothing)
-      secure: true,
-      path: "/",
-      sameSite: "strict",
-      expires: csrfTokenExpiresIn,
-    });
+    };
+
+    if (process.env.NODE_ENV === "production") {
+      cookieOptions.domain = ".iforge.sheffield.ac.uk";
+    }
+
+    res.cookie("access_token", access_token, cookieOptions);
+
+    cookieOptions.expires = refreshTokenExpiresIn;
+    res.cookie("refresh_token", refresh_token, cookieOptions);
+
+    cookieOptions.httpOnly = false;
+    cookieOptions.expires = csrfTokenExpiresIn;
+    res.cookie("csrf_token", csrf_token, cookieOptions);
   }
 
   clearAuthCookies(res: Response) {
-    res.clearCookie("access_token", {
+    const cookieOptions: CookieOptions = {
       httpOnly: true,
       secure: true,
       path: "/",
-      sameSite: "strict",
+      sameSite: "lax",
       expires: new Date(0),
-    });
+    };
 
-    res.clearCookie("refresh_token", {
-      httpOnly: true,
-      secure: true,
-      path: "/",
-      sameSite: "strict",
-      expires: new Date(0),
-    });
+    if (process.env.NODE_ENV === "production") {
+      cookieOptions.domain = ".iforge.sheffield.ac.uk";
+    }
+
+    res.clearCookie("access_token", cookieOptions);
+
+    res.clearCookie("refresh_token", cookieOptions);
   }
 }

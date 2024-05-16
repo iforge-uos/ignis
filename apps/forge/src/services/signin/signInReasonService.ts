@@ -1,7 +1,7 @@
 //signinRasonService.ts
 import axiosInstance from "@/api/axiosInstance.ts";
 import { SIGN_IN_REASONS_STORAGE_KEY } from "@/config/constants.ts";
-import { Reason } from "@ignis/types/sign_in";
+import { Location, PartialReason, Reason } from "@ignis/types/sign_in";
 import { UseQueryResult, useQuery } from "@tanstack/react-query";
 
 type LocalSignInReasonsData = {
@@ -19,6 +19,11 @@ export const fetchSignInReasons = async (): Promise<Reason[]> => {
   const response = await axiosInstance.get("sign-in-reasons");
   return response.data;
 };
+
+export const getCommonReasons = async (location: Location): Promise<PartialReason[]> => {
+  const {data} =  await axiosInstance.get(`/location/${location}/common-reasons`);
+  return data
+}
 
 export const useSignInReasons = (): UseQueryResult<Reason[], unknown> => {
   return useQuery({

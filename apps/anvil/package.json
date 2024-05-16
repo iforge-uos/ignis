@@ -12,7 +12,7 @@
     "start:debug": "OP_ACCOUNT=iforge.1password.com op run --env-file=../../config/anvil/.env.development.tpl -- nest start --debug --watch --preserveWatchOutput",
     "start:prod": "OP_ACCOUNT=iforge.1password.com op run --env-file=../../config/anvil/.env.production.tpl -- node dist/src/main",
     "start:prod:docker": "node dist/src/main.js",
-    "start:email": "op run --env-file=.dev.env -- email preview src/email/templates",
+    "start:email": "op run --env-file=../../config/anvil/.env.development.tpl -- email preview src/email/templates",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -108,19 +108,13 @@
     "typescript": "^5.4.5"
   },
   "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
+    "moduleFileExtensions": ["js", "json", "ts"],
     "rootDir": "src",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
+    "collectCoverageFrom": ["**/*.(t|j)s"],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   }
