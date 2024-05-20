@@ -514,23 +514,26 @@ export class SignInService implements OnModuleInit {
   }
 
   async preSignInChecks(location: Location, ucard_number: number, post: boolean = false) {
-    if (await this.queueInUse(location)) {
-      this.logger.log(
-        `Queue in use, Checking if user: ${ucard_number} has queued at location: ${location}`,
-        SignInService.name,
-      );
-      await this.assertHasQueued(location, ucard_number);
-      if (post) {
-        await this.dbService.query(
-          e.delete(e.sign_in.QueuePlace, (place) => ({
-            filter_single: e.op(place.user.ucard_number, "=", ucard_number),
-          })),
+    if ((await this.getAvailableCapacity(location)) <= 0) {
+      if (await this.queueInUse(location)) {
+        this.logger.log(
+          `Queue in use, Checking if user: ${ucard_number} has queued at location: ${location}`,
+          SignInService.name,
+        );
+        await this.assertHasQueued(location, ucard_number);
+      } else {
+        throw new HttpException(
+          "Failed to sign in, we are at max capacity. Consider using the queue",
+          HttpStatus.SERVICE_UNAVAILABLE,
         );
       }
-    } else if (!(await this.canSignIn(location))) {
-      throw new HttpException(
-        "Failed to sign in, we are at max capacity. Consider using the queue",
-        HttpStatus.SERVICE_UNAVAILABLE,
+    }
+    if (post) {
+      // try and delete them from the queue if they're signing in for real
+      await this.dbService.query(
+        e.delete(e.sign_in.QueuePlace, (place) => ({
+          filter_single: e.op(place.user.ucard_number, "=", ucard_number),
+        })),
       );
     }
 
@@ -694,15 +697,15 @@ export class SignInService implements OnModuleInit {
       throw new HttpException("Queue has been manually disabled", HttpStatus.SERVICE_UNAVAILABLE);
     }
     const queuing = await this.dbService.query(
-      e.count(
+      e.op(
+        "exists",
         e.select(e.sign_in.QueuePlace, (place) => ({
           filter: e.op(place.location, "=", castLocation(location)),
-          limit: 1,
         })),
       ),
     );
     this.logger.debug(`Queue Enabled: ${queuing as unknown as boolean}`, SignInService.name);
-    return queuing > 0 || !(await this.canSignIn(location));
+    return queuing || !(await this.canSignIn(location));
   }
 
   async assertHasQueued(location: Location, ucard_number: number) {
