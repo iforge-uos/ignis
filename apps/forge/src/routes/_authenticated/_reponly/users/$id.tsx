@@ -48,7 +48,7 @@ export default function Component() {
   const { user, trainings, signIns } = data!;
   const rep = user.roles.some((role) => role.name === "Rep");
   const locationIcon = (training: Training) => {
-    return training.locations.map((location) => <LocationIcon location={location} />);
+    return training.locations.map((location) => <LocationIcon location={location} key={training.id} />);
   };
 
   return (
@@ -68,7 +68,9 @@ export default function Component() {
                 <div className="text-sm mt-2">Roles</div>
                 <div className="flex flex-wrap">
                   {user.roles.map((role) => (
-                    <Badge variant="outline">{role.name}</Badge>
+                    <Badge variant="outline" key={role.id}>
+                      {role.name}
+                    </Badge>
                   ))}
                 </div>
               </div>

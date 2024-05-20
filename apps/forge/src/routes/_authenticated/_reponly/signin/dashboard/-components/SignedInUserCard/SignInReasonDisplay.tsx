@@ -23,7 +23,7 @@ export const SignInReasonWithToolsDisplay: React.FC<SignInReasonWithToolsDisplay
           </div>
           <div className="flex flex-wrap gap-1 mt-2 justify-center">
             {tools.sort().map((tool) => (
-              <Badge variant="default" className="max-w-48 rounded-sm shadow-lg text-center">
+              <Badge variant="default" className="max-w-48 rounded-sm shadow-lg text-center" key={tool}>
                 {tool}
               </Badge>
             ))}

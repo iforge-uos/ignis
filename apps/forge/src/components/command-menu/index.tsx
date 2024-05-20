@@ -96,7 +96,7 @@ export default function CommandMenu() {
                 })}
               </CommandGroup>
             );
-            return index < array.length - 1 ? [group, <CommandSeparator />] : [group];
+            return index < array.length - 1 ? [group, <CommandSeparator key={group.key} />] : [group];
           })}
         </CommandList>
       </CommandDialog>
