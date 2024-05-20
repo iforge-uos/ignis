@@ -87,9 +87,11 @@ export const QueuedUserCard: React.FC<QueuedUserCardProps> = ({ place, onDequeue
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button onClick={handleDequeue} variant="destructive">
-                <Delete />
-                <span className="ml-1.5">Dequeue</span>
+              <Button onClick={handleDequeue} variant="destructive" className="flex-grow">
+                <div className="flex items-center">
+                  <Delete />
+                  <span className="ml-1.5">Dequeue</span>
+                </div>
               </Button>
             </TooltipTrigger>
             <TooltipContent>
