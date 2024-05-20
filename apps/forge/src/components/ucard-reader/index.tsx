@@ -1,8 +1,9 @@
+import { useUser } from "@/lib/utils";
 import { signinActions } from "@/redux/signin.slice";
 import { AppDispatch, AppRootState } from "@/redux/store";
 import { GetSignIn, PostSignOut } from "@/services/signin/signInService";
 import { useQueryClient } from "@tanstack/react-query";
-import {  useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,8 +15,13 @@ export default function UCardReader() {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const user = useUser();
+  const rep = user?.roles.some((role) => role.name === "Rep");
 
   useEffect(() => {
+    if (!rep) {
+      return;
+    }
     const down = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement) {
         // TODO capture the input if a ucard is detected. This should be possible assuming the card reader is fast af
@@ -27,7 +33,7 @@ export default function UCardReader() {
     };
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
-  }, []);
+  }, [rep]);
 
   useEffect(() => {
     (async () => {
@@ -41,21 +47,27 @@ export default function UCardReader() {
         keysPressed[keysPressed.length - 1].key === "Enter" && // Last key press is "Enter"
         keysPressed[keysPressed.length - 1].timestamp - keysPressed[0].timestamp < 10_000 // All entered in 10ms
       ) {
-        const userProps = { uCardNumber, locationName: activeLocation, signal: undefined as any };
+        const userProps = {
+          uCardNumber,
+          locationName: activeLocation,
+          signal: undefined as any,
+          params: { fast: true },
+        };
         const matchingUser = await GetSignIn(userProps);
 
         const PopUp = (action: string, onClick: () => Promise<any>) => {
           return (
             <div className="flex justify-between items-center">
               <div>
-                <div className="pr-3">
-                  {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
-                  <text // TODO this should be a Link element, no idea why tanstack breaks
-                    className="font-bold hover:underline hover:cursor-pointer"
-                    onClick={() => navigate({ to: "/users/$id", params: matchingUser })}
-                  >
+                <div className="pr-3 text-m">
+                  {/* <Link
+                      className="font-bold hover:underline hover:cursor-pointer"
+                     to="/users/$id"
+                     params={matchingUser}
+                  */}
+                  <a className="font-bold hover:underline hover:cursor-pointer" href={`/users/${matchingUser.id}`}>
                     {matchingUser.display_name}
-                  </text>{" "}
+                  </a>{" "}
                   would like to sign {action}.
                 </div>
                 <div>Sign {action} this user?</div>
@@ -68,18 +80,27 @@ export default function UCardReader() {
         };
 
         if (matchingUser.signed_in) {
-          toast(
+          const t = toast(
             PopUp("out", async () => {
-              try {
-                await PostSignOut(userProps);
-              } catch (e) {
-                return toast.error(`Failed to sign out user ${uCardNumber}`, {
-                  description: (e as any).toString(),
-                });
-              }
-
-              queryClient.invalidateQueries({ queryKey: ["locationStatus", "locationList", { activeLocation }] });
-              toast.success(`Successfully signed out ${uCardNumber}`);
+              toast.promise(PostSignOut(userProps), {
+                id: t,
+                loading: "Loading...",
+                error: (e) => {
+                  return (
+                    <>
+                      <a className="font-bold hover:underline hover:cursor-pointer" href={`/users/${matchingUser.id}`}>
+                        {matchingUser.display_name}
+                      </a>
+                      <br />
+                      {(e as any).toString()}
+                    </>
+                  );
+                },
+                success: () => {
+                  queryClient.invalidateQueries({ queryKey: ["locationStatus", "locationList", { activeLocation }] });
+                  return `Successfully signed out ${uCardNumber}`;
+                },
+              });
             }),
           );
         } else {
@@ -93,10 +114,16 @@ export default function UCardReader() {
               navigation_is_backtracking: false,
             }),
           );
-          toast(PopUp("in", () => navigate({ to: "/signin/actions/in-faster" })));
+          const t = toast(
+            PopUp("in", async () => {
+              navigate({ to: "/signin/actions/in-faster" });
+              toast.dismiss(t); // auto-dismiss to avoid invalid state if the user re-clicks
+            }),
+          );
         }
       }
     })();
   }, [keysPressed, activeLocation]);
+
   return undefined;
 }

@@ -5,18 +5,20 @@ export interface GetSignInProps {
   locationName: string;
   uCardNumber: string;
   signal: AbortSignal;
+  params?: { fast: boolean };
 }
 
-export const GetSignIn = async ({ locationName, uCardNumber, signal }: GetSignInProps): Promise<User> => {
+export const GetSignIn = async ({ locationName, uCardNumber, signal, params }: GetSignInProps): Promise<User> => {
   try {
     const { data } = await axiosInstance.get(`/location/${locationName}/sign-in/${uCardNumber}`, {
       signal: signal,
       timeout: 10_000,
       timeoutErrorMessage: "Timed out waiting for the user's info.",
+      params,
     });
     return data;
   } catch (error) {
-    console.error("An error occurred while Getting Sign In:", error);
+    console.error("An error occurred while Getting Sign In:", error, params);
     throw error;
   }
 };

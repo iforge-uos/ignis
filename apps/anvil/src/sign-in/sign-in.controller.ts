@@ -21,11 +21,13 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Req,
   UseGuards,
   UseInterceptors,
 } from "@nestjs/common";
 import { Logger } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
+import { Request } from "express";
 import { FinaliseSignInDto, UpdateSignInDto } from "./dto/sigs-in-dto";
 import { SignInService } from "./sign-in.service";
 
@@ -50,20 +52,22 @@ export class SignInController {
   async signInOptions(
     @Param("location") location: Location,
     @Param("ucard_number") ucard_number: string,
+    @Req() request: Request,
   ): Promise<sign_in_.User> {
     this.logger.log(
       `Retrieving sign-in options for UCard number: ${ucard_number} at location: ${location}`,
       SignInController.name,
     );
     const user = await this.signInService.getUserForSignIn(location, ucard_number);
-    if (user.signed_in) {
+    if (user.signed_in && request.query?.fast !== "true") {
+      // fast is from the UCardReader component can't think of a better name
       throw new BadRequestException({
         message: "User is already signed in",
         code: ErrorCodes.already_signed_in_to_location,
       });
     }
 
-    if (user?.is_rep) {
+    if (user.is_rep) {
       return {
         // reasons,
         training: await this.signInService.getTrainings(user.id, location),
