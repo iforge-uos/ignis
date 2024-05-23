@@ -68,7 +68,7 @@ export default function TrainingLocation({ location, img, optionalTrainingText }
             className="flex justify-center aspect-[32/9] object-cover"
             src={`${import.meta.env.VITE_CDN_URL}/files/mainspace_training.jpg`}
           />
-          <div className="mx-auto max-w-[600px] text-accent-foreground">
+          <div className="mx-auto max-w-[600px] text-accent-foreground sm:text-2xl md:text-3xl">
             Complete the following trainings to gain access to the machines and tools in the {name}.
           </div>
         </div>
@@ -79,7 +79,7 @@ export default function TrainingLocation({ location, img, optionalTrainingText }
           <div className="grid items-center gap-4 px-4 text-center lg:gap-6">
             <div className="space-y-3">
               <h1 className="text-4xl font-bold tracking-wide sm:text-5xl md:text-6xl">Compulsory Training</h1>
-              <div className="mx-auto max-w-[600px] text-accent-foreground">
+              <div className="mx-auto max-w-[600px] text-accent-foreground sm:text-lg md:text-xl">
                 Complete these trainings to gain access to the {name}.
               </div>
             </div>
@@ -99,7 +99,7 @@ export default function TrainingLocation({ location, img, optionalTrainingText }
           <div className="grid items-center gap-4 px-4 text-center lg:gap-6">
             <div className="space-y-3">
               <h1 className="text-4xl font-bold tracking-wide sm:text-5xl md:text-6xl">Machine & Equipment Training</h1>
-              <div className="mx-auto max-w-[600px] text-accent-foreground">
+              <div className="mx-auto max-w-[600px] text-accent-foreground sm:text-lg md:text-xl">
                 Extra trainings for machines/tools such as the {optionalTrainingText}.
               </div>
             </div>
