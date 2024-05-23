@@ -1,54 +1,46 @@
 import React from "react";
 import { Link } from "@tanstack/react-router";
-import { Card, CardContent, CardDescription, CardTitle } from "@ui/components/ui/card";
-import { Separator } from "@ui/components/ui/separator";
 
 interface IndexCardProps {
-    to?: string;
-    imageSrc: string;
-    imageAlt: string;
-    title: string;
-    description: string;
-    onClick?: () => void;
+  to?: string;
+  imageSrc: string;
+  imageAlt: string;
+  title: string;
+  description: string;
+  onClick?: () => void;
 }
 
 const IndexCard: React.FC<IndexCardProps> = ({ to, imageSrc, imageAlt, title, description, onClick }) => {
-    return (
-        <Card className="w-full transition-all duration-300 hover:shadow-lg group flex flex-col gap-2.5 p-4 border rounded-lg md:gap-4 md:p-8">
-            <br />
-            {to ? (
-                <Link to={to}>
-                    <CardContent className="m-4">
-                        <CardTitle className="text-3xl font-semibold">{title}</CardTitle>
-                        <Separator className="my-2" />
-                        <br />
-                        <div className="overflow-hidden rounded-md">
-                            <img
-                                alt={imageAlt}
-                                height="100"
-                                src={imageSrc}
-                                className="aspect-[2/1] object-cover transition-transform duration-300 group-hover:scale-105"
-                            />
-                        </div>
-                        <CardDescription className="text-lg mt-2">{description}</CardDescription>
-                    </CardContent>
-                </Link>
-            ) : (
-                <CardContent className="m-4" onClick={onClick}>
-                    <div className="overflow-hidden rounded-md">
-                        <img
-                            alt={imageAlt}
-                            height="100"
-                            src={imageSrc}
-                            className="aspect-[2/1] object-cover transition-transform duration-300 group-hover:scale-105"
-                        />
-                    </div>
-                    <CardTitle className="text-3xl font-semibold mt-4">{title}</CardTitle>
-                    <CardDescription className="text-lg mt-2 text-balance">{description}</CardDescription>
-                </CardContent>
-            )}
-        </Card>
-    );
+  const CardContent = () => (
+    <div className="group relative w-full max-w-sm cursor-pointer overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:scale-105 hover:shadow-lg">
+      <img
+        alt={imageAlt}
+        className="h-60 w-full object-cover"
+        height="240"
+        src={imageSrc}
+        style={{
+          aspectRatio: "360/240",
+          objectFit: "cover",
+        }}
+        width="360"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 px-6 pb-6">
+        <h3 className="text-xl font-bold text-white">{title}</h3>
+        <p className="mt-2 text-sm text-gray-300 text-balance">{description}</p>
+      </div>
+    </div>
+  );
+
+  return to ? (
+    <Link to={to}>
+      <CardContent />
+    </Link>
+  ) : (
+    <div onClick={onClick} onKeyDown={onClick}>
+      <CardContent />
+    </div>
+  );
 };
 
 export default IndexCard;
