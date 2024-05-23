@@ -1,8 +1,10 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { Forbidden } from "@/components/routing/Forbidden";
+import { useUser } from "@/lib/utils";
+import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   beforeLoad: ({ context, location }) => {
-    if (!context.auth.user?.roles.find((role) => role.name === "Admin")) {
+    if (!context.auth.user) {
       throw redirect({
         to: "/auth/login",
         search: {
@@ -10,5 +12,11 @@ export const Route = createFileRoute("/_authenticated/admin")({
         },
       });
     }
+  },
+  component: () => {
+    if (!useUser()!.roles.find((role) => role.name === "Admin")) {
+      return <Forbidden />;
+    }
+    return <Outlet />;
   },
 });
