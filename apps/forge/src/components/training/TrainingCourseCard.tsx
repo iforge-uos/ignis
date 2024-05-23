@@ -5,40 +5,53 @@ import { Button } from "@ui/components/ui/button";
 import { Card } from "@ui/components/ui/card";
 import { Separator } from "@ui/components/ui/separator";
 
-export default function TrainingCourseCard({
-  training,
-  isRep,
-}: {
+interface TrainingCourseCardProps {
   training: PartialTrainingWithStatus;
   isRep: boolean;
-}) {
+}
+
+export default function TrainingCourseCard({
+                                             training,
+                                             isRep,
+                                           }: TrainingCourseCardProps) {
   return (
-    <Card className="flex flex-col gap-2.5 p-4 border rounded-lg md:gap-4 md:p-8 hover:bg-accent">
-      <div className="space-y-1 text-center md:text-left">
-        <h3 className="text-lg font-bold">{training.name}</h3>
-        <Separator />
-        <img
-          src="https://wallpapers.com/images/featured-full/super-cool-pictures-h943jt67w6kqn4e6.jpg"
-          alt={training.name}
-          height="100"
-          className="aspect-[4/3] object-scale-down"
-        />
-        <div className="text-sm text-accent-foreground">
-          <TrainingContent content={training.description} />
+      <Card className="w-full max-w-sm overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:scale-105 hover:shadow-lg flex flex-col">
+        <div className="rounded-t-lg overflow-hidden">
+          <img
+              alt={training.name}
+              className="w-full h-full object-cover"
+              height="200"
+              src="https://wallpapers.com/images/featured-full/super-cool-pictures-h943jt67w6kqn4e6.jpg"
+              style={{
+                aspectRatio: "400/200",
+                objectFit: "cover",
+              }}
+              width="400"
+          />
         </div>
-      </div>
-      <div className="mt-auto flex gap-1 min-[200px]:flex-row w-full justify-between">
-        <Link to="/training/$id" params={training}>
-          <Button className="flex h-8 rounded-md border text-xs md:h-10 md:px-4 md:text-sm">{training.status}</Button>
-        </Link>
-        {isRep && training.rep !== null && (
-          <Link to="/training/$id" params={training.rep!}>
-            <Button className="flex h-8 rounded-md border text-xs md:h-10 md:px-4 md:text-sm">
-              {`${training.rep.status} Rep Training`}
-            </Button>
-          </Link>
-        )}
-      </div>
-    </Card>
+        <div className="p-4 flex flex-col justify-between flex-grow">
+          <div>
+            <h3 className="text-2xl font-bold text-primary mb-2 text-balance">{training.name}</h3>
+            <Separator />
+            <div className="text-sm text-muted-foreground mt-2 text-balance">
+              <TrainingContent content={training.description} />
+            </div>
+          </div>
+          <div className="flex justify-between mt-4">
+            <Link to="/training/$id" params={training}>
+              <Button variant={"default"}>
+                {training.status}
+              </Button>
+            </Link>
+            {isRep && training.rep !== null && (
+                <Link to="/training/$id" params={training.rep!}>
+                  <Button variant={"outline"}>
+                    {`${training.rep.status} Rep Training`}
+                  </Button>
+                </Link>
+            )}
+          </div>
+        </div>
+      </Card>
   );
 }
