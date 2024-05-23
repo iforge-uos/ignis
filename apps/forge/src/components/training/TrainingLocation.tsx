@@ -1,4 +1,5 @@
 import Title from "@/components/title";
+import { locationNameToCSSName } from "@/config/constants.ts";
 import { extractError, toTitleCase, useUser } from "@/lib/utils";
 import { getLocation } from "@/services/training/getLocation";
 import { getStatus } from "@/services/training/getStatus";
@@ -6,9 +7,9 @@ import { Location, PartialTrainingWithStatus } from "@ignis/types/training";
 import { useQuery } from "@tanstack/react-query";
 import { Loader } from "@ui/components/ui/loader";
 import { Separator } from "@ui/components/ui/separator";
+import ImageWithPlaceholder from "../loading/img";
+import ImageGradient from "./ImageGradient";
 import TrainingCourseCard from "./TrainingCourseCard";
-import ImageGradient from "@/components/training/ImageGradient.tsx";
-import {locationNameToCSSName} from "@/config/constants.ts";
 
 // don't ask why this is in the components folder
 async function getData(location: Location): Promise<PartialTrainingWithStatus[]> {
@@ -45,39 +46,41 @@ export default function TrainingLocation({ location, optionalTrainingText }: Tra
   }
   if (error) {
     return (
-        <>
-          An error occurred fetching trainings
-          <br />
-          {extractError(error!)}
-        </>
+      <>
+        An error occurred fetching trainings
+        <br />
+        {extractError(error!)}
+      </>
     );
   }
   const { compulsory, not_compulsory } = trainings!.reduce(
-      (acc, training) => {
-        training.compulsory ? acc.compulsory.push(training) : acc.not_compulsory.push(training);
-        return acc;
-      },
-      { compulsory: [] as PartialTrainingWithStatus[], not_compulsory: [] as PartialTrainingWithStatus[] },
+    (acc, training) => {
+      training.compulsory ? acc.compulsory.push(training) : acc.not_compulsory.push(training);
+      return acc;
+    },
+    { compulsory: [] as PartialTrainingWithStatus[], not_compulsory: [] as PartialTrainingWithStatus[] },
   );
 
   const gradientColor = locationNameToCSSName(location);
 
-
   return (
-      <>
-        <Title prompt={`${name} Training`} />
-        <div className="container grid items-center gap-4 px-4 py-12">
-          <div className="space-y-3 text-center">
-            <h1 className="text-4xl font-bold tracking-wide sm:text-5xl md:text-6xl">{name} Training</h1>
+    <>
+      <Title prompt={`${name} Training`} />
+      <div className="container grid items-center gap-4 px-4 py-12">
+        <div className="space-y-3 text-center">
+          <h1 className="text-4xl font-bold tracking-wide sm:text-5xl md:text-6xl">{name} Training</h1>
+          <div className="group relative w-full max-w-m rounded-lg shadow-md">
             <ImageGradient
-                imageSrc={`${import.meta.env.VITE_CDN_URL}/files/mainspace_training.jpg`}
-                imageAlt={`${name} Image`}
-                gradientColor={gradientColor}
-                maxHeight="500px"
-                aspectRatio="32/9"
+              imageSrc={`${import.meta.env.VITE_CDN_URL}/files/mainspace_training.jpg`}
+              imageAlt={location}
+              gradientColor={gradientColor}
+              className="object-center"
+              aspectRatio="32/9"
             />
-            <div className="mx-auto max-w-[600px] text-accent-foreground sm:text-2xl md:text-3xl">
-              Complete the following trainings to gain access to the machines and tools in the {name}.
+            <div className="absolute bottom-0 left-0 right-0 px-6 pb-4">
+              <p className="text-gray-300 sm:text-l md:text-xl">
+                Complete the following trainings to gain access to the machines and tools in the {name}.
+              </p>
             </div>
           </div>
         </div>
@@ -93,10 +96,10 @@ export default function TrainingLocation({ location, optionalTrainingText }: Tra
               </div>
               <div className="grid gap-4 align-middle w-full grid-cols-1 items-stretch justify-center md:grid-cols-2 lg:grid-cols-3">
                 {compulsory
-                    .sort((a, b) => a.name.localeCompare(b.name))
-                    .map((training) => (
-                        <TrainingCourseCard key={training.id} training={training} isRep={isRep} />
-                    ))}
+                  .sort((a, b) => a.name.localeCompare(b.name))
+                  .map((training) => (
+                    <TrainingCourseCard key={training.id} training={training} isRep={isRep} />
+                  ))}
               </div>
             </div>
           </div>
@@ -106,21 +109,24 @@ export default function TrainingLocation({ location, optionalTrainingText }: Tra
           <div className="container py-12 md:py-16">
             <div className="grid items-center gap-4 px-4 text-center lg:gap-6">
               <div className="space-y-3">
-                <h1 className="text-4xl font-bold tracking-wide sm:text-5xl md:text-6xl">Machine & Equipment Training</h1>
+                <h1 className="text-4xl font-bold tracking-wide sm:text-5xl md:text-6xl">
+                  Machine & Equipment Training
+                </h1>
                 <div className="mx-auto max-w-[600px] text-accent-foreground sm:text-lg md:text-xl">
                   Extra trainings for machines/tools such as the {optionalTrainingText}.
                 </div>
               </div>
               <div className="grid gap-4 align-middle w-full grid-cols-1 items-stretch justify-center md:grid-cols-2 lg:grid-cols-3">
                 {not_compulsory
-                    .sort((a, b) => a.name.localeCompare(b.name))
-                    .map((training) => (
-                        <TrainingCourseCard key={training.id} training={training} isRep={isRep} />
-                    ))}
+                  .sort((a, b) => a.name.localeCompare(b.name))
+                  .map((training) => (
+                    <TrainingCourseCard key={training.id} training={training} isRep={isRep} />
+                  ))}
               </div>
             </div>
           </div>
         </div>
-      </>
+      </div>
+    </>
   );
 }
