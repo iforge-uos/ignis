@@ -63,11 +63,11 @@ export default function TrainingLocation({ location, img, optionalTrainingText }
       <Title prompt={`${name} Training`} />
       <div className="container grid items-center gap-4 px-4 py-12">
         <div className="space-y-3 text-center">
-          <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">{name} Training</h1>
-          {/* <img
-              className="flex justify-center"
-              src="https://training.iforge.shef.ac.uk/attachments/442?version=large&ts=1707320456"
-            /> */}
+          <h1 className="text-4xl font-bold tracking-wide sm:text-5xl md:text-6xl">{name} Training</h1>
+          <img
+            className="flex justify-center"
+            src="https://training.iforge.shef.ac.uk/attachments/442?version=large&ts=1707320456"
+          />
           <div className="mx-auto max-w-[600px] text-accent-foreground">
             Complete the following trainings to gain access to the machines and tools in the {name}.
           </div>
@@ -78,7 +78,7 @@ export default function TrainingLocation({ location, img, optionalTrainingText }
         <div className="container py-12 md:py-16">
           <div className="grid items-center gap-4 px-4 text-center lg:gap-6">
             <div className="space-y-3">
-              <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">Compulsory Training</h1>
+              <h1 className="text-4xl font-bold tracking-wide sm:text-5xl md:text-6xl">Compulsory Training</h1>
               <div className="mx-auto max-w-[600px] text-accent-foreground">
                 Complete these trainings to gain access to the {name}.
               </div>
@@ -87,7 +87,7 @@ export default function TrainingLocation({ location, img, optionalTrainingText }
               {compulsory
                 .sort((a, b) => a.name.localeCompare(b.name))
                 .map((training) => (
-                  <TrainingCourseCard training={training} isRep={isRep} />
+                  <TrainingCourseCard key={training.id} training={training} isRep={isRep} />
                 ))}
             </div>
           </div>
@@ -98,9 +98,7 @@ export default function TrainingLocation({ location, img, optionalTrainingText }
         <div className="container py-12 md:py-16">
           <div className="grid items-center gap-4 px-4 text-center lg:gap-6">
             <div className="space-y-3">
-              <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
-                Machine & Equipment Training
-              </h1>
+              <h1 className="text-4xl font-bold tracking-wide sm:text-5xl md:text-6xl">Machine & Equipment Training</h1>
               <div className="mx-auto max-w-[600px] text-accent-foreground">
                 Extra trainings for machines/tools such as the {optionalTrainingText}.
               </div>
@@ -109,7 +107,7 @@ export default function TrainingLocation({ location, img, optionalTrainingText }
               {not_compulsory
                 .sort((a, b) => a.name.localeCompare(b.name))
                 .map((training) => (
-                  <TrainingCourseCard training={training} isRep={isRep} />
+                  <TrainingCourseCard key={training.id} training={training} isRep={isRep} />
                 ))}
             </div>
           </div>
