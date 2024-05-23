@@ -1,4 +1,7 @@
+import { cn } from "@/lib/utils";
 import React from "react";
+import { useMediaQuery } from "react-responsive";
+import ImageWithPlaceholder from "../loading/img";
 
 interface ImageGradientProps {
   imageSrc: string;
@@ -6,6 +9,8 @@ interface ImageGradientProps {
   gradientColor: string;
   maxHeight?: string;
   aspectRatio?: string;
+  gradientAmount?: number; // must be in [0, 1]
+  className?: string;
 }
 
 const ImageGradient: React.FC<ImageGradientProps> = ({
@@ -14,22 +19,24 @@ const ImageGradient: React.FC<ImageGradientProps> = ({
   gradientColor,
   maxHeight = "400px",
   aspectRatio = "360/240",
+  gradientAmount = 0.5,
+  className,
 }) => {
+  const isMediumScreen = useMediaQuery({ minWidth: 768 });
+  const gradientPercentage = `${gradientAmount * 100 * (isMediumScreen ? 1 : 1.25)}%`;
+
   return (
     <div className="relative w-full overflow-hidden rounded-lg" style={{ maxHeight }}>
-      <img
+      <ImageWithPlaceholder
         alt={imageAlt}
-        className="w-full h-full object-contain"
+        className={cn("w-full h-full object-cover", className)}
         src={imageSrc}
-        style={{
-          aspectRatio,
-          objectFit: "cover", // Ensure the entire image is visible within the container
-        }}
+        aspectRatio={aspectRatio}
       />
       <div
         className="absolute inset-0"
         style={{
-          background: `linear-gradient(to top, var(--${gradientColor}) 5%, transparent 50%)`,
+          background: `linear-gradient(to top, var(--${gradientColor}) 5%, transparent ${gradientPercentage})`,
         }}
       />
     </div>
