@@ -65,8 +65,8 @@ export default function TrainingLocation({ location, img, optionalTrainingText }
         <div className="space-y-3 text-center">
           <h1 className="text-4xl font-bold tracking-wide sm:text-5xl md:text-6xl">{name} Training</h1>
           <img
-            className="flex justify-center"
-            src="https://training.iforge.shef.ac.uk/attachments/442?version=large&ts=1707320456"
+            className="flex justify-center aspect-[32/9] object-cover"
+            src={`${import.meta.env.VITE_CDN_URL}/files/mainspace_training.jpg`}
           />
           <div className="mx-auto max-w-[600px] text-accent-foreground">
             Complete the following trainings to gain access to the machines and tools in the {name}.

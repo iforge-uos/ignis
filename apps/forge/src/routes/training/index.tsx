@@ -17,7 +17,6 @@ export default function Component() {
           </h1>
         </div>
         <div className="mb-8">
-          {" "}
           {/* // TODO add this */}
           <h2 className="text-2xl font-semibold text-center mb-4">Search for a course</h2>
           <div className="relative w-3/4 mx-auto">
@@ -30,18 +29,19 @@ export default function Component() {
         </div>
         <h4 className="text-3xl font-semibold mb-4">Locations</h4>
         <div className="grid grid-cols-3 gap-4 align-middle">
-          <Card className="w-full transition-all duration-300 hover:bg-accent group">
+          <Card className="w-full transition-all duration-300 hover:bg-accent group flex flex-col gap-2.5 p-4 border rounded-lg md:gap-4 md:p-8">
             <br />
             <Link to="/training/locations/mainspace">
               <CardContent className="m-4">
+                <CardTitle className="text-3xl">iForge Mainspace</CardTitle>
+                <Separator />
+                <br />
                 <img
                   alt="iForge Mainspace"
                   height="100"
                   src={`${import.meta.env.VITE_CDN_URL}/files/mainspace_training.jpg`}
                   className="aspect-[2/1] object-cover rounded-md transition-all duration-300 group-hover:grayscale"
                 />
-                <br />
-                <CardTitle className="text-3xl">iForge Mainspace</CardTitle>
                 <CardDescription className="text-lg">
                   Training for the iForge Mainspace located in the Diamond.
                 </CardDescription>
