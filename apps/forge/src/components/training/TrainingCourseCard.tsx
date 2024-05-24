@@ -16,7 +16,7 @@ export default function TrainingCourseCard({ training, isRep }: TrainingCourseCa
       <div className="rounded-t-lg overflow-hidden">
         <img
           alt={training.name}
-          className="w-full h-full object-cover aspect-[2/1]"
+          className="w-full h-full object-scale-down aspect-[2/1]"
           height="200"
           src="https://wallpapers.com/images/featured-full/super-cool-pictures-h943jt67w6kqn4e6.jpg"
         />
