@@ -1,16 +1,11 @@
-import { CheckAbilities } from "@/auth/authorization/decorators/check-abilities-decorator";
-import { IsAdmin, IsRep } from "@/auth/authorization/decorators/check-roles-decorator";
+import { IsRep } from "@/auth/authorization/decorators/check-roles-decorator";
 import { CaslAbilityGuard } from "@/auth/authorization/guards/casl-ability.guard";
 import { ErrorCodes } from "@/shared/constants/ErrorCodes";
 import { IdempotencyCache } from "@/shared/decorators/idempotency.decorator";
-import { User } from "@/shared/decorators/user.decorator";
 import { ldapLibraryToUcardNumber } from "@/shared/functions/utils";
 import { IdempotencyCacheInterceptor } from "@/shared/interceptors/idempotency-cache.interceptor";
-import { TrainingService } from "@/training/training.service";
-import { UsersService } from "@/users/users.service";
 import { sign_in as sign_in_ } from "@ignis/types";
 import type { Location, LocationName, PartialLocation } from "@ignis/types/sign_in";
-import type { User as User_ } from "@ignis/types/users";
 import {
   BadRequestException,
   Body,
@@ -35,9 +30,7 @@ import { SignInService } from "./sign-in.service";
 @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
 export class SignInController {
   constructor(
-    private readonly trainingService: TrainingService,
     private readonly signInService: SignInService,
-    private readonly userService: UsersService,
     private readonly logger: Logger,
   ) {}
 

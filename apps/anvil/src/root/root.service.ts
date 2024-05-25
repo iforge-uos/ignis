@@ -1,6 +1,7 @@
 import { createHash } from "crypto";
 import { EdgeDBService } from "@/edgedb/edgedb.service";
 import { LOCATIONS, SignInService } from "@/sign-in/sign-in.service";
+import { PartialUserProps } from "@/users/users.service";
 import e from "@dbschema/edgeql-js";
 import type { Agreement } from "@ignis/types/root";
 import type { LocationName, PartialLocation } from "@ignis/types/sign_in";
@@ -21,6 +22,30 @@ export class RootService {
     private readonly signInService: SignInService,
     private readonly dbService: EdgeDBService,
   ) {}
+
+  async getSignIn(id: string) {
+    let sign_in: any;
+    try {
+      sign_in = await this.dbService.query(
+        e.assert_exists(
+          e.select(e.sign_in.SignIn, () => ({
+            ...e.sign_in.SignIn["*"],
+            user: PartialUserProps,
+            reason: e.sign_in.SignInReason["*"],
+            filter_single: { id },
+          })),
+        ),
+      );
+    } catch (error) {
+      if (error instanceof CardinalityViolationError) {
+        throw new NotFoundException(`No sign in found with ID ${id}`);
+      }
+      throw error;
+    }
+
+    sign_in.duration = sign_in.duration.seconds;
+    return sign_in;
+  }
 
   async getAgreements(): Promise<Agreement[]> {
     return await this.dbService.query(
