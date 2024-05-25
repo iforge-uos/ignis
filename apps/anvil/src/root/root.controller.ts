@@ -1,7 +1,10 @@
 import { IsAdmin, IsRep } from "@/auth/authorization/decorators/check-roles-decorator";
 import { CaslAbilityGuard } from "@/auth/authorization/guards/casl-ability.guard";
+import { EmailService } from "@/email/email.service";
 import { GoogleService } from "@/google/google.service";
+import { IdempotencyCache } from "@/shared/decorators/idempotency.decorator";
 import { User as GetUser } from "@/shared/decorators/user.decorator";
+import { IdempotencyCacheInterceptor } from "@/shared/interceptors/idempotency-cache.interceptor";
 import { SignInService } from "@/sign-in/sign-in.service";
 import type { User } from "@ignis/types/users";
 import {
@@ -17,15 +20,12 @@ import {
   UseGuards,
   UseInterceptors,
 } from "@nestjs/common";
+import { Logger } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { Response } from "express";
 import { CreateAgreementDto, UpdateAgreementDto } from "./dto/agreement.dto";
 import { CreateSignInReasonCategoryDto } from "./dto/reason.dto";
 import { RootService } from "./root.service";
-import { Logger } from "@nestjs/common";
-import { EmailService } from "@/email/email.service";
-import { IdempotencyCacheInterceptor } from "@/shared/interceptors/idempotency-cache.interceptor";
-import { IdempotencyCache } from "@/shared/decorators/idempotency.decorator";
 
 @Controller()
 @UseInterceptors(IdempotencyCacheInterceptor)
@@ -41,6 +41,13 @@ export class RootController {
   @Get("status")
   async getStatus() {
     return await this.rootService.getStatus();
+  }
+
+  @Get("sign-ins/:id")
+  @IsRep() // TODO figure out how to make READ SELF work with this might be best handled in service tbh
+  @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
+  async getSignIn(@Param("id") id: string) {
+    return await this.rootService.getSignIn(id);
   }
 
   @Get("sign-in-reasons-last-update")
