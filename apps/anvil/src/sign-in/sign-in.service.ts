@@ -174,6 +174,7 @@ export class SignInService implements OnModuleInit {
         },
       ),
     );
+    await this.dbService.query(e.delete(e.sign_in.QueuePlace));
   }
 
   async removeUserFromQueueTask(location: Location, user: PartialUser) {
