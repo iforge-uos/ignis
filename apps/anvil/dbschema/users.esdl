@@ -44,6 +44,8 @@ module users {
         multi roles: auth::Role;
         multi infractions: Infraction;
 
+        multi bookings: machines::Booking;
+
         multi mailing_list_subscriptions: notification::MailingList;
         multi referrals: User {
             created_at: datetime {
