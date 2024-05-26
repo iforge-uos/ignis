@@ -6,7 +6,8 @@
   "license": "GPL-3.0-or-later",
   "private": true,
   "scripts": {
-    "build": "cargo build",
+    "build": "cargo build --release",
+    "build:dev": "cargo build",
     "format": "rustfmt src/*.rs --edition=2021",
     "start": "cargo run",
     "dev": "OP_ACCOUNT=iforge.1password.com op run --env-file=../../config/mine/.env.development.tpl -- cargo watch -x run",

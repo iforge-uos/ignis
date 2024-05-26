@@ -8,8 +8,30 @@ use actix_web::{
 use jsonwebtoken::{get_current_timestamp, DecodingKey, Validation};
 use resvg::{tiny_skia, usvg, usvg::TreeParsing};
 use serde::{Deserialize, Serialize};
-use std::{ffi::OsStr, fs, path::Path};
+use std::{ffi::OsStr, fs, path::{Path, PathBuf}};
 use uuid::Uuid;
+
+lazy_static::lazy_static! {
+    static ref JWT_SECRET: String =
+        std::env::var("JWT_SECRET").unwrap();
+    static ref KEY: DecodingKey = DecodingKey::from_secret(JWT_SECRET.as_bytes());
+
+    static ref ALLOWED_TO_UPLOAD: Vec<String> =
+        std::env::var("ALLOWED_TO_UPLOAD")
+        .unwrap()
+        .split(',')
+        .map(str::to_string)
+        .collect();
+
+    static ref MINE_PORT: u16 =
+        std::env::var("MINE_PORT")
+        .unwrap_or_else(|_| "4000".to_string())
+        .parse()
+        .expect("MINE_PORT must be a valid number");
+
+    static ref CONTENT_BASE_DIR: PathBuf =
+        PathBuf::from(std::env::var("CONTENT_BASE_DIR").unwrap_or_else(|_| "./".to_string()));
+}
 
 fn convert_svg(content: String, format: &OsStr) -> actix_web::Result<impl Responder> {
     let extension = format.to_str().expect("format wasn't valid utf-8");
@@ -57,9 +79,9 @@ fn convert_svg(content: String, format: &OsStr) -> actix_web::Result<impl Respon
 #[actix_web::get("icons/{name}")] // TODO params for size
 async fn icons(name: web::Path<String>) -> actix_web::Result<impl Responder> {
     let filename = Path::new(name.as_str());
-    let svg = Path::new("icons").join(filename.with_extension("svg"));
+    let svg = CONTENT_BASE_DIR.join("icons").join(filename.with_extension("svg"));
 
-    let read = match fs::read_to_string(svg) {
+    let read = match fs::read_to_string(&svg) {
         Ok(content) => content,
         _ => return Err(error::ErrorNotFound(format!("file {filename:?} not found"))),
     };
@@ -80,25 +102,6 @@ struct Claims {
     sub: String,
     exp: usize,
     roles: Vec<String>,
-}
-
-lazy_static::lazy_static! {
-    static ref JWT_SECRET: String =
-        std::env::var("JWT_SECRET").unwrap();
-    static ref KEY: DecodingKey = DecodingKey::from_secret(JWT_SECRET.as_bytes());
-
-    static ref ALLOWED_TO_UPLOAD: Vec<String> =
-        std::env::var("ALLOWED_TO_UPLOAD")
-        .unwrap()
-        .split(',')
-        .map(str::to_string)
-        .collect();
-
-    static ref MINE_PORT: u16 =
-        std::env::var("MINE_PORT")
-        .unwrap_or_else(|_| "4000".to_string())
-        .parse()
-        .expect("MINE_PORT must be a valid number");
 }
 
 #[actix_web::post("/upload")]
@@ -137,18 +140,19 @@ async fn files_upload(
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    // TODO if not present build caches images
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
 
     log::info!("starting HTTP server at http://localhost:{}", *MINE_PORT);
     log::info!("Allowed to upload: {:?}", *ALLOWED_TO_UPLOAD);
-    HttpServer::new(|| {
+    log::info!("Content base directory: {:?}", *CONTENT_BASE_DIR);
+
+    HttpServer::new(move || {
         App::new()
-            .service(Files::new("/files", "./files/"))
-            .service(Files::new("/fonts", "./fonts/").show_files_listing())
+            .service(Files::new("/files", CONTENT_BASE_DIR.join("files")))
+            .service(Files::new("/fonts", CONTENT_BASE_DIR.join("fonts")).show_files_listing())
             .service(files_upload)
             .service(icons)
-            .service(Files::new("/logos", "./logos/").show_files_listing())
+            .service(Files::new("/logos", CONTENT_BASE_DIR.join("logos")).show_files_listing())
             // .service(logos)
             .wrap(Logger::default())
             .wrap(Cors::permissive())
