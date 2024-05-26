@@ -26,7 +26,7 @@ const ImageGradient: React.FC<ImageGradientProps> = ({
   const gradientPercentage = `${gradientAmount * 100 * (isMediumScreen ? 1 : 1.25)}%`;
 
   return (
-    <div className="relative w-full overflow-hidden rounded-lg" style={{ maxHeight }}>
+    <div className="relative w-full overflow-hidden rounded-lg h-fit" style={{ maxHeight }}>
       <ImageWithPlaceholder
         alt={imageAlt}
         className={cn("w-full h-full object-cover", className)}
