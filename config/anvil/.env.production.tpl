@@ -22,7 +22,8 @@ DISCORD_CLIENT_CALLBACK_URL="http://127.0.0.1:3000/api/v1/authentication/discord
 # AUTH
 JWT_SECRET="op://IT/Anvil JWT Signing Key/credential"
 CSRF_SECRET="op://IT/Anvil CSRF Secret Key/credential"
-CSRF_EXCLUDE_ROUTES=auth/login,POST;auth/refresh,POST
+CSRF_EXCLUDE_ROUTES=auth/login,POST
+auth/refresh,POST
 ACCESS_TOKEN_EXPIRES_IN="1h"
 REFRESH_TOKEN_EXPIRES_IN="7d"
 
@@ -44,7 +45,7 @@ REDIS_DB="0"
 REDIS_PASSWORD="op://IT/Ignis Redis Password/password"
 
 # CDN
-CDN_URL="https://cdn.iforge.sheffield.ac.uk"
+CDN_URL="https://iforge.sheffield.ac.uk/cdn"
 ANVIL_PORT=3000
 
 # Front End
