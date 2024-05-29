@@ -8,7 +8,7 @@ A blazing fast, little HTTP server for hosting, converting and uploading files f
 ## Installation
 
 ```bash
-$ cargo install
+$ cargo build
 ```
 
 ## Running the app
