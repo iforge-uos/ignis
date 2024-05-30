@@ -98,7 +98,14 @@ export default function UCardReader() {
                 },
                 success: () => {
                   queryClient.invalidateQueries({ queryKey: ["locationStatus", "locationList", { activeLocation }] });
-                  return `Successfully signed out ${uCardNumber}`;
+                  return (
+                    <>
+                      Successfully signed out{" "}
+                      <a className="font-bold hover:underline hover:cursor-pointer" href={`/users/${matchingUser.id}`}>
+                        {matchingUser.display_name}
+                      </a>
+                    </>
+                  );
                 },
               });
             }),
