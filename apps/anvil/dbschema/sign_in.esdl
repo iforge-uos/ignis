@@ -21,13 +21,9 @@ module sign_in {
         required location: SignInLocation;
         required tools: array<str>;
         required reason: SignInReason;
-        signed_out: bool {
-            default := false;
-        }
-        # TODO
-        # required signed_out := {
-        #     exists .ends_at
-        # };
+        required signed_out := {
+            exists .ends_at
+        };
 
         constraint exclusive on (.user) except (.signed_out);
     }

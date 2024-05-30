@@ -168,7 +168,6 @@ export class SignInService implements OnModuleInit {
           return e.update(sign_in, () => ({
             set: {
               ends_at: new Date(),
-              signed_out: true,
             },
           }));
         },
@@ -456,7 +455,6 @@ export class SignInService implements OnModuleInit {
           ),
           tools,
           reason,
-          signed_out: false,
         }).user,
       );
     } catch (error) {
@@ -597,7 +595,6 @@ export class SignInService implements OnModuleInit {
           user,
           tools: [],
           reason,
-          signed_out: false,
         }),
       );
     } catch (error) {
@@ -669,7 +666,6 @@ export class SignInService implements OnModuleInit {
               filter_single: e.all(e.set(isCorrectLocation, userMatches, doesNotExist)),
               set: {
                 ends_at: new Date(),
-                signed_out: true,
               },
             };
           }),
