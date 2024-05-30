@@ -1,10 +1,11 @@
 // appLinks.ts
 import { Apps } from "@/types/app.ts";
+import { appRoutes } from "@/types/common";
 
 export type AppLink = {
   app: Apps; // Identifier for the app
   displayName: string; // User-facing name
-  path?: string; // Path for the link
+  path?: appRoutes; // Path for the link
   children?: AppLink[]; // Nested links, specific to the same app
   index?: number; // Index of the link in the navbar (PER LEVEL)
   id: string; // Unique identifier for the link
@@ -23,7 +24,6 @@ export const appLinks: AppLink[] = [
   {
     app: "Sign In",
     displayName: "Actions",
-    path: "/signin/actions",
     index: 2,
     id: "signin_actions_root",
     children: [
