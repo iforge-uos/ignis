@@ -62,7 +62,14 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
     },
     onSuccess: () => {
       abortController.abort();
-      toast.success(`Successfully signed out ${user.display_name}`);
+      toast.success(
+        <>
+          Successfully signed out{" "}
+          <a className="font-bold hover:underline hover:cursor-pointer" href={`/users/${user.id}`}>
+            {user.display_name}
+          </a>
+        </>,
+      );
       onSignOut?.();
       queryClient.invalidateQueries({ queryKey: ["locationStatus", "locationList", { activeLocation }] });
     },
