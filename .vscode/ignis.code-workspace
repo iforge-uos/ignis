@@ -1,0 +1,51 @@
+{
+  "folders": [
+    {
+      "name": "ROOT",
+      "path": "../",
+    },
+    {
+      "name": "Anvil",
+      "path": "../apps/anvil",
+    },
+    {
+      "name": "Forge",
+      "path": "../apps/forge",
+    },
+    {
+      "name": "Mine",
+      "path": "../apps/mine",
+    },
+    {
+      "name": "Errors",
+      "path": "../packages/errors",
+    },
+    {
+      "name": "Types",
+      "path": "../packages/types",
+    },
+    {
+      "name": "UI",
+      "path": "../packages/ui",
+    },
+    {
+      "name": "TS Config",
+      "path": "../tooling/ts-config",
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "node_modules/": true,
+      "apps/": true,
+      "tooling/": true,
+      "packages/": true
+    },
+  }, 
+  "extensions": {
+    "recommendations": [
+      "biomejs.biome",
+      "bradlc.vscode-tailwindcss",
+      "YoavBls.pretty-ts-errors",
+    ],
+  }
+}
