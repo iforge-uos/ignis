@@ -15,6 +15,7 @@ import { routeTree } from "@/routeTree.gen.ts";
 import { Toaster } from "@ui/components/ui/sonner.tsx";
 import posthog from "posthog-js";
 import { PersistGate } from "redux-persist/integration/react";
+import { Apps } from "./types/app";
 
 // Begin Router
 const queryClient = new QueryClient();
@@ -34,6 +35,9 @@ const router = createRouter({
 declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router;
+  }
+  interface StaticDataRouteOption {
+    title?: Apps;
   }
 }
 

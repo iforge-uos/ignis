@@ -25,4 +25,4 @@ const IndexComponent = () => {
   );
 };
 
-export const Route = createFileRoute("/")({ component: IndexComponent });
+export const Route = createFileRoute("/")({ component: IndexComponent, staticData: { title: "Main" } });
