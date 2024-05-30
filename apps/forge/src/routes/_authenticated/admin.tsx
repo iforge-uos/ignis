@@ -19,4 +19,5 @@ export const Route = createFileRoute("/_authenticated/admin")({
     }
     return <Outlet />;
   },
+  staticData: { title: "Admin" },
 });
