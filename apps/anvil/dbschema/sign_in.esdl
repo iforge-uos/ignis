@@ -19,7 +19,7 @@ module sign_in {
     type SignIn extending default::Timed {
         required user: users::User;
         required location: SignInLocation;
-        required tools: array<str>;
+        multi tools: machines::Machine;
         required reason: SignInReason;
         required signed_out := {
             exists .ends_at

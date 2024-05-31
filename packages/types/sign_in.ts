@@ -58,7 +58,7 @@ export type Training = Omit<users.Training, "locations" | "created_at" | "update
 };
 
 export type User = users.UserWithInfractions & {
-  training: Training[];
+  training: Training[]; // TODO tools
   registered: boolean;
   is_rep: boolean;
   signed_in: boolean;

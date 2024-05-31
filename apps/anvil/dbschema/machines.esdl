@@ -17,47 +17,55 @@ module machines {
         required status: Status;
 
         required is_bookable: bool;
-        multi booking_times: Booking;
+        multi bookings: Booking;
         max_booking_daily: cal::relative_duration;
         max_booking_weekly: cal::relative_duration;
         min_booking_time: cal::relative_duration;  # default is 1h for bookable machines
 
-        trigger checks after update for each do (
+        trigger booking_check after update for each do (
             with booking := (
-                select __new__.booking_times except __old__.booking_times  # get the newly inserted booking
+                select __new__.bookings except __old__.bookings  # get the newly inserted booking
             ),
+            user_bookings := (
+                select Booking filter .user = booking.user
+            )
             week_duration := (
                 select sum(
                     (
-                        select Booking filter (
-                            .user = booking.user
-                            and .created_at < datetime_of_statement() - <cal::relative_duration>"7d"
-                        )
+                        select user_bookings filter .created_at < datetime_of_statement() - <cal::relative_duration>"7d"
                     ).duration,
-                    booking.duration,
-                )
+                ) + booking.duration
             ),
             day_duration := (
                 select sum(
                     (
-                        select Booking filter (
-                            .user = booking.user
-                            and .created_at < datetime_of_statement() - <cal::relative_duration>"1d"
-                        )
+                        select user_bookings filter .created_at < datetime_of_statement() - <cal::relative_duration>"1d"
                     ).duration,
-                    booking.duration
-                )
+                ) + booking.duration
             ),
             select (
                 exists booking  # don't do anything if booking wasn't updated
                 and assert(__source__.is_bookable or __source__.status != Status.OUT_OF_ORDER, message := "This machine is not bookable")
-                and assert(booking.duration >= __source__.min_booking_time)
-                and assert()  # TODO check for overlaps
+                # and in location booking hours and ends_at isnt before starts_at
+                and assert(
+                    not exists (
+                        select __source__.bookings filter (
+                            booking.starts_at >= .starts_at and booking.ends_at <= .ends_at
+                        )
+                    ),
+                    message := "Booking overlaps with another booking."
+                )
+                and assert(
+                    booking.duration >= __source__.min_booking_time,
+                    message := (
+                        "Booking is too short, must be at least" ++ to_str(duration_to_seconds(__source__.min_booking_time) / 60) ++ " minutes"
+                    ),
+                )
                 and assert(
                     week_duration > __source__.max_booking_weekly,
                     message := (
                         "You can't book this machine for this long as you'll exceed your maximium time for this week by "
-                        ++ to_str(duration_get(__source__.max_booking_weekly - week_duration, "totalseconds") / 60)
+                        ++ to_str(duration_to_seconds(__source__.max_booking_weekly - week_duration) / 60)
                         ++ " minutes"
                     ),
                 )
@@ -65,12 +73,15 @@ module machines {
                     day_duration > __source__.max_booking_daily,
                     message := (
                         "You can't book this machine for this long as you'll exceed your maximium time for today by "
-                        ++ to_str(duration_get(__source__.max_booking_daily - day_duration, "totalseconds") / 60)
+                        ++ to_str(duration_to_seconds(__source__.max_booking_daily - day_duration) / 60)
                         ++ " minutes"
                     ),
                 )
             )
         )
+        # trigger status_check after update for each do (
+        #     dispatch notification somehow?
+        # )
     }
 
     type Booking extending default::Auditable {

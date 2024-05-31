@@ -21,7 +21,7 @@
     "../docker-compose.yml",
     "docker-compose.yml"
   ],
-  service: "",
+  "service": "",
   "mounts": [
     "source=${localWorkspaceFolderBasename}-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
     "source=${localWorkspaceFolder} ,target=/code,type=bind,consistency=cached"
