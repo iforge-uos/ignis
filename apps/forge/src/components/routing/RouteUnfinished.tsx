@@ -1,15 +1,10 @@
-import { useNavigate } from "@tanstack/react-router";
 import Title from "@/components/title";
+import { Link } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button.tsx";
-import React from "react";
 
 export const RouteUnfinished = () => {
-  const navigate = useNavigate();
-
-  const goToHome = () => navigate({ to: "/" });
-
   return (
-    <React.Fragment>
+    <>
       <Title prompt="Unfinished" />
       <div className="flex items-center justify-center w-full min-h-[80vh] px-4">
         <div className="grid items-center gap-4 text-center">
@@ -26,13 +21,13 @@ export const RouteUnfinished = () => {
               .
             </p>
           </div>
-          <div className="flex justify-center">
-            <Button variant="outline" onClick={goToHome}>
-              Go to Homepage
-            </Button>
+          <div className="flex justify-center space-x-2">
+            <Link to="/">
+              <Button variant="outline">Go to Homepage</Button>
+            </Link>
           </div>
         </div>
       </div>
-    </React.Fragment>
+    </>
   );
 };
