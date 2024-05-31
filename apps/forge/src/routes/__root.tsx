@@ -20,7 +20,7 @@ const TanStackRouterDevtools =
         })),
       );
 
-function RootComponent() {
+export function RootComponentInner({ children }: { children: React.ReactNode }) {
   return (
     <>
       <NavBar />
@@ -28,11 +28,19 @@ function RootComponent() {
       <ScrollRestoration />
       <CommandMenu />
       <UCardReader />
-      <Outlet /> {/* This is where child routes will render */}
+      {children} {/* This is where child routes will render */}
       <Suspense>
         <TanStackRouterDevtools />
       </Suspense>
     </>
+  );
+}
+
+function RootComponent() {
+  return (
+    <RootComponentInner>
+      <Outlet />
+    </RootComponentInner>
   );
 }
 
