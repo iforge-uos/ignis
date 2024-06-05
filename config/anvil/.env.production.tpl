@@ -26,6 +26,7 @@ CSRF_EXCLUDE_ROUTES=auth/login,POST
 auth/refresh,POST
 ACCESS_TOKEN_EXPIRES_IN="1h"
 REFRESH_TOKEN_EXPIRES_IN="7d"
+ADMIN_ROLE="5ea86cc8-f86c-11ee-8cfe-bfcf9fe5f446"
 
 # Email
 EMAIL_HOST="op://IT/Anvil MailServer Credentials/server"
