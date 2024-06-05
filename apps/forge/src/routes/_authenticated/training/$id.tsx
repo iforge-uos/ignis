@@ -1,6 +1,6 @@
 import axiosInstance from "@/api/axiosInstance";
 import Title from "@/components/title";
-import { extractError, toTitleCase } from "@/lib/utils";
+import { extractError, trainingBadges } from "@/lib/utils";
 import { get } from "@/services/training/get";
 import type { InteractionResponse, Training } from "@ignis/types/training";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
