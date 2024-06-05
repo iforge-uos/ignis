@@ -1,11 +1,14 @@
 import { RootState } from "@/redux/store";
 import { ErrorCodes } from "@ignis/errors";
+import { Location, Training } from "@ignis/types/training";
+import { deserializeMd as deserializeMd_ } from "@udecode/plate-serializer-md";
+import { createPlateEditor } from "@ui/components/plate-ui/plate-editor";
 import { isAxiosError } from "axios";
 import { type ClassValue, clsx } from "clsx";
 import md5 from "md5";
 import { useSelector } from "react-redux";
 import { twMerge } from "tailwind-merge";
-import { UCARD_LENGTH } from "./constants";
+import { LOCATIONS, UCARD_LENGTH } from "./constants";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -57,3 +60,55 @@ export type PickByValue<T, V> = Pick<T, { [K in keyof T]: T[K] extends V ? K : n
 export type Entries<T> = {
   [K in keyof T]: [keyof PickByValue<T, T[K]>, T[K]];
 }[keyof T][];
+
+export function deserializeMd(content: string) {
+  const editor = createPlateEditor();
+  return deserializeMd_(editor, content);
+}
+
+type TrainingBadge = "Compulsory" | "In-Person Training Required" | "Rep Training" | "Mainspace" | "Heartspace"; // TODO visible
+type TrainingForBadges = {
+  compulsory?: boolean;
+  in_person?: boolean;
+  rep?: any;
+  locations: Location[];
+};
+
+const keyToBadgeMap: Record<keyof TrainingForBadges, TrainingBadge[]> = {
+  compulsory: ["Compulsory"],
+  in_person: ["In-Person Training Required"],
+  rep: ["Rep Training"],
+  locations: ["Mainspace", "Heartspace"],
+};
+
+export const ALL_BADGES: readonly TrainingBadge[] = Object.values(keyToBadgeMap).flat();
+
+export function trainingBadges(training: TrainingForBadges) {
+  return Object.entries(training)
+    .flatMap(([key, value]) => (value ? keyToBadgeMap[key as keyof TrainingForBadges] : []))
+    .filter(Boolean) as TrainingBadge[];
+}
+
+export function serializeTrainingBadges(badges_: TrainingBadge[]): Required<TrainingForBadges> {
+  const badges = new Set(badges_);
+  const training: Partial<TrainingForBadges> = {};
+
+  for (const badge of badges) {
+    const keys = Object.entries(keyToBadgeMap)
+      .filter(([_, badges]) => badges.includes(badge))
+      .map(([key]) => key as keyof TrainingForBadges);
+
+    for (const key of keys) {
+      if (key === "locations") {
+        if (!training.locations) {
+          training.locations = [];
+        }
+        training.locations.push(badge.replace(" ", "_").toLowerCase() as Location);
+      } else {
+        training[key] = true;
+      }
+    }
+  }
+
+  return training as Required<TrainingForBadges>;
+}
