@@ -29,23 +29,27 @@ export class TrainingService {
     private readonly usersService: UsersService,
   ) {}
 
-  async getTraining(id: string): Promise<training.Training> {
+  async getTraining(id: string, editing?: boolean): Promise<training.Training> {
     try {
       return await this.dbService.query(
         e.assert_exists(
           e.select(e.training.Training, () => ({
-            id: true,
-            created_at: true,
-            updated_at: true,
-            name: true,
-            description: true,
-            locations: true,
-            rep: {
-              id: true,
-              description: true,
-            },
-            compulsory: true,
-            in_person: true,
+            ...(editing
+              ? {
+                  ...e.training.Training["*"],
+                  sections: TrainingSection,
+                }
+              : {
+                  id: true,
+                  created_at: true,
+                  updated_at: true,
+                  name: true,
+                  description: true,
+                  locations: true,
+                  compulsory: true,
+                  in_person: true,
+                }),
+            rep: { id: true, name: true, description: true },
             filter_single: { id },
           })),
         ),

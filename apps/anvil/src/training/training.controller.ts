@@ -1,4 +1,5 @@
 import { CaslAbilityGuard } from "@/auth/authorization/guards/casl-ability.guard";
+import { JwtPayload } from "@/auth/interfaces/jwtpayload.interface";
 import { User as GetUser } from "@/shared/decorators/user.decorator";
 import verifyJWT from "@/shared/functions/verifyJWT";
 import { TrainingService } from "@/training/training.service";
@@ -6,7 +7,7 @@ import { std } from "@dbschema/interfaces";
 import type { training } from "@ignis/types";
 import { PartialTraining } from "@ignis/types/training";
 import type { User } from "@ignis/types/users";
-import { Body, Controller, Get, Logger, Param, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, ForbiddenException, Get, Logger, Param, Post, Query, Req, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { Request } from "express";
 
@@ -24,9 +25,20 @@ export class TrainingController {
   }
 
   @Get(":id")
-  async getTraining(@Param("id") id: string): Promise<training.Training> {
+  async getTraining(@Param("id") id: string, @Req() req: Request): Promise<training.Training> {
     this.logger.log(`Retrieving training with ID: ${id}`, TrainingController.name);
-    return this.trainingService.getTraining(id);
+    const editing = req.query.editing === "true";
+    if (editing) {
+      try {
+        const payload = verifyJWT(req.cookies.access_token) as JwtPayload;
+        if (!payload.roles.some((role) => role === process.env.ADMIN_ROLE)) {
+          throw new Error();
+        }
+      } catch (_) {
+        throw new ForbiddenException();
+      }
+    }
+    return this.trainingService.getTraining(id, editing);
   }
 
   @Post(":id/start")

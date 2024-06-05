@@ -26,6 +26,9 @@ export function UserNav() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.is_authenticated);
   const user = useUser();
 
+  const isMacOs = !!navigator?.userAgent?.match(/Macintosh;/);
+  const metaKey = isMacOs ? "⌘" : "Ctrl";
+
   const isAdmin = user?.roles.some((role) => role.name === "Admin");
 
   if (isAuthenticated && user && isString(user.email) && isString(user.display_name)) {
@@ -57,13 +60,13 @@ export function UserNav() {
             <Link to="/user/profile">
               <DropdownMenuItem>
                 Profile
-                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                <DropdownMenuShortcut>{`⇧${metaKey}P`}</DropdownMenuShortcut>
               </DropdownMenuItem>
             </Link>
             <Link to="/user/settings">
               <DropdownMenuItem>
                 Settings
-                <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+                <DropdownMenuShortcut>{`${metaKey}S`}</DropdownMenuShortcut>
               </DropdownMenuItem>
             </Link>
           </DropdownMenuGroup>
@@ -74,7 +77,7 @@ export function UserNav() {
                 <Link to="/admin/dashboard">
                   <DropdownMenuItem>
                     Admin Dashboard
-                    <DropdownMenuShortcut>⇧⌘D</DropdownMenuShortcut>
+                    <DropdownMenuShortcut>{`⇧${metaKey}D`}</DropdownMenuShortcut>
                   </DropdownMenuItem>
                 </Link>
               </DropdownMenuGroup>
@@ -84,7 +87,7 @@ export function UserNav() {
           <Link to="/auth/logout">
             <DropdownMenuItem>
               Log out
-              <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+              <DropdownMenuShortcut>{`⇧${metaKey}Q`}</DropdownMenuShortcut>
             </DropdownMenuItem>
           </Link>
         </DropdownMenuContent>
