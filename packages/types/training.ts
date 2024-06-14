@@ -34,6 +34,7 @@ export type PartialTraining = {
   created_at: Date;
   updated_at: Date;
   in_person: boolean;
+  icon_url: string;
 };
 
 export type PartialTrainingWithStatus = Omit<PartialTraining, "rep"> & {
