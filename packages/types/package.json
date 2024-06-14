@@ -5,7 +5,8 @@
   "author": "iForge IT team",
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "zod": "^3.22.4",
-    "@nivo/calendar": "^0.85.1"
+    "@nivo/calendar": "^0.85.1",
+    "react-dom": "^18.3.1",
+    "zod": "^3.22.4"
   }
 }

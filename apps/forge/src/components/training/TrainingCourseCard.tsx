@@ -18,7 +18,7 @@ export default function TrainingCourseCard({ training, isRep }: TrainingCourseCa
           alt={training.name}
           className="w-full h-full object-scale-down aspect-[2/1]"
           height="200"
-          src="https://wallpapers.com/images/featured-full/super-cool-pictures-h943jt67w6kqn4e6.jpg"
+          src={training.icon_url}
         />
       </div>
       <div className="p-4 flex flex-col justify-between flex-grow">
