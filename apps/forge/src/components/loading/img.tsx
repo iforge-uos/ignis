@@ -29,7 +29,7 @@ const ImageWithPlaceholder: React.FC<ImageWithPlaceholderProps> = ({
         src={src}
         alt={alt}
         onLoad={() => setImageLoaded(true)}
-        className={cn("absolute top-0 left-0 w-full h-full object-cover", className, { hidden: !imageLoaded })}
+        className={cn("absolute w-full h-full object-cover", className, { hidden: !imageLoaded })}
       />
       {!imageLoaded && <Skeleton className="absolute top-0 left-0 w-full h-full" />}
     </div>
