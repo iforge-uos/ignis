@@ -12,7 +12,7 @@ interface TrainingCourseCardProps {
 
 export default function TrainingCourseCard({ training, isRep }: TrainingCourseCardProps) {
   return (
-    <Card className="w-full max-w-sm overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:scale-105 hover:shadow-lg flex flex-col">
+    <Card className="w-full max-w-sm overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:shadow-lg flex flex-col">
       <div className="rounded-t-lg overflow-hidden">
         <img
           alt={training.name}
