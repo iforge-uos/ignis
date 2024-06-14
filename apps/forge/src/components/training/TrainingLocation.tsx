@@ -1,13 +1,16 @@
 import Title from "@/components/title";
 import { locationNameToCSSName } from "@/config/constants.ts";
-import { extractError, toTitleCase, useUser } from "@/lib/utils";
+import { cn, extractError, toTitleCase, useUser } from "@/lib/utils";
 import { getLocation } from "@/services/training/getLocation";
 import { getStatus } from "@/services/training/getStatus";
 import { Location, PartialTrainingWithStatus } from "@ignis/types/training";
 import { useQuery } from "@tanstack/react-query";
 import { Loader } from "@ui/components/ui/loader";
 import { Separator } from "@ui/components/ui/separator";
-import ImageWithPlaceholder from "../loading/img";
+import { Skeleton } from "@ui/components/ui/skeleton";
+import { useState } from "react";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import { useMediaQuery } from "react-responsive";
 import ImageGradient from "./ImageGradient";
 import TrainingCourseCard from "./TrainingCourseCard";
 
@@ -25,14 +28,16 @@ async function getData(location: Location): Promise<PartialTrainingWithStatus[]>
 
 interface TrainingLocationProps {
   location: Location;
-  img?: string;
+  img: React.ReactNode;
   optionalTrainingText: string;
 }
 
-export default function TrainingLocation({ location, optionalTrainingText }: TrainingLocationProps) {
+export default function TrainingLocation({ location, optionalTrainingText, img }: TrainingLocationProps) {
   const user = useUser();
-  const name = toTitleCase(location.split("_").join(" "));
+  const name = toTitleCase(location.replace("_", " "));
   const isRep = !!user?.roles.some((role) => role.name === "Rep");
+  const isMediumScreen = useMediaQuery({ minWidth: 768 });
+
   const {
     data: trainings,
     isLoading,
@@ -61,22 +66,15 @@ export default function TrainingLocation({ location, optionalTrainingText }: Tra
     { compulsory: [] as PartialTrainingWithStatus[], not_compulsory: [] as PartialTrainingWithStatus[] },
   );
 
-  const gradientColor = locationNameToCSSName(location);
-
   return (
     <>
       <Title prompt={`${name} Training`} />
       <div className="container grid items-center gap-4 px-4 py-12">
         <div className="space-y-3 text-center">
           <h1 className="text-4xl font-bold tracking-wide sm:text-5xl md:text-6xl">{name} Training</h1>
-          <div className="group relative w-full max-w-m rounded-lg shadow-md">
-            <ImageGradient
-              imageSrc={`${import.meta.env.VITE_CDN_URL}/files/mainspace_training.jpg`}
-              imageAlt={location}
-              gradientColor={gradientColor}
-              className="object-center"
-              aspectRatio="32/9"
-            />
+          <div className="group relative overflow-hidden w-full max-w-m rounded-lg shadow-md h-[400px]">
+            <ImageGradient gradientColor={locationNameToCSSName(location)}>{img}</ImageGradient>
+
             <div className="absolute bottom-0 left-0 right-0 px-6 pb-4">
               <p className="text-gray-300 sm:text-l md:text-xl">
                 Complete the following trainings to gain access to the machines and tools in the {name}.
