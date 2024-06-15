@@ -22,8 +22,7 @@ DISCORD_CLIENT_CALLBACK_URL="http://127.0.0.1:3000/v1/authentication/discord/cal
 # AUTH
 JWT_SECRET="op://Employee/JWT Secret Key/password"
 CSRF_SECRET="op://Employee/CSRF Secret Key/password"
-CSRF_EXCLUDE_ROUTES=auth/login,POST
-auth/refresh,POST
+CSRF_EXCLUDE_ROUTES=auth/login,POST;auth/refresh,POST
 ACCESS_TOKEN_EXPIRES_IN="1h"
 REFRESH_TOKEN_EXPIRES_IN="7d"
 ADMIN_ROLE="5ea86cc8-f86c-11ee-8cfe-bfcf9fe5f446"
