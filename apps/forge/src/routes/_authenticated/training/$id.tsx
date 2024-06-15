@@ -1,7 +1,6 @@
 import axiosInstance from "@/api/axiosInstance";
 import Title from "@/components/title";
-import { TrainingHeader } from "@/components/training/TrainingHeader";
-import { extractError, trainingBadges } from "@/lib/utils";
+import { extractError, toTitleCase } from "@/lib/utils";
 import { get } from "@/services/training/get";
 import type { InteractionResponse, Training } from "@ignis/types/training";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
@@ -9,7 +8,6 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
 import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert";
 import { Badge } from "@ui/components/ui/badge";
-import { Button } from "@ui/components/ui/button";
 import { Checkbox } from "@ui/components/ui/checkbox";
 import { Label } from "@ui/components/ui/label";
 import { Loader } from "@ui/components/ui/loader";
@@ -154,7 +152,7 @@ const Component: React.FC = () => {
         <div className="container space-y-4 px-4 md:px-6">
           <div className="space-y-2">
             <h1 className="text-4xl font-bold text-center">{data.name}</h1>
-            <TrainingHeader data={data} />
+            <TrainingHeader />
             <TrainingContent content={data.description} />
             <br />
             {sections.map((section, idx) => (
