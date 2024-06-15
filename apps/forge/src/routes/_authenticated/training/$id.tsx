@@ -1,11 +1,12 @@
 import axiosInstance from "@/api/axiosInstance";
 import Title from "@/components/title";
-import { extractError, toTitleCase } from "@/lib/utils";
+import { TrainingHeader } from "@/components/training/TrainingHeader";
+import { extractError, trainingBadges } from "@/lib/utils";
 import { get } from "@/services/training/get";
 import type { InteractionResponse, Training } from "@ignis/types/training";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
 import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert";
 import { Badge } from "@ui/components/ui/badge";
 import { Button } from "@ui/components/ui/button";
@@ -77,8 +78,7 @@ const Component: React.FC = () => {
     return <Loader />;
   }
   if (error instanceof axios.AxiosError && error.response?.status === 404) {
-    navigate({ to: "/not-found" as string });
-    return;
+    throw notFound();
   }
   if (error) {
     return (
@@ -138,7 +138,7 @@ const Component: React.FC = () => {
 
     setButtonName("Next");
     if (section.type_name === "training::TrainingPage") {
-      const duration_ = section.duration_ ? parseFloat(section.duration_) * 1000 : null;
+      const duration_ = section.duration_ ? Number.parseFloat(section.duration_) * 1000 : null;
       if (duration_) {
         setButtonDisabled(true);
       }
@@ -154,35 +154,11 @@ const Component: React.FC = () => {
         <div className="container space-y-4 px-4 md:px-6">
           <div className="space-y-2">
             <h1 className="text-4xl font-bold text-center">{data.name}</h1>
-            <div className="space-y-2 flex justify-between">
-              <div>
-                <h2 className="text-2xl font-semibold mb-2">Tags</h2>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    data.compulsory ? "Compulsory" : undefined,
-                    data.in_person ? "In-Person Training Required" : undefined,
-                    data.rep ? undefined : "Rep Training",
-                    ...data.locations.map((value) => toTitleCase(value.split("_").join(" "))),
-                  ]
-                    .filter(Boolean)
-                    .map((tag) => (
-                      <Badge variant="outline" key={tag}>
-                        {tag}
-                      </Badge>
-                    ))}
-                </div>
-              </div>
-              <div className="flex flex-col justify-end">
-                <div className="text-right text-lg">Created: {data.created_at.toLocaleDateString()}</div>
-                <div className="text-right text-lg">Last Updated: {data.updated_at.toLocaleDateString()}</div>
-              </div>
-            </div>
-            <Separator />
-            <br />
+            <TrainingHeader data={data} />
             <TrainingContent content={data.description} />
             <br />
             {sections.map((section, idx) => (
-              <>
+              <div key={section.id}>
                 <Separator />
                 <h2 className="text-2xl font-semibold py-3">{(section as any)?.name ?? "Question"}</h2>
                 <>
@@ -191,7 +167,7 @@ const Component: React.FC = () => {
                     section.type === "SINGLE" ? (
                       <RadioGroup>
                         {section.answers.map((answer) => (
-                          <div className="flex items-center space-x-2">
+                          <div className="flex items-center space-x-2" key={answer.id}>
                             <RadioGroupItem
                               value={answer.id}
                               id={answer.id}
@@ -213,31 +189,29 @@ const Component: React.FC = () => {
                       </RadioGroup>
                     ) : (
                       section.answers.map((answer) => (
-                        <>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox
-                              value={answer.id}
-                              id={answer.id}
-                              disabled={idx !== sections.length - 1}
-                              onCheckedChange={() => {
-                                setAnswers((prevState) => {
-                                  return prevState.includes(answer)
-                                    ? prevState.filter((answer_) => answer_ !== answer)
-                                    : [...prevState, answer];
-                                });
-                              }}
-                            />
-                            <Label htmlFor={answer.id} className="hover:cursor-pointer">
-                              <TrainingContent content={answer.content} />
-                            </Label>
-                          </div>
-                        </>
+                        <div className="flex items-center space-x-2" key={answer.id}>
+                          <Checkbox
+                            value={answer.id}
+                            id={answer.id}
+                            disabled={idx !== sections.length - 1}
+                            onCheckedChange={() => {
+                              setAnswers((prevState) => {
+                                return prevState.includes(answer)
+                                  ? prevState.filter((answer_) => answer_ !== answer)
+                                  : [...prevState, answer];
+                              });
+                            }}
+                          />
+                          <Label htmlFor={answer.id} className="hover:cursor-pointer">
+                            <TrainingContent content={answer.content} />
+                          </Label>
+                        </div>
                       ))
                     )
                   ) : null}
                   <br />
                 </>
-              </>
+              </div>
             ))}
           </div>
           <Separator />
