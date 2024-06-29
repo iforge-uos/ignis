@@ -1,5 +1,5 @@
 import { auth, helper, std, users } from "@dbschema/interfaces";
-import { Location } from "./sign_in";
+import { LocationName } from "./sign_in";
 export type { CreateUserDto, UpdateUserDto } from "@/users/dto/users.dto";
 import type { CalendarDatum } from "@nivo/calendar";
 import { training } from "./";
@@ -43,7 +43,7 @@ export type User = helper.Props<users.User> &
     profile_picture?: string | null;
   };
 
-export type Infraction = Omit<users.Infraction, "user">
+export type Infraction = Omit<users.Infraction, "user">;
 export type UserWithInfractions = User & {
   infractions: Infraction[];
 };
@@ -65,7 +65,7 @@ export type SignInStat = CalendarDatum & {
     created_at: Date;
     duration: number | null;
     ends_at: Date | null;
-    location: Location;
+    location: { name: LocationName };
   }[];
 };
 

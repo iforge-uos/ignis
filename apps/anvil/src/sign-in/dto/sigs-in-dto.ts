@@ -12,5 +12,5 @@ const UpdateSignInSchema = CreateSignInSchema.partial({
 });
 
 export class CreateSignInDto extends createZodDto(SignInSchema) {}
-export class FinaliseSignInDto extends createZodDto(CreateSignInSchema.omit({ location: true })) {}
-export class UpdateSignInDto extends createZodDto(UpdateSignInSchema.omit({ location: true })) {}
+export class FinaliseSignInDto extends createZodDto(CreateSignInSchema) {}
+export class UpdateSignInDto extends createZodDto(UpdateSignInSchema) {}

@@ -1,14 +1,15 @@
-import * as React from "react";
+import { INFRACTION_TYPES } from "@/lib/constants.ts";
+import { toTitleCase } from "@/lib/utils.ts";
+import addInfraction from "@/services/users/addInfraction.ts";
+import { getUserTraining } from "@/services/users/getUserTraining.ts";
+import revokeTraining from "@/services/users/revokeTraining.ts";
+import type { LocationName } from "@ignis/types/sign_in.ts";
 import type { InfractionType, PartialUserWithTeams } from "@ignis/types/users.ts";
 import { useQuery } from "@tanstack/react-query";
-import { getUserTraining } from "@/services/users/getUserTraining.ts";
-import { DateRange } from "react-day-picker";
-import { addDays, startOfDay } from "date-fns";
+import DatePickerWithRange from "@ui/components/date-picker-with-range.tsx";
+import { Button } from "@ui/components/ui/button.tsx";
 import { Checkbox } from "@ui/components/ui/checkbox.tsx";
 import { Label } from "@ui/components/ui/label.tsx";
-import addInfraction from "@/services/users/addInfraction.ts";
-import DatePickerWithRange from "@ui/components/date-picker-with-range.tsx";
-import revokeTraining from "@/services/users/revokeTraining.ts";
 import {
   Select,
   SelectContent,
@@ -17,19 +18,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@ui/components/ui/select.tsx";
-import type { Location } from "@ignis/types/sign_in.ts";
-import { INFRACTION_TYPES } from "@/lib/constants.ts";
-import { toTitleCase } from "@/lib/utils.ts";
 import { Textarea } from "@ui/components/ui/textarea.tsx";
-import { Button } from "@ui/components/ui/button.tsx";
+import { addDays, startOfDay } from "date-fns";
+import * as React from "react";
+import { DateRange } from "react-day-picker";
 import { toast } from "sonner";
 
 interface InfractionSectionProps {
   user: PartialUserWithTeams;
-  location: Location;
+  locationName: LocationName;
 }
 
-export const InfractionSection: React.FC<InfractionSectionProps> = ({ user, location }) => {
+export const InfractionSection: React.FC<InfractionSectionProps> = ({ user, locationName: location }) => {
   // TODO auto log onShiftReps
   const [type, setType] = React.useState<InfractionType>("WARNING");
   const [reason, setReason] = React.useState<string>("");
@@ -98,8 +98,10 @@ export const InfractionSection: React.FC<InfractionSectionProps> = ({ user, loca
             <SelectContent>
               <SelectGroup>
                 {trainings?.map((training) =>
-                  training.locations.includes(location.toUpperCase() as Uppercase<Location>) ? (
-                    <SelectItem value={training.id}>{training.name}</SelectItem>
+                  training.locations.includes(location) ? (
+                    <SelectItem key={training.id} value={training.id}>
+                      {training.name}
+                    </SelectItem>
                   ) : undefined,
                 )}
               </SelectGroup>
@@ -131,7 +133,9 @@ export const InfractionSection: React.FC<InfractionSectionProps> = ({ user, loca
           <SelectContent>
             <SelectGroup>
               {INFRACTION_TYPES.map((type) => (
-                <SelectItem value={type}>{toTitleCase(type.split("_").join(" "))}</SelectItem>
+                <SelectItem key={type} value={type}>
+                  {toTitleCase(type.split("_").join(" "))}
+                </SelectItem>
               ))}
             </SelectGroup>
           </SelectContent>

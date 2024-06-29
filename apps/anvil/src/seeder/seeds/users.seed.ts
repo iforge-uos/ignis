@@ -50,8 +50,8 @@ export async function seedUsers(dbService: EdgeDBService) {
       ? userAgreement[0]
       : await dbService.query(
           e.assert_exists(
-            e.update(e.sign_in.SignInReason, (reason) => ({
-              filter_single: e.op(reason.category, "=", e.sign_in.SignInReasonCategory.PERSONAL_PROJECT),
+            e.update(e.sign_in.Reason, (reason) => ({
+              filter_single: e.op(reason.category, "=", e.sign_in.ReasonCategory.PERSONAL_PROJECT),
               set: {
                 agreement: e.insert(e.sign_in.Agreement, {
                   content: readFileSync(ua, { encoding: "utf-8" }),
@@ -66,7 +66,7 @@ export async function seedUsers(dbService: EdgeDBService) {
     repAgreement.length > 0
       ? repAgreement[0]
       : await dbService.query(
-          e.update(e.sign_in.SignInReason, (reason) => ({
+          e.update(e.sign_in.Reason, (reason) => ({
             filter_single: e.op(reason.name, "=", REP_ON_SHIFT),
             set: {
               agreement: e.insert(e.sign_in.Agreement, {

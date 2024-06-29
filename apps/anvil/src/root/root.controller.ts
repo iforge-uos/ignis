@@ -1,7 +1,10 @@
 import { IsAdmin, IsRep } from "@/auth/authorization/decorators/check-roles-decorator";
 import { CaslAbilityGuard } from "@/auth/authorization/guards/casl-ability.guard";
+import { EmailService } from "@/email/email.service";
 import { GoogleService } from "@/google/google.service";
+import { IdempotencyCache } from "@/shared/decorators/idempotency.decorator";
 import { User as GetUser } from "@/shared/decorators/user.decorator";
+import { IdempotencyCacheInterceptor } from "@/shared/interceptors/idempotency-cache.interceptor";
 import { SignInService } from "@/sign-in/sign-in.service";
 import type { User } from "@ignis/types/users";
 import {
@@ -17,15 +20,12 @@ import {
   UseGuards,
   UseInterceptors,
 } from "@nestjs/common";
+import { Logger } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { Response } from "express";
 import { CreateAgreementDto, UpdateAgreementDto } from "./dto/agreement.dto";
-import { CreateSignInReasonCategoryDto } from "./dto/reason.dto";
+import { CreateReasonDto } from "./dto/reason.dto";
 import { RootService } from "./root.service";
-import { Logger } from "@nestjs/common";
-import { EmailService } from "@/email/email.service";
-import { IdempotencyCacheInterceptor } from "@/shared/interceptors/idempotency-cache.interceptor";
-import { IdempotencyCache } from "@/shared/decorators/idempotency.decorator";
 
 @Controller()
 @UseInterceptors(IdempotencyCacheInterceptor)
@@ -47,7 +47,7 @@ export class RootController {
   @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
   async optionsSignInReasons(@Res() resp: Response) {
     this.logger.log("Retrieving sign-in reasons last update", RootController.name);
-    const last_modified = await this.signInService.getSignInReasonsLastUpdate();
+    const last_modified = await this.signInService.getReasonsLastUpdate();
     resp.setHeader("Last-Modified", last_modified.toUTCString());
     return resp.send();
   }
@@ -56,22 +56,22 @@ export class RootController {
   @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
   async getSignInReasons() {
     this.logger.log("Retrieving sign-in reasons", RootController.name);
-    return await this.signInService.getSignInReasons();
+    return await this.signInService.getReasons();
   }
 
   @Post("sign-in-reasons")
   @IdempotencyCache(60)
   @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
-  async addSignInReason(@Body() reason: CreateSignInReasonCategoryDto) {
+  async addSignInReason(@Body() reason: CreateReasonDto) {
     this.logger.log("Adding sign-in reason", RootController.name);
-    return await this.signInService.addSignInReason(reason);
+    return await this.signInService.addReason(reason);
   }
 
   @Delete("sign-in-reasons/:id")
   @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
   async deleteSignInReason(@Param("id") id: string) {
     this.logger.log(`Deleting sign-in reason with ID: ${id}`, RootController.name);
-    return await this.signInService.deleteSignInReason(id);
+    return await this.signInService.deleteReason(id);
   }
 
   @Get("agreements")

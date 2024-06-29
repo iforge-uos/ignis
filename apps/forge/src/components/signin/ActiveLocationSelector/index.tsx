@@ -1,24 +1,24 @@
+import { QueueStatus } from "@/components/signin/ActiveLocationSelector/QueueStatus.tsx";
+import { StatusBadge } from "@/components/signin/ActiveLocationSelector/StatusBadge.tsx";
+import { UserCount } from "@/components/signin/ActiveLocationSelector/UserCount.tsx";
+import { cn, toTitleCase } from "@/lib/utils";
+import { signinActions } from "@/redux/signin.slice.ts";
+import { AppDispatch, AppRootState } from "@/redux/store.ts";
+import { locationStatus } from "@/services/signin/locationService.ts";
+import { LocationName } from "@ignis/types/sign_in.ts";
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
-import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@ui/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@ui/components/ui/popover";
-import { useLayoutEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, AppRootState } from "@/redux/store.ts";
-import { signinActions } from "@/redux/signin.slice.ts";
-import { locationStatus } from "@/services/signin/locationService.ts";
-import { useQuery } from "@tanstack/react-query";
 import { Separator } from "@ui/components/ui/separator.tsx";
-import { PulseLoader } from "react-spinners";
-import { Location } from "@ignis/types/sign_in.ts";
-import { UserCount } from "@/components/signin/ActiveLocationSelector/UserCount.tsx";
-import { StatusBadge } from "@/components/signin/ActiveLocationSelector/StatusBadge.tsx";
-import { QueueStatus } from "@/components/signin/ActiveLocationSelector/QueueStatus.tsx";
 import { Skeleton } from "@ui/components/ui/skeleton.tsx";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ui/components/ui/tooltip.tsx";
-import { Link } from "@tanstack/react-router";
 import { MessageCircleWarning } from "lucide-react";
+import { useLayoutEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { PulseLoader } from "react-spinners";
 
 const ActiveLocationSelector = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -54,16 +54,11 @@ const ActiveLocationSelector = () => {
     setValue(activeLocation);
   }, [locationStatuses, dispatch, isError, activeLocation, error]);
 
-  const capitalizeFirstLetter = (string: string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  };
-
-  const handleLocationSelect = (selectedLocationName: Location) => {
+  const handleLocationSelect = (selectedLocationName: LocationName) => {
     dispatch(signinActions.setActiveLocation(selectedLocationName));
   };
 
-  const activeLocationStatus = locationStatuses?.find((status) => status.locationName === activeLocation);
-
+  const activeLocationStatus = locationStatuses?.[activeLocation];
   return (
     <>
       <div className="flex items-center justify-between p-3 space-x-4 bg-card text-card-foreground mt-4 mb-4 drop-shadow-lg dark:shadow-none flex-col md:flex-row">
@@ -77,7 +72,7 @@ const ActiveLocationSelector = () => {
                 aria-expanded={open}
                 className={`w-[200px] justify-between border-2 ${borderColor}`}
               >
-                {value ? capitalizeFirstLetter(value) : "No active location selected"}
+                {value ? toTitleCase(value) : "No active location selected"}
                 <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
@@ -88,30 +83,27 @@ const ActiveLocationSelector = () => {
                 <CommandGroup>
                   {isLoading ? (
                     <div className="flex items-center justify-center h-[40px]">
-                      <PulseLoader color="#e11d48" size={15} />{" "}
+                      <PulseLoader color="#e11d48" size={15} />
                     </div>
                   ) : (
                     <>
                       {locationStatuses &&
-                        locationStatuses!.map((location) => (
+                        Object.keys(locationStatuses).map((name) => (
                           <CommandItem
-                            key={location.locationName}
-                            value={location.locationName}
+                            key={name}
+                            value={name} // TODO why is this converting to lower
                             onSelect={(currentValue) => {
-                              setValue(currentValue);
+                              setValue(currentValue.toUpperCase());
                               setOpen(false);
-                              handleLocationSelect(currentValue as Location);
+                              handleLocationSelect(currentValue.toUpperCase() as LocationName);
                             }}
                           >
-                            {capitalizeFirstLetter(location.locationName)}
+                            {toTitleCase(name)}
                             <CheckIcon
-                              className={cn(
-                                "ml-auto h-4 w-4",
-                                value === location.locationName ? "opacity-100" : "opacity-0",
-                              )}
+                              className={cn("ml-auto h-4 w-4", value === name ? "opacity-100" : "opacity-0")}
                             />
                           </CommandItem>
-                        ))}{" "}
+                        ))}
                     </>
                   )}
                 </CommandGroup>
@@ -139,14 +131,18 @@ const ActiveLocationSelector = () => {
               <Tooltip>
                 <TooltipTrigger>
                   <StatusBadge
-                    is_open={activeLocationStatus.open}
+                    is_open={activeLocationStatus.status === "open"}
                     is_out_of_hours={activeLocationStatus.out_of_hours}
                   />
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>The space is marked as OPEN when there is at least one rep signed in.</p>
                   <p>It is closed otherwise.</p>
-                  <p>Current opening hours are: 12:00 - 20:00</p>
+                  <p>
+                    Current opening hours are:{" "}
+                    {activeLocationStatus.opening_time.substring(0, activeLocationStatus.opening_time.length - 3)} -{" "}
+                    {activeLocationStatus.closing_time.substring(0, activeLocationStatus.opening_time.length - 3)}
+                  </p>
                 </TooltipContent>
               </Tooltip>
               <Tooltip>

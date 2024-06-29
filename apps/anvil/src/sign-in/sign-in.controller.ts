@@ -9,7 +9,7 @@ import { IdempotencyCacheInterceptor } from "@/shared/interceptors/idempotency-c
 import { TrainingService } from "@/training/training.service";
 import { UsersService } from "@/users/users.service";
 import { sign_in as sign_in_ } from "@ignis/types";
-import type { List, Location, LocationStatus } from "@ignis/types/sign_in";
+import type { Location, LocationName, PartialLocation } from "@ignis/types/sign_in";
 import type { User as User_ } from "@ignis/types/users";
 import {
   BadRequestException,
@@ -43,14 +43,14 @@ export class SignInController {
 
   @Get()
   @IsRep()
-  async getList(@Param("location") location: Location): Promise<List> {
-    return this.signInService.getList(location);
+  async getLocation(@Param("location") location: LocationName): Promise<Location> {
+    return this.signInService.getLocation(location);
   }
 
   @Get("sign-in/:ucard_number")
   @IsRep()
   async signInOptions(
-    @Param("location") location: Location,
+    @Param("location") location: LocationName,
     @Param("ucard_number") ucard_number: string,
     @Req() request: Request,
   ): Promise<sign_in_.User> {
@@ -95,7 +95,7 @@ export class SignInController {
   @UseInterceptors(IdempotencyCacheInterceptor)
   @IdempotencyCache(60)
   async signIn(
-    @Param("location") location: Location,
+    @Param("location") location: LocationName,
     @Param("ucard_number") ucard_number: string,
     @Body() finaliseSignInDto: FinaliseSignInDto,
   ) {
@@ -116,7 +116,7 @@ export class SignInController {
   @Patch("sign-in/:ucard_number")
   @IsRep()
   async updateVisitPurpose(
-    @Param("location") location: Location,
+    @Param("location") location: LocationName,
     @Param("ucard_number", ParseIntPipe) ucard_number: number,
     @Body() updateSignInDto: UpdateSignInDto,
   ) {
@@ -136,15 +136,15 @@ export class SignInController {
   @IsRep()
   @UseInterceptors(IdempotencyCacheInterceptor)
   @IdempotencyCache(60)
-  async signOut(@Param("location") location: Location, @Param("ucard_number") ucard_number: string) {
+  async signOut(@Param("location") location: LocationName, @Param("ucard_number") ucard_number: string) {
     this.logger.log(`Signing out UCard number: ${ucard_number} at location: ${location}`, SignInController.name);
     return await this.signInService.signOut(location, ldapLibraryToUcardNumber(ucard_number));
   }
 
   @Get("status")
-  async getLocationStatus(@Param("location") location: Location): Promise<LocationStatus> {
+  async getPartialLocation(@Param("location") location: LocationName): Promise<PartialLocation> {
     this.logger.log(`Retrieving sign-in status for location: ${location}`, SignInController.name);
-    return await this.signInService.getStatusForLocation(location);
+    return await this.signInService.getLocationStatus(location);
   }
 
   // @Post("queue/remotely")
@@ -161,7 +161,7 @@ export class SignInController {
   @IsRep()
   @UseInterceptors(IdempotencyCacheInterceptor)
   @IdempotencyCache(60)
-  async addToQueueInPerson(@Param("location") location: Location, @Body("ucard_number") ucard_number: string) {
+  async addToQueueInPerson(@Param("location") location: LocationName, @Body("ucard_number") ucard_number: string) {
     this.logger.log(
       `Adding UCard number: ${ucard_number} to queue in-person at location: ${location}`,
       SignInController.name,
@@ -174,7 +174,7 @@ export class SignInController {
   @UseInterceptors(IdempotencyCacheInterceptor)
   //@CheckAbilities(["READ"], "ALL") // FIXME: needs an any rather than all guard also allows for users to remove themselves
   @IdempotencyCache(60)
-  async removeFromQueue(@Param("location") location: Location, @Param("id") id: string) {
+  async removeFromQueue(@Param("location") location: LocationName, @Param("id") id: string) {
     this.logger.log(`Removing queue request with ID: ${id} from queue at location: ${location}`, SignInController.name);
     return await this.signInService.removeFromQueue(location, id);
   }
@@ -183,7 +183,7 @@ export class SignInController {
 
   @Get("/common-reasons")
   @IsRep()
-  async getPopularSignInReasons(@Param("location") location: Location) {
-    return this.signInService.getPopularSignInReasons(location);
+  async getPopularSignInReasons(@Param("location") location: LocationName) {
+    return this.signInService.getPopularReasons(location);
   }
 }

@@ -1,12 +1,12 @@
-import { EdgeDBService } from "@/edgedb/edgedb.service";
-import e from "@dbschema/edgeql-js";
-import { ConstraintViolationError } from "edgedb";
-import { parse } from "csv-parse/sync";
 import { readFileSync } from "fs";
+import { EdgeDBService } from "@/edgedb/edgedb.service";
 import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/sign-in/sign-in.service";
+import e from "@dbschema/edgeql-js";
 import { sign_in } from "@dbschema/interfaces";
+import { parse } from "csv-parse/sync";
+import { ConstraintViolationError } from "edgedb";
 
-type SignInReason = { name: string; category: sign_in.SignInReasonCategory };
+type SignInReason = { name: string; category: sign_in.ReasonCategory };
 
 export async function seedSignInReasons(dbService: EdgeDBService) {
   const filename = "src/seeder/seeds/sign-in-reasons.csv"; // headers name, category
@@ -31,9 +31,9 @@ export async function seedSignInReasons(dbService: EdgeDBService) {
   try {
     await dbService.query(
       e.for(e.json_array_unpack(e.json(reasons)), ({ name, category }) => {
-        return e.insert(e.sign_in.SignInReason, {
+        return e.insert(e.sign_in.Reason, {
           name: e.cast(e.str, name),
-          category: e.cast(e.sign_in.SignInReasonCategory, category),
+          category: e.cast(e.sign_in.ReasonCategory, category),
         });
       }),
     );

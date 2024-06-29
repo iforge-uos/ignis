@@ -1,4 +1,4 @@
-import type { Location, QueueEntry } from "@ignis/types/sign_in";
+import type { LocationName, QueueEntry } from "@ignis/types/sign_in";
 import type { PartialUser } from "@ignis/types/users";
 import { InjectQueue } from "@nestjs/bull";
 import { Injectable, Logger } from "@nestjs/common";
@@ -50,14 +50,14 @@ export class EmailService {
     });
   }
 
-  async sendUnqueuedEmail(place: QueueEntry, location: Location) {
+  async sendUnqueuedEmail(place: QueueEntry, location: LocationName) {
     await this.sendHtml(Unqueued({ ...place, location }), {
       recipients: [`${place.user.email}@sheffield.ac.uk`],
       subject: `Your place in the iForge ${location}`,
     });
   }
 
-  async sendQueuedEmail(place: QueueEntry, location: Location) {
+  async sendQueuedEmail(place: QueueEntry, location: LocationName) {
     await this.sendHtml(Queued({ ...place, location }), {
       recipients: [`${place.user.email}@sheffield.ac.uk`],
       subject: `Your place in the iForge ${location}`,

@@ -74,7 +74,7 @@ export default function CommandMenu() {
   }
 
   return (
-    <Command className="rounded-lg border shadow-md">
+    <Command className="rounded-lg shadow-md">
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder="Type a command or search..." />
         <CommandList>

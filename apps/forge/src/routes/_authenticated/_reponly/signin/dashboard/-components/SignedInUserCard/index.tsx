@@ -134,8 +134,8 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
             </Tooltip>
           </TooltipProvider>
           <PopoverContent className="mt-2 ml-2 w-[350px] shadow-xl border-2 border-gray-200 dark:border-gray-700">
-            <ManageUserWidget user={user} onShiftReps={onShiftReps ?? []} location={activeLocation} />
-          </PopoverContent>{" "}
+            <ManageUserWidget user={user} onShiftReps={onShiftReps ?? []} locationName={activeLocation} />
+          </PopoverContent>
         </Popover>
         <TooltipProvider>
           <Tooltip>

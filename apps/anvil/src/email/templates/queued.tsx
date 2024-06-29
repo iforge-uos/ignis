@@ -1,4 +1,4 @@
-import { Location, QueueEntry } from "@ignis/types/sign_in";
+import { LocationName, QueueEntry } from "@ignis/types/sign_in";
 import { Container, Hr, Text } from "jsx-email";
 import * as React from "react";
 import { Email } from "../components/heading";

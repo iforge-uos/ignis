@@ -1,18 +1,16 @@
 import { EdgeDBService } from "@/edgedb/edgedb.service";
 import { EmailService } from "@/email/email.service";
 import { LdapService } from "@/ldap/ldap.service";
-import { CreateSignInReasonCategoryDto } from "@/root/dto/reason.dto";
+import { CreateReasonDto } from "@/root/dto/reason.dto";
 import { ErrorCodes } from "@/shared/constants/ErrorCodes";
 import { sleep } from "@/shared/functions/sleep";
 import { ldapLibraryToUcardNumber } from "@/shared/functions/utils";
 import { PartialUserProps, UserProps, UsersService } from "@/users/users.service";
-import { SignInLocationSchema } from "@dbschema/edgedb-zod/modules/sign_in";
+import { LocationNameSchema } from "@dbschema/edgedb-zod/modules/sign_in";
 import e from "@dbschema/edgeql-js";
-import { QueuePlace } from "@dbschema/edgeql-js/modules/sign_in";
 import { std } from "@dbschema/interfaces";
-import { getUserTrainingForSignIn } from "@dbschema/queries/getUserTrainingForSignIn.query";
 import { users } from "@ignis/types";
-import type { Location, LocationStatus, QueueEntry, Training } from "@ignis/types/sign_in";
+import type { LocationName, PartialLocation, QueueEntry, Training } from "@ignis/types/sign_in";
 import type { Infraction, InfractionType, PartialUser, User, UserWithInfractions } from "@ignis/types/users";
 import {
   BadRequestException,
@@ -28,16 +26,7 @@ import { CardinalityViolationError, ConstraintViolationError, InvalidValueError 
 
 export const REP_ON_SHIFT = "Rep On Shift";
 export const REP_OFF_SHIFT = "Rep Off Shift";
-const IN_HOURS_RATIO = 15;
-const OUT_OF_HOURS_RATIO = 8;
-
-export const LOCATIONS = Object.keys(SignInLocationSchema.Values).map((location) =>
-  location.toLocaleLowerCase(),
-) as Location[];
-
-function castLocation(location: Location) {
-  return e.cast(e.sign_in.SignInLocation, location.toUpperCase());
-}
+export const LOCATIONS = Object.keys(LocationNameSchema.Values) as readonly LocationName[];
 
 function formatInfraction(infraction: Infraction) {
   switch (infraction.type) {
@@ -66,7 +55,6 @@ const QueuePlaceProps = e.shape(e.sign_in.QueuePlace, () => ({
 
 @Injectable()
 export class SignInService implements OnModuleInit {
-  private readonly disabledQueue: Set<Location>;
   private readonly logger: Logger;
 
   constructor(
@@ -75,7 +63,6 @@ export class SignInService implements OnModuleInit {
     private readonly ldapService: LdapService,
     private readonly emailService: EmailService,
   ) {
-    this.disabledQueue = new Set();
     this.logger = new Logger(SignInService.name);
   }
 
@@ -92,47 +79,39 @@ export class SignInService implements OnModuleInit {
     // }
   }
 
-  async getStatusForLocation(location: Location): Promise<LocationStatus> {
-    const [on_shift_rep_count, off_shift_rep_count, total_count, max, needs_queue, count_in_queue] = await Promise.all([
-      this.onShiftReps(location),
-      this.offShiftReps(location),
-      this.totalCount(location),
-      this.maxCount(location),
-      this.queueInUse(location),
-      this.countInQueue(location),
-      this.outOfHours(),
-    ]);
-
-    const user_count = total_count - off_shift_rep_count - on_shift_rep_count;
-
-    return {
-      locationName: location,
-      open: on_shift_rep_count > 0,
-      on_shift_rep_count,
-      off_shift_rep_count,
-      user_count,
-      max,
-      out_of_hours: this.outOfHours(),
-      needs_queue,
-      count_in_queue,
-    };
+  async getLocationStatus(location: LocationName): Promise<PartialLocation> {
+    const status = (await this.dbService.query(
+      e.assert_exists(
+        e.select(e.sign_in.Location, (loc) => ({
+          on_shift_rep_count: e.count(loc.on_shift_reps),
+          off_shift_rep_count: e.count(loc.off_shift_reps),
+          user_count: e.op(e.count(loc.sign_ins), "-", e.count(loc.supervising_reps)),
+          max: loc.max_count,
+          count_in_queue: e.count(loc.queued),
+          out_of_hours: true,
+          name: true,
+          status: true,
+          opening_time: true,
+          closing_time: true,
+          filter_single: { name: location },
+        })),
+      ),
+    )) as unknown as Partial<PartialLocation>; // the LocalTimes serialise to string
+    status.needs_queue = await this.queueInUse(location);
+    return status as PartialLocation;
   }
 
-  async getList(location: Location) {
+  async getLocation(name: LocationName) {
     try {
       return await this.dbService.query(
         e.assert_exists(
-          e.select(e.sign_in.List, (user) => ({
-            ...e.sign_in.List["*"],
-            location: false,
+          e.select(e.sign_in.Location, () => ({
+            ...e.sign_in.Location["*"],
             sign_ins: {
               ...e.sign_in.SignIn["*"],
-              location: false,
-              reason: {
-                ...e.sign_in.SignInReason["*"],
-              },
+              reason: e.sign_in.Reason["*"],
               user: {
-                ...PartialUserProps(user),
+                ...PartialUserProps,
                 ...e.is(e.users.Rep, {
                   teams: { name: true, description: true, id: true },
                 }),
@@ -140,18 +119,15 @@ export class SignInService implements OnModuleInit {
             },
             queued: {
               ...e.sign_in.QueuePlace["*"],
-              location: false,
-              user: PartialUserProps(user),
+              user: PartialUserProps,
             },
-            filter_single: {
-              location: castLocation(location),
-            },
+            filter_single: { name },
           })),
         ),
       );
     } catch (error) {
       if (error instanceof InvalidValueError) {
-        throw new NotFoundException(`${location} is not a known location`);
+        throw new NotFoundException(`${name} is not a known location`);
       }
       throw error;
     }
@@ -161,14 +137,13 @@ export class SignInService implements OnModuleInit {
   async signOutAllUsers() {
     await this.dbService.query(
       e.for(
-        e.select(e.sign_in.List, () => ({
+        e.select(e.sign_in.Location, () => ({
           sign_ins: true,
         })).sign_ins,
         (sign_in) => {
           return e.update(sign_in, () => ({
             set: {
               ends_at: new Date(),
-              signed_out: true,
             },
           }));
         },
@@ -177,13 +152,13 @@ export class SignInService implements OnModuleInit {
     await this.dbService.query(e.delete(e.sign_in.QueuePlace));
   }
 
-  async removeUserFromQueueTask(location: Location, user: PartialUser) {
+  async removeUserFromQueueTask(location: LocationName, user: PartialUser) {
     await sleep(1000 * 60 * 15); // This isn't committed to DB but that should be fine
     await this.removeFromQueue(location, user.id);
   }
 
   async getUserForSignIn(
-    location: Location,
+    location: LocationName,
     ucard_number: string,
   ): Promise<User & { is_rep: boolean; registered: boolean; signed_in: boolean }> {
     const sign_in = e.select(e.sign_in.SignIn, (sign_in) => ({
@@ -198,7 +173,7 @@ export class SignInService implements OnModuleInit {
           is_rep: boolean;
           registered: boolean;
           signed_in: boolean;
-          location?: Uppercase<Location>;
+          location?: LocationName;
           teams?: users.ShortTeam[] | null;
         })
       | null = await this.dbService.query(
@@ -207,13 +182,13 @@ export class SignInService implements OnModuleInit {
         is_rep: e.select(e.op(user.__type__.name, "=", "users::Rep")),
         registered: e.select(true as boolean),
         signed_in: e.select(true as boolean),
-        location: e.assert_exists(sign_in.location),
+        location: e.assert_exists(sign_in.location.name),
         ...e.is(e.users.Rep, {
           teams: { name: true, description: true, id: true },
         }),
       })),
     );
-    if (user?.location && user.location.toLowerCase() !== location) {
+    if (user?.location && user.location !== location) {
       throw new BadRequestException({
         message: `User ${ucard_number} is already signed in at a different location, please sign out there before signing in.`,
         code: ErrorCodes.already_signed_in_to_location,
@@ -252,7 +227,7 @@ export class SignInService implements OnModuleInit {
     user = await this.dbService.query(
       e.select(
         e.insert(e.sign_in.UserRegistration, {
-          location: castLocation(location),
+          location: e.select(e.sign_in.Location, () => ({ filter_single: { name: location } })),
           user: e.insert(e.users.User, this.userService.ldapUserProps(ldapUser)),
         }).user,
         (user) => ({
@@ -268,16 +243,57 @@ export class SignInService implements OnModuleInit {
     return user;
   }
 
-  async getTrainings(id: string, location: Location): Promise<Training[]> {
-    // This cannot work in TS until edgedb/edgedb-js#615 is resolved, instead just use EdgeQL directly
-    const location_ = location.toUpperCase() as Uppercase<Location>;
+  async getTrainings(id: string, name: LocationName): Promise<Training[]> {
+    const rep_training = e.select(e.sign_in.Location, () => ({ filter_single: { name } })).on_shift_reps.training;
 
-    const { training } = await getUserTrainingForSignIn(this.dbService.client, {
-      id,
-      location: location_,
-      location_,
-      on_shift_reasons: this.outOfHours() ? [REP_ON_SHIFT, REP_OFF_SHIFT] : [REP_ON_SHIFT],
-    });
+    const { training } = await this.dbService.query(
+      e.assert_exists(
+        e.select(e.users.User, (user) => ({
+          training: (training) => ({
+            id: true,
+            name: true,
+            compulsory: true,
+            in_person: true,
+            description: true,
+            rep: {
+              id: true,
+              description: true,
+            },
+            "@created_at": true,
+            "@in_person_created_at": true,
+            expired: e.assert_exists(
+              e.op(
+                e.op(e.op(training["@created_at"], "+", training.expires_after), "<", e.datetime_of_statement()),
+                "if",
+                e.op("exists", training.expires_after),
+                "else",
+                false,
+              ),
+            ),
+            selectable: e.op(
+              // if they're a rep they can sign in off shift to use the machines they want even if the reps aren't trained
+              // ideally first comparison should be `__source__ is users::Rep`
+              e.op(
+                e.op(e.op(user.__type__.name, "=", "users::Rep"), "or", e.op(training.rep.id, "in", rep_training.id)),
+                "and",
+                e.op("exists", training["@in_person_created_at"]),
+              ),
+              "if",
+              training.in_person,
+              "else",
+              true,
+            ),
+            filter: e.op(
+              e.op("exists", training.rep),
+              "and",
+              e.op(e.cast(e.training.TrainingLocation, name), "in", training.locations),
+            ),
+          }),
+          filter_single: { id },
+        })),
+      ),
+    );
+
     const all_training = await this.dbService.query(
       e.select(e.training.Training, (training_) => ({
         id: true,
@@ -290,126 +306,13 @@ export class SignInService implements OnModuleInit {
           e.set(
             e.op(training_.id, "not in", e.cast(e.uuid, e.set(...training.map((training) => training.id)))),
             e.op("exists", training_.rep),
-            e.op(e.cast(e.training.TrainingLocation, location_), "in", training_.locations),
+            e.op(e.cast(e.training.TrainingLocation, name), "in", training_.locations),
           ),
         ),
       })),
     );
-    return [...all_training, ...training];
-  }
 
-  async totalCount(location: Location): Promise<number> {
-    return await this.dbService.query(
-      e.count(
-        e.select(e.sign_in.List, () => ({
-          filter_single: {
-            location: castLocation(location),
-          },
-        })).sign_ins,
-      ),
-    );
-  }
-
-  outOfHours() {
-    const date = new Date();
-    const current_hour = date.getHours();
-    const current_day = date.getDay();
-
-    return !(
-      // TODO include term dates here/have some way to set this
-      (12 <= current_hour && current_hour < 20 && ![0, 6].includes(current_day))
-    );
-  }
-
-  async maxCount(location: Location): Promise<number> {
-    const out_of_hours = this.outOfHours();
-    let on_shift = await this.onShiftReps(location);
-    if (out_of_hours) {
-      // on/off-shift doesn't matter towards the count out of hours it's purely for if the doorbell is outside
-      on_shift += await this.offShiftReps(location);
-    }
-    const factor = out_of_hours ? OUT_OF_HOURS_RATIO : IN_HOURS_RATIO;
-    return Math.min(on_shift * factor, this.maxPeopleForLocation(location));
-  }
-
-  async offShiftReps(location: Location): Promise<number> {
-    return await this.dbService.query(
-      e.count(
-        e.select(e.sign_in.List, () => ({
-          sign_ins: (sign_in) => ({
-            filter: e.op(
-              e.op(sign_in.user.__type__.name, "=", "users::Rep"),
-              "and",
-              e.op(sign_in.reason.name, "=", REP_OFF_SHIFT),
-            ),
-          }),
-          filter_single: {
-            location: castLocation(location),
-          },
-        })).sign_ins,
-      ),
-    );
-  }
-
-  async onShiftReps(location: Location): Promise<number> {
-    return await this.dbService.query(
-      e.count(
-        e.select(e.sign_in.List, () => ({
-          sign_ins: (sign_in) => ({
-            filter: e.op(
-              e.op(sign_in.user.__type__.name, "=", "users::Rep"),
-              "and",
-              e.op(sign_in.reason.name, "=", REP_ON_SHIFT),
-            ),
-          }),
-          filter_single: {
-            location: castLocation(location),
-          },
-        })).sign_ins,
-      ),
-    );
-  }
-
-  async countInQueue(location: Location): Promise<number> {
-    return await this.dbService.query(
-      e.count(
-        e.select(e.sign_in.List, () => ({
-          filter_single: {
-            location: castLocation(location),
-          },
-        })).queued,
-      ),
-    );
-  }
-
-  async canSignIn(location: Location): Promise<boolean> {
-    const total_count = await this.totalCount(location);
-
-    let on_shift = await this.onShiftReps(location);
-    const off_shift = await this.offShiftReps(location);
-
-    if (this.outOfHours()) {
-      // on/off-shift doesn't matter towards the count out of hours it's purely for if the doorbell is outside
-      on_shift += off_shift;
-    }
-
-    if (total_count >= this.maxPeopleForLocation(location)) {
-      // the hard cap assuming you're signing in as a user, on shift reps skip this check
-      return false;
-    }
-
-    return (await this.maxCount(location)) + on_shift - total_count >= 0;
-  }
-
-  maxPeopleForLocation(location: Location) {
-    switch (location.toLowerCase()) {
-      case "mainspace":
-        return 45;
-      case "heartspace":
-        return 12;
-      default:
-        return 0;
-    }
+    return [...training, ...all_training];
   }
 
   async isRep(ucard_number: number): Promise<boolean> {
@@ -434,7 +337,7 @@ export class SignInService implements OnModuleInit {
    *
    * [![](https://mermaid.ink/img/pako:eNqNlEFvozAQhf_KyOdGveewqzSQhjZBaYC2KenBgklilRjWNl1VJP99bbAD2V7KiYE3730zFjQkK3MkY7IXtDpA7G056GuSRooKNYYooxySKRX5O4xGv-CuCWT3MKqzDKXc1cXvc9d0ZxSnDcoTTNMZquwAiUQBsaCMM76H21tIIn8NQej5Kz_0JmH8PmwNyxO8pb4QpbDJM8oKzK1o2hJ4hqD1XeOeSYUCc0fg9QS-kT3VWCNMMsU-EXalgCX9QCErmuF1i0neuOTWPCzVIMAS-L3_7ILBeJfjHP2L433aCiIsMFNSh2cHxlFas1lv9hOhMXz9hujCrfS-XdG88Uq0dHOqR1_jn5rpMfqj6JbRxTjweQ8UmOmemWQKVrWoSonwTAuWX0sN0otDCvinUTjXS5QlC1qyh8vWJoVAmn9BxPZcgwUc_ELi34PetgsJLiGPzZzaPqtfUIVSWau9QDwiV67xoR8kudrYt1AL99g3LNJpeawKVNiqRv9pDE187enS2_PonG3Lop15mVqjwSdjBctWEKY-z10arERpRFbx1im6YjMsXofFy7BIhkXcFeSGHFEcKcv1t96YV1uiDpp7S8b6NqfiY0u2_Kx1tFZl9MUzMlaixhtSV7letseo_kUcyXhH9Tmd_wHhkVOk?type=png)](https://mermaid.live/edit#pako:eNqNlEFvozAQhf_KyOdGveewqzSQhjZBaYC2KenBgklilRjWNl1VJP99bbAD2V7KiYE3730zFjQkK3MkY7IXtDpA7G056GuSRooKNYYooxySKRX5O4xGv-CuCWT3MKqzDKXc1cXvc9d0ZxSnDcoTTNMZquwAiUQBsaCMM76H21tIIn8NQej5Kz_0JmH8PmwNyxO8pb4QpbDJM8oKzK1o2hJ4hqD1XeOeSYUCc0fg9QS-kT3VWCNMMsU-EXalgCX9QCErmuF1i0neuOTWPCzVIMAS-L3_7ILBeJfjHP2L433aCiIsMFNSh2cHxlFas1lv9hOhMXz9hujCrfS-XdG88Uq0dHOqR1_jn5rpMfqj6JbRxTjweQ8UmOmemWQKVrWoSonwTAuWX0sN0otDCvinUTjXS5QlC1qyh8vWJoVAmn9BxPZcgwUc_ELi34PetgsJLiGPzZzaPqtfUIVSWau9QDwiV67xoR8kudrYt1AL99g3LNJpeawKVNiqRv9pDE187enS2_PonG3Lop15mVqjwSdjBctWEKY-z10arERpRFbx1im6YjMsXofFy7BIhkXcFeSGHFEcKcv1t96YV1uiDpp7S8b6NqfiY0u2_Kx1tFZl9MUzMlaixhtSV7letseo_kUcyXhH9Tmd_wHhkVOk)
    */
-  async signIn(location: Location, ucard_number: number, tools: string[], reason_id: string) {
+  async signIn(location: LocationName, ucard_number: number, tools: string[], reason_id: string) {
     const { infractions } = await this.preSignInChecks(location, ucard_number, /* post */ true);
     if (infractions.length !== 0) {
       throw new BadRequestException({
@@ -442,13 +345,13 @@ export class SignInService implements OnModuleInit {
         code: ErrorCodes.user_has_active_infractions,
       });
     }
-    const { reason } = await this.verifySignInReason(reason_id, ucard_number);
+    const { reason } = await this.verifyReason(reason_id, ucard_number);
 
     let user: std.BaseObject;
     try {
       user = await this.dbService.query(
         e.insert(e.sign_in.SignIn, {
-          location: castLocation(location),
+          location: e.select(e.sign_in.Location, () => ({ filter_single: { name: location } })),
           user: e.assert_exists(
             e.select(e.users.User, () => ({
               filter_single: { ucard_number },
@@ -456,7 +359,6 @@ export class SignInService implements OnModuleInit {
           ),
           tools,
           reason,
-          signed_out: false,
         }).user,
       );
     } catch (error) {
@@ -475,7 +377,7 @@ export class SignInService implements OnModuleInit {
   /** Verify that the user can use the sign in reason given by checking their signed agreements
    * Ideally this can be removed one day.
    */
-  async verifySignInReason(reason_id: string, ucard_number: number, is_rep = false) {
+  async verifyReason(reason_id: string, ucard_number: number, is_rep = false) {
     const agreements_signed = await this.dbService.query(
       e.select(e.users.User, () => ({
         filter_single: { ucard_number },
@@ -484,8 +386,8 @@ export class SignInService implements OnModuleInit {
     // check for the user agreement
     const user_agreement = await this.dbService.query(
       e.assert_exists(
-        e.select(e.sign_in.SignInReason, (reason) => ({
-          filter_single: e.op(reason.category, "=", e.sign_in.SignInReasonCategory.PERSONAL_PROJECT),
+        e.select(e.sign_in.Reason, (reason) => ({
+          filter_single: e.op(reason.category, "=", e.sign_in.ReasonCategory.PERSONAL_PROJECT),
         })).agreement,
       ),
     );
@@ -494,7 +396,7 @@ export class SignInService implements OnModuleInit {
     }
 
     const query = e.assert_exists(
-      e.select(e.sign_in.SignInReason, () => ({
+      e.select(e.sign_in.Reason, () => ({
         name: true,
         agreement: true,
         category: true,
@@ -514,7 +416,7 @@ export class SignInService implements OnModuleInit {
     return { reason: query, reason_name: name };
   }
 
-  async preSignInChecks(location: Location, ucard_number: number, post: boolean = false) {
+  async preSignInChecks(location: LocationName, ucard_number: number, post: boolean = false) {
     if ((await this.getAvailableCapacity(location)) <= 0) {
       if (await this.queueInUse(location)) {
         this.logger.log(
@@ -555,11 +457,14 @@ export class SignInService implements OnModuleInit {
     return { infractions: active_infractions };
   }
 
-  async repSignIn(location: Location, ucard_number: number, reason_id: string) {
-    const { reason, reason_name } = await this.verifySignInReason(reason_id, ucard_number, /* is_rep */ true);
+  async repSignIn(name: LocationName, ucard_number: number, reason_id: string) {
+    const { reason, reason_name } = await this.verifyReason(reason_id, ucard_number, /* is_rep */ true);
 
-    if (reason_name !== REP_ON_SHIFT && !this.outOfHours()) {
-      await this.preSignInChecks(location, ucard_number, /* post */ true);
+    if (
+      reason_name !== REP_ON_SHIFT &&
+      !(await this.dbService.query(e.select(e.sign_in.Location, () => ({ filter_single: { name } })).out_of_hours))
+    ) {
+      await this.preSignInChecks(name, ucard_number, /* post */ true);
     }
 
     // TODO this should be client side?
@@ -573,7 +478,7 @@ export class SignInService implements OnModuleInit {
       filter: e.op(
         training.compulsory,
         "and",
-        e.op(e.cast(e.training.TrainingLocation, location.toUpperCase()), "in", training.locations),
+        e.op(e.cast(e.training.TrainingLocation, name.toUpperCase()), "in", training.locations),
       ),
     }));
 
@@ -593,11 +498,10 @@ export class SignInService implements OnModuleInit {
     try {
       await this.dbService.query(
         e.insert(e.sign_in.SignIn, {
-          location: castLocation(location),
+          location: e.select(e.sign_in.Location, () => ({ filter_single: { name } })),
           user,
           tools: [],
           reason,
-          signed_out: false,
         }),
       );
     } catch (error) {
@@ -622,18 +526,18 @@ export class SignInService implements OnModuleInit {
   }
 
   async updateVisitPurpose(
-    location: Location,
+    name: LocationName,
     ucard_number: number,
     tools: string[] | undefined,
     reason_id: string | undefined,
   ) {
-    const { reason } = reason_id ? await this.verifySignInReason(reason_id, ucard_number) : { reason: undefined };
+    const { reason } = reason_id ? await this.verifyReason(reason_id, ucard_number) : { reason: undefined };
 
     try {
       await this.dbService.query(
         e.assert_exists(
           e.update(e.sign_in.SignIn, (sign_in) => {
-            const isCorrectLocation = e.op(sign_in.location, "=", castLocation(location));
+            const isCorrectLocation = e.op(sign_in.location.name, "=", e.cast(e.sign_in.LocationName, name));
             const userMatches = e.op(sign_in.user.ucard_number, "=", ucard_number);
             const doesNotExist = e.op("not", e.op("exists", sign_in.ends_at));
 
@@ -656,23 +560,22 @@ export class SignInService implements OnModuleInit {
     }
   }
 
-  async signOut(location: Location, ucard_number: number) {
+  async signOut(name: LocationName, ucard_number: number) {
     try {
       await this.dbService.query(
         e.assert_exists(
-          e.update(e.sign_in.SignIn, (sign_in) => {
-            const isCorrectLocation = e.op(sign_in.location, "=", castLocation(location));
-            const userMatches = e.op(sign_in.user.ucard_number, "=", ucard_number);
-            const doesNotExist = e.op("not", e.op("exists", sign_in.ends_at));
-
-            return {
-              filter_single: e.all(e.set(isCorrectLocation, userMatches, doesNotExist)),
-              set: {
-                ends_at: new Date(),
-                signed_out: true,
-              },
-            };
-          }),
+          e.update(e.sign_in.SignIn, (sign_in) => ({
+            filter_single: e.all(
+              e.set(
+                e.op(sign_in.location.name, "=", e.cast(e.sign_in.LocationName, name)),
+                e.op(sign_in.user.ucard_number, "=", ucard_number),
+                e.op("not", sign_in.signed_out),
+              ),
+            ),
+            set: {
+              ends_at: new Date(),
+            },
+          })),
         ),
       );
     } catch (error) {
@@ -684,32 +587,30 @@ export class SignInService implements OnModuleInit {
       }
       throw error;
     }
-    if (await this.canSignIn(location)) {
-      await this.dequeueTop(location);
+    if (await this.dbService.query(e.select(e.sign_in.Location, () => ({ filter_single: { name } })).can_sign_in)) {
+      await this.dequeueTop(name);
     }
   }
 
   // queue management
 
   /* Are there people queuing currently or has it been manually disabled */
-  async queueInUse(location: Location) {
-    if (this.disabledQueue.has(location)) {
-      this.logger.debug(`Queue Disabled at location: ${location}`, SignInService.name);
+  async queueInUse(name: LocationName) {
+    let queuing: boolean;
+    try {
+      queuing = await this.dbService.query(
+        e.assert_exists(e.select(e.sign_in.Location, () => ({ filter_single: { name } }))).queue_in_use,
+      );
+    } catch (e) {
+      this.logger.debug(`Queue Disabled at location: ${name}`, SignInService.name);
       throw new HttpException("Queue has been manually disabled", HttpStatus.SERVICE_UNAVAILABLE);
     }
-    const queuing = await this.dbService.query(
-      e.op(
-        "exists",
-        e.select(e.sign_in.QueuePlace, (place) => ({
-          filter: e.op(place.location, "=", castLocation(location)),
-        })),
-      ),
-    );
-    this.logger.debug(`Queue Enabled: ${queuing as unknown as boolean}`, SignInService.name);
-    return queuing || !(await this.canSignIn(location));
+
+    this.logger.debug(`Queue Enabled: ${queuing}`, SignInService.name);
+    return queuing;
   }
 
-  async assertHasQueued(location: Location, ucard_number: number) {
+  async assertHasQueued(location: LocationName, ucard_number: number) {
     const users_can_sign_in = await this.queuedUsersThatCanSignIn(location);
 
     if (
@@ -729,23 +630,27 @@ export class SignInService implements OnModuleInit {
     this.logger.debug(`User ${ucard_number} has queued at location: ${location}`, SignInService.name);
   }
 
-  async getAvailableCapacity(location: Location): Promise<number> {
-    const maxCapacity = await this.maxCount(location);
-    const currentCount = await this.totalCount(location);
-    const queued = await this.queuedUsersThatCanSignIn(location);
-    const availableCapacity = maxCapacity - currentCount - queued.length;
-    this.logger.debug(`Available capacity for ${location}: ${availableCapacity}`, SignInService.name);
+  async getAvailableCapacity(name: LocationName): Promise<number> {
+    const location = e.assert_exists(e.select(e.sign_in.Location, () => ({ filter_single: { name } })));
+    const availableCapacity = await this.dbService.query(
+      e.op(
+        e.op(location.max_count, "-", e.count(location.sign_ins)),
+        "-",
+        e.count(location.queued_users_that_can_sign_in),
+      ),
+    );
+    this.logger.debug(`Available capacity for ${name}: ${availableCapacity}`, SignInService.name);
     return availableCapacity;
   }
 
-  async dequeueTop(location: Location) {
-    const availableCapacity = await this.getAvailableCapacity(location);
+  async dequeueTop(name: LocationName) {
+    const availableCapacity = await this.getAvailableCapacity(name);
 
     if (availableCapacity > 0) {
       const queuedUsers = await this.dbService.query(
         e.select(e.sign_in.QueuePlace, (queue_place) => ({
           filter: e.op(
-            e.op(queue_place.location, "=", castLocation(location)),
+            e.op(queue_place.location.name, "=", e.cast(e.sign_in.LocationName, name)),
             "and",
             e.op("not", e.op("exists", queue_place.notified_at)),
           ),
@@ -758,7 +663,7 @@ export class SignInService implements OnModuleInit {
         })),
       );
 
-      this.logger.debug(`Dequeuing ${queuedUsers.length} users for ${location}`, SignInService.name);
+      this.logger.debug(`Dequeuing ${queuedUsers.length} users for ${name}`, SignInService.name);
 
       for (const queuedUser of queuedUsers) {
         await this.dbService.query(
@@ -770,21 +675,21 @@ export class SignInService implements OnModuleInit {
           })),
         );
 
-        await this.emailService.sendUnqueuedEmail(queuedUser, location);
+        await this.emailService.sendUnqueuedEmail(queuedUser, name);
         this.logger.debug(
           `Sent unqueued email to user ${queuedUser.user.display_name} (${queuedUser.user.ucard_number})`,
           SignInService.name,
         );
       }
     } else {
-      this.logger.debug(`No available capacity to dequeue users for ${location}`, SignInService.name);
+      this.logger.debug(`No available capacity to dequeue users for ${name}`, SignInService.name);
     }
   }
 
-  async addToQueue(location: Location, ucard_number: string) {
-    if (!(await this.queueInUse(location))) {
+  async addToQueue(name: LocationName, ucard_number: string) {
+    if (!(await this.queueInUse(name))) {
       this.logger.warn(
-        `Attempt to add user ${ucard_number} to queue at ${location}, but queue is not in use`,
+        `Attempt to add user ${ucard_number} to queue at ${name}, but queue is not in use`,
         SignInService.name,
       );
       throw new HttpException("The queue is currently not in use", HttpStatus.BAD_REQUEST);
@@ -799,27 +704,27 @@ export class SignInService implements OnModuleInit {
             user: e.select(e.users.User, () => ({
               filter_single: { ucard_number: ldapLibraryToUcardNumber(ucard_number) },
             })),
-            location: castLocation(location),
+            location: e.select(e.sign_in.Location, () => ({ filter_single: { name } })),
           }),
           QueuePlaceProps,
         ),
       );
-      this.logger.debug(`Added user ${ucard_number} to queue at ${location}`, SignInService.name);
+      this.logger.debug(`Added user ${ucard_number} to queue at ${name}`, SignInService.name);
     } catch (e) {
       if (e instanceof ConstraintViolationError && e.code === 84017154) {
         this.logger.warn(
-          `Attempt to add user ${ucard_number} to queue at ${location}, but user is already in the queue`,
+          `Attempt to add user ${ucard_number} to queue at ${name}, but user is already in the queue`,
           SignInService.name,
         );
         throw new HttpException("The user is already in the queue", HttpStatus.BAD_REQUEST);
       }
       this.logger.error(
-        `Error adding user ${ucard_number} to queue at ${location}: ${(e as Error).message}`,
+        `Error adding user ${ucard_number} to queue at ${name}: ${(e as Error).message}`,
         SignInService.name,
       );
       throw e;
     }
-    await this.emailService.sendQueuedEmail(place, location);
+    await this.emailService.sendQueuedEmail(place, name);
     this.logger.debug(
       `Sent queued email to user ${place.user.display_name} (${place.user.ucard_number})`,
       SignInService.name,
@@ -827,7 +732,7 @@ export class SignInService implements OnModuleInit {
     return place;
   }
 
-  async removeFromQueue(location: Location, id: string) {
+  async removeFromQueue(location: LocationName, id: string) {
     await this.dbService.query(
       e.delete(e.sign_in.QueuePlace, () => ({
         filter_single: { id },
@@ -836,57 +741,51 @@ export class SignInService implements OnModuleInit {
     this.logger.debug(`Removed queue entry with ID ${id} from ${location}`, SignInService.name);
   }
 
-  async queuedUsersThatCanSignIn(location: Location) {
+  async queuedUsersThatCanSignIn(name: LocationName) {
     const users = await this.dbService.query(
       e.select(
-        e.select(e.sign_in.QueuePlace, (queue_place) => ({
-          filter: e.op(
-            e.op(queue_place.location, "=", castLocation(location)),
-            "and",
-            e.op(queue_place.ends_at, ">", e.datetime_of_statement()),
-          ),
-        })).user,
+        e.select(e.sign_in.Location, () => ({ filter_single: { name } })).queued_users_that_can_sign_in,
         PartialUserProps,
       ),
     );
-    this.logger.debug(`Found ${users.length} users that can sign in at ${location}`, SignInService.name);
+    this.logger.debug(`Found ${users.length} users that can sign in at ${name}`, SignInService.name);
     return users;
   }
 
-  async getSignInReasons() {
+  async getReasons() {
     // TODO in future would be nice to only return options that a user is part of due to
     // - Their course
     // - SU clubs
     // - CCAs
     return await this.dbService.query(
-      e.select(e.sign_in.SignInReason, () => ({ ...e.sign_in.SignInReason["*"], agreement: true })),
+      e.select(e.sign_in.Reason, () => ({ ...e.sign_in.Reason["*"], agreement: true })),
     );
   }
 
-  async addSignInReason(reason: CreateSignInReasonCategoryDto) {
+  async addReason(reason: CreateReasonDto) {
     return await this.dbService.query(
       e.select(
-        e.insert(e.sign_in.SignInReason, {
+        e.insert(e.sign_in.Reason, {
           ...reason, // for some reason this works but just passing it directly doesn't
         }),
-        () => e.sign_in.SignInReason["*"],
+        () => e.sign_in.Reason["*"],
       ),
     );
   }
 
-  async deleteSignInReason(id: string) {
+  async deleteReason(id: string) {
     return await this.dbService.query(
-      e.delete(e.sign_in.SignInReason, () => ({
+      e.delete(e.sign_in.Reason, () => ({
         filter_single: { id },
       })),
     );
   }
 
-  async getSignInReasonsLastUpdate() {
+  async getReasonsLastUpdate() {
     return await this.dbService.query(
       e.assert_exists(
         e.assert_single(
-          e.select(e.sign_in.SignInReason, (sign_in) => ({
+          e.select(e.sign_in.Reason, (sign_in) => ({
             order_by: {
               expression: sign_in.created_at,
               direction: e.DESC,
@@ -898,7 +797,7 @@ export class SignInService implements OnModuleInit {
     );
   }
 
-  async getPopularSignInReasons(location: Location) {
+  async getPopularReasons(name: LocationName) {
     const reasons: any = await this.dbService.query(
       e.select(
         e.group(
@@ -906,7 +805,7 @@ export class SignInService implements OnModuleInit {
             filter: e.op(
               e.op(sign_in.created_at, "<", e.op(e.datetime_current(), "-", e.cal.relative_duration("3d"))),
               "and",
-              e.op(sign_in.location, "=", castLocation(location)),
+              e.op(sign_in.location.name, "=", e.cast(e.sign_in.LocationName, name)),
             ),
           })),
           (sign_in) => ({

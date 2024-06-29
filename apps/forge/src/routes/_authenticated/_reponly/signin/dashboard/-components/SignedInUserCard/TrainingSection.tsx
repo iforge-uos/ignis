@@ -1,7 +1,12 @@
-import * as React from "react";
-import { useQuery } from "@tanstack/react-query";
+import { ManageUserWidgetProps } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/ManageUserWidget.tsx";
+import addInPersonTraining from "@/services/users/addInPersonTraining.ts";
 import { getUserTrainingRemaining } from "@/services/users/getUserTrainingRemaining.ts";
+import type { Location } from "@ignis/types/sign_in.ts";
+import { useQuery } from "@tanstack/react-query";
+import { Button } from "@ui/components/ui/button.tsx";
+import { Calendar } from "@ui/components/ui/calendar.tsx";
 import { Label } from "@ui/components/ui/label.tsx";
+import { Popover, PopoverContent, PopoverTrigger } from "@ui/components/ui/popover.tsx";
 import {
   Select,
   SelectContent,
@@ -10,18 +15,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@ui/components/ui/select.tsx";
-import type { Location } from "@ignis/types/sign_in.ts";
-import { Popover, PopoverContent, PopoverTrigger } from "@ui/components/ui/popover.tsx";
-import { Button } from "@ui/components/ui/button.tsx";
 import { cn } from "@ui/lib/utils.ts";
-import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
-import { Calendar } from "@ui/components/ui/calendar.tsx";
-import addInPersonTraining from "@/services/users/addInPersonTraining.ts";
+import { CalendarIcon } from "lucide-react";
+import * as React from "react";
 import { toast } from "sonner";
-import { ManageUserWidgetProps } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/ManageUserWidget.tsx";
 
-export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, location, onShiftReps }) => {
+export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locationName: location, onShiftReps }) => {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [repSigningOff, setRepSigningOff] = React.useState<string>();
   const [training, setTraining] = React.useState<string>();

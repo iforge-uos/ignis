@@ -1,27 +1,19 @@
 import axiosInstance from "@/api/axiosInstance.ts";
-import { List, LocationStatus } from "@ignis/types/sign_in.ts";
+import { Location, LocationName, PartialLocation } from "@ignis/types/sign_in.ts";
 
-export const locationStatus = async (): Promise<LocationStatus[]> => {
+export const locationStatus = async (): Promise<{ [KeyT in LocationName]: PartialLocation }> => {
   try {
-    const { data } = await axiosInstance.get<{ [key: string]: Omit<LocationStatus, "locationName"> }>("/status");
-
-    if (!data) {
-      return [];
-    }
-
-    return Object.entries(data).map(([key, value]) => ({
-      locationName: key.toLowerCase(),
-      ...value,
-    }));
+    const { data } = await axiosInstance.get<{ [KeyT in LocationName]: PartialLocation }>("/status");
+    return data;
   } catch (error) {
     console.error("An error occurred while fetching locations:", error);
     throw error;
   }
 };
 
-export const dataForLocation = async (location: string): Promise<List> => {
+export const dataForLocation = async (location: string): Promise<Location> => {
   try {
-    const { data } = await axiosInstance.get<List>(`/location/${location}`);
+    const { data } = await axiosInstance.get<Location>(`/location/${location}`);
     for (const place of data.queued) {
       // @ts-ignore parsing data
       place.created_at = new Date(place.ends_at);

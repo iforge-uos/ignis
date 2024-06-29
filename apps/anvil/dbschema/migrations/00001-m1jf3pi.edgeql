@@ -1,4 +1,4 @@
-CREATE MIGRATION m1eewyk2vcv4ym43hugslnzjyodkwuda4sia35yf764hsqyddocazq
+CREATE MIGRATION m1jf3piha2azx2oajs4efriawjwstpqiwgskmytiltwk4epf7mla4a
     ONTO initial
 {
   CREATE MODULE auth IF NOT EXISTS;
@@ -50,6 +50,31 @@ CREATE MIGRATION m1eewyk2vcv4ym43hugslnzjyodkwuda4sia35yf764hsqyddocazq
           CREATE CONSTRAINT std::exclusive;
       };
   };
+  CREATE ABSTRACT TYPE training::Interactable {
+      CREATE REQUIRED PROPERTY content: std::str;
+      CREATE REQUIRED PROPERTY enabled: std::bool {
+          SET default := true;
+      };
+      CREATE REQUIRED PROPERTY index: std::int16;
+  };
+  CREATE TYPE training::Answer {
+      CREATE REQUIRED PROPERTY content: std::str;
+      CREATE REQUIRED PROPERTY correct: std::bool {
+          SET default := false;
+      };
+      CREATE PROPERTY description: std::str {
+          CREATE ANNOTATION std::description := "The text shown after a user passes their answer giving a lil' explaination about whatever they said.";
+      };
+  };
+  CREATE SCALAR TYPE training::AnswerType EXTENDING enum<`SINGLE`, MULTI>;
+  CREATE TYPE training::Question EXTENDING training::Interactable {
+      CREATE MULTI LINK answers: training::Answer;
+      CREATE REQUIRED PROPERTY type: training::AnswerType;
+  };
+  CREATE TYPE training::TrainingPage EXTENDING training::Interactable {
+      CREATE PROPERTY duration: std::duration;
+      CREATE REQUIRED PROPERTY name: std::str;
+  };
   CREATE TYPE users::User EXTENDING default::Auditable {
       CREATE MULTI LINK permissions: auth::Permission;
       CREATE MULTI LINK roles: auth::Role;
@@ -97,6 +122,35 @@ CREATE MIGRATION m1eewyk2vcv4ym43hugslnzjyodkwuda4sia35yf764hsqyddocazq
           SET default := (users::RepStatus.ACTIVE);
       };
   };
+  CREATE SCALAR TYPE training::TrainingLocation EXTENDING enum<MAINSPACE, HEARTSPACE, GEORGE_PORTER>;
+  CREATE TYPE training::Training EXTENDING default::Auditable {
+      CREATE MULTI LINK pages: training::TrainingPage;
+      CREATE MULTI LINK questions: training::Question;
+      CREATE MULTI LINK sections := (SELECT
+          (.pages UNION .questions)
+      ORDER BY
+          .index ASC
+      );
+      CREATE LINK rep: training::Training {
+          CREATE ANNOTATION std::description := 'Empty if the training is for reps.';
+      };
+      CREATE REQUIRED PROPERTY name: std::str;
+      CREATE CONSTRAINT std::exclusive ON ((.name, .rep));
+      CREATE INDEX fts::index ON (fts::with_options(.name, language := fts::Language.eng));
+      CREATE REQUIRED PROPERTY compulsory: std::bool {
+          SET default := false;
+      };
+      CREATE REQUIRED PROPERTY description: std::str;
+      CREATE REQUIRED PROPERTY enabled: std::bool {
+          SET default := true;
+      };
+      CREATE PROPERTY expires_after: std::duration;
+      CREATE REQUIRED PROPERTY in_person: std::bool {
+          CREATE ANNOTATION std::description := 'Whether this training requires in person training.';
+      };
+      CREATE MULTI PROPERTY locations: training::TrainingLocation;
+      CREATE PROPERTY training_lockout: std::duration;
+  };
   CREATE TYPE auth::BlacklistedToken {
       CREATE ANNOTATION std::description := 'Used to mark JWTs as invalid';
       CREATE REQUIRED PROPERTY expires: std::datetime;
@@ -118,36 +172,31 @@ CREATE MIGRATION m1eewyk2vcv4ym43hugslnzjyodkwuda4sia35yf764hsqyddocazq
       CREATE REQUIRED PROPERTY description: std::str;
       CREATE REQUIRED PROPERTY name: std::str;
   };
-  CREATE TYPE training::Answer {
-      CREATE REQUIRED PROPERTY content: std::str;
-      CREATE REQUIRED PROPERTY correct: std::bool {
-          SET default := false;
+  CREATE SCALAR TYPE sign_in::LocationName EXTENDING enum<MAINSPACE, HEARTSPACE>;
+  CREATE TYPE sign_in::Location EXTENDING default::Auditable {
+      CREATE REQUIRED PROPERTY closing_time: cal::local_time;
+      CREATE MULTI PROPERTY opening_days: std::int16 {
+          CREATE ANNOTATION std::description := '0-6, the days of the week we are currently open, Sunday (0) to Saturday (6)';
       };
-      CREATE PROPERTY description: std::str {
-          CREATE ANNOTATION std::description := "The text shown after a user passes their answer giving a lil' explaination about whatever they said.";
-      };
-  };
-  CREATE SCALAR TYPE training::TrainingLocation EXTENDING enum<MAINSPACE, HEARTSPACE, GEORGE_PORTER>;
-  CREATE TYPE training::Training EXTENDING default::Auditable {
-      CREATE LINK rep: training::Training {
-          CREATE ANNOTATION std::description := 'Empty if the training is for reps.';
-      };
-      CREATE REQUIRED PROPERTY name: std::str;
-      CREATE CONSTRAINT std::exclusive ON ((.name, .rep));
-      CREATE INDEX fts::index ON (fts::with_options(.name, language := fts::Language.eng));
-      CREATE REQUIRED PROPERTY compulsory: std::bool {
-          SET default := false;
-      };
-      CREATE REQUIRED PROPERTY description: std::str;
-      CREATE REQUIRED PROPERTY enabled: std::bool {
+      CREATE REQUIRED PROPERTY opening_time: cal::local_time;
+      CREATE REQUIRED PROPERTY out_of_hours := (WITH
+          current_time := 
+              (SELECT
+                  cal::to_local_time(std::datetime_of_statement(), 'Europe/London')
+              )
+      SELECT
+          NOT ((((.opening_time <= current_time) AND (current_time <= .closing_time)) AND (<std::int16>std::datetime_get(std::datetime_of_statement(), 'dow') IN .opening_days)))
+      );
+      CREATE REQUIRED PROPERTY in_of_hours_rep_multiplier: std::int16;
+      CREATE REQUIRED PROPERTY max_users: std::int16;
+      CREATE REQUIRED PROPERTY out_of_hours_rep_multiplier: std::int16;
+      CREATE REQUIRED PROPERTY queue_enabled: std::bool {
           SET default := true;
+          CREATE ANNOTATION std::description := 'Manually disable the queue.';
       };
-      CREATE PROPERTY expires_after: std::duration;
-      CREATE REQUIRED PROPERTY in_person: std::bool {
-          CREATE ANNOTATION std::description := 'Whether this training requires in person training.';
+      CREATE REQUIRED PROPERTY name: sign_in::LocationName {
+          CREATE CONSTRAINT std::exclusive;
       };
-      CREATE MULTI PROPERTY locations: training::TrainingLocation;
-      CREATE PROPERTY training_lockout: std::duration;
   };
   CREATE TYPE training::UserTrainingSession EXTENDING default::Auditable {
       CREATE REQUIRED LINK training: training::Training;
@@ -173,12 +222,11 @@ CREATE MIGRATION m1eewyk2vcv4ym43hugslnzjyodkwuda4sia35yf764hsqyddocazq
       CREATE PROPERTY ends_at: std::datetime;
       CREATE REQUIRED PROPERTY duration := (std::assert_exists(((.ends_at - .created_at) IF EXISTS (.ends_at) ELSE (std::datetime_of_transaction() - .created_at))));
   };
-  CREATE SCALAR TYPE sign_in::SignInLocation EXTENDING enum<MAINSPACE, HEARTSPACE>;
   CREATE TYPE sign_in::SignIn EXTENDING default::Timed {
-      CREATE REQUIRED PROPERTY location: sign_in::SignInLocation;
-      CREATE PROPERTY signed_out: std::bool {
-          SET default := false;
-      };
+      CREATE REQUIRED LINK location: sign_in::Location;
+      CREATE REQUIRED PROPERTY signed_out := (SELECT
+          EXISTS (.ends_at)
+      );
       CREATE REQUIRED LINK user: users::User;
       CREATE CONSTRAINT std::exclusive ON (.user) EXCEPT (.signed_out);
       CREATE REQUIRED PROPERTY tools: array<std::str>;
@@ -211,27 +259,27 @@ CREATE MIGRATION m1eewyk2vcv4ym43hugslnzjyodkwuda4sia35yf764hsqyddocazq
       };
   };
   CREATE TYPE sign_in::QueuePlace EXTENDING default::CreatedAt {
-      CREATE REQUIRED PROPERTY location: sign_in::SignInLocation;
+      CREATE REQUIRED LINK location: sign_in::Location;
       CREATE REQUIRED LINK user: users::User {
           CREATE CONSTRAINT std::exclusive;
       };
-      CREATE REQUIRED PROPERTY can_sign_in: std::bool {
-          SET default := false;
+      CREATE PROPERTY notified_at: std::datetime {
+          CREATE ANNOTATION std::description := 'The time the user was emailed that they have a slot.';
       };
-      CREATE REQUIRED PROPERTY position: std::int16;
+      CREATE PROPERTY ends_at := ((.notified_at + <cal::relative_duration>'15m'));
   };
-  CREATE SCALAR TYPE sign_in::SignInReasonCategory EXTENDING enum<UNIVERSITY_MODULE, CO_CURRICULAR_GROUP, PERSONAL_PROJECT, SOCIETY, REP_SIGN_IN, EVENT>;
-  CREATE TYPE sign_in::SignInReason EXTENDING default::CreatedAt {
+  CREATE SCALAR TYPE sign_in::ReasonCategory EXTENDING enum<UNIVERSITY_MODULE, CO_CURRICULAR_GROUP, PERSONAL_PROJECT, SOCIETY, REP_SIGN_IN, EVENT>;
+  CREATE TYPE sign_in::Reason EXTENDING default::CreatedAt {
       CREATE LINK agreement: sign_in::Agreement;
       CREATE REQUIRED PROPERTY name: std::str {
           CREATE CONSTRAINT std::exclusive;
       };
       CREATE INDEX ON (.name);
-      CREATE REQUIRED PROPERTY category: sign_in::SignInReasonCategory;
+      CREATE REQUIRED PROPERTY category: sign_in::ReasonCategory;
   };
   CREATE TYPE sign_in::UserRegistration EXTENDING default::CreatedAt {
+      CREATE REQUIRED LINK location: sign_in::Location;
       CREATE REQUIRED LINK user: users::User;
-      CREATE REQUIRED PROPERTY location: sign_in::SignInLocation;
   };
   CREATE SCALAR TYPE users::InfractionType EXTENDING enum<WARNING, TEMP_BAN, PERM_BAN, RESTRICTION, TRAINING_ISSUE>;
   CREATE TYPE users::Infraction EXTENDING default::CreatedAt {
@@ -278,30 +326,76 @@ CREATE MIGRATION m1eewyk2vcv4ym43hugslnzjyodkwuda4sia35yf764hsqyddocazq
   };
   ALTER TYPE sign_in::Agreement {
       CREATE MULTI LINK reasons := (SELECT
-          sign_in::SignInReason
+          sign_in::Reason
       FILTER
           (.agreement = __source__)
       );
   };
-  CREATE TYPE sign_in::List {
-      CREATE REQUIRED PROPERTY location: sign_in::SignInLocation {
-          SET readonly := true;
-          CREATE CONSTRAINT std::exclusive;
-      };
-      CREATE INDEX ON (.location);
-      CREATE MULTI LINK queued := (SELECT
-          sign_in::QueuePlace
-      FILTER
-          (.location = __source__.location)
-      );
+  ALTER TYPE sign_in::Location {
       CREATE MULTI LINK sign_ins := (SELECT
           sign_in::SignIn
       FILTER
-          (NOT (.signed_out) AND (.location = __source__.location))
+          (NOT (.signed_out) AND (.location = __source__))
       );
   };
   ALTER TYPE sign_in::SignIn {
-      CREATE REQUIRED LINK reason: sign_in::SignInReason;
+      CREATE REQUIRED LINK reason: sign_in::Reason;
+  };
+  ALTER TYPE sign_in::Location {
+      CREATE MULTI LINK off_shift_reps := (WITH
+          rep_sign_ins := 
+              (SELECT
+                  .sign_ins
+              FILTER
+                  ((.user IS users::Rep) AND (.reason.name = 'Rep Off Shift'))
+              )
+      SELECT
+          rep_sign_ins.user
+      );
+      CREATE MULTI LINK on_shift_reps := (WITH
+          rep_sign_ins := 
+              (SELECT
+                  .sign_ins
+              FILTER
+                  ((.user IS users::Rep) AND (.reason.name = 'Rep On Shift'))
+              )
+      SELECT
+          rep_sign_ins.user
+      );
+      CREATE MULTI LINK queued := (SELECT
+          sign_in::QueuePlace
+      FILTER
+          (.location = __source__)
+      );
+      CREATE MULTI LINK queued_users_that_can_sign_in := (SELECT
+          ((SELECT
+              .queued
+          FILTER
+              (.ends_at >= std::datetime_of_statement())
+          )).user
+      );
+      CREATE MULTI LINK supervising_reps := (SELECT
+          ((.on_shift_reps UNION .off_shift_reps) IF .out_of_hours ELSE .on_shift_reps)
+      );
+      CREATE REQUIRED PROPERTY max_count := (SELECT
+          std::min({((SELECT
+              (.out_of_hours_rep_multiplier IF .out_of_hours ELSE .in_of_hours_rep_multiplier)
+          ) * std::count(.supervising_reps)), .max_users})
+      );
+      CREATE REQUIRED PROPERTY can_sign_in := (SELECT
+          ((std::count(.sign_ins) < .max_count) AND (((.max_count + std::count(.supervising_reps)) - std::count(.sign_ins)) >= 0))
+      );
+      CREATE REQUIRED PROPERTY queue_in_use := (SELECT
+          ((std::assert(.queue_enabled, message := 'Queue has been manually disabled') AND EXISTS (.queued)) OR NOT (.can_sign_in))
+      );
+      CREATE REQUIRED PROPERTY status := (WITH
+          current_time := 
+              (SELECT
+                  cal::to_local_time(std::datetime_of_statement(), 'Europe/London')
+              )
+      SELECT
+          ('open' IF (std::count(.on_shift_reps) > 0) ELSE ('soon' IF ((((.opening_time - <cal::relative_duration>'30m') <= current_time) AND (current_time <= (.closing_time - <cal::relative_duration>'30m'))) AND (std::datetime_get(std::datetime_of_statement(), 'dow') IN .opening_days)) ELSE 'closed'))
+      );
   };
   ALTER TYPE team::Team {
       CREATE MULTI LINK all_members := (SELECT
@@ -320,35 +414,6 @@ CREATE MIGRATION m1eewyk2vcv4ym43hugslnzjyodkwuda4sia35yf764hsqyddocazq
               )))
           ))
       );
-  };
-  CREATE ABSTRACT TYPE training::Interactable {
-      CREATE REQUIRED LINK parent: training::Training;
-      CREATE REQUIRED PROPERTY content: std::str;
-      CREATE REQUIRED PROPERTY enabled: std::bool {
-          SET default := true;
-      };
-      CREATE REQUIRED PROPERTY index: std::int16;
-      CREATE CONSTRAINT std::exclusive ON ((.parent, .index));
-  };
-  CREATE SCALAR TYPE training::AnswerType EXTENDING enum<`SINGLE`, MULTI>;
-  CREATE TYPE training::Question EXTENDING training::Interactable {
-      CREATE MULTI LINK answers: training::Answer;
-      CREATE REQUIRED PROPERTY type: training::AnswerType;
-  };
-  CREATE TYPE training::TrainingPage EXTENDING training::Interactable {
-      CREATE PROPERTY duration: std::duration;
-      CREATE REQUIRED PROPERTY name: std::str;
-  };
-  ALTER TYPE training::Training {
-      CREATE MULTI LINK sections := (SELECT
-          training::Interactable
-      FILTER
-          (.parent = __source__)
-      ORDER BY
-          .index ASC
-      );
-      CREATE MULTI LINK questions: training::Question;
-      CREATE MULTI LINK pages: training::TrainingPage;
   };
   CREATE TYPE users::SettingTemplate {
       CREATE REQUIRED PROPERTY key: std::str {

@@ -1,10 +1,10 @@
 import axiosInstance from "@/api/axiosInstance.ts";
-import { Location } from "@ignis/types/sign_in";
+import { LocationName } from "@ignis/types/sign_in";
 import axios from "axios";
 
 export interface PostQueueProps {
   signal: AbortSignal;
-  locationName: Location;
+  locationName: LocationName;
   uCardNumber: string;
 }
 
@@ -28,7 +28,7 @@ export const PostQueue = async ({ locationName, uCardNumber, signal }: PostQueue
 };
 
 export interface DeleteQueueProps {
-  locationName: Location;
+  locationName: LocationName;
   id: string;
 }
 

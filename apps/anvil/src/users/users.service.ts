@@ -7,7 +7,7 @@ import { ldapLibraryToUcardNumber, removeDomain } from "@/shared/functions/utils
 import e from "@dbschema/edgeql-js";
 import { addInPersonTraining } from "@dbschema/queries/addInPersonTraining.query";
 import { users } from "@ignis/types";
-import { Location } from "@ignis/types/sign_in";
+import { LocationName } from "@ignis/types/sign_in";
 import { Rep, RepStatus, SignInStat, Training, User } from "@ignis/types/users";
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { CardinalityViolationError, ConstraintViolationError, Duration, InvalidValueError } from "edgedb";
@@ -271,7 +271,7 @@ export class UsersService {
         })),
         (sign_in) => ({
           id: true,
-          location: true,
+          location: { name: true },
           ends_at: true,
           created_at: true,
           duration_: e.select(e.duration_to_seconds(sign_in.duration)),
@@ -287,11 +287,14 @@ export class UsersService {
 
       return {
         day: `${year}-${month}-${day}`,
-        value: group.elements.reduce((previous_duration, visit) => previous_duration + parseInt(visit.duration_), 0),
+        value: group.elements.reduce(
+          (previous_duration, visit) => previous_duration + Number.parseInt(visit.duration_),
+          0,
+        ),
         sign_ins: group.elements.map((sign_in) => ({
           ...sign_in,
-          location: sign_in.location.toLowerCase() as unknown as Location,
-          duration: parseInt(sign_in.duration_),
+          location: sign_in.location,
+          duration: Number.parseInt(sign_in.duration_),
         })),
       };
     });
@@ -410,11 +413,11 @@ export class UsersService {
             organisational_unit: user.organisational_unit,
             agreements_signed: user.agreements_signed,
             permissions: user.permissions,
-            roles: e.select(e.auth.Role, () => ({ filter_single: { name: "Rep" } })),
             infractions: user.infractions,
             mailing_list_subscriptions: user.mailing_list_subscriptions,
             referrals: user.referrals,
             training: user.training,
+            roles: e.select(e.auth.Role, () => ({ filter_single: { name: "Rep" } })),
             status,
             teams: e.select(e.team.Team, (team_) => ({
               filter: e.op(team_.id, "in", e.cast(e.uuid, e.set(...teamIds))),

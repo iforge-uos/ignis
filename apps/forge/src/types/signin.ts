@@ -1,11 +1,11 @@
 import { sign_in } from "@ignis/types";
-import { Location, LocationStatus, Reason, Training } from "@ignis/types/sign_in.ts";
+import { LocationName, PartialLocation, Reason, Training } from "@ignis/types/sign_in.ts";
 
 export interface SignInState {
-  active_location: Location;
+  active_location: LocationName;
   is_loading: boolean;
   error: string;
-  locations: LocationStatus[];
+  locations: { [KeyT in LocationName]: PartialLocation };
   session: SignInSession | null;
 }
 

@@ -1,12 +1,12 @@
+import { useAuth } from "@/components/auth-provider";
 import { InfractionSection } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/InfractionSection.tsx";
+import { TeamManagementSection } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/TeamManagementSection.tsx";
 import { TrainingSection } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/TrainingSection.tsx";
-import type { Location } from "@ignis/types/sign_in.ts";
+import type { Location, LocationName } from "@ignis/types/sign_in.ts";
 import { PartialUserWithTeams } from "@ignis/types/users.ts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui/components/ui/tabs.tsx";
-import * as React from "react";
-import { TeamManagementSection } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/TeamManagementSection.tsx";
-import { useAuth } from "@/components/auth-provider";
 import posthog from "posthog-js";
+import * as React from "react";
 
 type ManageSections = "Training" | "Infraction" | "Teams";
 
@@ -14,7 +14,7 @@ const ManageSectionList: ManageSections[] = ["Training", "Infraction", "Teams"];
 
 export interface ManageUserWidgetProps {
   user: PartialUserWithTeams;
-  location: Location;
+  locationName: LocationName;
   onShiftReps: PartialUserWithTeams[];
 }
 
@@ -25,16 +25,16 @@ const sectionHeadings: Record<ManageSections, string> = {
 };
 
 const sectionComponents: Record<ManageSections, (props: ManageUserWidgetProps) => React.ReactElement> = {
-  Training: ({ user, location, onShiftReps }) => (
-    <TrainingSection user={user} location={location} onShiftReps={onShiftReps} />
+  Training: ({ user, locationName: location, onShiftReps }) => (
+    <TrainingSection user={user} locationName={location} onShiftReps={onShiftReps} />
   ),
-  Infraction: ({ user, location }) => <InfractionSection user={user} location={location} />,
-  Teams: ({ user, location, onShiftReps }) => (
-    <TeamManagementSection user={user} location={location} onShiftReps={onShiftReps} />
+  Infraction: ({ user, locationName: location }) => <InfractionSection user={user} locationName={location} />,
+  Teams: ({ user, locationName: location, onShiftReps }) => (
+    <TeamManagementSection user={user} locationName={location} onShiftReps={onShiftReps} />
   ),
 };
 
-export const ManageUserWidget: React.FC<ManageUserWidgetProps> = ({ user, location, onShiftReps }) => {
+export const ManageUserWidget: React.FC<ManageUserWidgetProps> = ({ user, locationName, onShiftReps }) => {
   const auth = useAuth();
 
   const roleNames = auth.user?.roles.map((role) => role.name).filter(Boolean) ?? ["Rep"];
@@ -67,7 +67,7 @@ export const ManageUserWidget: React.FC<ManageUserWidgetProps> = ({ user, locati
         </TabsList>
         {ManageSectionList.filter((title) => canUserViewSection(roleNames, title)).map((title) => (
           <TabsContent className="content-center justify-center" value={title}>
-            {sectionComponents[title]({ user: user, location, onShiftReps })}
+            {sectionComponents[title]({ user: user, locationName: location, onShiftReps })}
           </TabsContent>
         ))}
       </Tabs>

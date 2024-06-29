@@ -8,8 +8,8 @@ export type {
 } from "@/sign-in/dto/sigs-in-dto";
 
 /** All the locations amiable to login to */
-export type Location = Lowercase<sign_in.SignInLocation>;
-export type ReasonCategory = sign_in.SignInReasonCategory;
+export type LocationName = sign_in.LocationName;
+export type ReasonCategory = sign_in.ReasonCategory;
 export type PartialReason = {
   id: string;
   name: string;
@@ -31,17 +31,8 @@ export type QueueEntry = {
   ends_at: Date | null;
 };
 
-/** The type of the location/:location endpoint storing data on who's logged in for the dashboard  */
-export type List = {
-  id: string;
-  location: Location;
-  sign_ins: SignInEntry[];
-  queued: QueueEntry[];
-};
-
-/** The status of a space */
-export type LocationStatus = {
-  open: boolean;
+export type PartialLocation = {
+  status: LocationStatusStatus;
   on_shift_rep_count: number;
   off_shift_rep_count: number;
   user_count: number;
@@ -49,8 +40,19 @@ export type LocationStatus = {
   needs_queue: boolean;
   out_of_hours: boolean;
   count_in_queue: number;
-  locationName: Location;
+  opening_time: string;
+  closing_time: string;
 };
+
+/** The type of the location/:location endpoint storing data on who's logged in for the dashboard  */
+export type Location = {
+  id: string;
+  name: LocationName;
+  sign_ins: SignInEntry[];
+  queued: QueueEntry[];
+};
+
+export type LocationStatusStatus = "open" | "soon" | "closed";
 
 //* Training for a user who's requesting to sign in */
 export type Training = Omit<users.Training, "locations" | "created_at" | "updated_at"> & {

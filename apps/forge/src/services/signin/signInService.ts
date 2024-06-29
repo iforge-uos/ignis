@@ -1,8 +1,8 @@
 import axiosInstance from "@/api/axiosInstance.ts";
-import { FinaliseSignInDto, User } from "@ignis/types/sign_in.ts";
+import { FinaliseSignInDto, LocationName, User } from "@ignis/types/sign_in.ts";
 
 export interface GetSignInProps {
-  locationName: string;
+  locationName: LocationName;
   uCardNumber: string;
   signal: AbortSignal;
   params?: { fast: boolean };
@@ -25,7 +25,7 @@ export const GetSignIn = async ({ locationName, uCardNumber, signal, params }: G
 
 export interface PostSignInProps {
   signal: AbortSignal;
-  locationName: string;
+  locationName: LocationName;
   uCardNumber: string;
   postBody: FinaliseSignInDto;
 }
@@ -44,7 +44,7 @@ export const PostSignIn = async ({ locationName, uCardNumber, signal, postBody }
 
 export interface PostSignOutProps {
   signal: AbortSignal;
-  locationName: string;
+  locationName: LocationName;
   uCardNumber: string;
 }
 
@@ -64,7 +64,7 @@ export const PostSignOut = async ({ locationName, uCardNumber, signal }: PostSig
 
 export interface PostRegisterProps {
   signal: AbortSignal;
-  locationName: string;
+  locationName: LocationName;
   uCardNumber: string;
 }
 

@@ -44,7 +44,7 @@ function SignInTable({ datum }: { datum: SignInDatum | null }) {
               onClick={() => navigate({ to: "/sign-ins/$id", params: sign_in })} // cannot use Link here as it breaks table formatting
             >
               <TableCell className="flex justify-center">
-                <LocationIcon location={sign_in.location} />
+                <LocationIcon location={sign_in.location.name} />
               </TableCell>
               <TableCell className="text-center">{sign_in.created_at.toLocaleTimeString()}</TableCell>
               <TableCell className="text-center">{sign_in.ends_at?.toLocaleTimeString() || "-"}</TableCell>
