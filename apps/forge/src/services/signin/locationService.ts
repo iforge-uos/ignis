@@ -11,7 +11,7 @@ export const locationStatus = async (): Promise<{ [KeyT in LocationName]: Partia
   }
 };
 
-export const dataForLocation = async (location: string): Promise<Location> => {
+export const dataForLocation = async (location: LocationName): Promise<Location> => {
   try {
     const { data } = await axiosInstance.get<Location>(`/location/${location}`);
     for (const place of data.queued) {

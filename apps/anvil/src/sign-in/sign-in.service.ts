@@ -110,12 +110,12 @@ export class SignInService implements OnModuleInit {
             sign_ins: {
               ...e.sign_in.SignIn["*"],
               reason: e.sign_in.Reason["*"],
-              user: {
-                ...PartialUserProps,
+              user: (user) => ({
+                ...PartialUserProps(user),
                 ...e.is(e.users.Rep, {
                   teams: { name: true, description: true, id: true },
                 }),
-              },
+              }),
             },
             queued: {
               ...e.sign_in.QueuePlace["*"],

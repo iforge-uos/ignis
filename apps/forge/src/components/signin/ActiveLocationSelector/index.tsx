@@ -1,7 +1,7 @@
 import { QueueStatus } from "@/components/signin/ActiveLocationSelector/QueueStatus.tsx";
 import { StatusBadge } from "@/components/signin/ActiveLocationSelector/StatusBadge.tsx";
 import { UserCount } from "@/components/signin/ActiveLocationSelector/UserCount.tsx";
-import { cn, toTitleCase } from "@/lib/utils";
+import { cn, removeSuffix, toTitleCase } from "@/lib/utils";
 import { signinActions } from "@/redux/signin.slice.ts";
 import { AppDispatch, AppRootState } from "@/redux/store.ts";
 import { locationStatus } from "@/services/signin/locationService.ts";
@@ -139,9 +139,8 @@ const ActiveLocationSelector = () => {
                   <p>The space is marked as OPEN when there is at least one rep signed in.</p>
                   <p>It is closed otherwise.</p>
                   <p>
-                    Current opening hours are:{" "}
-                    {activeLocationStatus.opening_time.substring(0, activeLocationStatus.opening_time.length - 3)} -{" "}
-                    {activeLocationStatus.closing_time.substring(0, activeLocationStatus.opening_time.length - 3)}
+                    Current opening hours are: {removeSuffix(activeLocationStatus.opening_time, ":00")} -{" "}
+                    {removeSuffix(activeLocationStatus.closing_time, ":00")}
                   </p>
                 </TooltipContent>
               </Tooltip>
