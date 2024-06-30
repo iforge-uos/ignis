@@ -1,37 +1,26 @@
-import { SignedInUserCard } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard";
-import type { SignInEntry } from "@ignis/types/sign_in.ts";
-import { PartialUserWithTeams } from "@ignis/types/users.ts";
+import type { QueueEntry } from "@ignis/types/sign_in.ts";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
 import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert.tsx";
 import { Button } from "@ui/components/ui/button.tsx";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@ui/components/ui/collapsible.tsx";
 import { ArrowDownIcon, ArrowRightIcon, Ban } from "lucide-react";
 import { FC, useState } from "react";
+import { QueuedUserCard } from "./QueuedUserCard";
 
-// SignInDrawer Props
-interface SignInDrawerProps {
-  title: string;
-  entries: SignInEntry[];
-  onShiftReps: PartialUserWithTeams[];
-  onSignOut: (user_id: string) => void;
+// QueuedDrawer Props
+interface QueueDrawerProps {
+  entries: QueueEntry[];
+  onDequeue: (user_id: string) => void;
   startExpanded?: boolean;
-  isAdmin?: boolean;
 }
 
-export const SignInDrawer: FC<SignInDrawerProps> = ({
-  title,
-  entries,
-  startExpanded,
-  onSignOut,
-  onShiftReps,
-  isAdmin = false,
-}) => {
+export const QueueDrawer: FC<QueueDrawerProps> = ({ entries, startExpanded, onDequeue }) => {
   const [isOpen, setIsOpen] = useState(startExpanded);
 
   const toggleOpen = () => setIsOpen(!isOpen);
 
   return (
-    <Collapsible className="space-y-2 mt-2 mb-2" defaultOpen={startExpanded}>
+    <Collapsible className="space-y-2 mt-2 mb-2">
       <CollapsibleTrigger asChild>
         <Button
           className="flex items-center justify-between space-x-4 py-7 w-full"
@@ -45,7 +34,7 @@ export const SignInDrawer: FC<SignInDrawerProps> = ({
             <span className="inline-flex items-center justify-center h-6 w-6 rounded-sm bg-primary text-sm font-semibold text-primary-foreground">
               {entries.length}
             </span>
-            <h4 className="text-lg font-bold">{title}</h4>
+            <h4 className="text-lg font-bold">Queued</h4>
           </div>
           <div className="flex items-center gap-2">
             {entries.length === 0 ? (
@@ -67,20 +56,11 @@ export const SignInDrawer: FC<SignInDrawerProps> = ({
               <Alert variant="default">
                 <InfoCircledIcon className="h-4 w-4" />
                 <AlertTitle>Info</AlertTitle>
-                <AlertDescription>There are no users currently signed in.</AlertDescription>
+                <AlertDescription>There are no users currently queued.</AlertDescription>
               </Alert>
             )}
             {entries.map((entry) => (
-              <SignedInUserCard
-                key={entry.user.id}
-                user={entry.user as PartialUserWithTeams}
-                tools={entry.tools}
-                reason={entry.reason}
-                timeIn={entry.created_at}
-                onSignOut={() => onSignOut(entry.user.id)}
-                onShiftReps={onShiftReps}
-                isAdmin={isAdmin}
-              />
+              <QueuedUserCard place={entry} key={entry.user.id} onDequeue={onDequeue} />
             ))}
           </div>
         </div>

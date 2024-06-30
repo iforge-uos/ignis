@@ -15,6 +15,7 @@ import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert.tsx
 import { Loader } from "@ui/components/ui/loader.tsx";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { QueueDrawer } from "./-components/QueuedDraw";
 
 export default function SignInDashboard() {
   const queryClient = useQueryClient();
@@ -125,20 +126,7 @@ export default function SignInDashboard() {
                 />
               </div>
               <div id="queue-shelf" className="mt-4 flex-1">
-                <h4 className="text-xl font-bold mb-4">Queued</h4>
-                <div className="flex flex-wrap gap-4 mb-4">
-                  {queuedUsers.length === 0 && (
-                    <Alert variant="default">
-                      <InfoCircledIcon className="h-4 w-4" />
-                      <AlertTitle>Info</AlertTitle>
-                      <AlertDescription>There are no users currently queued.</AlertDescription>
-                    </Alert>
-                  )}
-                  {queuedUsers.length > 0 &&
-                    queuedUsers.map((entry) => (
-                      <QueuedUserCard place={entry} key={entry.user.id} onDequeue={handleDequeue} />
-                    ))}
-                </div>
+                <QueueDrawer entries={queuedUsers} onDequeue={handleDequeue} />
               </div>
             </div>
           )}
