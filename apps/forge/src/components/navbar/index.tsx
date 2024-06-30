@@ -1,11 +1,11 @@
+import AppNav from "@/components/navbar/appNav";
 import AppSwitcher from "@/components/navbar/appSwitcher";
 import { ThemeSwitcher } from "@/components/navbar/themeSwitcher";
 import { UserNav } from "@/components/navbar/userNav";
-import AppNav from "@/components/navbar/appNav";
 
 export default function NavBar() {
   return (
-    <div className="flex items-center justify-between h-[60px] p-3 w-full bg-card text-card-foreground backdrop-filter shadow-lg dark:shadow-none">
+    <div className="sticky top-0 z-40 flex items-center justify-between h-[60px] p-3 w-full bg-card text-card-foreground backdrop-filter shadow-lg dark:shadow-none border-b-2">
       <div className="flex flex-1">
         <AppSwitcher />
       </div>
