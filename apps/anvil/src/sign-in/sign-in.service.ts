@@ -803,7 +803,7 @@ export class SignInService implements OnModuleInit {
         e.group(
           e.select(e.sign_in.SignIn, (sign_in) => ({
             filter: e.op(
-              e.op(sign_in.created_at, "<", e.op(e.datetime_current(), "-", e.cal.relative_duration("3d"))),
+              e.op(sign_in.created_at, ">", e.op(e.datetime_current(), "-", e.cal.relative_duration("3d"))),
               "and",
               e.op(sign_in.location.name, "=", e.cast(e.sign_in.LocationName, name)),
             ),
