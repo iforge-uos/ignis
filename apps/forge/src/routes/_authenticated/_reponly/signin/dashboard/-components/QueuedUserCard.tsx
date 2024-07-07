@@ -60,7 +60,9 @@ export const QueuedUserCard: React.FC<QueuedUserCardProps> = ({ place, onDequeue
         <div className="flex items-center justify-between mb-4 w-full space-x-2">
           <div className="w-2/3 p-1 flex-col">
             <Link to="/users/$id" params={place.user}>
-              <h2 className="text-center text-lg font-bold hover:underline">{place.user.display_name}</h2>
+              <h2 className="text-center text-lg font-bold hover:underline underline-offset-4">
+                {place.user.display_name}
+              </h2>
             </Link>
           </div>
           <div className="w-1/3 aspect-square">

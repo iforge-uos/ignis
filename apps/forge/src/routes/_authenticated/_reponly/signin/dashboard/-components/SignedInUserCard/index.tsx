@@ -65,7 +65,7 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
       toast.success(
         <>
           Successfully signed out{" "}
-          <a className="font-bold hover:underline hover:cursor-pointer" href={`/users/${user.id}`}>
+          <a className="font-bold hover:underline underline-offset-4 hover:cursor-pointer" href={`/users/${user.id}`}>
             {user.display_name}
           </a>
         </>,
@@ -89,7 +89,7 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
         <div className="flex items-center justify-between mb-4 w-full space-x-2">
           <div className="w-2/3 p-1 flex-col">
             <Link to="/users/$id" params={user}>
-              <h2 className="text-center text-lg font-bold hover:underline">{user.display_name}</h2>
+              <h2 className="text-center text-lg font-bold hover:underline underline-offset-4">{user.display_name}</h2>
             </Link>
             <div>
               {user.teams?.map((team) => (
