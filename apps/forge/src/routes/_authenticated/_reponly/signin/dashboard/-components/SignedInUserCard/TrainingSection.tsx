@@ -1,3 +1,4 @@
+import { iForgeEpoch } from "@/config/constants";
 import { ManageUserWidgetProps } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/ManageUserWidget.tsx";
 import addInPersonTraining from "@/services/users/addInPersonTraining.ts";
 import { getUserTrainingRemaining } from "@/services/users/getUserTrainingRemaining.ts";
@@ -75,7 +76,7 @@ export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locatio
               mode="single"
               selected={date}
               onSelect={setDate}
-              disabled={(date) => date > new Date() || date < new Date("2015-01-01")} // a fun epoch
+              disabled={(date) => date > new Date() || date < iForgeEpoch}
               initialFocus
             />
           </PopoverContent>
