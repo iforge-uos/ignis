@@ -21,6 +21,7 @@ module training {
             select .pages union .questions
             order by .index
         );
+        icon_url: str;
 
         # things for the UI
         multi locations: TrainingLocation;

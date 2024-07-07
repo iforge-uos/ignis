@@ -86,6 +86,7 @@ export class TrainingService {
           id: true,
           description: true,
         },
+        icon_url: true,
         filter: e.all(
           e.set(e.op(e.cast(TrainingLocation, location), "in", training.locations), e.op("exists", training.rep)),
         ),

@@ -83,7 +83,7 @@
 
         #sign-in-chart>div>div>div>div {
             background: hsl(var(--background)) !important;
-            color: var(--foreground) !important;
+            color: hsl(var(--foreground)) !important;
         }
 
         /* The text for the pop-up */
