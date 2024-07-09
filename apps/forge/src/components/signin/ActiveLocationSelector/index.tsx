@@ -22,7 +22,7 @@ import { PulseLoader } from "react-spinners";
 
 const ActiveLocationSelector = () => {
   const [open, setOpen] = useState<boolean>(false);
-  const [value, setValue] = useState<string>("");
+  const [value, setValue] = useState<LocationName | null>();
   const activeLocation = useSelector((state: AppRootState) => state.signin.active_location);
   const refetchInterval = 5000;
 
@@ -93,9 +93,10 @@ const ActiveLocationSelector = () => {
                             key={name}
                             value={name} // TODO why is this converting to lower
                             onSelect={(currentValue) => {
-                              setValue(currentValue.toUpperCase());
+                              const location = currentValue.toUpperCase() as LocationName;
+                              setValue(location);
                               setOpen(false);
-                              handleLocationSelect(currentValue.toUpperCase() as LocationName);
+                              handleLocationSelect(location);
                             }}
                           >
                             {toTitleCase(name)}
