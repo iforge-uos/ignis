@@ -57,6 +57,7 @@ export const TrainingProps = e.shape(e.training.Training, () => ({
   compulsory: true,
   in_person: true,
   locations: true,
+  enabled: true,
   "@created_at": true,
   "@in_person_created_at": true,
   rep: true,

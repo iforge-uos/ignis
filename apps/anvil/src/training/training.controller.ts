@@ -7,7 +7,7 @@ import { std } from "@dbschema/interfaces";
 import type { training } from "@ignis/types";
 import { PartialTraining } from "@ignis/types/training";
 import type { User } from "@ignis/types/users";
-import { Body, Controller, ForbiddenException, Get, Logger, Param, Post, Query, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, ForbiddenException, Get, Logger, Param, Post, Req, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { Request } from "express";
 
