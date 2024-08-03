@@ -1,20 +1,15 @@
 import axiosInstance from "@/api/axiosInstance";
 import Title from "@/components/title";
-import { extractError, trainingBadges } from "@/lib/utils";
+import { TrainingHeader } from "@/components/training/TrainingHeader";
 import { get } from "@/services/training/get";
 import type { InteractionResponse, Training } from "@ignis/types/training";
-import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
-import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
-import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert";
-import { Badge } from "@ui/components/ui/badge";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Button } from "@ui/components/ui/button";
 import { Checkbox } from "@ui/components/ui/checkbox";
 import { Label } from "@ui/components/ui/label";
-import { Loader } from "@ui/components/ui/loader";
 import { Progress } from "@ui/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@ui/components/ui/radio-group";
 import { Separator } from "@ui/components/ui/separator";
-import axios from "axios";
 import React from "react";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
@@ -33,6 +28,8 @@ export function TrainingContent({ content }: { content: string }) {
 
 const Component: React.FC = () => {
   const { id } = Route.useParams();
+  const data = Route.useLoaderData();
+
   const navigate = useNavigate();
   const [sessionId, setSessionId] = React.useState<string | null>(null);
   const [buttonName, setButtonName] = React.useState<string>("Start Training");
@@ -42,11 +39,6 @@ const Component: React.FC = () => {
   const [_, setDelay] = React.useState<number | null>(null);
   const [duration, setDuration] = React.useState<number | null>(null);
   const [answers, setAnswers] = React.useState<{ id: string }[]>([]);
-
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["getTraining", id],
-    queryFn: () => get(id),
-  });
 
   React.useEffect(() => {
     const progressUpdater = setInterval(() => {
@@ -71,31 +63,6 @@ const Component: React.FC = () => {
       clearInterval(progressUpdater);
     };
   }, [duration]);
-
-  if (isLoading || !sections) {
-    return <Loader />;
-  }
-  if (error instanceof axios.AxiosError && error.response?.status === 404) {
-    throw notFound();
-  }
-  if (error) {
-    return (
-      <>
-        <Alert variant="destructive">
-          <ExclamationTriangleIcon className="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>
-            There was an error <br />
-            {extractError(error!)}
-          </AlertDescription>
-        </Alert>
-      </>
-    );
-  }
-  if (data === undefined) {
-    alert("No idea what cases hit this");
-    return;
-  }
 
   const interactWithTraining = async (training_id: string) => {
     let section: NonNullable<InteractionResponse>;
@@ -161,8 +128,8 @@ const Component: React.FC = () => {
                 <h2 className="text-2xl font-semibold py-3">{(section as any)?.name ?? "Question"}</h2>
                 <>
                   <TrainingContent content={section.content} />
-                  {section.type_name === "training::Question" ? (
-                    section.type === "SINGLE" ? (
+                  {section.type_name === "training::Question" &&
+                    (section.type === "SINGLE" ? (
                       <RadioGroup>
                         {section.answers.map((answer) => (
                           <div className="flex items-center space-x-2" key={answer.id}>
@@ -176,12 +143,12 @@ const Component: React.FC = () => {
                             <Label htmlFor={answer.id} className="hover:cursor-pointer">
                               <TrainingContent content={answer.content} />
                             </Label>
-                            {answer.description ? ( // TODO think about how to show these
+                            {answer.description && ( // TODO think about how to show these
                               <>
                                 <br />
                                 <TrainingContent content={answer.description} />
                               </>
-                            ) : undefined}
+                            )}
                           </div>
                         ))}
                       </RadioGroup>
@@ -205,8 +172,7 @@ const Component: React.FC = () => {
                           </Label>
                         </div>
                       ))
-                    )
-                  ) : null}
+                    ))}
                   <br />
                 </>
               </div>
@@ -242,5 +208,6 @@ const Component: React.FC = () => {
 };
 
 export const Route = createFileRoute("/_authenticated/training/$id")({
+  loader: async ({ params }) => await get(params.id),
   component: Component,
 });

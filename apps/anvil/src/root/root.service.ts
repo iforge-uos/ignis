@@ -5,7 +5,8 @@ import e from "@dbschema/edgeql-js";
 import type { Agreement } from "@ignis/types/root";
 import type { LocationName, PartialLocation } from "@ignis/types/sign_in";
 import type { User } from "@ignis/types/users";
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { CardinalityViolationError, InvalidValueError } from "edgedb";
 
 // Helper function to compute SHA-256 hash of string
 function computeHash(string: string) {
@@ -48,12 +49,21 @@ export class RootService {
   }
 
   async getAgreement(id: string) {
-    return this.dbService.query(
-      e.select(e.sign_in.Agreement, () => ({
-        ...e.sign_in.Agreement["*"],
-        filter_single: { id },
-      })),
-    );
+    try {
+      return this.dbService.query(
+        e.select(e.sign_in.Agreement, () => ({
+          ...e.sign_in.Agreement["*"],
+          filter_single: { id },
+        })),
+      );
+    } catch (error) {
+      if (error instanceof InvalidValueError || error instanceof CardinalityViolationError) {
+        throw new NotFoundException(`Agreement with id ${id} not found`, {
+          cause: error.toString(),
+        });
+      }
+      throw error;
+    }
   }
 
   async createAgreement(name: string, reason_ids: string[], content: string) {
@@ -86,14 +96,23 @@ export class RootService {
       })),
     );
 
-    await this.dbService.query(
-      e.update(e.sign_in.Reason, (reason) => ({
-        filter: e.op(reason.agreement.id, "=", current_agreement.id),
-        set: {
-          agreement: null, // unlink all old agreements
-        },
-      })),
-    );
+    try {
+      await this.dbService.query(
+        e.update(e.sign_in.Reason, (reason) => ({
+          filter: e.op(reason.agreement.id, "=", current_agreement.id),
+          set: {
+            agreement: null, // unlink all old agreements
+          },
+        })),
+      );
+    } catch (error) {
+      if (error instanceof InvalidValueError || error instanceof CardinalityViolationError) {
+        throw new NotFoundException(`Agreement with id ${agreement_id} not found`, {
+          cause: error.toString(),
+        });
+      }
+      throw error;
+    }
 
     const new_agreement = e.insert(e.sign_in.Agreement, {
       name,
@@ -102,32 +121,50 @@ export class RootService {
       version: e.op(current_agreement.version, "+", 1),
     });
 
-    // Then, update each SignInReason to link to the new Agreement
-    await this.dbService.query(
-      e.for(e.cast(e.uuid, e.set(...reason_ids)), (reason_id) =>
-        e.update(e.sign_in.Reason, () => ({
-          filter_single: { id: reason_id },
-          set: {
-            agreement: new_agreement,
-          },
-        })),
-      ),
-    );
+    try {
+      // Then, update each SignInReason to link to the new Agreement
+      await this.dbService.query(
+        e.for(e.cast(e.uuid, e.set(...reason_ids)), (reason_id) =>
+          e.update(e.sign_in.Reason, () => ({
+            filter_single: { id: reason_id },
+            set: {
+              agreement: new_agreement,
+            },
+          })),
+        ),
+      );
+    } catch (error) {
+      if (error instanceof InvalidValueError || error instanceof CardinalityViolationError) {
+        throw new NotFoundException(`Reason with id ${agreement_id} not found`, {
+          cause: error.toString(),
+        });
+      }
+      throw error;
+    }
   }
 
   async signAgreement(id: string, user: User) {
-    await this.dbService.query(
-      e.update(e.users.User, () => ({
-        filter_single: { id: user.id },
-        set: {
-          agreements_signed: {
-            "+=": e.select(e.sign_in.Agreement, () => ({
-              filter_single: { id },
-            })),
+    try {
+      await this.dbService.query(
+        e.update(e.users.User, () => ({
+          filter_single: { id: user.id },
+          set: {
+            agreements_signed: {
+              "+=": e.select(e.sign_in.Agreement, () => ({
+                filter_single: { id },
+              })),
+            },
           },
-        },
-      })),
-    );
+        })),
+      );
+    } catch (error) {
+      if (error instanceof InvalidValueError || error instanceof CardinalityViolationError) {
+        throw new NotFoundException(`Agreement with id ${id} not found`, {
+          cause: error.toString(),
+        });
+      }
+      throw error;
+    }
   }
 
   async getTeams() {

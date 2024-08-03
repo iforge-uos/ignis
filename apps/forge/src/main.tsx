@@ -10,10 +10,12 @@ import { HelmetProvider } from "react-helmet-async";
 import { Provider } from "react-redux";
 
 import { AuthProvider, useAuth } from "@/components/auth-provider";
-import { Loading } from "@/components/routing/Loading.tsx";
 import { routeTree } from "@/routeTree.gen.ts";
 import { Toaster } from "@ui/components/ui/sonner.tsx";
 import { PersistGate } from "redux-persist/integration/react";
+import { GenericError } from "./components/routing/GenericError";
+import { Loading } from "./components/routing/Loading";
+import { NotFound } from "./components/routing/NotFound";
 import { Apps } from "./types/app";
 
 // Begin Router
@@ -29,6 +31,9 @@ const router = createRouter({
   // Since we're using React Query, we don't want loader calls to ever be stale
   // This will ensure that the loader is always called when the route is preloaded or visited
   defaultPreloadStaleTime: 0,
+  defaultNotFoundComponent: NotFound,
+  defaultErrorComponent: GenericError,
+  defaultPendingComponent: Loading,
 });
 
 declare module "@tanstack/react-router" {

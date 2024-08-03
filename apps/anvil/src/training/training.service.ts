@@ -3,23 +3,26 @@ import { ErrorCodes } from "@/shared/constants/ErrorCodes";
 import { UsersService } from "@/users/users.service";
 import e from "@dbschema/edgeql-js";
 import { TrainingLocation } from "@dbschema/edgeql-js/modules/training";
+import { getTrainingForEditing } from "@dbschema/queries/getTrainingForEditing.query";
 import { getTrainingNextSection } from "@dbschema/queries/getTrainingNextSection.query";
 import { startTraining } from "@dbschema/queries/startTraining.query";
 import { training } from "@ignis/types";
 import { PartialTraining } from "@ignis/types/training";
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
-import { CardinalityViolationError, MissingRequiredError } from "edgedb";
+import { CardinalityViolationError, InvalidValueError, MissingRequiredError } from "edgedb";
 
 const TrainingSection = e.shape(e.training.Training.sections, (section) => ({
   type_name: e.select(section.__type__.name),
   id: true,
-  index: true,
   content: true,
+  index: true,
   ...e.is(e.training.TrainingPage, {
     name: true,
     duration_: e.duration_to_seconds(section.is(e.training.TrainingPage).duration),
   }),
-  ...e.is(e.training.Question, { type: true, answers: { id: true, content: true } }),
+  ...e.is(e.training.Question, {
+    answers: { id: true, content: true },
+  }),
 }));
 
 @Injectable()
@@ -30,36 +33,76 @@ export class TrainingService {
   ) {}
 
   async getTraining(id: string, editing?: boolean): Promise<training.Training> {
-    try {
-      return await this.dbService.query(
-        e.assert_exists(
-          e.select(e.training.Training, () => ({
-            ...(editing
-              ? {
-                  ...e.training.Training["*"],
-                  sections: TrainingSection,
-                }
-              : {
-                  id: true,
-                  created_at: true,
-                  updated_at: true,
-                  name: true,
-                  description: true,
-                  locations: true,
-                  compulsory: true,
-                  in_person: true,
-                }),
-            rep: { id: true, name: true, description: true },
-            filter_single: { id },
-          })),
-        ),
-      );
-    } catch (e) {
-      if (e instanceof CardinalityViolationError) {
-        throw new NotFoundException(`Training with id ${id} not found`);
-      }
-      throw e;
+    let fn: () => Promise<training.Training>;
+    if (editing) {
+      fn = () => getTrainingForEditing(this.dbService.client, { id }) as Promise<training.Training>;
+    } else {
+      fn = () =>
+        this.dbService.query(
+          e.assert_exists(
+            e.select(e.training.Training, () => ({
+              id: true,
+              created_at: true,
+              updated_at: true,
+              name: true,
+              description: true,
+              locations: true,
+              compulsory: true,
+              in_person: true,
+              enabled: true,
+              rep: {
+                id: true,
+                name: true,
+                description: true,
+              },
+              filter_single: { id },
+            })),
+          ),
+        );
     }
+
+    try {
+      return await fn();
+    } catch (error) {
+      if (error instanceof InvalidValueError || error instanceof CardinalityViolationError) {
+        throw new NotFoundException(`Training with id ${id} not found`, {
+          cause: error.toString(),
+        });
+      }
+      throw error;
+    }
+
+    // try {
+    //   return await this.dbService.query(
+    //     e.assert_exists(
+    //       e.select(e.training.Training, () => ({
+    //         ...(editing
+    //           ? {
+    //               ...e.training.Training["*"],
+    //               sections: TrainingSection,
+    //             }
+    //           : {
+    //               id: true,
+    //               created_at: true,
+    //               updated_at: true,
+    //               name: true,
+    //               description: true,
+    //               locations: true,
+    //               compulsory: true,
+    //               in_person: true,
+    //             }),
+    //         enabled: true,
+    //         rep: { id: true, name: true, description: true },
+    //         filter_single: { id },
+    //       })),
+    //     ),
+    //   );
+    // } catch (e) {
+    //   if (e instanceof CardinalityViolationError) {
+    //     throw new NotFoundException(`Training with id ${id} not found`);
+    //   }
+    //   throw e;
+    // }
   }
 
   async searchTrainings(name: string) {
@@ -90,8 +133,14 @@ export class TrainingService {
           id: true,
           description: true,
         },
+        icon_url: true,
+        enabled: true,
         filter: e.all(
-          e.set(e.op(e.cast(TrainingLocation, location), "in", training.locations), e.op("exists", training.rep)),
+          e.set(
+            e.op(e.cast(TrainingLocation, location), "in", training.locations),
+            e.op("exists", training.rep),
+            training.enabled,
+          ),
         ),
       })),
     );

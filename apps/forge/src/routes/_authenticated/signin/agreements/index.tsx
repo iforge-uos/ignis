@@ -1,30 +1,12 @@
-import { getAgreements } from "@/services/root/getAgreements";
-import { Agreement } from "@ignis/types/root";
-import { useQuery } from "@tanstack/react-query";
-import { Loader } from "@ui/components/ui/loader";
-import { AgreementCard } from "@/routes/_authenticated/signin/agreements/-components/AgreementCard";
-import { createFileRoute } from "@tanstack/react-router";
 import Title from "@/components/title";
 import { useUser } from "@/lib/utils";
+import { AgreementCard } from "@/routes/_authenticated/signin/agreements/-components/AgreementCard";
+import { getAgreements } from "@/services/root/getAgreements";
+import { createFileRoute } from "@tanstack/react-router";
 
 export default function Component() {
+  const agreements = Route.useLoaderData();
   const user = useUser()!;
-  const {
-    data: agreements,
-    isLoading,
-    isError,
-  } = useQuery<Agreement[]>({
-    queryKey: ["agreements"],
-    queryFn: getAgreements,
-  });
-
-  if (isLoading) {
-    return <Loader />;
-  }
-
-  if (isError || !agreements) {
-    return <div className="text-center">Error loading agreements</div>;
-  }
 
   // Filter agreements based on user role
   const filteredAgreements = agreements.filter((agreement) => {
@@ -52,5 +34,6 @@ export default function Component() {
 }
 
 export const Route = createFileRoute("/_authenticated/signin/agreements/")({
+  loader: getAgreements,
   component: Component,
 });
