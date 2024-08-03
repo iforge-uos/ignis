@@ -56,7 +56,7 @@ export const InfractionSection: React.FC<InfractionSectionProps> = ({ user, loca
         onCheckedChange={() => setResolved((oldValue) => !oldValue)}
       />
       <Label htmlFor={"resolved-checkbox"} className="hover:cursor-pointer">
-        <text>Resolved? (untick if needs investigation)</text>
+        <div>Resolved? (untick if needs investigation)</div>
       </Label>
     </div>
   );
