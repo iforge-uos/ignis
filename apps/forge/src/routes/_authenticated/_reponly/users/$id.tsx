@@ -1,50 +1,18 @@
 import { UserAvatar } from "@/components/avatar";
 import { LocationIcon } from "@/components/icons/Locations";
 import Title from "@/components/title";
-import { extractError } from "@/lib/utils";
 import SignInsChart from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignInsChart.tsx";
 import { getUser } from "@/services/users/getUser.ts";
 import getUserSignIns from "@/services/users/getUserSignIns.ts";
 import { getUserTraining } from "@/services/users/getUserTraining.ts";
 import { Training } from "@ignis/types/users.ts";
-import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { Badge } from "@ui/components/ui/badge.tsx";
-import { Loader } from "@ui/components/ui/loader";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@ui/components/ui/table.tsx";
-import { isAxiosError } from "axios";
 import { Check, X } from "lucide-react";
 
-async function getData(id: string) {
-  const [user, trainings, signIns] = await Promise.all([getUser(id), getUserTraining(id), getUserSignIns(id)]);
-  return {
-    user,
-    trainings,
-    signIns,
-  };
-}
-
 export default function Component() {
-  const { id } = Route.useParams();
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["user", id],
-    queryFn: async () => getData(id),
-  });
-
-  if (error) {
-    if (isAxiosError(error) && error.status === 404) {
-      throw notFound();
-    }
-    <>
-      An error occurred fetching the user:
-      <br />
-      {extractError(error!)}
-    </>;
-  }
-
-  if (isLoading) {
-    return <Loader />;
-  }
+  const data = Route.useLoaderData();
   const { user, trainings, signIns } = data!;
   const rep = user.roles.some((role) => role.name === "Rep");
   const locationIcon = (training: Training) => {
@@ -172,5 +140,17 @@ export default function Component() {
 }
 
 export const Route = createFileRoute("/_authenticated/_reponly/users/$id")({
+  loader: async ({ params }) => {
+    const [user, trainings, signIns] = await Promise.all([
+      getUser(params.id),
+      getUserTraining(params.id),
+      getUserSignIns(params.id),
+    ]);
+    return {
+      user,
+      trainings,
+      signIns,
+    };
+  },
   component: Component,
 });
