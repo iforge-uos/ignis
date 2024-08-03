@@ -283,10 +283,12 @@ export class SignInService implements OnModuleInit {
               "else",
               true,
             ),
-            filter: e.op(
-              e.op("exists", training.rep),
-              "and",
-              e.op(e.cast(e.training.TrainingLocation, name), "in", training.locations),
+            enabled: false,
+            filter: e.all(
+              e.set(
+                e.op("exists", training.rep),
+                e.op(e.cast(e.training.TrainingLocation, name), "in", training.locations),
+              ),
             ),
           }),
           filter_single: { id },
@@ -302,11 +304,13 @@ export class SignInService implements OnModuleInit {
         in_person: true,
         rep: { id: true, description: true },
         description: true,
+        enabled: true,
         filter: e.all(
           e.set(
             e.op(training_.id, "not in", e.cast(e.uuid, e.set(...training.map((training) => training.id)))),
             e.op("exists", training_.rep),
             e.op(e.cast(e.training.TrainingLocation, name), "in", training_.locations),
+            training_.enabled,
           ),
         ),
       })),
