@@ -1,8 +1,7 @@
 import axiosInstance from "@/api/axiosInstance";
 import Title from "@/components/title";
-import { extractError, useUser } from "@/lib/utils";
+import { useUser } from "@/lib/utils";
 import { getAgreement } from "@/services/root/getAgreement";
-import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button";
 import { Checkbox } from "@ui/components/ui/checkbox";
@@ -14,32 +13,11 @@ import { toast } from "sonner";
 
 export default function Component() {
   const { id } = Route.useParams();
+  const agreement = Route.useLoaderData();
 
   const [isChecked, setIsChecked] = useState<string | boolean>(false);
   const user = useUser()!;
   const navigator = useNavigate();
-
-  const {
-    data: agreement,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["agreement", id],
-    queryFn: () => getAgreement(id),
-  });
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return (
-      <div>
-        Error loading agreement: <br />
-        {extractError(error!)}
-      </div>
-    );
-  }
 
   return (
     <>
@@ -86,5 +64,6 @@ export default function Component() {
 }
 
 export const Route = createFileRoute("/_authenticated/signin/agreements/$id")({
+  loader: ({ params }) => getAgreement(params.id),
   component: Component,
 });

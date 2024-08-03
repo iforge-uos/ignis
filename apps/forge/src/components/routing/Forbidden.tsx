@@ -3,6 +3,17 @@ import { RootComponentInner } from "@/routes/__root";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button.tsx";
 
+//  maybe there's a way to make this work
+// declare module "@tanstack/react-router" {
+//   type NotFoundError = {
+//     forbidden?: boolean;
+//   };
+
+//   type NotFoundRouteProps = {
+//     forbidden?: boolean;
+//   };
+// }
+
 export const Forbidden = () => {
   return (
     <RootComponentInner>
