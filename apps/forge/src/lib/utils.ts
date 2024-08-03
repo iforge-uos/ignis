@@ -66,49 +66,35 @@ export function deserializeMd(content: string) {
   return deserializeMd_(editor, content);
 }
 
-type TrainingBadge = "Compulsory" | "In-Person Training Required" | "Rep Training" | "Mainspace" | "Heartspace"; // TODO visible
-type TrainingForBadges = {
-  compulsory?: boolean;
-  in_person?: boolean;
-  rep?: any;
-  locations: Location[];
-};
+const trainingKeysToTag = {
+  compulsory: "Compulsory",
+  in_person: "In-Person Training Required",
+  enabled: "Enabled",
+} as const;
+export type TrainingTag = (typeof trainingKeysToTag)[keyof typeof trainingKeysToTag];
+export type TrainingForTags = { [K in keyof typeof trainingKeysToTag]: boolean };
 
-const keyToBadgeMap: Record<keyof TrainingForBadges, TrainingBadge[]> = {
-  compulsory: ["Compulsory"],
-  in_person: ["In-Person Training Required"],
-  rep: ["Rep Training"],
-  locations: ["Mainspace", "Heartspace"],
-};
+export const ALL_TAGS: readonly TrainingTag[] = Object.values(trainingKeysToTag);
 
-export const ALL_BADGES: readonly TrainingBadge[] = Object.values(keyToBadgeMap).flat();
-
-export function trainingBadges(training: TrainingForBadges) {
+export function trainingTags(training: TrainingForTags) {
   return Object.entries(training)
-    .flatMap(([key, value]) => (value ? keyToBadgeMap[key as keyof TrainingForBadges] : []))
-    .filter(Boolean) as TrainingBadge[];
+    .map(([key, value]) => (value ? trainingKeysToTag[key as keyof TrainingForTags] : ""))
+    .filter(Boolean) as TrainingTag[];
 }
 
-export function serializeTrainingBadges(badges_: TrainingBadge[]): Required<TrainingForBadges> {
+type Mutable<T> = {
+  -readonly [P in keyof T]: T[P];
+};
+
+export function serializeTrainingTags(badges_: TrainingTag[]): Required<TrainingForTags> {
   const badges = new Set(badges_);
-  const training: Partial<TrainingForBadges> = {};
+  const training: Partial<Mutable<TrainingForTags>> = {};
 
-  for (const badge of badges) {
-    const keys = Object.entries(keyToBadgeMap)
-      .filter(([_, badges]) => badges.includes(badge))
-      .map(([key]) => key as keyof TrainingForBadges);
-
-    for (const key of keys) {
-      if (key === "locations") {
-        if (!training.locations) {
-          training.locations = [];
-        }
-        training.locations.push(badge.replace(" ", "_").toLowerCase() as Location);
-      } else {
-        training[key] = true;
-      }
+  for (const [key, badge_] of Object.entries(trainingKeysToTag)) {
+    if (badges.has(badge_)) {
+      training[key as keyof TrainingForTags] = true;
     }
   }
 
-  return training as Required<TrainingForBadges>;
+  return training as Required<TrainingForTags>;
 }

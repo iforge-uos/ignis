@@ -119,7 +119,7 @@ const Component: React.FC = () => {
         <div className="container space-y-4 px-4 md:px-6">
           <div className="space-y-2">
             <h1 className="text-4xl font-bold text-center">{data.name}</h1>
-            <TrainingHeader />
+            <TrainingHeader data={data} />
             <TrainingContent content={data.description} />
             <br />
             {sections.map((section, idx) => (
