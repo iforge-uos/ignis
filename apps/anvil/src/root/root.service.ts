@@ -24,27 +24,25 @@ export class RootService {
   ) {}
 
   async getSignIn(id: string) {
-    let sign_in: any;
     try {
-      sign_in = await this.dbService.query(
+      return await this.dbService.query(
         e.assert_exists(
-          e.select(e.sign_in.SignIn, () => ({
+          e.select(e.sign_in.SignIn, (sign_in) => ({
             ...e.sign_in.SignIn["*"],
+            location: { name: true },
             user: PartialUserProps,
-            reason: e.sign_in.SignInReason["*"],
+            reason: e.sign_in.Reason["*"],
+            duration_: e.duration_to_seconds(sign_in.duration),
             filter_single: { id },
           })),
         ),
       );
     } catch (error) {
-      if (error instanceof CardinalityViolationError) {
+      if (error instanceof CardinalityViolationError || error instanceof InvalidValueError) {
         throw new NotFoundException(`No sign in found with ID ${id}`);
       }
       throw error;
     }
-
-    sign_in.duration = sign_in.duration.seconds;
-    return sign_in;
   }
 
   async getAgreements(): Promise<Agreement[]> {

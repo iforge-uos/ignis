@@ -34,9 +34,9 @@ export default function Component() {
               </div>
               <div>
                 <div className="text-sm mt-2">Roles</div>
-                <div className="flex flex-wrap">
+                <div className="flex flex-wrap gap-1">
                   {user.roles.map((role) => (
-                    <Badge variant="outline" key={role.id}>
+                    <Badge key={role.id} variant="outline" className="rounded-md">
                       {role.name}
                     </Badge>
                   ))}
