@@ -18,7 +18,7 @@ export type SignIn = {
   created_at: Date;
   ends_at: Date | null;
   duration: number;
-  location: sign_in.SignInLocation;
+  location: { name: sign_in.LocationName };
   signed_out: boolean | null;
   tools: string[];
 };
