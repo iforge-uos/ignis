@@ -2,7 +2,7 @@ import { iForgeEpoch } from "@/config/constants";
 import { ManageUserWidgetProps } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/ManageUserWidget.tsx";
 import addInPersonTraining from "@/services/users/addInPersonTraining.ts";
 import { getUserTrainingRemaining } from "@/services/users/getUserTrainingRemaining.ts";
-import type { Location } from "@ignis/types/sign_in.ts";
+import type { LocationName } from "@ignis/types/sign_in.ts";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@ui/components/ui/button.tsx";
 import { Calendar } from "@ui/components/ui/calendar.tsx";
@@ -43,7 +43,7 @@ export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locatio
             <SelectGroup>
               {remainingTrainings && remainingTrainings.length > 0 ? (
                 remainingTrainings.map((training) =>
-                  training.locations.includes(location.toUpperCase() as Uppercase<Location>) ? (
+                  training.locations.includes(location.toUpperCase() as Uppercase<LocationName>) ? (
                     <SelectItem key={training.id} value={training.id}>
                       {training.name}
                     </SelectItem>
@@ -91,7 +91,11 @@ export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locatio
           <SelectContent>
             <SelectGroup>
               {onShiftReps && onShiftReps.length > 0 ? (
-                onShiftReps.map((rep) => <SelectItem value={rep.id}>{rep.display_name}</SelectItem>)
+                onShiftReps.map((rep) => (
+                  <SelectItem value={rep.id} key={rep.id}>
+                    {rep.display_name}
+                  </SelectItem>
+                ))
               ) : (
                 <SelectItem className="w-fit" value={"unselectable"} disabled>
                   <p>
