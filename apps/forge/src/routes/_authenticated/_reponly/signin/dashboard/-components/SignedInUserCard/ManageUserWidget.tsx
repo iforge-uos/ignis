@@ -1,8 +1,9 @@
 import { useAuth } from "@/components/auth-provider";
+import { Tuple } from "@/lib/constants";
 import { InfractionSection } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/InfractionSection.tsx";
 import { TeamManagementSection } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/TeamManagementSection.tsx";
 import { TrainingSection } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/TrainingSection.tsx";
-import type { Location, LocationName } from "@ignis/types/sign_in.ts";
+import type { LocationName } from "@ignis/types/sign_in.ts";
 import { PartialUserWithTeams } from "@ignis/types/users.ts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui/components/ui/tabs.tsx";
 import posthog from "posthog-js";
@@ -10,7 +11,7 @@ import * as React from "react";
 
 type ManageSections = "Training" | "Infraction" | "Teams";
 
-const ManageSectionList: ManageSections[] = ["Training", "Infraction", "Teams"];
+const ManageSectionList: Tuple<ManageSections> = ["Training", "Infraction", "Teams"];
 
 export interface ManageUserWidgetProps {
   user: PartialUserWithTeams;
@@ -62,12 +63,14 @@ export const ManageUserWidget: React.FC<ManageUserWidgetProps> = ({ user, locati
       <Tabs className="w-full" defaultValue={ManageSectionList[0]}>
         <TabsList className="w-full">
           {ManageSectionList.filter((title) => canUserViewSection(roleNames, title)).map((title) => (
-            <TabsTrigger value={title}>{sectionHeadings[title]}</TabsTrigger>
+            <TabsTrigger value={title} key={title}>
+              {sectionHeadings[title]}
+            </TabsTrigger>
           ))}
         </TabsList>
         {ManageSectionList.filter((title) => canUserViewSection(roleNames, title)).map((title) => (
-          <TabsContent className="content-center justify-center" value={title}>
-            {sectionComponents[title]({ user: user, locationName: location, onShiftReps })}
+          <TabsContent className="content-center justify-center" value={title} key={title}>
+            {sectionComponents[title]({ user: user, locationName, onShiftReps })}
           </TabsContent>
         ))}
       </Tabs>
