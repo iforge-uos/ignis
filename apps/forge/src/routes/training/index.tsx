@@ -9,7 +9,7 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button";
 import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from "@ui/components/ui/command";
 import { Separator } from "@ui/components/ui/separator";
-import { HeartIcon, ParkingMeterIcon, SearchCheckIcon, TriangleAlertIcon, WrenchIcon } from "lucide-react";
+import { SearchCheckIcon, TriangleAlertIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { TrainingContent } from "../_authenticated/training/$id";
 
@@ -83,6 +83,7 @@ export default function TrainingIndexPage() {
                 // TODO this doesn't cover the entirety of the box for some reason in lg
                 img={
                   <ImageGradient gradientColor="mainspace">
+                    {/* TODO this doesn't cover the entirety of the box for some reason in lg */}
                     <img
                       src={`${import.meta.env.VITE_CDN_URL}/files/mainspace_training.jpg`}
                       alt="iForge Mainspace"
