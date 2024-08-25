@@ -40,7 +40,7 @@ function SignInTable({ datum }: { datum: SignInDatum | null }) {
             <Link key={sign_in.id} to="/sign-ins/$id" params={sign_in} className="contents">
               <TableRow className="hover:bg-accent hover:cursor-pointer" key={sign_in.id}>
                 <TableCell className="flex justify-center">
-                  <LocationIcon location={sign_in.location.name} />
+                  <LocationIcon location={sign_in.location.name} tooltip={false} />
                 </TableCell>
                 <TableCell className="text-center">{sign_in.created_at.toLocaleTimeString()}</TableCell>
                 <TableCell className="text-center">{sign_in.ends_at?.toLocaleTimeString() || "-"}</TableCell>

@@ -1,21 +1,23 @@
 import Title from "@/components/title";
 import { locationNameToCSSName } from "@/config/constants.ts";
-import { cn, extractError, toTitleCase, useUser } from "@/lib/utils";
+import { toTitleCase, useUser } from "@/lib/utils";
+import { TrainingContent } from "@/routes/_authenticated/training/$id";
 import { getLocation } from "@/services/training/getLocation";
 import { getStatus } from "@/services/training/getStatus";
+import { training } from "@ignis/types";
 import { Location, PartialTrainingWithStatus } from "@ignis/types/training";
-import { useQuery } from "@tanstack/react-query";
-import { Loader } from "@ui/components/ui/loader";
+import { Link } from "@tanstack/react-router";
+import { Button } from "@ui/components/ui/button";
+import { Card } from "@ui/components/ui/card";
 import { Separator } from "@ui/components/ui/separator";
-import { Skeleton } from "@ui/components/ui/skeleton";
-import { useState } from "react";
-import { LazyLoadImage } from "react-lazy-load-image-component";
-import { useMediaQuery } from "react-responsive";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ui/components/ui/tooltip";
+import classNames from "clsx";
+import { CirclePlus, EditIcon } from "lucide-react";
 import ImageGradient from "./ImageGradient";
 import TrainingCourseCard from "./TrainingCourseCard";
 
 // don't ask why this is in the components folder
-async function getData(location: Location): Promise<PartialTrainingWithStatus[]> {
+export async function getData(location: Location): Promise<PartialTrainingWithStatus[]> {
   const [trainings, statuses]: any = await Promise.all([getLocation(location), getStatus(location)]);
   for (const training of trainings) {
     training.status = statuses[training.id];
@@ -30,35 +32,15 @@ interface TrainingLocationProps {
   location: Location;
   img: React.ReactNode;
   optionalTrainingText: string;
+  trainings: PartialTrainingWithStatus[];
 }
 
-export default function TrainingLocation({ location, optionalTrainingText, img }: TrainingLocationProps) {
+export function TrainingLocation({ location, optionalTrainingText, img, trainings }: TrainingLocationProps) {
   const user = useUser();
   const name = toTitleCase(location.replace("_", " "));
   const isRep = !!user?.roles.some((role) => role.name === "Rep");
-  const isMediumScreen = useMediaQuery({ minWidth: 768 });
 
-  const {
-    data: trainings,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["trainingLocation", location],
-    queryFn: async () => getData(location),
-  });
-  if (isLoading) {
-    return <Loader />;
-  }
-  if (error) {
-    return (
-      <>
-        An error occurred fetching trainings
-        <br />
-        {extractError(error!)}
-      </>
-    );
-  }
-  const { compulsory, not_compulsory } = trainings!.reduce(
+  const { compulsory, not_compulsory } = trainings.reduce(
     (acc, training) => {
       training.compulsory ? acc.compulsory.push(training) : acc.not_compulsory.push(training);
       return acc;
@@ -98,6 +80,7 @@ export default function TrainingLocation({ location, optionalTrainingText, img }
                   .map((training) => (
                     <TrainingCourseCard key={training.id} training={training} isRep={isRep} />
                   ))}
+                {isRep && <AddNewTraining location={location} compulsory />}
               </div>
             </div>
           </div>
@@ -120,11 +103,29 @@ export default function TrainingLocation({ location, optionalTrainingText, img }
                   .map((training) => (
                     <TrainingCourseCard key={training.id} training={training} isRep={isRep} />
                   ))}
+                {isRep && <AddNewTraining location={location} />}
               </div>
             </div>
           </div>
         </div>
       </div>
     </>
+  );
+}
+
+function AddNewTraining({ location, ...props }: any) {
+  return (
+    <Link to="/training/new" params={props}>
+      <Button
+        className={`w-full max-w-sm overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:shadow-lg
+          flex-col h-full justify-center items-center`}
+        variant="success"
+      >
+        <div className="p-4 flex flex-col justify-center items-center flex-grow">
+          <CirclePlus className="h-36 w-36 self-center m-2" />
+          <h3 className="text-2xl font-bold text-foreground mb-2 text-balance">Add new training</h3>
+        </div>
+      </Button>
+    </Link>
   );
 }

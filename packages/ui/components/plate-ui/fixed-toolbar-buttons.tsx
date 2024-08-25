@@ -4,6 +4,7 @@ import { MARK_BOLD, MARK_CODE, MARK_ITALIC, MARK_STRIKETHROUGH, MARK_UNDERLINE }
 import { useEditorReadOnly } from "@udecode/plate-common";
 
 import { ListStyleType } from "@udecode/plate-indent-list";
+import { ELEMENT_TODO_LI } from "@udecode/plate-list";
 import { ELEMENT_IMAGE, ELEMENT_MEDIA_EMBED } from "@udecode/plate-media";
 import { Bold, Code, Italic, Strikethrough, Underline } from "lucide-react";
 import { EmojiDropdownMenu } from "./emoji-dropdown-menu";
@@ -18,6 +19,8 @@ import { ModeDropdownMenu } from "./mode-dropdown-menu";
 import { MoreDropdownMenu } from "./more-dropdown-menu";
 import { OutdentToolbarButton } from "./outdent-toolbar-button";
 import { TableDropdownMenu } from "./table-dropdown-menu";
+import { TodoListElement } from "./todo-list-element";
+import { TodoListElementButton } from "./todo-list-element-button";
 import { ToolbarGroup } from "./toolbar";
 import { TurnIntoDropdownMenu } from "./turn-into-dropdown-menu";
 
@@ -76,6 +79,8 @@ export function FixedToolbarButtons() {
 
               <MediaToolbarButton nodeType={ELEMENT_IMAGE} />
               <MediaToolbarButton nodeType={ELEMENT_MEDIA_EMBED} />
+
+              <TodoListElementButton />
 
               <TableDropdownMenu />
 

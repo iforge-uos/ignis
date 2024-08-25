@@ -27,7 +27,6 @@ import {
   createCodeBlockPlugin,
 } from "@udecode/plate-code-block";
 import { createComboboxPlugin } from "@udecode/plate-combobox";
-import { CommentsProvider, MARK_COMMENT, createCommentsPlugin } from "@udecode/plate-comments";
 import {
   Plate,
   PlateLeaf,
@@ -71,6 +70,17 @@ import { createTrailingBlockPlugin } from "@udecode/plate-trailing-block";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
+import {
+  autoformatArrow,
+  autoformatLegal,
+  autoformatLegalHtml,
+  autoformatMath,
+  autoformatPunctuation,
+  autoformatSmartQuotes,
+} from "@udecode/plate-autoformat";
+import { VariantProps } from "class-variance-authority";
+import { TodoLi, TodoMarker } from "./IndentTodoMarker";
+import { autoformatBlocks, autoformatIndentLists, autoformatLists, autoformatMarks } from "./autoformat";
 import { BlockquoteElement } from "./blockquote-element";
 import { CodeBlockElement } from "./code-block-element";
 import { CodeLeaf } from "./code-leaf";
@@ -78,7 +88,7 @@ import { CodeLineElement } from "./code-line-element";
 import { CodeSyntaxLeaf } from "./code-syntax-leaf";
 import { CommentLeaf } from "./comment-leaf";
 import { CommentsPopover } from "./comments-popover";
-import { Editor } from "./editor";
+import { Editor, EditorProps, editorVariants } from "./editor";
 import { EmojiCombobox } from "./emoji-combobox";
 import { FixedToolbar } from "./fixed-toolbar";
 import { FixedToolbarButtons } from "./fixed-toolbar-buttons";
@@ -100,6 +110,7 @@ import { TodoListElement } from "./todo-list-element";
 import { ToggleElement } from "./toggle-element";
 import { TooltipProvider } from "./tooltip";
 import { withDraggables } from "./with-draggables";
+import React from "react";
 
 const plugins = createPlugins(
   [
@@ -147,20 +158,23 @@ const plugins = createPlugins(
     createIndentPlugin({
       inject: {
         props: {
-          validTypes: [
-            ELEMENT_PARAGRAPH,
-            // ELEMENT_H1, ELEMENT_H2, ELEMENT_H3, ELEMENT_BLOCKQUOTE, ELEMENT_CODE_BLOCK
-          ],
+          validTypes: [ELEMENT_PARAGRAPH, ELEMENT_H1, ELEMENT_H2, ELEMENT_H3, ELEMENT_BLOCKQUOTE, ELEMENT_CODE_BLOCK],
         },
       },
     }),
     createIndentListPlugin({
       inject: {
         props: {
-          validTypes: [
-            ELEMENT_PARAGRAPH,
-            // ELEMENT_H1, ELEMENT_H2, ELEMENT_H3, ELEMENT_BLOCKQUOTE, ELEMENT_CODE_BLOCK
-          ],
+          validTypes: [ELEMENT_PARAGRAPH, ELEMENT_H1, ELEMENT_H2, ELEMENT_H3, ELEMENT_BLOCKQUOTE, ELEMENT_CODE_BLOCK],
+        },
+      },
+      options: {
+        listStyleTypes: {
+          todo: {
+            liComponent: TodoLi,
+            markerComponent: TodoMarker,
+            type: "todo",
+          },
         },
       },
     }),
@@ -241,11 +255,19 @@ const plugins = createPlugins(
     createTrailingBlockPlugin({
       options: { type: ELEMENT_PARAGRAPH },
     }),
-    createCommentsPlugin(),
     createAutoformatPlugin({
       options: {
         rules: [
-          // Usage: https://platejs.org/docs/autoformat
+          ...autoformatBlocks,
+          ...autoformatLists,
+          ...autoformatIndentLists,
+          ...autoformatMarks,
+          ...autoformatSmartQuotes,
+          ...autoformatPunctuation,
+          ...autoformatLegal,
+          ...autoformatLegalHtml,
+          ...autoformatArrow,
+          ...autoformatMath,
         ],
         enableUndoOnDelete: true,
       },
@@ -280,7 +302,6 @@ const plugins = createPlugins(
         [ELEMENT_TODO_LI]: TodoListElement,
         [MARK_BOLD]: withProps(PlateLeaf, { as: "strong" }),
         [MARK_CODE]: CodeLeaf,
-        [MARK_COMMENT]: CommentLeaf,
         [MARK_ITALIC]: withProps(PlateLeaf, { as: "em" }),
         [MARK_KBD]: KbdLeaf,
         [MARK_STRIKETHROUGH]: withProps(PlateLeaf, { as: "s" }),
@@ -297,28 +318,36 @@ export function PlateEditor<V extends Value = Value>({
   placeholder,
   toolbarClassName,
   className,
-}: Omit<PlateProps<V>, "children"> & { placeholder?: string; toolbarClassName?: string; className?: string }) {
+  editorProps,
+}: Omit<PlateProps<V>, "children"> & {
+  placeholder?: string;
+  toolbarClassName?: string;
+  className?: string;
+  editorProps?: EditorProps;
+}) {
   return (
     <TooltipProvider disableHoverableContent delayDuration={500} skipDelayDuration={0}>
       <DndProvider backend={HTML5Backend}>
         {/* <CommentsProvider users={{}} myUserId="1"> */}
         <Plate plugins={plugins} initialValue={initialValue}>
-          <FixedToolbar className={toolbarClassName}>
+          {/* <FixedToolbar className={toolbarClassName}>
             <FixedToolbarButtons />
-          </FixedToolbar>
+          </FixedToolbar> */}
 
-          <Editor placeholder={placeholder} className={className} />
+          <Editor placeholder={placeholder} className={className} {...editorProps} />
 
-          {/* <FloatingToolbar>
-            <FloatingToolbarButtons />
-          </FloatingToolbar> */}
-          <CommentsPopover />
+          <FloatingToolbar>
+            <FixedToolbarButtons />
+          </FloatingToolbar>
+          {/* <CommentsPopover /> */}
         </Plate>
         {/* </CommentsProvider> */}
       </DndProvider>
     </TooltipProvider>
   );
 }
+
+export const MemoisedPlateEditor = React.memo(PlateEditor);
 
 /* Used for mocking/serialisation purposes */
 export function createPlateEditor() {

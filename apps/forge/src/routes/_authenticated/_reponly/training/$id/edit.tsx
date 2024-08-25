@@ -1,67 +1,38 @@
 import Title from "@/components/title";
 import { TrainingHeader } from "@/components/training/TrainingHeader";
-import { TrainingForTags, deserializeMd, extractError } from "@/lib/utils";
-import { TrainingContent } from "@/routes/_authenticated/training/$id";
+import { TrainingForTags, deserializeMd } from "@/lib/utils";
 import { get } from "@/services/training/get";
-import { Location } from "@ignis/types/training";
-import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
-import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, notFound } from "@tanstack/react-router";
-import MultipleSelector, { Option } from "@ui/components/multi-select";
-import { Checkbox } from "@ui/components/plate-ui/checkbox";
+import { Location, Section, Training } from "@ignis/types/training";
+import { createFileRoute, deepEqual } from "@tanstack/react-router";
 import { PlateEditor } from "@ui/components/plate-ui/plate-editor";
-import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert";
-import { badgeVariants } from "@ui/components/ui/badge";
+import { Badge } from "@ui/components/ui/badge";
+import { Button } from "@ui/components/ui/button";
+import { Input } from "@ui/components/ui/input";
 import { Label } from "@ui/components/ui/label";
-import { Loader } from "@ui/components/ui/loader.tsx";
 import { RadioGroup } from "@ui/components/ui/radio-group";
 import { RadioGroupItem } from "@ui/components/ui/radio-group";
 import { Separator } from "@ui/components/ui/separator";
-import { Textarea } from "@ui/components/ui/textarea";
-import axios from "axios";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ui/components/ui/tooltip";
+import { EyeIcon, EyeOffIcon, HourglassIcon, InfoIcon, PlusIcon, TrashIcon } from "lucide-react";
 import React from "react";
 
 function Component() {
   const { id } = Route.useParams();
-  console.log("loading", id);
-  const [tags, setTags] = React.useState<TrainingForTags>() as [
-    TrainingForTags,
-    React.Dispatch<React.SetStateAction<TrainingForTags>>,
-  ];
-  const [locations, setLocations] = React.useState<Location[]>([]);
+  const originalData = Route.useLoaderData();
+  const [data, setData] = React.useState<Training>(JSON.parse(JSON.stringify(originalData)));
+  const [locations, setLocations] = React.useState<Location[]>(data.locations);
+  const [sections, setSections] = React.useState(data.sections!);
+  const [tags, setTags] = React.useState<TrainingForTags>(data);
+  console.log("data", data, "orig", originalData);
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["getTraining", id],
-    queryFn: () => get(id, { editing: true }),
-  });
-
+  const updateSection = <KeyT extends keyof Section>(idx: number, key: KeyT, value: Section[KeyT]) => {
+    const updatedSections = [...sections];
+    updatedSections[idx][key] = value;
+    setSections(updatedSections);
+  };
   React.useEffect(() => {
-    if (data) {
-      setLocations(data.locations);
-      setTags(data);
-    }
-  }, [data]);
-
-  if (isLoading) {
-    return <Loader />;
-  }
-  if (error instanceof axios.AxiosError && error.response?.status === 404) {
-    throw notFound();
-  }
-  if (error || !data || !locations || !tags) {
-    return (
-      <>
-        <Alert variant="destructive">
-          <ExclamationTriangleIcon className="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>
-            There was an error <br />
-            {extractError(error!)}
-          </AlertDescription>
-        </Alert>
-      </>
-    );
-  }
+    setData((data) => ({ ...data, tags }));
+  }, [tags]);
 
   return (
     <>
@@ -69,7 +40,11 @@ function Component() {
       <div className="w-full py-6 space-y-4">
         <div className="container space-y-4 px-4 md:px-6">
           <div className="space-y-2">
-            <h1 className="text-4xl font-bold text-center">{data.name}</h1>
+            <Input
+              className="text-4xl font-bold text-center h-12"
+              value={data.name}
+              onChange={(e) => setData({ ...data, name: e.target.value })}
+            />
             <TrainingHeader
               data={data}
               editing
@@ -78,40 +53,139 @@ function Component() {
               locations={locations}
               setLocations={setLocations}
             />
-            <h2 className="text-2xl font-semibold mb-2">Description:</h2>
-            <PlateEditor // TODO one toolbar for whole instance becase is annoying scroll behave
+            <div className="flex gap-2 items-center mb-2">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <InfoIcon className="hover:cursor-pointer" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    Shown on various places around the website, ideally should be relatively short
+                  </TooltipContent>
+                </Tooltip>
+                <h2 className="text-2xl font-semibold">Description:</h2>
+              </TooltipProvider>
+            </div>
+            <PlateEditor
               className="z--10 text-lg"
               toolbarClassName="z--10"
               placeholder="Enter the training's description."
               initialValue={deserializeMd(data.description)}
             />
-            {data.sections?.map((section) => (
-              <div key={section.id}>
+            {sections.map((section, idx) => (
+              // TODO Draggable
+              <div key={section.index}>
                 <Separator />
-                {/* todo should be Textarea or something */}
-                {/*readOnly={!(section as any)?.name}*/}
-                <div className="text-2xl font-semibold py-3 px-5">{(section as any)?.name ?? "Question"}</div>
-                <PlateEditor
-                  className="z--10 text-lg"
-                  toolbarClassName="z--10"
-                  initialValue={deserializeMd(section.content)}
-                />
-                {(() => {
-                  console.log(section);
-                  return true;
-                })() &&
-                  section.type_name === "training::Question" &&
+                <div className="flex">
+                  <div className="grid-cols-2 flex w-full mt-2">
+                    <div className="flex flex-col w-full">
+                      <div className="flex border border-input rounded-tl-md">
+                        <div
+                          className={`inline-flex items-center px-2.5 py-0.5  text-2xl font-semibold min-w-10 ${section.enabled ? "" : "opacity-50 border-opacity-50"}`}
+                        >
+                          {section.index + 1}.
+                        </div>
+                        <Input
+                          className="flex justify-between text-2xl font-semibold border-none rounded-none relative z-10 focus:z-20 focus:ring-2 p--1"
+                          type="text"
+                          placeholder="Section Name"
+                          disabled={!section.enabled}
+                          readOnly={!(section as any)?.name === undefined}
+                          value={(section as any)?.name ?? "Question"}
+                          // @ts-expect-error: name isn't really valid in the union but since questions are readonly this is fine
+                          onChange={(e) => updateSection(idx, "name", e.target.value)}
+                          required={true}
+                        />
+                      </div>
+                      <PlateEditor
+                        className="text-lg rounded-none rounded-bl-md relative z-10 focus:z-20 focus:ring-2 w-full min-h-48"
+                        initialValue={deserializeMd(section.content)}
+                        editorProps={{ disabled: !section.enabled }}
+                      />
+                    </div>
+                    <div className="flex">
+                      <TooltipProvider>
+                        <div className="flex flex-col">
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className="rounded-none rounded-tr-md h-full"
+                                onClick={() => updateSection(idx, "enabled", !section.enabled)}
+                              >
+                                {section.enabled ? <EyeIcon /> : <EyeOffIcon />}
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>{section.enabled ? "Hide" : "Unhide"} Section</TooltipContent>
+                          </Tooltip>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="success"
+                                className="rounded-none h-full"
+                                onClick={() => {
+                                  setSections([
+                                    ...sections.slice(0, idx + 1),
+                                    {
+                                      content: "",
+                                      enabled: true,
+                                      index: idx + 1,
+                                      type_name: "training::TrainingPage", // if the content contains a Checkbox or a RadioGroup it goes to a Question
+                                      name: "",
+                                      id: null as never as string, // we can't have an ID till it's committed to DB TODO idk how this actually works when we go to display them
+                                    },
+                                    ...sections.slice(idx + 1).map((section) => ({
+                                      ...section,
+                                      index: section.index + 1,
+                                    })),
+                                  ]);
+                                }}
+                              >
+                                <PlusIcon />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Add new section below</TooltipContent>
+                          </Tooltip>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="info"
+                                className="rounded-none h-full"
+                                disabled={section.type_name === "training::Question"}
+                              >
+                                <HourglassIcon />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Adjust the amount of time the page must be viewed for</TooltipContent>
+                          </Tooltip>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="destructive"
+                                className="rounded-none rounded-br-md h-full"
+                                onClick={() => {
+                                  if (confirm("Delete this section?")) {
+                                    setSections(sections.filter((_, idx_) => idx !== idx_));
+                                  }
+                                }}
+                              >
+                                <TrashIcon />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Delete section</TooltipContent>
+                          </Tooltip>
+                        </div>
+                      </TooltipProvider>
+                    </div>
+                  </div>
+                </div>
+                {/* <div className="hover:cursor-pointer h-2 flex items-center"><Separator /></div> */}
+                {/* {section.type_name === "training::Question" &&
                   (section.type === "SINGLE" ? (
                     <RadioGroup>
                       {section.answers.map((answer) => (
                         <div className="flex items-center space-x-2" key={answer.id}>
-                          <RadioGroupItem
-                            value={answer.id}
-                            id={answer.id}
-                            // disabled={idx !== sections.length - 1}
-                            className="rounded-lg"
-                            // onClick={() => setAnswers([answer])}
-                          />
+                          <RadioGroupItem value={answer.id} id={answer.id} className="rounded-lg" />
                           <Label htmlFor={answer.id} className="hover:cursor-pointer">
                             <TrainingContent content={answer.content} />
                           </Label>
@@ -127,25 +201,26 @@ function Component() {
                   ) : (
                     section.answers.map((answer) => (
                       <div className="flex items-center space-x-2" key={answer.id}>
-                        <Checkbox
-                          value={answer.id}
-                          id={answer.id}
-                          // disabled={idx !== sections.length - 1}
-                          // onCheckedChange={() => {
-                          //   setAnswers((prevState) => {
-                          //     return prevState.includes(answer)
-                          //       ? prevState.filter((answer_) => answer_ !== answer)
-                          //       : [...prevState, answer];
-                          //   });
-                          // }}
-                        />
+                        <Checkbox value={answer.id} id={answer.id} />
                         <Label className="hover:cursor-pointer">{answer.content}</Label>
                       </div>
                     ))
-                  ))}
-                <br />
+                  ))} */}
               </div>
             ))}
+          </div>
+          <Separator className="h-0.5" />
+          <div className="flex justify-between">
+            <Button
+              className="w-full rounded-none rounded-l-md"
+              variant="success"
+              disabled={deepEqual(originalData, data, true)} // TODO no idea why this doesn't work
+            >
+              Save
+            </Button>
+            <Button className="w-full rounded-none rounded-r-md" variant="info">
+              View as user
+            </Button>
           </div>
         </div>
       </div>
@@ -155,4 +230,6 @@ function Component() {
 
 export const Route = createFileRoute("/_authenticated/_reponly/training/$id/edit")({
   component: Component,
+  loader: async ({ params }) => await get(params.id, { editing: true }),
+  // onLeave: () => saveSession  // Should also be doing this every time a change is made? maybe put in cache IDK
 });

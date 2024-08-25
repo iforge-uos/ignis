@@ -1,15 +1,18 @@
 import { EdgeDBService } from "@/edgedb/edgedb.service";
 import { ErrorCodes } from "@/shared/constants/ErrorCodes";
 import { UsersService } from "@/users/users.service";
+import { TrainingLocationSchema } from "@dbschema/edgedb-zod/modules/training";
 import e from "@dbschema/edgeql-js";
 import { TrainingLocation } from "@dbschema/edgeql-js/modules/training";
 import { getTrainingForEditing } from "@dbschema/queries/getTrainingForEditing.query";
 import { getTrainingNextSection } from "@dbschema/queries/getTrainingNextSection.query";
 import { startTraining } from "@dbschema/queries/startTraining.query";
 import { training } from "@ignis/types";
-import { PartialTraining } from "@ignis/types/training";
+import { AllTraining, PartialTraining } from "@ignis/types/training";
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { CardinalityViolationError, InvalidValueError, MissingRequiredError } from "edgedb";
+
+export const LOCATIONS = Object.keys(TrainingLocationSchema.Values) as readonly training.Location[];
 
 const TrainingSection = e.shape(e.training.Training.sections, (section) => ({
   type_name: e.select(section.__type__.name),
@@ -116,6 +119,25 @@ export class TrainingService {
         name: training.name,
       })),
     );
+  }
+
+  async getAllTrainings(): Promise<AllTraining[]> {
+    const all = await this.dbService.query(
+      e.select(e.training.Training, (training) => ({
+        id: true,
+        name: true,
+        description: true,
+        locations: true,
+        rep: {
+          id: true,
+          description: true,
+        },
+        filter: e.all(e.set(e.op("exists", training.rep), training.enabled)),
+        order_by: training.name,
+      })),
+    );
+
+    return all.sort((a, b) => a.name.localeCompare(b.name)) as AllTraining[];
   }
 
   async getTrainings(location: training.Location): Promise<PartialTraining[]> {

@@ -1,4 +1,4 @@
-import { LOCATIONS } from "@/lib/constants";
+import { LOCATIONS, TRAINING_LOCATIONS } from "@/lib/constants";
 import { ALL_TAGS, TrainingForTags, serializeTrainingTags, toTitleCase, trainingTags } from "@/lib/utils";
 import { Location, Training } from "@ignis/types/training";
 import MultipleSelector, { Option } from "@ui/components/multi-select";
@@ -14,10 +14,10 @@ interface BaseTrainingHeaderProps {
 
 interface TrainingHeaderPropsNonEditing extends BaseTrainingHeaderProps {
   editing?: false | undefined | null;
-  tags: undefined;
-  setTags: undefined;
-  locations: undefined;
-  setLocations: undefined;
+  tags?: undefined;
+  setTags?: undefined;
+  locations?: undefined;
+  setLocations?: undefined;
 }
 
 interface TrainingHeaderPropsEditing extends BaseTrainingHeaderProps {
@@ -48,11 +48,11 @@ export function TrainingHeader({ data, editing, tags, setTags, locations, setLoc
                 }))}
                 onChange={(options) => setLocations(options.map((option) => option.value) as Location[])} // TODO option for Rep training link and callback for the value changing to add last section for in-person
                 selectFirstItem={false}
-                defaultOptions={LOCATIONS.map((value) => ({
+                defaultOptions={TRAINING_LOCATIONS.map((value) => ({
                   label: (
                     <div className="flex">
                       <LocationIcon location={value} className="-m-1.5 w-4 mx-0.5" />
-                      <div className="ml-1">{toTitleCase(value)}</div>
+                      <div className="ml-1">{toTitleCase(value.replace("_", " "))}</div>
                     </div>
                   ),
                   value,
@@ -65,7 +65,7 @@ export function TrainingHeader({ data, editing, tags, setTags, locations, setLoc
             ) : (
               data.locations.map((value) => (
                 <Badge variant="outline" key={value} className="flex rounded-md py-[14px] gap-2 ml-2">
-                  {<LocationIcon location={value} className="-m-1.5 w-4 mx-0.5" />}
+                  <LocationIcon location={value} className="-m-1.5 w-4 mx-0.5" />
                 </Badge>
               ))
             )}
@@ -116,8 +116,6 @@ export function TrainingHeader({ data, editing, tags, setTags, locations, setLoc
           </div>
         </div>
       </div>
-      <Separator />
-      <br />
     </>
   );
 }
