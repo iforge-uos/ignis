@@ -9,7 +9,7 @@ interface IconProps {
   tooltip?: boolean;
 }
 
-export const Mainspace: React.FC<IconProps> = ({ tooltip, className }) => {
+export const Mainspace: React.FC<IconProps> = ({ tooltip = true, className }) => {
   const icon = <Wrench className={cn("stroke-mainspace", className)} />;
   if (tooltip) {
     return <IconWithTooltip tooltipText="Mainspace">{icon}</IconWithTooltip>;
@@ -17,7 +17,7 @@ export const Mainspace: React.FC<IconProps> = ({ tooltip, className }) => {
   return icon;
 };
 
-export const Heartspace: React.FC<IconProps> = ({ tooltip, className }) => {
+export const Heartspace: React.FC<IconProps> = ({ tooltip = true, className }) => {
   const icon = <Heart className={cn("stroke-heartspace", className)} />;
   if (tooltip) {
     return <IconWithTooltip tooltipText="Heartspace">{icon}</IconWithTooltip>;
@@ -25,7 +25,7 @@ export const Heartspace: React.FC<IconProps> = ({ tooltip, className }) => {
   return icon;
 };
 
-export const GeorgePorter: React.FC<IconProps> = ({ tooltip, className }) => {
+export const GeorgePorter: React.FC<IconProps> = ({ tooltip = true, className }) => {
   const icon = <ParkingMeter className={cn("stroke-george-porter", className)} />;
   if (tooltip) {
     return <IconWithTooltip tooltipText="George Porter">{icon}</IconWithTooltip>;
@@ -36,7 +36,7 @@ export const GeorgePorter: React.FC<IconProps> = ({ tooltip, className }) => {
 export const Location: React.FC<IconProps & { location: Uppercase<LocationType> | Lowercase<LocationType> }> = ({
   location,
   className,
-  tooltip,
+  tooltip = true,
 }) => {
   switch (location.toLowerCase() as Lowercase<LocationType>) {
     case "mainspace":
