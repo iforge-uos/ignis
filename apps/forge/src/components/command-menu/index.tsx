@@ -64,12 +64,12 @@ export default function CommandMenu() {
   }, []);
 
   const groups = new Map<string, typeof SHORTCUTS>();
+  const user = useUser();
 
-  if (useSelector((state: RootState) => state.auth.is_authenticated)) {
+  if (user) {
     groups.set("Settings", SETTINGS_SHORTCUTS);
   }
-
-  if (useUser()?.roles.some((role) => role.name === "Rep")) {
+  if (user?.roles.some((role) => role.name === "Rep")) {
     groups.set("User Management", USER_MANAGEMENT_SHORTCUTS);
   }
 

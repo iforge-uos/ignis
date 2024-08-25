@@ -16,14 +16,8 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@ui/components/ui/dropdown-menu";
-import { useSelector } from "react-redux";
-
-function isString(value: unknown): value is string {
-  return typeof value === "string";
-}
 
 export function UserNav() {
-  const isAuthenticated = useSelector((state: RootState) => state.auth.is_authenticated);
   const user = useUser();
 
   const isMacOs = !!navigator?.userAgent?.match(/Macintosh;/);
@@ -31,7 +25,7 @@ export function UserNav() {
 
   const isAdmin = user?.roles.some((role) => role.name === "Admin");
 
-  if (isAuthenticated && user && isString(user.email) && isString(user.display_name)) {
+  if (user) {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -48,7 +42,7 @@ export function UserNav() {
               </p>
               <div className="flex-wrap flex gap-2">
                 {user.roles.map((role) => (
-                  <Badge className="" key={role.id}>
+                  <Badge className="rounded-sm" key={role.id}>
                     {role.name}
                   </Badge>
                 ))}
