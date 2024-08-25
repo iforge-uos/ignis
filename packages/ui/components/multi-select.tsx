@@ -1,15 +1,14 @@
 "use client";
-
-import { Command as CommandPrimitive } from "cmdk";
-import cloneDeep from "lodash.clonedeep";
-import { X } from "lucide-react";
-import * as React from "react";
-import { useEffect } from "react";
+// https://github.com/hsuanyi-chou/shadcn-ui-expansions
 
 import { cn } from "@/lib/utils";
 import { Badge, badgeVariants } from "@ui/components/ui/badge";
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@ui/components/ui/command";
 import { VariantProps } from "class-variance-authority";
+import { Command as CommandPrimitive } from "cmdk";
+import { X } from "lucide-react";
+import * as React from "react";
+import { useEffect } from "react";
 
 export interface Option {
   value: string;
@@ -42,6 +41,7 @@ interface MultipleSelectorProps {
    **/
   triggerSearchOnFocus?: boolean;
   /** async search */
+  onFocus?: () => void;
   onSearch?: (value: string) => Promise<Option[]>;
   onChange?: (options: Option[]) => void;
   /** Limit the maximum number of selected options. */
@@ -136,6 +136,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
     {
       value,
       onChange,
+      onFocus,
       placeholder,
       defaultOptions: arrayDefaultOptions = [],
       options: arrayOptions,
@@ -334,6 +335,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
           handleKeyDown(e);
           commandProps?.onKeyDown?.(e);
         }}
+        onFocus={onFocus}
         className={cn("h-auto overflow-visible bg-transparent", commandProps?.className)}
         shouldFilter={commandProps?.shouldFilter !== undefined ? commandProps.shouldFilter : !onSearch} // When onSearch is provided, we don't want to filter the options. You can still override it.
         filter={commandFilter()}

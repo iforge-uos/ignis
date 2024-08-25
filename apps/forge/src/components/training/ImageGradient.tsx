@@ -1,3 +1,4 @@
+import { locationNameToCSSName } from "@/config/constants";
 import React from "react";
 import { useMediaQuery } from "react-responsive";
 

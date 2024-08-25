@@ -7,7 +7,7 @@ import { cn } from "@udecode/cn";
 import { PlateContent } from "@udecode/plate-common";
 import { cva } from "class-variance-authority";
 
-const editorVariants = cva(
+export const editorVariants = cva(
   cn(
     "relative overflow-x-auto whitespace-pre-wrap break-words",
     "min-h-[80px] w-full rounded-md bg-background px-6 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none",

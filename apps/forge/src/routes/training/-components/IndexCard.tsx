@@ -1,42 +1,26 @@
-import ImageGradient from "@/components/training/ImageGradient.tsx";
-import { Link } from "@tanstack/react-router";
+import { cn } from "@/lib/utils";
+import React from "react";
 
 interface IndexCardProps {
-  to?: string;
-  imageSrc: string;
-  imageAlt: string;
-  title: string;
+  img: React.ReactElement;
+  title: React.ReactElement;
   description: string;
-  onClick?: () => void;
-  gradientColor: string;
+  className?: string;
 }
 
-const IndexCard: React.FC<IndexCardProps> = ({
-  to,
-  imageSrc,
-  imageAlt,
-  title,
-  description,
-  onClick,
-  gradientColor,
-}) => {
-  const CardContent = () => (
-    <div className="group relative w-full max-w-lg cursor-pointer overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:scale-105 hover:shadow-lg">
-      <ImageGradient imageSrc={imageSrc} imageAlt={imageAlt} gradientColor={gradientColor} />
-      <div className="absolute bottom-0 left-0 right-0 px-6 pb-14">
+const IndexCard: React.FC<IndexCardProps> = ({ img, title, description, className }) => {
+  return (
+    <div
+      className={cn(
+        "group relative w-full max-w-lg cursor-pointer overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:scale-105 hover:shadow-lg",
+        className,
+      )}
+    >
+      {img}
+      <div className="absolute bottom-0 left-0 right-0 px-6 pb-12">
         <h3 className="text-xl font-bold text-white">{title}</h3>
-        <p className="mt-2 text-sm text-gray-300">{description}</p>
+        <p className="mt-2 text-sm text-gray-200">{description}</p>
       </div>
-    </div>
-  );
-
-  return to ? (
-    <Link to={to}>
-      <CardContent />
-    </Link>
-  ) : (
-    <div onClick={onClick} onKeyDown={onClick} role="button" tabIndex={0}>
-      <CardContent />
     </div>
   );
 };

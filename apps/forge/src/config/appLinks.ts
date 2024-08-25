@@ -76,7 +76,7 @@ export const appLinks: AppLink[] = [
       },
       {
         app: "Training",
-        displayName: "George Porter CCA Workshop",
+        displayName: "George Porter",
         path: "/training/locations/george-porter",
         id: "training_location_george_porter",
         index: 2,

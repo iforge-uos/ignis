@@ -4,10 +4,13 @@
 
 @layer base {
     :root {
-        /* Custom Colors */
-        --heartspace: #3badbf;
-        --mainspace: #ce5a4b;
-        --george-porter: #2e3bad;
+        /* Custom Colors these have to be hsl'd because otherwise ImageGradient breaks */
+        --heartspace: hsl(188, 53%, 49%);
+        --mainspace: hsl(7, 57%, 55%);
+        --george-porter: hsl(222, 53%, 21%);
+
+        --tick: hsl(126, 38%, 48%);
+        --cross: hsl(358, 65%, 46%);
 
         --tick: hsl(126, 38%, 48%);
         --cross: hsl(358, 65%, 46%);

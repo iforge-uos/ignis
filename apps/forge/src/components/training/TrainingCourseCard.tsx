@@ -1,9 +1,12 @@
+import { useUser } from "@/lib/utils";
 import { TrainingContent } from "@/routes/_authenticated/training/$id";
 import { PartialTrainingWithStatus } from "@ignis/types/training";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button";
 import { Card } from "@ui/components/ui/card";
 import { Separator } from "@ui/components/ui/separator";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ui/components/ui/tooltip";
+import { Edit, Edit2Icon, EditIcon } from "lucide-react";
 
 interface TrainingCourseCardProps {
   training: PartialTrainingWithStatus;
@@ -11,17 +14,46 @@ interface TrainingCourseCardProps {
 }
 
 export default function TrainingCourseCard({ training, isRep }: TrainingCourseCardProps) {
+  const user = useUser()!;
+  const navigate = useNavigate();
   return (
     <Card className="w-full max-w-sm overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:shadow-lg flex flex-col">
-      <div className="rounded-t-lg overflow-hidden">
+      <div className="relative m-4">
         <img
           alt={training.name}
           className="w-full h-full object-scale-down aspect-[2/1]"
           height="200"
           src={training.icon_url}
         />
+        {user.roles.some((role) => role.name === "Admin" || role.name === "Training Editor") && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  className="absolute top-0 left-0"
+                  onClick={() => navigate({ to: "/training/$id/edit", params: training })}
+                >
+                  <EditIcon />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Edit User Training</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  className="absolute top-0 right-0"
+                  variant={"outline"}
+                  onClick={() => navigate({ to: "/training/$id/edit", params: training.rep! })}
+                >
+                  <EditIcon />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Edit Rep Training</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
       </div>
-      <div className="p-4 flex flex-col justify-between flex-grow">
+      <div className="px-4 pb-4 flex flex-col justify-between flex-grow">
         <div>
           <h3 className="text-2xl font-bold text-primary mb-2 text-balance">{training.name}</h3>
           <Separator />
