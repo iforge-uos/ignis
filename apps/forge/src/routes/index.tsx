@@ -440,7 +440,9 @@ const IndexComponent = () => {
                   "You're free to use the space!",
                 ].map((value, idx, array) => (
                   <TimelineItem key={value}>
-                    <TimelineHeading className="whitespace-nowrap text-foreground">{value}</TimelineHeading>
+                    <TimelineHeading className="flex items-center text-foreground overflow-visible text-ellipsis whitespace-normal">
+                      {value}
+                    </TimelineHeading>
                     <TimelineDot status="done" className="rounded-sm" />
                     {idx !== array.length - 1 && <TimelineLine done={true} className="min-h-4" />}
                   </TimelineItem>
