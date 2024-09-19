@@ -74,6 +74,8 @@ module.exports = {
           DEFAULT: "hsl(var(--info))",
           foreground: "hsl(var(--info-foreground))",
         },
+        tick: "var(--tick)",
+        cross: "var(--cross)",
       },
     },
     borderRadius: {

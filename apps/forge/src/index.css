@@ -9,6 +9,8 @@
         --mainspace: #ce5a4b;
         --george-porter: #2e3bad;
 
+        --tick: hsl(126, 38%, 48%);
+        --cross: hsl(358, 65%, 46%);
 
         /* shadcn Colors (Generated from https://ui.jln.dev */
         --background: 0 0% 99%;

@@ -19,7 +19,7 @@ export const InstagramIcon = () => (
 );
 
 export const LinkedInIcon = () => (
-  <SocialIcon icon="linkedin" altText="edIn" href="https://www.edin.com/company/iforge" />
+  <SocialIcon icon="linkedin" altText="LinkedIn" href="https://www.linkedin.com/company/iforge" />
 );
 
 export const TwitterIcon = () => <SocialIcon icon="twitter" altText="Twitter" href="https://twitter.com/iForgeUoS" />;

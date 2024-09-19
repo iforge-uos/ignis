@@ -3,20 +3,52 @@ import { Separator } from "@ui/components/ui/separator";
 import Balancer from "react-wrap-balancer";
 import { LocationIcon } from "../icons/Locations";
 
-import { removeSuffix, toTitleCase } from "@/lib/utils";
+import { Entries, removeSuffix, toTitleCase } from "@/lib/utils";
 import { locationStatus } from "@/services/signin/locationService";
+import { PartialLocation } from "@ignis/types/sign_in";
 import { useQuery } from "@tanstack/react-query";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ui/components/ui/tooltip";
 import { DiscordIcon, GitHubIcon, InstagramIcon, LinkedInIcon, TwitterIcon, YouTubeIcon } from "../icons/Socials";
 import { IForgeLogo } from "../icons/iforge";
 
+function LocationStatusTooltip({ location }: { location: PartialLocation }) {
+  let className: string;
+  let tooltip: string;
+
+  switch (location.status) {
+    case "closed":
+      className = "bg-cross";
+      tooltip = "Closed";
+      break;
+    case "open":
+      className = "bg-tick";
+      tooltip = "Open";
+      break;
+    case "soon":
+      className = "bg-orange-500";
+      tooltip = "Opening/Closing Soon";
+      break;
+    default:
+      throw new Error("Unreachable"); // TODO make this grey if the backend is down
+  }
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="p-2 ml-0.5 hover:cursor-pointer">
+            <div className={`size-2 ${className} rounded-lg`} />
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{tooltip}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+
 export default function Footer() {
-  const {
-    data: locationStatuses,
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
+  const { data: locationStatuses } = useQuery({
     queryKey: ["locationStatus"],
     queryFn: locationStatus,
     staleTime: 20_000,
@@ -24,6 +56,8 @@ export default function Footer() {
 
   return (
     <footer>
+      <br />
+      <br />
       <div className="bg-card border-t-2 p-10">
         <div className="flex justify-between items-end mx-5">
           <div className="flex flex-col gap-2 not-prose max-w-[30rem]">
@@ -43,51 +77,44 @@ export default function Footer() {
             <h5 className="text-lg font-bold">Opening Hours</h5>
             <Balancer ratio="0.5">Open weekdays, subject to exams and holidays</Balancer>
             {locationStatuses && (
-              <div className="flex flex-col">
-                {/* TODO skelebones and make the traffic lights align */}
-                {Object.entries(locationStatuses).map(([name, location]) => (
-                  <div key={name} className="flex items-center">
-                    <LocationIcon location={name} className="h-4" /> {toTitleCase(name)} -{" "}
-                    {removeSuffix(location.opening_time, ":00")} to {removeSuffix(location.closing_time, ":00")}
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div className="p-2 ml-0.5 hover:cursor-pointer">
-                            <div
-                              className={`size-1.5 bg-${
-                                location.status === "closed" ? "red" : location.status === "open" ? "green" : "orange"
-                              }-500 rounded-lg`}
-                            />
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>
-                            {location.status === "closed"
-                              ? "Closed"
-                              : location.status === "open"
-                                ? "Open"
-                                : "Opening/Closing Soon"}
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-                ))}
-              </div>
+              <table className="w-full border-collapse items-center flex">
+                <tbody>
+                  {(Object.entries(locationStatuses) as Entries<typeof locationStatuses>).map(([name, location]) => (
+                    <tr key={name} className="py-2">
+                      <td>
+                        <div className="flex items-center justify-center h-full">
+                          <LocationIcon location={name} className="h-4" tooltip={false} />
+                        </div>
+                      </td>
+                      <td className="pr-2">
+                        <div className="flex items-center h-full">{toTitleCase(name)}</div>
+                      </td>
+                      <td>
+                        <div className="flex items-center justify-between h-full">
+                          <span>
+                            {removeSuffix(location.opening_time, ":00")} to {removeSuffix(location.closing_time, ":00")}
+                          </span>
+                          <LocationStatusTooltip location={location} />
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             )}
           </div>
           <div className="flex flex-col gap-2">
             <h5 className="text-lg font-bold">Website</h5>
-            <Link href="/" className="hover:underline underline-offset-4">
+            <Link to="/locations" className="hover:underline underline-offset-4">
               Locations
             </Link>
-            <Link href="/" className="hover:underline underline-offset-4">
+            <Link to="/projects" className="hover:underline underline-offset-4">
               Projects
             </Link>
-            <Link href="/" className="hover:underline underline-offset-4">
+            <Link to="/about" className="hover:underline underline-offset-4">
               About Us
             </Link>
-            <Link href="/" className="hover:underline underline-offset-4">
+            <Link to="/contact" className="hover:underline underline-offset-4">
               Contact
             </Link>
           </div>

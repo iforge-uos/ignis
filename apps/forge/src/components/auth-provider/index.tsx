@@ -1,7 +1,7 @@
-import * as React from "react";
-import { User } from "@ignis/types/users.ts";
 import { useVerifyAuthentication } from "@/hooks/useVerifyAuthentication.ts";
-import { Loader } from "@ui/components/ui/loader.tsx";
+import { User } from "@ignis/types/users.ts";
+import * as React from "react";
+import { Loading } from "../routing/Loading";
 
 export interface AuthContext {
   isAuthenticated: boolean;
@@ -15,7 +15,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { user, loading, setUser } = useVerifyAuthentication();
 
   if (loading) {
-    return <Loader />;
+    return <Loading />;
   }
 
   const isAuthenticated = !!user;
