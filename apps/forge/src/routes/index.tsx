@@ -451,15 +451,14 @@ const IndexComponent = () => {
             </Balancer>
           </CardDescription>
           <CardContent className="not-prose mx-auto flex items-center gap-2 justify-center">
-            <Button className="w-fit" asChild>
-              <Link href="#">Get Started</Link>
-              {/* TODO link to old blog page? */}
-            </Button>
-            <Button className="w-fit" variant="link" asChild>
-              <Link href="#">
-                Learn More <ArrowUpRight className="ml-1" size="16" />
-              </Link>
-            </Button>
+            <Link to="/auth/login">
+              <Button className="w-fit">Get Started{/* TODO link to old blog page? */}</Button>
+            </Link>
+            <a href="https://iforgesheffield.org/user-projects">
+              <Button className="w-fit" variant="link">
+                Get inspired <ArrowUpRight className="ml-1" size="16" />
+              </Button>
+            </a>
           </CardContent>
         </Card>
       </div>
