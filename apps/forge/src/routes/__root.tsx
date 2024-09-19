@@ -1,6 +1,7 @@
 import { AuthContext } from "@/components/auth-provider";
 import CommandMenu from "@/components/command-menu";
 import { TailwindIndicator } from "@/components/dev/Tailwind-Indicator.tsx";
+import Footer from "@/components/footer";
 import NavBar from "@/components/navbar";
 import { GenericError } from "@/components/routing/GenericError.tsx";
 import { Loading } from "@/components/routing/Loading.tsx";
@@ -32,6 +33,7 @@ export function RootComponentInner({ children }: { children: React.ReactNode }) 
       <Suspense>
         <TanStackRouterDevtools />
       </Suspense>
+      <Footer />
     </>
   );
 }

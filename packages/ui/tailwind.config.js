@@ -1,3 +1,7 @@
+const {
+  default: flattenColorPalette,
+} = require("tailwindcss/lib/util/flattenColorPalette");
+
 /** @type {import('tailwindcss').Config} */
 // eslint-disable-next-line no-undef
 module.exports = {
@@ -70,6 +74,8 @@ module.exports = {
           DEFAULT: "hsl(var(--info))",
           foreground: "hsl(var(--info-foreground))",
         },
+        tick: "var(--tick)",
+        cross: "var(--cross)",
       },
     },
     borderRadius: {
@@ -97,14 +103,42 @@ module.exports = {
         from: { backgroundPosition: "200% 0" },
         to: { backgroundPosition: "-200% 0" },
       },
+      marquee: {
+        from: { transform: "translateX(0)" },
+        to: { transform: "translateX(calc(-100% - var(--gap)))" },
+      },
+      "marquee-vertical": {
+        from: { transform: "translateY(0)" },
+        to: { transform: "translateY(calc(-100% - var(--gap)))" },
+      },
     },
     animation: {
       "accordion-down": "accordion-down 0.2s ease-out",
       "accordion-up": "accordion-up 0.2s ease-out",
       "caret-blink": "caret-blink 1.25s ease-out infinite",
       shine: "shine 8s ease-in-out infinite",
+      marquee: "marquee var(--duration) linear infinite",
+      "marquee-vertical": "marquee-vertical var(--duration) linear infinite",
     },
   },
   // eslint-disable-next-line no-undef
-  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography"), require("tailwindcss/nesting")],
+  plugins: [
+    require("tailwindcss-animate"),
+    require("@tailwindcss/typography"),
+    require("tailwindcss/nesting"),
+    require('tailwind-scrollbar'),
+    addVariablesForColors,
+  ],
 };
+
+// This plugin adds each Tailwind color as a global CSS variable, e.g. var(--gray-200).
+function addVariablesForColors({ addBase, theme }) {
+  const allColors = flattenColorPalette(theme("colors"));
+  const newVars = Object.fromEntries(
+    Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
+  );
+
+  addBase({
+    ":root": newVars,
+  });
+}

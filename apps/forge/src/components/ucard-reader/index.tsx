@@ -61,11 +61,14 @@ export default function UCardReader() {
               <div>
                 <div className="pr-3 text-m">
                   {/* <Link
-                      className="font-bold hover:underline hover:cursor-pointer"
+                      className="font-bold hover:underline underline-offset-4 hover:cursor-pointer"
                      to="/users/$id"
                      params={matchingUser}
                   */}
-                  <a className="font-bold hover:underline hover:cursor-pointer" href={`/users/${matchingUser.id}`}>
+                  <a
+                    className="font-bold hover:underline underline-offset-4 hover:cursor-pointer"
+                    href={`/users/${matchingUser.id}`}
+                  >
                     {matchingUser.display_name}
                   </a>{" "}
                   would like to sign {action}.
@@ -88,7 +91,10 @@ export default function UCardReader() {
                 error: (e) => {
                   return (
                     <>
-                      <a className="font-bold hover:underline hover:cursor-pointer" href={`/users/${matchingUser.id}`}>
+                      <a
+                        className="font-bold hover:underline underline-offset-4 hover:cursor-pointer"
+                        href={`/users/${matchingUser.id}`}
+                      >
                         {matchingUser.display_name}
                       </a>
                       <br />
@@ -101,7 +107,10 @@ export default function UCardReader() {
                   return (
                     <>
                       Successfully signed out{" "}
-                      <a className="font-bold hover:underline hover:cursor-pointer" href={`/users/${matchingUser.id}`}>
+                      <a
+                        className="font-bold hover:underline underline-offset-4 hover:cursor-pointer"
+                        href={`/users/${matchingUser.id}`}
+                      >
                         {matchingUser.display_name}
                       </a>
                     </>

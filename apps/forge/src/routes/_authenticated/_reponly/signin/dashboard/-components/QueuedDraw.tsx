@@ -8,19 +8,19 @@ import { FC, useState } from "react";
 import { QueuedUserCard } from "./QueuedUserCard";
 
 // QueuedDrawer Props
-interface QueueDrawerProps {
+interface QueuedDrawerProps {
   entries: QueueEntry[];
   onDequeue: (user_id: string) => void;
   startExpanded?: boolean;
 }
 
-export const QueueDrawer: FC<QueueDrawerProps> = ({ entries, startExpanded, onDequeue }) => {
+export const QueuedDrawer: FC<QueuedDrawerProps> = ({ entries, startExpanded = true, onDequeue }) => {
   const [isOpen, setIsOpen] = useState(startExpanded);
 
   const toggleOpen = () => setIsOpen(!isOpen);
 
   return (
-    <Collapsible className="space-y-2 mt-2 mb-2">
+    <Collapsible className="space-y-2 mt-2 mb-2" defaultOpen={startExpanded}>
       <CollapsibleTrigger asChild>
         <Button
           className="flex items-center justify-between space-x-4 py-7 w-full"

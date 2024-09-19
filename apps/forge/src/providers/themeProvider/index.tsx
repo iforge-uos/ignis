@@ -1,9 +1,14 @@
 import { createContext, useEffect, useState } from "react";
 import { Theme, ThemeProviderProps, ThemeProviderState } from "./themeTypes.ts";
 
+const systemTheme = () => {
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+};
+
 export const ThemeProviderContext = createContext<ThemeProviderState>({
   theme: "system",
   setTheme: () => null,
+  normalisedTheme: systemTheme(),
 });
 
 export function ThemeProvider({
@@ -13,25 +18,28 @@ export function ThemeProvider({
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(() => (localStorage.getItem(storageKey) as Theme) || defaultTheme);
+  const [normalisedTheme, setNormalisedTheme] = useState<"light" | "dark">(theme === "system" ? systemTheme() : theme);
 
   useEffect(() => {
     const root = window.document.documentElement;
 
     const applySystemTheme = () => {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-      setTheme(systemTheme);
+      const theme = systemTheme();
+      setTheme(theme);
+      setNormalisedTheme(theme);
     };
 
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     mediaQuery.addEventListener("change", applySystemTheme);
 
     root.classList.remove("light", "dark");
-    root.classList.add(theme === "system" ? (mediaQuery.matches ? "dark" : "light") : theme);
+    setNormalisedTheme(theme === "system" ? systemTheme() : theme);
+    root.classList.add(normalisedTheme!);
 
     return () => {
       mediaQuery.removeEventListener("change", applySystemTheme);
     };
-  }, [theme]);
+  }, [theme, normalisedTheme]);
 
   const value = {
     theme,
@@ -39,6 +47,7 @@ export function ThemeProvider({
       localStorage.setItem(storageKey, newTheme);
       setTheme(newTheme);
     },
+    normalisedTheme: normalisedTheme!,
   };
 
   return (

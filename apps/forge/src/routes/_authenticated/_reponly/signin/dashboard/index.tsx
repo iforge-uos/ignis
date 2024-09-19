@@ -15,7 +15,7 @@ import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert.tsx
 import { Loader } from "@ui/components/ui/loader.tsx";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { QueueDrawer } from "./-components/QueuedDraw";
+import { QueuedDrawer } from "./-components/QueuedDraw";
 
 export default function SignInDashboard() {
   const queryClient = useQueryClient();
@@ -126,7 +126,7 @@ export default function SignInDashboard() {
                 />
               </div>
               <div id="queue-shelf" className="mt-4 flex-1">
-                <QueueDrawer entries={queuedUsers} onDequeue={handleDequeue} />
+                <QueuedDrawer entries={queuedUsers} onDequeue={handleDequeue} />
               </div>
             </div>
           )}

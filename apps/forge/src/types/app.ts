@@ -1,1 +1,1 @@
-export type Apps = "Main" | "Sign In" | "Printing" | "User" | "Admin" | "Training" | "Auth" | "Socials";
+export type Apps = "Home" | "Sign In" | "Printing" | "User" | "Admin" | "Training" | "Auth" | "Socials";
