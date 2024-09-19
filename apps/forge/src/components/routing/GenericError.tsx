@@ -17,8 +17,8 @@ export const GenericError = () => {
               </p>
               <p className="text-sm text-accent-foreground">
                 Note: This site is still under development. For assistance, join our{" "}
-                <a className="text-primary" href={import.meta.env.VITE_DISCORD_URL}>
-                  Discord server
+                <a href={import.meta.env.VITE_DISCORD_URL}>
+                  <Button variant="hyperlink">Discord server</Button>
                 </a>
                 .
               </p>
