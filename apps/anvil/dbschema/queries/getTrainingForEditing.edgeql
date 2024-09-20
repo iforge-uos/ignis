@@ -7,9 +7,9 @@ select assert_exists(
             [is training::TrainingPage].name,
             duration_ := duration_to_seconds([is training::TrainingPage].duration),
             answers := [is training::Question].answers {
-            id,
-            content,
-            description,
+                id,
+                content,
+                description,
             },
         }
     }
