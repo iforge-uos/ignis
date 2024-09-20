@@ -32,6 +32,7 @@ export type GetTrainingForEditingReturns = {
   "in_person": boolean;
   "locations": Array<("MAINSPACE" | "HEARTSPACE" | "GEORGE_PORTER")>;
   "training_lockout": Duration | null;
+  "icon_url": string | null;
   "questions": Array<{
     "index": number;
     "enabled": boolean;
@@ -59,6 +60,7 @@ export type GetTrainingForEditingReturns = {
     "in_person": boolean;
     "locations": Array<("MAINSPACE" | "HEARTSPACE" | "GEORGE_PORTER")>;
     "training_lockout": Duration | null;
+    "icon_url": string | null;
   } | null;
 };
 
@@ -73,9 +75,9 @@ select assert_exists(
             [is training::TrainingPage].name,
             duration_ := duration_to_seconds([is training::TrainingPage].duration),
             answers := [is training::Question].answers {
-            id,
-            content,
-            description,
+                id,
+                content,
+                description,
             },
         }
     }

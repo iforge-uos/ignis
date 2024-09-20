@@ -58,6 +58,7 @@ export class TrainingService {
                 name: true,
                 description: true,
               },
+              icon_url: true,
               filter_single: { id },
             })),
           ),

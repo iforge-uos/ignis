@@ -45,8 +45,8 @@ export interface PartialTraining {
   created_at: Date;
   updated_at: Date;
   in_person: boolean;
-  // icon_url: string;
-  enabled: boolean;
+  icon_url?: string | null;
+  enabled?: boolean | null;
 }
 
 export interface PartialTrainingWithStatus extends PartialTraining {

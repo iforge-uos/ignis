@@ -284,6 +284,7 @@ export class SignInService implements OnModuleInit {
               true,
             ),
             enabled: false,
+            icon_url: true,
             filter: e.all(
               e.set(
                 e.op("exists", training.rep),
@@ -305,6 +306,7 @@ export class SignInService implements OnModuleInit {
         rep: { id: true, description: true },
         description: true,
         enabled: true,
+        icon_url: true,
         filter: e.all(
           e.set(
             e.op(training_.id, "not in", e.cast(e.uuid, e.set(...training.map((training) => training.id)))),
