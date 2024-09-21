@@ -18,7 +18,7 @@ export default function AppNav() {
             <Link
               key={link.displayName}
               to={link.path ?? "#"}
-              className="flex justify-center items-center p-2 text-sm font-medium rounded-md text-card-foreground hover:bg-accent"
+              className="flex justify-center items-center p-2 text-sm font-medium rounded-md text-card-foreground hover:bg-accent font-futura"
             >
               {link.displayName}
             </Link>

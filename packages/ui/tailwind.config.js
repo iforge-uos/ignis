@@ -77,6 +77,9 @@ module.exports = {
         tick: "var(--tick)",
         cross: "var(--cross)",
       },
+      fontFamily: {
+        futura: ['Futura', 'sans-serif'],
+      },
     },
     borderRadius: {
       lg: "var(--radius)",

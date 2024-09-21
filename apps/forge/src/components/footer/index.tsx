@@ -74,7 +74,7 @@ export default function Footer() {
             </p>
           </div>
           <div className="flex flex-col gap-2">
-            <h5 className="text-lg font-bold">Opening Hours</h5>
+            <h5 className="text-lg font-bold font-futura">Opening Hours</h5>
             <Balancer ratio="0.5">Open weekdays, subject to exams and holidays</Balancer>
             {locationStatuses && (
               <table className="w-full border-collapse items-center flex">
@@ -104,7 +104,7 @@ export default function Footer() {
             )}
           </div>
           <div className="flex flex-col gap-2">
-            <h5 className="text-lg font-bold">Website</h5>
+            <h5 className="text-lg font-bold font-futura">Website</h5>
             <Link to="/locations" className="hover:underline underline-offset-4">
               Locations
             </Link>
