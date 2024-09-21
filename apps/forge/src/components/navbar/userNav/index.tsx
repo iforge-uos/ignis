@@ -93,7 +93,9 @@ export function UserNav() {
   }
   return (
     <Link to="/auth/login">
-      <Button variant="ghost">Login</Button>
+      <Button variant="ghost" className="font-futura">
+        Login
+      </Button>
     </Link>
   );
 }
