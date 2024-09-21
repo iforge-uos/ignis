@@ -42,32 +42,10 @@ const NavigationMenuTrigger = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Trigger>
 >(({ className, children, ...props }, ref) => {
-  const [isHovered, setIsHovered] = React.useState(false);
-  const timeoutRef = React.useRef<number>();
-
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    timeoutRef.current = setTimeout(() => setIsHovered(false), 1000);
-  };
-
-  const handleClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
-    if (isHovered) {
-      e.preventDefault();
-    } else {
-      clearTimeout(timeoutRef.current);
-    }
-  };
-
   return (
     <NavigationMenuPrimitive.Trigger
       ref={ref}
       className={cn(navigationMenuTriggerStyle(), "group", className)}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onClick={handleClick}
       {...props}
     >
       {children}
