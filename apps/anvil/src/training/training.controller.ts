@@ -31,7 +31,7 @@ export class TrainingController {
     if (editing) {
       try {
         const payload = verifyJWT(req.cookies.access_token) as JwtPayload;
-        if (!payload.roles.some((role) => role === process.env.ADMIN_ROLE)) {
+        if (!payload.roles?.some((role) => role === process.env.ADMIN_ROLE)) {
           throw new Error();
         }
       } catch (_) {
