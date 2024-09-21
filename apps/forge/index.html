@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>iForge</title>
 
     <!-- Favicon -->
-    <link rel="icon" href="/favicon.svg"/> <!-- Placeholder, will be overridden by script -->
+    <link rel="icon" href="/favicon.svg" /> <!-- Placeholder, will be overridden by script -->
 
     <!-- Dynamic Favicon Script -->
     <script>
@@ -30,35 +31,56 @@
         });
     </script>
 
+    <!-- Dynamically load Futura -->
+    <script>
+        const isDevelopment = process.env.NODE_ENV === 'development';
+        const fontDir = isDevelopment ? 'http://localhost:4000/fonts' : '/cdn/fonts';
+
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @font-face {
+                font-family: 'Futura';
+                src: url('${fontUrl}/FuturaPTDemiOblique.otf') format('opentype');
+                font-weight: normal;
+                font-style: normal;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+
     <!-- Meta Tags -->
-    <meta name="author" content="iForge Team"/>
-    <meta name="keywords" content="iForge, makerspace, innovation, making, collaboration, Sheffield University"/>
+    <meta name="author" content="iForge Team" />
+    <meta name="keywords" content="iForge, makerspace, innovation, making, collaboration, Sheffield University" />
     <meta name="description"
         content="iForge - Empowering people to learn through making at Sheffield University's premier makerspace." />
 
     <!-- Open Graph / Social Media Meta Tags -->
-    <meta property="og:title" content="iForge - Empowering People Through Making"/>
-    <meta property="og:description" content="Discover iForge, a premier makerspace at Sheffield University. Join us to collaborate, create, and innovate through hands-on making and learning."/>
-    <meta property="og:image" content="https://iforgesheffield.org/wp-content/uploads/2022/08/FuturaLogo.png"/>
-    <meta property="og:type" content="website"/>
-    <meta property="og:url" content="https://iforge.sheffield.ac.uk"/>
-    <meta property="og:site_name" content="iForge"/>
+    <meta property="og:title" content="iForge - Empowering People Through Making" />
+    <meta property="og:description"
+        content="Discover iForge, a premier makerspace at Sheffield University. Join us to collaborate, create, and innovate through hands-on making and learning." />
+    <meta property="og:image" content="https://iforge.sheffield.ac.uk/cdn/logos/iforge.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://iforge.sheffield.ac.uk" />
+    <meta property="og:site_name" content="iForge" />
 
     <!-- Twitter Card Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image"/>
-    <meta name="twitter:title" content="iForge - Empowering People Through Making"/>
-    <meta name="twitter:description" content="Discover iForge, a premier makerspace at Sheffield University. Join us to collaborate, create, and innovate through hands-on making and learning."/>
-    <meta name="twitter:image" content="https://iforgesheffield.org/wp-content/uploads/2022/08/FuturaLogo.png"/>
-    <meta name="twitter:site" content="@iForgeUOS"/>
-    <meta name="twitter:creator" content="@iForgeUOS"/>
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="iForge - Empowering People Through Making" />
+    <meta name="twitter:description"
+        content="Discover iForge, a premier makerspace at Sheffield University. Join us to collaborate, create, and innovate through hands-on making and learning." />
+    <meta name="twitter:image" content="https://iforge.sheffield.ac.uk/cdn/logos/iforge.png" />
+    <meta name="twitter:site" content="@iForgeUOS" />
+    <meta name="twitter:creator" content="@iForgeUOS" />
 
     <!-- Additional Meta Tags -->
-    <meta name="robots" content="index, follow"/>
+    <meta name="robots" content="index, follow" />
 
 
 </head>
+
 <body>
-<div id="root"></div>
-<script type="module" src="/src/main.tsx"></script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
 </body>
+
 </html>

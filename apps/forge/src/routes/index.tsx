@@ -294,7 +294,7 @@ const mainspaceCards = [
 ].map(
   renderLocationCard(
     <>
-      <MainspaceIcon tooltip={false} className="w-8 h-8" /> Mainspace
+      <MainspaceIcon tooltip={false} className="w-8 h-8 mr-2" /> <span className="font-futura">Mainspace</span>
     </>,
   ),
 );
@@ -328,7 +328,7 @@ const heartspaceCards = [
 ].map(
   renderLocationCard(
     <>
-      <HeartspaceIcon tooltip={false} className="w-8 h-8" /> Heartspace
+      <HeartspaceIcon tooltip={false} className="w-8 h-8 mr-2" /> <span className="font-futura">Heartspace</span>
     </>,
   ),
 );
@@ -341,7 +341,7 @@ function renderLocationCard(header: React.ReactNode) {
       <div className="absolute bottom-28 left-0 flex items-center justify-center">
         <h1 className="text-white font-bold flex-col max-w-[75%] text-left">
           <div className="flex items-center text-3xl pb-2">{header}</div>
-          <Balancer className="text-xl" key={1}>
+          <Balancer className="text-xl font-light" key={1}>
             {value.text}
           </Balancer>
         </h1>
@@ -385,7 +385,7 @@ const LocationCards = () => {
 const FAQEntries = () => {
   return (
     <>
-      <div className="text-3xl font-bold">Frequently Asked Questions</div>
+      <h2 className="text-3xl font-bold font-futura">Frequently Asked Questions</h2>
       <div className="not-prose mt-4 flex flex-col gap-4 md:mt-8">
         {faqItems.map((item, index) => (
           <Accordion key={index} type="single" collapsible>
@@ -409,27 +409,29 @@ const IndexComponent = () => {
       <div className="flex justify-center my-10">
         <IForgeLogo className="w-96 h-[138px] pointer-events-none" />
       </div>
-      <Balancer className="mx-14 text-4xl mb-2">
-        The University of Sheffield's iForge is the UK's first student-led makerspace. We believe in learning through
-        making.
-      </Balancer>
+      <h2>
+        <Balancer className="mx-14 text-4xl mb-2 font-futura">
+          The University of Sheffield's iForge is the UK's first student-led makerspace. We believe in learning through
+          making.
+        </Balancer>
+      </h2>
       <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-md">
         <ImageCarousel />
       </div>
-      <Balancer className="mx-14 text-2xl mt-8 mb-4">
-        Join us to collaborate, create, and innovate through hands-on making and learning.
-      </Balancer>
+      <h3>
+        <Balancer className="mx-14 text-2xl mt-8 mb-4">
+          Join us to collaborate, create, and innovate through hands-on making and learning.
+        </Balancer>
+      </h3>
       <Separator className="my-8" />
-      <>
-        <div className="text-3xl font-bold mx-14 mb-8">Our Locations</div>
-        <LocationCards />
-      </>
+      <h2 className="text-3xl font-bold mx-14 mb-8 font-futura">Our Locations</h2>
+      <LocationCards />
       <Separator className="my-8" />
 
       <div className="px-14">
         <Card className="flex-col w-full">
-          <CardHeader className="font-bold text-center text-3xl">Sign Up Now!</CardHeader>
-          <CardDescription className="p-4 flex justify-center">
+          <CardHeader className="font-bold text-center text-3xl font-futura">Sign Up Now!</CardHeader>
+          <CardDescription className="pb-4 flex justify-center">
             <Balancer className="flex text-lg justify-center">
               It's easy:
               <Timeline>
@@ -443,7 +445,7 @@ const IndexComponent = () => {
                     <TimelineHeading className="flex items-center text-foreground overflow-visible text-ellipsis whitespace-normal">
                       {value}
                     </TimelineHeading>
-                    <TimelineDot status="done" className="rounded-sm" />
+                    <TimelineDot status="done" className="rounded-sm border-none" />
                     {idx !== array.length - 1 && <TimelineLine done={true} className="min-h-4" />}
                   </TimelineItem>
                 ))}

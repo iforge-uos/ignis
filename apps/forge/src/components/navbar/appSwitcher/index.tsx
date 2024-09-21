@@ -21,7 +21,7 @@ export default function AppSwitcher() {
       <NavigationMenuList>
         <NavigationMenuItem>
           <ContextMenuWrapper>
-            <NavigationMenuTrigger className="bg-card">iForge | {currentapp}</NavigationMenuTrigger>
+            <NavigationMenuTrigger className="bg-card font-futura">iForge | {currentapp}</NavigationMenuTrigger>
           </ContextMenuWrapper>
           <NavigationMenuContent>
             <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
@@ -33,7 +33,7 @@ export default function AppSwitcher() {
                     )}
                     to="/"
                   >
-                    <div className="mb-2 mt-4 text-lg font-medium">iForge</div>
+                    <div className="mb-2 mt-4 text-lg font-medium font-futura">iForge</div>
                     <p className="text-sm leading-tight text-muted-foreground">
                       The UK's first student-led MakerSpace!
                     </p>
