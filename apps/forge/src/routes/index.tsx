@@ -407,7 +407,7 @@ const IndexComponent = () => {
     <>
       <Title prompt="Home" />
       <div className="flex justify-center my-10">
-        <IForgeLogo className="w-96 pointer-events-none" />
+        <IForgeLogo className="w-96 h-[138px] pointer-events-none" />
       </div>
       <Balancer className="mx-14 text-4xl mb-2">
         The University of Sheffield's iForge is the UK's first student-led makerspace. We believe in learning through
