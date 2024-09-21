@@ -1,13 +1,4 @@
-import {
-  Column,
-  Head,
-  Heading,
-  Html,
-  Img,
-  Preview,
-  Row,
-  Tailwind,
-} from "jsx-email";
+import { Column, Head, Heading, Html, Img, Preview, Row, Tailwind } from "jsx-email";
 import * as React from "react";
 import { Footer } from "./footer";
 
@@ -56,6 +47,11 @@ export function Email({
 
           a {
             color: #CE5C4D;
+          }
+
+          a:hover {
+            text-decoration: underline;
+            text-underline-offset: 4px;
           }
 
           h1 {
