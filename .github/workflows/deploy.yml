@@ -17,7 +17,7 @@ jobs:
       - name: Notify Discord Maintenance Start
         uses: tsickert/discord-webhook@v6.0.0
         with:
-          webhook-url: ${{ secrets.DISCORD_ANNOUCE_WEBHOOK_URL }}
+          webhook-url: ${{ secrets.DISCORD_CICID_WEBHOOK_NOTI_URL}}
           embed-title: "Ignis Entering Maintenance Mode"
           embed-color: 15548997
           embed-description: "Ignis is going down for maintenance and will be back up shortly"
@@ -46,7 +46,7 @@ jobs:
       - name: Notify Discord Maintenance Start
         uses: tsickert/discord-webhook@v6.0.0
         with:
-          webhook-url: ${{ secrets.DISCORD_ANNOUCE_WEBHOOK_URL }}
+          webhook-url: ${{ secrets.DISCORD_CICID_WEBHOOK_NOTI_URL}}
           embed-title: "Ignis Exiting Maintenance Mode"
           embed-color: 5763719
           embed-description: "Ignis is back online!"
