@@ -50,25 +50,7 @@ export class AuthenticationController {
             throw new BadRequestException("Refresh token is missing");
         }
 
-        const isBlacklisted = await this.blacklistService.isTokenBlacklisted(refreshToken);
-        if (isBlacklisted) {
-            this.logger.warn("The refresh token is blacklisted", AuthenticationController.name);
-            this.authService.clearAuthCookies(res);
-            throw new UnauthorizedException("The refresh token is no longer valid");
-        }
-
-        const payload = await this.authService.validateRefreshToken(refreshToken);
-
-        const user = await this.usersService.findOne(payload.sub);
-        if (!user) {
-            this.logger.warn("User not found", AuthenticationController.name);
-            throw new UnauthorizedException("User not found");
-        }
-
-        const expiryDate = new Date();
-        await this.blacklistService.addToBlacklist(refreshToken, expiryDate);
-
-        const {access_token, refresh_token, csrf_token} = await this.authService.login(user);
+        const {access_token, refresh_token, csrf_token} = await this.refreshTokens(refreshToken, undefined);
 
         this.authService.setAuthCookies(res, access_token, refresh_token, csrf_token);
 
@@ -107,30 +89,6 @@ export class AuthenticationController {
         return {message: "Successfully logged out"};
     }
 
-    // @UseGuards(AuthGuard("discord"))
-    // @Get("discord-login")
-    // async discordLogin(@Req() req: any) {
-    //   // Check if user is authenticated with another method like LDAP before linking
-    //   if (!req.isAuthenticated()) {
-    //     throw new UnauthorizedException(
-    //       "User is not authenticated with primary method",
-    //     );
-    //   }
-    //   // Link Discord account to authenticated user
-    //   await this.integrationsService.linkDiscordAccount(req.user.id, req.user);
-    //   return req.user;
-    // }
-    //
-    // @UseGuards(AuthGuard("discord"))
-    // @Get("discord/callback")
-    // async discordRedirect(@Req() req: any) {
-    //   const tokens = await this.authService.login(req.user);
-    //   return {
-    //     ...tokens,
-    //     user: req.user,
-    //   };
-    // }
-
     @UseGuards(AuthGuard("google"))
     @Get("login")
     async googleLogin(@Req() req: Request) {
@@ -150,14 +108,59 @@ export class AuthenticationController {
     }
 
     @Get("validate-access")
-    async validateToken(@Req() req: Request, @Query("role") requiredRole: string) {
-        this.logger.log(`Validating access token for role: ${requiredRole}`, AuthenticationController.name);
-        const token = req.cookies.access_token;
-        if (!token) {
-            throw new UnauthorizedException("Access token is missing");
+    async validateToken(@Req() req: Request, @Res({passthrough: true}) res: Response, @Query("role") requiredRole?: string) {
+        this.logger.log(`Validating access token${requiredRole ? ` for role: ${requiredRole}` : ''}`, AuthenticationController.name);
+        const accessToken = req.cookies.access_token;
+        const refreshToken = req.cookies.refresh_token;
+
+        if (!accessToken && !refreshToken) {
+            throw new UnauthorizedException("Both access token and refresh token are missing");
         }
 
-        await this.authService.validateAccessToken(token, requiredRole);
-        return {status: "ok"};
+        try {
+            if (accessToken) {
+                await this.authService.validateAccessToken(accessToken, requiredRole);
+                return {status: "ok", message: "Access token and role is valid"};
+            }
+        } catch (error) {
+            if (!refreshToken) {
+                throw new UnauthorizedException("Access token is invalid and refresh token is missing");
+            }
+            // If access token is invalid and refresh token exists, proceed to refresh
+        }
+
+        const {access_token, refresh_token, csrf_token} = await this.refreshTokens(refreshToken, requiredRole);
+
+        this.authService.setAuthCookies(res, access_token, refresh_token, csrf_token);
+
+        return {status: "ok", message: "Tokens refreshed and validated"};
     }
+
+    private async refreshTokens(refreshToken: string, requiredRole?: string) {
+        const isBlacklisted = await this.blacklistService.isTokenBlacklisted(refreshToken);
+        if (isBlacklisted) {
+            this.logger.warn("The refresh token is blacklisted", AuthenticationController.name);
+            throw new UnauthorizedException("The refresh token is no longer valid");
+        }
+
+        const payload = await this.authService.validateRefreshToken(refreshToken);
+
+        const user = await this.usersService.findOne(payload.sub);
+        if (!user) {
+            this.logger.warn("User not found", AuthenticationController.name);
+            throw new UnauthorizedException("User not found");
+        }
+
+        // Check the role if required
+        if (requiredRole && !user.roles.some(role => role.name === requiredRole)) {
+            this.logger.warn(`User does not have the required role: ${requiredRole}`, AuthenticationController.name);
+            throw new UnauthorizedException("User does not have the required role");
+        }
+
+        const expiryDate = new Date();
+        await this.blacklistService.addToBlacklist(refreshToken, expiryDate);
+
+        return await this.authService.login(user);
+    }
+
 }
