@@ -50,12 +50,18 @@ export class AuthenticationController {
             throw new BadRequestException("Refresh token is missing");
         }
 
-        const {access_token, refresh_token, csrf_token} = await this.refreshTokens(refreshToken, undefined);
-
-        this.authService.setAuthCookies(res, access_token, refresh_token, csrf_token);
-
-        this.logger.log("Tokens refreshed", AuthenticationController.name);
-        return {message: "Tokens refreshed"};
+        try {
+            const {access_token, refresh_token, csrf_token} = await this.refreshTokens(refreshToken, undefined);
+            this.authService.setAuthCookies(res, access_token, refresh_token, csrf_token);
+            this.logger.log("Tokens refreshed", AuthenticationController.name);
+            return {message: "Tokens refreshed"};
+        } catch (error) {
+            this.logger.warn("Refresh token failed, clearing cookies", AuthenticationController.name);
+            // Clear all authentication cookies
+            this.authService.clearAuthCookies(res);
+            // Re-throw the error to be handled by the frontend
+            throw error;
+        }
     }
 
     @UseInterceptors(IdempotencyCacheInterceptor)
