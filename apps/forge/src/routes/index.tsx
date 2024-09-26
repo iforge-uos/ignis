@@ -382,7 +382,7 @@ const LocationCards = () => {
 
   return (
     <>
-      <div className="snap-y snap-mandatory h-screen overflow-y-scroll" ref={ref}>
+      <div className="snap-y snap-mandatory h-screen overflow-y-scroll hide-scrollbar sm:overflow-y-scroll" ref={ref}>
         <div>
           {mainspaceCards}
           {heartspaceCards}
