@@ -274,7 +274,10 @@ const mainspaceCards = [
         experienced maker working on complex projects, the Mainspace is equipped to support you.
       </>
     ),
-    img: <img src="ms inside.jpg" className="object-fill" />,
+    img: <img src="ms inside.jpg" 
+    alt="Mainspace interior" 
+    className="w-full h-full object-cover" // Ensure full width and height, otherwise image will not resize
+    />,
   },
   {
     text: (
@@ -289,7 +292,10 @@ const mainspaceCards = [
         design and manufacture with our volunteer reps.
       </>
     ),
-    img: <img src="ms front.jpg" className="object-fill" />,
+    img: <img src="ms front.jpg"
+    alt="Mainspace exterior" 
+    className="w-full h-full object-cover" // Ensure full width and height, otherwise image will not resize
+    />,
   },
 ].map(
   renderLocationCard(
@@ -309,7 +315,10 @@ const heartspaceCards = [
         tools and support to unleash your creativity.
       </>
     ),
-    img: <img src="hs inside.jpg" className="object-fill" />,
+    img: <img src="hs inside.jpg" 
+    alt="Heartspace interior"
+    className="w-full h-full object-cover" // Ensure full width and height, otherwise image will not resize
+    />,
   },
   {
     text: (
@@ -323,7 +332,10 @@ const heartspaceCards = [
         above the café, the Heartspace offers an easily accessible, inspiring environment for students and staff.
       </>
     ),
-    img: <img src="hs front.jpg" className="object-fill" />,
+    img: <img src="hs front.jpg"
+    alt="Heartspace exterior"
+    className="w-full h-full object-cover" // Ensure full width and height, otherwise image will not resize
+    />,
   },
 ].map(
   renderLocationCard(
@@ -335,7 +347,7 @@ const heartspaceCards = [
 
 function renderLocationCard(header: React.ReactNode) {
   return (value, index) => (
-    <div key={index} className="relative h-screen w-screen overflow-hidden snap-center">
+    <div key={index} className="relative h-screen w-full overflow-hidden snap-center">
       {value.img}
       <div className="absolute inset-0 bg-black bg-opacity-60" />
       <div className="absolute bottom-28 left-0 flex items-center justify-center">
