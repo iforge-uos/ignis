@@ -1,10 +1,1 @@
-<svg width="100%" height="100%" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg"
-    style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-    <path
-        d="M131.295,107.451c18.268,0 33.338,15.07 33.338,33.338c0,18.267 -15.07,33.337 -33.338,33.337c-18.267,0 -33.338,-15.07 -33.338,-33.337c0,-18.268 15.071,-33.338 33.338,-33.338"
-        style="fill:#ce5c4d;fill-rule:nonzero;" />
-    <rect x="100.943" y="222.135" width="60.705" height="173.399" style="fill:#ce5c4d;" />
-    <path
-        d="M402.043,160.195l-111.458,-0l-0,61.941l104.491,-0l0,55.729l-104.491,-0l-0,117.669l-64.685,-0l-0,-291.068l176.142,-0l0,55.729Z"
-        style="fill:#fff;fill-rule:nonzero;" />
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2" viewBox="0 0 500 500"><path d="M131.295 107.451c18.268 0 33.338 15.07 33.338 33.338 0 18.267-15.07 33.337-33.338 33.337-18.267 0-33.338-15.07-33.338-33.337s15.071-33.338 33.338-33.338" style="fill:#ce5c4d;fill-rule:nonzero"/><path d="M100.943 222.135h60.705v173.399h-60.705z" style="fill:#ce5c4d"/><path d="M402.043 160.195H290.585v61.941h104.491v55.729H290.585v117.669H225.9V104.466h176.142z" style="fill:#fff;fill-rule:nonzero"/></svg>
