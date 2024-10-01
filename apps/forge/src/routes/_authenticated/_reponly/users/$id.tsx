@@ -54,7 +54,7 @@ export default function Component() {
   return (
     <>
       <Title prompt={`User ${user.display_name}`} />
-      <div className="flex flex-col h-screen">
+      <div className="flex flex-col h-full">
         <main className="flex flex-1 flex-col gap-4 p-2 md:gap-8 md:p-6">
           <div className="flex items-center">
             <h1 className="font-semibold text-lg md:text-2xl">{user.display_name}</h1>
