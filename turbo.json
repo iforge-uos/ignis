@@ -1,6 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
@@ -46,7 +46,7 @@
     },
     "typecheck": {
       "dependsOn": ["^topo", "^generate", "generate"],
-      "outputMode": "errors-only"
+      "outputLogs": "errors-only"
     }
   }
 }
