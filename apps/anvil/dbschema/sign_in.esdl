@@ -153,6 +153,7 @@ module sign_in {
     }
 
     type Agreement extending default::CreatedAt {
+        required name: str;
         multi reasons := (
             select Reason filter .agreement = __source__
         );
