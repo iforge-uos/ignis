@@ -22,7 +22,7 @@ module sign_in {
             constraint exclusive;
         }
         multi opening_days: int16 {
-            annotation description := "0-6, the days of the week we are currently open, Sunday (0) to Saturday (6)"
+            annotation description := "1-7, the days of the week we are currently open, Monday (1) to Sunday (7)"
         };
         required opening_time: cal::local_time;
         required closing_time: cal::local_time;
@@ -47,7 +47,7 @@ module sign_in {
             select (
                 not (
                     .opening_time <= current_time and current_time <= .closing_time
-                    and <int16>datetime_get(datetime_of_statement(), "dow") in .opening_days
+                    and <int16>datetime_get(datetime_of_statement(), "isodow") in .opening_days
                 )
             )
         );
@@ -62,7 +62,7 @@ module sign_in {
                         .opening_time - <cal::relative_duration>"30m" <= current_time
                         and current_time <= .closing_time - <cal::relative_duration>"30m"
                     )
-                    and datetime_get(datetime_of_statement(), "dow") in .opening_days
+                    and datetime_get(datetime_of_statement(), "isodow") in .opening_days
                 )
                 else "closed"
             )
