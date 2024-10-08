@@ -26,6 +26,7 @@ export class RootService {
       e.select(e.sign_in.Reason.agreement, (agreement) => ({
         filter: e.op("exists", agreement),
         id: true,
+        name: true,
         created_at: true,
         version: true,
         content: true,

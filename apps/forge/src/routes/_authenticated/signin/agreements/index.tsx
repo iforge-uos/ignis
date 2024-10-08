@@ -47,6 +47,7 @@ export default function Component() {
         <Table className="max-w-xl mx-auto">
           <TableHeader className="bg-accent rounded-md">
             <TableRow>
+              <TableHead>Name</TableHead>
               <TableHead>Reasons</TableHead>
               <TableHead className="text-center">Status</TableHead>
               <TableHead className="text-center">Version</TableHead>
@@ -55,25 +56,21 @@ export default function Component() {
           </TableHeader>
           <TableBody>
             {agreements.map((agreement) => (
-                <Link
-                    key={agreement.id}
-                    to="/signin/agreements/$id"
-                    params={agreement}
-                    className="contents"
-                >
-                  <TableRow className="hover:bg-accent hover:cursor-pointer">
-                    <TableCell>{agreement.reasons.map((reason) => reason.name).join(", ")}</TableCell>
-                    <TableCell>
-                      <div className="flex justify-center">
-                        <Badge variant="outline" className="rounded-md">
-                          {getAgreementStatus(agreement)}
-                        </Badge>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-center">{agreement.version}</TableCell>
-                    <TableCell>{new Date(agreement.created_at).toLocaleDateString()}</TableCell>
-                  </TableRow>
-                </Link>
+              <Link key={agreement.id} to="/signin/agreements/$id" params={agreement} className="contents">
+                <TableRow className="hover:bg-accent hover:cursor-pointer">
+                  <TableCell>{agreement.name}</TableCell>
+                  <TableCell>{agreement.reasons.map((reason) => reason.name).join(", ")}</TableCell>
+                  <TableCell>
+                    <div className="flex justify-center">
+                      <Badge variant="outline" className="rounded-md">
+                        {getAgreementStatus(agreement)}
+                      </Badge>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-center">{agreement.version}</TableCell>
+                  <TableCell>{new Date(agreement.created_at).toLocaleDateString()}</TableCell>
+                </TableRow>
+              </Link>
             ))}
           </TableBody>
         </Table>
