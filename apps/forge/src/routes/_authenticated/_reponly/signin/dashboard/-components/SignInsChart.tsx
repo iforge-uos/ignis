@@ -1,7 +1,7 @@
 import { LocationIcon } from "@/components/icons/Locations.tsx";
 import { SignInStat } from "@ignis/types/users.ts";
 import { Datum, ResponsiveCalendar } from "@nivo/calendar";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button.tsx";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@ui/components/ui/dialog.tsx";
 import {
@@ -19,7 +19,6 @@ import MediaQuery from "react-responsive";
 type SignInDatum = Omit<Datum, "data"> & { data: Datum["data"] & SignInStat };
 
 function SignInTable({ datum }: { datum: SignInDatum | null }) {
-  const navigate = useNavigate();
   return (
     <Table>
       <TableHeader className="bg-accent rounded-md">
@@ -38,20 +37,18 @@ function SignInTable({ datum }: { datum: SignInDatum | null }) {
           const minutes_string = `${minutes} minute${minutes !== 1 ? "s" : ""}`;
 
           return (
-            <TableRow
-              className="hover:bg-accent hover:cursor-pointer"
-              key={sign_in.id}
-              onClick={() => navigate({ to: "/sign-ins/$id", params: sign_in })} // cannot use Link here as it breaks table formatting
-            >
-              <TableCell className="flex justify-center">
-                <LocationIcon location={sign_in.location.name} />
-              </TableCell>
-              <TableCell className="text-center">{sign_in.created_at.toLocaleTimeString()}</TableCell>
-              <TableCell className="text-center">{sign_in.ends_at?.toLocaleTimeString() || "-"}</TableCell>
-              <TableCell className="text-center">
-                {hours && minutes ? `${hours_string} and ${minutes_string}` : hours ? hours_string : minutes_string}
-              </TableCell>
-            </TableRow>
+            <Link key={sign_in.id} to="/sign-ins/$id" params={sign_in} className="contents">
+              <TableRow className="hover:bg-accent hover:cursor-pointer" key={sign_in.id}>
+                <TableCell className="flex justify-center">
+                  <LocationIcon location={sign_in.location.name} />
+                </TableCell>
+                <TableCell className="text-center">{sign_in.created_at.toLocaleTimeString()}</TableCell>
+                <TableCell className="text-center">{sign_in.ends_at?.toLocaleTimeString() || "-"}</TableCell>
+                <TableCell className="text-center">
+                  {hours && minutes ? `${hours_string} and ${minutes_string}` : hours ? hours_string : minutes_string}
+                </TableCell>
+              </TableRow>
+            </Link>
           );
         })}
       </TableBody>
