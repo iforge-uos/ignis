@@ -56,8 +56,8 @@ export class RootService {
     );
   }
 
-  async createAgreement(reason_ids: string[], content: string) {
-    const agreement = e.insert(e.sign_in.Agreement, { content, content_hash: computeHash(content) });
+  async createAgreement(name: string, reason_ids: string[], content: string) {
+    const agreement = e.insert(e.sign_in.Agreement, { name, content, content_hash: computeHash(content) });
 
     // update each SignInReason to link to the new Agreement
     return await this.dbService.query(
@@ -79,7 +79,7 @@ export class RootService {
     );
   }
 
-  async updateAgreement(agreement_id: string, reason_ids: string[], content: string) {
+  async updateAgreement(agreement_id: string, name: string, reason_ids: string[], content: string) {
     const current_agreement = e.assert_exists(
       e.select(e.sign_in.Agreement, () => ({
         filter_single: { id: agreement_id },
@@ -96,6 +96,7 @@ export class RootService {
     );
 
     const new_agreement = e.insert(e.sign_in.Agreement, {
+      name,
       content,
       content_hash: computeHash(content),
       version: e.op(current_agreement.version, "+", 1),

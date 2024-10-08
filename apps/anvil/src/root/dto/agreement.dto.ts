@@ -2,10 +2,12 @@ import { createZodDto } from "nestjs-zod";
 import { z } from "zod";
 
 export const CreateAgreementSchema = z.object({
+  name: z.string(),
   reason_ids: z.array(z.string()),
   content: z.string(),
 });
 export const UpdateAgreementSchema = z.object({
+  name: z.string(),
   reason_ids: z.array(z.string()),
   content: z.string(),
 });

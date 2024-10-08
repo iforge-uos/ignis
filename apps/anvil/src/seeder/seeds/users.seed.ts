@@ -54,6 +54,7 @@ export async function seedUsers(dbService: EdgeDBService) {
               filter_single: e.op(reason.category, "=", e.sign_in.ReasonCategory.PERSONAL_PROJECT),
               set: {
                 agreement: e.insert(e.sign_in.Agreement, {
+                  name: "User Agreement",
                   content: readFileSync(ua, { encoding: "utf-8" }),
                   content_hash: computeFileHash(ua),
                 }),
@@ -70,6 +71,7 @@ export async function seedUsers(dbService: EdgeDBService) {
             filter_single: e.op(reason.name, "=", REP_ON_SHIFT),
             set: {
               agreement: e.insert(e.sign_in.Agreement, {
+                name: "Rep Agreement",
                 content: readFileSync(ra, { encoding: "utf-8" }),
                 content_hash: computeFileHash(ra),
               }),

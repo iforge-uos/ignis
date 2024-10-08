@@ -87,7 +87,7 @@ export class RootController {
   @IdempotencyCache(60)
   async createAgreement(@Body() body: CreateAgreementDto) {
     this.logger.log("Creating agreement", RootController.name);
-    return await this.rootService.createAgreement(body.reason_ids, body.content);
+    return await this.rootService.createAgreement(body.name, body.reason_ids, body.content);
   }
 
   @Get("agreements/:agreement_id")
@@ -110,7 +110,7 @@ export class RootController {
   @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
   async updateAgreement(@Param("agreement_id") agreement_id: string, @Body() body: UpdateAgreementDto) {
     this.logger.log(`Updating agreement with ID: ${agreement_id}`, RootController.name);
-    return await this.rootService.updateAgreement(agreement_id, body.reason_ids, body.content);
+    return await this.rootService.updateAgreement(agreement_id, body.name, body.reason_ids, body.content);
   }
 
   @Post("test_email")
