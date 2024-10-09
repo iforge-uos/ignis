@@ -223,7 +223,7 @@ export default function SignInActionsManager<FlowT extends FlowType | undefined 
         {!currentFlow && (
           <div className="flex flex-1 items-center justify-center">
             <div className="p-6 space-y-4 w-full rounded-xl shadow-lg bg-card text-card-foreground">
-              <div className="flex flex-row space-x-4 justify-center">
+              <div className="flex flex-col space-y-4 lg:space-y-0 lg:flex-row lg:space-x-4 justify-center">
                 <Button variant="success" className={buttonStyles} onClick={() => startFlow(FlowType.SignIn)}>
                   Start Sign In
                 </Button>

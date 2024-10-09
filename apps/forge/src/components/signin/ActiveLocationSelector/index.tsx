@@ -59,18 +59,20 @@ const ActiveLocationSelector = () => {
   };
 
   const activeLocationStatus = locationStatuses?.[activeLocation];
+
   return (
-    <>
-      <div className="flex items-center justify-between p-3 space-x-4 bg-card text-card-foreground mt-4 mb-4 drop-shadow-lg dark:shadow-none flex-col md:flex-row">
-        <div>
-          <span className="font-medium mr-2">Select Location</span>
+    <div className="p-3 bg-card text-card-foreground mt-4 mb-4 drop-shadow-lg dark:shadow-none">
+      <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0 md:space-x-4">
+        <div className="w-full md:w-auto">
+          <span className="font-medium block mb-2 md:inline md:mr-2">Select Location</span>
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
+                // biome-ignore lint/a11y/useSemanticElements: I'll fix later - Sam
                 role="combobox"
                 aria-expanded={open}
-                className={`w-[200px] justify-between border-2 ${borderColor}`}
+                className={`w-full md:w-[200px] justify-between border-2 ${borderColor}`}
               >
                 {value ? toTitleCase(value) : "No active location selected"}
                 <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -91,7 +93,7 @@ const ActiveLocationSelector = () => {
                         Object.keys(locationStatuses).map((name) => (
                           <CommandItem
                             key={name}
-                            value={name} // TODO why is this converting to lower
+                            value={name}
                             onSelect={(currentValue) => {
                               const location = currentValue.toUpperCase() as LocationName;
                               setValue(location);
@@ -112,75 +114,79 @@ const ActiveLocationSelector = () => {
             </PopoverContent>
           </Popover>
         </div>
-        {isLoading && (
-          <div className="flex items-center gap-2 mt-2 lg:mt-0">
-            <Skeleton className="w-[110px] h-[40px]" />
-            <Separator orientation="vertical" />
-            <Skeleton className="w-[170px] h-[40px]" />
-            <Skeleton className="w-[180px] h-[40px]" />
-          </div>
-        )}
-        {isError && (
-          <div className="flex items-center gap-2 p-2 rounded-md bg-destructive text-destructive-foreground">
-            <MessageCircleWarning />
-            <p> Error Fetching Location Status</p>
-          </div>
-        )}
-        {activeLocationStatus && !isLoading && !isError && (
-          <div className="flex items-center gap-2 mt-2 lg:mt-0">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <StatusBadge
-                    is_open={activeLocationStatus.status === "open"}
-                    is_out_of_hours={activeLocationStatus.out_of_hours}
-                  />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>The space is marked as OPEN when there is at least one rep signed in.</p>
-                  <p>It is closed otherwise.</p>
-                  <p>
-                    Current opening hours are: {removeSuffix(activeLocationStatus.opening_time, ":00")} -{" "}
-                    {removeSuffix(activeLocationStatus.closing_time, ":00")}
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger>
-                  <UserCount
-                    rep_count={activeLocationStatus.on_shift_rep_count}
-                    off_shift_rep_count={activeLocationStatus.off_shift_rep_count}
-                    user_count={activeLocationStatus.user_count}
-                    max_count={activeLocationStatus.max}
-                  />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Click to view a more detailed breakdown of the user count.</p>
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger>
-                  <QueueStatus
-                    queue_needed={activeLocationStatus.needs_queue}
-                    count_in_queue={activeLocationStatus.count_in_queue}
-                  />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>The Queue is only enabled when capacity is reached.</p>
-                  <p>
-                    To view detailed queue status visit the{" "}
-                    <Link className="underline" to={"/signin/dashboard"}>
-                      dashboard
-                    </Link>
-                    .
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-        )}
+
+        <div className="w-full md:w-auto">
+          {isLoading && (
+            <div className="flex flex-col md:flex-row items-center gap-2">
+              <Skeleton className="w-full md:w-[110px] h-[40px]" />
+              <Separator orientation="horizontal" className="w-full md:hidden my-2" />
+              <Separator orientation="vertical" className="hidden md:block" />
+              <Skeleton className="w-full md:w-[170px] h-[40px]" />
+              <Skeleton className="w-full md:w-[180px] h-[40px]" />
+            </div>
+          )}
+          {isError && (
+            <div className="flex items-center gap-2 p-2 rounded-md bg-destructive text-destructive-foreground">
+              <MessageCircleWarning />
+              <p>Error Fetching Location Status</p>
+            </div>
+          )}
+          {activeLocationStatus && !isLoading && !isError && (
+            <div className="flex flex-col md:flex-row items-center gap-2">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <StatusBadge
+                      is_open={activeLocationStatus.status === "open"}
+                      is_out_of_hours={activeLocationStatus.out_of_hours}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>The space is marked as OPEN when there is at least one rep signed in.</p>
+                    <p>It is closed otherwise.</p>
+                    <p>
+                      Current opening hours are: {removeSuffix(activeLocationStatus.opening_time, ":00")} -{" "}
+                      {removeSuffix(activeLocationStatus.closing_time, ":00")}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <UserCount
+                      rep_count={activeLocationStatus.on_shift_rep_count}
+                      off_shift_rep_count={activeLocationStatus.off_shift_rep_count}
+                      user_count={activeLocationStatus.user_count}
+                      max_count={activeLocationStatus.max}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Click to view a more detailed breakdown of the user count.</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <QueueStatus
+                      queue_needed={activeLocationStatus.needs_queue}
+                      count_in_queue={activeLocationStatus.count_in_queue}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>The Queue is only enabled when capacity is reached.</p>
+                    <p>
+                      To view detailed queue status visit the{" "}
+                      <Link className="underline" to={"/signin/dashboard"}>
+                        dashboard
+                      </Link>
+                      .
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          )}
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 
