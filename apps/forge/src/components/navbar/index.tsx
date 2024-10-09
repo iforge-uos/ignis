@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import AppNav from "@/components/navbar/appNav";
 import AppSwitcher from "@/components/navbar/appSwitcher";
 import { ThemeSwitcher } from "@/components/navbar/themeSwitcher";
@@ -8,6 +8,10 @@ import { Button } from "@ui/components/ui/button";
 
 export default function NavBar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = useCallback(() => {
+    setMobileMenuOpen((prev) => !prev);
+  }, []);
 
   return (
     <div className="sticky top-0 z-40 w-full bg-card text-card-foreground backdrop-filter shadow-lg dark:shadow-none border-b-2">
@@ -26,7 +30,7 @@ export default function NavBar() {
           <UserNav />
 
           {/* Mobile Menu Button */}
-          <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+          <Button variant="ghost" size="icon" className="md:hidden" onClick={toggleMobileMenu}>
             {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </Button>
         </div>
