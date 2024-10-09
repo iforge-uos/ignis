@@ -9,7 +9,7 @@ interface UserCountProps {
 
 export const UserCount: React.FC<UserCountProps> = ({ rep_count, off_shift_rep_count, max_count, user_count }) => {
   const [showDetails, setShowDetails] = useState(false);
-  const total_count = rep_count + off_shift_rep_count + user_count;
+  const total_count = rep_count + user_count;
 
   const handleClick = () => {
     setShowDetails(!showDetails);
