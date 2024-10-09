@@ -13,7 +13,6 @@ import { AuthProvider, useAuth } from "@/components/auth-provider";
 import { Loading } from "@/components/routing/Loading.tsx";
 import { routeTree } from "@/routeTree.gen.ts";
 import { Toaster } from "@ui/components/ui/sonner.tsx";
-import posthog from "posthog-js";
 import { PersistGate } from "redux-persist/integration/react";
 import { Apps } from "./types/app";
 
@@ -43,7 +42,7 @@ declare module "@tanstack/react-router" {
 
 function InnerApp() {
   const auth = useAuth();
-  posthog.init("phc_XIzxR3RXcdmcyMPJCCnQFtxoL0gRshzEXo4kM925LvA", { api_host: "https://web-mkc4o00.sampiiiii.dev" });
+  //posthog.init("phc_XIzxR3RXcdmcyMPJCCnQFtxoL0gRshzEXo4kM925LvA", { api_host: "https://web-mkc4o00.sampiiiii.dev" });
   return <RouterProvider router={router} context={{ auth }} />;
 }
 
