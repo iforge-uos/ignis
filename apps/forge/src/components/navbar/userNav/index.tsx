@@ -1,3 +1,4 @@
+import React from "react";
 import { UserAvatar } from "@/components/avatar";
 import { useUser } from "@/lib/utils";
 import { RootState } from "@/redux/store";
@@ -22,11 +23,21 @@ function isString(value: unknown): value is string {
   return typeof value === "string";
 }
 
-export function UserNav() {
+interface UserNavProps {
+  onLinkClick?: () => void;
+}
+
+export function UserNav({ onLinkClick }: UserNavProps) {
   const isAuthenticated = useSelector((state: RootState) => state.auth.is_authenticated);
   const user = useUser();
 
   const isAdmin = user?.roles.some((role) => role.name === "Admin");
+
+  const handleLinkClick = () => {
+    if (onLinkClick) {
+      onLinkClick();
+    }
+  };
 
   if (isAuthenticated && user && isString(user.email) && isString(user.display_name)) {
     return (
@@ -54,13 +65,13 @@ export function UserNav() {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <Link to="/user/profile">
+            <Link to="/user/profile" onClick={handleLinkClick}>
               <DropdownMenuItem>
                 Profile
                 <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
               </DropdownMenuItem>
             </Link>
-            <Link to="/user/settings">
+            <Link to="/user/settings" onClick={handleLinkClick}>
               <DropdownMenuItem>
                 Settings
                 <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
@@ -71,7 +82,7 @@ export function UserNav() {
             <>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <Link to="/admin/dashboard">
+                <Link to="/admin/dashboard" onClick={handleLinkClick}>
                   <DropdownMenuItem>
                     Admin Dashboard
                     <DropdownMenuShortcut>⇧⌘D</DropdownMenuShortcut>
@@ -81,7 +92,7 @@ export function UserNav() {
             </>
           )}
           <DropdownMenuSeparator />
-          <Link to="/auth/logout">
+          <Link to="/auth/logout" onClick={handleLinkClick}>
             <DropdownMenuItem>
               Log out
               <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
@@ -92,7 +103,7 @@ export function UserNav() {
     );
   }
   return (
-    <Link to="/auth/login">
+    <Link to="/auth/login" onClick={handleLinkClick}>
       <Button variant="ghost" className="font-futura">
         Login
       </Button>

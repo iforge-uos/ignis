@@ -21,7 +21,7 @@ export default function NavBar() {
     <div className="sticky top-0 z-40 w-full bg-card text-card-foreground backdrop-filter shadow-lg dark:shadow-none border-b-2">
       <div className="flex items-center h-[60px] px-3 md:px-6">
         <div className="flex items-center flex-1 md:w-1/3 md:flex-none">
-          <AppSwitcher />
+          <AppSwitcher onLinkClick={closeMobileMenu} />
         </div>
 
         {/* Desktop Navigation */}
@@ -31,7 +31,7 @@ export default function NavBar() {
 
         <div className="flex items-center justify-end flex-1 md:w-1/3 space-x-2 md:space-x-4">
           <ThemeSwitcher />
-          <UserNav />
+          <UserNav onLinkClick={closeMobileMenu} />
 
           {/* Mobile Menu Button */}
           <Button variant="ghost" size="icon" className="md:hidden" onClick={toggleMobileMenu}>

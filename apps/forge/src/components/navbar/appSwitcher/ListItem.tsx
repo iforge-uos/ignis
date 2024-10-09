@@ -7,10 +7,11 @@ interface ListItemProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   icon?: ReactNode;
   title: string;
   to: string;
+  onClick?: () => void;
 }
 
 const ListItem = React.forwardRef<HTMLAnchorElement, ListItemProps>(
-  ({ className, title, icon, children, to, ...props }, ref) => {
+  ({ className, title, icon, children, to, onClick, ...props }, ref) => {
     return (
       <li>
         <NavigationMenuLink asChild>
@@ -21,6 +22,7 @@ const ListItem = React.forwardRef<HTMLAnchorElement, ListItemProps>(
               "flex items-center space-x-3 select-none rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
               className,
             )}
+            onClick={onClick}
             {...props}
           >
             {icon && <span className="flex-shrink-0">{icon}</span>}

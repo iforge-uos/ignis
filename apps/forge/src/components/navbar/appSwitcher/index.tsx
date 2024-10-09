@@ -1,3 +1,4 @@
+import React from "react";
 import ContextMenuWrapper from "@/components/navbar/appSwitcher/ContextMenu.tsx";
 import ListItem from "@/components/navbar/appSwitcher/ListItem";
 import useCurrentApp from "@/hooks/useCurrentApp.ts";
@@ -13,8 +14,18 @@ import {
 } from "@ui/components/ui/navigation-menu";
 import { BookOpen, PenLine, Printer } from "lucide-react";
 
-export default function AppSwitcher() {
+interface AppSwitcherProps {
+  onLinkClick?: () => void;
+}
+
+export default function AppSwitcher({ onLinkClick }: AppSwitcherProps) {
   const currentapp = useCurrentApp();
+
+  const handleLinkClick = () => {
+    if (onLinkClick) {
+      onLinkClick();
+    }
+  };
 
   return (
     <NavigationMenu>
@@ -32,6 +43,7 @@ export default function AppSwitcher() {
                       "flex h-full w-full select-none flex-col justify-end rounded-md p-6 no-underline outline-none focus:shadow-md bg-gradient-to-b from-red-300 to-white dark:bg-gradient-to-b dark:from-red-950 dark:to-black",
                     )}
                     to="/"
+                    onClick={handleLinkClick}
                   >
                     <div className="mb-2 mt-4 text-lg font-medium font-futura">iForge</div>
                     <p className="text-sm leading-tight text-muted-foreground">
@@ -40,13 +52,13 @@ export default function AppSwitcher() {
                   </Link>
                 </NavigationMenuLink>
               </li>
-              <ListItem to={"/signin"} title="Sign In" icon={<PenLine />}>
+              <ListItem to={"/signin"} title="Sign In" icon={<PenLine />} onClick={onLinkClick}>
                 iForge Sign In System
               </ListItem>
-              <ListItem to={"/training"} title="Training" icon={<BookOpen />}>
+              <ListItem to={"/training"} title="Training" icon={<BookOpen />} onClick={onLinkClick}>
                 Handle your iForge training here.
               </ListItem>
-              <ListItem to={"/printing"} title="Printing" icon={<Printer />}>
+              <ListItem to={"/printing"} title="Printing" icon={<Printer />} onClick={onLinkClick}>
                 3D Printing (WIP)
               </ListItem>
             </ul>
