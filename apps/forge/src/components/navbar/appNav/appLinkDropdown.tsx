@@ -8,9 +8,10 @@ type DropdownLinkProps = {
   link: AppLink;
   onClick: (id: string, url: string) => void;
   activeId: string;
+  onLinkClick?: () => void;
 };
 
-const DropdownLink: React.FC<DropdownLinkProps> = ({ link, onClick, activeId }) => {
+const DropdownLink: React.FC<DropdownLinkProps> = ({ link, onClick, activeId, onLinkClick }) => {
   const renderLink = (linkItem: AppLink, level = 0): React.ReactNode => {
     const hasChildren = linkItem.children && linkItem.children.length > 0;
     const isActive = linkItem.id === activeId;
@@ -28,6 +29,7 @@ const DropdownLink: React.FC<DropdownLinkProps> = ({ link, onClick, activeId }) 
     ) => {
       event.preventDefault();
       onClick(itemId, itemLink);
+      if (onLinkClick) onLinkClick();
     };
 
     // Top level link that is also a trigger for a dropdown
@@ -96,14 +98,15 @@ const DropdownLink: React.FC<DropdownLinkProps> = ({ link, onClick, activeId }) 
   return renderLink(link);
 };
 
-export const AppLinkDropdown: React.FC<{ link: AppLink }> = ({ link }) => {
+export const AppLinkDropdown: React.FC<{ link: AppLink; onLinkClick?: () => void }> = ({ link, onLinkClick }) => {
   const [activeId, setActiveId] = useState("");
   const navigate = useNavigate();
 
   const handleItemClick = (id: string, path: string) => {
     setActiveId(id);
     navigate({ to: path });
+    if (onLinkClick) onLinkClick();
   };
 
-  return <DropdownLink link={link} onClick={handleItemClick} activeId={activeId} />;
+  return <DropdownLink link={link} onClick={handleItemClick} activeId={activeId} onLinkClick={onLinkClick} />;
 };

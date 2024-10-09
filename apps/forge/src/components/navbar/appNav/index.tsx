@@ -19,7 +19,7 @@ const AppNav: React.FC<AppNavProps> = React.memo(({ onLinkClick }) => {
     return sortedAppLinks.map((link) => {
       if (link.app === currentApp) {
         return link.children && link.children.length > 0 ? (
-          <AppLinkDropdown key={link.id} link={link} />
+          <AppLinkDropdown key={link.id} link={link} onLinkClick={onLinkClick} />
         ) : (
           <Link
             key={link.displayName}
