@@ -40,6 +40,9 @@
       "tooling/": true,
       "packages/": true
     },
+    "[typescriptreact]": {
+      "editor.defaultFormatter": "biomejs.biome"
+    },
   }, 
   "extensions": {
     "recommendations": [
