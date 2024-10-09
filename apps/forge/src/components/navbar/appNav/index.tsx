@@ -4,7 +4,11 @@ import { Link } from "@tanstack/react-router";
 import { AppLinkDropdown } from "./appLinkDropdown.tsx";
 import useCurrentApp from "@/hooks/useCurrentApp.ts";
 
-const AppNav = React.memo(() => {
+interface AppNavProps {
+  onLinkClick?: () => void;
+}
+
+const AppNav: React.FC<AppNavProps> = React.memo(({ onLinkClick }) => {
   const currentApp = useCurrentApp();
 
   const sortedAppLinks = useMemo(() => {
@@ -21,6 +25,7 @@ const AppNav = React.memo(() => {
             key={link.displayName}
             to={link.path ?? "#"}
             className="flex justify-center items-center p-2 text-sm font-medium rounded-md text-card-foreground hover:bg-accent font-futura"
+            onClick={onLinkClick}
           >
             {link.displayName}
           </Link>
@@ -28,7 +33,7 @@ const AppNav = React.memo(() => {
       }
       return null;
     });
-  }, [currentApp, sortedAppLinks]);
+  }, [currentApp, sortedAppLinks, onLinkClick]);
 
   return <div className="p-2 flex flex-row align-middle justify-items-center justify-center gap-2">{navLinks}</div>;
 });

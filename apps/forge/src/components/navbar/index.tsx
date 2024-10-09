@@ -13,6 +13,10 @@ export default function NavBar() {
     setMobileMenuOpen((prev) => !prev);
   }, []);
 
+  const closeMobileMenu = useCallback(() => {
+    setMobileMenuOpen(false);
+  }, []);
+
   return (
     <div className="sticky top-0 z-40 w-full bg-card text-card-foreground backdrop-filter shadow-lg dark:shadow-none border-b-2">
       <div className="flex items-center h-[60px] px-3 md:px-6">
@@ -40,7 +44,7 @@ export default function NavBar() {
       {mobileMenuOpen && (
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1">
-            <AppNav />
+            <AppNav onLinkClick={closeMobileMenu} />
           </div>
         </div>
       )}
