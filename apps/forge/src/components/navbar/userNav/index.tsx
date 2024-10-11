@@ -31,9 +31,6 @@ export function UserNav({ onLinkClick }: UserNavProps) {
   const isAuthenticated = useSelector((state: RootState) => state.auth.is_authenticated);
   const user = useUser();
 
-  const isMacOs = !!navigator?.userAgent?.match(/Macintosh;/);
-  const metaKey = isMacOs ? "⌘" : "Ctrl";
-
   const isAdmin = user?.roles.some((role) => role.name === "Admin");
 
   const handleLinkClick = () => {
@@ -71,13 +68,13 @@ export function UserNav({ onLinkClick }: UserNavProps) {
             <Link to="/user/profile" onClick={handleLinkClick}>
               <DropdownMenuItem>
                 Profile
-                <DropdownMenuShortcut>{`⇧${metaKey}P`}</DropdownMenuShortcut>
+                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
               </DropdownMenuItem>
             </Link>
             <Link to="/user/settings" onClick={handleLinkClick}>
               <DropdownMenuItem>
                 Settings
-                <DropdownMenuShortcut>{`${metaKey}S`}</DropdownMenuShortcut>
+                <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
               </DropdownMenuItem>
             </Link>
           </DropdownMenuGroup>
@@ -88,7 +85,7 @@ export function UserNav({ onLinkClick }: UserNavProps) {
                 <Link to="/admin/dashboard" onClick={handleLinkClick}>
                   <DropdownMenuItem>
                     Admin Dashboard
-                    <DropdownMenuShortcut>{`⇧${metaKey}D`}</DropdownMenuShortcut>
+                    <DropdownMenuShortcut>⇧⌘D</DropdownMenuShortcut>
                   </DropdownMenuItem>
                 </Link>
               </DropdownMenuGroup>
@@ -98,7 +95,7 @@ export function UserNav({ onLinkClick }: UserNavProps) {
           <Link to="/auth/logout" onClick={handleLinkClick}>
             <DropdownMenuItem>
               Log out
-              <DropdownMenuShortcut>{`⇧${metaKey}Q`}</DropdownMenuShortcut>
+              <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
             </DropdownMenuItem>
           </Link>
         </DropdownMenuContent>
