@@ -66,35 +66,49 @@ export function deserializeMd(content: string) {
   return deserializeMd_(editor, content);
 }
 
-const trainingKeysToTag = {
-  compulsory: "Compulsory",
-  in_person: "In-Person Training Required",
-  enabled: "Enabled",
-} as const;
-export type TrainingTag = (typeof trainingKeysToTag)[keyof typeof trainingKeysToTag];
-export type TrainingForTags = { [K in keyof typeof trainingKeysToTag]: boolean };
-
-export const ALL_TAGS: readonly TrainingTag[] = Object.values(trainingKeysToTag);
-
-export function trainingTags(training: TrainingForTags) {
-  return Object.entries(training)
-    .map(([key, value]) => (value ? trainingKeysToTag[key as keyof TrainingForTags] : ""))
-    .filter(Boolean) as TrainingTag[];
-}
-
-type Mutable<T> = {
-  -readonly [P in keyof T]: T[P];
+type TrainingBadge = "Compulsory" | "In-Person Training Required" | "Rep Training" | "Mainspace" | "Heartspace"; // TODO visible
+type TrainingForBadges = {
+  compulsory?: boolean;
+  in_person?: boolean;
+  rep?: any;
+  locations: Location[];
 };
 
-export function serializeTrainingTags(badges_: TrainingTag[]): Required<TrainingForTags> {
-  const badges = new Set(badges_);
-  const training: Partial<Mutable<TrainingForTags>> = {};
+const keyToBadgeMap: Record<keyof TrainingForBadges, TrainingBadge[]> = {
+  compulsory: ["Compulsory"],
+  in_person: ["In-Person Training Required"],
+  rep: ["Rep Training"],
+  locations: ["Mainspace", "Heartspace"],
+};
 
-  for (const [key, badge_] of Object.entries(trainingKeysToTag)) {
-    if (badges.has(badge_)) {
-      training[key as keyof TrainingForTags] = true;
+export const ALL_BADGES: readonly TrainingBadge[] = Object.values(keyToBadgeMap).flat();
+
+export function trainingBadges(training: TrainingForBadges) {
+  return Object.entries(training)
+    .flatMap(([key, value]) => (value ? keyToBadgeMap[key as keyof TrainingForBadges] : []))
+    .filter(Boolean) as TrainingBadge[];
+}
+
+export function serializeTrainingBadges(badges_: TrainingBadge[]): Required<TrainingForBadges> {
+  const badges = new Set(badges_);
+  const training: Partial<TrainingForBadges> = {};
+
+  for (const badge of badges) {
+    const keys = Object.entries(keyToBadgeMap)
+      .filter(([_, badges]) => badges.includes(badge))
+      .map(([key]) => key as keyof TrainingForBadges);
+
+    for (const key of keys) {
+      if (key === "locations") {
+        if (!training.locations) {
+          training.locations = [];
+        }
+        training.locations.push(badge.replace(" ", "_").toLowerCase() as Location);
+      } else {
+        training[key] = true;
+      }
     }
   }
 
-  return training as Required<TrainingForTags>;
+  return training as Required<TrainingForBadges>;
 }

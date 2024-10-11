@@ -1,24 +1,22 @@
 "use client";
 
 import { Command as CommandPrimitive } from "cmdk";
-import cloneDeep from "lodash.clonedeep";
 import { X } from "lucide-react";
 import * as React from "react";
 import { useEffect } from "react";
 
 import { cn } from "@/lib/utils";
-import { Badge, badgeVariants } from "@ui/components/ui/badge";
+import { Badge } from "@ui/components/ui/badge";
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@ui/components/ui/command";
-import { VariantProps } from "class-variance-authority";
 
 export interface Option {
   value: string;
-  label: string | JSX.Element;
+  label: string;
   disable?: boolean;
   /** fixed option that can't be removed. */
   fixed?: boolean;
   /** Group the options by providing key. */
-  [key: string]: string | JSX.Element | boolean | undefined;
+  [key: string]: string | boolean | undefined;
 }
 interface GroupOption {
   [key: string]: Option[];
@@ -55,7 +53,6 @@ interface MultipleSelectorProps {
   groupBy?: string;
   className?: string;
   badgeClassName?: string;
-  badgeVariant?: VariantProps<typeof badgeVariants>["variant"] | null;
   /**
    * First item selected is a default behavior by cmdk. That is why the default is true.
    * This is a workaround solution by add a dummy item.
@@ -115,11 +112,12 @@ function transToGroupOption(options: Option[], groupBy?: string) {
 }
 
 function removePickedOption(groupOption: GroupOption, picked: Option[]) {
-  const result: GroupOption = {};
-  for (const [key, value] of Object.entries(groupOption)) {
-    result[key] = value.filter((val) => !picked.some((p) => p.value === val.value));
+  const cloneOption = JSON.parse(JSON.stringify(groupOption)) as GroupOption;
+
+  for (const [key, value] of Object.entries(cloneOption)) {
+    cloneOption[key] = value.filter((val) => !picked.find((p) => p.value === val.value));
   }
-  return result;
+  return cloneOption;
 }
 
 function isOptionsExist(groupOption: GroupOption, targetOption: Option[]) {
@@ -150,7 +148,6 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
       groupBy,
       className,
       badgeClassName,
-      badgeVariant = null,
       selectFirstItem = true,
       creatable = false,
       triggerSearchOnFocus = false,
@@ -362,7 +359,6 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                     "data-[fixed]:bg-muted-foreground data-[fixed]:text-muted data-[fixed]:hover:bg-muted-foreground",
                     badgeClassName,
                   )}
-                  variant={badgeVariant}
                   data-fixed={option.fixed}
                   data-disabled={disabled || undefined}
                 >
