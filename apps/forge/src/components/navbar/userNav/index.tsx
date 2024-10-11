@@ -1,9 +1,10 @@
+import React from "react";
 import { UserAvatar } from "@/components/avatar";
 import { useUser } from "@/lib/utils";
+import { RootState } from "@/redux/store";
 import { Link } from "@tanstack/react-router";
 import { Badge } from "@ui/components/ui/badge";
 import { Button } from "@ui/components/ui/button";
-import React from "react";
 
 import { USER_EMAIL_DOMAIN } from "@/config/constants.ts";
 import {
@@ -16,16 +17,22 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@ui/components/ui/dropdown-menu";
+import { useSelector } from "react-redux";
+
+function isString(value: unknown): value is string {
+  return typeof value === "string";
+}
 
 interface UserNavProps {
   onLinkClick?: () => void;
 }
 
 export function UserNav({ onLinkClick }: UserNavProps) {
+  const isAuthenticated = useSelector((state: RootState) => state.auth.is_authenticated);
   const user = useUser();
 
   const isMacOs = !!navigator?.userAgent?.match(/Macintosh;/);
-  const metaKey = isMacOs ? "⌘" : "Ctrl+";
+  const metaKey = isMacOs ? "⌘" : "Ctrl";
 
   const isAdmin = user?.roles.some((role) => role.name === "Admin");
 
@@ -35,7 +42,7 @@ export function UserNav({ onLinkClick }: UserNavProps) {
     }
   };
 
-  if (user) {
+  if (isAuthenticated && user && isString(user.email) && isString(user.display_name)) {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -52,7 +59,7 @@ export function UserNav({ onLinkClick }: UserNavProps) {
               </p>
               <div className="flex-wrap flex gap-2">
                 {user.roles.map((role) => (
-                  <Badge className="rounded-sm" key={role.id}>
+                  <Badge className="" key={role.id}>
                     {role.name}
                   </Badge>
                 ))}
