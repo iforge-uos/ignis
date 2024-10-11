@@ -21,7 +21,7 @@ export class TrainingController {
   @Get()
   async getTrainingLocations() {
     this.logger.log("Retrieving training locations", TrainingController.name);
-    return this.trainingService.getAllTrainings();
+    throw new Error("Not implemented yet"); // soon
   }
 
   @Get(":id")

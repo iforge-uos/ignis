@@ -1,9 +1,8 @@
 import axiosInstance from "@/api/axiosInstance";
 import Title from "@/components/title";
 import { TrainingHeader } from "@/components/training/TrainingHeader";
-import { cn } from "@/lib/utils";
 import { get } from "@/services/training/get";
-import type { InteractionResponse, Section, Training } from "@ignis/types/training";
+import type { InteractionResponse, Training } from "@ignis/types/training";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button";
 import { Checkbox } from "@ui/components/ui/checkbox";
@@ -18,9 +17,9 @@ import remarkGfm from "remark-gfm";
 
 const PROGRESS_BAR_SAMPLE_MS = 50;
 
-export function TrainingContent({ content, className }: { content: string; className?: string }) {
+export function TrainingContent({ content }: { content: string }) {
   return (
-    <div id="training-content" className={cn("text-lg", className)}>
+    <div id="training-content" className="text-lg">
       {/* We need special styling for <a> to show it's clickable */}
       <Markdown rehypePlugins={[rehypeRaw, remarkGfm]}>{content}</Markdown>
     </div>
@@ -35,7 +34,7 @@ const Component: React.FC = () => {
   const [sessionId, setSessionId] = React.useState<string | null>(null);
   const [buttonName, setButtonName] = React.useState<string>("Start Training");
   const [buttonDisabled, setButtonDisabled] = React.useState<boolean>(false);
-  const [sections, setSections] = React.useState<Section[]>([]);
+  const [sections, setSections] = React.useState<NonNullable<Training["sections"]>>([]);
   const [progress, setProgress] = React.useState(0);
   const [_, setDelay] = React.useState<number | null>(null);
   const [duration, setDuration] = React.useState<number | null>(null);
@@ -68,12 +67,14 @@ const Component: React.FC = () => {
   const interactWithTraining = async (training_id: string) => {
     let section: NonNullable<InteractionResponse>;
     if (!sessionId) {
-      const r = await axiosInstance.post<{ id: string; sections: Section[] }>(`training/${training_id}/start`);
+      const r = await axiosInstance.post<{ id: string; sections: Training["sections"] }>(
+        `training/${training_id}/start`,
+      );
       if (r.status !== 201) {
         return console.error("Failed to start training");
       }
       setSessionId(r.data.id);
-      const sections_ = r.data!.sections;
+      const sections_ = r.data!.sections!;
       setSections(sections_);
       section = sections_.at(-1)!;
     } else {
@@ -94,7 +95,7 @@ const Component: React.FC = () => {
         return alert("Wrong answers"); // FIXME better handling
       }
       setSections((sections) => {
-        sections.push(section as Section);
+        sections!.push(section as NonNullable<Training["sections"]>[number]);
         return sections;
       });
       setAnswers([]);
@@ -119,8 +120,6 @@ const Component: React.FC = () => {
           <div className="space-y-2">
             <h1 className="text-4xl font-bold text-center">{data.name}</h1>
             <TrainingHeader data={data} />
-            <Separator />
-            <br />
             <TrainingContent content={data.description} />
             <br />
             {sections.map((section, idx) => (

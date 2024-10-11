@@ -1,13 +1,13 @@
 import type { training } from "@dbschema/interfaces";
 
-export interface TrainingPageInteraction extends Omit<training.TrainingPage, "duration"> {
+export type TrainingPageInteraction = {
   type_name: "training::TrainingPage";
   duration_?: string; // duration in seconds as a float (but yes it really is a string)
-}
-export interface QuestionInteraction extends Omit<training.Question, "answers"> {
+} & Omit<training.TrainingPage, "duration">;
+export type QuestionInteraction = {
   type_name: "training::Question";
   answers: { id: string; content: string; description?: string }[];
-}
+} & Omit<training.Question, "answers">;
 export type WrongAnswers = {
   type_name: "training::WrongAnswers";
   answers: { id: string }[];
@@ -17,22 +17,11 @@ export type InteractionResponse = TrainingPageInteraction | QuestionInteraction 
 
 /** {id -> status} The text shown to a user on the button for the course */
 export type UserTrainingStatus = "Start" | "Resume" | "Retake";
-export type UserTrainingStatuses = Map<string, UserTrainingStatus>;
+export type UserTrainingStatuses = { [K in string]: "Start" | "Resume" | "Retake" };
 
 export type Location = training.TrainingLocation;
 
-export interface AllTraining {
-  id: string;
-  rep: {
-    id: string;
-    description: string;
-  };
-  name: string;
-  description: string;
-  locations: Location[];
-}
-
-export interface PartialTraining {
+export type PartialTraining = {
   name: string;
   id: string;
   description: string;
@@ -47,19 +36,17 @@ export interface PartialTraining {
   in_person: boolean;
   // icon_url: string;
   enabled: boolean;
-}
+};
 
-export interface PartialTrainingWithStatus extends PartialTraining {
+export type PartialTrainingWithStatus = Omit<PartialTraining, "rep"> & {
   status: UserTrainingStatus;
   rep: {
     id: string;
     description: string;
     status: UserTrainingStatus;
   } | null;
-}
+};
 
-export type Section = TrainingPageInteraction | QuestionInteraction;
-
-export interface Training extends PartialTraining {
-  sections?: Section[];
-}
+export type Training = PartialTraining & {
+  sections?: (TrainingPageInteraction | QuestionInteraction)[];
+};

@@ -27,7 +27,7 @@ module.exports = {
       colors: {
         heartspace: "var(--heartspace)",
         mainspace: "var(--mainspace)",
-        'george-porter': "var(--george-porter)",
+        george_porter: "var(--george-porter)",
 
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
