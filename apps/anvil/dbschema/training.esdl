@@ -32,19 +32,9 @@ module training {
             annotation description := "Whether this training requires in person training."
         }
         rep: Training {
-            annotation description := "The associated training that reps should have to supervise this. Empty if the training is for reps."
+            annotation description := "Empty if the training is for reps."
         }
         expires_after: duration;
-
-        # multi history: Training {
-        #     # @reset_training: bool {
-        #     #     annotation description := "Whether this was a large enough change to "
-        #     # }
-        #     annotation description := "We keep track of these for the edit functionality."
-        #     rewrite update using (
-
-        #     )
-        # }
 
         index fts::index on (
             fts::with_options(
@@ -64,7 +54,7 @@ module training {
         required enabled: bool {
             default := true;
         }
-        # constraint exclusive on ((.parent, .index));  # edgedb/edgedb#7209
+        # constraint exclusive on ((.parent, .index));  # FIXME open edgedb issue for this
         # TODO consider adding stats? e.g. failure rate
     }
 
@@ -80,7 +70,7 @@ module training {
 
     type Question extending Interactable {
         required type: AnswerType;
-        required multi answers: Answer;
+        multi answers: Answer;
     }
 
     type Answer {
