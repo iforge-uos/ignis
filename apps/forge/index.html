@@ -33,7 +33,7 @@
 
     <!-- Dynamically load Futura -->
     <script>
-        const isDevelopment = process.env.NODE_ENV === 'development';
+        const isDevelopment = window.location.hostname === 'localhost';
         const fontDir = isDevelopment ? 'http://localhost:4000/fonts' : '/cdn/fonts';
 
         const style = document.createElement('style');
