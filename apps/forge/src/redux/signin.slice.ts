@@ -21,7 +21,7 @@ interface UpdateSignInSessionFieldPayload {
 const initialState = defaultSignInState;
 
 const signinSlice = createSlice({
-  name: "signin",
+  name: "signIn",
   initialState: initialState,
   reducers: {
     setActiveLocation: (state, action: PayloadAction<LocationName>) => {
