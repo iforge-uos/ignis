@@ -270,18 +270,20 @@ export class SignInService implements OnModuleInit {
                 false,
               ),
             ),
-            selectable: e.op(
-              // if they're a rep they can sign in off shift to use the machines they want even if the reps aren't trained
-              // ideally first comparison should be `__source__ is users::Rep`
+            selectable: e.assert_exists(
               e.op(
-                e.op(e.op(user.__type__.name, "=", "users::Rep"), "or", e.op(training.rep.id, "in", rep_training.id)),
-                "and",
-                e.op("exists", training["@in_person_created_at"]),
+                // if they're a rep they can sign in off shift to use the machines they want even if the reps aren't trained
+                // ideally first comparison should be `__source__ is users::Rep`
+                e.op(
+                  e.op(e.op(user.__type__.name, "=", "users::Rep"), "or", e.op(training.rep.id, "in", rep_training.id)),
+                  "and",
+                  e.op("exists", training["@in_person_created_at"]),
+                ),
+                "if",
+                training.in_person,
+                "else",
+                true,
               ),
-              "if",
-              training.in_person,
-              "else",
-              true,
             ),
             enabled: false,
             icon_url: true,
