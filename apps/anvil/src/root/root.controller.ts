@@ -43,7 +43,7 @@ export class RootController {
     return await this.rootService.getStatus();
   }
 
-  @Get("sign-ins/:id")
+  @Get("sign-in/:id")
   @IsRep() // TODO figure out how to make READ SELF work with this might be best handled in service tbh
   @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
   async getSignIn(@Param("id") id: string) {

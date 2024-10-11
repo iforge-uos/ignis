@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_authenticated/signin")({
+export const Route = createFileRoute("/_authenticated/sign-in")({
   staticData: { title: "Sign In" },
 });

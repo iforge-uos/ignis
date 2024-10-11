@@ -40,10 +40,10 @@ export default function CommandMenu() {
   };
 
   const USER_MANAGEMENT_SHORTCUTS: Record<string, [() => any, string, ReactElement]> = {
-    d: [() => navigate({ to: "/signin/dashboard" }), "Dashboard", <LayoutDashboard className="mr-2 h-4 w-4" />],
+    d: [() => navigate({ to: "/sign-in/dashboard" }), "Dashboard", <LayoutDashboard className="mr-2 h-4 w-4" />],
     u: [() => navigate({ to: "/users" }), "Search users", <UserRoundSearch className="mr-2 h-4 w-4" />],
-    i: [() => navigate({ to: "/signin/actions/in" }), "Sign in", <LogIn className="mr-2 h-4 w-4" />],
-    o: [() => navigate({ to: "/signin/actions/out" }), "Sign out", <LogOut className="mr-2 h-4 w-4" />],
+    i: [() => navigate({ to: "/sign-in/actions/in" }), "Sign in", <LogIn className="mr-2 h-4 w-4" />],
+    o: [() => navigate({ to: "/sign-in/actions/out" }), "Sign out", <LogOut className="mr-2 h-4 w-4" />],
   };
 
   const SHORTCUTS = { ...SETTINGS_SHORTCUTS, ...USER_MANAGEMENT_SHORTCUTS };

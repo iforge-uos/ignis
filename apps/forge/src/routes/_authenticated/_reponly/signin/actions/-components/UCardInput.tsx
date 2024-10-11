@@ -1,5 +1,5 @@
 import { UCARD_LENGTH } from "@/lib/constants.ts";
-import { signinActions, useSignInSessionField } from "@/redux/signin.slice.ts";
+import { signInActions, useSignInSessionField } from "@/redux/signin.slice.ts";
 import { AppDispatch } from "@/redux/store.ts";
 import { FlowStepComponent } from "@/types/signInActions.ts";
 import { Button } from "@ui/components/ui/button.tsx";
@@ -21,14 +21,14 @@ const UCardInput: FlowStepComponent = ({ onPrimary }) => {
   const handleClear = () => {
     console.log("Clearing OTP");
     setOtp(""); // Clear the OTP by resetting the state
-    dispatch(signinActions.updateSignInSessionField("ucard_number", ""));
-    dispatch(signinActions.updateSignInSessionField("user", null));
+    dispatch(signInActions.updateSignInSessionField("ucard_number", ""));
+    dispatch(signInActions.updateSignInSessionField("user", null));
   };
 
   const handleOnSubmit = () => {
     if (isOtpValid) {
-      dispatch(signinActions.updateSignInSessionField("ucard_number", otp));
-      dispatch(signinActions.updateSignInSessionField("user", null));
+      dispatch(signInActions.updateSignInSessionField("ucard_number", otp));
+      dispatch(signInActions.updateSignInSessionField("user", null));
       onPrimary?.();
     }
   };

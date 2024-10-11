@@ -1,12 +1,11 @@
 import { useAuth } from "@/components/auth-provider";
-import ActiveLocationSelector from "@/components/signin/ActiveLocationSelector";
+import ActiveLocationSelector from "@/components/sign-in/ActiveLocationSelector";
 import Title from "@/components/title";
 import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants.ts";
 import { extractError } from "@/lib/utils.ts";
 import { AppRootState } from "@/redux/store.ts";
-import { QueuedUserCard } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/QueuedUserCard.tsx";
 import { SignInDrawer } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignInDrawer.tsx";
-import { dataForLocation } from "@/services/signin/locationService.ts";
+import { dataForLocation } from "@/services/sign_in/locationService";
 import type { QueueEntry, SignInEntry } from "@ignis/types/sign_in.ts";
 import { ExclamationTriangleIcon, InfoCircledIcon } from "@radix-ui/react-icons";
 import { useQuery, useQueryClient } from "@tanstack/react-query";

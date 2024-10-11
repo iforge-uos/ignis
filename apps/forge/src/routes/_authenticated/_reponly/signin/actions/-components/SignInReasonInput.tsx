@@ -7,11 +7,11 @@ import { Category } from "@/components/icons/SignInReason.tsx";
 import { errorDisplay, ErrorDisplayProps } from "@/components/errors/ErrorDisplay";
 import { extractError } from "@/lib/utils.ts";
 import { FlowStepComponent } from "@/types/signInActions.ts";
-import { getCommonReasons, useSignInReasons } from "@/services/signin/signInReasonService.ts";
+import { getCommonReasons, useSignInReasons } from "@/services/sign_in/signInReasonService.ts";
 import { Input } from "@ui/components/ui/input.tsx";
 import { Loader } from "@ui/components/ui/loader.tsx";
 import type { PartialReason, Reason } from "@ignis/types/sign_in.ts";
-import { signinActions, useSignInSessionField } from "@/redux/signin.slice.ts";
+import { signInActions, useSignInSessionField } from "@/redux/signin.slice.ts";
 import { SignInReason } from "./SignInReason.tsx";
 import { useDispatch, useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
@@ -121,7 +121,7 @@ const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
     if (canContinue) {
       onPrimary?.();
       // Dispatch the selected reason to the store
-      dispatch(signinActions.updateSignInSessionField("sign_in_reason", selectedReason as Reason));
+      dispatch(signInActions.updateSignInSessionField("sign_in_reason", selectedReason as Reason));
     }
   };
 

@@ -6,7 +6,7 @@ import SignOutDispatcher from "@/routes/_authenticated/_reponly/signin/actions/-
 import ToolSelectionInput from "@/routes/_authenticated/_reponly/signin/actions/-components/ToolSelectionInput.tsx";
 import UCardInput from "@/routes/_authenticated/_reponly/signin/actions/-components/UCardInput.tsx";
 import useDoubleTapEscape from "@/hooks/useDoubleTapEscape.ts";
-import { signinActions, useSignInSessionField } from "@/redux/signin.slice.ts";
+import { signInActions, useSignInSessionField } from "@/redux/signin.slice.ts";
 import { AppDispatch, AppRootState } from "@/redux/store.ts";
 import {
   AnyStep,
@@ -131,7 +131,7 @@ export default function SignInActionsManager<FlowT extends FlowType | undefined 
 
   // Make new Session
   useEffect(() => {
-    if (!initialStep) dispatch(signinActions.setSignInSession(defaultSignInSession));
+    if (!initialStep) dispatch(signInActions.setSignInSession(defaultSignInSession));
   }, []);
 
   useEffect(() => {
@@ -158,7 +158,7 @@ export default function SignInActionsManager<FlowT extends FlowType | undefined 
       // Dynamically set the initial step based on the flowType
       const initialStep: AnyStep = Object.keys(flowConfig[flowType])[0] as AnyStep;
       setCurrentStep(initialStep);
-      dispatch(signinActions.setSignInSession(defaultSignInSession));
+      dispatch(signInActions.setSignInSession(defaultSignInSession));
     }
   };
 
@@ -170,7 +170,7 @@ export default function SignInActionsManager<FlowT extends FlowType | undefined 
     if (StepComponent) {
       // This is to stop the case where a rep is backtracking and then step 3 auto navigates them forwards again
       if (currentStep === SignInSteps.Step3) {
-        dispatch(signinActions.updateSignInSessionField("navigation_is_backtracking", true));
+        dispatch(signInActions.updateSignInSessionField("navigation_is_backtracking", true));
       }
       return StepComponent ? <StepComponent onPrimary={moveToNextStep} onSecondary={moveToPreviousStep} /> : null;
     }

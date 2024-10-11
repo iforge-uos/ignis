@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import AppNav from "@/components/navbar/appNav";
-import AppSwitcher from "@/components/navbar/appSwitcher";
+import er from "@/components/navbar/appSwitcher";
 import { ThemeSwitcher } from "@/components/navbar/themeSwitcher";
 import { UserNav } from "@/components/navbar/userNav";
 import { Menu, X } from "lucide-react";
@@ -21,7 +21,7 @@ export default function NavBar() {
     <div className="sticky top-0 z-40 w-full bg-card text-card-foreground backdrop-filter shadow-lg dark:shadow-none border-b-2">
       <div className="flex items-center h-[60px] px-3 md:px-6">
         <div className="flex items-center flex-1 md:w-1/3 md:flex-none">
-          <AppSwitcher onLinkClick={closeMobileMenu} />
+          <er onLinkClick={closeMobileMenu} />
         </div>
 
         {/* Desktop Navigation */}

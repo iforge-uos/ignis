@@ -85,6 +85,6 @@ export default function Component() {
   );
 }
 
-export const Route = createFileRoute("/_authenticated/signin/agreements/$id")({
+export const Route = createFileRoute("/_authenticated/sign-in/agreements/$id")({
   component: Component,
 });

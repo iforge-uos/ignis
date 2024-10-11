@@ -9,13 +9,11 @@ interface UserCountProps {
 
 export const UserCount: React.FC<UserCountProps> = ({ rep_count, off_shift_rep_count, max_count, user_count }) => {
   const [showDetails, setShowDetails] = useState(false);
-  const total_count = rep_count + user_count;
+  const total_count = rep_count + off_shift_rep_count + user_count;
 
   const handleClick = () => {
     setShowDetails(!showDetails);
   };
-
-  const correctUserCount = user_count - off_shift_rep_count;
 
   return (
     <div
@@ -34,7 +32,7 @@ export const UserCount: React.FC<UserCountProps> = ({ rep_count, off_shift_rep_c
           <span className="text-gray-500 dark:text-gray-400 uppercase font-mono">rep(s)</span>
           <span>{off_shift_rep_count}</span>
           <span className="text-gray-500 dark:text-gray-400 uppercase font-mono">off-shift rep(s)</span>
-          <span>{correctUserCount}</span>
+          <span>{user_count}</span>
           <span className="text-gray-500 dark:text-gray-400 uppercase font-mono">user(s)</span>
         </>
       ) : (

@@ -4,8 +4,8 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@ui/compon
 import { useDispatch, useSelector } from "react-redux";
 
 import { errorDisplay } from "@/components/errors/ErrorDisplay";
-import { signinActions } from "@/redux/signin.slice.ts";
-import { PostQueue, PostQueueProps } from "@/services/signin/queueService.ts";
+import { signInActions } from "@/redux/signin.slice.ts";
+import { PostQueue, PostQueueProps } from "@/services/sign_in/queueService";
 import { FlowStepComponent } from "@/types/signInActions.ts";
 import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button.tsx";
@@ -41,7 +41,7 @@ const QueueDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
       console.log("Success");
       setCanContinue(true);
       abortController.abort();
-      dispatch(signinActions.resetSignInSession());
+      dispatch(signInActions.resetSignInSession());
       toast.success("User added to queue successfully");
       navigate({ to: "/signin" });
     },
@@ -66,7 +66,7 @@ const QueueDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
       abortController.abort();
       onPrimary?.();
       console.log("Done ");
-      dispatch(signinActions.resetSignInSession());
+      dispatch(signInActions.resetSignInSession());
     }
   };
 
