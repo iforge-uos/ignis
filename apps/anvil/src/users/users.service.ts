@@ -348,7 +348,7 @@ export class UsersService {
       e.update(user, () => ({
         set: {
           training: {
-            "-=": e.assert_exists(e.select(e.training.Training, () => ({ filter_single: { id: training_id } }))),
+            "-=": e.assert_exists(e.select(e.users.User, UserTrainingEntry(id, { training_id }))).training,
           },
           infractions: {
             "+=": e.insert(e.users.Infraction, {
