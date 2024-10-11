@@ -62,7 +62,7 @@ const signInSlice = createSlice({
   },
 });
 
-export const { actions: signInActions, reducer: signInReducer } = signInSlice;
+export const { actions: signinActions, reducer: signinReducer } = signInSlice;
 
 export const useSignInSessionField = <KeyT extends keyof SignInSession>(
   field: KeyT,

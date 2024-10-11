@@ -1,11 +1,11 @@
 import { AppDispatch, AppRootState } from "@/redux/store.ts";
-import { PostSignOut, PostSignOutProps } from "@/services/signin/signInService.ts";
+import { PostSignOut, PostSignOutProps } from "@/services/sign_in/signInService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card.tsx";
 import { useDispatch, useSelector } from "react-redux";
 
 import { errorDisplay } from "@/components/errors/ErrorDisplay";
-import { signinActions } from "@/redux/signin.slice.ts";
+import { signInActions } from "@/redux/signin.slice.ts";
 import { FlowStepComponent } from "@/types/signInActions.ts";
 import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button.tsx";
@@ -40,7 +40,7 @@ const SignOutDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
     onSuccess: () => {
       setCanContinue(true);
       abortController.abort();
-      dispatch(signinActions.resetSignInSession());
+      dispatch(signInActions.resetSignInSession());
       queryClient.invalidateQueries({ queryKey: ["locationStatus"] });
       toast.success("User signed out successfully!");
       navigate({ to: "/signin" });
@@ -66,7 +66,7 @@ const SignOutDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
       abortController.abort();
       onPrimary?.();
       console.log("Done ");
-      dispatch(signinActions.resetSignInSession());
+      dispatch(signInActions.resetSignInSession());
     }
   };
 

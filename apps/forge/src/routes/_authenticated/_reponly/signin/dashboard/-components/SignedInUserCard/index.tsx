@@ -8,8 +8,8 @@ import { AdminDisplay } from "@/routes/_authenticated/_reponly/signin/dashboard/
 import { ManageUserWidget } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/ManageUserWidget.tsx";
 import { SignInReasonWithToolsDisplay } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/SignInReasonDisplay.tsx";
 import { TimeDisplay } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/TimeDisplay.tsx";
-import { PostSignOut, PostSignOutProps } from "@/services/signin/signInService.ts";
-import type { PartialReason } from "@ignis/types/sign_in.ts";
+import { PostSignOut, PostSignOutProps } from "@/services/sign_in/signInService";
+import type { LocationName, PartialReason } from "@ignis/types/sign_in.ts";
 import type { PartialUserWithTeams } from "@ignis/types/users.ts";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
@@ -119,24 +119,7 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
       </div>
       <TimeDisplay timeIn={timeIn ?? iForgeEpoch} />
       <div className="pt-4 border-t border-gray-700 flex justify-between">
-        <Popover>
-          <TooltipProvider>
-            <Tooltip>
-              <PopoverTrigger asChild>
-                <TooltipTrigger asChild>
-                  <Button variant="warning" disabled={!onShiftReps}>
-                    <Plus className="stroke-warning-foreground" />
-                    <span className="text-warning-foreground ml-1.5">Add</span>
-                  </Button>
-                </TooltipTrigger>
-              </PopoverTrigger>
-              <TooltipContent>Add in-person training and infractions.</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <PopoverContent className="mt-2 ml-2 w-[350px] shadow-xl border-2 border-gray-200 dark:border-gray-700">
-            <ManageUserWidget user={user} onShiftReps={onShiftReps ?? []} locationName={activeLocation} />
-          </PopoverContent>
-        </Popover>
+        <AddUserAttributes onShiftReps={onShiftReps} user={user} activeLocation={activeLocation} />
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -154,3 +137,30 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
     </Card>
   );
 };
+
+export function AddUserAttributes(
+  onShiftReps: PartialUserWithTeams[] | undefined,
+  user: PartialUserWithTeams,
+  activeLocation: LocationName,
+) {
+  return (
+    <Popover>
+      <TooltipProvider>
+        <Tooltip>
+          <PopoverTrigger asChild>
+            <TooltipTrigger asChild>
+              <Button variant="warning" disabled={!onShiftReps}>
+                <Plus className="stroke-warning-foreground" />
+                <span className="text-warning-foreground ml-1.5">Add</span>
+              </Button>
+            </TooltipTrigger>
+          </PopoverTrigger>
+          <TooltipContent>Add in-person training and infractions.</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      <PopoverContent className="mt-2 ml-2 w-[350px] shadow-xl border-2 border-gray-200 dark:border-gray-700">
+        <ManageUserWidget user={user} onShiftReps={onShiftReps ?? []} locationName={activeLocation} />
+      </PopoverContent>
+    </Popover>
+  );
+}

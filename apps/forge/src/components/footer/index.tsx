@@ -4,7 +4,7 @@ import Balancer from "react-wrap-balancer";
 import { LocationIcon } from "../icons/Locations";
 
 import { Entries, removeSuffix, toTitleCase } from "@/lib/utils";
-import { locationStatus } from "@/services/signin/locationService";
+import { locationStatus } from "@/services/sign_in/locationService";
 import { PartialLocation } from "@ignis/types/sign_in";
 import { useQuery } from "@tanstack/react-query";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ui/components/ui/tooltip";

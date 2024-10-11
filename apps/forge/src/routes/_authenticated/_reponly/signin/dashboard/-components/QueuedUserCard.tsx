@@ -2,7 +2,7 @@ import { UserAvatar } from "@/components/avatar";
 import { iForgeEpoch } from "@/config/constants.ts";
 import { useUser } from "@/lib/utils.ts";
 import { AppRootState } from "@/redux/store.ts";
-import { DeleteQueue } from "@/services/signin/queueService.ts";
+import { DeleteQueue } from "@/services/sign_in/queueService.ts";
 import { QueueEntry } from "@ignis/types/sign_in.ts";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";

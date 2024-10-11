@@ -3,7 +3,7 @@ import { authReducer } from "@/redux/auth.slice.ts";
 import { userReducer } from "@/redux/user.slice.ts";
 import storage from "redux-persist/lib/storage";
 import { persistReducer, persistStore } from "redux-persist";
-import { signinReducer } from "@/redux/signin.slice.ts";
+import { signInReducer } from "@/redux/signin.slice.ts";
 import { AuthState } from "@/types/auth.ts";
 import { UserState } from "@/types/user.ts";
 import { SignInState } from "@/types/signin.ts";
@@ -17,7 +17,7 @@ export interface AppRootState {
 const rootReducer = combineReducers({
   auth: authReducer,
   user: userReducer,
-  signin: signinReducer,
+  signin: signInReducer,
 });
 
 const persistConfig = {
@@ -50,7 +50,7 @@ if (import.meta.hot) {
       const newRootReducer = combineReducers({
         user: (await import("./user.slice.ts")).userReducer,
         auth: (await import("./auth.slice.ts")).authReducer,
-        signin: (await import("./signin.slice.ts")).signinReducer,
+        signin: (await import("./signin.slice.ts")).signInReducer,
       });
 
       store.replaceReducer(persistReducer(persistConfig, newRootReducer));

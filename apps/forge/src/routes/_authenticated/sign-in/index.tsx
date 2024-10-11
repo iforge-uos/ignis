@@ -1,4 +1,4 @@
-import ActiveLocationSelector from "@/components/signin/ActiveLocationSelector";
+import ActiveLocationSelector from "@/components/sign-in/ActiveLocationSelector";
 import SignInActionsManager from "@/routes/_authenticated/_reponly/signin/actions/-components/SignInManager.tsx";
 import Title from "@/components/title";
 import { useUser } from "@/lib/utils.ts";
@@ -479,6 +479,6 @@ const SignInIndexAppComponent = () => {
   );
 };
 
-export const Route = createFileRoute("/_authenticated/signin/")({
+export const Route = createFileRoute("/_authenticated/sign-in/")({
   component: SignInIndexAppComponent,
 });

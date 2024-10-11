@@ -49,7 +49,7 @@
 
         --font-sans: Roboto, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 
-        /* SignInsChart.tsx specific stuff */
+        /* SignInChart.tsx specific stuff */
         /* The chart's background */
 
         #sign-in-chart>div>div>svg>rect {

@@ -53,7 +53,7 @@ export default function AppSwitcher({ onLinkClick }: AppSwitcherProps) {
                   </Link>
                 </NavigationMenuLink>
               </li>
-              <ListItem to={"/signin"} title="Sign In" icon={<PenLine />} onClick={onLinkClick}>
+              <ListItem to={"/sign-in"} title="Sign In" icon={<PenLine />} onClick={onLinkClick}>
                 iForge Sign In System
               </ListItem>
               <ListItem to={"/training"} title="Training" icon={<BookOpen />} onClick={onLinkClick}>

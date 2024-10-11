@@ -37,7 +37,7 @@ function SignInTable({ datum }: { datum: SignInDatum | null }) {
           const minutes_string = `${minutes} minute${minutes !== 1 ? "s" : ""}`;
 
           return (
-            <Link key={sign_in.id} to="/sign-ins/$id" params={sign_in} className="contents">
+            <Link key={sign_in.id} to="/sign-in/$id" params={sign_in} className="contents">
               <TableRow className="hover:bg-accent hover:cursor-pointer" key={sign_in.id}>
                 <TableCell className="flex justify-center">
                   <LocationIcon location={sign_in.location.name} tooltip={false} />
@@ -60,7 +60,7 @@ const Entry = ({ day }: { day: string }) => {
   return <div className="bg-inherit p-4 rounded-md">{new Date(day).toLocaleDateString()}</div>;
 };
 
-export default function SignInsChart({ data }: { data: SignInStat[] }) {
+export default function SignInChart({ data }: { data: SignInStat[] }) {
   // Theming for this component is handled in index.css using selectors,
   // I'm sorry :(
   // TODO rewrite this to use nivo's theming engine and get the colours from the index.css dynamically?

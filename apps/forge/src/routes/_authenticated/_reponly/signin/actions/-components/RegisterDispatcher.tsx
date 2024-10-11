@@ -1,4 +1,4 @@
-import { PostRegister, PostRegisterProps } from "@/services/signin/signInService.ts";
+import { PostRegister, PostRegisterProps } from "@/services/sign_in/signInService";
 import { useMutation } from "@tanstack/react-query";
 import { AppDispatch, AppRootState } from "@/redux/store.ts";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,7 +7,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@ui/compon
 import { Loader } from "@ui/components/ui/loader.tsx";
 import { Button } from "@ui/components/ui/button.tsx";
 import { useState } from "react";
-import { signinActions } from "@/redux/signin.slice.ts";
+import { signInActions } from "@/redux/signin.slice.ts";
 import { FlowStepComponent } from "@/types/signInActions.ts";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
@@ -46,7 +46,7 @@ const RegisterDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
       console.log("Success");
       setCanContinue(true);
       abortController.abort();
-      dispatch(signinActions.resetSignInSession());
+      dispatch(signInActions.resetSignInSession());
       toast.success("User registered successfully");
       navigate({ to: "/signin" });
     },
@@ -71,7 +71,7 @@ const RegisterDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
       abortController.abort();
       onPrimary?.();
       console.log("Done ");
-      dispatch(signinActions.resetSignInSession());
+      dispatch(signInActions.resetSignInSession());
     }
   };
 

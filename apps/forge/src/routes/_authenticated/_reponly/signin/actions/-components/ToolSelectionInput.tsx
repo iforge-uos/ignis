@@ -1,9 +1,9 @@
 import { errorDisplay } from "@/components/errors/ErrorDisplay";
-import { signinActions, useSignInSessionField } from "@/redux/signin.slice.ts";
+import { signInActions, useSignInSessionField } from "@/redux/signin.slice.ts";
 import { AppDispatch, AppRootState } from "@/redux/store.ts";
 import { SelectedTrainingPipDisplay } from "@/routes/_authenticated/_reponly/signin/actions/-components/SelectedTrainingPipDisplay.tsx";
 import ToolSelectionList from "@/routes/_authenticated/_reponly/signin/actions/-components/TrainingSelectionList.tsx";
-import { GetSignIn, GetSignInProps } from "@/services/signin/signInService.ts";
+import { GetSignIn, GetSignInProps } from "@/services/sign_in/signInService";
 import { FlowStepComponent } from "@/types/signInActions.ts";
 import { Training, User } from "@ignis/types/sign_in.ts";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
@@ -83,13 +83,13 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
     const selectAbleTraining: Training[] = [];
     const unselectAbleTraining: Training[] = [];
     const disabledTraining: Training[] = [];
-    dispatch(signinActions.updateSignInSessionField("user", data));
+    dispatch(signInActions.updateSignInSessionField("user", data));
     const isRep = data.roles.some((role) => role.name === "Rep");
 
     if (isRep && !isBackTracking) {
       console.log("User is a rep && not backtracking");
       // Dispatch the action directly instead of setting state
-      dispatch(signinActions.updateSignInSessionField("training", []));
+      dispatch(signInActions.updateSignInSessionField("training", []));
 
       onPrimary?.(); // Proceed to the next step
       return; // Exit the function
@@ -124,7 +124,7 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   useEffect(() => {
     parseData(data);
     setSelectedTrainings([]);
-    dispatch(signinActions.updateSignInSessionField("navigation_is_backtracking", false));
+    dispatch(signInActions.updateSignInSessionField("navigation_is_backtracking", false));
   }, [data]);
 
   const handleSecondaryClick = () => {
@@ -137,7 +137,7 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
       abortController.abort();
       onPrimary?.();
       console.log("Selected Trainings: ", selectedTrainings);
-      dispatch(signinActions.updateSignInSessionField("training", selectedTrainings));
+      dispatch(signInActions.updateSignInSessionField("training", selectedTrainings));
     }
   };
 

@@ -1,7 +1,7 @@
 import { UserAvatar } from "@/components/avatar";
 import { LocationIcon } from "@/components/icons/Locations";
 import Title from "@/components/title";
-import SignInsChart from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignInsChart.tsx";
+import SignInChart from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignInChart.tsx";
 import { getUser } from "@/services/users/getUser.ts";
 import getUserSignIns from "@/services/users/getUserSignIns.ts";
 import { getUserTraining } from "@/services/users/getUserTraining.ts";
@@ -130,7 +130,7 @@ export default function Component() {
                 </TableBody>
               </Table>
               <h1 className="text-center m-2 text-lg">Sign Ins</h1>
-              <SignInsChart data={signIns} />
+              <SignInChart data={signIns} />
             </div>
           </div>
         </main>
