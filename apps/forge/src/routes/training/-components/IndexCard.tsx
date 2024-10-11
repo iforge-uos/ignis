@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import React from "react";
+import Balancer from "react-wrap-balancer";
 
 interface IndexCardProps {
   img: React.ReactElement;
@@ -19,7 +20,9 @@ const IndexCard: React.FC<IndexCardProps> = ({ img, title, description, classNam
       {img}
       <div className="absolute bottom-0 left-0 right-0 px-6 pb-12">
         <h3 className="text-xl font-bold text-white">{title}</h3>
-        <p className="mt-2 text-sm text-gray-200">{description}</p>
+        <span className="mt-2 text-sm text-gray-200">
+          <Balancer>{description}</Balancer>
+        </span>
       </div>
     </div>
   );

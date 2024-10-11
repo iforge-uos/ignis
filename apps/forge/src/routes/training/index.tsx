@@ -41,7 +41,7 @@ export default function TrainingIndexPage() {
         </h1>
         <Separator className="my-6" />
         <div className="mb-8">
-          <h2 className="text-2xl font-semibold text-center mb-4">Search for a course</h2>
+          <h3 className="text-2xl font-semibold text-center mb-4">Search for a course</h3>
           <Command
             ref={commandRef}
             className="flex justify-center w-3/4 mx-auto max-w-[720px]"
@@ -150,7 +150,7 @@ export default function TrainingIndexPage() {
           </div>
         </div>
         <Separator className="my-6" />
-        <h2 className="text-4xl font-semibold font-futura text-center m-4">Useful Links</h2>{" "}
+        <h2 className="text-4xl font-semibold font-futura text-center m-4">Useful Links</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 justify-items-center mx-auto min-h-72 max-w-[1440px]">
           <div className="flex w-full max-h-80 justify-items-center">
             <Link to="/training/approved-materials">
