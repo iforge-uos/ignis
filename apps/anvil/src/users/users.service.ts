@@ -61,7 +61,6 @@ export const TrainingProps = e.shape(e.training.Training, () => ({
   "@created_at": true,
   "@in_person_created_at": true,
   rep: true,
-  icon_url: true,
   // "@expires": true,
 }));
 
