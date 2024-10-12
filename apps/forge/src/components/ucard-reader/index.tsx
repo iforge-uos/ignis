@@ -1,5 +1,5 @@
 import { useUser } from "@/lib/utils";
-import { signinActions } from "@/redux/sign_in.slice";
+import { signInActions } from "@/redux/sign_in.slice";
 import { AppDispatch, AppRootState } from "@/redux/store";
 import { GetSignIn, PostSignOut } from "@/services/sign_in/signInService";
 import { useQueryClient } from "@tanstack/react-query";
@@ -11,7 +11,7 @@ import { toast } from "sonner";
 
 export default function UCardReader() {
   const [keysPressed, setKeysPressed] = useState<{ key: string; timestamp: number }[]>([]);
-  const activeLocation = useSelector((state: AppRootState) => state.signin.active_location);
+  const activeLocation = useSelector((state: AppRootState) => state.signIn.active_location);
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -121,7 +121,7 @@ export default function UCardReader() {
           );
         } else {
           dispatch(
-            signinActions.setSignInSession({
+            signInActions.setSignInSession({
               ucard_number: uCardNumber,
               user: matchingUser,
               training: null,
@@ -132,7 +132,7 @@ export default function UCardReader() {
           );
           const t = toast(
             PopUp("in", async () => {
-              navigate({ to: "/signin/actions/in-faster" });
+              navigate({ to: "/sign-in/actions/in-faster" });
               toast.dismiss(t); // auto-dismiss to avoid invalid state if the user re-clicks
             }),
           );

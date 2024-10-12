@@ -1,5 +1,5 @@
 import { UCARD_LENGTH } from "@/lib/constants.ts";
-import { signInActions, useSignInSessionField } from "@/redux/signin.slice.ts";
+import { signInActions, useSignInSessionField } from "@/redux/sign_in.slice.ts";
 import { AppDispatch } from "@/redux/store.ts";
 import { FlowStepComponent } from "@/types/signInActions.ts";
 import { Button } from "@ui/components/ui/button.tsx";

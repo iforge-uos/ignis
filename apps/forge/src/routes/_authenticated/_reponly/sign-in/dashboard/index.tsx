@@ -4,7 +4,7 @@ import Title from "@/components/title";
 import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants.ts";
 import { extractError } from "@/lib/utils.ts";
 import { AppRootState } from "@/redux/store.ts";
-import { SignInDrawer } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignInDrawer.tsx";
+import { SignInDrawer } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignInDrawer.tsx";
 import { dataForLocation } from "@/services/sign_in/locationService";
 import type { QueueEntry, SignInEntry } from "@ignis/types/sign_in.ts";
 import { ExclamationTriangleIcon, InfoCircledIcon } from "@radix-ui/react-icons";
@@ -18,7 +18,7 @@ import { QueuedDrawer } from "./-components/QueuedDraw";
 
 export default function SignInDashboard() {
   const queryClient = useQueryClient();
-  const activeLocation = useSelector((state: AppRootState) => state.signin.active_location);
+  const activeLocation = useSelector((state: AppRootState) => state.signIn.active_location);
   const [signedInUsers, setSignedInUsers] = useState<SignInEntry[]>([]);
   const [queuedUsers, setQueuedUsers] = useState<QueueEntry[]>([]);
   const [signedInReps, setSignedInReps] = useState<SignInEntry[]>([]);
@@ -29,21 +29,29 @@ export default function SignInDashboard() {
 
   const handleRemoveSignedInUser = (userId: string) => {
     setSignedInUsers((currentUsers) => currentUsers.filter((signIn) => signIn.user.id !== userId));
-    queryClient.invalidateQueries({ queryKey: ["locationStatus", "locationList", { activeLocation }] });
+    queryClient.invalidateQueries({
+      queryKey: ["locationStatus", "locationList", { activeLocation }],
+    });
   };
 
   const handleRemoveSignedInRep = (userId: string) => {
     setSignedInReps((currentReps) => currentReps.filter((signIn) => signIn.user.id !== userId));
-    queryClient.invalidateQueries({ queryKey: ["locationStatus", "locationList", { activeLocation }] });
+    queryClient.invalidateQueries({
+      queryKey: ["locationStatus", "locationList", { activeLocation }],
+    });
   };
 
   const handleRemoveSignedInOffShiftRep = (userId: string) => {
     setSignInOffShiftReps((currentOffShiftReps) => currentOffShiftReps.filter((signIn) => signIn.user.id !== userId));
-    queryClient.invalidateQueries({ queryKey: ["locationStatus", "locationList", { activeLocation }] });
+    queryClient.invalidateQueries({
+      queryKey: ["locationStatus", "locationList", { activeLocation }],
+    });
   };
   const handleDequeue = (userId: string) => {
     setQueuedUsers((currentQueuedUsers) => currentQueuedUsers.filter((place) => place.user.id !== userId));
-    queryClient.invalidateQueries({ queryKey: ["locationStatus", "locationList", { activeLocation }] });
+    queryClient.invalidateQueries({
+      queryKey: ["locationStatus", "locationList", { activeLocation }],
+    });
   };
   const {
     data: locationList,
@@ -147,6 +155,6 @@ export default function SignInDashboard() {
   );
 }
 
-export const Route = createFileRoute("/_authenticated/_reponly/signin/dashboard/")({
+export const Route = createFileRoute("/_authenticated/_reponly/sign-in/dashboard/")({
   component: SignInDashboard,
 });

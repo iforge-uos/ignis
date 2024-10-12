@@ -1,8 +1,8 @@
 import { errorDisplay } from "@/components/errors/ErrorDisplay";
-import { signInActions, useSignInSessionField } from "@/redux/signin.slice.ts";
+import { signInActions, useSignInSessionField } from "@/redux/sign_in.slice.ts";
 import { AppDispatch, AppRootState } from "@/redux/store.ts";
-import { SelectedTrainingPipDisplay } from "@/routes/_authenticated/_reponly/signin/actions/-components/SelectedTrainingPipDisplay.tsx";
-import ToolSelectionList from "@/routes/_authenticated/_reponly/signin/actions/-components/TrainingSelectionList.tsx";
+import { SelectedTrainingPipDisplay } from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SelectedTrainingPipDisplay.tsx";
+import ToolSelectionList from "@/routes/_authenticated/_reponly/sign-in/actions/-components/TrainingSelectionList.tsx";
 import { GetSignIn, GetSignInProps } from "@/services/sign_in/signInService";
 import { FlowStepComponent } from "@/types/signInActions.ts";
 import { Training, User } from "@ignis/types/sign_in.ts";
@@ -30,7 +30,7 @@ export type CategoryTrainingMap = Record<TrainingStatus, Training[]>;
 const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const abortController = new AbortController(); // For gracefully cancelling the query
 
-  const activeLocation = useSelector((state: AppRootState) => state.signin.active_location);
+  const activeLocation = useSelector((state: AppRootState) => state.signIn.active_location);
   const uCardNumber = useSignInSessionField("ucard_number");
   const user = useSignInSessionField("user");
 
@@ -47,7 +47,7 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
 
   // Check if the user is backtracking (do not auto send the user back to the previous step)
   const isBackTracking = useSelector(
-    (state: AppRootState) => state.signin.session?.navigation_is_backtracking ?? false,
+    (state: AppRootState) => state.signIn.session?.navigation_is_backtracking ?? false,
   );
 
   const signInProps: GetSignInProps = {

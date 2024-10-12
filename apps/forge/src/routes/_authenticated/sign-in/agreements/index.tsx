@@ -55,25 +55,20 @@ export default function Component() {
           </TableHeader>
           <TableBody>
             {agreements.map((agreement) => (
-                <Link
-                    key={agreement.id}
-                    to="/signin/agreements/$id"
-                    params={agreement}
-                    className="contents"
-                >
-                  <TableRow className="hover:bg-accent hover:cursor-pointer">
-                    <TableCell>{agreement.reasons.map((reason) => reason.name).join(", ")}</TableCell>
-                    <TableCell>
-                      <div className="flex justify-center">
-                        <Badge variant="outline" className="rounded-md">
-                          {getAgreementStatus(agreement)}
-                        </Badge>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-center">{agreement.version}</TableCell>
-                    <TableCell>{new Date(agreement.created_at).toLocaleDateString()}</TableCell>
-                  </TableRow>
-                </Link>
+              <Link key={agreement.id} to="/sign-in/agreements/$id" params={agreement} className="contents">
+                <TableRow className="hover:bg-accent hover:cursor-pointer">
+                  <TableCell>{agreement.reasons.map((reason) => reason.name).join(", ")}</TableCell>
+                  <TableCell>
+                    <div className="flex justify-center">
+                      <Badge variant="outline" className="rounded-md">
+                        {getAgreementStatus(agreement)}
+                      </Badge>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-center">{agreement.version}</TableCell>
+                  <TableCell>{new Date(agreement.created_at).toLocaleDateString()}</TableCell>
+                </TableRow>
+              </Link>
             ))}
           </TableBody>
         </Table>

@@ -1,13 +1,13 @@
-import QueueDispatcher from "@/routes/_authenticated/_reponly/signin/actions/-components/QueueDispatcher.tsx";
-import SignInDispatcher from "@/routes/_authenticated/_reponly/signin/actions/-components/SignInDispatcher.tsx";
-import SignInFlowProgress from "@/routes/_authenticated/_reponly/signin/actions/-components/SignInFlowProgress.tsx";
-import SignInReasonInput from "@/routes/_authenticated/_reponly/signin/actions/-components/SignInReasonInput.tsx";
-import SignOutDispatcher from "@/routes/_authenticated/_reponly/signin/actions/-components/SignOutDispatcher.tsx";
-import ToolSelectionInput from "@/routes/_authenticated/_reponly/signin/actions/-components/ToolSelectionInput.tsx";
-import UCardInput from "@/routes/_authenticated/_reponly/signin/actions/-components/UCardInput.tsx";
 import useDoubleTapEscape from "@/hooks/useDoubleTapEscape.ts";
-import { signInActions, useSignInSessionField } from "@/redux/signin.slice.ts";
+import { signInActions, useSignInSessionField } from "@/redux/sign_in.slice.ts";
 import { AppDispatch, AppRootState } from "@/redux/store.ts";
+import QueueDispatcher from "@/routes/_authenticated/_reponly/sign-in/actions/-components/QueueDispatcher.tsx";
+import SignInDispatcher from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SignInDispatcher.tsx";
+import SignInFlowProgress from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SignInFlowProgress.tsx";
+import SignInReasonInput from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SignInReasonInput.tsx";
+import SignOutDispatcher from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SignOutDispatcher.tsx";
+import ToolSelectionInput from "@/routes/_authenticated/_reponly/sign-in/actions/-components/ToolSelectionInput.tsx";
+import UCardInput from "@/routes/_authenticated/_reponly/sign-in/actions/-components/UCardInput.tsx";
 import {
   AnyStep,
   EnqueueSteps,
@@ -18,7 +18,7 @@ import {
   SignOutSteps,
   flowTypeToPrintTable,
 } from "@/types/signInActions.ts";
-import { SignInSession } from "@/types/signin.ts";
+import { SignInSession } from "@/types/sign_in.ts";
 import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button.tsx";
 import React, { ReactElement, useEffect, useLayoutEffect, useState } from "react";
@@ -80,7 +80,7 @@ export default function SignInActionsManager<FlowT extends FlowType | undefined 
 }: SignInManagerProps<FlowT>): React.ReactElement {
   const [currentFlow, setCurrentFlow] = useState<FlowType | null>(null);
   const [currentStep, setCurrentStep] = useState<AnyStep | null>(null);
-  const activeLocation = useSelector((state: AppRootState) => state.signin.active_location);
+  const activeLocation = useSelector((state: AppRootState) => state.signIn.active_location);
   const user = useSignInSessionField("user");
 
   const dispatch = useDispatch<AppDispatch>();
@@ -198,7 +198,7 @@ export default function SignInActionsManager<FlowT extends FlowType | undefined 
           <Button
             onClick={() => {
               setCurrentFlow(null);
-              navigate({ to: "/signin" });
+              navigate({ to: "/sign-in" });
             }}
           >
             Clear Flow
@@ -223,7 +223,7 @@ export default function SignInActionsManager<FlowT extends FlowType | undefined 
         {!currentFlow && (
           <div className="flex flex-1 items-center justify-center">
             <div className="p-6 space-y-4 w-full rounded-xl shadow-lg bg-card text-card-foreground">
-              <div className="flex flex-col space-y-4 lg:space-y-0 lg:flex-row lg:space-x-4 justify-center">
+              <div className="flex flex-row space-x-4 justify-center">
                 <Button variant="success" className={buttonStyles} onClick={() => startFlow(FlowType.SignIn)}>
                   Start Sign In
                 </Button>
