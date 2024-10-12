@@ -1,6 +1,5 @@
 import { RootState } from "@/redux/store";
 import { ErrorCodes } from "@ignis/errors";
-import { Location, Training } from "@ignis/types/training";
 import { deserializeMd as deserializeMd_ } from "@udecode/plate-serializer-md";
 import { createPlateEditor } from "@ui/components/plate-ui/plate-editor";
 import { isAxiosError } from "axios";
@@ -8,7 +7,8 @@ import { type ClassValue, clsx } from "clsx";
 import md5 from "md5";
 import { useSelector } from "react-redux";
 import { twMerge } from "tailwind-merge";
-import { LOCATIONS, UCARD_LENGTH } from "./constants";
+import { UCARD_LENGTH } from "./constants";
+import { Apps } from "@/types/app";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -97,4 +97,25 @@ export function serializeTrainingTags(badges_: TrainingTag[]): Required<Training
   }
 
   return training as Required<TrainingForTags>;
+}
+
+export function currentAppToColor(currentApp: Apps): string {
+  switch (currentApp) {
+    case "Admin":
+      return "border-purple-600";
+    case "Auth":
+      return "border-fuchisa-600";
+    case "Main":
+      return "border-red-700";
+    case "Printing":
+      return "border-orange-500";
+    case "Sign In":
+      return "border-rose-700";
+    case "Training":
+      return "border-green-700";
+    case "User":
+      return "border-indigo-600";
+    default:
+      return "";
+  }
 }

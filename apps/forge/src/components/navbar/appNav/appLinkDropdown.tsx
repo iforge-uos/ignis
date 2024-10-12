@@ -17,7 +17,7 @@ const DropdownLink: React.FC<DropdownLinkProps> = ({ link, onClick, activeId, on
     const isActive = linkItem.id === activeId;
 
     // Link styles
-    const linkClasses = `flex justify-center items-center p-2 text-sm font-medium rounded-md text-card-foreground hover:bg-accent ${
+    const linkClasses = `flex justify-center items-center p-2 text-sm font-medium rounded-md text-card-foreground hover:bg-accent font-futura ${
       isActive ? "border-2 border-accent/40" : ""
     }`;
 

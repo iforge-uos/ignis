@@ -1,8 +1,6 @@
-import React from "react";
 import ContextMenuWrapper from "@/components/navbar/appSwitcher/ContextMenu.tsx";
 import ListItem from "@/components/navbar/appSwitcher/ListItem";
-import useCurrentApp from "@/hooks/useCurrentApp.ts";
-import { cn } from "@/lib/utils.ts";
+import { cn, currentAppToColor } from "@/lib/utils.ts";
 import { Link } from "@tanstack/react-router";
 import {
   NavigationMenu,
@@ -13,6 +11,7 @@ import {
   NavigationMenuTrigger,
 } from "@ui/components/ui/navigation-menu";
 import { BookOpen, PenLine, Printer } from "lucide-react";
+import useCurrentApp from "@/hooks/useCurrentApp";
 
 interface AppSwitcherProps {
   onLinkClick?: () => void;
@@ -32,7 +31,9 @@ export default function AppSwitcher({ onLinkClick }: AppSwitcherProps) {
       <NavigationMenuList>
         <NavigationMenuItem>
           <ContextMenuWrapper>
-            <NavigationMenuTrigger className="bg-card font-futura">iForge | {currentapp}</NavigationMenuTrigger>
+            <NavigationMenuTrigger className="bg-card font-futura">
+              <span className={`border-b-2 ${currentAppToColor(currentapp)}`}>iForge | {currentapp}</span>
+            </NavigationMenuTrigger>
           </ContextMenuWrapper>
           <NavigationMenuContent>
             <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">

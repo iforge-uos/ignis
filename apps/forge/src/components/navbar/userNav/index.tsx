@@ -3,7 +3,6 @@ import { useUser } from "@/lib/utils";
 import { Link } from "@tanstack/react-router";
 import { Badge } from "@ui/components/ui/badge";
 import { Button } from "@ui/components/ui/button";
-import React from "react";
 
 import { USER_EMAIL_DOMAIN } from "@/config/constants.ts";
 import {

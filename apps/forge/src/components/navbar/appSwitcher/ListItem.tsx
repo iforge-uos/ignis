@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { RoutePath } from "@/types/router";
 import { Link } from "@tanstack/react-router";
 import { NavigationMenuLink } from "@ui/components/ui/navigation-menu";
 import React, { AnchorHTMLAttributes, ReactNode } from "react";
@@ -6,7 +7,7 @@ import React, { AnchorHTMLAttributes, ReactNode } from "react";
 interface ListItemProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   icon?: ReactNode;
   title: string;
-  to: string;
+  to: RoutePath;
   onClick?: () => void;
 }
 

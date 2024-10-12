@@ -1,21 +1,39 @@
 import { Apps } from "@/types/app.ts";
-import { useMatches, useParentMatches } from "@tanstack/react-router";
+import { useLocation } from "@tanstack/react-router";
+import { useMemo } from "react";
 
-const useCurrentApp = (): Apps | undefined => {
-  const parent = useParentMatches();
-  const matchWithTitle = useMatches()
-    .reverse()
-    .find((d) => d.staticData?.title);
+const useCurrentApp = (): Apps => {
+  const pathname = useLocation({
+    select: (location) => location.pathname,
+  });
 
-  if (!matchWithTitle) {
-    if (parent.length === 0) {
-      return "Error"; // not found
+  return useMemo(() => {
+    // Split the pathname and get the first segment
+    const segments = pathname.split("/").filter(Boolean);
+    const firstSegment = segments[0]?.toLowerCase();
+
+    switch (firstSegment) {
+      case "":
+      case undefined:
+        return "Main";
+      case "signin":
+        return "Sign In";
+      case "printing":
+        return "Printing";
+      case "user":
+        return "User";
+      case "admin":
+        return "Admin";
+      case "training":
+        return "Training";
+      case "auth":
+        return "Auth";
+      case "socials":
+        return "Socials";
+      default:
+        return "Error";
     }
-    console.error("No match with title found", parent);
-    throw new Error("Page has no title. This should have been set in the root directory in a file with the app's name");
-  }
-
-  return matchWithTitle.staticData.title;
+  }, [pathname]); // Only recalculate when pathname changes
 };
 
 export default useCurrentApp;

@@ -1,5 +1,5 @@
 export const TailwindIndicator = () => {
-  if (process.env.NODE_ENV === "production") return null;
+  if (import.meta.env.PROD) return null;
 
   return (
     <div className="fixed top-1 left-1 z-50 flex h-6 w-6 items-center justify-center bg-gray-800 p-3 rounded-lg font-mono text-xs text-white">
