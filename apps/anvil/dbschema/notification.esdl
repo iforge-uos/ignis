@@ -14,9 +14,10 @@ module notification {
         INFRACTION,
         PRINTING,
         QUEUE_SLOT_ACTIVE,
+        HEALTH_AND_SAFETY,
+        REMINDER,
         RECRUITMENT,
         REFERRAL,
-        REMINDER,
         TRAINING,
     >;
 
@@ -37,7 +38,7 @@ module notification {
         ERRORED,
     >;
 
-    # to avoid linking to every user we have a silly lil sorta enum (regular enums don't work)
+     # to avoid linking to every user we have a silly lil sorta enum (regular enums don't work)
     scalar type AllTargetTarget extending enum<
         ALL,
         REPS,
@@ -69,7 +70,9 @@ module notification {
         required content: str {
             annotation description := "The content (MARKDOWN) from plate"
         }
-        required multi target: AllTarget | users::User | team::Team | MailingList | event::Event;
+        required multi target: AllTarget | users::User | team::Team | MailingList | event::Event {
+            annotation description := "Who will be receiving the notification"
+        }
     }
 
     type SystemNotification extending Notification {

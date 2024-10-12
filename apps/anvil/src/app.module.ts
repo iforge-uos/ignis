@@ -1,6 +1,8 @@
 import * as process from "node:process";
 import { CsrfMiddleware } from "@/auth/authentication/middleware/csrf.middleware";
 import { EdgeDBModule } from "@/edgedb/edgedb.module";
+import { NotificationsModule } from "@/notifications/notifications.module";
+import { NotificationsService } from "@/notifications/notifications.service";
 import { IdempotencyMiddleware } from "@/shared/middleware/idempotency.middleware";
 import { TrainingService } from "@/training/training.service";
 import { BullModule } from "@nestjs/bull";
@@ -52,6 +54,7 @@ import { UsersModule } from "./users/users.module";
     AuthorizationModule,
     EmailModule,
     SignInModule,
+    NotificationsModule,
     BullModule.registerQueue({ name: "email" }),
     RootModule,
     LdapModule,
@@ -65,6 +68,7 @@ import { UsersModule } from "./users/users.module";
     SignInService,
     EmailService,
     RootService,
+    NotificationsService,
     GoogleService,
     Logger,
   ],
