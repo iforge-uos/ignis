@@ -1,20 +1,20 @@
-import Fuse from "fuse.js";
-import React, { useEffect, useState } from "react";
+import { ErrorDisplayProps, errorDisplay } from "@/components/errors/ErrorDisplay";
+import { Category } from "@/components/icons/SignInReason.tsx";
+import { extractError } from "@/lib/utils.ts";
+import { signInActions, useSignInSessionField } from "@/redux/sign_in.slice.ts";
 import { AppDispatch, AppRootState } from "@/redux/store.ts";
+import { getCommonReasons, useSignInReasons } from "@/services/sign_in/signInReasonService.ts";
+import { FlowStepComponent } from "@/types/signInActions.ts";
+import type { PartialReason, Reason } from "@ignis/types/sign_in.ts";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@ui/components/ui/button.tsx";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card.tsx";
-import { Category } from "@/components/icons/SignInReason.tsx";
-import { errorDisplay, ErrorDisplayProps } from "@/components/errors/ErrorDisplay";
-import { extractError } from "@/lib/utils.ts";
-import { FlowStepComponent } from "@/types/signInActions.ts";
-import { getCommonReasons, useSignInReasons } from "@/services/sign_in/signInReasonService.ts";
 import { Input } from "@ui/components/ui/input.tsx";
 import { Loader } from "@ui/components/ui/loader.tsx";
-import type { PartialReason, Reason } from "@ignis/types/sign_in.ts";
-import { signInActions, useSignInSessionField } from "@/redux/signin.slice.ts";
-import { SignInReason } from "./SignInReason.tsx";
+import Fuse from "fuse.js";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useQuery } from "@tanstack/react-query";
+import { SignInReason } from "./SignInReason.tsx";
 
 const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const [inputValue, setInputValue] = useState<string>("");
@@ -28,7 +28,7 @@ const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const [canContinue, setCanContinue] = useState<boolean>(false);
   const hasSessionError = useSignInSessionField("session_errored") ?? false;
   const dispatch: AppDispatch = useDispatch();
-  const activeLocation = useSelector((state: AppRootState) => state.signin.active_location);
+  const activeLocation = useSelector((state: AppRootState) => state.signIn.active_location);
 
   const {
     data: commonReasons,

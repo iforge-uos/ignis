@@ -4,10 +4,10 @@ import { iForgeEpoch } from "@/config/constants.ts";
 import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants.ts";
 import { uCardNumberToString } from "@/lib/utils.ts";
 import { AppRootState } from "@/redux/store.ts";
-import { AdminDisplay } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/AdminDisplay.tsx";
-import { ManageUserWidget } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/ManageUserWidget.tsx";
-import { SignInReasonWithToolsDisplay } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/SignInReasonDisplay.tsx";
-import { TimeDisplay } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/TimeDisplay.tsx";
+import { AdminDisplay } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/AdminDisplay.tsx";
+import { ManageUserWidget } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/ManageUserWidget.tsx";
+import { SignInReasonWithToolsDisplay } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/SignInReasonDisplay.tsx";
+import { TimeDisplay } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/TimeDisplay.tsx";
 import { PostSignOut, PostSignOutProps } from "@/services/sign_in/signInService";
 import type { LocationName, PartialReason } from "@ignis/types/sign_in.ts";
 import type { PartialUserWithTeams } from "@ignis/types/users.ts";
@@ -42,7 +42,7 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
   onShiftReps,
   isAdmin = false,
 }) => {
-  const activeLocation = useSelector((state: AppRootState) => state.signin.active_location);
+  const activeLocation = useSelector((state: AppRootState) => state.signIn.active_location);
   const abortController = new AbortController();
   const queryClient = useQueryClient();
 

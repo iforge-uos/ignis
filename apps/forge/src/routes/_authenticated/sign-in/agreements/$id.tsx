@@ -52,7 +52,7 @@ export default function Component() {
             if (isChecked) {
               await axiosInstance.post(`/agreements/${id}`, { user });
               toast.success("Successfully signed agreement");
-              return navigator({ to: "/signin/agreements" });
+              return navigator({ to: "/sign-in/agreements" });
             }
           }}
         >

@@ -1,49 +1,54 @@
 import { AppDispatch, AppRootState } from "@/redux/store.ts";
-import { PostSignOut, PostSignOutProps } from "@/services/sign_in/signInService";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { PostRegister, PostRegisterProps } from "@/services/sign_in/signInService";
+import { useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card.tsx";
 import { useDispatch, useSelector } from "react-redux";
 
 import { errorDisplay } from "@/components/errors/ErrorDisplay";
-import { signInActions } from "@/redux/signin.slice.ts";
+import { signInActions } from "@/redux/sign_in.slice.ts";
 import { FlowStepComponent } from "@/types/signInActions.ts";
 import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button.tsx";
 import { Loader } from "@ui/components/ui/loader.tsx";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 
-const SignOutDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
-  const queryClient = useQueryClient();
-
+const RegisterDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const dispatch: AppDispatch = useDispatch();
-  const signInSession = useSelector((state: AppRootState) => state.signin.session);
-  const activeLocation = useSelector((state: AppRootState) => state.signin.active_location);
+  const signInSession = useSelector((state: AppRootState) => state.signIn.session);
+  const activeLocation = useSelector((state: AppRootState) => state.signIn.active_location);
   const abortController = new AbortController(); // For gracefully cancelling the query
   const [canContinue, setCanContinue] = useState<boolean>(false);
   const navigate = useNavigate();
+  const timeout = 3000;
 
-  const signOutProps: PostSignOutProps = {
+  const registerProps: PostRegisterProps = {
     locationName: activeLocation,
     uCardNumber: signInSession?.ucard_number ?? "",
     signal: abortController.signal,
   };
 
   const { isPending, error, mutate } = useMutation({
-    mutationKey: ["postSignOut", signOutProps],
-    mutationFn: () => PostSignOut(signOutProps),
+    mutationKey: ["postRegister", registerProps],
+    mutationFn: () => PostRegister(registerProps),
     retry: 0,
+    onMutate: () => {
+      setTimeout(() => {
+        console.log("Aborting request deadline exceeded");
+        abortController.abort();
+      }, 20_000);
+    },
     onError: (error) => {
       console.log("Error", error);
       abortController.abort();
     },
     onSuccess: () => {
+      console.log("Success");
       setCanContinue(true);
       abortController.abort();
       dispatch(signInActions.resetSignInSession());
-      queryClient.invalidateQueries({ queryKey: ["locationStatus"] });
-      toast.success("User signed out successfully!");
-      navigate({ to: "/signin" });
+      toast.success("User registered successfully");
+      navigate({ to: "/sign-in" });
     },
   });
 
@@ -51,7 +56,7 @@ const SignOutDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
     <>
       <div className="flex justify-items-center justify-center">
         <h1 className="text-xl flex-auto">Success!</h1>
-        <p className="text-sm">Redirecting...</p>
+        <p className="text-sm">Possibly redirecting to actions page in ~{timeout / 1000} seconds...</p>
       </div>
     </>
   );
@@ -70,20 +75,16 @@ const SignOutDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
     }
   };
 
-  useEffect(() => {
-    mutate();
-  }, [mutate]);
-
   return (
     <>
       <Card className="w-[700px]">
         <CardHeader>
-          <CardTitle>Signing Out</CardTitle>
+          <CardTitle>Registering User</CardTitle>
         </CardHeader>
         <CardContent>
           {!(canContinue || error || isPending) && (
-            <Button onClick={() => mutate()} autoFocus={true} variant="default" className="h-[200px] w-full">
-              Sign Out
+            <Button onClick={() => mutate()} autoFocus={true} variant="outline" className="h-[200px] w-full">
+              Register
             </Button>
           )}
           {isPending && <Loader />}
@@ -103,4 +104,4 @@ const SignOutDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   );
 };
 
-export default SignOutDispatcher;
+export default RegisterDispatcher;

@@ -1,4 +1,4 @@
-import { SignInReason } from "@/routes/_authenticated/_reponly/signin/actions/-components/SignInReason.tsx";
+import { SignInReason } from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SignInReason.tsx";
 import { PartialReason } from "@ignis/types/sign_in.ts";
 import { Badge } from "@ui/components/ui/badge.tsx";
 

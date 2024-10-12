@@ -2,7 +2,7 @@ import { QueueStatus } from "@/components/sign-in/ActiveLocationSelector/QueueSt
 import { StatusBadge } from "@/components/sign-in/ActiveLocationSelector/StatusBadge.tsx";
 import { UserCount } from "@/components/sign-in/ActiveLocationSelector/UserCount.tsx";
 import { cn, removeSuffix, toTitleCase } from "@/lib/utils";
-import { signInActions } from "@/redux/signin.slice.ts";
+import { signInActions } from "@/redux/sign_in.slice.ts";
 import { AppDispatch, AppRootState } from "@/redux/store.ts";
 import { locationStatus } from "@/services/sign_in/locationService";
 import { LocationName } from "@ignis/types/sign_in.ts";
@@ -23,7 +23,7 @@ import { PulseLoader } from "react-spinners";
 const ActiveLocationSelector = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [value, setValue] = useState<LocationName | null>();
-  const activeLocation = useSelector((state: AppRootState) => state.signin.active_location);
+  const activeLocation = useSelector((state: AppRootState) => state.signIn.active_location);
   const refetchInterval = 5000;
 
   const {
@@ -169,7 +169,7 @@ const ActiveLocationSelector = () => {
                   <p>The Queue is only enabled when capacity is reached.</p>
                   <p>
                     To view detailed queue status visit the{" "}
-                    <Link className="underline" to={"/signin/dashboard"}>
+                    <Link className="underline" to={"/sign-in/dashboard"}>
                       dashboard
                     </Link>
                     .

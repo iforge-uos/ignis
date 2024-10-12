@@ -1,5 +1,5 @@
 import { iForgeEpoch } from "@/config/constants";
-import { ManageUserWidgetProps } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/ManageUserWidget.tsx";
+import { ManageUserWidgetProps } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/ManageUserWidget.tsx";
 import addInPersonTraining from "@/services/users/addInPersonTraining.ts";
 import { getUserTrainingRemaining } from "@/services/users/getUserTrainingRemaining.ts";
 import type { LocationName } from "@ignis/types/sign_in.ts";

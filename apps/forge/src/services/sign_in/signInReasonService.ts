@@ -1,4 +1,3 @@
-//signinRasonService.ts
 import axiosInstance from "@/api/axiosInstance.ts";
 import { SIGN_IN_REASONS_STORAGE_KEY } from "@/config/constants.ts";
 import { LocationName, PartialReason, Reason } from "@ignis/types/sign_in";

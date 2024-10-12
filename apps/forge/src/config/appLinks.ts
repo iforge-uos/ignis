@@ -13,11 +13,11 @@ export type AppLink = {
 
 export const appLinks: AppLink[] = [
   { app: "Home", displayName: "Home", path: "/", index: 0, id: "home" },
-  { app: "Sign In", displayName: "Home", path: "/signin", index: 0, id: "signin_root" },
+  { app: "Sign In", displayName: "Home", path: "/sign-in", index: 0, id: "signin_root" },
   {
     app: "Sign In",
     displayName: "Agreements",
-    path: "/signin/agreements",
+    path: "/sign-in/agreements",
     index: 1,
     id: "signin_agreements",
   },
@@ -30,28 +30,28 @@ export const appLinks: AppLink[] = [
       {
         app: "Sign In",
         displayName: "Sign In",
-        path: "/signin/actions/in",
+        path: "/sign-in/actions/in",
         index: 0,
         id: "signin_actions_in",
       },
-      { app: "Sign In", displayName: "Sign Out", path: "/signin/actions/out", id: "signin_actions_out", index: 1 },
+      { app: "Sign In", displayName: "Sign Out", path: "/sign-in/actions/out", id: "signin_actions_out", index: 1 },
       {
         app: "Sign In",
         displayName: "Register",
-        path: "/signin/actions/register",
+        path: "/sign-in/actions/register",
         id: "signin_actions_register",
         index: 2,
       },
       {
         app: "Sign In",
         displayName: "Enqueue",
-        path: "/signin/actions/enqueue",
+        path: "/sign-in/actions/enqueue",
         id: "signin_actions_enqueue",
         index: 3,
       },
     ],
   },
-  { app: "Sign In", displayName: "Dashboard", path: "/signin/dashboard", index: 3, id: "signin_dashboard" },
+  { app: "Sign In", displayName: "Dashboard", path: "/sign-in/dashboard", index: 3, id: "signin_dashboard" },
   { app: "Training", displayName: "Home", path: "/training", index: 0, id: "training_home" },
   {
     app: "Training",

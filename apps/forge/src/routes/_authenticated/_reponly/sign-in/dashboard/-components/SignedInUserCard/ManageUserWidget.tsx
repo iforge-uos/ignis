@@ -1,8 +1,8 @@
 import { useAuth } from "@/components/auth-provider";
 import { Tuple } from "@/lib/constants";
-import { InfractionSection } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/InfractionSection.tsx";
-import { TeamManagementSection } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/TeamManagementSection.tsx";
-import { TrainingSection } from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignedInUserCard/TrainingSection.tsx";
+import { InfractionSection } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/InfractionSection.tsx";
+import { TeamManagementSection } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/TeamManagementSection.tsx";
+import { TrainingSection } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/TrainingSection.tsx";
 import type { LocationName } from "@ignis/types/sign_in.ts";
 import { PartialUserWithTeams } from "@ignis/types/users.ts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui/components/ui/tabs.tsx";

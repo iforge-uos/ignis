@@ -1,7 +1,7 @@
 import { UserAvatar } from "@/components/avatar";
 import { LocationIcon } from "@/components/icons/Locations";
 import Title from "@/components/title";
-import SignInChart from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignInChart.tsx";
+import SignInChart from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignInChart.tsx";
 import { getUser } from "@/services/users/getUser.ts";
 import getUserSignIns from "@/services/users/getUserSignIns.ts";
 import { getUserTraining } from "@/services/users/getUserTraining.ts";

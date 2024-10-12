@@ -5,7 +5,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@ui/compon
 import { useDispatch, useSelector } from "react-redux";
 
 import { errorDisplay } from "@/components/errors/ErrorDisplay";
-import { signInActions } from "@/redux/signin.slice.ts";
+import { signInActions } from "@/redux/sign_in.slice.ts";
 import { FlowStepComponent } from "@/types/signInActions.ts";
 import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button.tsx";
@@ -16,8 +16,8 @@ import { toast } from "sonner";
 const SignInDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const queryClient = useQueryClient();
   const dispatch: AppDispatch = useDispatch();
-  const signInSession = useSelector((state: AppRootState) => state.signin.session);
-  const activeLocation = useSelector((state: AppRootState) => state.signin.active_location);
+  const signInSession = useSelector((state: AppRootState) => state.signIn.session);
+  const activeLocation = useSelector((state: AppRootState) => state.signIn.active_location);
   const abortController = new AbortController(); // For gracefully cancelling the query
   const [canContinue, setCanContinue] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -50,7 +50,7 @@ const SignInDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
       dispatch(signInActions.resetSignInSession());
       queryClient.invalidateQueries({ queryKey: ["locationStatus"] });
       toast.success("User signed in!");
-      navigate({ to: "/signin" });
+      navigate({ to: "/sign-in" });
     },
   });
 

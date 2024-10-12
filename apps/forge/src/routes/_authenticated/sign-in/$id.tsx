@@ -9,8 +9,8 @@ import { Button } from "@ui/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@ui/components/ui/card";
 import { Separator } from "@ui/components/ui/separator";
 import { CalendarIcon, ClockIcon, DrillIcon } from "lucide-react";
-import { SignInReason } from "../_reponly/signin/actions/-components/SignInReason";
-import { AddUserAttributes } from "../_reponly/signin/dashboard/-components/SignedInUserCard";
+import { SignInReason } from "../_reponly/sign-in/actions/-components/SignInReason";
+import { AddUserAttributes } from "../_reponly/sign-in/dashboard/-components/SignedInUserCard";
 
 export default function Component() {
   const data = Route.useLoaderData();

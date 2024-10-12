@@ -22,7 +22,7 @@ interface QueuedUserCardProps {
 
 export const QueuedUserCard: React.FC<QueuedUserCardProps> = ({ place, onDequeue }) => {
   const isAdmin = useUser()!.roles.find((role) => role.name === "Admin");
-  const activeLocation = useSelector((state: AppRootState) => state.signin.active_location);
+  const activeLocation = useSelector((state: AppRootState) => state.signIn.active_location);
   const abortController = new AbortController();
   const queryClient = useQueryClient();
   const dequeueProps = {

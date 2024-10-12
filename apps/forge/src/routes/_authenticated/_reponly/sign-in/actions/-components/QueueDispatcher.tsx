@@ -4,7 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@ui/compon
 import { useDispatch, useSelector } from "react-redux";
 
 import { errorDisplay } from "@/components/errors/ErrorDisplay";
-import { signInActions } from "@/redux/signin.slice.ts";
+import { signInActions } from "@/redux/sign_in.slice.ts";
 import { PostQueue, PostQueueProps } from "@/services/sign_in/queueService";
 import { FlowStepComponent } from "@/types/signInActions.ts";
 import { useNavigate } from "@tanstack/react-router";
@@ -15,8 +15,8 @@ import { toast } from "sonner";
 
 const QueueDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const dispatch: AppDispatch = useDispatch();
-  const signInSession = useSelector((state: AppRootState) => state.signin.session);
-  const activeLocation = useSelector((state: AppRootState) => state.signin.active_location);
+  const signInSession = useSelector((state: AppRootState) => state.signIn.session);
+  const activeLocation = useSelector((state: AppRootState) => state.signIn.active_location);
   const abortController = new AbortController(); // For gracefully cancelling the query
   const [canContinue, setCanContinue] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -43,7 +43,7 @@ const QueueDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
       abortController.abort();
       dispatch(signInActions.resetSignInSession());
       toast.success("User added to queue successfully");
-      navigate({ to: "/signin" });
+      navigate({ to: "/sign-in" });
     },
   });
 
