@@ -63,7 +63,7 @@
     "@udecode/plate-line-height": "^33.0.0",
     "@udecode/plate-link": "^33.0.5",
     "@udecode/plate-list": "^33.0.3",
-    "@udecode/plate-media": "^33.0.2",
+    "@udecode/plate-media": "^36.0.10",
     "@udecode/plate-node-id": "^33.0.0",
     "@udecode/plate-paragraph": "^33.0.0",
     "@udecode/plate-reset-node": "^33.0.0",
