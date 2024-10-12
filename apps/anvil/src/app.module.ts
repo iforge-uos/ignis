@@ -1,4 +1,9 @@
+import * as process from "node:process";
+import { CsrfMiddleware } from "@/auth/authentication/middleware/csrf.middleware";
 import { EdgeDBModule } from "@/edgedb/edgedb.module";
+import { NotificationsModule } from "@/notifications/notifications.module";
+import { NotificationsService } from "@/notifications/notifications.service";
+import { IdempotencyMiddleware } from "@/shared/middleware/idempotency.middleware";
 import { TrainingService } from "@/training/training.service";
 import { BullModule } from "@nestjs/bull";
 import { Logger, MiddlewareConsumer, Module, NestModule, RequestMethod } from "@nestjs/common";
@@ -23,9 +28,6 @@ import { SignInModule } from "./sign-in/sign-in.module";
 import { SignInService } from "./sign-in/sign-in.service";
 import { TrainingController } from "./training/training.controller";
 import { UsersModule } from "./users/users.module";
-import * as process from "node:process";
-import { CsrfMiddleware } from "@/auth/authentication/middleware/csrf.middleware";
-import { IdempotencyMiddleware } from "@/shared/middleware/idempotency.middleware";
 
 @Module({
   imports: [
@@ -55,6 +57,7 @@ import { IdempotencyMiddleware } from "@/shared/middleware/idempotency.middlewar
     EmailModule,
     SeederModule,
     SignInModule,
+    NotificationsModule,
     BullModule.registerQueue({ name: "email" }),
     RootModule,
     LdapModule,
@@ -69,6 +72,7 @@ import { IdempotencyMiddleware } from "@/shared/middleware/idempotency.middlewar
     SignInService,
     EmailService,
     RootService,
+    NotificationsService,
     GoogleService,
     Logger,
   ],
