@@ -9,6 +9,10 @@
       "path": "../apps/anvil"
     },
     {
+      "name": "Anvil-2",
+      "path": "../apps/anvil2"
+    },
+    {
       "name": "Forge",
       "path": "../apps/forge"
     },
