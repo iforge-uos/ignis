@@ -1,0 +1,36 @@
+{
+  "name": "anvil-2",
+  "version": "1.0.0",
+  "description": "Anvil is the Backend to Ignis powered by Express",
+  "author": "iForge IT team",
+  "license": "GPL-3.0-or-later",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@casl/ability": "^6.7.1",
+    "cors": "^2.8.5",
+    "edgedb": "^1.5.7",
+    "edgedb-zod": "1.0.0-beta4",
+    "express": "^4.21.1",
+    "helmet": "^7.1.0",
+    "ldapts": "^7.2.1",
+    "passport": "^0.6.0",
+    "passport-discord": "^0.1.4",
+    "passport-google-oauth2": "^0.2.0",
+    "passport-jwt": "^4.0.1",
+    "passport-ldapauth": "^3.0.1",
+    "winston": "^3.13.0",
+    "winston-daily-rotate-file": "^5.0.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.7.5",
+    "ts-node-dev": "^2.0.0"
+  }
+}
