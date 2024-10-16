@@ -1,15 +1,24 @@
 {
   "compilerOptions": {
+    "jsx": "react",
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "node",
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": "./",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": "./",
+    "rootDirs": ["./src", "./dbschema"],
+    "paths": {
+      "@/": ["./src/*"],
+      "@/*": ["./src/*"],
+      "@dbschema/*": ["./dbschema/*"]
+    },
+    "incremental": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "dbschema/**/*"],
   "exclude": ["node_modules"]
 }
