@@ -9,7 +9,7 @@ import { getEmailConfig } from "@/config/email.config";
 import { getRedisConfig } from "@/config/redis.config";
 import { getCdnConfig } from "@/config/cdn.config";
 import { getFrontendConfig } from "@/config/frontend.config";
-import { getLoggingConfig } from "@/config/logging.config";
+import { getLoggingConfig } from "@/config/logger.config";
 
 // Load the appropriate .env file based on the NODE_ENV
 dotenv.config({
