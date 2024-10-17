@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-discord";
 import { IntegrationsService } from "@/users/integrations/integrations.service";
-import * as process from "process";
+import * as process from "node:process";
 import { EdgeDBService } from "@/edgedb/edgedb.service";
 
 @Injectable()
@@ -19,13 +19,7 @@ export class DiscordStrategy extends PassportStrategy(Strategy, "discord") {
     this.integrationService = new IntegrationsService(this.dbService);
   }
 
-  async validate(
-    accessToken: string,
-    refreshToken: string,
-    profile: any,
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    done: Function,
-  ) {
+  async validate(accessToken: string, refreshToken: string, profile: any, done: (err: any, user?: any) => void) {
     // Here, you can extract the user information from the 'profile' object
     // and do whatever you want with it - e.g., find or create the user in your DB,
     // then call the 'done' callback.

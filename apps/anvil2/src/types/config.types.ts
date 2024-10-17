@@ -1,3 +1,5 @@
+import { Logger } from "winston";
+
 export interface LdapConfig {
   host: string;
   port: number;
@@ -60,6 +62,7 @@ export interface FrontendConfig {
 
 export interface LoggingConfig {
   level: string;
+  logger: Logger;
 }
 
 export interface AppConfig {
