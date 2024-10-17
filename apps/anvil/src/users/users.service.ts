@@ -9,7 +9,6 @@ import { addInPersonTraining } from "@dbschema/queries/addInPersonTraining.query
 import { GetSignInTrainingsReturns, getSignInTrainings } from "@dbschema/queries/getSignInTrainings.query";
 import { revokeTraining } from "@dbschema/queries/revokeTraining.query";
 import { sign_in, users } from "@ignis/types";
-import { LocationName } from "@ignis/types/sign_in";
 import { Rep, RepStatus, SignInStat, Training, User } from "@ignis/types/users";
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { CardinalityViolationError, ConstraintViolationError, Duration, InvalidValueError } from "edgedb";
