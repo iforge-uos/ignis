@@ -16,7 +16,7 @@ const useCurrentApp = (): Apps => {
       case "":
       case undefined:
         return "Main";
-      case "signin":
+      case "sign-in":
         return "Sign In";
       case "printing":
         return "Printing";

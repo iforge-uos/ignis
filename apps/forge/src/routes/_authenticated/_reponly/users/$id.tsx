@@ -1,7 +1,7 @@
 import { UserAvatar } from "@/components/avatar";
 import { LocationIcon } from "@/components/icons/Locations";
 import Title from "@/components/title";
-import SignInsChart from "@/routes/_authenticated/_reponly/signin/dashboard/-components/SignInsChart.tsx";
+import SignInChart from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignInChart.tsx";
 import { getUser } from "@/services/users/getUser.ts";
 import getUserSignIns from "@/services/users/getUserSignIns.ts";
 import { getUserTraining } from "@/services/users/getUserTraining.ts";
@@ -34,9 +34,9 @@ export default function Component() {
               </div>
               <div>
                 <div className="text-sm mt-2">Roles</div>
-                <div className="flex flex-wrap">
+                <div className="flex flex-wrap gap-1">
                   {user.roles.map((role) => (
-                    <Badge variant="outline" key={role.id}>
+                    <Badge key={role.id} variant="outline" className="rounded-md">
                       {role.name}
                     </Badge>
                   ))}
@@ -130,7 +130,7 @@ export default function Component() {
                 </TableBody>
               </Table>
               <h1 className="text-center m-2 text-lg">Sign Ins</h1>
-              <SignInsChart data={signIns} />
+              <SignInChart data={signIns} />
             </div>
           </div>
         </main>
