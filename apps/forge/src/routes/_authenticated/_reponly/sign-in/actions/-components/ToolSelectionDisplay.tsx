@@ -1,20 +1,26 @@
 import { Training } from "@ignis/types/sign_in";
+import { CategoryTrainingMap } from "@ignis/types/sign_in";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
-import { ChevronsDownUp, ChevronsUpDown } from "lucide-react";
-import { Button } from "@ui/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert";
+import { Button } from "@ui/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@ui/components/ui/collapsible";
+import { ChevronsDownUp, ChevronsUpDown } from "lucide-react";
 import { useState } from "react";
 import ToolSelectionList from "./TrainingSelectionList";
-import { CategoryTrainingMap, TrainingStatus } from "@ignis/types/sign_in";
 
 interface ToolSelectionDisplayProps {
   trainingMap: CategoryTrainingMap;
   onTrainingSelect: (selectedTrainings: Training[]) => void;
   className?: string;
+  initialSelection?: string[];
 }
 
-export const ToolSelectionDisplay = ({ trainingMap, onTrainingSelect, className = "" }: ToolSelectionDisplayProps) => {
+export const ToolSelectionDisplay = ({
+  trainingMap,
+  onTrainingSelect,
+  className = "",
+  initialSelection,
+}: ToolSelectionDisplayProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const missingCompulsoryTraining = trainingMap.DISABLED.filter((training) => training.compulsory);
@@ -37,6 +43,7 @@ export const ToolSelectionDisplay = ({ trainingMap, onTrainingSelect, className 
           selectable={true}
           onTrainingSelect={onTrainingSelect}
           toolTipContent="Tools that the user has training for, and reps are trained on the tool"
+          initialSelection={initialSelection}
         />
       ) : (
         <Alert variant="default">

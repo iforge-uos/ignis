@@ -117,6 +117,7 @@ export class SignInController {
       `Updating visit purpose for UCard number: ${ucard_number} at location: ${location}`,
       SignInController.name,
     );
+
     return await this.signInService.updateVisitPurpose(
       location,
       ucard_number,

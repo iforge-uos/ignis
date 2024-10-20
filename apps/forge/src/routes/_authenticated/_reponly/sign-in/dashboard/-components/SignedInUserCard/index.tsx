@@ -2,30 +2,27 @@ import { UserAvatar } from "@/components/avatar";
 import { TeamIcon } from "@/components/icons/Team.tsx";
 import { iForgeEpoch } from "@/config/constants.ts";
 import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants.ts";
-import { uCardNumberToString } from "@/lib/utils.ts";
+import { cn, uCardNumberToString } from "@/lib/utils.ts";
 import { AppRootState } from "@/redux/store.ts";
 import { AdminDisplay } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/AdminDisplay.tsx";
 import { ManageUserWidget } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/ManageUserWidget.tsx";
 import { SignInReasonWithToolsDisplay } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/SignInReasonDisplay.tsx";
 import { TimeDisplay } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/TimeDisplay.tsx";
-import { GetSignIn, PatchSignIn, PostSignOut, PostSignOutProps } from "@/services/sign_in/signInService";
-import type { LocationName, PartialReason, User } from "@ignis/types/sign_in.ts";
+import { PostSignOut, PostSignOutProps } from "@/services/sign_in/signInService";
+import { type LocationName, type PartialReason } from "@ignis/types/sign_in.ts";
 import type { PartialUserWithTeams } from "@ignis/types/users.ts";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Badge } from "@ui/components/ui/badge.tsx";
 import { Button } from "@ui/components/ui/button.tsx";
 import { Card } from "@ui/components/ui/card.tsx";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@ui/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@ui/components/ui/popover.tsx";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ui/components/ui/tooltip.tsx";
-import { Edit, LogOut, Plus } from "lucide-react";
+import { LogOut, Plus } from "lucide-react";
 import * as React from "react";
+import { useDrag } from "react-dnd";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
-import SignInReasonInput from "../../../actions/-components/SignInReasonInput";
-import { ToolSelectionDisplay } from "../../../actions/-components/ToolSelectionDisplay";
-import ToolSelectionInput from "../../../actions/-components/ToolSelectionInput";
 
 interface SignInUserCardProps {
   user: PartialUserWithTeams;
@@ -49,7 +46,17 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
   const activeLocation = useSelector((state: AppRootState) => state.signIn.active_location);
   const abortController = new AbortController();
   const queryClient = useQueryClient();
-  const [isUpdateDialogOpen, setIsUpdateDialogOpen] = React.useState(false);
+
+  const canDrag = user.roles.some((r) => r.name === "Rep");
+
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: "SignedInUserCard",
+    canDrag,
+    item: { user, reason },
+    collect: (monitor) => ({
+      isDragging: !!monitor.isDragging(),
+    }),
+  }));
 
   const signOutProps: PostSignOutProps = {
     locationName: activeLocation,
@@ -85,46 +92,16 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
       signOutMutate();
     }
   };
-  const { mutate: updateSignInMutate } = useMutation({
-    mutationKey: ["patchSignIn", user.ucard_number],
-    mutationFn: (postBody: { tools?: string[]; reason?: PartialReason }) =>
-      PatchSignIn({
-        locationName: activeLocation,
-        uCardNumber: uCardNumberToString(user.ucard_number),
-        signal: abortController.signal,
-        postBody,
-      }),
-    onSuccess: () => {
-      toast.success("Successfully updated user sign-in information");
-      queryClient.invalidateQueries({ queryKey: ["locationStatus", "locationList", { activeLocation }] });
-      setIsUpdateDialogOpen(false);
-    },
-    onError: (error) => {
-      console.error("Error updating sign-in information", error);
-      toast.error("Failed to update user sign-in information");
-    },
-  });
-
-  const { data: userData, isLoading: isUserDataLoading } = useQuery<User>({
-    queryKey: ["getSignIn", user.ucard_number],
-    queryFn: () =>
-      GetSignIn({
-        locationName: activeLocation,
-        uCardNumber: uCardNumberToString(user.ucard_number),
-        signal: abortController.signal,
-        params: { fast: true },
-      }),
-    enabled: isUpdateDialogOpen,
-  });
-
-  const handleUpdateSignIn = (newTools: string[], newReason: PartialReason) => {
-    updateSignInMutate({ tools: newTools, reason: newReason });
-  };
-
-  const shouldDisplayReason = !(reason?.name === REP_ON_SHIFT || reason?.name === REP_OFF_SHIFT);
 
   return (
-    <Card className="bg-card w-[240px] md:w-[300px] p-4 rounded-sm flex flex-col justify-between text-black dark:text-white">
+    <Card
+      className={cn(
+        "bg-card w-[240px] md:w-[300px] p-4 rounded-sm flex flex-col justify-between text-black dark:text-white",
+        isDragging ? "opacity-50" : "",
+        canDrag ? "cursor-move" : "",
+      )}
+      ref={canDrag ? drag : undefined}
+    >
       <div>
         <div className="flex items-center justify-between mb-4 w-full space-x-2">
           <div className="w-2/3 p-1 flex-col">
@@ -147,66 +124,20 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
             </div>
           </div>
           <div className="w-1/3 aspect-square">
-            <UserAvatar user={user} className="w-full h-full aspect-square" />
+            <UserAvatar user={user} className="w-full h-full aspect-square" draggable={false} />
           </div>
         </div>
       </div>
       {isAdmin && <AdminDisplay user={user} />}
       <div className="flex-grow">
-        {shouldDisplayReason ? (
-          <SignInReasonWithToolsDisplay tools={tools!} reason={reason!} key={user.id} />
-        ) : undefined}
+        {!(reason?.name === REP_ON_SHIFT || reason?.name === REP_OFF_SHIFT) && (
+          <SignInReasonWithToolsDisplay user={user} tools={tools!} reason={reason!} key={user.id} />
+        )}
       </div>
       <TimeDisplay timeIn={timeIn ?? iForgeEpoch} />
       <div className="pt-4 border-t border-gray-700 flex justify-between">
         <AddUserAttributes onShiftReps={onShiftReps!} user={user} activeLocation={activeLocation} />
-        <Dialog open={isUpdateDialogOpen} onOpenChange={setIsUpdateDialogOpen}>
-          <DialogTrigger asChild>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="outline" className="mr-2">
-                    <Edit className="mr-2 h-4 w-4" />
-                    Update
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Update user's tools and sign-in reason</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Update Sign-In Information</DialogTitle>
-            </DialogHeader>
-            {isUserDataLoading ? (
-              <div>Loading...</div>
-            ) : (
-              <>
-                {userData && (
-                  <ToolSelectionDisplay
-                    trainingMap={{
-                      SELECTABLE: userData?.training.filter((t) => t.selectable === true),
-                      UNSELECTABLE: userData?.training.filter((t) => t.selectable === false),
-                      DISABLED: userData?.training.filter((t) => t.selectable === undefined),
-                    }}
-                    onTrainingSelect={(newTools) =>
-                      handleUpdateSignIn(
-                        newTools.map((t) => t.name),
-                        reason!,
-                      )
-                    }
-                  />
-                )}
-                <SignInReasonInput
-                  initialReason={reason}
-                  onReasonChange={(newReason) => handleUpdateSignIn(tools!, newReason)}
-                />
-              </>
-            )}
-          </DialogContent>
-        </Dialog>
+
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
