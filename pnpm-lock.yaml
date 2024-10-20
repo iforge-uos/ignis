@@ -97,7 +97,7 @@ importers:
         version: 1.5.12
       edgedb-zod:
         specifier: github:iforge-uos/edgedb-zod
-        version: https://codeload.github.com/iforge-uos/edgedb-zod/tar.gz/e1cec259a4cbe29a9f03c14fe4769d1aba0036e9
+        version: git+https://git@github.com:iforge-uos/edgedb-zod.git#e1cec259a4cbe29a9f03c14fe4769d1aba0036e9
       glob:
         specifier: ^10.3.12
         version: 10.3.12
@@ -678,8 +678,8 @@ importers:
         specifier: ^33.0.3
         version: 33.0.3(@udecode/plate-common@33.0.4(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(scheduler@0.23.2)(slate-history@0.100.0(slate@0.103.0))(slate-hyperscript@0.100.0(slate@0.103.0))(slate-react@0.104.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate@0.103.0))(slate@0.103.0))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate-history@0.100.0(slate@0.103.0))(slate-hyperscript@0.100.0(slate@0.103.0))(slate-react@0.104.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate@0.103.0))(slate@0.103.0)
       '@udecode/plate-media':
-        specifier: ^33.0.2
-        version: 33.0.2(@udecode/plate-common@33.0.4(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(scheduler@0.23.2)(slate-history@0.100.0(slate@0.103.0))(slate-hyperscript@0.100.0(slate@0.103.0))(slate-react@0.104.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate@0.103.0))(slate@0.103.0))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate-history@0.100.0(slate@0.103.0))(slate-hyperscript@0.100.0(slate@0.103.0))(slate-react@0.104.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate@0.103.0))(slate@0.103.0)
+        specifier: ^36.0.10
+        version: 36.0.10(@udecode/plate-common@33.0.4(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(scheduler@0.23.2)(slate-history@0.100.0(slate@0.103.0))(slate-hyperscript@0.100.0(slate@0.103.0))(slate-react@0.104.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate@0.103.0))(slate@0.103.0))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate-history@0.100.0(slate@0.103.0))(slate-hyperscript@0.100.0(slate@0.103.0))(slate-react@0.104.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate@0.103.0))(slate@0.103.0)
       '@udecode/plate-node-id':
         specifier: ^33.0.0
         version: 33.0.0(@udecode/plate-common@33.0.4(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(scheduler@0.23.2)(slate-history@0.100.0(slate@0.103.0))(slate-hyperscript@0.100.0(slate@0.103.0))(slate-react@0.104.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate@0.103.0))(slate@0.103.0))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate-history@0.100.0(slate@0.103.0))(slate-hyperscript@0.100.0(slate@0.103.0))(slate-react@0.104.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate@0.103.0))(slate@0.103.0)
@@ -4854,10 +4854,10 @@ packages:
       slate-hyperscript: '>=0.66.0'
       slate-react: '>=0.99.0'
 
-  '@udecode/plate-media@33.0.2':
-    resolution: {integrity: sha512-oyOLIUg8ZaOQUZzpakvoIo7SEprGo7uLPgJbom70yGtU5AK7dV+CFDAS5q6s4oHxqJ26aCsplXvNiSC6GFvMhQ==}
+  '@udecode/plate-media@36.0.10':
+    resolution: {integrity: sha512-MNZsYPk+FDVvkRkbf1strNdrmBc0E+/yYOzEAqt70Snjg4V4uUC6MTQ8dF3He7mtk18mYfTZN8p43K0FwSjvEA==}
     peerDependencies:
-      '@udecode/plate-common': '>=33.0.0'
+      '@udecode/plate-common': '>=36.0.6'
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
       slate: '>=0.94.0'
@@ -6352,8 +6352,8 @@ packages:
   ecdsa-sig-formatter@1.0.11:
     resolution: {integrity: sha512-nagl3RYrbNv6kQkeJIpt6NJZy8twLB/2vtz6yN9Z4vRKHN4/QZJIEbqohALSgwKdnksuY3k5Addp5lg8sVoVcQ==}
 
-  edgedb-zod@https://codeload.github.com/iforge-uos/edgedb-zod/tar.gz/e1cec259a4cbe29a9f03c14fe4769d1aba0036e9:
-    resolution: {tarball: https://codeload.github.com/iforge-uos/edgedb-zod/tar.gz/e1cec259a4cbe29a9f03c14fe4769d1aba0036e9}
+  edgedb-zod@git+https://git@github.com:iforge-uos/edgedb-zod.git#e1cec259a4cbe29a9f03c14fe4769d1aba0036e9:
+    resolution: {commit: e1cec259a4cbe29a9f03c14fe4769d1aba0036e9, repo: git@github.com:iforge-uos/edgedb-zod.git, type: git}
     version: 0.0.0
     hasBin: true
 
@@ -15971,7 +15971,7 @@ snapshots:
       slate-hyperscript: 0.100.0(slate@0.103.0)
       slate-react: 0.104.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate@0.103.0)
 
-  '@udecode/plate-media@33.0.2(@udecode/plate-common@33.0.4(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(scheduler@0.23.2)(slate-history@0.100.0(slate@0.103.0))(slate-hyperscript@0.100.0(slate@0.103.0))(slate-react@0.104.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate@0.103.0))(slate@0.103.0))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate-history@0.100.0(slate@0.103.0))(slate-hyperscript@0.100.0(slate@0.103.0))(slate-react@0.104.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate@0.103.0))(slate@0.103.0)':
+  '@udecode/plate-media@36.0.10(@udecode/plate-common@33.0.4(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(scheduler@0.23.2)(slate-history@0.100.0(slate@0.103.0))(slate-hyperscript@0.100.0(slate@0.103.0))(slate-react@0.104.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate@0.103.0))(slate@0.103.0))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate-history@0.100.0(slate@0.103.0))(slate-hyperscript@0.100.0(slate@0.103.0))(slate-react@0.104.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate@0.103.0))(slate@0.103.0)':
     dependencies:
       '@udecode/plate-common': 33.0.4(@types/react@18.3.3)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(scheduler@0.23.2)(slate-history@0.100.0(slate@0.103.0))(slate-hyperscript@0.100.0(slate@0.103.0))(slate-react@0.104.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate@0.103.0))(slate@0.103.0)
       js-video-url-parser: 0.5.1
@@ -17676,7 +17676,7 @@ snapshots:
     dependencies:
       safe-buffer: 5.2.1
 
-  edgedb-zod@https://codeload.github.com/iforge-uos/edgedb-zod/tar.gz/e1cec259a4cbe29a9f03c14fe4769d1aba0036e9:
+  edgedb-zod@git+https://git@github.com:iforge-uos/edgedb-zod.git#e1cec259a4cbe29a9f03c14fe4769d1aba0036e9:
     dependencies:
       edgedb: 1.5.12
       yargs: 17.7.2
