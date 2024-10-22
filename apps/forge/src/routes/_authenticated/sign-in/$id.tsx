@@ -35,7 +35,7 @@ export default function Component() {
                 </Link>
                 <div className="flex gap-1">
                   {data.user.roles.map((role) => (
-                    <Badge key={role.id} variant="secondary" className="text-xs">
+                    <Badge key={role.id} variant="outline" className="rounded-md">
                       {role.name}
                     </Badge>
                   ))}
