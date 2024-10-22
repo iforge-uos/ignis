@@ -42,6 +42,23 @@ export const PostSignIn = async ({ locationName, uCardNumber, signal, postBody }
   }
 };
 
+export const PatchSignIn = async ({
+  locationName,
+  uCardNumber,
+  signal,
+  postBody,
+}: PostSignInProps): Promise<string> => {
+  try {
+    const { data } = await axiosInstance.patch(`/location/${locationName}/sign-in/${uCardNumber}`, postBody, {
+      signal: signal,
+    });
+    return data;
+  } catch (error) {
+    console.error("An error occurred while Patching to Sign In:", error);
+    throw error;
+  }
+};
+
 export interface PostSignOutProps {
   signal: AbortSignal;
   locationName: LocationName;
@@ -58,28 +75,6 @@ export const PostSignOut = async ({ locationName, uCardNumber, signal }: PostSig
     return data;
   } catch (error) {
     console.error("An error occurred while Posting to Sign Out:", error);
-    throw error;
-  }
-};
-
-export interface PostRegisterProps {
-  signal: AbortSignal;
-  locationName: LocationName;
-  uCardNumber: string;
-}
-
-export const PostRegister = async ({ locationName, uCardNumber, signal }: PostRegisterProps): Promise<string> => {
-  try {
-    const { data } = await axiosInstance.post(
-      `/location/${locationName}/register-user`,
-      {
-        ucard_number: uCardNumber,
-      },
-      { signal: signal },
-    );
-    return data;
-  } catch (error) {
-    console.error("An error occurred while Posting to Register Endpoint:", error);
     throw error;
   }
 };

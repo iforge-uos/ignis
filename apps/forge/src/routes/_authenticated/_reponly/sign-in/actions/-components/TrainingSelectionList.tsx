@@ -14,6 +14,7 @@ interface ToolSelectionListProps {
   toolTipContent: string;
   selectable?: boolean;
   onTrainingSelect?: (selectedTrainings: Training[]) => void;
+  initialSelection?: string[];
 }
 
 const TrainingSelectionList: React.FC<ToolSelectionListProps> = ({
@@ -22,8 +23,9 @@ const TrainingSelectionList: React.FC<ToolSelectionListProps> = ({
   toolTipContent,
   selectable,
   onTrainingSelect,
+  initialSelection,
 }) => {
-  const [selectedTrainings, setSelectedTrainings] = useState<string[]>([]);
+  const [selectedTrainings, setSelectedTrainings] = useState<string[]>(initialSelection ?? []);
 
   const handleTrainingClick = (clickedTraining: Training) => {
     if (selectable) {
@@ -73,14 +75,13 @@ const TrainingSelectionList: React.FC<ToolSelectionListProps> = ({
           trainings
             .sort((a, b) => a.name.localeCompare(b.name))
             .map((training) => (
-              <React.Fragment key={training.id}>
-                <TrainingDisplay
-                  training={training}
-                  selected={selectedTrainings.includes(training.id)}
-                  selectable={selectable}
-                  onClick={() => handleTrainingClick(training)}
-                />
-              </React.Fragment>
+              <TrainingDisplay
+                key={training.id}
+                training={training}
+                selected={selectedTrainings.includes(training.id)}
+                selectable={selectable}
+                onClick={() => handleTrainingClick(training)}
+              />
             ))
         )}
       </div>

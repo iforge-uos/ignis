@@ -6,7 +6,7 @@ import { Button } from "@ui/components/ui/button";
 import { Card } from "@ui/components/ui/card";
 import { Separator } from "@ui/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ui/components/ui/tooltip";
-import { Edit, Edit2Icon, EditIcon } from "lucide-react";
+import { EditIcon } from "lucide-react";
 
 interface TrainingCourseCardProps {
   training: PartialTrainingWithStatus;
@@ -14,7 +14,7 @@ interface TrainingCourseCardProps {
 }
 
 export default function TrainingCourseCard({ training, isRep }: TrainingCourseCardProps) {
-  const user = useUser()!;
+  const user = useUser();
   const navigate = useNavigate();
   return (
     <Card className="w-full max-w-sm overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:shadow-lg flex flex-col">
@@ -25,28 +25,25 @@ export default function TrainingCourseCard({ training, isRep }: TrainingCourseCa
           height="200"
           src={training.icon_url}
         />
-        {user.roles.some((role) => role.name === "Admin" || role.name === "Training Editor") && (
+        {user?.roles.some((role) => role.name === "Admin" || role.name === "Training Editor") && (
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button
-                  className="absolute top-0 left-0"
-                  onClick={() => navigate({ to: "/training/$id/edit", params: training })}
-                >
-                  <EditIcon />
-                </Button>
+                <Link to="/training/$id/edit" params={training} className="contents">
+                  <Button className="absolute top-0 left-0">
+                    <EditIcon />
+                  </Button>
+                </Link>
               </TooltipTrigger>
               <TooltipContent>Edit User Training</TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button
-                  className="absolute top-0 right-0"
-                  variant={"outline"}
-                  onClick={() => navigate({ to: "/training/$id/edit", params: training.rep! })}
-                >
-                  <EditIcon />
-                </Button>
+                <Link to="/training/$id/edit" params={training.rep!} className="contents">
+                  <Button className="absolute top-0 right-0" variant={"outline"}>
+                    <EditIcon />
+                  </Button>
+                </Link>
               </TooltipTrigger>
               <TooltipContent>Edit Rep Training</TooltipContent>
             </Tooltip>

@@ -13,45 +13,45 @@ export type AppLink = {
 
 export const appLinks: AppLink[] = [
   { app: "Home", displayName: "Home", path: "/", index: 0, id: "home" },
-  { app: "Sign In", displayName: "Home", path: "/sign-in", index: 0, id: "signin_root" },
+  { app: "Sign In", displayName: "Home", path: "/signin", index: 0, id: "signin_root" },
   {
     app: "Sign In",
     displayName: "Agreements",
-    path: "/sign-in/agreements",
+    path: "/signin/agreements",
     index: 1,
-    id: "signin_agreements",
+    id: "sign_in_agreements",
   },
   {
     app: "Sign In",
     displayName: "Actions",
     index: 2,
-    id: "signin_actions_root",
+    id: "sign_in_actions_root",
     children: [
       {
         app: "Sign In",
         displayName: "Sign In",
-        path: "/sign-in/actions/in",
+        path: "/signin/actions/in",
         index: 0,
-        id: "signin_actions_in",
+        id: "sign_in_actions_in",
       },
-      { app: "Sign In", displayName: "Sign Out", path: "/sign-in/actions/out", id: "signin_actions_out", index: 1 },
+      { app: "Sign In", displayName: "Sign Out", path: "/signin/actions/out", id: "signin_actions_out", index: 1 },
       {
         app: "Sign In",
         displayName: "Register",
-        path: "/sign-in/actions/register",
+        path: "/signin/actions/register",
         id: "signin_actions_register",
         index: 2,
       },
       {
         app: "Sign In",
         displayName: "Enqueue",
-        path: "/sign-in/actions/enqueue",
+        path: "/signin/actions/enqueue",
         id: "signin_actions_enqueue",
         index: 3,
       },
     ],
   },
-  { app: "Sign In", displayName: "Dashboard", path: "/sign-in/dashboard", index: 3, id: "signin_dashboard" },
+  { app: "Sign In", displayName: "Dashboard", path: "/signin/dashboard", index: 3, id: "signin_dashboard" },
   { app: "Training", displayName: "Home", path: "/training", index: 0, id: "training_home" },
   {
     app: "Training",
@@ -114,7 +114,6 @@ export const appLinks: AppLink[] = [
   {
     app: "Admin",
     displayName: "Notifications",
-    path: "/admin/notifications",
     index: 2,
     id: "admin_notifications_link_root",
     children: [

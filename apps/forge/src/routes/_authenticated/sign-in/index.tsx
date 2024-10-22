@@ -431,7 +431,7 @@ const SignInIndexAppComponent = () => {
 
   return (
     <>
-      <Title prompt="Signin App Home" />
+      <Title prompt="Sign In App Home" />
       <div className="p-4 mt-1">
         <ActiveLocationSelector />
         <div className="border-2 rounded-md p-4">
