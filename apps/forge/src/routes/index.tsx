@@ -13,7 +13,6 @@ import Autoplay from "embla-carousel-autoplay";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import { useScroll, useTransform } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import { Masonry, useInfiniteLoader } from "masonic";
 import React from "react";
 import { useEffect, useRef, useState } from "react";
 import Balancer from "react-wrap-balancer";
@@ -503,4 +502,4 @@ const IndexComponent = () => {
   );
 };
 
-export const Route = createFileRoute("/")({ component: IndexComponent, staticData: { title: "Home" } });
+export const Route = createFileRoute("/")({ component: IndexComponent, staticData: { title: "Main" } });
