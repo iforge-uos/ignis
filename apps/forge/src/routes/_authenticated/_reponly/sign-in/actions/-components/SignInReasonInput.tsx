@@ -128,7 +128,7 @@ export const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary })
       <CardHeader>
         <CardTitle>Sign-In Reason Input</CardTitle>
         <CardDescription>Start typing to match your sign-in reason or pick a recent common reason:</CardDescription>
-        {commonReasonsError ? (
+        {/* {commonReasonsError ? (  // FIXME
           `Failed to fetch common reasons: ${extractError(commonReasonsError)}`
         ) : commonReasonsIsLoading ? (
           <Loader />
@@ -141,7 +141,7 @@ export const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary })
               </div>
             ))}
           </div>
-        )}
+        )} */}
       </CardHeader>
       <CardContent>
         {isLoading && <Loader />}
