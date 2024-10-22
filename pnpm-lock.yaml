@@ -20678,9 +20678,6 @@ snapshots:
     dependencies:
       dnd-core: 16.0.1
 
-<<<<<<< HEAD
-  react-dnd@16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@22.7.7)(@types/react@18.3.11)(react@18.3.1):
-=======
   react-dnd@16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@22.7.5)(@types/react@18.3.11)(react@18.3.1):
     dependencies:
       '@react-dnd/invariant': 4.0.2
@@ -20694,8 +20691,7 @@ snapshots:
       '@types/node': 22.7.5
       '@types/react': 18.3.11
 
-  react-dnd@16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@22.7.5)(@types/react@18.3.3)(react@18.3.1):
->>>>>>> origin/main
+  react-dnd@16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@22.7.7)(@types/react@18.3.11)(react@18.3.1):
     dependencies:
       '@react-dnd/invariant': 4.0.2
       '@react-dnd/shallowequal': 4.0.2
