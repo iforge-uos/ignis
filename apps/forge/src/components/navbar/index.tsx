@@ -1,10 +1,43 @@
-import { useState, useCallback } from "react";
 import AppNav from "@/components/navbar/appNav";
 import AppSwitcher from "@/components/navbar/appSwitcher";
 import { ThemeSwitcher } from "@/components/navbar/themeSwitcher";
 import { UserNav } from "@/components/navbar/userNav";
-import { Menu, X } from "lucide-react";
+import { getCookie, setCookie } from "@/services/cookies/cookieService";
+import { Badge } from "@ui/components/ui/badge";
 import { Button } from "@ui/components/ui/button";
+import { Menu, X, XIcon } from "lucide-react";
+import { useCallback, useState } from "react";
+
+function NotificationBanner() {
+  const [dismissed, setDismissed] = useState(getCookie("notification_dismissed") === "true" || false);
+
+  if (dismissed) return null;
+
+  const handleDismiss = () => {
+    setDismissed(true);
+    // Set the cookie to remember the dismissal
+    setCookie("notification_dismissed", "true");
+  };
+
+  return (
+    <div className="relative w-full">
+      <Badge className="h-6 w-full rounded-none flex items-center justify-center text-sm font-medium gap-0.5 overflow-hidden hover:bg-primary">
+        The iForge is recruiting!
+        <Button
+          variant="hyperlink"
+          className="text-red-50"
+          onClick={() =>
+            (document.location =
+              "https://docs.google.com/forms/d/e/1FAIpQLSfRTTBDKCd_kZkVLBHW2LI_GHKkYTwyLWcLkqu7E5AemxJKaw/viewform")
+          }
+        >
+          Apply here
+        </Button>
+        <XIcon className="cursor-pointer" onClick={handleDismiss} />
+      </Badge>
+    </div>
+  );
+}
 
 export default function NavBar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -48,6 +81,7 @@ export default function NavBar() {
           </div>
         </div>
       )}
+      <NotificationBanner />
     </div>
   );
 }
