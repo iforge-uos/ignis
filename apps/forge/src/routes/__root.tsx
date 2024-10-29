@@ -9,7 +9,7 @@ import { NotFound } from "@/components/routing/NotFound.tsx";
 import UCardReader from "@/components/ucard-reader";
 import { QueryClient } from "@tanstack/react-query";
 import { Outlet, ScrollRestoration, createRootRouteWithContext } from "@tanstack/react-router";
-import { SidebarProvider } from "@ui/components/ui/sidebar";
+import { SidebarInset, SidebarProvider } from "@ignis/ui/components/ui/sidebar";
 import React, { Suspense } from "react";
 
 const TanStackRouterDevtools = import.meta.env.PROD
@@ -24,16 +24,14 @@ const TanStackRouterDevtools = import.meta.env.PROD
 export function RootComponentInner({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <AppSidebar />
       <TailwindIndicator />
       <ScrollRestoration />
       <CommandMenu />
       <UCardReader />
-      {children} {/* This is where child routes will render */}
+      {children}
       <Suspense>
-        <TanStackRouterDevtools />
+        <TanStackRouterDevtools position={"bottom-right"} />
       </Suspense>
-      <Footer />
     </>
   );
 }
@@ -41,9 +39,13 @@ export function RootComponentInner({ children }: { children: React.ReactNode }) 
 function RootComponent() {
   return (
     <SidebarProvider>
-      <RootComponentInner>
-        <Outlet />
-      </RootComponentInner>
+      <AppSidebar />
+      <SidebarInset>
+        <RootComponentInner>
+          <Outlet />
+        </RootComponentInner>
+        <Footer />
+      </SidebarInset>
     </SidebarProvider>
   );
 }

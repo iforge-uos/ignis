@@ -1,4 +1,4 @@
-import { ChevronRight, Link } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@ignis/ui/components/ui/collapsible";
 import {
@@ -13,6 +13,7 @@ import {
 } from "@ignis/ui/components/ui/sidebar";
 import { Route } from "@/types/nav";
 import { useUserRoles } from "@/hooks/useUserRoles";
+import { Link } from "@tanstack/react-router";
 
 interface NavMainProps {
   items: Route[];
@@ -31,6 +32,8 @@ export function NavMain({ items }: NavMainProps) {
     // Check if the user has all the required roles for the item (case-insensitive)
     return item.requiredRoles.every((requiredRole) => userRoles.includes(requiredRole.toLowerCase()));
   });
+
+  console.log(items, filteredItems);
 
   return (
     <SidebarGroup>

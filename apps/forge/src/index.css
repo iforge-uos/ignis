@@ -181,3 +181,9 @@
         @apply bg-background text-foreground;
     }
 }
+
+/* TanStack Router Devtools */
+.TanStackRouterDevtools > button {
+	@apply rotate-90 origin-top-right -translate-y-[50px] translate-x-2 bg-white dark:bg-gray-900;
+	@apply border-t-0 border-gray-500/10 shadow-xl text-gray-800;
+}
