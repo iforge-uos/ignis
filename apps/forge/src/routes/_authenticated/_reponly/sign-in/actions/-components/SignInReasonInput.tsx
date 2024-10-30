@@ -96,9 +96,10 @@ export const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary })
       }
     } else if (event.key === "Escape") {
       handleClearReason();
-    } else if (event.key >= "1" && event.key <= "8") {
-      const index = Number.parseInt(event.key) - 1;
+    } else if (event.key >= "F1" && event.key <= "F6") {
+      const index = Number.parseInt(event.key.slice(1)) - 1;
       if (commonReasons && index < commonReasons.length) {
+        event.preventDefault(); // Prevent default F-key behavior
         handleSelectReason(commonReasons[index]);
       }
     }
@@ -128,7 +129,7 @@ export const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary })
       <CardHeader>
         <CardTitle>Sign-In Reason Input</CardTitle>
         <CardDescription>Start typing to match your sign-in reason or pick a recent common reason:</CardDescription>
-        {/* {commonReasonsError ? (  // FIXME
+        {commonReasonsError ? ( // FIXME
           `Failed to fetch common reasons: ${extractError(commonReasonsError)}`
         ) : commonReasonsIsLoading ? (
           <Loader />
@@ -136,12 +137,11 @@ export const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary })
           <div className="flex flex-wrap">
             {commonReasons?.map((reason, index) => (
               <div key={reason.id} onClick={() => handleSelectReason(reason)} className="flex hover:cursor-pointer m-1">
-                <span className="mr-1 text-muted-foreground">{index + 1}</span>
-                <SignInReason reason={reason} />
+                <SignInReason reason={reason} index={index} />
               </div>
             ))}
           </div>
-        )} */}
+        )}
       </CardHeader>
       <CardContent>
         {isLoading && <Loader />}
@@ -155,7 +155,7 @@ export const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary })
               value={inputValue}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
-              placeholder="Start typing a reason or press 1-8 for quick selection..."
+              placeholder="Start typing a reason or press F1-F6 for quick selection..."
               className="mb-2"
             />
             {inputValue && (

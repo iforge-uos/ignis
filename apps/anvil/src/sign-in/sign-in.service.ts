@@ -811,41 +811,26 @@ export class SignInService implements OnModuleInit {
     );
   }
 
-  async getPopularReasons(name: LocationName) {
-    return await this.dbService.query(
-      e.select(
-        e.op(
-          e.select(
-            e.group(
-              e.select(e.sign_in.SignIn, (sign_in) => ({
-                filter: e.all(
-                  e.set(
-                    e.op(sign_in.location.name, "=", e.cast(e.sign_in.LocationName, name)),
-                    e.op(sign_in.reason.name, "in", e.set(REP_ON_SHIFT, REP_OFF_SHIFT, PERSONAL)),
-                  ),
-                ),
-              })),
-              (sign_in) => ({
-                by: { reason: sign_in.reason },
-              }),
+  async getPopularReasons(name: LocationName, rep: boolean) {
+    return await this.dbService
+      .query(
+        e.select({
+          default_: e.select(e.sign_in.Reason, (reason) => ({
+            filter: e.op(reason.name, "in", e.set(...(rep ? [REP_ON_SHIFT, REP_OFF_SHIFT] : []), PERSONAL)),
+            order_by: e.op(
+              // Personal then on then off
+              0,
+              "if",
+              e.op(e.assert_single(reason.name), "=", PERSONAL),
+              "else",
+              e.op(1, "if", e.op(e.assert_single(reason.name), "=", REP_ON_SHIFT), "else", 2),
             ),
-            (group) => ({
-              name: e.assert_single(group.elements.reason.name),
-              category: e.assert_single(group.elements.reason.category),
-              id_: e.assert_single(group.elements.reason.id),
-              count: e.count(group.elements),
-              order_by: e.op(
-                // Personal then on then off
-                0,
-                "if",
-                e.op(group.elements.reason.name, "=", PERSONAL),
-                "else",
-                e.op(1, "if", e.op(group.elements.reason.name, "=", REP_ON_SHIFT), "else", 2),
-              ),
-            }),
-          ),
-          "intersect",
-          e.select(
+            id_: reason.id,
+            name: true,
+            category: true,
+            count: e.select(0),
+          })),
+          common: e.select(
             e.group(
               e.select(e.sign_in.SignIn, (sign_in) => ({
                 filter: e.all(
@@ -869,17 +854,11 @@ export class SignInService implements OnModuleInit {
                 expression: e.count(group.elements),
                 direction: e.DESC,
               },
-              limit: 3,
+              limit: rep ? 3 : 5,
             }),
           ),
-        ),
-        (reason) => ({
-          name: e.assert_exists(reason.name),
-          category: e.assert_exists(reason.category),
-          id: e.assert_exists(reason.id_),
-          count: reason.count,
         }),
-      ),
-    );
+      )
+      .then(({ common, default_ }) => [...default_, ...common].map((reason) => ({ id: reason.id_, ...reason })));
   }
 }
