@@ -11,6 +11,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { Outlet, ScrollRestoration, createRootRouteWithContext } from "@tanstack/react-router";
 import { SidebarInset, SidebarProvider } from "@ignis/ui/components/ui/sidebar";
 import React, { Suspense } from "react";
+import { SidebarHeader } from "@/components/app-navigation/sidebar-header";
 
 const TanStackRouterDevtools = import.meta.env.PROD
   ? () => null // Render nothing in production
@@ -26,7 +27,6 @@ export function RootComponentInner({ children }: { children: React.ReactNode }) 
     <>
       <TailwindIndicator />
       <ScrollRestoration />
-      <CommandMenu />
       <UCardReader />
       {children}
       <Suspense>
@@ -38,15 +38,19 @@ export function RootComponentInner({ children }: { children: React.ReactNode }) 
 
 function RootComponent() {
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <RootComponentInner>
-          <Outlet />
-        </RootComponentInner>
-        <Footer />
-      </SidebarInset>
-    </SidebarProvider>
+    <>
+      <CommandMenu />
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          <SidebarHeader />
+          <RootComponentInner>
+            <Outlet />
+          </RootComponentInner>
+          <Footer />
+        </SidebarInset>
+      </SidebarProvider>
+    </>
   );
 }
 

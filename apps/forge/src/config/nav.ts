@@ -12,15 +12,17 @@ import {
   RssIcon,
   ServerCrashIcon,
   ShieldAlertIcon,
+  TreePalmIcon,
   UserCogIcon,
   ZapIcon,
 } from "lucide-react";
 
 export const appConfig: AppConfig[] = [
   {
-    name: "Main",
+    name: "Home",
     url: "/",
     logo: HouseIcon,
+    color: "#115e59",
     description: "",
     mainMenuNavigable: true,
     routes: [
@@ -31,23 +33,28 @@ export const appConfig: AppConfig[] = [
         isActive: true,
       },
     ],
+    navSub: [
+      { name: "iDocs", url: "https://docs.iforge.sheffield.ac.uk", icon: BookOpenIcon, isExternal: true },
+      { name: "LinkTree", url: "https://linktr.ee/iforgeuos", icon: TreePalmIcon, isExternal: true },
+    ],
   },
   {
     name: "Sign In",
-    url: "/signin/",
+    url: "/sign-in/",
     logo: PencilRulerIcon,
+    color: "#500724",
     description: "Manage your Sign-In data here.",
     mainMenuNavigable: true,
     routes: [
       {
         title: "Home",
-        url: "/signin",
+        url: "/sign-in",
         icon: HouseIcon,
         isActive: true,
       },
       {
         title: "Agreements",
-        url: "/signin/agreements",
+        url: "/sign-in/agreements",
         icon: ClipboardPenIcon,
         isActive: true,
       },
@@ -59,32 +66,33 @@ export const appConfig: AppConfig[] = [
         items: [
           {
             title: "Sign In",
-            url: "/signin/actions/in",
+            url: "/sign-in/actions/in",
           },
           {
             title: "Sign Out",
-            url: "/signin/actions/out",
+            url: "/sign-in/actions/out",
           },
           {
             title: "Enqueue",
-            url: "/signin/actions/enqueue",
+            url: "/sign-in/actions/enqueue",
           },
         ],
         url: "",
       },
       {
         title: "Dashboard",
-        url: "/signin/agreements",
+        url: "/sign-in/dashboard",
         icon: LayoutDashboardIcon,
         isActive: true,
         requiredRoles: ["rep"],
       },
     ],
-    navSub: [{ name: "iDocs", url: "https://docs.iforge.sheffield.ac.uk", icon: BookOpenIcon }],
+    navSub: [{ name: "iDocs", url: "https://docs.iforge.sheffield.ac.uk", icon: BookOpenIcon, isExternal: true }],
   },
   {
     name: "Training",
     url: "/training",
+    color: "#022c22",
     logo: BookIcon,
     description: "Do your user training here.",
     mainMenuNavigable: true,
@@ -133,9 +141,10 @@ export const appConfig: AppConfig[] = [
   {
     name: "Printing",
     url: "/printing",
+    color: "#1e1b4b",
     logo: PrinterIcon,
     description: "Manage your 3D Print Jobs here (coming soon)",
-    mainMenuNavigable: true,
+    mainMenuNavigable: false,
     routes: [
       {
         title: "Home",
@@ -148,8 +157,9 @@ export const appConfig: AppConfig[] = [
   },
   {
     name: "User",
-    url: "/signin",
+    url: "/user",
     logo: UserCogIcon,
+    color: "#701a75",
     description: "Manage your user details here",
     mainMenuNavigable: false,
     routes: [
@@ -165,6 +175,7 @@ export const appConfig: AppConfig[] = [
   {
     name: "Admin",
     url: "/admin",
+    color: "#1e1b4b",
     logo: ShieldAlertIcon,
     description: "Administer the iForge",
     mainMenuNavigable: true,
@@ -232,6 +243,7 @@ export const appConfig: AppConfig[] = [
   {
     name: "Auth",
     url: "/auth",
+    color: "#b91c1c",
     logo: FingerprintIcon,
     description: "Authenticate with the iForge",
     mainMenuNavigable: false,
@@ -241,6 +253,7 @@ export const appConfig: AppConfig[] = [
   {
     name: "Error",
     url: "",
+    color: "#b45309",
     logo: ServerCrashIcon,
     description: "Oh no!",
     mainMenuNavigable: false,
@@ -249,6 +262,7 @@ export const appConfig: AppConfig[] = [
   {
     name: "Socials",
     url: "/socials",
+    color: "#fb7185",
     logo: RssIcon,
     description: "iForge Social Media Profiles",
     mainMenuNavigable: false,

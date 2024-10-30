@@ -15,6 +15,7 @@ import { UserAvatar } from "@/components/avatar";
 import { Link } from "@tanstack/react-router";
 import { useTheme } from "@/providers/themeProvider/use-theme";
 import { useUser } from "@/lib/utils";
+import { Button } from "@ignis/ui/components/ui/button";
 
 export function NavUser() {
   const user = useUser();
@@ -25,7 +26,11 @@ export function NavUser() {
   const metaKey = isMacOs ? "⌘" : "Ctrl+";
 
   if (!user) {
-    return null;
+    return (
+      <Link to="/auth/login" className="w-full">
+        <Button className="w-full">Sign in</Button>
+      </Link>
+    );
   }
 
   return (

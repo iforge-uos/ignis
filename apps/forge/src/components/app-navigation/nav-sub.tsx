@@ -7,6 +7,7 @@ import {
 } from "@ignis/ui/components/ui/sidebar";
 import { NavSub as NavSubType } from "@/types/nav";
 import { Link } from "@tanstack/react-router";
+import { RoutePath } from "@/types/router";
 
 interface NavSubProps {
   elements: NavSubType[];
@@ -20,10 +21,17 @@ export function NavSub({ elements }: NavSubProps) {
         {elements.map((item) => (
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton asChild>
-              <Link to={item.url}>
-                <item.icon />
-                <span>{item.name}</span>
-              </Link>
+              {item.isExternal ? (
+                <a href={item.url} target="_blank" rel="noopener noreferrer">
+                  <item.icon />
+                  <span>{item.name}</span>
+                </a>
+              ) : (
+                <Link to={item.url as RoutePath}>
+                  <item.icon />
+                  <span>{item.name}</span>
+                </Link>
+              )}
             </SidebarMenuButton>
           </SidebarMenuItem>
         ))}

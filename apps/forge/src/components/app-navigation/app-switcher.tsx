@@ -49,8 +49,11 @@ export function AppSwitcher() {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <currentApp.logo className="size-4" />
+              <div
+                className="flex aspect-square size-8 items-center justify-center rounded-lg"
+                style={{ backgroundColor: currentApp.color }}
+              >
+                <currentApp.logo className="size-4 text-white" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">{currentApp.name}</span>
@@ -69,8 +72,11 @@ export function AppSwitcher() {
             {filteredApps.map((app, index) => (
               <Link key={app.name} to={app.url}>
                 <DropdownMenuItem className="gap-2 p-2">
-                  <div className="flex size-6 items-center justify-center rounded-sm border">
-                    <app.logo className="size-4 shrink-0" />
+                  <div
+                    className="flex size-6 items-center justify-center rounded-sm border"
+                    style={{ backgroundColor: app.color }}
+                  >
+                    <app.logo className="size-4 text-white shrink-0" />
                   </div>
                   {app.name}
                   <DropdownMenuShortcut>
