@@ -26,6 +26,7 @@ export const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary })
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
   const [canContinue, setCanContinue] = useState<boolean>(false);
   const hasSessionError = useSignInSessionField("session_errored") ?? false;
+  const user = useSignInSessionField("user");
   const dispatch = useDispatch();
   const activeLocation = useSelector((state: AppRootState) => state.signIn.active_location);
 
@@ -35,7 +36,7 @@ export const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary })
     isLoading: commonReasonsIsLoading,
   } = useQuery({
     queryKey: ["getCommonReasons", activeLocation],
-    queryFn: () => getCommonReasons(activeLocation),
+    queryFn: () => getCommonReasons(activeLocation, user?.is_rep),
   });
 
   useEffect(() => {
