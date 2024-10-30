@@ -18,6 +18,7 @@ interface TrainingCourseCardProps {
 
 export default function TrainingCourseCard({ training, isRep, userTraining }: TrainingCourseCardProps) {
   const user = useUser();
+
   return (
     <Card className="w-full max-w-sm overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:shadow-lg flex flex-col">
       <div className="relative m-4">
