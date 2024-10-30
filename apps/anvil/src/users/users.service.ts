@@ -6,9 +6,10 @@ import { ErrorCodes } from "@/shared/constants/ErrorCodes";
 import { ldapLibraryToUcardNumber, removeDomain } from "@/shared/functions/utils";
 import e from "@dbschema/edgeql-js";
 import { addInPersonTraining } from "@dbschema/queries/addInPersonTraining.query";
+import { searchUsers } from "@dbschema/queries/searchUsers.query";
 import { users } from "@ignis/types";
 import { LocationName } from "@ignis/types/sign_in";
-import { Rep, RepStatus, SignInStat, Training, User } from "@ignis/types/users";
+import { PartialUser, Rep, RepStatus, SignInStat, Training, User } from "@ignis/types/users";
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { CardinalityViolationError, ConstraintViolationError, Duration, InvalidValueError } from "edgedb";
 import {
@@ -448,6 +449,10 @@ export class UsersService {
         })),
       ),
     );
+  }
+
+  async searchUsers(query: string, limit: number): Promise<PartialUser[]> {
+    return await searchUsers(this.dbService.client, { query, limit });
   }
 
   // This is cursed and im not sure what to do but the idea is there will be an endpoint to handle updating things that will either do the promoto endpoints job(by calling old function) or it will update the existing reps teams (no idea how to edgedb tho (skill issue))

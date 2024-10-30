@@ -1,3 +1,5 @@
+using extension pg_trgm;
+
 module users {
     type User extending default::Auditable {
         required ucard_number: int32 {

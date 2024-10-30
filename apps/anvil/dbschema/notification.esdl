@@ -26,6 +26,7 @@ module notification {
         EMAIL,
         TRAY,
         POPUP,
+        DISCORD,
     >;
 
     scalar type Status extending enum<
