@@ -1,5 +1,7 @@
 import { AppConfig } from "@/types/nav";
 import {
+  ArrowLeftToLineIcon,
+  ArrowRightToLineIcon,
   BellIcon,
   BookIcon,
   BookOpenIcon, BookUserIcon,
@@ -7,7 +9,7 @@ import {
   EarthIcon, FilePenIcon,
   FingerprintIcon,
   HouseIcon,
-  LayoutDashboardIcon, MailIcon, MegaphoneIcon, MessageCircleIcon,
+  LayoutDashboardIcon, ListEndIcon, MailIcon, MegaphoneIcon, MessageCircleIcon,
   PencilRulerIcon,
   PrinterIcon,
   RssIcon, SchoolIcon,
@@ -67,14 +69,17 @@ export const appConfig: AppConfig[] = [
         items: [
           {
             title: "Sign In",
+            icon: ArrowRightToLineIcon,
             url: "/sign-in/actions/in",
           },
           {
             title: "Sign Out",
+            icon: ArrowLeftToLineIcon,
             url: "/sign-in/actions/out",
           },
           {
             title: "Enqueue",
+            icon: ListEndIcon,
             url: "/sign-in/actions/enqueue",
           },
         ],
