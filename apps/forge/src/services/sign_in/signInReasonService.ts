@@ -19,8 +19,10 @@ export const fetchSignInReasons = async (): Promise<Reason[]> => {
   return response.data;
 };
 
-export const getCommonReasons = async (location: LocationName): Promise<PartialReason[]> => {
-  const { data } = await axiosInstance.get(`/location/${location}/common-reasons`);
+export const getCommonReasons = async (location: LocationName, rep?: boolean): Promise<PartialReason[]> => {
+  const { data } = await axiosInstance.get(`/location/${location}/common-reasons`, {
+    params: { rep: rep ? "true" : "" },
+  });
   return data;
 };
 

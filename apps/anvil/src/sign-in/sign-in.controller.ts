@@ -16,6 +16,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   Req,
   UseGuards,
   UseInterceptors,
@@ -177,7 +178,7 @@ export class SignInController {
 
   @Get("/common-reasons")
   @IsRep()
-  async getPopularSignInReasons(@Param("location") location: LocationName) {
-    return this.signInService.getPopularReasons(location);
+  async getPopularSignInReasons(@Param("location") location: LocationName, @Query("rep") rep: string) {
+    return this.signInService.getPopularReasons(location, rep === "true");
   }
 }
