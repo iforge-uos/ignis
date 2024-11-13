@@ -438,7 +438,7 @@ const IndexComponent = () => {
           making.
         </Balancer>
       </h2>
-      <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-md">
+      <div className="relative flex h-1/4 w-full flex-col items-center justify-center overflow-hidden rounded-md">
         <ImageCarousel />
       </div>
       <h3>

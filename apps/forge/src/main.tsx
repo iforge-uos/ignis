@@ -17,6 +17,7 @@ import { Loading } from "@/components/routing/Loading";
 import { NotFound } from "@/components/routing/NotFound";
 import { Apps } from "@/types/app";
 import { AuthProvider } from "@/providers/AuthProvider";
+import {useUser} from "@/lib/utils.ts";
 
 // Begin Router
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const router = createRouter({
   routeTree,
   context: {
     queryClient,
+    user: undefined!
   },
   defaultPreload: "intent",
   // Since we're using React Query, we don't want loader calls to ever be stale
@@ -46,7 +48,8 @@ declare module "@tanstack/react-router" {
 
 function InnerApp() {
   //posthog.init("phc_XIzxR3RXcdmcyMPJCCnQFtxoL0gRshzEXo4kM925LvA", { api_host: "https://web-mkc4o00.sampiiiii.dev" });
-  return <RouterProvider router={router} />;
+  const useUserHook = useUser()
+  return <RouterProvider router={router} context={{ user: useUserHook }} />;
 }
 
 const rootElement = document.getElementById("root");

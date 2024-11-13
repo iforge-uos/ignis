@@ -11,6 +11,7 @@ import { Outlet, ScrollRestoration, createRootRouteWithContext } from "@tanstack
 import { SidebarInset, SidebarProvider } from "@ignis/ui/components/ui/sidebar";
 import React, { Suspense } from "react";
 import { SidebarHeader } from "@/components/app-navigation/sidebar-header";
+import {useUser} from "@/lib/utils.ts";
 
 const TanStackRouterDevtools = import.meta.env.PROD
   ? () => null // Render nothing in production
@@ -55,6 +56,7 @@ function RootComponent() {
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
+  user: ReturnType<typeof useUser>;
 }>()({
   component: RootComponent,
   notFoundComponent: NotFound,

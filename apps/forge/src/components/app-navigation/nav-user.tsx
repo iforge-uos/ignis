@@ -92,7 +92,7 @@ export function NavUser() {
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
                 <DropdownMenuItem asChild>
-                  <Link to="/user/profile">
+                  <Link to="/user">
                     <BadgeCheck className="mr-2 h-4 w-4" />
                     Profile
                     <DropdownMenuShortcut>{`⇧${metaKey}P`}</DropdownMenuShortcut>

@@ -10,6 +10,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Badge } from "@ui/components/ui/badge.tsx";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@ui/components/ui/table.tsx";
 import { Check, X } from "lucide-react";
+import {useUser} from "@/lib/utils.ts";
 
 export default function Component() {
   const data = Route.useLoaderData();
@@ -141,6 +142,14 @@ export default function Component() {
 
 export const Route = createFileRoute("/_authenticated/_reponly/users/$id")({
   loader: async ({ params }) => {
+    const userId = useUser()?.id
+    if (userId === undefined) {
+      return {
+        user: null,
+        trainings: [],
+        signIns: [],
+      };
+    }
     const [user, trainings, signIns] = await Promise.all([
       getUser(params.id),
       getUserTraining(params.id),
