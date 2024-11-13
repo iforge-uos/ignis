@@ -33,7 +33,6 @@ export function NavMain({ items }: NavMainProps) {
     return item.requiredRoles.every((requiredRole) => userRoles.includes(requiredRole.toLowerCase()));
   });
 
-  console.log(items, filteredItems);
 
   return (
     <SidebarGroup>
@@ -65,6 +64,7 @@ export function NavMain({ items }: NavMainProps) {
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton asChild>
                           <Link to={subItem.url}>
+                            {subItem.icon && <subItem.icon />}
                             <span>{subItem.title}</span>
                           </Link>
                         </SidebarMenuSubButton>
