@@ -10,7 +10,6 @@ import {
   DropdownMenuTrigger,
 } from "@ignis/ui/components/ui/dropdown-menu";
 import { BadgeCheck, Bell, ChevronsUpDown, LogIn, LogOut, Moon, Settings, Sparkles, Sun } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from "@ignis/ui/components/ui/avatar";
 import { UserAvatar } from "@/components/avatar";
 import { Link } from "@tanstack/react-router";
 import { useTheme } from "@/providers/themeProvider/use-theme";
@@ -74,10 +73,7 @@ export function NavUser() {
             >
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                  <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={user.profile_picture ?? ""} alt={user.last_name ?? "?"} />
-                    <AvatarFallback className="rounded-lg">CN</AvatarFallback>
-                  </Avatar>
+                  <UserAvatar user={user} />
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-semibold">{user.display_name}</span>
                     <span className="truncate text-xs">{user.email}@sheffield.ac.uk</span>
