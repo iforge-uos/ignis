@@ -303,6 +303,9 @@ importers:
       '@tailwindcss/typography':
         specifier: ^0.5.15
         version: 0.5.15(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.9.2(@swc/helpers@0.5.13))(@types/node@22.9.0)(typescript@5.6.3)))
+      '@tanstack/query-core':
+        specifier: ^5.59.20
+        version: 5.59.20
       '@tanstack/react-query':
         specifier: ^5.59.20
         version: 5.59.20(react@18.3.1)
@@ -357,6 +360,9 @@ importers:
       jotai:
         specifier: ^2.10.2
         version: 2.10.2(@types/react@18.3.12)(react@18.3.1)
+      jotai-tanstack-query:
+        specifier: ^0.9.0
+        version: 0.9.0(@tanstack/query-core@5.59.20)(jotai@2.10.2(@types/react@18.3.12)(react@18.3.1))
       js-cookie:
         specifier: ^3.0.5
         version: 3.0.5
@@ -7603,6 +7609,12 @@ packages:
     peerDependencies:
       jotai: '>=1.11.0'
       optics-ts: '*'
+
+  jotai-tanstack-query@0.9.0:
+    resolution: {integrity: sha512-8n7/xV14+ZE63dyqngtmqs6aV1bNnQJF9bJN5Bj70USc2cMFRmsVhGGzL1cSvp5E/xXasU37czFFaZ0vavmyfA==}
+    peerDependencies:
+      '@tanstack/query-core': '*'
+      jotai: '>=2.0.0'
 
   jotai-x@1.2.4:
     resolution: {integrity: sha512-FyLrAR/ZDtmaWgif4cNRuJvMam/RSFv+B11/p4T427ws/T+8WhZzwmULwNogG6ZbZq+v1XpH6f9aN1lYqY5dLg==}
@@ -19196,6 +19208,11 @@ snapshots:
     dependencies:
       jotai: 2.10.2(@types/react@18.3.12)(react@18.3.1)
       optics-ts: 2.4.1
+
+  jotai-tanstack-query@0.9.0(@tanstack/query-core@5.59.20)(jotai@2.10.2(@types/react@18.3.12)(react@18.3.1)):
+    dependencies:
+      '@tanstack/query-core': 5.59.20
+      jotai: 2.10.2(@types/react@18.3.12)(react@18.3.1)
 
   jotai-x@1.2.4(@types/react@18.3.11)(jotai@2.10.2(@types/react@18.3.11)(react@18.3.1))(react@18.3.1):
     dependencies:

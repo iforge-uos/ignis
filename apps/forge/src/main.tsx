@@ -12,11 +12,11 @@ import { routeTree } from "@/routeTree.gen.ts";
 import { Toaster } from "@ui/components/ui/sonner.tsx";
 import React from "react";
 import { PersistGate } from "redux-persist/integration/react";
-import { GenericError } from "./components/routing/GenericError";
-import { Loading } from "./components/routing/Loading";
-import { NotFound } from "./components/routing/NotFound";
-import { Apps } from "./types/app";
-import { AuthProvider } from "./providers/AuthProvider";
+import { GenericError } from "@/components/routing/GenericError";
+import { Loading } from "@/components/routing/Loading";
+import { NotFound } from "@/components/routing/NotFound";
+import { Apps } from "@/types/app";
+import { AuthProvider } from "@/providers/AuthProvider";
 
 // Begin Router
 const queryClient = new QueryClient();
