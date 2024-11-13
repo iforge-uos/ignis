@@ -1,29 +1,21 @@
-import { authReducer } from "@/redux/auth.slice.ts";
 import { signInReducer } from "@/redux/sign_in.slice.ts";
-import { userReducer } from "@/redux/user.slice.ts";
-import { AuthState } from "@/types/auth.ts";
 import { SignInState } from "@/types/sign_in.ts";
-import { UserState } from "@/types/user.ts";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
 export interface AppRootState {
-  auth: AuthState;
-  user: UserState;
   signIn: SignInState;
 }
 
 const rootReducer = combineReducers({
-  auth: authReducer,
-  user: userReducer,
   signIn: signInReducer,
 });
 
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["user", "app", "signIn", "auth"],
+  whitelist: ["signIn"],
   version: 1,
 };
 
@@ -48,8 +40,6 @@ if (import.meta.hot) {
     ["./user/user.slice", "./app/app.slice", "./auth/auth.slice", "./sign_in/sign_in.slice"],
     async () => {
       const newRootReducer = combineReducers({
-        user: (await import("./user.slice.ts")).userReducer,
-        auth: (await import("./auth.slice.ts")).authReducer,
         signIn: (await import("./sign_in.slice.ts")).signInReducer,
       });
 

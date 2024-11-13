@@ -1,5 +1,4 @@
 import { AppSidebar } from "@/components/app-navigation";
-import { AuthContext } from "@/components/auth-provider";
 import CommandMenu from "@/components/command-menu";
 import { TailwindIndicator } from "@/components/dev/Tailwind-Indicator.tsx";
 import Footer from "@/components/footer";
@@ -56,7 +55,6 @@ function RootComponent() {
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
-  auth: AuthContext;
 }>()({
   component: RootComponent,
   notFoundComponent: NotFound,

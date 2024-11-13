@@ -1,21 +1,18 @@
 // src/routes/_authenticated.tsx
+import { LoginModal } from "@/components/auth/LoginModal";
 import { Forbidden } from "@/components/routing/Forbidden";
-import { useUser } from "@/lib/utils";
-import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
+import { useAuth } from "@/hooks/useAuth";
+import { Outlet, createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/_reponly")({
-  beforeLoad: ({ context, location }) => {
-    if (!context.auth.user) {
-      throw redirect({
-        to: "/auth/login",
-        search: {
-          redirect: location.href,
-        },
-      });
-    }
-  },
   component: () => {
-    if (!useUser()!.roles.find((role) => role.name === "Rep")) {
+    const { isAuthenticated, user } = useAuth();
+    console.log(user);
+
+    if (!isAuthenticated) {
+      return <LoginModal />;
+    }
+    if (!user?.roles.find((role) => role.name === "Rep")) {
       return <Forbidden />;
     }
     return <Outlet />;

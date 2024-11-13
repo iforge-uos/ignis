@@ -1,4 +1,4 @@
-import { useAuth } from "@/components/auth-provider";
+import { useAuth } from "@/hooks/useAuth";
 import { Tuple } from "@/lib/constants";
 import { InfractionSection } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/InfractionSection.tsx";
 import { TeamManagementSection } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/TeamManagementSection.tsx";

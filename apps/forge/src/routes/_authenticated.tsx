@@ -1,15 +1,16 @@
 // src/routes/_authenticated.tsx
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { LoginModal } from "@/components/auth/LoginModal";
+import { useAuth } from "@/hooks/useAuth";
+import { createFileRoute, Outlet } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated")({
-    beforeLoad: ({ context, location }) => {
-        if (!context.auth.isAuthenticated) {
-            throw redirect({
-                to: '/auth/login',
-                search: {
-                    redirect: location.href,
-                },
-            })
-        }
-    },
+  component: () => {
+    const { isAuthenticated } = useAuth();
+
+    if (!isAuthenticated) {
+      return <LoginModal />;
+    }
+
+    return <Outlet />;
+  },
 });

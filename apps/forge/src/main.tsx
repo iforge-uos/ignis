@@ -8,7 +8,6 @@ import ReactDOM from "react-dom/client";
 import { HelmetProvider } from "react-helmet-async";
 import { Provider } from "react-redux";
 
-import { AuthProvider, useAuth } from "@/components/auth-provider";
 import { routeTree } from "@/routeTree.gen.ts";
 import { Toaster } from "@ui/components/ui/sonner.tsx";
 import React from "react";
@@ -17,6 +16,7 @@ import { GenericError } from "./components/routing/GenericError";
 import { Loading } from "./components/routing/Loading";
 import { NotFound } from "./components/routing/NotFound";
 import { Apps } from "./types/app";
+import { AuthProvider } from "./providers/AuthProvider";
 
 // Begin Router
 const queryClient = new QueryClient();
@@ -25,7 +25,6 @@ const router = createRouter({
   routeTree,
   context: {
     queryClient,
-    auth: undefined!,
   },
   defaultPreload: "intent",
   // Since we're using React Query, we don't want loader calls to ever be stale
@@ -46,9 +45,8 @@ declare module "@tanstack/react-router" {
 }
 
 function InnerApp() {
-  const auth = useAuth();
   //posthog.init("phc_XIzxR3RXcdmcyMPJCCnQFtxoL0gRshzEXo4kM925LvA", { api_host: "https://web-mkc4o00.sampiiiii.dev" });
-  return <RouterProvider router={router} context={{ auth }} />;
+  return <RouterProvider router={router} />;
 }
 
 const rootElement = document.getElementById("root");

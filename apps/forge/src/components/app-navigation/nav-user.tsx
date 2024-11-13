@@ -27,7 +27,7 @@ export function NavUser() {
 
   if (!user) {
     return (
-      <Link to="/auth/login" className="w-full">
+      <Link to="/sign-in/dashboard" className="w-full">
         <Button className="w-full">Sign in</Button>
       </Link>
     );
@@ -45,7 +45,7 @@ export function NavUser() {
               <UserAvatar user={user} />
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">{user.display_name}</span>
-                <span className="truncate text-xs">{user.email}</span>
+                <span className="truncate text-xs">{user.email}@sheffield.ac.uk</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>

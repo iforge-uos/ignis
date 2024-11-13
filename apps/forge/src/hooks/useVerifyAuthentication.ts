@@ -1,38 +1,40 @@
-import { useCallback, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { User } from "@ignis/types/users.ts";
-import axiosInstance from "@/api/axiosInstance.ts";
-import { userActions } from "@/redux/user.slice.ts";
-import { authActions } from "@/redux/auth.slice.ts";
+// src/hooks/useVerifyAuthentication.ts
+import { useCallback, useEffect } from "react";
+import { useAtom } from "jotai";
+import axiosInstance from "@/api/axiosInstance";
+import { authEffectAtom, userAtom, loadingAtom } from "@/atoms/authSessionAtoms.ts";
 
 export const useVerifyAuthentication = () => {
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<User | null>(null);
-  const dispatch = useDispatch();
+  const [, setAuthEffect] = useAtom(authEffectAtom); // Sets authentication status
+  const [, setUser] = useAtom(userAtom); // Sets the user data in Jotai
+  const [loading, setLoading] = useAtom(loadingAtom); // Manages the loading state
 
   const verifyAuthentication = useCallback(async () => {
     setLoading(true);
     try {
       const response = await axiosInstance.get("/users/me");
       if (response.status === 200) {
-        dispatch(userActions.setUser(response.data));
-        dispatch(authActions.onLogin());
+        // Set user data and mark as authenticated
         setUser(response.data);
+        setAuthEffect(true);
       } else {
-        dispatch(authActions.onLogout());
+        // Clear user data and mark as not authenticated
+        setAuthEffect(false);
         setUser(null);
       }
     } catch (error) {
       setUser(null);
-      dispatch(authActions.onLogout());
+      setAuthEffect(false);
     } finally {
       setLoading(false);
     }
-  }, [dispatch]);
+  }, [setUser, setAuthEffect, setLoading]);
 
   useEffect(() => {
     verifyAuthentication();
   }, [verifyAuthentication]);
 
-  return { user, loading, setUser };
+  const [user] = useAtom(userAtom); // Get the user state
+
+  return { user, loading };
 };

@@ -1,4 +1,3 @@
-import { useAuth } from "@/components/auth-provider";
 import ActiveLocationSelector from "@/components/sign-in/ActiveLocationSelector";
 import Title from "@/components/title";
 import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants.ts";
@@ -7,7 +6,7 @@ import { AppRootState } from "@/redux/store.ts";
 import { SignInDrawer } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignInDrawer.tsx";
 import { dataForLocation } from "@/services/sign_in/locationService";
 import type { QueueEntry, SignInEntry } from "@ignis/types/sign_in.ts";
-import { ExclamationTriangleIcon, InfoCircledIcon } from "@radix-ui/react-icons";
+import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert.tsx";
@@ -15,6 +14,7 @@ import { Loader } from "@ui/components/ui/loader.tsx";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { QueuedDrawer } from "./-components/QueuedDraw";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function SignInDashboard() {
   const queryClient = useQueryClient();
@@ -23,9 +23,9 @@ export default function SignInDashboard() {
   const [queuedUsers, setQueuedUsers] = useState<QueueEntry[]>([]);
   const [signedInReps, setSignedInReps] = useState<SignInEntry[]>([]);
   const [signInOffShiftReps, setSignInOffShiftReps] = useState<SignInEntry[]>([]);
-  const auth = useAuth();
+  const { user } = useAuth();
 
-  const isUserAdmin = !!auth.user?.roles.find((role) => role.name === "Admin");
+  const isUserAdmin = !!user?.roles.find((role) => role.name === "Admin");
 
   const handleRemoveSignedInUser = (userId: string) => {
     setSignedInUsers((currentUsers) => currentUsers.filter((signIn) => signIn.user.id !== userId));

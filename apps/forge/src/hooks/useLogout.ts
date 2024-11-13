@@ -1,30 +1,35 @@
-import { AppDispatch, persistor } from "@/redux/store.ts";
-import { userActions } from "@/redux/user.slice.ts";
-import axiosInstance from "@/api/axiosInstance.ts";
-import { toast } from "sonner";
+import { useAtom } from "jotai";
 import { useNavigate } from "@tanstack/react-router";
-import { useAuth } from "@/components/auth-provider";
-import { useDispatch } from "react-redux";
+import { toast } from "sonner";
+import axiosInstance from "@/api/axiosInstance";
+import { authEffectAtom } from "@/atoms/authSessionAtoms.ts";
 import axios from "axios";
 
 export const useLogout = () => {
-  const dispatch: AppDispatch = useDispatch();
-  const auth = useAuth();
+  const [, setAuthEffect] = useAtom(authEffectAtom); // Use Jotai to handle logout effects
   const navigate = useNavigate();
 
   return async () => {
     try {
+      // Call the logout endpoint
       await axiosInstance.post("/authentication/logout");
-      await persistor.purge();
-      dispatch(userActions.clearUser());
-      auth.logout();
+
+      // Clear the Jotai state for user and authentication
+      setAuthEffect(false); // This will set `isAuthenticatedAtom` to false and clear `userAtom`
+
+      // Show success message
       toast.success("Logged out successfully.");
+
+      // Navigate to the home page
       await navigate({ to: "/" });
     } catch (error) {
+      // Handle specific error cases
       if (axios.isAxiosError(error) && error.response?.status === 409) {
         await navigate({ to: "/" });
         return;
       }
+
+      // Log the error and show an error message
       console.error("Logout failed:", error);
       toast.error("Logout failed.");
       await navigate({ to: "/" });
