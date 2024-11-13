@@ -6,17 +6,17 @@ import {
   BookIcon,
   BookOpenIcon, BookUserIcon,
   ClipboardPenIcon,
-  EarthIcon, FilePenIcon,
-  FingerprintIcon,
+  EarthIcon, FilePenIcon, FileWarningIcon,
+  FingerprintIcon, HammerIcon,
   HouseIcon,
   LayoutDashboardIcon, ListEndIcon, MailIcon, MegaphoneIcon, MessageCircleIcon,
   PencilRulerIcon,
   PrinterIcon,
-  RssIcon, SchoolIcon,
-  ServerCrashIcon,
-  ShieldAlertIcon, ShieldCheckIcon,
+  RssIcon, SchoolIcon, ScissorsLineDashedIcon,
+  ServerCrashIcon, SettingsIcon,
+  ShieldAlertIcon, ShieldCheckIcon, TrafficConeIcon,
   TreePalmIcon,
-  UserCogIcon, UsersIcon,
+  UserCogIcon, UserIcon, UsersIcon,
   ZapIcon,
 } from "lucide-react";
 
@@ -116,10 +116,12 @@ export const appConfig: AppConfig[] = [
         items: [
           {
             title: "Mainspace",
+            icon: HammerIcon,
             url: "/training/locations/mainspace",
           },
           {
             title: "Heartspace",
+            icon: ScissorsLineDashedIcon,
             url: "/training/locations/heartspace",
           },
         ],
@@ -132,10 +134,12 @@ export const appConfig: AppConfig[] = [
         items: [
           {
             title: "Approved Materials",
+            icon: TrafficConeIcon,
             url: "/training/approved-materials",
           },
           {
             title: "Risk Assessments",
+            icon: FileWarningIcon,
             url: "/training/risk-assessments",
           },
         ],
@@ -163,17 +167,23 @@ export const appConfig: AppConfig[] = [
   },
   {
     name: "User",
-    url: "/user",
+    url: "/user/me",
     logo: UserCogIcon,
     color: "#701a75",
     description: "Manage your user details here",
-    mainMenuNavigable: false,
+    mainMenuNavigable: true,
     routes: [
       {
-        title: "Home",
-        url: "/user",
-        icon: HouseIcon,
+        title: "Profile",
+        url: "/user/me",
+        icon: UserIcon,
         isActive: true,
+      },
+      {
+        title: "Settings",
+        url: "/user/settings",
+        icon: SettingsIcon,
+        isActive: false,
       },
     ],
     navSub: [{ name: "iDocs", url: "https://docs.iforge.sheffield.ac.uk", icon: BookOpenIcon }],
