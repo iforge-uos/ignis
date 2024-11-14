@@ -1,37 +1,36 @@
-import { AppDispatch, AppRootState } from "@/redux/store.ts";
 import { PostSignIn, PostSignInProps } from "@/services/sign_in/signInService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card.tsx";
-import { useDispatch, useSelector } from "react-redux";
-
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card";
 import { errorDisplay } from "@/components/errors/ErrorDisplay";
-import { signInActions } from "@/redux/sign_in.slice.ts";
-import { FlowStepComponent } from "@/types/signInActions.ts";
+import { FlowStepComponent } from "@/types/signInActions";
 import { useNavigate } from "@tanstack/react-router";
-import { Button } from "@ui/components/ui/button.tsx";
-import { Loader } from "@ui/components/ui/loader.tsx";
+import { Button } from "@ui/components/ui/button";
+import { Loader } from "@ui/components/ui/loader";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useAtom } from 'jotai';
+import {activeLocationAtom, resetSessionAtom, sessionAtom} from "@/atoms/signInAppAtoms.ts";
 
 const SignInDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const queryClient = useQueryClient();
-  const dispatch: AppDispatch = useDispatch();
-  const signInSession = useSelector((state: AppRootState) => state.signIn.session);
-  const activeLocation = useSelector((state: AppRootState) => state.signIn.active_location);
-  const abortController = new AbortController(); // For gracefully cancelling the query
+  const [session] = useAtom(sessionAtom);
+  const [activeLocation] = useAtom(activeLocationAtom);
+  const [, resetSession] = useAtom(resetSessionAtom);
+
+  const abortController = new AbortController();
   const [canContinue, setCanContinue] = useState<boolean>(false);
   const navigate = useNavigate();
   const timeout = 3000;
 
   const signInProps: PostSignInProps = {
     locationName: activeLocation,
-    uCardNumber: signInSession?.ucard_number ?? "",
+    uCardNumber: session?.ucard_number ?? "",
     signal: abortController.signal,
     postBody: {
-      ucard_number: signInSession?.ucard_number ?? "",
+      ucard_number: session?.ucard_number ?? "",
       location: activeLocation,
-      reason_id: signInSession?.sign_in_reason?.id ?? "",
-      tools: signInSession?.training?.map((training) => training.name) ?? [],
+      reason_id: session?.sign_in_reason?.id ?? "",
+      tools: session?.training?.map((training) => training.name) ?? [],
     },
   };
 
@@ -43,24 +42,24 @@ const SignInDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
       console.log("Error", error);
       abortController.abort();
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       console.log("Success");
       setCanContinue(true);
       abortController.abort();
-      dispatch(signInActions.resetSignInSession());
-      queryClient.invalidateQueries({ queryKey: ["locationStatus"] });
+      resetSession(null);
+      await queryClient.invalidateQueries({ queryKey: ["locationStatus"] });
       toast.success("User signed in!");
-      navigate({ to: "/sign-in" });
+      await navigate({ to: "/sign-in" });
     },
   });
 
   const successDisplay = (
-    <>
-      <div className="flex justify-items-center justify-center">
-        <h1 className="text-xl flex-auto">Success!</h1>
-        <p className="text-sm">Redirecting to sign-in page in ~{timeout / 1000} seconds...</p>
-      </div>
-    </>
+      <>
+        <div className="flex justify-items-center justify-center">
+          <h1 className="text-xl flex-auto">Success!</h1>
+          <p className="text-sm">Redirecting to sign-in page in ~{timeout / 1000} seconds...</p>
+        </div>
+      </>
   );
 
   const handleSecondaryClick = () => {
@@ -73,7 +72,7 @@ const SignInDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
       abortController.abort();
       onPrimary?.();
       console.log("Done ");
-      dispatch(signInActions.resetSignInSession());
+      resetSession(null);
     }
   };
 
@@ -82,31 +81,31 @@ const SignInDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   }, [mutate]);
 
   return (
-    <>
-      <Card className="w-[700px]">
-        <CardHeader>
-          <CardTitle>Signing In</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {!(canContinue || error || isPending) && (
-            <Button onClick={() => mutate()} autoFocus={true} variant="outline" className="h-[200px] w-full">
-              Sign in
+      <>
+        <Card className="w-[700px]">
+          <CardHeader>
+            <CardTitle>Signing In</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {!(canContinue || error || isPending) && (
+                <Button onClick={() => mutate()} autoFocus={true} variant="outline" className="h-[200px] w-full">
+                  Sign in
+                </Button>
+            )}
+            {isPending && <Loader />}
+            {!isPending && error && !canContinue && errorDisplay({ error })}
+            {!isPending && canContinue && successDisplay}
+          </CardContent>
+          <CardFooter className="flex justify-between flex-row-reverse">
+            <Button onClick={handlePrimaryClick} disabled={!canContinue}>
+              Continue
             </Button>
-          )}
-          {isPending && <Loader />}
-          {!isPending && error && !canContinue && errorDisplay({ error })}
-          {!isPending && canContinue && successDisplay}
-        </CardContent>
-        <CardFooter className="flex justify-between flex-row-reverse">
-          <Button onClick={handlePrimaryClick} disabled={!canContinue}>
-            Continue
-          </Button>
-          <Button onClick={handleSecondaryClick} variant="outline">
-            Go Back
-          </Button>
-        </CardFooter>
-      </Card>
-    </>
+            <Button onClick={handleSecondaryClick} variant="outline">
+              Go Back
+            </Button>
+          </CardFooter>
+        </Card>
+      </>
   );
 };
 

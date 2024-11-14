@@ -1,6 +1,5 @@
 import { errorDisplay } from "@/components/errors/ErrorDisplay";
-import { signInActions, useSignInSessionField } from "@/redux/sign_in.slice.ts";
-import { AppDispatch, AppRootState } from "@/redux/store.ts";
+
 import { SelectedTrainingPipDisplay } from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SelectedTrainingPipDisplay.tsx";
 import ToolSelectionList from "@/routes/_authenticated/_reponly/sign-in/actions/-components/TrainingSelectionList.tsx";
 import { GetSignIn, GetSignInProps } from "@/services/sign_in/signInService";
@@ -13,9 +12,10 @@ import { Button } from "@ui/components/ui/button.tsx";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card.tsx";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@ui/components/ui/collapsible.tsx";
 import { Loader } from "@ui/components/ui/loader.tsx";
+import { useAtom } from "jotai";
 import { ChevronsDownUp, ChevronsUpDown } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import {activeLocationAtom, sessionAtom, sessionFieldAtom} from "@/atoms/signInAppAtoms.ts";
 
 /*
 three categories of tools that can be selected:
@@ -28,11 +28,15 @@ export type TrainingStatus = "SELECTABLE" | "UNSELECTABLE" | "DISABLED";
 export type CategoryTrainingMap = Record<TrainingStatus, Training[]>;
 
 const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
-  const abortController = new AbortController(); // For gracefully cancelling the query
+  const abortController = new AbortController();
 
-  const activeLocation = useSelector((state: AppRootState) => state.signIn.active_location);
-  const uCardNumber = useSignInSessionField("ucard_number");
-  const user = useSignInSessionField("user");
+  const [activeLocation] = useAtom(activeLocationAtom);
+  const [,setSession] = useAtom(sessionAtom);
+  const [uCardNumber] = useAtom(sessionFieldAtom('ucard_number'));
+  const [user] = useAtom(sessionFieldAtom('user'));
+  const [, setTraining] = useAtom(sessionFieldAtom('training'));
+  const [isBackTracking] = useAtom(sessionFieldAtom('navigation_is_backtracking'));
+  const [, setNavigationIsBacktracking] = useAtom(sessionFieldAtom('navigation_is_backtracking'));
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [trainingMap, setTrainingMap] = useState<CategoryTrainingMap>({
@@ -43,19 +47,13 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
 
   const [selectedTrainings, setSelectedTrainings] = useState<Training[]>([]);
   const [canContinue, setCanContinue] = useState<boolean>(false);
-  const dispatch: AppDispatch = useDispatch();
-
-  // Check if the user is backtracking (do not auto send the user back to the previous step)
-  const isBackTracking = useSelector(
-    (state: AppRootState) => state.signIn.session?.navigation_is_backtracking ?? false,
-  );
 
   const signInProps: GetSignInProps = {
     locationName: activeLocation,
     uCardNumber: uCardNumber ?? "",
     signal: abortController.signal,
   };
-  // Using the useQuery hook to fetch the sign-in data
+
   const { data, isLoading, error } = useQuery({
     queryKey: ["getSignIn", signInProps],
     queryFn: () => {
@@ -69,36 +67,32 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
 
   const handleOnTrainingSelect = (selectedTrainings: Training[]) => {
     setSelectedTrainings(selectedTrainings);
-    if (selectedTrainings.length > 0) {
-      setCanContinue(true);
-      return;
-    }
-    setCanContinue(false);
+    setCanContinue(selectedTrainings.length > 0);
   };
 
   const parseData = (data: User | undefined) => {
-    if (!data) {
-      return;
-    }
+    if (!data) return;
+
     const selectAbleTraining: Training[] = [];
     const unselectAbleTraining: Training[] = [];
     const disabledTraining: Training[] = [];
-    dispatch(signInActions.updateSignInSessionField("user", data));
+
+    // Update user in session
+    setSession((prev: any) => prev ? { ...prev, user: data } : null);
+
     const isRep = data.roles.some((role) => role.name === "Rep");
 
     if (isRep && !isBackTracking) {
       console.log("User is a rep && not backtracking");
-      // Dispatch the action directly instead of setting state
-      dispatch(signInActions.updateSignInSessionField("training", []));
-
-      onPrimary?.(); // Proceed to the next step
-      return; // Exit the function
+      setTraining([]);
+      onPrimary?.();
+      return;
     }
+
     if (isRep && isBackTracking) {
       console.log("User is a rep && backtracking");
-      // Dispatch the action directly instead of setting state
       setCanContinue(true);
-      return; // Exit the function
+      return;
     }
 
     if (!isRep) {
@@ -112,6 +106,7 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
         }
       }
     }
+
     setTrainingMap({
       SELECTABLE: selectAbleTraining,
       UNSELECTABLE: unselectAbleTraining,
@@ -119,12 +114,10 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
     });
   };
 
-  // Parse the data once it is fetched
-
   useEffect(() => {
     parseData(data);
     setSelectedTrainings([]);
-    dispatch(signInActions.updateSignInSessionField("navigation_is_backtracking", false));
+    setNavigationIsBacktracking(false);
   }, [data]);
 
   const handleSecondaryClick = () => {
@@ -137,7 +130,7 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
       abortController.abort();
       onPrimary?.();
       console.log("Selected Trainings: ", selectedTrainings);
-      dispatch(signInActions.updateSignInSessionField("training", selectedTrainings));
+      setTraining(selectedTrainings);
     }
   };
 

@@ -3,7 +3,6 @@ import { TeamIcon } from "@/components/icons/Team.tsx";
 import { iForgeEpoch } from "@/config/constants.ts";
 import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants.ts";
 import { uCardNumberToString } from "@/lib/utils.ts";
-import { AppRootState } from "@/redux/store.ts";
 import { AdminDisplay } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/AdminDisplay.tsx";
 import { ManageUserWidget } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/ManageUserWidget.tsx";
 import { SignInReasonWithToolsDisplay } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/SignInReasonDisplay.tsx";
@@ -18,10 +17,11 @@ import { Button } from "@ui/components/ui/button.tsx";
 import { Card } from "@ui/components/ui/card.tsx";
 import { Popover, PopoverContent, PopoverTrigger } from "@ui/components/ui/popover.tsx";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ui/components/ui/tooltip.tsx";
+import { useAtom } from "jotai";
 import { LogOut, Plus } from "lucide-react";
 import * as React from "react";
-import { useSelector } from "react-redux";
 import { toast } from "sonner";
+import {activeLocationAtom} from "@/atoms/signInAppAtoms.ts";
 
 interface SignInUserCardProps {
   user: PartialUserWithTeams;
@@ -34,15 +34,15 @@ interface SignInUserCardProps {
 }
 
 export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
-  user,
-  tools,
-  reason,
-  timeIn,
-  onSignOut,
-  onShiftReps,
-  isAdmin = false,
-}) => {
-  const activeLocation = useSelector((state: AppRootState) => state.signIn.active_location);
+                                                                                 user,
+                                                                                 tools,
+                                                                                 reason,
+                                                                                 timeIn,
+                                                                                 onSignOut,
+                                                                                 onShiftReps,
+                                                                                 isAdmin = false,
+                                                                               }) => {
+  const [activeLocation] = useAtom(activeLocationAtom);
   const abortController = new AbortController();
   const queryClient = useQueryClient();
 
@@ -60,18 +60,18 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
       console.error("Error", error);
       abortController.abort();
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       abortController.abort();
       toast.success(
-        <>
-          Successfully signed out{" "}
-          <a className="font-bold hover:underline underline-offset-4 hover:cursor-pointer" href={`/users/${user.id}`}>
-            {user.display_name}
-          </a>
-        </>,
+          <>
+            Successfully signed out{" "}
+            <a className="font-bold hover:underline underline-offset-4 hover:cursor-pointer" href={`/users/${user.id}`}>
+              {user.display_name}
+            </a>
+          </>,
       );
       onSignOut?.();
-      queryClient.invalidateQueries({ queryKey: ["locationStatus", "locationList", { activeLocation }] });
+      await queryClient.invalidateQueries({ queryKey: ["locationStatus", "locationList", { activeLocation }] });
     },
   });
 

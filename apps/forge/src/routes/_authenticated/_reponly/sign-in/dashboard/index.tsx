@@ -2,7 +2,6 @@ import ActiveLocationSelector from "@/components/sign-in/ActiveLocationSelector"
 import Title from "@/components/title";
 import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants.ts";
 import { extractError } from "@/lib/utils.ts";
-import { AppRootState } from "@/redux/store.ts";
 import { SignInDrawer } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignInDrawer.tsx";
 import { dataForLocation } from "@/services/sign_in/locationService";
 import type { QueueEntry, SignInEntry } from "@ignis/types/sign_in.ts";
@@ -12,44 +11,44 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert.tsx";
 import { Loader } from "@ui/components/ui/loader.tsx";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { QueuedDrawer } from "./-components/QueuedDraw";
-import { useAuth } from "@/hooks/useAuth";
+import { useAtom } from "jotai";
+import { activeLocationAtom } from "@/atoms/signInAppAtoms";
+import {useUserRoles} from "@/hooks/useUserRoles.ts";
 
-export default function SignInDashboard() {
+function SignInDashboard() {
   const queryClient = useQueryClient();
-  const activeLocation = useSelector((state: AppRootState) => state.signIn.active_location);
+  const [activeLocation] = useAtom(activeLocationAtom);
+
   const [signedInUsers, setSignedInUsers] = useState<SignInEntry[]>([]);
   const [queuedUsers, setQueuedUsers] = useState<QueueEntry[]>([]);
   const [signedInReps, setSignedInReps] = useState<SignInEntry[]>([]);
   const [signInOffShiftReps, setSignInOffShiftReps] = useState<SignInEntry[]>([]);
-  const { user } = useAuth();
+  const isUserAdmin = useUserRoles().includes("admin");
 
-  const isUserAdmin = !!user?.roles.find((role) => role.name === "Admin");
-
-  const handleRemoveSignedInUser = (userId: string) => {
+  const handleRemoveSignedInUser = async (userId: string) => {
     setSignedInUsers((currentUsers) => currentUsers.filter((signIn) => signIn.user.id !== userId));
-    queryClient.invalidateQueries({
+    await queryClient.invalidateQueries({
       queryKey: ["locationStatus", "locationList", { activeLocation }],
     });
   };
 
-  const handleRemoveSignedInRep = (userId: string) => {
+  const handleRemoveSignedInRep = async (userId: string) => {
     setSignedInReps((currentReps) => currentReps.filter((signIn) => signIn.user.id !== userId));
-    queryClient.invalidateQueries({
+    await queryClient.invalidateQueries({
       queryKey: ["locationStatus", "locationList", { activeLocation }],
     });
   };
 
-  const handleRemoveSignedInOffShiftRep = (userId: string) => {
+  const handleRemoveSignedInOffShiftRep = async (userId: string) => {
     setSignInOffShiftReps((currentOffShiftReps) => currentOffShiftReps.filter((signIn) => signIn.user.id !== userId));
-    queryClient.invalidateQueries({
+    await queryClient.invalidateQueries({
       queryKey: ["locationStatus", "locationList", { activeLocation }],
     });
   };
-  const handleDequeue = (userId: string) => {
+  const handleDequeue = async (userId: string) => {
     setQueuedUsers((currentQueuedUsers) => currentQueuedUsers.filter((place) => place.user.id !== userId));
-    queryClient.invalidateQueries({
+    await queryClient.invalidateQueries({
       queryKey: ["locationStatus", "locationList", { activeLocation }],
     });
   };

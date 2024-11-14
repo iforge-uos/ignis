@@ -1,13 +1,5 @@
 import { sign_in } from "@ignis/types";
-import { LocationName, PartialLocation, Reason, Training } from "@ignis/types/sign_in.ts";
-
-export interface SignInState {
-  active_location: LocationName;
-  is_loading: boolean;
-  error: string;
-  locations: { [KeyT in LocationName]: PartialLocation };
-  session: SignInSession | null;
-}
+import {Reason, Training } from "@ignis/types/sign_in.ts";
 
 // TODO IDEALLY THIS WOULD BE A SESSION PER FLOW TYPE BUT I DON'T WANT TO REFACTOR THE WHOLE THING RN
 export interface SignInSession {
