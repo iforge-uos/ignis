@@ -16,6 +16,9 @@ import { Apps } from "@/types/app";
 import { AuthProvider } from "@/providers/AuthProvider";
 import {useUser} from "@/lib/utils.ts";
 
+import { DevTools } from 'jotai-devtools'
+import 'jotai-devtools/styles.css'
+
 // Begin Router
 const queryClient = new QueryClient();
 
@@ -58,6 +61,7 @@ if (rootElement) {
         <HelmetProvider>
           <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
                 <AuthProvider>
+                  <DevTools />
                   <InnerApp />
                   <Toaster />
                 </AuthProvider>
