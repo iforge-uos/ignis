@@ -26,7 +26,8 @@ import {
   activeLocationAtom,
   sessionAtom,
   resetSessionAtom,
-  sessionFieldAtom,
+  sessionUserAtom,
+  sessionNavigationBacktrackingAtom
 } from "@/atoms/signInAppAtoms.ts";
 
 const flowConfig: FlowConfiguration = {
@@ -84,19 +85,17 @@ export default function SignInActionsManager<FlowT extends FlowType | undefined 
   const [currentFlow, setCurrentFlow] = useState<FlowType | null>(null);
   const [currentStep, setCurrentStep] = useState<AnyStep | null>(null);
   const activeLocation = useAtomValue(activeLocationAtom);
-  const userAtom = sessionFieldAtom("user");
-  const user = useAtomValue(userAtom);
+  const user = useAtomValue(sessionUserAtom);
   const [, setSession] = useAtom(sessionAtom);
   const resetSession = useSetAtom(resetSessionAtom);
-  const navigationBacktrackingAtom = sessionFieldAtom("navigation_is_backtracking");
-  const [, setNavigationBacktracking] = useAtom(navigationBacktrackingAtom);
+  const [, setNavigationBacktracking] = useAtom(sessionNavigationBacktrackingAtom);
 
   const navigate = useNavigate();
 
   const handleDoubleTapEscape = () => {
     setCurrentFlow(null);
     setCurrentStep(null);
-    resetSession(null);
+    resetSession();
   };
 
   useDoubleTapEscape(handleDoubleTapEscape);

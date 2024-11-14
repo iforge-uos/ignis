@@ -15,7 +15,13 @@ import { Loader } from "@ui/components/ui/loader.tsx";
 import { useAtom } from "jotai";
 import { ChevronsDownUp, ChevronsUpDown } from "lucide-react";
 import { useEffect, useState } from "react";
-import {activeLocationAtom, sessionAtom, sessionFieldAtom} from "@/atoms/signInAppAtoms.ts";
+import {
+  activeLocationAtom,
+  sessionNavigationBacktrackingAtom,
+  sessionTrainingAtom,
+  sessionUcardNumberAtom,
+  sessionUserAtom
+} from "@/atoms/signInAppAtoms.ts";
 
 /*
 three categories of tools that can be selected:
@@ -31,12 +37,10 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const abortController = new AbortController();
 
   const [activeLocation] = useAtom(activeLocationAtom);
-  const [,setSession] = useAtom(sessionAtom);
-  const [uCardNumber] = useAtom(sessionFieldAtom('ucard_number'));
-  const [user] = useAtom(sessionFieldAtom('user'));
-  const [, setTraining] = useAtom(sessionFieldAtom('training'));
-  const [isBackTracking] = useAtom(sessionFieldAtom('navigation_is_backtracking'));
-  const [, setNavigationIsBacktracking] = useAtom(sessionFieldAtom('navigation_is_backtracking'));
+  const [uCardNumber] = useAtom(sessionUcardNumberAtom);
+  const [user, setSessionUser] = useAtom(sessionUserAtom);
+  const [, setTraining] = useAtom(sessionTrainingAtom);
+  const [isBackTracking, setNavigationIsBacktracking] = useAtom(sessionNavigationBacktrackingAtom);
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [trainingMap, setTrainingMap] = useState<CategoryTrainingMap>({
@@ -78,7 +82,7 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
     const disabledTraining: Training[] = [];
 
     // Update user in session
-    setSession((prev: any) => prev ? { ...prev, user: data } : null);
+    setSessionUser(data)
 
     const isRep = data.roles.some((role) => role.name === "Rep");
 

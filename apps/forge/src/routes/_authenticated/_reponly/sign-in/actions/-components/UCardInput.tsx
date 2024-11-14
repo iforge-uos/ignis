@@ -4,12 +4,13 @@ import { Button } from "@ui/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card";
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@ui/components/ui/input-otp";
 import { useState } from "react";
-import { useAtom } from 'jotai';
-import {sessionAtom, sessionFieldAtom} from "@/atoms/signInAppAtoms.ts";
+import {useAtom, useSetAtom} from 'jotai';
+import {initializeSessionAtom, sessionUcardNumberAtom, sessionUserAtom} from "@/atoms/signInAppAtoms.ts";
 
 const UCardInput: FlowStepComponent = ({ onPrimary }) => {
-  const [, setSession] = useAtom(sessionAtom);
-  const [uCardNumber] = useAtom(sessionFieldAtom('ucard_number'));
+  const [uCardNumber, setUcardNumber] = useAtom(sessionUcardNumberAtom);
+  const [, setUser] = useAtom(sessionUserAtom);
+  const initializeSession = useSetAtom(initializeSessionAtom);
   const [otp, setOtp] = useState(uCardNumber ?? "");
   const [isOtpValid, setIsOtpValid] = useState(otp.length === UCARD_LENGTH);
 
@@ -21,27 +22,14 @@ const UCardInput: FlowStepComponent = ({ onPrimary }) => {
   const handleClear = () => {
     console.log("Clearing OTP");
     setOtp("");
-    setSession(prev => prev ? {
-      ...prev,
-      ucard_number: "",
-      user: null
-    } : null);
+    // Update individual atoms instead of session
+    setUcardNumber("");
+    setUser(null);
   };
 
   const handleOnSubmit = () => {
     if (isOtpValid) {
-      setSession(prev => prev ? {
-        ...prev,
-        ucard_number: otp,
-        user: null
-      } : {
-        ucard_number: otp,
-        user: null,
-        training: null,
-        sign_in_reason: null,
-        session_errored: false,
-        navigation_is_backtracking: false,
-      });
+      initializeSession(otp);
       onPrimary?.();
     }
   };

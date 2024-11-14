@@ -13,15 +13,19 @@ import Fuse from "fuse.js";
 import React, { useEffect, useState } from "react";
 import { SignInReason } from "./SignInReason";
 import {useAtom} from "jotai";
-import {activeLocationAtom, sessionAtom, sessionFieldAtom} from "@/atoms/signInAppAtoms.ts";
+import {
+  activeLocationAtom,
+  sessionErroredAtom,
+  sessionSignInReasonAtom,
+  sessionUserAtom
+} from "@/atoms/signInAppAtoms.ts";
 
 export const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const [inputValue, setInputValue] = useState("");
-  const [, setSession] = useAtom(sessionAtom);
   const [activeLocation] = useAtom(activeLocationAtom);
-  const [signInReason] = useAtom(sessionFieldAtom('sign_in_reason'));
-  const [sessionErrored] = useAtom(sessionFieldAtom('session_errored'));
-  const [user] = useAtom(sessionFieldAtom('user'));
+  const [signInReason, setSignInReason] = useAtom(sessionSignInReasonAtom);
+  const [sessionErrored] = useAtom(sessionErroredAtom);
+  const [user] = useAtom(sessionUserAtom);
 
   const [selectedReason, setSelectedReason] = useState<PartialReason | null>(signInReason ?? null);
   const { data: signInReasons, isLoading, isError, error } = useSignInReasons();
@@ -118,12 +122,10 @@ export const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary })
   };
 
   const handlePrimaryClick = () => {
-    if (canContinue) {
+    if (canContinue && selectedReason) {
+      // Update just the sign in reason atom
+      setSignInReason(selectedReason as Reason);
       onPrimary?.();
-      setSession(prev => prev ? {
-        ...prev,
-        sign_in_reason: selectedReason as Reason
-      } : null);
     }
   };
 

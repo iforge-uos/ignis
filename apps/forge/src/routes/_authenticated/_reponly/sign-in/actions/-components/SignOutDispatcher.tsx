@@ -39,7 +39,7 @@ const SignOutDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
     onSuccess: async () => {
       setCanContinue(true);
       abortController.abort();
-      resetSession(null);
+      resetSession();
       await queryClient.invalidateQueries({ queryKey: ["locationStatus"] });
       toast.success("User signed out successfully!");
       await navigate({ to: "/sign-in" });
@@ -65,7 +65,7 @@ const SignOutDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
       abortController.abort();
       onPrimary?.();
       console.log("Done ");
-      resetSession(null);
+      resetSession();
     }
   };
 

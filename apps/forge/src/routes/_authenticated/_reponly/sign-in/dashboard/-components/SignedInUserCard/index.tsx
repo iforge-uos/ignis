@@ -33,6 +33,35 @@ interface SignInUserCardProps {
   isAdmin?: boolean;
 }
 
+interface AddUserAttributesProps {
+    onShiftReps: PartialUserWithTeams[] | undefined;
+    user: PartialUserWithTeams;
+    activeLocation: LocationName;
+}
+
+export function AddUserAttributes({ onShiftReps, user, activeLocation }: AddUserAttributesProps) {
+    return (
+        <Popover>
+            <TooltipProvider>
+                <Tooltip>
+                    <PopoverTrigger asChild>
+                        <TooltipTrigger asChild>
+                            <Button variant="warning" disabled={!onShiftReps}>
+                                <Plus className="stroke-warning-foreground" />
+                                <span className="text-warning-foreground ml-1.5">Add</span>
+                            </Button>
+                        </TooltipTrigger>
+                    </PopoverTrigger>
+                    <TooltipContent>Add in-person training and infractions.</TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
+            <PopoverContent className="mt-2 ml-2 w-[350px] shadow-xl border-2 border-gray-200 dark:border-gray-700">
+                <ManageUserWidget user={user} onShiftReps={onShiftReps ?? []} locationName={activeLocation} />
+            </PopoverContent>
+        </Popover>
+    );
+}
+
 export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
                                                                                  user,
                                                                                  tools,
@@ -138,29 +167,4 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
   );
 };
 
-export function AddUserAttributes(
-  onShiftReps: PartialUserWithTeams[] | undefined,
-  user: PartialUserWithTeams,
-  activeLocation: LocationName,
-) {
-  return (
-    <Popover>
-      <TooltipProvider>
-        <Tooltip>
-          <PopoverTrigger asChild>
-            <TooltipTrigger asChild>
-              <Button variant="warning" disabled={!onShiftReps}>
-                <Plus className="stroke-warning-foreground" />
-                <span className="text-warning-foreground ml-1.5">Add</span>
-              </Button>
-            </TooltipTrigger>
-          </PopoverTrigger>
-          <TooltipContent>Add in-person training and infractions.</TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-      <PopoverContent className="mt-2 ml-2 w-[350px] shadow-xl border-2 border-gray-200 dark:border-gray-700">
-        <ManageUserWidget user={user} onShiftReps={onShiftReps ?? []} locationName={activeLocation} />
-      </PopoverContent>
-    </Popover>
-  );
-}
+

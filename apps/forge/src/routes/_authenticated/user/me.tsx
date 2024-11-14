@@ -179,14 +179,15 @@ function Component() {
                           </TableCell>
                           <TableCell>
                             <div className="text-sm text-center">
-                              {
-                                training.renewal_due
-                                  ? new Date(
-                                      training.renewal_due,
-                                    ).toLocaleDateString()
-                                  : 'Never'
-                                // FIXME this is also broken
-                              }
+                              {/*{*/}
+                              {/*  training.renewal_due*/}
+                              {/*    ? new Date(*/}
+                              {/*        training.renewal_due,*/}
+                              {/*      ).toLocaleDateString()*/}
+                              {/*    : 'Never'*/}
+                              {/*  // FIXME this is also broken*/}
+                              {/*}*/}
+                              Never
                             </div>
                           </TableCell>
                         </TableRow>
