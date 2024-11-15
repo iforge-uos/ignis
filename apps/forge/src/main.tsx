@@ -47,9 +47,7 @@ declare module "@tanstack/react-router" {
 }
 
 function InnerApp() {
-  //posthog.init("phc_XIzxR3RXcdmcyMPJCCnQFtxoL0gRshzEXo4kM925LvA", { api_host: "https://web-mkc4o00.sampiiiii.dev" });
-  const useUserHook = useUser()
-  return <RouterProvider router={router} context={{ user: useUserHook }} />;
+  return <RouterProvider router={router} context={{ user: useUser() }} />;
 }
 
 const rootElement = document.getElementById("root");

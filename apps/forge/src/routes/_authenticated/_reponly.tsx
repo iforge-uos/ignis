@@ -7,7 +7,6 @@ import { Outlet, createFileRoute } from "@tanstack/react-router";
 export const Route = createFileRoute("/_authenticated/_reponly")({
   component: () => {
     const { isAuthenticated, user } = useAuth();
-    console.log(user);
 
     if (!isAuthenticated) {
       return <LoginModal />;
