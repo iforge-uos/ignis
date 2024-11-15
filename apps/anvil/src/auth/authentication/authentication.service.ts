@@ -1,9 +1,9 @@
-import { UsersService } from "@/users/users.service";
-import type { User } from "@ignis/types/users";
-import { Injectable, UnauthorizedException } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
-import { CookieOptions, Response } from "express";
-import { JwtPayload } from "../interfaces/jwtpayload.interface";
+import {UsersService} from "@/users/users.service";
+import type {User} from "@ignis/types/users";
+import {Injectable, UnauthorizedException} from "@nestjs/common";
+import {JwtService} from "@nestjs/jwt";
+import {CookieOptions, Response} from "express";
+import {JwtPayload} from "../interfaces/jwtpayload.interface";
 
 const ms = require("ms");
 
@@ -71,7 +71,7 @@ export class AuthenticationService {
   setAuthCookies(res: Response, access_token: string, refresh_token: string, csrf_token: string) {
     const accessTokenExpiresIn = new Date(Date.now() + ms(process.env.ACCESS_TOKEN_EXPIRES_IN ?? "1h"));
     const refreshTokenExpiresIn = new Date(Date.now() + ms(process.env.REFRESH_TOKEN_EXPIRES_IN ?? "7d"));
-    const csrfTokenExpiresIn = new Date(Date.now() + ms(process.env.REFRESH_TOKEN_EXPIRES_IN ?? "1h"));
+    const csrfTokenExpiresIn = new Date(Date.now() + ms(process.env.ACCESS_TOKEN_EXPIRES_IN ?? "1h"));
 
     const cookieOptions: CookieOptions = {
       httpOnly: true,
@@ -111,5 +111,10 @@ export class AuthenticationService {
     res.clearCookie("access_token", cookieOptions);
 
     res.clearCookie("refresh_token", cookieOptions);
+  }
+
+  getExpiryDate(token: string): Date {
+    const payload = this.jwtService.verify(token);
+    return new Date(payload.exp * 1000);
   }
 }

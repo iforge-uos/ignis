@@ -76,7 +76,8 @@ export class AuthenticationController {
             throw new BadRequestException("Refresh token is missing");
         }
 
-        const expiryDate = new Date();
+        const expiryDate = this.authService.getExpiryDate(refreshToken);
+
         try {
             await this.blacklistService.addToBlacklist(refreshToken, expiryDate);
             this.logger.log("Refresh token added to blacklist", AuthenticationController.name);
@@ -163,7 +164,8 @@ export class AuthenticationController {
             throw new UnauthorizedException("User does not have the required role");
         }
 
-        const expiryDate = new Date();
+        const expiryDate = this.authService.getExpiryDate(refreshToken);
+
         await this.blacklistService.addToBlacklist(refreshToken, expiryDate);
 
         return await this.authService.login(user);
