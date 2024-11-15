@@ -18,6 +18,7 @@ import {useUser} from "@/lib/utils.ts";
 
 import { DevTools } from 'jotai-devtools'
 import 'jotai-devtools/styles.css'
+import {ForgeRouterContext} from "@/routes/__root.tsx";
 
 // Begin Router
 const queryClient = new QueryClient();
@@ -40,14 +41,25 @@ const router = createRouter({
 declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router;
+    routeContext: ForgeRouterContext;
   }
   interface StaticDataRouteOption {
     title?: Apps;
   }
 }
 
-function InnerApp() {
-  return <RouterProvider router={router} context={{ user: useUser() }} />;
+function App() {
+  const user = useUser();
+
+  return (
+      <RouterProvider
+          router={router}
+          context={{
+            queryClient,
+            user
+          }}
+      />
+  );
 }
 
 const rootElement = document.getElementById("root");
@@ -60,7 +72,7 @@ if (rootElement) {
           <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
                 <AuthProvider>
                   <DevTools />
-                  <InnerApp />
+                  <App />
                   <Toaster />
                 </AuthProvider>
           </ThemeProvider>

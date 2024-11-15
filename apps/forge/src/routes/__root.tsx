@@ -54,10 +54,12 @@ function RootComponent() {
   );
 }
 
-export const Route = createRootRouteWithContext<{
-  queryClient: QueryClient;
-  user: ReturnType<typeof useUser>;
-}>()({
+export interface ForgeRouterContext {
+    user: ReturnType<typeof useUser>
+    queryClient: QueryClient;
+}
+
+export const Route = createRootRouteWithContext<ForgeRouterContext>()({
   component: RootComponent,
   notFoundComponent: NotFound,
   errorComponent: GenericError,
