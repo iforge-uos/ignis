@@ -9,7 +9,7 @@ import {
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubButton,
-  SidebarMenuSubItem,
+  SidebarMenuSubItem, useSidebar,
 } from "@ignis/ui/components/ui/sidebar";
 import { Route } from "@/types/nav";
 import { useUserRoles } from "@/hooks/useUserRoles";
@@ -21,6 +21,14 @@ interface NavMainProps {
 
 export function NavMain({ items }: NavMainProps) {
   const userRoles = useUserRoles();
+  const { toggleSidebar, open} = useSidebar()
+
+  // function that toggles sidebar if its not open when button is clicked
+  const toggleSidebarIfClosed = () => {
+    if(!open) {
+      toggleSidebar()
+    }
+  }
 
   // Filter the items based on the user's roles
   const filteredItems = items.filter((item) => {
@@ -43,7 +51,7 @@ export function NavMain({ items }: NavMainProps) {
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
                 {item.items && item.items.length > 0 ? (
-                  <SidebarMenuButton tooltip={item.title}>
+                  <SidebarMenuButton tooltip={item.title} onClick={toggleSidebarIfClosed}>
                     {item.icon && <item.icon />}
                     <span>{item.title}</span>
                     <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
