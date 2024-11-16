@@ -1,19 +1,24 @@
-// src/components/LoginModal.tsx
-import { Link } from "@tanstack/react-router";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@ignis/ui/components/ui/card";
+import { previousPathnameAtom } from "@/atoms/authSessionAtoms.ts";
 import Title from "@/components/title";
 import { Button } from "@ignis/ui/components/ui/button";
-import { Info } from "lucide-react";
-import { previousPathnameAtom } from "@/atoms/authSessionAtoms.ts";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@ignis/ui/components/ui/card";
+// src/components/LoginModal.tsx
+import {Link, useLocation} from "@tanstack/react-router";
 import { useAtom } from "jotai";
+import { Info } from "lucide-react";
 import { useEffect } from "react";
 
 export function LoginModal() {
+  const pathname = useLocation({
+    select: (location) => location.pathname,
+  });
   const [, setPreviousPathname] = useAtom(previousPathnameAtom);
 
+
   useEffect(() => {
-    setPreviousPathname(window.location.pathname);
-  }, [setPreviousPathname]);
+    setPreviousPathname(pathname);
+
+  }, [pathname, setPreviousPathname]);
 
   return (
     <div className="flex justify-center items-center w-full h-full">
