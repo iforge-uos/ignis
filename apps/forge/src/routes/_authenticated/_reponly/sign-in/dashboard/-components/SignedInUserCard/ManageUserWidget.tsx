@@ -6,7 +6,6 @@ import { TrainingSection } from "@/routes/_authenticated/_reponly/sign-in/dashbo
 import type { LocationName } from "@ignis/types/sign_in.ts";
 import { PartialUserWithTeams } from "@ignis/types/users.ts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui/components/ui/tabs.tsx";
-import posthog from "posthog-js";
 import * as React from "react";
 
 type ManageSections = "Training" | "Infraction" | "Teams";
@@ -45,13 +44,6 @@ export const ManageUserWidget: React.FC<ManageUserWidgetProps> = ({ user, locati
     Infraction: "Rep",
     Teams: "Admin",
   };
-
-  posthog.onFeatureFlags(() => {
-    // feature flags are guaranteed to be available at this point
-    if (!posthog.isFeatureEnabled("user-promotion-ui")) {
-      sectionPermissions.Teams = "noone";
-    }
-  });
 
   function canUserViewSection(roleNames: string[], section: ManageSections): boolean {
     const requiredRole = sectionPermissions[section];
