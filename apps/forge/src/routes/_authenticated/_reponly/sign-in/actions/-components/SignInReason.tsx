@@ -19,8 +19,8 @@ export const SignInReason = ({
               variant="default"
               className={cn("max-w-48 rounded-sm shadow-lg justify-center items-center", className)}
             >
-              {index !== undefined ? <Kbd className="mr-1 text-muted-foreground text-center">F{index + 1}</Kbd> : null}
-              {<Category category={reason.category} className="mr-1" />}
+              {index !== undefined ? <Kbd className="mr-1">F{index + 1}</Kbd> : null}
+              {<Category category={reason.category} />}
               {reason.category === "UNIVERSITY_MODULE" ? reason.name.split(" ")[0] : reason.name}
             </Badge>
           </div>
