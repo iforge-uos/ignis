@@ -1,7 +1,7 @@
 import { commandMenuIsOpenAtom } from "@/atoms/commandMenuAtoms.ts";
 import { useUser } from "@/lib/utils";
 import {RoutePath} from "@/types/router.ts";
-import { useNavigate } from "@tanstack/react-router";
+import {Link, useNavigate} from "@tanstack/react-router";
 import {
   Command,
   CommandDialog,
@@ -133,8 +133,26 @@ export default function CommandMenu() {
                 placeholder="Type a command or search..."
             />
             <CommandList className="max-h-[calc(80vh-60px)] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
-              <CommandEmpty>No results found.</CommandEmpty>
-              {[...groups].flatMap(([name, shortcuts], index) => [
+              <CommandEmpty className="py-6 text-center">
+                <div className="flex flex-col items-center gap-4">
+                  <div className="flex flex-col gap-2">
+                    <p className="text-sm text-muted-foreground">
+                      No results found
+                    </p>
+                    <p className="text-sm font-medium">
+                      Please{" "}
+                      <Link
+                          to="/sign-in"
+                          className="inline-flex items-center gap-1 text-primary hover:underline"
+                      >
+                        sign in
+                        <span aria-hidden="true">→</span>
+                      </Link>
+                      {" "}to access all commands
+                    </p>
+                  </div>
+                </div>
+              </CommandEmpty>              {[...groups].flatMap(([name, shortcuts], index) => [
                 <CommandGroup key={`group-${name}`} heading={name}>
                   {Object.entries(shortcuts).map(([key, { callback, label, icon, disabled }]) => (
                       <CommandItem
