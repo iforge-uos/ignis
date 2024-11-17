@@ -71,29 +71,37 @@ export class AuthenticationService {
   setAuthCookies(res: Response, access_token: string, refresh_token: string, csrf_token: string) {
     const accessTokenExpiresIn = new Date(Date.now() + ms(process.env.ACCESS_TOKEN_EXPIRES_IN ?? "1h"));
     const refreshTokenExpiresIn = new Date(Date.now() + ms(process.env.REFRESH_TOKEN_EXPIRES_IN ?? "7d"));
-    const csrfTokenExpiresIn = new Date(Date.now() + ms(process.env.ACCESS_TOKEN_EXPIRES_IN ?? "1h"));
+    const csrfTokenExpiresIn = new Date(Date.now() + ms(process.env.ACCESS_TOKEN_EXPIRES_IN ?? "1h") + ms("30s"));
 
-    const cookieOptions: CookieOptions = {
-      httpOnly: true,
+    const baseCookieOptions: CookieOptions = {
       secure: true,
       path: "/",
       sameSite: "lax",
-      expires: accessTokenExpiresIn,
     };
 
     if (process.env.NODE_ENV === "production") {
-      cookieOptions.domain = ".iforge.sheffield.ac.uk";
+      baseCookieOptions.domain = ".iforge.sheffield.ac.uk";
     }
 
-    res.cookie("access_token", access_token, cookieOptions);
+    res.cookie("access_token", access_token, {
+      ...baseCookieOptions,
+      httpOnly: true,
+      expires: accessTokenExpiresIn,
+    });
 
-    cookieOptions.expires = refreshTokenExpiresIn;
-    res.cookie("refresh_token", refresh_token, cookieOptions);
+    res.cookie("refresh_token", refresh_token, {
+      ...baseCookieOptions,
+      httpOnly: true,
+      expires: refreshTokenExpiresIn,
+    });
 
-    cookieOptions.httpOnly = false;
-    cookieOptions.expires = csrfTokenExpiresIn;
-    res.cookie("csrf_token", csrf_token, cookieOptions);
+    res.cookie("csrf_token", csrf_token, {
+      ...baseCookieOptions,
+      httpOnly: false,
+      expires: csrfTokenExpiresIn,
+    });
   }
+
 
   clearAuthCookies(res: Response) {
     const cookieOptions: CookieOptions = {
@@ -111,6 +119,8 @@ export class AuthenticationService {
     res.clearCookie("access_token", cookieOptions);
 
     res.clearCookie("refresh_token", cookieOptions);
+
+    res.clearCookie("csrf_token", { ...cookieOptions, httpOnly: false });
   }
 
   getExpiryDate(token: string): Date {
