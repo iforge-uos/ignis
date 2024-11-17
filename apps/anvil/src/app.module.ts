@@ -1,4 +1,7 @@
+import * as process from "node:process";
+import { CsrfMiddleware } from "@/auth/authentication/middleware/csrf.middleware";
 import { EdgeDBModule } from "@/edgedb/edgedb.module";
+import { IdempotencyMiddleware } from "@/shared/middleware/idempotency.middleware";
 import { TrainingService } from "@/training/training.service";
 import { BullModule } from "@nestjs/bull";
 import { Logger, MiddlewareConsumer, Module, NestModule, RequestMethod } from "@nestjs/common";
@@ -23,9 +26,6 @@ import { SignInModule } from "./sign-in/sign-in.module";
 import { SignInService } from "./sign-in/sign-in.service";
 import { TrainingController } from "./training/training.controller";
 import { UsersModule } from "./users/users.module";
-import * as process from "node:process";
-import { CsrfMiddleware } from "@/auth/authentication/middleware/csrf.middleware";
-import { IdempotencyMiddleware } from "@/shared/middleware/idempotency.middleware";
 
 @Module({
   imports: [
@@ -87,11 +87,17 @@ export class AppModule implements NestModule {
   }
 
   private getCsrfExclusions(): { path: string; method: RequestMethod }[] {
-    // Example: Parse a CSV from environment variables or a config
-    const routes = process.env.CSRF_EXCLUDE_ROUTES || "auth/login,POST;auth/refresh,POST";
-    return routes.split(";").map((route) => {
+    console.log("Env CSRF_EXCLUDE_ROUTES:", process.env.CSRF_EXCLUDE_ROUTES);
+
+    const routes = process.env.CSRF_EXCLUDE_ROUTES || "v1/authentication/login,POST;v1/authentication/refresh,POST";
+    const exclusions = routes.split(";").map((route) => {
       const [path, method] = route.split(",");
       return { path, method: RequestMethod[method as keyof typeof RequestMethod] };
     });
+
+    console.log("Generated CSRF Exclusions:", exclusions);
+    return exclusions;
   }
+
+
 }

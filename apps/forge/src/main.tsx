@@ -6,15 +6,15 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 import ReactDOM from "react-dom/client";
 import { HelmetProvider } from "react-helmet-async";
 
-import { routeTree } from "@/routeTree.gen.ts";
-import { Toaster } from "@ui/components/ui/sonner.tsx";
-import React from "react";
 import { GenericError } from "@/components/routing/GenericError";
 import { Loading } from "@/components/routing/Loading";
 import { NotFound } from "@/components/routing/NotFound";
-import { Apps } from "@/types/app";
-import { AuthProvider } from "@/providers/AuthProvider";
 import {useUser} from "@/lib/utils.ts";
+import { AuthProvider } from "@/providers/AuthProvider";
+import { routeTree } from "@/routeTree.gen.ts";
+import { Apps } from "@/types/app";
+import { Toaster } from "@ui/components/ui/sonner.tsx";
+import React from "react";
 
 import { DevTools } from 'jotai-devtools'
 import 'jotai-devtools/styles.css'
@@ -49,17 +49,17 @@ declare module "@tanstack/react-router" {
 }
 
 function App() {
-  const user = useUser();
+    const user = useUser();
 
-  return (
-      <RouterProvider
-          router={router}
-          context={{
-            queryClient,
-            user
-          }}
-      />
-  );
+    return (
+        <RouterProvider
+            router={router}
+            context={{
+                queryClient,
+                user
+            }}
+        />
+    );
 }
 
 const rootElement = document.getElementById("root");
@@ -71,7 +71,7 @@ if (rootElement) {
         <HelmetProvider>
           <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
                 <AuthProvider>
-                  <DevTools />
+                  <DevTools position="bottom-right"/>
                   <App />
                   <Toaster />
                 </AuthProvider>

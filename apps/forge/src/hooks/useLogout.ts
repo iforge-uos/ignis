@@ -1,38 +1,39 @@
-import { useAtom } from "jotai";
-import { useNavigate } from "@tanstack/react-router";
-import { toast } from "sonner";
 import axiosInstance from "@/api/axiosInstance";
-import { authEffectAtom } from "@/atoms/authSessionAtoms.ts";
+import {authEffectAtom, loadingAtom} from "@/atoms/authSessionAtoms.ts";
+import { useNavigate } from "@tanstack/react-router";
 import axios from "axios";
+import { useAtom } from "jotai";
+import { toast } from "sonner";
 
 export const useLogout = () => {
-  const [, setAuthEffect] = useAtom(authEffectAtom); // Use Jotai to handle logout effects
+  const [, setAuthEffect] = useAtom(authEffectAtom);
+  const [, setLoading] = useAtom(loadingAtom);
   const navigate = useNavigate();
 
   return async () => {
     try {
-      // Call the logout endpoint
       await axiosInstance.post("/authentication/logout");
 
-      // Clear the Jotai state for user and authentication
-      setAuthEffect(false); // This will set `isAuthenticatedAtom` to false and clear `userAtom`
+      setAuthEffect(false);
+      setLoading(false);
 
-      // Show success message
       toast.success("Logged out successfully.");
 
-      // Navigate to the home page
       await navigate({ to: "/" });
     } catch (error) {
-      // Handle specific error cases
       if (axios.isAxiosError(error) && error.response?.status === 409) {
+        setAuthEffect(false);
+        setLoading(false);
         await navigate({ to: "/" });
         return;
       }
 
-      // Log the error and show an error message
       console.error("Logout failed:", error);
       toast.error("Logout failed.");
+      setAuthEffect(false);
+      setLoading(false);
       await navigate({ to: "/" });
     }
   };
 };
+

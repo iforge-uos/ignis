@@ -22,7 +22,7 @@ DISCORD_CLIENT_CALLBACK_URL="http://127.0.0.1:3000/api/v1/authentication/discord
 # AUTH
 JWT_SECRET="op://IT/Anvil JWT Signing Key/credential"
 CSRF_SECRET="op://IT/Anvil CSRF Secret Key/credential"
-CSRF_EXCLUDE_ROUTES=auth/login,POST;auth/refresh,POST
+CSRF_EXCLUDE_ROUTES=v1/auth/login,POST;v1/auth/refresh,POST
 ACCESS_TOKEN_EXPIRES_IN="1h"
 REFRESH_TOKEN_EXPIRES_IN="7d"
 ADMIN_ROLE="5ea86cc8-f86c-11ee-8cfe-bfcf9fe5f446"
