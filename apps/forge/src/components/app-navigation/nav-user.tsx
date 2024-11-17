@@ -1,4 +1,7 @@
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@ignis/ui/components/ui/sidebar";
+import { UserAvatar } from "@/components/avatar";
+import { useUser } from "@/lib/utils";
+import { useTheme } from "@/providers/themeProvider/use-theme";
+import { Button } from "@ignis/ui/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,12 +12,9 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@ignis/ui/components/ui/dropdown-menu";
-import { BadgeCheck, Bell, ChevronsUpDown, LogIn, LogOut, Moon, Settings, Sparkles, Sun } from 'lucide-react';
-import { UserAvatar } from "@/components/avatar";
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@ignis/ui/components/ui/sidebar";
 import { Link } from "@tanstack/react-router";
-import { useTheme } from "@/providers/themeProvider/use-theme";
-import { useUser } from "@/lib/utils";
-import { Button } from "@ignis/ui/components/ui/button";
+import { BadgeCheck, Bell, ChevronsUpDown, LogIn, LogOut, Moon, Settings, Sparkles, Sun } from 'lucide-react';
 
 export function NavUser() {
   const user = useUser();
@@ -98,7 +98,7 @@ export function NavUser() {
                     <DropdownMenuShortcut>{`⇧${metaKey}P`}</DropdownMenuShortcut>
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
+                <DropdownMenuItem asChild disabled>
                   <Link to="/user/settings">
                     <Settings className="mr-2 h-4 w-4" />
                     Settings
