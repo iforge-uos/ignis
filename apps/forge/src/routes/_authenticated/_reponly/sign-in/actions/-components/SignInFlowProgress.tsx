@@ -4,6 +4,7 @@ import { Timeline, TimelineDot, TimelineHeading, TimelineItem, TimelineLine } fr
 import React, { useEffect, useState } from "react";
 
 interface SignInProgressProps {
+  className?: string;
   currentStep: AnyStep;
   flowType: FlowType;
   totalSteps: number;
@@ -12,7 +13,7 @@ interface SignInProgressProps {
 
 const SWITCH_WIDTH_PX = 1024;
 
-const SignInFlowProgress: React.FC<SignInProgressProps> = ({ currentStep, flowType }) => {
+const SignInFlowProgress: React.FC<SignInProgressProps> = ({ currentStep, flowType, className }) => {
   const [timelineOrientation, setTimelineOrientation] = useState<"vertical" | "horizontal">(
     window.innerWidth >= SWITCH_WIDTH_PX ? "vertical" : "horizontal",
   );
@@ -48,7 +49,7 @@ const SignInFlowProgress: React.FC<SignInProgressProps> = ({ currentStep, flowTy
   const currentStepIndex = stepTitles.indexOf(currentStep as string);
 
   return (
-    <Card>
+    <Card className={className}>
       <CardHeader className="flex items-center justify-center">
         <h3 className="text-lg font-bold">{"Progress"}</h3>
       </CardHeader>

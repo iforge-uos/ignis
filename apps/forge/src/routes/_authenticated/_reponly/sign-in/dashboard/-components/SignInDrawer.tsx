@@ -1,21 +1,12 @@
-import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants";
-import { uCardNumberToString } from "@/lib/utils";
-import { AppRootState } from "@/redux/store";
 import { SignedInUserCard } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard";
-import { useSignInReasons } from "@/services/sign_in/signInReasonService";
-import { PatchSignIn } from "@/services/sign_in/signInService";
-import type { PartialReason, SignInEntry } from "@ignis/types/sign_in.ts";
+import type { SignInEntry } from "@ignis/types/sign_in.ts";
 import { PartialUserWithTeams } from "@ignis/types/users.ts";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert.tsx";
 import { Button } from "@ui/components/ui/button.tsx";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@ui/components/ui/collapsible.tsx";
 import { ArrowDownIcon, ArrowRightIcon, Ban } from "lucide-react";
 import { FC, useState } from "react";
-import { useDrop } from "react-dnd";
-import { useSelector } from "react-redux";
-import { toast } from "sonner";
 
 // SignInDrawer Props
 interface SignInDrawerProps {
@@ -25,7 +16,6 @@ interface SignInDrawerProps {
   onSignOut: (user_id: string) => void;
   startExpanded?: boolean;
   isAdmin?: boolean;
-  reason?: PartialReason;
 }
 
 export const SignInDrawer: FC<SignInDrawerProps> = ({
@@ -35,51 +25,13 @@ export const SignInDrawer: FC<SignInDrawerProps> = ({
   onSignOut,
   onShiftReps,
   isAdmin = false,
-  reason,
 }) => {
-  const activeLocation = useSelector((state: AppRootState) => state.signIn.active_location);
   const [isOpen, setIsOpen] = useState(startExpanded);
-  const abortController = new AbortController();
-  const queryClient = useQueryClient();
-
-  const { mutate: changeReasonMutate } = useMutation({
-    mutationKey: ["patchSignIn"],
-    mutationFn: ({ user, newReason }: { user: PartialUserWithTeams; newReason: PartialReason }) =>
-      PatchSignIn({
-        locationName: activeLocation,
-        uCardNumber: uCardNumberToString(user.ucard_number),
-        signal: abortController.signal,
-        postBody: {
-          reason_id: newReason.id,
-        },
-      }),
-    retry: 0,
-    onError: (error) => {
-      console.error("Error", error);
-      abortController.abort();
-      toast.error("Failed to set new shift type");
-    },
-    onSuccess: (_data, { user }) => {
-      abortController.abort();
-      toast.success("Successfully changed shift type");
-      queryClient.invalidateQueries({ queryKey: ["locationStatus", "locationList", { activeLocation }] });
-      const updatedEntries = entries.filter((entry) => entry.user.id !== user.id);
-    },
-  });
-
-  const [, drop] = useDrop(() => ({
-    accept: "SignedInUserCard",
-    drop: ({ user, reason: oldReason }: { user: PartialUserWithTeams; reason: PartialReason }) => {
-      console.log(reason, oldReason);
-      if (reason === oldReason) return;
-      changeReasonMutate({ user, newReason: reason! });
-    },
-  }));
 
   const toggleOpen = () => setIsOpen(!isOpen);
 
   return (
-    <Collapsible className="space-y-2 mt-2 mb-2" defaultOpen={startExpanded} ref={drop}>
+    <Collapsible className="space-y-2 mt-2 mb-2" defaultOpen={startExpanded}>
       <CollapsibleTrigger asChild>
         <Button
           className="flex items-center justify-between space-x-4 py-7 w-full"

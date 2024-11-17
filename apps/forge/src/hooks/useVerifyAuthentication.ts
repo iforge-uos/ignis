@@ -1,38 +1,69 @@
-import { useCallback, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { User } from "@ignis/types/users.ts";
-import axiosInstance from "@/api/axiosInstance.ts";
-import { userActions } from "@/redux/user.slice.ts";
-import { authActions } from "@/redux/auth.slice.ts";
+import axiosInstance from "@/api/axiosInstance";
+import { authEffectAtom, loadingAtom, userAtom } from "@/atoms/authSessionAtoms.ts";
+import { useAtom } from "jotai";
+import { useCallback, useEffect, useRef } from "react";
 
 export const useVerifyAuthentication = () => {
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<User | null>(null);
-  const dispatch = useDispatch();
+  const [, setAuthEffect] = useAtom(authEffectAtom);
+  const [, setUser] = useAtom(userAtom);
+  const [loading, setLoading] = useAtom(loadingAtom);
+
+  const isVerifyingRef = useRef(false); // Prevents multiple authentication requests simultaneously
+  const isLoggedOutRef = useRef(false); // Keeps track of logged-out state to stop further requests
+
+  const logout = useCallback(() => {
+    isLoggedOutRef.current = true;
+    setAuthEffect(false);
+    setLoading(false);
+    setUser(null);
+  }, [setAuthEffect, setLoading, setUser]);
+
+  // Set the logout callback once when the hook mounts
+  useEffect(() => {
+    axiosInstance.setLogoutCallback(logout);
+  }, [logout]);
 
   const verifyAuthentication = useCallback(async () => {
+    if (isLoggedOutRef.current) {
+      return; // Stop verification if the user has been logged out
+    }
+
+    if (isVerifyingRef.current) {
+      return; // Prevent multiple calls if a request is already in progress
+    }
+
+    isVerifyingRef.current = true; // Mark that verification is in progress
     setLoading(true);
+
     try {
       const response = await axiosInstance.get("/users/me");
       if (response.status === 200) {
-        dispatch(userActions.setUser(response.data));
-        dispatch(authActions.onLogin());
+        // Set user data and mark as authenticated
         setUser(response.data);
+        setAuthEffect(true);
+        isLoggedOutRef.current = false; // Mark that user is authenticated
       } else {
-        dispatch(authActions.onLogout());
+        // Clear user data and mark as aren't authenticated
+        setAuthEffect(false);
         setUser(null);
       }
     } catch (error) {
       setUser(null);
-      dispatch(authActions.onLogout());
+      setAuthEffect(false);
     } finally {
       setLoading(false);
+      isVerifyingRef.current = false; // Mark that verification is complete
     }
-  }, [dispatch]);
+  }, [setUser, setAuthEffect, setLoading]);
 
+  // Run the authentication verification once when the hook is used
   useEffect(() => {
-    verifyAuthentication();
+    if (!isLoggedOutRef.current) {
+      verifyAuthentication();
+    }
   }, [verifyAuthentication]);
 
-  return { user, loading, setUser };
+  const [user] = useAtom(userAtom); // Get the user state
+
+  return { user, loading };
 };

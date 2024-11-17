@@ -1,8 +1,6 @@
 import { ErrorDisplayProps, errorDisplay } from "@/components/errors/ErrorDisplay";
 import { Category } from "@/components/icons/SignInReason";
 import { extractError } from "@/lib/utils";
-import { signInActions, useSignInSessionField } from "@/redux/sign_in.slice";
-import { AppDispatch, AppRootState } from "@/redux/store";
 import { getCommonReasons, useSignInReasons } from "@/services/sign_in/signInReasonService";
 import { FlowStepComponent } from "@/types/signInActions";
 import type { PartialReason, Reason } from "@ignis/types/sign_in";
@@ -13,22 +11,27 @@ import { Input } from "@ui/components/ui/input";
 import { Loader } from "@ui/components/ui/loader";
 import Fuse from "fuse.js";
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { SignInReason } from "./SignInReason";
+import {useAtom} from "jotai";
+import {
+  activeLocationAtom,
+  sessionErroredAtom,
+  sessionSignInReasonAtom,
+  sessionUserAtom
+} from "@/atoms/signInAppAtoms.ts";
 
 export const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const [inputValue, setInputValue] = useState("");
-  const [selectedReason, setSelectedReason] = useState<PartialReason | null>(
-    useSignInSessionField("sign_in_reason") ?? null,
-  );
+  const [activeLocation] = useAtom(activeLocationAtom);
+  const [signInReason, setSignInReason] = useAtom(sessionSignInReasonAtom);
+  const [sessionErrored] = useAtom(sessionErroredAtom);
+  const [user] = useAtom(sessionUserAtom);
+
+  const [selectedReason, setSelectedReason] = useState<PartialReason | null>(signInReason ?? null);
   const { data: signInReasons, isLoading, isError, error } = useSignInReasons();
   const [fuse, setFuse] = useState<Fuse<PartialReason>>(new Fuse([], { keys: ["name"] }));
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
   const [canContinue, setCanContinue] = useState<boolean>(false);
-  const hasSessionError = useSignInSessionField("session_errored") ?? false;
-  const user = useSignInSessionField("user");
-  const dispatch = useDispatch();
-  const activeLocation = useSelector((state: AppRootState) => state.signIn.active_location);
 
   const {
     data: commonReasons,
@@ -40,21 +43,21 @@ export const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary })
   });
 
   useEffect(() => {
-    if (selectedReason && !hasSessionError) {
+    if (selectedReason && !sessionErrored) {
       setCanContinue(true);
       handleSelectReason(selectedReason);
     }
     if (signInReasons) {
       setFuse(
-        new Fuse(signInReasons, {
-          keys: ["name"],
-          includeScore: true,
-          threshold: 0.6,
-          ignoreLocation: true,
-        }),
+          new Fuse(signInReasons, {
+            keys: ["name"],
+            includeScore: true,
+            threshold: 0.6,
+            ignoreLocation: true,
+          }),
       );
     }
-  }, [hasSessionError, signInReasons, selectedReason]);
+  }, [sessionErrored, signInReasons, selectedReason]);
 
   const handleSelectReason = (reason: PartialReason) => {
     setInputValue("");
@@ -100,7 +103,7 @@ export const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary })
     } else if (event.key >= "F1" && event.key <= "F6") {
       const index = Number.parseInt(event.key.slice(1)) - 1;
       if (commonReasons && index < commonReasons.length) {
-        event.preventDefault(); // Prevent default F-key behavior
+        event.preventDefault();
         handleSelectReason(commonReasons[index]);
       }
     }
@@ -119,11 +122,13 @@ export const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary })
   };
 
   const handlePrimaryClick = () => {
-    if (canContinue) {
+    if (canContinue && selectedReason) {
+      // Update just the sign in reason atom
+      setSignInReason(selectedReason as Reason);
       onPrimary?.();
-      dispatch(signInActions.updateSignInSessionField("sign_in_reason", selectedReason as Reason));
     }
   };
+
 
   return (
     <Card className="w-[700px]">

@@ -18,3 +18,7 @@ export const locationNameToCSSName = (location: Location | Lowercase<Location>):
       throw new Error(`Unreachable ${location}`);
   }
 };
+
+export const ATOM_KEYS = {
+  AUTH_REDIRECT_PATH: 'Ignis:authRedirectPath',
+};

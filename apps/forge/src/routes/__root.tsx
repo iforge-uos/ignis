@@ -1,15 +1,17 @@
-import { AuthContext } from "@/components/auth-provider";
+import { AppSidebar } from "@/components/app-navigation";
 import CommandMenu from "@/components/command-menu";
 import { TailwindIndicator } from "@/components/dev/Tailwind-Indicator.tsx";
 import Footer from "@/components/footer";
-import NavBar from "@/components/navbar";
 import { GenericError } from "@/components/routing/GenericError.tsx";
 import { Loading } from "@/components/routing/Loading.tsx";
 import { NotFound } from "@/components/routing/NotFound.tsx";
 import UCardReader from "@/components/ucard-reader";
 import { QueryClient } from "@tanstack/react-query";
 import { Outlet, ScrollRestoration, createRootRouteWithContext } from "@tanstack/react-router";
+import { SidebarInset, SidebarProvider } from "@ignis/ui/components/ui/sidebar";
 import React, { Suspense } from "react";
+import { SidebarHeader } from "@/components/app-navigation/sidebar-header";
+import {useUser} from "@/lib/utils.ts";
 
 const TanStackRouterDevtools = import.meta.env.PROD
   ? () => null // Render nothing in production
@@ -23,32 +25,41 @@ const TanStackRouterDevtools = import.meta.env.PROD
 export function RootComponentInner({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <NavBar />
       <TailwindIndicator />
       <ScrollRestoration />
-      <CommandMenu />
       <UCardReader />
-      {children} {/* This is where child routes will render */}
+      {children}
       <Suspense>
-        <TanStackRouterDevtools />
+        <TanStackRouterDevtools position={"bottom-right"} />
       </Suspense>
-      <Footer />
     </>
   );
 }
 
 function RootComponent() {
   return (
-    <RootComponentInner>
-      <Outlet />
-    </RootComponentInner>
+    <>
+      <CommandMenu />
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          <SidebarHeader />
+          <RootComponentInner>
+            <Outlet />
+          </RootComponentInner>
+          <Footer />
+        </SidebarInset>
+      </SidebarProvider>
+    </>
   );
 }
 
-export const Route = createRootRouteWithContext<{
-  queryClient: QueryClient;
-  auth: AuthContext;
-}>()({
+export interface ForgeRouterContext {
+    user: ReturnType<typeof useUser>
+    queryClient: QueryClient;
+}
+
+export const Route = createRootRouteWithContext<ForgeRouterContext>()({
   component: RootComponent,
   notFoundComponent: NotFound,
   errorComponent: GenericError,

@@ -1,6 +1,11 @@
+import {
+  activeLocationAtom,
+  resetSessionAtom,
+  sessionAtom,
+  sessionNavigationBacktrackingAtom,
+  sessionUserAtom
+} from "@/atoms/signInAppAtoms.ts";
 import useDoubleTapEscape from "@/hooks/useDoubleTapEscape.ts";
-import { signInActions, useSignInSessionField } from "@/redux/sign_in.slice.ts";
-import { AppDispatch, AppRootState } from "@/redux/store.ts";
 import QueueDispatcher from "@/routes/_authenticated/_reponly/sign-in/actions/-components/QueueDispatcher.tsx";
 import SignInDispatcher from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SignInDispatcher.tsx";
 import SignInFlowProgress from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SignInFlowProgress.tsx";
@@ -21,8 +26,8 @@ import {
 import { SignInSession } from "@/types/sign_in.ts";
 import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button.tsx";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import React, { ReactElement, useEffect, useLayoutEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import SigningInUserCard from "./SigningInUserCard.tsx";
 
 const flowConfig: FlowConfiguration = {
@@ -57,9 +62,9 @@ interface SignInManagerProps<FlowT extends FlowType | undefined = undefined> {
 }
 
 export const getStepComponent = (
-  currentFlow: FlowType,
-  currentStep: SignInSteps | SignOutSteps | EnqueueSteps,
-  flowConfig: FlowConfiguration,
+    currentFlow: FlowType,
+    currentStep: SignInSteps | SignOutSteps | EnqueueSteps,
+    flowConfig: FlowConfiguration,
 ): FlowStepComponent => {
   switch (currentFlow) {
     case FlowType.SignIn:
@@ -73,27 +78,28 @@ export const getStepComponent = (
   }
 };
 
-// SignInActionsManager Component
 export default function SignInActionsManager<FlowT extends FlowType | undefined = undefined>({
-  initialFlow,
-  initialStep,
-}: SignInManagerProps<FlowT>): React.ReactElement {
+                                                                                               initialFlow,
+                                                                                               initialStep,
+                                                                                             }: SignInManagerProps<FlowT>): React.ReactElement {
   const [currentFlow, setCurrentFlow] = useState<FlowType | null>(null);
   const [currentStep, setCurrentStep] = useState<AnyStep | null>(null);
-  const activeLocation = useSelector((state: AppRootState) => state.signIn.active_location);
-  const user = useSignInSessionField("user");
+  const activeLocation = useAtomValue(activeLocationAtom);
+  const user = useAtomValue(sessionUserAtom);
+  const [, setSession] = useAtom(sessionAtom);
+  const resetSession = useSetAtom(resetSessionAtom);
+  const [, setNavigationBacktracking] = useAtom(sessionNavigationBacktrackingAtom);
 
-  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   const handleDoubleTapEscape = () => {
     setCurrentFlow(null);
     setCurrentStep(null);
+    resetSession();
   };
 
   useDoubleTapEscape(handleDoubleTapEscape);
 
-  // Function to advance to the next step within the current flow
   const moveToNextStep = () => {
     if (currentFlow == null || currentStep == null) return;
 
@@ -109,7 +115,6 @@ export default function SignInActionsManager<FlowT extends FlowType | undefined 
     }
   };
 
-  // Function to go back to the previous step within the current flow
   const moveToPreviousStep = () => {
     if (currentFlow == null || currentStep == null) return;
 
@@ -131,7 +136,7 @@ export default function SignInActionsManager<FlowT extends FlowType | undefined 
 
   // Make new Session
   useEffect(() => {
-    if (!initialStep) dispatch(signInActions.setSignInSession(defaultSignInSession));
+    if (!initialStep) setSession(defaultSignInSession);
   }, []);
 
   useEffect(() => {
@@ -144,21 +149,18 @@ export default function SignInActionsManager<FlowT extends FlowType | undefined 
     if (initialFlow) {
       setCurrentFlow(initialFlow);
       if (!initialStep) {
-        // Dynamically set the initial step for the initialFlow
         initialStep = Object.keys(flowConfig[initialFlow])[0] as any;
       }
       setCurrentStep(initialStep!);
     }
   }, []);
 
-  // Function to initialize the flow
   const startFlow = (flowType: FlowType) => {
     setCurrentFlow(flowType);
     if (!initialStep) {
-      // Dynamically set the initial step based on the flowType
       const initialStep: AnyStep = Object.keys(flowConfig[flowType])[0] as AnyStep;
       setCurrentStep(initialStep);
-      dispatch(signInActions.setSignInSession(defaultSignInSession));
+      setSession(defaultSignInSession);
     }
   };
 
@@ -168,13 +170,13 @@ export default function SignInActionsManager<FlowT extends FlowType | undefined 
     const StepComponent = getStepComponent(currentFlow, currentStep, flowConfig);
 
     if (StepComponent) {
-      // This is to stop the case where a rep is backtracking and then step 3 auto navigates them forwards again
       if (currentStep === SignInSteps.Step3) {
-        dispatch(signInActions.updateSignInSessionField("navigation_is_backtracking", true));
+        setNavigationBacktracking(true);
       }
-      return StepComponent ? <StepComponent onPrimary={moveToNextStep} onSecondary={moveToPreviousStep} /> : null;
+      return StepComponent ? (
+          <StepComponent onPrimary={moveToNextStep} onSecondary={moveToPreviousStep} />
+      ) : null;
     }
-    // Handle the end of the flow or an invalid step
     return <div>Flow completed or invalid step</div>;
   };
 
@@ -185,59 +187,78 @@ export default function SignInActionsManager<FlowT extends FlowType | undefined 
   const totalSteps = currentFlow ? getTotalSteps(currentFlow) : 0;
   const currentStepIndex = currentStep ? getStepIndex(Object.values(SignInSteps), currentStep) : 0;
 
-  const buttonStyles = "h-20 w-64";
+  const buttonStyles = "h-16 w-full sm:h-20 sm:w-64";
 
   return (
-    <div className="p-4">
-      {currentFlow && (
-        <div className="flex items-center justify-between p-3 space-x-4 bg-card text-card-foreground mt-4 mb-4 drop-shadow-lg dark:shadow-none flex-col md:flex-row">
-          <div className="flex items-center">
-            <span className="text-lg font-bold mr-2">Current Flow:</span>
-            <span className="text-ring uppercase text-xl">{flowTypeToPrintTable(currentFlow)}</span>
-          </div>
-          <Button
-            onClick={() => {
-              setCurrentFlow(null);
-              navigate({ to: "/sign-in" });
-            }}
-          >
-            Clear Flow
-          </Button>
-        </div>
-      )}
-
-      <div className="flex flex-col lg:flex-row">
+      <div className="p-2 sm:p-4">
         {currentFlow && (
-          <>
-            <SignInFlowProgress currentStep={currentStep as AnyStep} flowType={currentFlow} totalSteps={totalSteps}>
-              {/* Pass the current step's index and total steps */}
-              <div>{`Current Step: ${currentStepIndex + 1} of ${totalSteps}`}</div>
-            </SignInFlowProgress>
-            <div className="mt-4 lg:mt-0 lg:ml-4 columns-1 ">
-              {user && <SigningInUserCard user={user} />}
-              <div className="lg:mt-4">{renderCurrentStep()}</div>
+            <div className="flex items-center justify-between p-2 sm:p-3 space-y-2 sm:space-y-0 space-x-0 sm:space-x-4 bg-card text-card-foreground mt-2 sm:mt-4 mb-2 sm:mb-4 drop-shadow-lg dark:shadow-none flex-col sm:flex-row">
+              <div className="flex items-center">
+                <span className="text-base sm:text-lg font-bold mr-2">Current Flow:</span>
+                <span className="text-ring uppercase text-lg sm:text-xl">{flowTypeToPrintTable(currentFlow)}</span>
+              </div>
+              <Button
+                  onClick={async () => {
+                    setCurrentFlow(null);
+                    await navigate({ to: "/sign-in" });
+                  }}
+                  className="w-full sm:w-auto"
+              >
+                Clear Flow
+              </Button>
             </div>
-          </>
         )}
 
-        {!currentFlow && (
-          <div className="flex flex-1 items-center justify-center">
-            <div className="p-6 space-y-4 w-full rounded-xl shadow-lg bg-card text-card-foreground">
-              <div className="flex flex-row space-x-4 justify-center">
-                <Button variant="success" className={buttonStyles} onClick={() => startFlow(FlowType.SignIn)}>
-                  Start Sign In
-                </Button>
-                <Button variant="destructive" className={buttonStyles} onClick={() => startFlow(FlowType.SignOut)}>
-                  Start Sign Out
-                </Button>
-                <Button variant="warning" className={buttonStyles} onClick={() => startFlow(FlowType.Enqueue)}>
-                  Enqueue User
-                </Button>
+        <div className="flex flex-col lg:flex-row">
+          {currentFlow && (
+              <>
+                <SignInFlowProgress
+                    currentStep={currentStep as AnyStep}
+                    flowType={currentFlow}
+                    totalSteps={totalSteps}
+                    className="w-full lg:w-auto"
+                >
+                  <div className="text-sm sm:text-base">
+                    {`Current Step: ${currentStepIndex + 1} of ${totalSteps}`}
+                  </div>
+                </SignInFlowProgress>
+                <div className="mt-4 lg:mt-0 lg:ml-4 w-full">
+                  {user && <SigningInUserCard user={user} className="w-full" />}
+                  <div className="mt-4 w-full">{renderCurrentStep()}</div>
+                </div>
+              </>
+          )}
+
+          {!currentFlow && (
+              <div className="flex flex-1 items-center justify-center w-full">
+                <div className="p-3 sm:p-6 space-y-4 w-full rounded-xl shadow-lg bg-card text-card-foreground">
+                  <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 justify-center">
+                    <Button
+                        variant="success"
+                        className={buttonStyles}
+                        onClick={() => startFlow(FlowType.SignIn)}
+                    >
+                      Start Sign In
+                    </Button>
+                    <Button
+                        variant="destructive"
+                        className={buttonStyles}
+                        onClick={() => startFlow(FlowType.SignOut)}
+                    >
+                      Start Sign Out
+                    </Button>
+                    <Button
+                        variant="warning"
+                        className={buttonStyles}
+                        onClick={() => startFlow(FlowType.Enqueue)}
+                    >
+                      Enqueue User
+                    </Button>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-    </div>
   );
 }

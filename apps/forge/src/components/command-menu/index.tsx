@@ -1,5 +1,4 @@
 import { useUser } from "@/lib/utils";
-import { RootState } from "@/redux/store";
 import { useNavigate } from "@tanstack/react-router";
 import {
   Command,
@@ -14,7 +13,6 @@ import {
 } from "@ui/components/ui/command";
 import { LayoutDashboard, LogIn, LogOut, Settings, UserRound, UserRoundSearch } from "lucide-react";
 import React, { ReactElement } from "react";
-import { useSelector } from "react-redux";
 
 export default function CommandMenu() {
   const [open, setOpen] = React.useState(false);

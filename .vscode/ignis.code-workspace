@@ -1,7 +1,7 @@
 {
   "folders": [
     {
-      "name": "ROOT",
+      "name": "Ignis",
       "path": "../"
     },
     {
@@ -43,13 +43,15 @@
     "[typescriptreact]": {
       "editor.defaultFormatter": "biomejs.biome"
     },
-    "liveServer.settings.multiRootWorkspaceName": "ROOT"
+    "liveServer.settings.multiRootWorkspaceName": "Ignis"
   },
   "extensions": {
     "recommendations": [
       "biomejs.biome",
       "bradlc.vscode-tailwindcss",
-      "YoavBls.pretty-ts-errors"
+      "YoavBls.pretty-ts-errors",
+      "magicstack.edgedb",
+      "million.million-lint"
     ]
   }
 }

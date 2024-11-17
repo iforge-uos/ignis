@@ -1,33 +1,38 @@
-import { useEffect } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { authEffectAtom } from "@/atoms/authSessionAtoms";
 import Title from "@/components/title";
 import { useLogout } from "@/hooks/useLogout.ts";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useAtom } from "jotai";
+import { useEffect } from "react";
 
 const LogOutComponent = () => {
   const logout = useLogout();
   const navigate = useNavigate();
+  const [, setAuthEffect] = useAtom(authEffectAtom);
 
   useEffect(() => {
     const performLogout = async () => {
       try {
         await logout();
+        setAuthEffect(false);
+        await navigate({ to: "/" });
       } catch (error) {
-        // handle errors if any
         console.error("Failed to logout:", error);
-        navigate({ to: "/" });
+        setAuthEffect(false);
+        await navigate({ to: "/" });
       }
     };
 
     performLogout();
-  }, [logout, navigate]);
+  }, [logout, navigate, setAuthEffect]);
 
   return (
-    <>
-      <Title prompt="Logout" />
-      <div className="p-2">
-        <h3>Logging out...</h3>
-      </div>
-    </>
+      <>
+        <Title prompt="Logout" />
+        <div className="p-2">
+          <h3>Logging out...</h3>
+        </div>
+      </>
   );
 };
 

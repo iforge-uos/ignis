@@ -1,20 +1,17 @@
 import { Forbidden } from "@/components/routing/Forbidden";
-import { useUser } from "@/lib/utils";
-import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
+import { Outlet, createFileRoute } from "@tanstack/react-router";
+import {useAuth} from "@/hooks/useAuth.ts";
+import {LoginModal} from "@/components/auth/LoginModal.tsx";
 
 export const Route = createFileRoute("/_authenticated/admin")({
-  beforeLoad: ({ context, location }) => {
-    if (!context.auth.user) {
-      throw redirect({
-        to: "/auth/login",
-        search: {
-          redirect: location.href,
-        },
-      });
-    }
-  },
   component: () => {
-    if (!useUser()!.roles.find((role) => role.name === "Admin")) {
+    const { isAuthenticated, user } = useAuth();
+    console.log(user);
+
+    if (!isAuthenticated) {
+      return <LoginModal />;
+    }
+    if (!user?.roles.find((role) => role.name === "Admin")) {
       return <Forbidden />;
     }
     return <Outlet />;
