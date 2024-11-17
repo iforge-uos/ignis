@@ -4,18 +4,34 @@ import {
   ArrowRightToLineIcon,
   BellIcon,
   BookIcon,
-  BookOpenIcon, BookUserIcon,
+  BookOpenIcon,
+  BookUserIcon,
   ClipboardPenIcon,
-  EarthIcon, FilePenIcon, FileWarningIcon,
-  FingerprintIcon, HammerIcon, HouseIcon,
-  LayoutDashboardIcon, ListEndIcon, MailIcon, MegaphoneIcon, MessageCircleIcon,
+  EarthIcon,
+  FilePenIcon,
+  FileWarningIcon,
+  FingerprintIcon,
+  HammerIcon,
+  HouseIcon,
+  LayoutDashboardIcon,
+  ListEndIcon,
+  MailIcon,
+  MegaphoneIcon,
+  MessageCircleIcon,
   PencilRulerIcon,
   PrinterIcon,
-  RssIcon, SchoolIcon, ScissorsLineDashedIcon,
-  ServerCrashIcon, SettingsIcon,
-  ShieldAlertIcon, ShieldCheckIcon, TrafficConeIcon,
+  RssIcon,
+  SchoolIcon,
+  ScissorsLineDashedIcon,
+  ServerCrashIcon,
+  SettingsIcon,
+  ShieldAlertIcon,
+  ShieldCheckIcon,
+  TrafficConeIcon,
   TreePalmIcon,
-  UserCogIcon, UserIcon, UsersIcon,
+  UserCogIcon,
+  UserIcon,
+  UsersIcon,
   ZapIcon,
 } from "lucide-react";
 
@@ -45,7 +61,7 @@ export const appConfig: AppConfig[] = [
     url: "/sign-in/",
     logo: PencilRulerIcon,
     color: "#500724",
-    description: "Manage your Sign-In data here.",
+    description: "Manage your sign-in data here",
     mainMenuNavigable: true,
     routes: [
       {
@@ -99,7 +115,7 @@ export const appConfig: AppConfig[] = [
     url: "/training",
     color: "#022c22",
     logo: BookIcon,
-    description: "Do your user training here.",
+    description: "Do your user training here",
     mainMenuNavigable: true,
     routes: [
       {
@@ -152,7 +168,7 @@ export const appConfig: AppConfig[] = [
     url: "/printing",
     color: "#1e1b4b",
     logo: PrinterIcon,
-    description: "Manage your 3D Print Jobs here (coming soon)",
+    description: "Manage your 3D print jobs here (coming soon)",
     mainMenuNavigable: false,
     routes: [
       {
@@ -282,7 +298,7 @@ export const appConfig: AppConfig[] = [
     url: "/socials",
     color: "#fb7185",
     logo: RssIcon,
-    description: "iForge Social Media Profiles",
+    description: "iForge social media profiles",
     mainMenuNavigable: false,
     routes: [
       {
