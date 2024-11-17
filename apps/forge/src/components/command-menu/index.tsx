@@ -1,7 +1,6 @@
 import { commandMenuIsOpenAtom } from "@/atoms/commandMenuAtoms.ts";
 import { useUser } from "@/lib/utils";
 import {RoutePath} from "@/types/router.ts";
-import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
 import { useNavigate } from "@tanstack/react-router";
 import {
   Command,
