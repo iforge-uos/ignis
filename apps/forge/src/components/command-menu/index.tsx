@@ -1,3 +1,4 @@
+import {commandMenuIsOpenAtom} from "@/atoms/commandMenuAtoms.ts";
 import { useUser } from "@/lib/utils";
 import { useNavigate } from "@tanstack/react-router";
 import {
@@ -11,37 +12,48 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "@ui/components/ui/command";
+import { useAtom } from "jotai";
 import { LayoutDashboard, LogIn, LogOut, Settings, UserRound, UserRoundSearch } from "lucide-react";
 import React, { ReactElement } from "react";
 
 export default function CommandMenu() {
-  const [open, setOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useAtom(commandMenuIsOpenAtom)
   const navigate = useNavigate();
+  const inputRef = React.useRef<HTMLInputElement>(null)
 
   const isMacOs = !!navigator?.userAgent?.match(/Macintosh;/);
   const metaKey = isMacOs ? "⌘" : "Ctrl";
 
+  // Focus the input when opened
+  React.useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => {
+        inputRef.current?.focus()
+      }, 0)
+    }
+  }, [isOpen])
+
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "k" && (isMacOs ? e.metaKey : e.ctrlKey)) {
-        e.preventDefault();
-        setOpen((open) => !open);
+        e.preventDefault()
+        setIsOpen((open) => !open)
       }
-    };
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
-  }, [isMacOs]);
+    }
+    document.addEventListener("keydown", down)
+    return () => document.removeEventListener("keydown", down)
+  }, [isMacOs, setIsOpen])
 
   const SETTINGS_SHORTCUTS: Record<string, [() => any, string, ReactElement]> = {
-    p: [() => navigate({ to: "/user/profile" }), "Profile", <UserRound className="mr-2 h-4 w-4" />],
-    ",": [() => navigate({ to: "/user/settings" }), "Settings", <Settings className="mr-2 h-4 w-4" />],
+    p: [() => navigate({ to: "/user/me" }), "Profile", <UserRound key="userProfileKey" className="mr-2 h-4 w-4" />],
+    ",": [() => navigate({ to: "/user/settings" }), "Settings", <Settings key="userSettingsKey" className="mr-2 h-4 w-4" />],
   };
 
   const USER_MANAGEMENT_SHORTCUTS: Record<string, [() => any, string, ReactElement]> = {
-    d: [() => navigate({ to: "/sign-in/dashboard" }), "Dashboard", <LayoutDashboard className="mr-2 h-4 w-4" />],
-    u: [() => navigate({ to: "/users" }), "Search users", <UserRoundSearch className="mr-2 h-4 w-4" />],
-    i: [() => navigate({ to: "/sign-in/actions/in" }), "Sign in", <LogIn className="mr-2 h-4 w-4" />],
-    o: [() => navigate({ to: "/sign-in/actions/out" }), "Sign out", <LogOut className="mr-2 h-4 w-4" />],
+    d: [() => navigate({ to: "/sign-in/dashboard" }), "Dashboard", <LayoutDashboard key="signinDashboardKey" className="mr-2 h-4 w-4" />],
+    u: [() => navigate({ to: "/users" }), "Search users", <UserRoundSearch key="usersPageKey" className="mr-2 h-4 w-4" />],
+    i: [() => navigate({ to: "/sign-in/actions/in" }), "Sign in", <LogIn key="signInActionKey" className="mr-2 h-4 w-4" />],
+    o: [() => navigate({ to: "/sign-in/actions/out" }), "Sign out", <LogOut key="signOutActionKey" className="mr-2 h-4 w-4" />],
   };
 
   const SHORTCUTS = { ...SETTINGS_SHORTCUTS, ...USER_MANAGEMENT_SHORTCUTS };
@@ -73,8 +85,11 @@ export default function CommandMenu() {
 
   return (
     <Command className="rounded-lg shadow-md">
-      <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Type a command or search..." />
+      <CommandDialog open={isOpen} onOpenChange={setIsOpen}>
+        <CommandInput
+            ref={inputRef}
+            placeholder="Type a command or search..."
+        />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
           {[...groups].flatMap(([name, shortcuts]: [string, typeof SHORTCUTS], index, array) => {

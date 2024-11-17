@@ -1,11 +1,12 @@
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@ignis/ui/components/ui/sidebar";
 import { AppSwitcher } from "@/components/app-navigation/app-switcher";
-import { NavUser } from "@/components/app-navigation/nav-user";
-import { NavSub } from "@/components/app-navigation/nav-sub";
 import { NavMain } from "@/components/app-navigation/nav-main";
+import {NavSearch} from "@/components/app-navigation/nav-search.tsx";
+import { NavSub } from "@/components/app-navigation/nav-sub";
+import { NavUser } from "@/components/app-navigation/nav-user";
 import { appConfig } from "@/config/nav";
 import useCurrentApp from "@/hooks/useCurrentApp";
 import { useUserRoles } from "@/hooks/useUserRoles";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@ignis/ui/components/ui/sidebar";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const currentApp = useCurrentApp();
@@ -34,6 +35,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <Sidebar variant="sidebar" collapsible="icon" {...props}>
       <SidebarHeader>
         <AppSwitcher />
+        <NavSearch />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={currentAppConfig.routes} />
