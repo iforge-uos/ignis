@@ -1,6 +1,8 @@
 import { ChevronsUpDown } from "lucide-react";
 
+import { appConfig } from "@/config/nav";
 import useCurrentApp from "@/hooks/useCurrentApp";
+import { useUserRoles } from "@/hooks/useUserRoles";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,8 +13,6 @@ import {
 } from "@ignis/ui/components/ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@ignis/ui/components/ui/sidebar";
 import { Link } from "@tanstack/react-router";
-import { appConfig } from "@/config/nav";
-import { useUserRoles } from "@/hooks/useUserRoles";
 
 export function AppSwitcher() {
   const { isMobile } = useSidebar();
@@ -63,13 +63,13 @@ export function AppSwitcher() {
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+            className="w-[--radix-dropdown-menu-trigger-width] min-w-36 rounded-lg"
             align="start"
             side={isMobile ? "bottom" : "right"}
             sideOffset={4}
           >
             <DropdownMenuLabel className="text-xs text-muted-foreground">iForge Apps</DropdownMenuLabel>
-            {filteredApps.map((app, index) => (
+            {filteredApps.map((app) => (
               <Link key={app.name} to={app.url}>
                 <DropdownMenuItem className="gap-2 p-2">
                   <div
@@ -79,10 +79,7 @@ export function AppSwitcher() {
                     <app.logo className="size-4 text-white shrink-0" />
                   </div>
                   {app.name}
-                  <DropdownMenuShortcut>
-                    {metaKey}
-                    {index + 1}
-                  </DropdownMenuShortcut>
+                  {/* {app.name === "Sign In" ? <DropdownMenuShortcut>{metaKey}D</DropdownMenuShortcut> : null} */}
                 </DropdownMenuItem>
               </Link>
             ))}
