@@ -61,7 +61,7 @@ export const appConfig: AppConfig[] = [
     url: "/sign-in/",
     logo: PencilRulerIcon,
     color: "#500724",
-    description: "Manage your sign-in data here",
+    description: "Manage your sign-in data",
     mainMenuNavigable: true,
     routes: [
       {
@@ -115,7 +115,7 @@ export const appConfig: AppConfig[] = [
     url: "/training",
     color: "#022c22",
     logo: BookIcon,
-    description: "Do your user training here",
+    description: "Do your user training",
     mainMenuNavigable: true,
     routes: [
       {
@@ -168,7 +168,7 @@ export const appConfig: AppConfig[] = [
     url: "/printing",
     color: "#1e1b4b",
     logo: PrinterIcon,
-    description: "Manage your 3D print jobs here (coming soon)",
+    description: "Manage your 3D print jobs (coming soon)",
     mainMenuNavigable: false,
     routes: [
       {
@@ -185,7 +185,7 @@ export const appConfig: AppConfig[] = [
     url: "/user/me",
     logo: UserCogIcon,
     color: "#701a75",
-    description: "Manage your user details here",
+    description: "Manage your user details",
     mainMenuNavigable: true,
     routes: [
       {
