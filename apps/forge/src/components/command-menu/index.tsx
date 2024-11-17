@@ -127,10 +127,7 @@ export default function CommandMenu() {
   return (
       <Command className="rounded-lg shadow-md">
         <CommandDialog open={isOpen} onOpenChange={setIsOpen}>
-          <DialogTitle className="sr-only">Command Menu</DialogTitle>
-          <DialogDescription className="sr-only">
-            Use the command menu to navigate the application
-          </DialogDescription>
+
           <div className="max-h-[80vh] overflow-hidden flex flex-col">
             <CommandInput
                 ref={inputRef}
