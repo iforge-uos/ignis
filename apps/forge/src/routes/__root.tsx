@@ -43,9 +43,11 @@ function RootComponent() {
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset className="flex flex-col">
-          <SidebarHeader />
-          <div className="flex-grow ">
-            <div className="h-fit min-h-screen">
+          <div className="sticky top-0 z-50 bg-background">
+            <SidebarHeader />
+          </div>
+          <div className="flex-grow">
+            <div className="h-fit min-h-screen pt-4">
               <RootComponentInner>
                 <Outlet />
               </RootComponentInner>
