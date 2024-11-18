@@ -1,12 +1,9 @@
+import { type VariantProps, cva } from "class-variance-authority";
+import { CheckIcon, ChevronDown, Sparkles, XCircle, XIcon } from "lucide-react";
 import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
-import { CheckIcon, XCircle, ChevronDown, XIcon, Sparkles } from "lucide-react";
 
-import { cn } from "@ui/lib/utils";
-import { Separator } from "@ui/components/ui/separator";
-import { Button } from "@ui/components/ui/button";
 import { Badge } from "@ui/components/ui/badge";
-import { Popover, PopoverContent, PopoverTrigger } from "@ui/components/ui/popover";
+import { Button } from "@ui/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -16,13 +13,16 @@ import {
   CommandList,
   CommandSeparator,
 } from "@ui/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@ui/components/ui/popover";
+import { Separator } from "@ui/components/ui/separator";
+import { cn } from "@ui/lib/utils";
 
 const multiSelectVariants = cva(
   "m-1 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300",
   {
     variants: {
       variant: {
-        default: "border-foreground/10 drop-shadow-md text-foreground bg-card hover:bg-card/80",
+        default: "border-foreground/10 drop-shadow-md text-foreground bg-card hover:bg-card/80 p-2 rounded-md",
         secondary: "border-foreground/10 bg-secondary text-secondary-foreground hover:bg-secondary/80",
         destructive: "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
         inverted: "inverted",

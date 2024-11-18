@@ -1,11 +1,20 @@
 import axiosInstance from "@/api/axiosInstance";
-import { authEffectAtom, loadingAtom, userAtom } from "@/atoms/authSessionAtoms.ts";
+import {
+  authEffectAtom,
+  loadingAtom,
+  originalUserRolesAtom,
+  userAtom,
+  userRolesAtom,
+} from "@/atoms/authSessionAtoms.ts";
+import { User } from "@ignis/types/users.ts";
 import { useAtom } from "jotai";
 import { useCallback, useEffect, useRef } from "react";
 
 export const useVerifyAuthentication = () => {
   const [, setAuthEffect] = useAtom(authEffectAtom);
   const [, setUser] = useAtom(userAtom);
+  const [, setOriginalUserRoles] = useAtom(originalUserRolesAtom);
+  const [, setUserRoles] = useAtom(userRolesAtom);
   const [loading, setLoading] = useAtom(loadingAtom);
 
   const isVerifyingRef = useRef(false); // Prevents multiple authentication requests simultaneously
@@ -15,8 +24,7 @@ export const useVerifyAuthentication = () => {
     isLoggedOutRef.current = true;
     setAuthEffect(false);
     setLoading(false);
-    setUser(null);
-  }, [setAuthEffect, setLoading, setUser]);
+  }, [setAuthEffect, setLoading]);
 
   // Set the logout callback once when the hook mounts
   useEffect(() => {
@@ -40,21 +48,22 @@ export const useVerifyAuthentication = () => {
       if (response.status === 200) {
         // Set user data and mark as authenticated
         setUser(response.data);
+        const lowercaseRoles = (response.data as User).roles.map((role) => role.name.toLowerCase());
+        setOriginalUserRoles(lowercaseRoles);
+        setUserRoles(lowercaseRoles);
         setAuthEffect(true);
         isLoggedOutRef.current = false; // Mark that user is authenticated
       } else {
         // Clear user data and mark as aren't authenticated
         setAuthEffect(false);
-        setUser(null);
       }
-    } catch (error) {
-      setUser(null);
+    } catch (_error) {
       setAuthEffect(false);
     } finally {
       setLoading(false);
       isVerifyingRef.current = false; // Mark that verification is complete
     }
-  }, [setUser, setAuthEffect, setLoading]);
+  }, [setUser, setAuthEffect, setLoading, setOriginalUserRoles, setUserRoles]);
 
   // Run the authentication verification once when the hook is used
   useEffect(() => {

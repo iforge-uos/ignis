@@ -1,19 +1,14 @@
-import { useUser } from "@/lib/utils";
+import { userRolesAtom } from "@/atoms/authSessionAtoms.ts";
+import { useAtom } from "jotai";
 
 /**
  * Retrieves the roles of the current user in lowercase.
+ * These roles can be modified by external actors, if you want their actual roles user the other hook
  *
  * @returns {string[]} An array of roles in lowercase.
  * Returns an empty array if the user has no roles.
  */
 export function useUserRoles(): string[] {
-  const user = useUser();
-
-  // If the user object or user roles are not defined, return an empty array
-  if (!user?.roles) {
-    return [];
-  }
-
-  // Map through user roles and convert each role to lowercase
-  return user.roles.map((role) => role.name.toLowerCase());
+  const [userRoles] = useAtom(userRolesAtom);
+  return userRoles;
 }

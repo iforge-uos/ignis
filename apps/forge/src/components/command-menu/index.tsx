@@ -1,7 +1,10 @@
-import { commandMenuIsOpenAtom } from "@/atoms/commandMenuAtoms.ts";
-import { useUser } from "@/lib/utils";
-import { RoutePath } from "@/types/router.ts";
+import { commandMenuIsOpenAtom } from "@/atoms/commandMenuAtoms";
+import { CommandConfig, commandConfig } from "@/config/commands";
+import { useFilteredCommands } from "@/hooks/useFilteredCommands";
+import { RoutePath } from "@/types/router";
+import { Card, CardContent, CardFooter } from "@ignis/ui/components/ui/card.tsx";
 import { Link, useNavigate } from "@tanstack/react-router";
+import { Button } from "@ui/components/ui/button";
 import {
   Command,
   CommandDialog,
@@ -14,40 +17,61 @@ import {
 } from "@ui/components/ui/command";
 import { Shortcut } from "@ui/components/ui/kbd";
 import { useAtom } from "jotai";
-import { LayoutDashboard, LogIn, LogOut, Settings, UserRound, UserRoundSearch } from "lucide-react";
-import React, { ReactElement } from "react";
+import { X } from "lucide-react";
+import React from "react";
+import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 
-type NavigateFunction = (to: RoutePath) => void;
-
-type ShortcutItem = {
-  callback: () => void;
-  label: string;
-  icon: ReactElement;
-  disabled?: boolean;
+type ActiveContent = {
+  type: "component";
+  content: ReactNode;
 };
 
 export default function CommandMenu() {
   const [isOpen, setIsOpen] = useAtom(commandMenuIsOpenAtom);
   const navigateBase = useNavigate();
-  const inputRef = React.useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [activeContent, setActiveContent] = useState<ActiveContent | null>(null);
 
   const isMacOs = !!navigator?.userAgent?.match(/Macintosh;/);
   const metaKey = isMacOs ? "⌘" : "Ctrl";
 
-  const navigate: NavigateFunction = (to: RoutePath) => {
-    navigateBase({ to }).then(() => setIsOpen(false));
-  };
+  const navigate = useCallback(
+    (to: RoutePath) => {
+      navigateBase({ to }).then(() => setIsOpen(false));
+    },
+    [navigateBase, setIsOpen],
+  );
 
-  // Focus the input when opened
-  React.useEffect(() => {
+  const handleCommand = useCallback(
+    (command: CommandConfig) => {
+      switch (command.action.type) {
+        case "navigate":
+          navigate(command.action.to);
+          break;
+        case "component":
+          setActiveContent({
+            type: "component",
+            content: command.action.component,
+          });
+          command.action.onOpen?.();
+          setIsOpen(false);
+          break;
+        case "custom":
+          command.action.handler();
+          setIsOpen(false);
+          break;
+      }
+    },
+    [navigate, setIsOpen],
+  );
+
+  useEffect(() => {
     if (isOpen) {
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 0);
+      setTimeout(() => inputRef.current?.focus(), 0);
     }
   }, [isOpen]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "k" && (isMacOs ? e.metaKey : e.ctrlKey)) {
         e.preventDefault();
@@ -58,113 +82,92 @@ export default function CommandMenu() {
     return () => document.removeEventListener("keydown", down);
   }, [isMacOs, setIsOpen]);
 
-  const SETTINGS_SHORTCUTS: Record<string, ShortcutItem> = {
-    p: {
-      callback: () => navigate("/user/me"),
-      label: "Profile",
-      icon: <UserRound key="userProfileKey" className="mr-2 h-4 w-4" />,
-    },
-    ",": {
-      callback: () => navigate("/user/settings"),
-      label: "Settings",
-      icon: <Settings key="userSettingsKey" className="mr-2 h-4 w-4" />,
-    },
-  };
-
-  const USER_MANAGEMENT_SHORTCUTS: Record<string, ShortcutItem> = {
-    d: {
-      callback: () => navigate("/sign-in/dashboard"),
-      label: "Dashboard",
-      icon: <LayoutDashboard key="signinDashboardKey" className="mr-2 h-4 w-4" />,
-    },
-    u: {
-      callback: () => navigate("/users"),
-      label: "Search users",
-      icon: <UserRoundSearch key="usersPageKey" className="mr-2 h-4 w-4" />,
-      disabled: true,
-    },
-    i: {
-      callback: () => navigate("/sign-in/actions/in"),
-      label: "Sign in",
-      icon: <LogIn key="signInActionKey" className="mr-2 h-4 w-4" />,
-    },
-    o: {
-      callback: () => navigate("/sign-in/actions/out"),
-      label: "Sign out",
-      icon: <LogOut key="signOutActionKey" className="mr-2 h-4 w-4" />,
-    },
-  };
-
-  const SHORTCUTS = { ...SETTINGS_SHORTCUTS, ...USER_MANAGEMENT_SHORTCUTS };
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: thisRunsOnMount only
-  React.useEffect(() => {
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isMacOs ? e.metaKey : e.ctrlKey) {
-        const shortcut = SHORTCUTS[e.key];
-        if (shortcut !== undefined && !shortcut.disabled) {
+        const command = commandConfig.find((cmd) => cmd.shortcutKey === e.key);
+        if (command && !command.disabled) {
           e.preventDefault();
-          shortcut.callback();
+          handleCommand(command);
         }
       }
     };
-
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }, [handleCommand, isMacOs]);
 
-  const groups = new Map<string, Record<string, ShortcutItem>>();
-  const user = useUser();
+  const groupedCommands = useFilteredCommands();
 
-  if (user) {
-    groups.set("Settings", SETTINGS_SHORTCUTS);
-  }
-  if (user?.roles.some((role) => role.name === "Rep")) {
-    groups.set("User Management", USER_MANAGEMENT_SHORTCUTS);
-  }
+  const closeActiveContent = useCallback(() => {
+    if (activeContent?.type === "component") {
+      const command = commandConfig.find(
+        (cmd) => cmd.action.type === "component" && cmd.action.component === activeContent.content,
+      );
+      if (command?.action.type === "component") {
+        command.action.onClose?.();
+      }
+    }
+    setActiveContent(null);
+  }, [activeContent]);
 
   return (
-    <Command className="rounded-lg shadow-md">
-      <CommandDialog open={isOpen} onOpenChange={setIsOpen}>
-        <div className="max-h-[80vh] overflow-hidden flex flex-col">
-          <CommandInput ref={inputRef} placeholder="Type a command or search..." />
-          <CommandList className="max-h-[calc(80vh-60px)] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
-            <CommandEmpty className="py-6 text-center">
-              <div className="flex flex-col items-center gap-4">
-                <div className="flex flex-col gap-2">
-                  <p className="text-sm text-muted-foreground">No results found</p>
-                  <p className="text-sm font-medium">
-                    Please{" "}
-                    <Link to="/sign-in" className="inline-flex items-center gap-1 text-primary hover:underline">
-                      sign in
-                      <span aria-hidden="true">→</span>
-                    </Link>{" "}
-                    to access all commands
-                  </p>
+    <>
+      <Command className="rounded-lg shadow-md">
+        <CommandDialog open={isOpen} onOpenChange={setIsOpen}>
+          <div className="max-h-[80vh] overflow-hidden flex flex-col">
+            <CommandInput ref={inputRef} placeholder="Type a command or search..." />
+            <CommandList className="max-h-[calc(80vh-60px)] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
+              <CommandEmpty className="py-6 text-center">
+                <div className="flex flex-col items-center gap-4">
+                  <div className="flex flex-col gap-2">
+                    <p className="text-sm text-muted-foreground">No results found</p>
+                    <p className="text-sm font-medium">
+                      Please{" "}
+                      <Link to="/sign-in" className="inline-flex items-center gap-1 text-primary hover:underline">
+                        sign in
+                        <span aria-hidden="true">→</span>
+                      </Link>{" "}
+                      to access all commands
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </CommandEmpty>{" "}
-            {[...groups]
-              .flatMap(([name, shortcuts], index) => [
-                <CommandGroup key={`group-${name}`} heading={name}>
-                  {Object.entries(shortcuts).map(([key, { callback, label, icon, disabled }]) => (
-                    <CommandItem
-                      key={`item-${name}-${key}`}
-                      onSelect={() => !disabled && callback()}
-                      disabled={disabled}
-                    >
-                      {icon}
-                      <span>{label}</span>
-                      <Shortcut keys={[metaKey, key.toUpperCase()]} className="ml-auto" />
-                    </CommandItem>
-                  ))}
-                </CommandGroup>,
-                index < groups.size - 1 ? <CommandSeparator key={`separator-${name}`} /> : null,
-              ])
-              .filter(Boolean)}
-          </CommandList>
+              </CommandEmpty>
+              {Object.entries(groupedCommands).map(([groupName, commands], index) => (
+                <React.Fragment key={groupName}>
+                  <CommandGroup heading={groupName}>
+                    {commands.map((command) => (
+                      <CommandItem
+                        key={`${groupName}-${command.shortcutKey}`}
+                        onSelect={() => !command.disabled && handleCommand(command)}
+                        disabled={command.disabled}
+                      >
+                        <command.icon className="mr-2 h-4 w-4" />
+                        <span>{command.label}</span>
+                        <Shortcut keys={[metaKey, command.shortcutKey.toUpperCase()]} className="ml-auto" />
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                  {index < Object.keys(groupedCommands).length - 1 && <CommandSeparator />}
+                </React.Fragment>
+              ))}
+            </CommandList>
+          </div>
+        </CommandDialog>
+      </Command>
+
+      {activeContent?.type === "component" && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+          <Card className="w-full max-w-lg">
+            <CardContent className="pt-6">{activeContent.content as ReactNode}</CardContent>
+            <CardFooter className="flex justify-end">
+              <Button variant="outline" onClick={closeActiveContent}>
+                <X className="mr-2 h-4 w-4" />
+                Close
+              </Button>
+            </CardFooter>
+          </Card>
         </div>
-      </CommandDialog>
-    </Command>
+      )}
+    </>
   );
 }

@@ -20,5 +20,9 @@ export const locationNameToCSSName = (location: Location | Lowercase<Location>):
 };
 
 export const ATOM_KEYS = {
-  AUTH_REDIRECT_PATH: 'Ignis:authRedirectPath',
+  AUTH_REDIRECT_PATH: "Ignis:authRedirectPath",
+  ADMIN_OVERWRITTEN_ROLES: "Ignis:adminOverwrittenRoles",
+  ADMIN_OVERWRITE_ROLES: "Ignis:adminOverwriteRoles",
 };
+
+export const AVAILABLE_ROLES = ["admin", "rep"];
