@@ -27,7 +27,11 @@ export default function Component() {
       <h1 className="text-2xl sm:text-3xl font-bold text-center my-5">Agreements</h1>
       <p className="text-center mb-6">The signable agreements in the iForge.</p>
       <div
-        className={`grid grid-cols-1 md:grid-cols-2 gap-6 ${filteredAgreements.length === 1 ? "md:grid-cols-1 max-w-md mx-auto" : ""}`}
+        className={`
+        grid 
+        ${filteredAgreements.length === 1 ? "grid-cols-1 max-w-md mx-auto" : "grid-cols-1 md:grid-cols-2"} 
+        gap-6
+      `}
       >
         {filteredAgreements.map((agreement) => (
           <AgreementCard key={agreement.id} agreement={agreement} />
