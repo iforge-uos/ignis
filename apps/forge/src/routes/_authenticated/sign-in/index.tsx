@@ -1,6 +1,6 @@
 import ActiveLocationSelector from "@/components/sign-in/ActiveLocationSelector";
 import Title from "@/components/title";
-import { useUser } from "@/lib/utils.ts";
+import { useUserRoles } from "@/hooks/useUserRoles.ts";
 import SignInActionsManager from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SignInManager.tsx";
 import { createFileRoute } from "@tanstack/react-router";
 import { World } from "@ui/components/globe.tsx";
@@ -405,9 +405,9 @@ const SignInIndexAppComponent = () => {
       externalLink: import.meta.env.VITE_DISCORD_URL,
     },
   ];
-  const user = useUser();
-  const isRep = user?.roles.some((role) => role.name.includes("Rep"));
-  const isAdmin = user?.roles.some((role) => role.name.includes("Admin"));
+  const roles = useUserRoles();
+  const isRep = roles.some((role) => role === "rep");
+  const isAdmin = roles.some((role) => role === "admin");
 
   if (isRep) {
     items.push(

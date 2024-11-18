@@ -1,27 +1,69 @@
-import { previousPathnameAtom } from "@/atoms/authSessionAtoms.ts";
+import { previousPathnameAtom } from "@/atoms/authSessionAtoms";
 import Title from "@/components/title";
+import { useVerifyAuthentication } from "@/hooks/useVerifyAuthentication";
 import { Button } from "@ignis/ui/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@ignis/ui/components/ui/card";
-// src/components/LoginModal.tsx
-import {Link, useLocation} from "@tanstack/react-router";
+import { Skeleton } from "@ignis/ui/components/ui/skeleton";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import { Info } from "lucide-react";
 import { useEffect } from "react";
 
+function LoadingState() {
+  return (
+    <div className="flex justify-center items-center w-full h-full">
+      <Card className="w-[350px]">
+        <CardHeader>
+          <Skeleton className="h-8 w-3/4 mb-2" />
+          <Skeleton className="h-4 w-full" />
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Skeleton className="h-10 w-full" />
+          <div className="flex items-center space-x-2">
+            <Skeleton className="h-4 w-4" />
+            <Skeleton className="h-4 w-full" />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
 export function LoginModal() {
+  const navigate = useNavigate();
+  const { user, loading } = useVerifyAuthentication();
   const pathname = useLocation({
     select: (location) => location.pathname,
   });
-  const [, setPreviousPathname] = useAtom(previousPathnameAtom);
-
+  const [previousPathname, setPreviousPathname] = useAtom(previousPathnameAtom);
 
   useEffect(() => {
-    setPreviousPathname(pathname);
-
+    // Don't store auth-related paths as previous pathname
+    if (!pathname.startsWith("/auth/")) {
+      setPreviousPathname(pathname);
+    }
   }, [pathname, setPreviousPathname]);
 
+  useEffect(() => {
+    if (!loading && user) {
+      // If no previous pathname stored or it's an auth path, redirect to home
+      const redirectPath = previousPathname && !previousPathname.startsWith("/auth/") ? previousPathname : "/";
+
+      navigate({ to: redirectPath });
+      setPreviousPathname(""); // Clear the stored path after redirect
+    }
+  }, [user, loading, navigate, previousPathname, setPreviousPathname]);
+
+  if (loading) {
+    return <LoadingState />;
+  }
+
+  if (user) {
+    return null;
+  }
+
   return (
-    <div className="flex justify-center items-center w-full h-full">
+    <div className="flex justify-center items-center w-full h-screen">
       <div className="flex flex-col justify-center items-center">
         <Title prompt="Login" />
         <Card className="w-[350px]">

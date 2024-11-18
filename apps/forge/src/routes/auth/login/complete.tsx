@@ -1,19 +1,27 @@
-import { previousPathnameAtom } from "@/atoms/authSessionAtoms.ts";
+import { previousPathnameAtom } from "@/atoms/authSessionAtoms";
 import { useVerifyAuthentication } from "@/hooks/useVerifyAuthentication";
 import { Navigate, createFileRoute } from "@tanstack/react-router";
 import { Loader } from "@ui/components/ui/loader";
-import {useAtom} from "jotai";
+import { useAtom } from "jotai";
+import { useEffect, useState } from "react";
 
 export const CompleteComponent = () => {
   const { user, loading } = useVerifyAuthentication();
-  const [redirect] = useAtom(previousPathnameAtom); // Get the stored redirect path
+  const [redirect] = useAtom(previousPathnameAtom);
+  const [verificationComplete, setVerificationComplete] = useState(false);
 
-  console.log(
-    "redirect",
-    redirect)
+  useEffect(() => {
+    if (!loading) {
+      // Add a small delay to ensure all state updates have been processed
+      const timer = setTimeout(() => {
+        setVerificationComplete(true);
+      }, 100);
 
+      return () => clearTimeout(timer);
+    }
+  }, [loading, user]);
 
-  if (loading) {
+  if (loading || !verificationComplete) {
     return <Loader />;
   }
 
