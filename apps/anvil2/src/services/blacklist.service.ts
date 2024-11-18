@@ -1,11 +1,11 @@
-import e from "@dbschema/edgeql-js";
 import { EdgeDBService } from "@/services/edgedb.service";
+import e from "@dbschema/edgeql-js";
 
 export class BlacklistService {
   private edgeDBService: EdgeDBService;
 
   constructor() {
-    this.edgeDBService = EdgeDBService.getInstance();
+    this.edgeDBService = EdgeDBService.instance;
   }
 
   async isTokenBlacklisted(token: string): Promise<boolean> {

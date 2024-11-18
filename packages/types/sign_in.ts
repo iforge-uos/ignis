@@ -38,7 +38,7 @@ export type PartialLocation = {
   off_shift_rep_count: number;
   user_count: number;
   max: number;
-  needs_queue: boolean;
+  queue_in_use: boolean;
   out_of_hours: boolean;
   count_in_queue: number;
   opening_time: string;
