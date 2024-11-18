@@ -17,6 +17,12 @@ module sign_in {
         HEARTSPACE,
     >;
 
+    # scalar type LocationStatus extending enum<
+    #     OPEN,
+    #     SOON,
+    #     CLOSED,
+    # >;
+
     type Location extending default::Auditable {
         required name: LocationName {
             constraint exclusive;
