@@ -160,15 +160,6 @@ class AxiosAuthInstance {
           return Promise.reject(error);
         }
 
-        // Don't intercept /users/me 401s
-        if (
-          error.config?.url?.includes("/users/me") &&
-          error.response?.status === 401 &&
-          error.response?.data?.message === "Unauthorized"
-        ) {
-          return Promise.reject(error);
-        }
-
         // Handle other 401s with refresh attempt
         if (error instanceof AxiosError && error.response?.status === 401) {
           try {
