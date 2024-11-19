@@ -43,6 +43,13 @@ export class RootController {
     return await this.rootService.getStatus();
   }
 
+  @Get("sign-in/:id")
+  @IsRep() // TODO figure out how to make READ SELF work with this might be best handled in service tbh
+  @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
+  async getSignIn(@Param("id") id: string) {
+    return await this.rootService.getSignIn(id);
+  }
+
   @Get("sign-in-reasons-last-update")
   @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
   async optionsSignInReasons(@Res() resp: Response) {

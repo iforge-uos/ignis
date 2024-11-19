@@ -189,6 +189,7 @@ export class TrainingService {
     }));
     const rest_of_training = e.select(e.training.Training, (training) => ({
       filter: e.op(
+        // FIXME this doesnt work in the HS
         e.op(
           e.op(e.cast(TrainingLocation, location), "in", training.locations),
           "if",

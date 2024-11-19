@@ -13,7 +13,6 @@ import Autoplay from "embla-carousel-autoplay";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import { useScroll, useTransform } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import { Masonry, useInfiniteLoader } from "masonic";
 import React from "react";
 import { useEffect, useRef, useState } from "react";
 import Balancer from "react-wrap-balancer";
@@ -48,7 +47,7 @@ const faqItems: FAQItem[] = [
         or the bottom of the page for short-notice closures during term time due to events or unforeseen circumstances.
         <br />
         We may be open outside of these hours. To check, you can go to the{" "}
-        <Link to="/signin">
+        <Link to="/sign-in">
           <Button variant="hyperlink" className="text-lg">
             Sign in page
           </Button>
@@ -274,10 +273,13 @@ const mainspaceCards = [
         experienced maker working on complex projects, the Mainspace is equipped to support you.
       </>
     ),
-    img: <img src="ms inside.jpg" 
-    alt="Mainspace interior" 
-    className="w-full h-full object-cover" // Ensure full width and height, otherwise image will not resize
-    />,
+    img: (
+      <img
+        src="ms inside.jpg"
+        alt="Mainspace interior"
+        className="w-full h-full object-cover" // Ensure full width and height, otherwise image will not resize
+      />
+    ),
   },
   {
     text: (
@@ -292,10 +294,13 @@ const mainspaceCards = [
         design and manufacture with our volunteer reps.
       </>
     ),
-    img: <img src="ms front.jpg"
-    alt="Mainspace exterior" 
-    className="w-full h-full object-cover" // Ensure full width and height, otherwise image will not resize
-    />,
+    img: (
+      <img
+        src="ms front.jpg"
+        alt="Mainspace exterior"
+        className="w-full h-full object-cover" // Ensure full width and height, otherwise image will not resize
+      />
+    ),
   },
 ].map(
   renderLocationCard(
@@ -315,10 +320,13 @@ const heartspaceCards = [
         tools and support to unleash your creativity.
       </>
     ),
-    img: <img src="hs inside.jpg" 
-    alt="Heartspace interior"
-    className="w-full h-full object-cover" // Ensure full width and height, otherwise image will not resize
-    />,
+    img: (
+      <img
+        src="hs inside.jpg"
+        alt="Heartspace interior"
+        className="w-full h-full object-cover" // Ensure full width and height, otherwise image will not resize
+      />
+    ),
   },
   {
     text: (
@@ -332,10 +340,13 @@ const heartspaceCards = [
         above the café, the Heartspace offers an easily accessible, inspiring environment for students and staff.
       </>
     ),
-    img: <img src="hs front.jpg"
-    alt="Heartspace exterior"
-    className="w-full h-full object-cover" // Ensure full width and height, otherwise image will not resize
-    />,
+    img: (
+      <img
+        src="hs front.jpg"
+        alt="Heartspace exterior"
+        className="w-full h-full object-cover" // Ensure full width and height, otherwise image will not resize
+      />
+    ),
   },
 ].map(
   renderLocationCard(
@@ -427,7 +438,7 @@ const IndexComponent = () => {
           making.
         </Balancer>
       </h2>
-      <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-md">
+      <div className="relative flex h-1/4 w-full flex-col items-center justify-center overflow-hidden rounded-md">
         <ImageCarousel />
       </div>
       <h3>
@@ -491,4 +502,4 @@ const IndexComponent = () => {
   );
 };
 
-export const Route = createFileRoute("/")({ component: IndexComponent, staticData: { title: "Home" } });
+export const Route = createFileRoute("/")({ component: IndexComponent, staticData: { title: "Main" } });

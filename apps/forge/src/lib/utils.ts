@@ -1,14 +1,14 @@
-import { RootState } from "@/redux/store";
+import { originalUserRolesAtom, userAtom } from "@/atoms/authSessionAtoms.ts";
+import { Apps } from "@/types/app";
 import { ErrorCodes } from "@ignis/errors";
 import { deserializeMd as deserializeMd_ } from "@udecode/plate-serializer-md";
 import { createPlateEditor } from "@ui/components/plate-ui/plate-editor";
 import { isAxiosError } from "axios";
 import { type ClassValue, clsx } from "clsx";
+import { useAtom } from "jotai";
 import md5 from "md5";
-import { useSelector } from "react-redux";
 import { twMerge } from "tailwind-merge";
 import { UCARD_LENGTH } from "./constants";
-import { Apps } from "@/types/app";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -20,7 +20,13 @@ export function getGravatarUrl(email: string, size = 64) {
 }
 
 export function useUser() {
-  return useSelector((state: RootState) => state.user.user);
+  const [user] = useAtom(userAtom);
+  return user;
+}
+
+export function useOriginalUserRoles() {
+  const [originalUserRoles] = useAtom(originalUserRolesAtom);
+  return originalUserRoles;
 }
 
 export function toTitleCase(str: string) {
@@ -105,7 +111,7 @@ export function currentAppToColor(currentApp: Apps): string {
       return "border-purple-600";
     case "Auth":
       return "border-fuchisa-600";
-    case "Main":
+    case "Home":
       return "border-red-700";
     case "Printing":
       return "border-orange-500";

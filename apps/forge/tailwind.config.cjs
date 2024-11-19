@@ -4,7 +4,7 @@ module.exports = {
   ...baseConfig,
   plugins: [
     ...(baseConfig.plugins || []),
-    function ({ addUtilities }) {
+    ({ addUtilities }) => {
       addUtilities({
         '.hide-scrollbar': {
           '-ms-overflow-style': 'none', // For IE and Edge

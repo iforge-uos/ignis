@@ -1,4 +1,6 @@
+import {IdempotencyCache} from "@/shared/decorators/idempotency.decorator";
 import {User as GetUser} from "@/shared/decorators/user.decorator";
+import {IdempotencyCacheInterceptor} from "@/shared/interceptors/idempotency-cache.interceptor";
 import {IntegrationsService} from "@/users/integrations/integrations.service";
 import {UsersService} from "@/users/users.service";
 import type {User} from "@ignis/types/users";
@@ -21,8 +23,6 @@ import {Throttle} from "@nestjs/throttler";
 import {Request, Response} from "express";
 import {AuthenticationService} from "./authentication.service";
 import {BlacklistService} from "./blacklist/blacklist.service";
-import {IdempotencyCacheInterceptor} from "@/shared/interceptors/idempotency-cache.interceptor";
-import {IdempotencyCache} from "@/shared/decorators/idempotency.decorator";
 
 @Controller("authentication")
 export class AuthenticationController {
@@ -58,7 +58,7 @@ export class AuthenticationController {
         } catch (error) {
             this.logger.warn("Refresh token failed, clearing cookies", AuthenticationController.name);
             // Clear all authentication cookies
-            this.authService.clearAuthCookies(res);
+            //this.authService.clearAuthCookies(res);
             // Re-throw the error to be handled by the frontend
             throw error;
         }
@@ -76,7 +76,8 @@ export class AuthenticationController {
             throw new BadRequestException("Refresh token is missing");
         }
 
-        const expiryDate = new Date();
+        const expiryDate = this.authService.getExpiryDate(refreshToken);
+
         try {
             await this.blacklistService.addToBlacklist(refreshToken, expiryDate);
             this.logger.log("Refresh token added to blacklist", AuthenticationController.name);
@@ -163,7 +164,8 @@ export class AuthenticationController {
             throw new UnauthorizedException("User does not have the required role");
         }
 
-        const expiryDate = new Date();
+        const expiryDate = this.authService.getExpiryDate(refreshToken);
+
         await this.blacklistService.addToBlacklist(refreshToken, expiryDate);
 
         return await this.authService.login(user);

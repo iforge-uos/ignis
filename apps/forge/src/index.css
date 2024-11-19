@@ -3,160 +3,188 @@
 @tailwind utilities;
 
 @layer base {
-    :root {
-        /* Custom Colors these have to be hsl'd because otherwise ImageGradient breaks */
-        --heartspace: hsl(188, 53%, 49%);
-        --mainspace: hsl(7, 57%, 55%);
-        --george-porter: hsl(222, 53%, 21%);
+  :root {
+    /* Custom Colors these have to be hsl'd because otherwise ImageGradient breaks */
+    --heartspace: hsl(188, 53%, 49%);
+    --mainspace: hsl(7, 57%, 55%);
+    --george-porter: hsl(222, 53%, 21%);
 
-        --tick: hsl(126, 38%, 48%);
-        --cross: hsl(358, 65%, 46%);
+    --tick: hsl(126, 38%, 48%);
+    --cross: hsl(358, 65%, 46%);
 
-        --tick: hsl(126, 38%, 48%);
-        --cross: hsl(358, 65%, 46%);
+    --tick: hsl(126, 38%, 48%);
+    --cross: hsl(358, 65%, 46%);
 
-        /* shadcn Colors (Generated from https://ui.jln.dev */
-        --background: 0 0% 99%;
-        --foreground: 60 2% 30%;
-        --muted: 0 12% 90%;
-        --muted-foreground: 0 12% 30%;
-        --popover: 0 0% 96%;
-        --popover-foreground: 60 2% 20%;
-        --card: 0 0% 97%;
-        --card-foreground: 60 2% 25%;
-        --border: 0 0% 94%;
-        --input: 0 0% 91%;
-        --primary: 7 82% 36%;
-        --primary-foreground: 7 82% 96%;
-        --secondary: 7 30% 75%;
-        --secondary-foreground: 7 30% 15%;
-        --accent: 0 0% 84%;
-        --accent-foreground: 0 0% 24%;
-        --destructive: 1 83% 35%;
-        --destructive-foreground: 1 83% 95%;
-        --ring: 7 82% 36%;
-        --radius: 0.5rem;
+    /* shadcn Colors (Generated from https://ui.jln.dev */
+    --background: 0 0% 99%;
+    --foreground: 60 2% 30%;
+    --muted: 0 12% 90%;
+    --muted-foreground: 0 12% 30%;
+    --popover: 0 0% 96%;
+    --popover-foreground: 60 2% 20%;
+    --card: 0 0% 97%;
+    --card-foreground: 60 2% 25%;
+    --border: 0 0% 94%;
+    --input: 0 0% 91%;
+    --primary: 7 82% 36%;
+    --primary-foreground: 7 82% 96%;
+    --secondary: 7 30% 75%;
+    --secondary-foreground: 7 30% 15%;
+    --accent: 0 0% 84%;
+    --accent-foreground: 0 0% 24%;
+    --ring: 7 82% 36%;
+    --radius: 0.5rem;
 
-        /* shadcn Warnings and Colors (Generated from https://ui.jln.dev/feedback-colors-generator-for-shadcn-ui */
-        --destructive: 1 67% 88%;
-        --destructive-foreground: 1 67% 28%;
-        --success: 156 67% 88%;
-        --success-foreground: 156 67% 8%;
-        --warning: 41 67% 88%;
-        --warning-foreground: 41 67% 8%;
-        --info: 209 67% 88%;
-        --info-foreground: 209 67% 28%;
+    /* shadcn Warnings and Colors (Generated from https://ui.jln.dev/feedback-colors-generator-for-shadcn-ui */
+    --destructive: 1 67% 88%;
+    --destructive-foreground: 1 67% 28%;
+    --success: 156 67% 88%;
+    --success-foreground: 156 67% 8%;
+    --warning: 41 67% 88%;
+    --warning-foreground: 41 67% 8%;
+    --info: 209 67% 88%;
+    --info-foreground: 209 67% 28%;
 
-        --font-sans: Roboto, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    /* Sidebar theming */
+    --sidebar-background: 0 12% 98%;
+    --sidebar-foreground: 0 12% 30%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
 
-        /* SignInsChart.tsx specific stuff */
-        /* The chart's background */
+    --font-sans: Roboto, ui-sans-serif, system-ui, sans-serif,
+      "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+      "Noto Color Emoji";
 
-        #sign-in-chart>div>div>svg>rect {
-            fill: hsl(var(--background)) !important;
-        }
+    /* SignInChart.tsx specific stuff */
+    /* The chart's background */
 
-        /* Any text in the chart*/
-
-        #sign-in-chart>text {
-            fill: hsl(var(--foreground)) !important;
-            font-family: var(--font-sans), sans-serif !important;
-        }
-
-        /* The individual rectangles in the chart */
-
-        #sign-in-chart g rect[x][y][width][height][style] {
-            rx: var(--radius);
-            stroke: hsl(var(--background)) !important;
-        }
-
-        /* The lines that bind months together */
-
-        #sign-in-chart>div>div>svg>g>path {
-            stroke: hsl(var(--background)) !important;
-            stroke-width: 0px !important;
-        }
-
-        /* The legend text */
-
-        #sign-in-chart>div>div>svg>g>text {
-            fill: hsl(var(--foreground)) !important;
-            font-family: var(--font-sans), sans-serif !important;
-        }
-
-        /* The on-hover pop-up */
-
-        #sign-in-chart>div>div>div>div {
-            background: hsl(var(--background)) !important;
-            color: hsl(var(--foreground)) !important;
-        }
-
-        /* The text for the pop-up */
-
-        #sign-in-chart>div>div>div>div>div>span {
-            color: hsl(var(--foreground)) !important;
-            font-family: var(--font-sans), sans-serif !important;
-        }
-
-        /* Otherwise this doesn't show as clickable */
-
-        #training-content a {
-            color: hsl(var(--primary))
-        }
-
-        #training-content li {
-            list-style-type: disc;
-            list-style-position: inside;
-        }
-
-        #training-content ol {
-            list-style-type: decimal;
-            list-style-position: inside;
-        }
+    #sign-in-chart > div > div > svg > rect {
+      fill: hsl(var(--background)) !important;
     }
 
-    .dark {
-        /* shadcn Colors dark mode (Generated from https://ui.jln.dev */
+    /* Any text in the chart*/
 
-        --background: 220 11% 11%;
-        --foreground: 60 30% 96%;
-        --muted: 220 12% 15%;
-        --muted-foreground: 220 12% 65%;
-        --popover: 220 11% 8%;
-        --popover-foreground: 0 0% 100%;
-        --card: 220 11% 9%;
-        --card-foreground: 0 0% 100%;
-        --border: 220 1% 16%;
-        --input: 220 1% 19%;
-        --primary: 353 57% 45%;
-        --primary-foreground: 0 0% 100%;
-        --secondary: 353 30% 75%;
-        --secondary-foreground: 353 30% 15%;
-        --accent: 220 11% 26%;
-        --accent-foreground: 220 11% 86%;
-        --ring: 353 57% 45%;
-
-        /* shadcn Warnings and Colors (Generated from https://ui.jln.dev/feedback-colors-generator-for-shadcn-ui */
-
-        --destructive: 12 45% 7%;
-        --destructive-foreground: 12 45% 67%;
-        --success: 142 45% 7%;
-        --success-foreground: 142 45% 47%;
-        --warning: 46 45% 7%;
-        --warning-foreground: 46 45% 47%;
-        --info: 201 45% 7%;
-        --info-foreground: 201 45% 67%;
-
+    #sign-in-chart > text {
+      fill: hsl(var(--foreground)) !important;
+      font-family: var(--font-sans), sans-serif !important;
     }
+
+    /* The individual rectangles in the chart */
+
+    #sign-in-chart g rect[x][y][width][height][style] {
+      rx: var(--radius);
+      stroke: hsl(var(--background)) !important;
+    }
+
+    /* The lines that bind months together */
+
+    #sign-in-chart > div > div > svg > g > path {
+      stroke: hsl(var(--background)) !important;
+      stroke-width: 0px !important;
+    }
+
+    /* The legend text */
+
+    #sign-in-chart > div > div > svg > g > text {
+      fill: hsl(var(--foreground)) !important;
+      font-family: var(--font-sans), sans-serif !important;
+    }
+
+    /* The on-hover pop-up */
+
+    #sign-in-chart > div > div > div > div {
+      background: hsl(var(--background)) !important;
+      color: hsl(var(--foreground)) !important;
+    }
+
+    /* The text for the pop-up */
+
+    #sign-in-chart > div > div > div > div > div > span {
+      color: hsl(var(--foreground)) !important;
+      font-family: var(--font-sans), sans-serif !important;
+    }
+
+    /* Otherwise this doesn't show as clickable */
+
+    #training-content a {
+      color: hsl(var(--primary));
+    }
+
+    #training-content li {
+      list-style-type: disc;
+      list-style-position: inside;
+    }
+
+    #training-content ol {
+      list-style-type: decimal;
+      list-style-position: inside;
+    }
+  }
+
+  .dark {
+    /* shadcn Colors dark mode (Generated from https://ui.jln.dev */
+
+    --background: 220 11% 11%;
+    --foreground: 60 30% 96%;
+    --muted: 220 12% 15%;
+    --muted-foreground: 220 12% 65%;
+    --popover: 220 11% 8%;
+    --popover-foreground: 0 0% 100%;
+    --card: 220 11% 9%;
+    --card-foreground: 0 0% 100%;
+    --border: 220 1% 16%;
+    --input: 220 1% 19%;
+    --primary: 353 57% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 353 30% 75%;
+    --secondary-foreground: 353 30% 15%;
+    --accent: 220 11% 26%;
+    --accent-foreground: 220 11% 86%;
+    --ring: 353 57% 45%;
+
+    /* shadcn Warnings and Colors (Generated from https://ui.jln.dev/feedback-colors-generator-for-shadcn-ui */
+
+    --destructive: 12 45% 7%;
+    --destructive-foreground: 12 45% 67%;
+    --success: 142 45% 7%;
+    --success-foreground: 142 45% 47%;
+    --warning: 46 45% 7%;
+    --warning-foreground: 46 45% 47%;
+    --info: 201 45% 7%;
+    --info-foreground: 201 45% 67%;
+
+    /* Sidebar theming */
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
 }
 
-
 @layer base {
-    * {
-        @apply border-border;
-    }
+  * {
+    @apply border-border;
+  }
 
-    body {
-        @apply bg-background text-foreground;
-    }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* TanStack Router Devtools */
+.TanStackRouterDevtools > button {
+  @apply rotate-90 origin-top-right -translate-y-[50px] translate-x-2 bg-white dark:bg-gray-900;
+  @apply border-t-0 border-gray-500/10 shadow-xl text-gray-800;
+}
+
+.internal-jotai-devtools-trigger-button {
+  right: 4.5rem !important;
 }

@@ -15,12 +15,13 @@ const useCurrentApp = (): Apps => {
     switch (firstSegment) {
       case "":
       case undefined:
-        return "Main";
-      case "signin":
+        return "Home";
+      case "sign-in":
         return "Sign In";
       case "printing":
         return "Printing";
       case "user":
+      case "users":
         return "User";
       case "admin":
         return "Admin";

@@ -26,6 +26,7 @@ import { CardinalityViolationError, ConstraintViolationError, InvalidValueError 
 
 export const REP_ON_SHIFT = "Rep On Shift";
 export const REP_OFF_SHIFT = "Rep Off Shift";
+export const PERSONAL = "Personal";
 export const LOCATIONS = Object.keys(LocationNameSchema.Values) as readonly LocationName[];
 
 function formatInfraction(infraction: Infraction) {
@@ -385,12 +386,17 @@ export class SignInService implements OnModuleInit {
   /** Verify that the user can use the sign in reason given by checking their signed agreements
    * Ideally this can be removed one day.
    */
-  async verifyReason(reason_id: string, ucard_number: number, is_rep = false) {
-    const agreements_signed = await this.dbService.query(
-      e.select(e.users.User, () => ({
-        filter_single: { ucard_number },
-      })).agreements_signed,
+  async verifyReason(reason_id: string, ucard_number: number) {
+    const { is_rep, agreements_signed } = await this.dbService.query(
+      e.assert_exists(
+        e.select(e.users.User, (user) => ({
+          agreements_signed: true,
+          is_rep: e.op(user.__type__.name, "=", "users::Rep"),
+          filter_single: { ucard_number },
+        })),
+      ),
     );
+
     // check for the user agreement
     const user_agreement = await this.dbService.query(
       e.assert_exists(
@@ -466,7 +472,7 @@ export class SignInService implements OnModuleInit {
   }
 
   async repSignIn(name: LocationName, ucard_number: number, reason_id: string) {
-    const { reason, reason_name } = await this.verifyReason(reason_id, ucard_number, /* is_rep */ true);
+    const { reason, reason_name } = await this.verifyReason(reason_id, ucard_number);
 
     if (
       reason_name !== REP_ON_SHIFT &&
@@ -544,19 +550,19 @@ export class SignInService implements OnModuleInit {
     try {
       await this.dbService.query(
         e.assert_exists(
-          e.update(e.sign_in.SignIn, (sign_in) => {
-            const isCorrectLocation = e.op(sign_in.location.name, "=", e.cast(e.sign_in.LocationName, name));
-            const userMatches = e.op(sign_in.user.ucard_number, "=", ucard_number);
-            const doesNotExist = e.op("not", e.op("exists", sign_in.ends_at));
-
-            return {
-              filter_single: e.all(e.set(isCorrectLocation, userMatches, doesNotExist)),
-              set: {
-                tools,
-                reason,
-              },
-            };
-          }),
+          e.update(e.sign_in.SignIn, (sign_in) => ({
+            filter_single: e.all(
+              e.set(
+                e.op(sign_in.location.name, "=", e.cast(e.sign_in.LocationName, name)),
+                e.op(sign_in.user.ucard_number, "=", ucard_number),
+                e.op("not", sign_in.signed_out),
+              ),
+            ),
+            set: {
+              tools,
+              reason,
+            },
+          })),
         ),
       );
     } catch (e) {
@@ -805,38 +811,54 @@ export class SignInService implements OnModuleInit {
     );
   }
 
-  async getPopularReasons(name: LocationName) {
-    const reasons: any = await this.dbService.query(
-      e.select(
-        e.group(
-          e.select(e.sign_in.SignIn, (sign_in) => ({
-            filter: e.op(
-              e.op(sign_in.created_at, ">", e.op(e.datetime_current(), "-", e.cal.relative_duration("3d"))),
-              "and",
-              e.op(sign_in.location.name, "=", e.cast(e.sign_in.LocationName, name)),
+  async getPopularReasons(name: LocationName, rep: boolean) {
+    return await this.dbService
+      .query(
+        e.select({
+          default_: e.select(e.sign_in.Reason, (reason) => ({
+            filter: e.op(reason.name, "in", e.set(...(rep ? [REP_ON_SHIFT, REP_OFF_SHIFT] : []), PERSONAL)),
+            order_by: e.op(
+              // Personal then on then off
+              0,
+              "if",
+              e.op(e.assert_single(reason.name), "=", PERSONAL),
+              "else",
+              e.op(1, "if", e.op(e.assert_single(reason.name), "=", REP_ON_SHIFT), "else", 2),
             ),
+            id_: reason.id,
+            name: true,
+            category: true,
+            count: e.select(0),
           })),
-          (sign_in) => ({
-            by: { reason: sign_in.reason },
-          }),
-        ),
-        (group) => ({
-          name: e.assert_single(group.elements.reason.name),
-          category: e.assert_single(group.elements.reason.category),
-          id_: e.assert_single(group.elements.reason.id),
-          count: e.count(group.elements),
-          order_by: {
-            expression: e.count(group.elements),
-            direction: e.DESC,
-          },
-          limit: 5,
+          common: e.select(
+            e.group(
+              e.select(e.sign_in.SignIn, (sign_in) => ({
+                filter: e.all(
+                  e.set(
+                    e.op(sign_in.created_at, ">", e.op(e.datetime_current(), "-", e.cal.relative_duration("3d"))),
+                    e.op(sign_in.location.name, "=", e.cast(e.sign_in.LocationName, name)),
+                    e.op(sign_in.reason.name, "not in", e.set(REP_ON_SHIFT, REP_OFF_SHIFT, PERSONAL)),
+                  ),
+                ),
+              })),
+              (sign_in) => ({
+                by: { reason: sign_in.reason },
+              }),
+            ),
+            (group) => ({
+              name: e.assert_single(group.elements.reason.name),
+              category: e.assert_single(group.elements.reason.category),
+              id_: e.assert_single(group.elements.reason.id),
+              count: e.count(group.elements),
+              order_by: {
+                expression: e.count(group.elements),
+                direction: e.DESC,
+              },
+              limit: rep ? 3 : 5,
+            }),
+          ),
         }),
-      ),
-    );
-    return reasons.map((reason: any) => {
-      reason.id = reason.id_; // rename id field
-      reason.id_ = undefined;
-      return reason;
-    });
+      )
+      .then(({ common, default_ }) => [...default_, ...common].map((reason) => ({ id: reason.id_, ...reason })));
   }
 }
