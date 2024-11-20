@@ -1,7 +1,6 @@
 import { UserAvatar } from "@/components/avatar";
 import { LocationIcon } from "@/components/icons/Locations";
 import Title from "@/components/title";
-import { useUserRoles } from "@/hooks/useUserRoles.ts";
 import SignInChart from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignInChart.tsx";
 import { getUser } from "@/services/users/getUser.ts";
 import getUserSignIns from "@/services/users/getUserSignIns.ts";
@@ -15,7 +14,7 @@ import { Check, X } from "lucide-react";
 export default function Component() {
   const data = Route.useLoaderData();
   const { user, trainings, signIns } = data!;
-  const rep = useUserRoles().includes("Rep");
+  const rep = user!.roles.some((role) => role.name === "Rep");
   const locationIcon = (training: Training) => {
     return training.locations.map((location) => <LocationIcon location={location} key={training.id} />);
   };
