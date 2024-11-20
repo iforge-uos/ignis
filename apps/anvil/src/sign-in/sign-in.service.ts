@@ -229,7 +229,19 @@ export class SignInService implements OnModuleInit {
       e.select(
         e.insert(e.sign_in.UserRegistration, {
           location: e.select(e.sign_in.Location, () => ({ filter_single: { name: location } })),
-          user: e.insert(e.users.User, this.userService.ldapUserProps(ldapUser)),
+          user: e.insert(
+            e.users.User, 
+            this.userService.ldapUserProps(ldapUser)
+          ).unlessConflict(  // if the user has a new ucard number e.g. PGR or re-registered update their associated ucard
+            (user) => ({
+              on: user.email,
+              else: e.update(user, () => ({
+                set: {
+                  ucard_number: ldapLibraryToUcardNumber(ucard_number)
+                }
+              })),
+            })
+          ),
         }).user,
         (user) => ({
           ...UserProps(user),
