@@ -1,7 +1,7 @@
 import { useUser } from "@/lib/utils";
 import { TrainingContent } from "@/routes/_authenticated/training/$id";
 import { PartialTrainingWithStatus } from "@ignis/types/training";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button";
 import { Card } from "@ui/components/ui/card";
 import { Separator } from "@ui/components/ui/separator";
@@ -15,7 +15,7 @@ interface TrainingCourseCardProps {
 
 export default function TrainingCourseCard({ training, isRep }: TrainingCourseCardProps) {
   const user = useUser();
-  const navigate = useNavigate();
+
   return (
     <Card className="w-full max-w-sm overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:shadow-lg flex flex-col">
       <div className="relative m-4">

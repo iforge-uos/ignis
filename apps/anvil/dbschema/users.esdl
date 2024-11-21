@@ -1,3 +1,5 @@
+using extension pg_trgm;
+
 module users {
     type User extending default::Auditable {
         required ucard_number: int32 {
@@ -45,6 +47,12 @@ module users {
         multi infractions: Infraction;
 
         multi mailing_list_subscriptions: notification::MailingList;
+        multi notifications: notification::Notification {
+            acknowledged: datetime {
+                annotation description := "Time the user has dismissed / marked as read / interacted with it (will be true if noti type is email & is delivered) otherwise empty";
+            }
+        };
+
         multi referrals: User {
             created_at: datetime {
                 readonly := true;
