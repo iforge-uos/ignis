@@ -7,6 +7,15 @@ networks:
   ignis-dev:
     name: ignis-dev
 
+secrets:
+  ca_cert:
+    file: ../config/secret/db/ca_cert.pem
+  db_cert:
+    file: ../config/secret/db/ignis_cert.pem
+  db_key:
+    file: ../config/secret/db/ignis_key.pem
+
+
 services:
   devcontainer:
     build:
@@ -15,9 +24,15 @@ services:
     container_name: ignis-dev-devcontainer
     env_file:
       - ../.env
+    environment:
+      EDGEDB_TLS_CA_FILE: /run/secrets/ca_cert
     networks:
       - op
       - ignis-dev
+    secrets:
+      - ca_cert
+      - db_cert
+      - db_key
     depends_on:
       db:
         condition: service_healthy
@@ -34,7 +49,12 @@ services:
     image: edgedb/edgedb:5
     container_name: ignis-dev-db
     env_file:
-      - ../.env
+      - ../config/secret/db/.env
+    environment:
+      EDGEDB_SERVER_TLS_CERT_MODE: require_file
+      EDGEDB_SERVER_TLS_KEY_FILE: /ignis_certs/ignis_key.pem
+      EDGEDB_SERVER_TLS_CERT_FILE: /ignis_certs/ignis_cert.pem
+      EDGEDB_SERVER_TLS_CA_FILE: /ignis_certs/ca_cert.pem
     networks:
       - ignis-dev
     volumes:
@@ -78,18 +98,26 @@ services:
       - ignis-dev
     env_file:
       - ../.env
-    command: ["valkey", "--requirepass", "${KV_PASSWORD}"]
+    command: ["valkey-server", "--requirepass", "${KV_PASSWORD}"]
 
   mailhog:
     image: jcalonso/mailhog:latest
     container_name: ignis-dev-mail
     networks:
       - ignis-dev
+    ports:
+      - "8025:8025"
 
 volumes:
   db_data:
     driver: local
+    labels:
+      com.ignis.description: "IGNIS - EdgeDB data volume"
   kv_data:
     driver: local
+    labels:
+      com.ignis.description: "IGNIS - Valkey data volume"
   1p_data:
     driver: local
+    labels:
+      com.ignis.description: "IGNIS - 1Password data volume"
