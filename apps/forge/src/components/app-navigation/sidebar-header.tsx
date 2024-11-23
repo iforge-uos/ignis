@@ -1,4 +1,3 @@
-import NavAdvertisementBanner from "@/components/app-navigation/nav-advertisementbanner";
 import { SidebarTrigger } from "@ignis/ui/components/ui/sidebar";
 
 export const SidebarHeader = () => {
@@ -7,7 +6,6 @@ export const SidebarHeader = () => {
       <div className="flex items-center gap-2 px-4">
         <SidebarTrigger className="-ml-1 h-5 w-5" />
       </div>
-      <NavAdvertisementBanner />
     </header>
   );
 };

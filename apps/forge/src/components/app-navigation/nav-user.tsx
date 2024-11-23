@@ -1,5 +1,4 @@
 import { UserAvatar } from "@/components/avatar";
-import { useUserRoles } from "@/hooks/useUserRoles";
 import { useUser } from "@/lib/utils";
 import { useTheme } from "@/providers/themeProvider/use-theme";
 import { Button } from "@ignis/ui/components/ui/button";
@@ -15,11 +14,10 @@ import {
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@ignis/ui/components/ui/sidebar";
 import { Link } from "@tanstack/react-router";
 import { Shortcut } from "@ui/components/ui/kbd";
-import { BadgeCheck, Bell, ChevronsUpDown, LogIn, LogOut, Moon, Settings, Sparkles, Sun } from "lucide-react";
+import { BadgeCheck, Bell, ChevronsUpDown, LogIn, LogOut, Moon, Settings, Sun } from "lucide-react";
 
 export function NavUser() {
   const user = useUser();
-  const isRep = useUserRoles().includes("rep");
   const { isMobile, state } = useSidebar();
   const { setTheme, theme } = useTheme();
 
@@ -79,23 +77,6 @@ export function NavUser() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {!isRep && (
-              <>
-                <DropdownMenuGroup>
-                  <a
-                    href="https://docs.google.com/forms/d/e/1FAIpQLSfRTTBDKCd_kZkVLBHW2LI_GHKkYTwyLWcLkqu7E5AemxJKaw/viewform"
-                    rel="noreferrer"
-                    target="_blank"
-                  >
-                    <DropdownMenuItem>
-                      <Sparkles className="mr-2 h-4 w-4" />
-                      Apply to become a rep!
-                    </DropdownMenuItem>
-                  </a>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-              </>
-            )}
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
                 <Link to="/user/me">
