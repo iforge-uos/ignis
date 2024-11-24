@@ -1,0 +1,165 @@
+# deploy/compose/apps.yml
+name: ignis-apps
+
+networks:
+  ignis-public:
+    external: true
+  ignis-internal:
+    external: true
+  ignis-storage:
+    external: true
+  op-internal:
+    external: true
+
+configs:
+  anvil_config:
+    file: ../config/anvil/.env.production.tpl
+  mine_config:
+    file: ../config/mine/.env.production.tpl
+
+secrets:
+  ca_cert:
+    external: true
+  client_cert:
+    file: ../secret/db/client.pem
+  client_key:
+    file: ../secret/db/client.key
+
+services:
+  anvil:
+    image: ${REGISTRY}/ignis/anvil:${TAG}
+    deploy:
+      mode: replicated
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+        failure_action: rollback
+        monitor: 60s
+      rollback_config:
+        parallelism: 1
+        delay: 5s
+        failure_action: pause
+      placement:
+        constraints:
+          - node.role != manager
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.anvil.rule=Host(`${API_DOMAIN}`)"
+        - "traefik.http.routers.anvil.entrypoints=websecure"
+        - "traefik.http.routers.anvil.tls.certresolver=letsencrypt"
+        - "traefik.http.routers.anvil.middlewares=anvil-cors"
+        - "traefik.http.services.anvil.loadbalancer.server.port=3000"
+        - "traefik.http.middlewares.anvil-cors.headers.accesscontrolallowmethods=GET,POST,PUT,DELETE,OPTIONS"
+        - "traefik.http.middlewares.anvil-cors.headers.accesscontrolallowheaders=*"
+        - "traefik.http.middlewares.anvil-cors.headers.accesscontrolalloworiginlist=https://${APP_DOMAIN}"
+    configs:
+      - source: anvil_config
+        target: /config/.env.production.tpl
+    networks:
+      - ignis-public
+      - ignis-internal
+      - ignis-storage
+      - op-internal
+    secrets:
+      - ca_cert
+      - client_cert
+      - client_key
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  forge:
+    image: ${REGISTRY}/ignis/forge:${TAG}
+    deploy:
+      mode: replicated
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+        failure_action: rollback
+      placement:
+        constraints:
+          - node.role != manager
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.forge.rule=Host(`${APP_DOMAIN}`)"
+        - "traefik.http.routers.forge.entrypoints=websecure"
+        - "traefik.http.routers.forge.tls.certresolver=letsencrypt"
+        - "traefik.http.routers.forge.middlewares=forge-security"
+        - "traefik.http.services.forge.loadbalancer.server.port=80"
+        - "traefik.http.middlewares.forge-security.headers.stsSeconds=31536000"
+        - "traefik.http.middlewares.forge-security.headers.stsIncludeSubdomains=true"
+        - "traefik.http.middlewares.forge-security.headers.stsPreload=true"
+        - "traefik.http.middlewares.forge-security.headers.forceSTSHeader=true"
+    networks:
+      - ignis-public
+      - ignis-internal
+      - op-internal
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  mine:
+    image: ${REGISTRY}/ignis/mine:${TAG}
+    deploy:
+      mode: replicated
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+        failure_action: rollback
+      placement:
+        constraints:
+          - node.role != manager
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.mine.rule=Host(`${CDN_DOMAIN}`)"
+        - "traefik.http.routers.mine.entrypoints=websecure"
+        - "traefik.http.routers.mine.tls.certresolver=letsencrypt"
+        - "traefik.http.routers.mine.middlewares=mine-security"
+        - "traefik.http.services.mine.loadbalancer.server.port=4000"
+    configs:
+      - source: mine_config
+        target: /config/.env.production.tpl
+    networks:
+      - ignis-public
+      - ignis-internal
+      - ignis-storage
+      - op-internal
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:4000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

@@ -1,0 +1,150 @@
+# deploy/compose/infra.yml
+name: ignis-infra
+
+networks:
+  ignis-internal:
+    driver: overlay
+    internal: true
+    attachable: false
+  ignis-storage:
+    driver: overlay
+    internal: true
+    attachable: false
+  op-internal:
+    driver: overlay
+    internal: true
+    attachable: false
+
+volumes:
+  db_data:
+    driver: local
+  kv_data:
+    driver: local
+  op_data:
+    driver: local
+
+secrets:
+  # Database certificates
+  ca_cert:
+    file: ../secret/db/ca.pem
+  server_cert:
+    file: ../secret/db/server.pem
+  server_key:
+    file: ../secret/db/server.key
+  # Valkey password
+  valkey_password:
+    file: ../secret/valkey/password.txt
+  # 1Password credentials
+  op_credentials:
+    file: ../secret/op/1password-credentials.json
+
+services:
+  # 1Password Services
+  op-connect-api:
+    image: 1password/connect-api:latest
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+    networks:
+      - op-internal
+    volumes:
+      - op_data:/home/opuser/.op/data
+    secrets:
+      - source: op_credentials
+        target: /home/opuser/.op/1password-credentials.json
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/heartbeat"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  op-connect-sync:
+    image: 1password/connect-sync:latest
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+    networks:
+      - op-internal
+    volumes:
+      - op_data:/home/opuser/.op/data
+    secrets:
+      - source: op_credentials
+        target: /home/opuser/.op/1password-credentials.json
+    depends_on:
+      - op-connect-api
+
+  # Database
+  db:
+    image: edgedb/edgedb:5
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+    env_file:
+      - ../config/db/.env.production
+    environment:
+      EDGEDB_SERVER_TLS_CERT_MODE: require_file
+      EDGEDB_SERVER_TLS_KEY_FILE: /run/secrets/server_key
+      EDGEDB_SERVER_TLS_CERT_FILE: /run/secrets/server_cert
+      EDGEDB_SERVER_TLS_CA_FILE: /run/secrets/ca_cert
+    networks:
+      - ignis-storage
+    volumes:
+      - db_data:/var/lib/edgedb/data
+      - ../apps/anvil/dbschema:/dbschema:ro
+    secrets:
+      - ca_cert
+      - server_cert
+      - server_key
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:5656/server/status/ready"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Key-Value Store
+  valkey:
+    image: valkey/valkey:latest
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
+    networks:
+      - ignis-storage
+    volumes:
+      - kv_data:/bitnami/valkey/data
+    secrets:
+      - source: valkey_password
+        target: /run/secrets/valkey_password
+    command: ["valkey-server", "--requirepass", "$(cat /run/secrets/valkey_password)"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
