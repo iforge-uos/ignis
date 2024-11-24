@@ -255,7 +255,7 @@ export class UsersService {
   ldapUserProps(ldapUser: LdapUser, profile_picture: string | undefined = undefined) {
     return {
       username: ldapUser.uid,
-      email: removeDomain(ldapUser.mail),
+      email: removeDomain(ldapUser.mail).toLowerCase(),
       first_name: ldapUser.givenName,
       last_name: ldapUser.sn,
       organisational_unit: ldapUser.ou,
