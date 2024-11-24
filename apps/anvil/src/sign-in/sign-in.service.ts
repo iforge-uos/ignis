@@ -181,8 +181,8 @@ export class SignInService implements OnModuleInit {
       e.select(sign_in.user, (user) => ({
         ...UserProps(user),
         is_rep: e.select(e.op(user.__type__.name, "=", "users::Rep")),
-        registered: e.select(true as boolean),
-        signed_in: e.select(true as boolean),
+        registered: e.bool(true),
+        signed_in: e.bool(true),
         location: e.assert_exists(sign_in.location.name),
         ...e.is(e.users.Rep, {
           teams: { name: true, description: true, id: true },
@@ -203,8 +203,8 @@ export class SignInService implements OnModuleInit {
         filter_single: { ucard_number: ldapLibraryToUcardNumber(ucard_number) },
         ...UserProps(user),
         is_rep: e.select(e.op(user.__type__.name, "=", "users::Rep")),
-        registered: e.select(true as boolean),
-        signed_in: e.select(false as boolean),
+        registered: e.bool(true),
+        signed_in: e.bool(false),
         ...e.is(e.users.Rep, {
           teams: { name: true, description: true, id: true },
         }),
@@ -225,30 +225,42 @@ export class SignInService implements OnModuleInit {
       });
     }
 
-    user = await this.dbService.query(
-      e.select(
+    const ldapUserProps = this.userService.ldapUserProps(ldapUser);
+    const userByEmail = e.select(e.users.User, () => ({
+      filter_single: { email: ldapUserProps.email },
+    }));
+    const u = await this.dbService.query(userByEmail);
+
+    // TODO there's a better way incoming but this works for now.
+    // check https://discord.com/channels/841451783728529451/1309279819359584397
+    const upsert = (userQuery: any) => {
+      return e.select(
         e.insert(e.sign_in.UserRegistration, {
-          location: e.select(e.sign_in.Location, () => ({ filter_single: { name: location } })),
-          user: e.insert(
-            e.users.User, 
-            this.userService.ldapUserProps(ldapUser)
-          ).unlessConflict(  // if the user has a new ucard number e.g. PGR or re-registered update their associated ucard
-            (user) => ({
-              on: user.email,
-              else: e.update(user, () => ({
-                set: {
-                  ucard_number: ldapLibraryToUcardNumber(ucard_number)
-                }
-              })),
-            })
-          ),
+          location: e.select(e.sign_in.Location, () => ({
+            filter_single: { name: location },
+          })),
+          user: e.assert_exists(userQuery),
         }).user,
         (user) => ({
           ...UserProps(user),
-          is_rep: e.select(false as boolean),
-          registered: e.select(false as boolean),
-          signed_in: e.select(false as boolean),
+          is_rep: e.bool(false),
+          registered: e.bool(false),
+          signed_in: e.bool(false),
         }),
+      );
+    };
+
+    user = await this.dbService.query(
+      upsert(
+        u
+          ? e.update(e.assert_exists(userByEmail), () => ({
+              set: {
+                ucard_number: ldapLibraryToUcardNumber(ucard_number),
+                username: ldapUser.uid,
+                organisational_unit: ldapUser.ou,
+              },
+            }))
+          : e.insert(e.users.User, ldapUserProps),
       ),
     );
 
