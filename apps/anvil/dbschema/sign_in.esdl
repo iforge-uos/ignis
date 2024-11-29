@@ -83,6 +83,17 @@ module sign_in {
         multi supervising_reps := (  # reps are always meant to be supervising cause everyone is responsible for H+S but can't think of a better name
             select (.on_shift_reps union .off_shift_reps) if .out_of_hours else .on_shift_reps
         );
+        multi supervisable_training := (
+            for rep in supervising_reps union (
+                with current_training := rep.training,  # need to store this in a local var cause otherwise it doesn't work
+                select rep.training
+                filter (
+                    exists .rep and  # it's user training
+                    .rep in current_training  # they have the rep training in their own training
+                )
+            )
+        )
+
         required max_count := (
             select min(
                 {

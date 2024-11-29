@@ -23,6 +23,7 @@ import {
 import { Logger } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
 import { CardinalityViolationError, ConstraintViolationError, InvalidValueError } from "edgedb";
+import e from "express";
 
 export const REP_ON_SHIFT = "Rep On Shift";
 export const REP_OFF_SHIFT = "Rep Off Shift";
@@ -269,7 +270,7 @@ export class SignInService implements OnModuleInit {
   }
 
   async getTrainings(id: string, name: LocationName): Promise<Training[]> {
-    const rep_training = e.select(e.sign_in.Location, () => ({ filter_single: { name } })).on_shift_reps.training;
+    const location = e.select(e.sign_in.Location, () => ({ filter_single: { name } }));
 
     const { training } = await this.dbService.query(
       e.assert_exists(
@@ -300,14 +301,18 @@ export class SignInService implements OnModuleInit {
                 // if they're a rep they can sign in off shift to use the machines they want even if the reps aren't trained
                 // ideally first comparison should be `__source__ is users::Rep`
                 e.op(
-                  e.op(e.op(user.__type__.name, "=", "users::Rep"), "or", e.op(training.rep.id, "in", rep_training.id)),
+                  e.op(
+                    e.op(user.__type__.name, "=", "users::Rep"),
+                    "or",
+                    e.op(training.rep, "in", location.supervisable_training),
+                  ),
                   "and",
                   e.op("exists", training["@in_person_created_at"]),
                 ),
                 "if",
                 training.in_person,
                 "else",
-                true,
+                e.op(training, "in", location.supervisable_training),
               ),
             ),
             enabled: false,
