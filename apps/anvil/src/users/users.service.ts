@@ -319,14 +319,14 @@ export class UsersService {
 
   async getUserTrainingInPersonTrainingRemaining(
     id: string,
-    location: LocationName,
+    name: LocationName,
   ): Promise<users.UserInPersonTrainingRemaining[]> {
     // TODO send out emails when training is about to expire.
 
     return await this.dbService.query(
       e.select(
         e.op(
-          location.supervisable_training,
+          e.select(e.sign_in.Location, () => ({ filter_single: { name } })).supervisable_training,
           "intersect",
           e.assert_exists(e.select(e.users.User, UserTrainingEntry(id, { include_fully_complete: false })).training),
         ),

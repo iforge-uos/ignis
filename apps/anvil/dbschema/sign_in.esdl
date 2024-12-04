@@ -84,7 +84,7 @@ module sign_in {
             select (.on_shift_reps union .off_shift_reps) if .out_of_hours else .on_shift_reps
         );
         multi supervisable_training := (
-            for rep in supervising_reps union (
+            for rep in .supervising_reps union (
                 with current_training := rep.training,  # need to store this in a local var cause otherwise it doesn't work
                 select rep.training
                 filter (

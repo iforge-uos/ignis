@@ -1,7 +1,9 @@
 import { useUser } from "@/lib/utils";
 import { TrainingContent } from "@/routes/_authenticated/training/$id";
+import { getUserTraining } from "@/services/users/getUserTraining";
 import { PartialTrainingWithStatus } from "@ignis/types/training";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Training } from "@ignis/types/users";
+import { Link } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button";
 import { Card } from "@ui/components/ui/card";
 import { Separator } from "@ui/components/ui/separator";
@@ -11,11 +13,11 @@ import { EditIcon } from "lucide-react";
 interface TrainingCourseCardProps {
   training: PartialTrainingWithStatus;
   isRep: boolean;
+  userTraining?: Training[];
 }
 
-export default function TrainingCourseCard({ training, isRep }: TrainingCourseCardProps) {
+export default function TrainingCourseCard({ training, isRep, userTraining }: TrainingCourseCardProps) {
   const user = useUser();
-  const navigate = useNavigate();
   return (
     <Card className="w-full max-w-sm overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:shadow-lg flex flex-col">
       <div className="relative m-4">
@@ -64,7 +66,10 @@ export default function TrainingCourseCard({ training, isRep }: TrainingCourseCa
           </Link>
           {isRep && training.rep !== null && (
             <Link to="/training/$id" params={training.rep!}>
-              <Button variant={"outline"}>{`${training.rep.status} Rep Training`}</Button>
+              <Button
+                variant={"outline"}
+                disabled={!userTraining?.map((t) => t.id)?.includes(training.id)}
+              >{`${training.rep.status} Rep Training`}</Button>
             </Link>
           )}
         </div>
