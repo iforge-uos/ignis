@@ -90,10 +90,10 @@ module sign_in {
                 filter (
                     exists .rep and  # it's user training
                     .rep in current_training and  # they have the rep training in their own training
-                    (not .in_person or exists @in_person_completed_at)  # must also have the in person training
+                    (not .in_person or exists @in_person_created_at)  # must also have the in person training
                 )
             )
-        )
+        );
 
         required max_count := (
             select min(
