@@ -1,3 +1,4 @@
+import { activeLocationAtom } from "@/atoms/signInAppAtoms";
 import { iForgeEpoch } from "@/config/constants";
 import { ManageUserWidgetProps } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/ManageUserWidget.tsx";
 import addInPersonTraining from "@/services/users/addInPersonTraining.ts";
@@ -18,6 +19,7 @@ import {
 } from "@ui/components/ui/select.tsx";
 import { cn } from "@ui/lib/utils.ts";
 import { format } from "date-fns";
+import { useAtomValue } from "jotai";
 import { CalendarIcon } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
@@ -26,9 +28,10 @@ export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locatio
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [repSigningOff, setRepSigningOff] = React.useState<string>();
   const [training, setTraining] = React.useState<string>();
+  const activeLocation = useAtomValue(activeLocationAtom);
   const { data: remainingTrainings } = useQuery({
     queryKey: ["userTrainingRemaining", user.id],
-    queryFn: () => getUserTrainingRemaining(user.id),
+    queryFn: () => getUserTrainingRemaining(user.id, activeLocation),
   });
 
   return (

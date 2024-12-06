@@ -86,7 +86,7 @@ export class SignInService implements OnModuleInit {
         e.select(e.sign_in.Location, (loc) => ({
           on_shift_rep_count: e.count(loc.on_shift_reps),
           off_shift_rep_count: e.count(loc.off_shift_reps),
-          user_count: e.op(e.count(loc.sign_ins), "-", e.count(loc.supervising_reps)),
+          user_count: e.op(loc.sign_ins.user.__type__.name, "=", "users::User"),
           max: loc.max_count,
           count_in_queue: e.count(loc.queued),
           out_of_hours: true,
@@ -269,7 +269,7 @@ export class SignInService implements OnModuleInit {
   }
 
   async getTrainings(id: string, name: LocationName): Promise<Training[]> {
-    const rep_training = e.select(e.sign_in.Location, () => ({ filter_single: { name } })).on_shift_reps.training;
+    const location = e.select(e.sign_in.Location, () => ({ filter_single: { name } }));
 
     const { training } = await this.dbService.query(
       e.assert_exists(
@@ -300,14 +300,18 @@ export class SignInService implements OnModuleInit {
                 // if they're a rep they can sign in off shift to use the machines they want even if the reps aren't trained
                 // ideally first comparison should be `__source__ is users::Rep`
                 e.op(
-                  e.op(e.op(user.__type__.name, "=", "users::Rep"), "or", e.op(training.rep.id, "in", rep_training.id)),
+                  e.op(
+                    e.op(user.__type__.name, "=", "users::Rep"),
+                    "or",
+                    e.op(training.rep, "in", location.supervisable_training),
+                  ),
                   "and",
                   e.op("exists", training["@in_person_created_at"]),
                 ),
                 "if",
                 training.in_person,
                 "else",
-                true,
+                e.op(training, "in", location.supervisable_training),
               ),
             ),
             enabled: false,
@@ -651,11 +655,7 @@ export class SignInService implements OnModuleInit {
   async assertHasQueued(location: LocationName, ucard_number: number) {
     const users_can_sign_in = await this.queuedUsersThatCanSignIn(location);
 
-    if (
-      !users_can_sign_in.find((user) => {
-        return user.ucard_number === ucard_number;
-      })
-    ) {
+    if (!users_can_sign_in.some((user) => user.ucard_number === ucard_number)) {
       this.logger.warn(`User ${ucard_number} has not queued at location: ${location}`, SignInService.name);
       throw new HttpException(
         {

@@ -53,7 +53,7 @@ module sign_in {
         );
         required status := (
             with current_time := (
-                select cal::to_local_time(datetime_of_statement(), 'Europe/London')
+                select cal::to_local_time(datetime_of_statement(), "Europe/London")
             ),
             select (
                 "open" if count(.on_shift_reps) > 0 else
@@ -83,6 +83,18 @@ module sign_in {
         multi supervising_reps := (  # reps are always meant to be supervising cause everyone is responsible for H+S but can't think of a better name
             select (.on_shift_reps union .off_shift_reps) if .out_of_hours else .on_shift_reps
         );
+        multi supervisable_training := (
+            for rep in .supervising_reps union (
+                with current_training := rep.training,  # need to store this in a local var cause otherwise it doesn't work
+                select rep.training
+                filter (
+                    exists .rep and  # it's user training
+                    .rep in current_training and  # they have the rep training in their own training
+                    (not .in_person or exists @in_person_completed_at)  # must also have the in person training
+                )
+            )
+        )
+
         required max_count := (
             select min(
                 {
@@ -123,7 +135,7 @@ module sign_in {
         required user: users::User;
     }
 
-    type QueuePlace extending default::CreatedAt {  # TODO consider storing these permenantly
+    type QueuePlace extending default::CreatedAt {  # TODO consider storing these permanently
         required user: users::User {
             constraint exclusive;
         }
