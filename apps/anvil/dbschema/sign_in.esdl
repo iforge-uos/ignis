@@ -53,7 +53,7 @@ module sign_in {
         );
         required status := (
             with current_time := (
-                select cal::to_local_time(datetime_of_statement(), 'Europe/London')
+                select cal::to_local_time(datetime_of_statement(), "Europe/London")
             ),
             select (
                 "open" if count(.on_shift_reps) > 0 else
@@ -89,7 +89,8 @@ module sign_in {
                 select rep.training
                 filter (
                     exists .rep and  # it's user training
-                    .rep in current_training  # they have the rep training in their own training
+                    .rep in current_training and  # they have the rep training in their own training
+                    (not .in_person or exists @in_person_completed_at)  # must also have the in person training
                 )
             )
         )
@@ -134,7 +135,7 @@ module sign_in {
         required user: users::User;
     }
 
-    type QueuePlace extending default::CreatedAt {  # TODO consider storing these permenantly
+    type QueuePlace extending default::CreatedAt {  # TODO consider storing these permanently
         required user: users::User {
             constraint exclusive;
         }
