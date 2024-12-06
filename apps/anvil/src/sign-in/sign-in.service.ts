@@ -303,7 +303,7 @@ export class SignInService implements OnModuleInit {
                   e.op(
                     e.op(user.__type__.name, "=", "users::Rep"),
                     "or",
-                    e.op(training.rep, "in", location.supervisable_training),
+                    e.op(training, "in", location.supervisable_training),
                   ),
                   "and",
                   e.op("exists", training["@in_person_created_at"]),
