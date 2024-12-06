@@ -655,11 +655,7 @@ export class SignInService implements OnModuleInit {
   async assertHasQueued(location: LocationName, ucard_number: number) {
     const users_can_sign_in = await this.queuedUsersThatCanSignIn(location);
 
-    if (
-      !users_can_sign_in.find((user) => {
-        return user.ucard_number === ucard_number;
-      })
-    ) {
+    if (!users_can_sign_in.some((user) => user.ucard_number === ucard_number)) {
       this.logger.warn(`User ${ucard_number} has not queued at location: ${location}`, SignInService.name);
       throw new HttpException(
         {
