@@ -86,7 +86,7 @@ export class SignInService implements OnModuleInit {
         e.select(e.sign_in.Location, (loc) => ({
           on_shift_rep_count: e.count(loc.on_shift_reps),
           off_shift_rep_count: e.count(loc.off_shift_reps),
-          user_count: e.op(e.count(loc.sign_ins), "-", e.count(loc.supervising_reps)),
+          user_count: e.op(loc.sign_ins.user.__type__.name, "=", "users::User"),
           max: loc.max_count,
           count_in_queue: e.count(loc.queued),
           out_of_hours: true,
