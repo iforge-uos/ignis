@@ -1,8 +1,16 @@
 module training {
-    scalar type TrainingLocation extending enum<
+    scalar type LocationName extending enum<
         MAINSPACE,
         HEARTSPACE,
         GEORGE_PORTER,
+    >;
+
+    scalar type Selectability extending enum<
+        NO_TRAINING,
+        REVOKED,
+        EXPIRED,
+        REPS_UNTRAINED,
+        IN_PERSON_MISSING,
     >;
 
     type Training extending default::Auditable {
@@ -24,7 +32,7 @@ module training {
         icon_url: str;
 
         # things for the UI
-        multi locations: TrainingLocation;
+        multi locations: LocationName;
         required compulsory: bool {
             default := false;
         }
@@ -73,6 +81,8 @@ module training {
         duration: duration;
     }
 
+    alias Page := TrainingPage;
+
     scalar type AnswerType extending enum<
         `SINGLE`,
         MULTI,
@@ -89,11 +99,11 @@ module training {
             default := false;
         }
         description: str {
-            annotation description := "The text shown after a user passes their answer giving a lil' explaination about whatever they said."
+            annotation description := "The text shown after a user passes their answer giving a lil' explanation about whatever they said."
         }
     }
 
-    type UserTrainingSession extending default::Auditable {
+    type Session extending default::Auditable {
         required user: users::User;
         required training: Training;
         required index: int16 {

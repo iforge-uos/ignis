@@ -72,27 +72,19 @@ module sign_in {
             with rep_sign_ins := (
                 select .sign_ins filter .user is users::Rep and .reason.name = "Rep On Shift"
             ),
-            select rep_sign_ins.user
+            select rep_sign_ins.user[is users::Rep]
         );
         multi off_shift_reps := (
             with rep_sign_ins := (
                 select .sign_ins filter .user is users::Rep and .reason.name = "Rep Off Shift"
             ),
-            select rep_sign_ins.user
+            select rep_sign_ins.user[is users::Rep]
         );
         multi supervising_reps := (  # reps are always meant to be supervising cause everyone is responsible for H+S but can't think of a better name
             select (.on_shift_reps union .off_shift_reps) if .out_of_hours else .on_shift_reps
         );
         multi supervisable_training := (
-            for rep in .supervising_reps union (
-                with current_training := rep.training,  # need to store this in a local var cause otherwise it doesn't work
-                select rep.training
-                filter (
-                    exists .rep and  # it's user training
-                    .rep in current_training and  # they have the rep training in their own training
-                    (not .in_person or exists @in_person_created_at)  # must also have the in person training
-                )
-            )
+            select distinct .supervising_reps.supervisable_training
         );
 
         required max_count := (

@@ -38,7 +38,8 @@ module users {
                 default := datetime_of_statement();
             }
             in_person_created_at: datetime;
-            in_person_signed_off_by: uuid;  # a rep ID, hopefully can be migrated to the actual object when the requirement for these to be scalars is lifed.
+            in_person_signed_off_by: uuid;  # a rep ID, hopefully can be migrated to the actual object when the requirement for these to be scalars is lifted.
+            infraction: uuid;  # same as above
         }
         multi permissions: auth::Permission;
         multi roles: auth::Role;
@@ -69,6 +70,15 @@ module users {
         required status: RepStatus {
             default := RepStatus.ACTIVE;
         }
+        multi supervisable_training := (
+            with current_training := .training,  # need to store this in a local var cause otherwise it doesn't work
+            select .training
+            filter (
+                exists .rep and  # it's user training
+                .rep in current_training and  # they have the rep training in their own training
+                (not .in_person or exists @in_person_created_at)  # must also have the in person training
+            )
+        );
     }
 
     # N.B. make sure to update in forge/lib/constants
