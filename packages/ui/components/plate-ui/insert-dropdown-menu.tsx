@@ -9,6 +9,7 @@ import { focusEditor, insertEmptyElement, useEditorRef } from "@udecode/plate-co
 import { ELEMENT_H1, ELEMENT_H2, ELEMENT_H3 } from "@udecode/plate-heading";
 import { ELEMENT_PARAGRAPH } from "@udecode/plate-paragraph";
 
+import { useShortcutKey } from "@/lib/utils";
 import { Heading1, Heading2, Heading3, MessageSquareQuote, Pilcrow, Plus } from "lucide-react";
 import {
   DropdownMenu,
@@ -21,8 +22,8 @@ import {
 } from "./dropdown-menu";
 import { ToolbarButton } from "./toolbar";
 
-const isMacOs = !!navigator?.userAgent?.match(/Macintosh;/);
-const metaKey = isMacOs ? "⌘" : "Ctrl";
+// biome-ignore lint/correctness/useHookAtTopLevel: <explanation>
+const metaKey = useShortcutKey();
 const items = [
   {
     items: [

@@ -20,9 +20,6 @@ export function AppSwitcher() {
   const app = useCurrentApp();
   const userRoles = useUserRoles();
 
-  const isMacOs = !!navigator?.userAgent?.match(/Macintosh;/);
-  const metaKey = isMacOs ? "⌘+" : "Ctrl+";
-
   const currentApp = appConfig.find((a) => a.name === app)!;
 
   const filteredApps = appConfig.filter((app) => {

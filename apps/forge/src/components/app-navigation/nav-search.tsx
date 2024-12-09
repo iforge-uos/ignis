@@ -1,4 +1,5 @@
 import { commandMenuIsOpenAtom } from "@/atoms/commandMenuAtoms";
+import { useShortcutKey } from "@/lib/utils";
 import { Label } from "@ignis/ui/components/ui/label";
 import {
   SidebarGroup,
@@ -13,8 +14,7 @@ import { Search } from "lucide-react";
 
 export function NavSearch() {
   const setCommandMenuOpen = useSetAtom(commandMenuIsOpenAtom);
-  const isMacOs = typeof navigator !== "undefined" && !!navigator.userAgent.match(/Macintosh;/);
-  const metaKey = isMacOs ? "⌘" : "Ctrl";
+  const metaKey = useShortcutKey();
   const { state } = useSidebar();
 
   const handleClick = (e: React.MouseEvent) => {

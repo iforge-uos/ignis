@@ -23,12 +23,12 @@ import { TodoListElement } from "./todo-list-element";
 import { TodoListElementButton } from "./todo-list-element-button";
 import { ToolbarGroup } from "./toolbar";
 import { TurnIntoDropdownMenu } from "./turn-into-dropdown-menu";
+import { useShortcutKey } from "@/lib/utils";
 
 export function FixedToolbarButtons() {
   const readOnly = useEditorReadOnly();
 
-  const isMacOs = !!navigator?.userAgent?.match(/Macintosh;/);
-  const metaKey = isMacOs ? "⌘" : "Ctrl";
+  const metaKey = useShortcutKey();
 
   return (
     <div className="w-full overflow-hidden">

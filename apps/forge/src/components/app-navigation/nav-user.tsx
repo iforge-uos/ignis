@@ -1,5 +1,5 @@
 import { UserAvatar } from "@/components/avatar";
-import { useUser } from "@/lib/utils";
+import { useShortcutKey, useUser } from "@/lib/utils";
 import { useTheme } from "@/providers/themeProvider/use-theme";
 import { Button } from "@ignis/ui/components/ui/button";
 import {
@@ -21,8 +21,7 @@ export function NavUser() {
   const { isMobile, state } = useSidebar();
   const { setTheme, theme } = useTheme();
 
-  const isMacOs = !!navigator?.userAgent?.match(/Macintosh;/);
-  const metaKey = isMacOs ? "⌘" : "Ctrl+";
+  const metaKey = useShortcutKey();
 
   const isMinimized = state === "collapsed";
 

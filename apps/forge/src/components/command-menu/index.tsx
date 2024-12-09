@@ -1,6 +1,7 @@
 import { commandMenuIsOpenAtom } from "@/atoms/commandMenuAtoms";
 import { CommandConfig, commandConfig } from "@/config/commands";
 import { useFilteredCommands } from "@/hooks/useFilteredCommands";
+import { useShortcutKey } from "@/lib/utils";
 import { RoutePath } from "@/types/router";
 import { Card, CardContent, CardFooter } from "@ignis/ui/components/ui/card.tsx";
 import { Link, useNavigate } from "@tanstack/react-router";
@@ -32,8 +33,7 @@ export default function CommandMenu() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [activeContent, setActiveContent] = useState<ActiveContent | null>(null);
 
-  const isMacOs = !!navigator?.userAgent?.match(/Macintosh;/);
-  const metaKey = isMacOs ? "⌘" : "Ctrl";
+  const metaKey = useShortcutKey();
 
   const navigate = useCallback(
     (to: RoutePath) => {
