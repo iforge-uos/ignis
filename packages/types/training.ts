@@ -1,6 +1,6 @@
 import type { training } from "@dbschema/interfaces";
 
-export interface TrainingPageInteraction extends Omit<training.TrainingPage, "duration"> {
+export interface PageInteraction extends Omit<training.Page, "duration"> {
   type_name: "training::TrainingPage";
   duration_?: string; // duration in seconds as a float (but yes it really is a string)
 }
@@ -13,13 +13,13 @@ export type WrongAnswers = {
   answers: { id: string }[];
 };
 
-export type InteractionResponse = TrainingPageInteraction | QuestionInteraction | WrongAnswers | undefined;
+export type InteractionResponse = PageInteraction | QuestionInteraction | WrongAnswers | undefined;
 
 /** {id -> status} The text shown to a user on the button for the course */
 export type UserTrainingStatus = "Start" | "Resume" | "Retake";
 export type UserTrainingStatuses = Map<string, UserTrainingStatus>;
 
-export type Location = training.TrainingLocation;
+export type LocationName = training.LocationName;
 
 export interface AllTraining {
   id: string;
@@ -29,7 +29,7 @@ export interface AllTraining {
   };
   name: string;
   description: string;
-  locations: Location[];
+  locations: LocationName[];
 }
 
 export interface PartialTraining {
@@ -41,7 +41,7 @@ export interface PartialTraining {
     id: string;
     description: string;
   } | null;
-  locations: Location[];
+  locations: LocationName[];
   created_at: Date;
   updated_at: Date;
   in_person: boolean;
@@ -58,7 +58,7 @@ export interface PartialTrainingWithStatus extends PartialTraining {
   } | null;
 }
 
-export type Section = TrainingPageInteraction | QuestionInteraction;
+export type Section = PageInteraction | QuestionInteraction;
 
 export interface Training extends PartialTraining {
   sections?: Section[];

@@ -1,7 +1,7 @@
 import axiosInstance from "@/api/axiosInstance";
-import type { Location, UserTrainingStatuses } from "@ignis/types/training";
+import type { LocationName, UserTrainingStatuses } from "@ignis/types/training";
 
-export async function getStatus(location: Location): Promise<UserTrainingStatuses> {
+export async function getStatus(location: LocationName): Promise<UserTrainingStatuses> {
   try {
     const { data } = await axiosInstance.get(`/training/location/${location}/statuses`);
     return data;

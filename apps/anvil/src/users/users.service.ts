@@ -370,10 +370,8 @@ export class UsersService {
       })),
     );
     await this.dbService.query(
-      e.delete(e.training.UserTrainingSession, (session) => ({
-        filter_single: e.all(
-          e.set(e.op(session.training.id, "=", e.cast(e.uuid, training_id)), e.op(session.user, "=", user)),
-        ),
+      e.delete(e.training.Session, (session) => ({
+        filter_single: e.all(e.set(e.op(session.training.id, "=", e.uuid(training_id)), e.op(session.user, "=", user))),
       })),
     );
   }

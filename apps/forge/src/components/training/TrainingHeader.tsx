@@ -1,6 +1,6 @@
 import { LOCATIONS, TRAINING_LOCATIONS } from "@/lib/constants";
 import { ALL_TAGS, TrainingForTags, serializeTrainingTags, toTitleCase, trainingTags } from "@/lib/utils";
-import { Location, Training } from "@ignis/types/training";
+import { LocationName, Training } from "@ignis/types/training";
 import MultipleSelector, { Option } from "@ui/components/multi-select";
 import { Badge } from "@ui/components/ui/badge";
 import { Separator } from "@ui/components/ui/separator";
@@ -24,8 +24,8 @@ interface TrainingHeaderPropsEditing extends BaseTrainingHeaderProps {
   editing: true;
   tags: TrainingForTags;
   setTags: React.Dispatch<React.SetStateAction<TrainingForTags>>;
-  locations: Location[];
-  setLocations: React.Dispatch<React.SetStateAction<Location[]>>;
+  locations: LocationName[];
+  setLocations: React.Dispatch<React.SetStateAction<LocationName[]>>;
 }
 
 type TrainingHeaderProps = TrainingHeaderPropsEditing | TrainingHeaderPropsNonEditing;
@@ -46,7 +46,7 @@ export function TrainingHeader({ data, editing, tags, setTags, locations, setLoc
                   label: <LocationIcon location={value} className="-m-1.5 w-4 mx-0.5" />,
                   value,
                 }))}
-                onChange={(options) => setLocations(options.map((option) => option.value) as Location[])} // TODO option for Rep training link and callback for the value changing to add last section for in-person
+                onChange={(options) => setLocations(options.map((option) => option.value) as LocationName[])} // TODO option for Rep training link and callback for the value changing to add last section for in-person
                 selectFirstItem={false}
                 defaultOptions={TRAINING_LOCATIONS.map((value) => ({
                   label: (

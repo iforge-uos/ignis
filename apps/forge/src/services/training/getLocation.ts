@@ -1,7 +1,7 @@
 import axiosInstance from "@/api/axiosInstance";
 import type { training } from "@ignis/types";
 
-export async function getLocation(location: training.Location): Promise<training.PartialTraining[]> {
+export async function getLocation(location: training.LocationName): Promise<training.PartialTraining[]> {
   try {
     const { data } = await axiosInstance.get(`/training/location/${location}`);
     for (const training of data) {

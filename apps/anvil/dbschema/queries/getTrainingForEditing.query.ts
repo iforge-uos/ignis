@@ -29,10 +29,10 @@ export type GetTrainingForEditingReturns = {
   "description": string;
   "enabled": boolean;
   "expires_after": Duration | null;
+  "icon_url": string | null;
   "in_person": boolean;
   "locations": Array<("MAINSPACE" | "HEARTSPACE" | "GEORGE_PORTER")>;
   "training_lockout": Duration | null;
-  "icon_url": string | null;
   "questions": Array<{
     "index": number;
     "enabled": boolean;
@@ -57,10 +57,10 @@ export type GetTrainingForEditingReturns = {
     "description": string;
     "enabled": boolean;
     "expires_after": Duration | null;
+    "icon_url": string | null;
     "in_person": boolean;
     "locations": Array<("MAINSPACE" | "HEARTSPACE" | "GEORGE_PORTER")>;
     "training_lockout": Duration | null;
-    "icon_url": string | null;
   } | null;
 };
 
@@ -72,8 +72,8 @@ select assert_exists(
         sections: {
             *,
             type_name := .__type__.name,
-            [is training::TrainingPage].name,
-            duration_ := duration_to_seconds([is training::TrainingPage].duration),
+            [is training::Page].name,
+            duration_ := duration_to_seconds([is training::Page].duration),
             answers := [is training::Question].answers {
                 id,
                 content,

@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Location as LocationType } from "@ignis/types/training";
+import { LocationName as LocationType } from "@ignis/types/training";
 import { Heart, ParkingMeter, Wrench } from "lucide-react";
 import React from "react";
 import { IconWithTooltip } from ".";

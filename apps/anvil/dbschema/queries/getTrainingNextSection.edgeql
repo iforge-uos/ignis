@@ -13,8 +13,8 @@ select assert_single(
         id,
         index,
         content,
-        name := [is training::TrainingPage].name,
-        duration_ := duration_to_seconds([is training::TrainingPage].duration),
+        name := [is training::Page].name,
+        duration_ := duration_to_seconds([is training::Page].duration),
         type := [is training::Question].type,
         answers := [is training::Question].answers {
             id,

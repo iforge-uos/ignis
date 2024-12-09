@@ -2,7 +2,7 @@ import Title from "@/components/title";
 import { TrainingHeader } from "@/components/training/TrainingHeader";
 import { TrainingForTags, deserializeMd } from "@/lib/utils";
 import { get } from "@/services/training/get";
-import { Location, Section, Training } from "@ignis/types/training";
+import { LocationName, Section, Training } from "@ignis/types/training";
 import { createFileRoute, deepEqual } from "@tanstack/react-router";
 import { PlateEditor } from "@ui/components/plate-ui/plate-editor";
 import { Badge } from "@ui/components/ui/badge";
@@ -20,7 +20,7 @@ function Component() {
   const { id } = Route.useParams();
   const originalData = Route.useLoaderData();
   const [data, setData] = React.useState<Training>(JSON.parse(JSON.stringify(originalData)));
-  const [locations, setLocations] = React.useState<Location[]>(data.locations);
+  const [locations, setLocations] = React.useState<LocationName[]>(data.locations);
   const [sections, setSections] = React.useState(data.sections!);
   const [tags, setTags] = React.useState<TrainingForTags>(data);
   console.log("data", data, "orig", originalData);

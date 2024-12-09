@@ -344,7 +344,7 @@ export class SignInService implements OnModuleInit {
           e.set(
             e.op(training_.id, "not in", e.cast(e.uuid, e.set(...training.map((training) => training.id)))),
             e.op("exists", training_.rep),
-            e.op(e.cast(e.training.TrainingLocation, name), "in", training_.locations),
+            e.op(e.cast(e.training.LocationName, name), "in", training_.locations),
             training_.enabled,
           ),
         ),
@@ -522,7 +522,7 @@ export class SignInService implements OnModuleInit {
       filter: e.op(
         training.compulsory,
         "and",
-        e.op(e.cast(e.training.TrainingLocation, name.toUpperCase()), "in", training.locations),
+        e.op(e.cast(e.training.LocationName, name.toUpperCase()), "in", training.locations),
       ),
     }));
 

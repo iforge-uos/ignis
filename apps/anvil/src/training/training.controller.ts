@@ -64,13 +64,13 @@ export class TrainingController {
   }
 
   @Get("location/:location")
-  async trainings(@Param("location") location: training.Location): Promise<PartialTraining[]> {
+  async trainings(@Param("location") location: training.LocationName): Promise<PartialTraining[]> {
     this.logger.log(`Retrieving trainings for location: ${location}`, TrainingController.name);
     return this.trainingService.getTrainings(location);
   }
 
   @Get("location/:location/statuses")
-  async trainingStatuses(@Req() req: Request, @Param("location") location: training.Location) {
+  async trainingStatuses(@Req() req: Request, @Param("location") location: training.LocationName) {
     let user_id: string | undefined;
     try {
       const payload = verifyJWT(req.cookies.access_token);

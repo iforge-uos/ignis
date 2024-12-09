@@ -91,7 +91,7 @@ export const seedTraining = async (dbService: EdgeDBService) => {
         description: e.cast(e.str, item.description),
         compulsory: e.cast(e.bool, item.compulsory),
         in_person: e.cast(e.bool, item.in_person),
-        locations: e.array_unpack(e.cast(e.array(e.training.TrainingLocation), item.locations)),
+        locations: e.array_unpack(e.cast(e.array(e.training.LocationName), item.locations)),
         questions: e.for(e.json_array_unpack(e.json_get(item, "questions")), (question) => {
           // @ts-ignore TODO FIX?
           return e.insert(e.training.Question, {
@@ -108,7 +108,7 @@ export const seedTraining = async (dbService: EdgeDBService) => {
         }),
         pages: e.for(e.json_array_unpack(e.json_get(item, "pages")), (training_) => {
           // @ts-ignore TODO FIX?
-          return e.insert(e.training.TrainingPage, {
+          return e.insert(e.training.Page, {
             name: e.cast(e.str, training_.name),
             content: e.cast(e.str, training_.content),
             index: e.cast(e.int16, training_.index),

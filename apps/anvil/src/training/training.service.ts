@@ -1,9 +1,9 @@
 import { EdgeDBService } from "@/edgedb/edgedb.service";
 import { ErrorCodes } from "@/shared/constants/ErrorCodes";
 import { UsersService } from "@/users/users.service";
-import { TrainingLocationSchema } from "@dbschema/edgedb-zod/modules/training";
+import { LocationNameSchema } from "@dbschema/edgedb-zod/modules/training";
 import e from "@dbschema/edgeql-js";
-import { TrainingLocation } from "@dbschema/edgeql-js/modules/training";
+import { LocationName } from "@dbschema/edgeql-js/modules/training";
 import { getTrainingForEditing } from "@dbschema/queries/getTrainingForEditing.query";
 import { getTrainingNextSection } from "@dbschema/queries/getTrainingNextSection.query";
 import { startTraining } from "@dbschema/queries/startTraining.query";
@@ -12,16 +12,16 @@ import { AllTraining, PartialTraining } from "@ignis/types/training";
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { CardinalityViolationError, InvalidValueError, MissingRequiredError } from "edgedb";
 
-export const LOCATIONS = Object.keys(TrainingLocationSchema.Values) as readonly training.Location[];
+export const LOCATIONS = Object.keys(LocationNameSchema.Values) as readonly training.LocationName[];
 
 const TrainingSection = e.shape(e.training.Training.sections, (section) => ({
   type_name: e.select(section.__type__.name),
   id: true,
   content: true,
   index: true,
-  ...e.is(e.training.TrainingPage, {
+  ...e.is(e.training.Page, {
     name: true,
-    duration_: e.duration_to_seconds(section.is(e.training.TrainingPage).duration),
+    duration_: e.duration_to_seconds(section.is(e.training.Page).duration),
   }),
   ...e.is(e.training.Question, {
     answers: { id: true, content: true },
@@ -158,7 +158,7 @@ export class TrainingService {
     return all.sort((a, b) => a.name.localeCompare(b.name)) as AllTraining[];
   }
 
-  async getTrainings(location: training.Location): Promise<PartialTraining[]> {
+  async getTrainings(location: training.LocationName): Promise<PartialTraining[]> {
     return await this.dbService.query(
       e.select(e.training.Training, (training) => ({
         id: true,
@@ -177,7 +177,7 @@ export class TrainingService {
         enabled: true,
         filter: e.all(
           e.set(
-            e.op(e.cast(TrainingLocation, location), "in", training.locations),
+            e.op(e.cast(LocationName, location), "in", training.locations),
             e.op("exists", training.rep),
             training.enabled,
           ),
@@ -186,29 +186,29 @@ export class TrainingService {
     );
   }
 
-  async trainingStatuses(location: training.Location, user_id: string | undefined) {
+  async trainingStatuses(location: training.LocationName, user_id: string | undefined) {
     if (user_id === undefined) {
       return await this.dbService.query(
         e.select(e.training.Training, (training) => ({
-          filter: e.op(e.cast(TrainingLocation, location), "in", training.locations),
+          filter: e.op(e.cast(LocationName, location), "in", training.locations),
           id_: e.select(training.id),
           status: e.select("Start"),
         })),
       );
     }
     const user = e.select(e.users.User, () => ({ filter_single: { id: user_id } }));
-    const sessions = e.select(e.training.UserTrainingSession, (session) => ({
+    const sessions = e.select(e.training.Session, (session) => ({
       filter: e.op(
         e.op(session.user, "=", user),
         "and",
-        e.op(e.cast(TrainingLocation, location), "in", session.training.locations),
+        e.op(e.cast(LocationName, location), "in", session.training.locations),
       ),
     }));
     const rest_of_training = e.select(e.training.Training, (training) => ({
       filter: e.op(
         // FIXME this doesnt work in the HS
         e.op(
-          e.op(e.cast(TrainingLocation, location), "in", training.locations),
+          e.op(e.cast(LocationName, location), "in", training.locations),
           "if",
           e.op("exists", training.rep), // forward all rep trainings no-matter the location
           "else",
@@ -233,9 +233,7 @@ export class TrainingService {
             "Start",
           ),
         );
-        const session_training_id_selector = e.select(
-          training_or_session.is(e.training.UserTrainingSession).training.id,
-        );
+        const session_training_id_selector = e.select(training_or_session.is(e.training.Session).training.id);
         const is_training = e.op(training_or_session.__type__.name, "=", "training::Training");
         return {
           id_: e.select(
@@ -270,7 +268,7 @@ export class TrainingService {
     // TODO per-session locks to prevent funny things happening
     const session = await this.dbService.query(
       e.assert_exists(
-        e.select(e.training.UserTrainingSession, (session) => ({
+        e.select(e.training.Session, (session) => ({
           training: true,
           index: true,
           filter_single: e.op(
@@ -316,7 +314,7 @@ export class TrainingService {
       }
     } else {
       try {
-        await this.dbService.query(e.assert_exists(e.select(e.training.TrainingPage, selector)));
+        await this.dbService.query(e.assert_exists(e.select(e.training.Page, selector)));
       } catch (e) {
         if (e instanceof CardinalityViolationError) {
           throw new BadRequestException({
@@ -359,7 +357,7 @@ export class TrainingService {
                 }),
               ),
               "union",
-              e.delete(e.training.UserTrainingSession, () => ({
+              e.delete(e.training.Session, () => ({
                 filter_single: { id: session_id },
               })).training, // add it back in while atomically deleting the session
             ),
@@ -371,7 +369,7 @@ export class TrainingService {
     }
 
     await this.dbService.query(
-      e.update(e.training.UserTrainingSession, () => ({
+      e.update(e.training.Session, () => ({
         set: {
           index: next_section.index,
         },

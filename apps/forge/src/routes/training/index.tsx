@@ -55,7 +55,7 @@ export default function TrainingIndexPage() {
                   <Link to="/training/$id" params={training}>
                     <div className="flex gap-3 justify-center items-center">
                       {training.locations.map((location) => (
-                        <LocationIcon key={location} location={location as training.Location} />
+                        <LocationIcon key={location} location={location as training.LocationName} />
                       ))}
                       <div className="flex-col">
                         <div className="font-semibold">{training.name}</div>

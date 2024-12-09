@@ -6,7 +6,7 @@ import { getLocation } from "@/services/training/getLocation";
 import { getStatus } from "@/services/training/getStatus";
 import { getUserTraining } from "@/services/users/getUserTraining";
 import { training } from "@ignis/types";
-import { Location, PartialTrainingWithStatus } from "@ignis/types/training";
+import { LocationName, PartialTrainingWithStatus } from "@ignis/types/training";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button";
@@ -19,7 +19,7 @@ import ImageGradient from "./ImageGradient";
 import TrainingCourseCard from "./TrainingCourseCard";
 
 // don't ask why this is in the components folder
-export async function getData(location: Location): Promise<PartialTrainingWithStatus[]> {
+export async function getData(location: LocationName): Promise<PartialTrainingWithStatus[]> {
   const [trainings, statuses]: any = await Promise.all([getLocation(location), getStatus(location)]);
   for (const training of trainings) {
     training.status = statuses[training.id];
@@ -30,14 +30,14 @@ export async function getData(location: Location): Promise<PartialTrainingWithSt
   return trainings;
 }
 
-interface TrainingLocationProps {
-  location: Location;
+interface LocationNameProps {
+  location: LocationName;
   img: React.ReactNode;
   optionalTrainingText: string;
   trainings: PartialTrainingWithStatus[];
 }
 
-export function TrainingLocation({ location, optionalTrainingText, img, trainings }: TrainingLocationProps) {
+export function LocationName({ location, optionalTrainingText, img, trainings }: LocationNameProps) {
   const user = useUser();
   const name = toTitleCase(location.replace("_", " "));
   const isRep = !!user?.roles.some((role) => role.name === "Rep");
