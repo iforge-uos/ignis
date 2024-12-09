@@ -17,15 +17,15 @@ function LocationStatusTooltip({ location }: { location: PartialLocation }) {
   let tooltip: string;
 
   switch (location.status) {
-    case "closed":
+    case "CLOSED":
       className = "bg-cross";
       tooltip = "Closed";
       break;
-    case "open":
+    case "OPEN":
       className = "bg-tick";
       tooltip = "Open";
       break;
-    case "soon":
+    case "SOON":
       className = "bg-orange-500";
       tooltip = "Opening/Closing Soon";
       break;

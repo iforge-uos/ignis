@@ -33,7 +33,7 @@ export type QueueEntry = {
 };
 
 export type PartialLocation = {
-  status: LocationStatusStatus;
+  status: LocationStatus;
   on_shift_rep_count: number;
   off_shift_rep_count: number;
   user_count: number;
@@ -53,7 +53,7 @@ export type Location = {
   queued: QueueEntry[];
 };
 
-export type LocationStatusStatus = "open" | "soon" | "closed";
+export type LocationStatus = sign_in.LocationStatus;
 
 //* Training for a user who's requesting to sign in */
 export type Training = GetSignInTrainingsReturns["training"][number];

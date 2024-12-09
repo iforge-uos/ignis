@@ -17,6 +17,12 @@ module sign_in {
         HEARTSPACE,
     >;
 
+    scalar type LocationStatus extending enum<
+        OPEN,
+        SOON,
+        CLOSED,
+    >;
+
     type Location extending default::Auditable {
         required name: LocationName {
             constraint exclusive;
@@ -56,15 +62,15 @@ module sign_in {
                 select cal::to_local_time(datetime_of_statement(), "Europe/London")
             ),
             select (
-                "open" if count(.on_shift_reps) > 0 else
-                "soon" if (
+                LocationStatus.OPEN if count(.on_shift_reps) > 0 else
+                LocationStatus.SOON if (
                     (
                         .opening_time - <cal::relative_duration>"30m" <= current_time
                         and current_time <= .closing_time - <cal::relative_duration>"30m"
                     )
                     and datetime_get(datetime_of_statement(), "isodow") in .opening_days
                 )
-                else "closed"
+                else LocationStatus.CLOSED
             )
         );
 
