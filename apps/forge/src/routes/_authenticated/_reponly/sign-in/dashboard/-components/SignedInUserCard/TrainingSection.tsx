@@ -23,6 +23,7 @@ import { useAtomValue } from "jotai";
 import { CalendarIcon } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
+import { getTrainingSelectabilityIcons } from "../../../actions/-components/ToolSelectionInput";
 
 export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locationName: location, onShiftReps }) => {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
@@ -44,15 +45,21 @@ export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locatio
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              {remainingTrainings && remainingTrainings.length > 0 ? (
-                remainingTrainings.map((training) =>
-                  training.locations.includes(location.toUpperCase() as Uppercase<LocationName>) ? (
-                    <SelectItem key={training.id} value={training.id}>
+              {remainingTrainings?.map((training) => {
+                const Icon = getTrainingSelectabilityIcons(training);
+                return (
+                  <SelectItem
+                    key={training.id}
+                    value={training.id}
+                    disabled={training.selectable.length !== 1 && !training.selectable.includes("IN_PERSON_MISSING")}
+                  >
+                    <div>
+                      {Icon}
                       {training.name}
-                    </SelectItem>
-                  ) : null,
-                )
-              ) : (
+                    </div>
+                  </SelectItem>
+                );
+              }) || (
                 <SelectItem value={"unselectable"} disabled>
                   No available trainings
                 </SelectItem>

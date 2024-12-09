@@ -2,7 +2,7 @@ import { CheckAbilities } from "@/auth/authorization/decorators/check-abilities-
 import { IsAdmin } from "@/auth/authorization/decorators/check-roles-decorator";
 import { CaslAbilityGuard } from "@/auth/authorization/guards/casl-ability.guard";
 import type { UpdateUserSchema } from "@dbschema/edgedb-zod/modules/users";
-import { users } from "@ignis/types";
+import { sign_in, training, users } from "@ignis/types";
 import { LocationName } from "@ignis/types/sign_in";
 import type { Training, User } from "@ignis/types/users";
 import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, UseGuards } from "@nestjs/common";
@@ -96,7 +96,7 @@ export class UsersController {
   async getRemainingTraining(
     @Param("id") id: string,
     @Param("location") location: LocationName,
-  ): Promise<users.UserInPersonTrainingRemaining[]> {
+  ): Promise<sign_in.Training[]> {
     this.logger.log(`Retrieving remaining training for user with ID: ${id}`, UsersController.name);
     return this.usersService.getUserTrainingInPersonTrainingRemaining(id, location);
   }

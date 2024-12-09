@@ -1,4 +1,5 @@
-import { sign_in, std } from "@dbschema/interfaces";
+import { sign_in, std, training } from "@dbschema/interfaces";
+import { GetSignInTrainingsReturns } from "@dbschema/queries/getSignInTrainings.query";
 import * as users from "./users";
 
 export type {
@@ -55,9 +56,7 @@ export type Location = {
 export type LocationStatusStatus = "open" | "soon" | "closed";
 
 //* Training for a user who's requesting to sign in */
-export type Training = Omit<users.Training, "locations" | "created_at" | "updated_at"> & {
-  selectable?: boolean;
-};
+export type Training = GetSignInTrainingsReturns["training"][number];
 
 export type User = users.UserWithInfractions & {
   training: Training[];

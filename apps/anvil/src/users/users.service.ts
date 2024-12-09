@@ -6,7 +6,8 @@ import { ErrorCodes } from "@/shared/constants/ErrorCodes";
 import { ldapLibraryToUcardNumber, removeDomain } from "@/shared/functions/utils";
 import e from "@dbschema/edgeql-js";
 import { addInPersonTraining } from "@dbschema/queries/addInPersonTraining.query";
-import { users } from "@ignis/types";
+import { GetSignInTrainingsReturns, getSignInTrainings } from "@dbschema/queries/getSignInTrainings.query";
+import { sign_in, users } from "@ignis/types";
 import { LocationName } from "@ignis/types/sign_in";
 import { Rep, RepStatus, SignInStat, Training, User } from "@ignis/types/users";
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
@@ -71,40 +72,7 @@ interface UserTrainingEntryPropsOptions {
 }
 const UserTrainingEntry = (id: string, options: UserTrainingEntryPropsOptions) => {
   // TODO ignore trainings that are purely informational, needs a new flag adding to Training entry
-  return e.shape(e.users.User, () => ({
-    training: (training) => ({
-      filter: e.all(
-        e.set(
-          options.training_id ? e.op(training.id, "=", e.uuid(options.training_id)) : true,
-          e.op(
-            "not",
-            e.op(
-              // should be e.op(training["@expires"], "<", e.datetime_of_statement())
-              e.op(e.op(training["@created_at"], "+", training.expires_after), "<", e.datetime_of_statement()),
-              "if",
-              e.op("exists", training.expires_after),
-              "else",
-              false,
-            ),
-          ),
-          options.include_fully_complete
-            ? true
-            : e.op(
-                e.op(
-                  e.op("not", e.op("exists", training["@in_person_created_at"])),
-                  "and",
-                  e.op("exists", training["@created_at"]),
-                ),
-                "if",
-                training.in_person,
-                "else",
-                true,
-              ),
-        ),
-      ),
-    }),
-    filter_single: { id },
-  }));
+  return e.shape(e.users.User, () => ({}));
 };
 
 @Injectable()
@@ -317,27 +285,11 @@ export class UsersService {
     return training;
   }
 
-  async getUserTrainingInPersonTrainingRemaining(
-    id: string,
-    name: LocationName,
-  ): Promise<users.UserInPersonTrainingRemaining[]> {
+  async getUserTrainingInPersonTrainingRemaining(id: string, name: LocationName): Promise<sign_in.Training[]> {
     // TODO send out emails when training is about to expire.
 
-    return await this.dbService.query(
-      e.select(
-        e.op(
-          e.select(e.sign_in.Location, () => ({ filter_single: { name } })).supervisable_training,
-          "intersect",
-          e.assert_exists(e.select(e.users.User, UserTrainingEntry(id, { include_fully_complete: false })).training),
-        ),
-        (training) => ({
-          name: true,
-          id: true,
-          locations: true,
-          filter: training.in_person,
-        }),
-      ),
-    );
+    const { training } = await getSignInTrainings(this.dbService.client, { id, name, name_: name });
+    return training.filter((t) => t.selectable.includes("IN_PERSON_MISSING"));
   }
 
   async addInPersonTraining(id: string, training_id: string, data: AddInPersonTrainingDto) {
@@ -352,20 +304,33 @@ export class UsersService {
 
   async revokeTraining(id: string, training_id: string, data: RevokeTrainingDto) {
     const user = e.assert_exists(e.select(e.users.User, () => ({ filter_single: { id } })));
+    const infraction = e.insert(e.users.Infraction, {
+      user,
+      reason: data.reason,
+      resolved: true,
+      type: e.users.InfractionType.TRAINING_ISSUE,
+    });
+
     await this.dbService.query(
       e.update(user, () => ({
         set: {
-          training: {
-            "-=": e.assert_exists(e.select(e.training.Training, () => ({ filter_single: { id: training_id } }))),
-          },
           infractions: {
-            "+=": e.insert(e.users.Infraction, {
-              user,
-              reason: data.reason,
-              resolved: true,
-              type: e.users.InfractionType.TRAINING_ISSUE,
-            }),
+            "+=": infraction,
           },
+          training: e.op(
+            e.assert_exists(
+              e.select(user.training, () => ({
+                filter_single: {
+                  id: training_id,
+                },
+                "@infraction": infraction,
+              })),
+            ),
+            "union",
+            e.select(user.training, (t) => ({
+              filter: e.op(t.id, "!=", training_id),
+            })),
+          ),
         },
       })),
     );

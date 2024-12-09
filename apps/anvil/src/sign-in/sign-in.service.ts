@@ -8,7 +8,10 @@ import { ldapLibraryToUcardNumber } from "@/shared/functions/utils";
 import { PartialUserProps, UserProps, UsersService } from "@/users/users.service";
 import { LocationNameSchema } from "@dbschema/edgedb-zod/modules/sign_in";
 import e from "@dbschema/edgeql-js";
-import { std } from "@dbschema/interfaces";
+import { Cardinality } from "@dbschema/edgeql-js/reflection";
+import { $expr_Array, ArrayType, ScalarType } from "@dbschema/edgeql-js/typesystem";
+import { std, training } from "@dbschema/interfaces";
+import { getSignInTrainings } from "@dbschema/queries/getSignInTrainings.query";
 import { users } from "@ignis/types";
 import type { LocationName, PartialLocation, QueueEntry, Training } from "@ignis/types/sign_in";
 import type { Infraction, InfractionType, PartialUser, User, UserWithInfractions } from "@ignis/types/users";
@@ -271,66 +274,9 @@ export class SignInService implements OnModuleInit {
   }
 
   async getTrainings(id: string, name: LocationName): Promise<Training[]> {
-    const location = e.select(e.sign_in.Location, () => ({ filter_single: { name } }));
+    const { training } = await getSignInTrainings(this.dbService.client, { id, name, name_: name });
 
-    const { training } = await this.dbService.query(
-      e.assert_exists(
-        e.select(e.users.User, (user) => ({
-          training: (training) => ({
-            id: true,
-            name: true,
-            compulsory: true,
-            in_person: true,
-            description: true,
-            rep: {
-              id: true,
-              description: true,
-            },
-            "@created_at": true,
-            "@in_person_created_at": true,
-            expired: e.assert_exists(
-              e.op(
-                e.op(e.op(training["@created_at"], "+", training.expires_after), "<", e.datetime_of_statement()),
-                "if",
-                e.op("exists", training.expires_after),
-                "else",
-                false,
-              ),
-            ),
-            selectable: e.assert_exists(
-              e.op(
-                // if they're a rep they can sign in off shift to use the machines they want even if the reps aren't trained
-                // ideally first comparison should be `__source__ is users::Rep`
-                e.op(
-                  e.op(
-                    e.op(user.__type__.name, "=", "users::Rep"),
-                    "or",
-                    e.op(training, "in", location.supervisable_training),
-                  ),
-                  "and",
-                  e.op("exists", training["@in_person_created_at"]),
-                ),
-                "if",
-                training.in_person,
-                "else",
-                e.op(training, "in", location.supervisable_training),
-              ),
-            ),
-            enabled: false,
-            icon_url: true,
-            filter: e.all(
-              e.set(
-                e.op("exists", training.rep),
-                e.op(e.cast(e.training.TrainingLocation, name), "in", training.locations),
-              ),
-            ),
-          }),
-          filter_single: { id },
-        })),
-      ),
-    );
-
-    const all_training = await this.dbService.query(
+    const all_training = (await this.dbService.query(
       e.select(e.training.Training, (training_) => ({
         id: true,
         name: true,
@@ -340,6 +286,7 @@ export class SignInService implements OnModuleInit {
         description: true,
         enabled: true,
         icon_url: true,
+        selectable: e.array(["NO_TRAINING" satisfies training.Selectability] as const),
         filter: e.all(
           e.set(
             e.op(training_.id, "not in", e.cast(e.uuid, e.set(...training.map((training) => training.id)))),
@@ -349,7 +296,7 @@ export class SignInService implements OnModuleInit {
           ),
         ),
       })),
-    );
+    )) as Training[];
 
     return [...training, ...all_training];
   }

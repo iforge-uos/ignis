@@ -1,11 +1,8 @@
 import axiosInstance from "@/api/axiosInstance";
+import { sign_in } from "@ignis/types";
 import { LocationName } from "@ignis/types/sign_in";
-import { UserInPersonTrainingRemaining } from "@ignis/types/users";
 
-export async function getUserTrainingRemaining(
-  id: string,
-  location: LocationName,
-): Promise<UserInPersonTrainingRemaining[]> {
+export async function getUserTrainingRemaining(id: string, location: LocationName): Promise<sign_in.Training[]> {
   try {
     const { data } = await axiosInstance.get(`/users/${id}/training/remaining/${location}`);
     return data;

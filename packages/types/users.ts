@@ -49,7 +49,6 @@ export type UserWithInfractions = User & {
 };
 export type InfractionType = users.InfractionType;
 
-export type UserInPersonTrainingRemaining = { name: string; id: string; locations: training.Location[] };
 //** A user's trainings. /users/:id/training */
 export type Training = Omit<training.PartialTraining, "created_at" | "updated_at"> & {
   expired?: boolean; // this should be "@expired", though currently a compute
