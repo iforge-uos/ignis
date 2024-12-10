@@ -255,7 +255,7 @@ export class UsersService {
   ldapUserProps(ldapUser: LdapUser, profile_picture: string | undefined = undefined) {
     return {
       username: ldapUser.uid,
-      email: removeDomain(ldapUser.mail),
+      email: removeDomain(ldapUser.mail).toLowerCase(),
       first_name: ldapUser.givenName,
       last_name: ldapUser.sn,
       organisational_unit: ldapUser.ou,
@@ -317,12 +317,19 @@ export class UsersService {
     return training;
   }
 
-  async getUserTrainingInPersonTrainingRemaining(id: string): Promise<users.UserInPersonTrainingRemaining[]> {
+  async getUserTrainingInPersonTrainingRemaining(
+    id: string,
+    name: LocationName,
+  ): Promise<users.UserInPersonTrainingRemaining[]> {
     // TODO send out emails when training is about to expire.
 
     return await this.dbService.query(
       e.select(
-        e.assert_exists(e.select(e.users.User, UserTrainingEntry(id, { include_fully_complete: false }))).training,
+        e.op(
+          e.select(e.sign_in.Location, () => ({ filter_single: { name } })).supervisable_training,
+          "intersect",
+          e.assert_exists(e.select(e.users.User, UserTrainingEntry(id, { include_fully_complete: false })).training),
+        ),
         (training) => ({
           name: true,
           id: true,

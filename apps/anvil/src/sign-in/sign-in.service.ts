@@ -86,7 +86,9 @@ export class SignInService implements OnModuleInit {
         e.select(e.sign_in.Location, (loc) => ({
           on_shift_rep_count: e.count(loc.on_shift_reps),
           off_shift_rep_count: e.count(loc.off_shift_reps),
-          user_count: e.op(e.count(loc.sign_ins), "-", e.count(loc.supervising_reps)),
+          user_count: e.count(
+            e.select(loc.sign_ins.user, (u) => ({ filter: e.op(u.__type__.name, "=", "users::User") })),
+          ),
           max: loc.max_count,
           count_in_queue: e.count(loc.queued),
           out_of_hours: true,
@@ -181,8 +183,8 @@ export class SignInService implements OnModuleInit {
       e.select(sign_in.user, (user) => ({
         ...UserProps(user),
         is_rep: e.select(e.op(user.__type__.name, "=", "users::Rep")),
-        registered: e.select(true as boolean),
-        signed_in: e.select(true as boolean),
+        registered: e.bool(true),
+        signed_in: e.bool(true),
         location: e.assert_exists(sign_in.location.name),
         ...e.is(e.users.Rep, {
           teams: { name: true, description: true, id: true },
@@ -203,8 +205,8 @@ export class SignInService implements OnModuleInit {
         filter_single: { ucard_number: ldapLibraryToUcardNumber(ucard_number) },
         ...UserProps(user),
         is_rep: e.select(e.op(user.__type__.name, "=", "users::Rep")),
-        registered: e.select(true as boolean),
-        signed_in: e.select(false as boolean),
+        registered: e.bool(true),
+        signed_in: e.bool(false),
         ...e.is(e.users.Rep, {
           teams: { name: true, description: true, id: true },
         }),
@@ -225,18 +227,42 @@ export class SignInService implements OnModuleInit {
       });
     }
 
-    user = await this.dbService.query(
-      e.select(
+    const ldapUserProps = this.userService.ldapUserProps(ldapUser);
+    const userByEmail = e.select(e.users.User, () => ({
+      filter_single: { email: ldapUserProps.email },
+    }));
+    const u = await this.dbService.query(userByEmail);
+
+    // TODO there's a better way incoming but this works for now.
+    // check https://discord.com/channels/841451783728529451/1309279819359584397
+    const upsert = (userQuery: any) => {
+      return e.select(
         e.insert(e.sign_in.UserRegistration, {
-          location: e.select(e.sign_in.Location, () => ({ filter_single: { name: location } })),
-          user: e.insert(e.users.User, this.userService.ldapUserProps(ldapUser)),
+          location: e.select(e.sign_in.Location, () => ({
+            filter_single: { name: location },
+          })),
+          user: e.assert_exists(userQuery),
         }).user,
         (user) => ({
           ...UserProps(user),
-          is_rep: e.select(false as boolean),
-          registered: e.select(false as boolean),
-          signed_in: e.select(false as boolean),
+          is_rep: e.bool(false),
+          registered: e.bool(false),
+          signed_in: e.bool(false),
         }),
+      );
+    };
+
+    user = await this.dbService.query(
+      upsert(
+        u
+          ? e.update(e.assert_exists(userByEmail), () => ({
+              set: {
+                ucard_number: ldapLibraryToUcardNumber(ucard_number),
+                username: ldapUser.uid,
+                organisational_unit: ldapUser.ou,
+              },
+            }))
+          : e.insert(e.users.User, ldapUserProps),
       ),
     );
 
@@ -245,7 +271,7 @@ export class SignInService implements OnModuleInit {
   }
 
   async getTrainings(id: string, name: LocationName): Promise<Training[]> {
-    const rep_training = e.select(e.sign_in.Location, () => ({ filter_single: { name } })).on_shift_reps.training;
+    const location = e.select(e.sign_in.Location, () => ({ filter_single: { name } }));
 
     const { training } = await this.dbService.query(
       e.assert_exists(
@@ -276,14 +302,18 @@ export class SignInService implements OnModuleInit {
                 // if they're a rep they can sign in off shift to use the machines they want even if the reps aren't trained
                 // ideally first comparison should be `__source__ is users::Rep`
                 e.op(
-                  e.op(e.op(user.__type__.name, "=", "users::Rep"), "or", e.op(training.rep.id, "in", rep_training.id)),
+                  e.op(
+                    e.op(user.__type__.name, "=", "users::Rep"),
+                    "or",
+                    e.op(training, "in", location.supervisable_training),
+                  ),
                   "and",
                   e.op("exists", training["@in_person_created_at"]),
                 ),
                 "if",
                 training.in_person,
                 "else",
-                true,
+                e.op(training, "in", location.supervisable_training),
               ),
             ),
             enabled: false,
@@ -627,11 +657,7 @@ export class SignInService implements OnModuleInit {
   async assertHasQueued(location: LocationName, ucard_number: number) {
     const users_can_sign_in = await this.queuedUsersThatCanSignIn(location);
 
-    if (
-      !users_can_sign_in.find((user) => {
-        return user.ucard_number === ucard_number;
-      })
-    ) {
+    if (!users_can_sign_in.some((user) => user.ucard_number === ucard_number)) {
       this.logger.warn(`User ${ucard_number} has not queued at location: ${location}`, SignInService.name);
       throw new HttpException(
         {

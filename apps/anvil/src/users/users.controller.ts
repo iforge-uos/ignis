@@ -3,8 +3,10 @@ import { IsAdmin } from "@/auth/authorization/decorators/check-roles-decorator";
 import { CaslAbilityGuard } from "@/auth/authorization/guards/casl-ability.guard";
 import type { UpdateUserSchema } from "@dbschema/edgedb-zod/modules/users";
 import { users } from "@ignis/types";
+import { LocationName } from "@ignis/types/sign_in";
 import type { Training, User } from "@ignis/types/users";
 import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, UseGuards } from "@nestjs/common";
+import { Logger } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import type { z } from "zod";
 import { User as GetUser } from "../shared/decorators/user.decorator";
@@ -12,12 +14,11 @@ import type {
   AddInPersonTrainingDto,
   CreateInfractionDto,
   CreateUserDto,
+  PromoteUserDto,
   RevokeTrainingDto,
   UpdateUserDto,
-  PromoteUserDto,
 } from "./dto/users.dto";
 import { UsersService } from "./users.service";
-import { Logger } from "@nestjs/common";
 
 @Controller("users")
 @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
@@ -90,11 +91,14 @@ export class UsersController {
     return this.usersService.getUserTraining(id);
   }
 
-  @Get(":id/training/remaining")
+  @Get(":id/training/remaining/:location")
   @CheckAbilities(["READ"], "USER")
-  async getRemainingTraining(@Param("id") id: string): Promise<users.UserInPersonTrainingRemaining[]> {
+  async getRemainingTraining(
+    @Param("id") id: string,
+    @Param("location") location: LocationName,
+  ): Promise<users.UserInPersonTrainingRemaining[]> {
     this.logger.log(`Retrieving remaining training for user with ID: ${id}`, UsersController.name);
-    return this.usersService.getUserTrainingInPersonTrainingRemaining(id);
+    return this.usersService.getUserTrainingInPersonTrainingRemaining(id, location);
   }
 
   @Post(":id/training/:training_id")

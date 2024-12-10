@@ -4,8 +4,10 @@ import { toTitleCase, useUser } from "@/lib/utils";
 import { TrainingContent } from "@/routes/_authenticated/training/$id";
 import { getLocation } from "@/services/training/getLocation";
 import { getStatus } from "@/services/training/getStatus";
+import { getUserTraining } from "@/services/users/getUserTraining";
 import { training } from "@ignis/types";
 import { Location, PartialTrainingWithStatus } from "@ignis/types/training";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button";
 import { Card } from "@ui/components/ui/card";
@@ -47,6 +49,10 @@ export function TrainingLocation({ location, optionalTrainingText, img, training
     },
     { compulsory: [] as PartialTrainingWithStatus[], not_compulsory: [] as PartialTrainingWithStatus[] },
   );
+  const { data: userTraining } = useQuery({
+    queryKey: ["userTraining"],
+    queryFn: async () => (user ? getUserTraining(user.id) : undefined),
+  });
 
   return (
     <>
@@ -78,7 +84,12 @@ export function TrainingLocation({ location, optionalTrainingText, img, training
                 {compulsory
                   .sort((a, b) => a.name.localeCompare(b.name))
                   .map((training) => (
-                    <TrainingCourseCard key={training.id} training={training} isRep={isRep} />
+                    <TrainingCourseCard
+                      key={training.id}
+                      training={training}
+                      isRep={isRep}
+                      userTraining={userTraining}
+                    />
                   ))}
                 {isRep && <AddNewTraining location={location} compulsory />}
               </div>
@@ -101,7 +112,12 @@ export function TrainingLocation({ location, optionalTrainingText, img, training
                 {not_compulsory
                   .sort((a, b) => a.name.localeCompare(b.name))
                   .map((training) => (
-                    <TrainingCourseCard key={training.id} training={training} isRep={isRep} />
+                    <TrainingCourseCard
+                      key={training.id}
+                      training={training}
+                      isRep={isRep}
+                      userTraining={userTraining}
+                    />
                   ))}
                 {isRep && <AddNewTraining location={location} />}
               </div>

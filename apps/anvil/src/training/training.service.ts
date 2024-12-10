@@ -9,7 +9,7 @@ import { getTrainingNextSection } from "@dbschema/queries/getTrainingNextSection
 import { startTraining } from "@dbschema/queries/startTraining.query";
 import { training } from "@ignis/types";
 import { AllTraining, PartialTraining } from "@ignis/types/training";
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { CardinalityViolationError, InvalidValueError, MissingRequiredError } from "edgedb";
 
 export const LOCATIONS = Object.keys(TrainingLocationSchema.Values) as readonly training.Location[];
@@ -35,38 +35,36 @@ export class TrainingService {
     private readonly usersService: UsersService,
   ) {}
 
-  async getTraining(id: string, editing?: boolean): Promise<training.Training> {
-    let fn: () => Promise<training.Training>;
-    if (editing) {
-      fn = () => getTrainingForEditing(this.dbService.client, { id }) as Promise<training.Training>;
-    } else {
-      fn = () =>
-        this.dbService.query(
-          e.assert_exists(
-            e.select(e.training.Training, () => ({
-              id: true,
-              created_at: true,
-              updated_at: true,
-              name: true,
-              description: true,
-              locations: true,
-              compulsory: true,
-              in_person: true,
-              enabled: true,
-              rep: {
+  async getTraining(id: string, editing?: boolean, rep_id?: string): Promise<training.Training> {
+    const fn = editing
+      ? () => getTrainingForEditing(this.dbService.client, { id }) as Promise<training.Training>
+      : () =>
+          this.dbService.query(
+            e.assert_exists(
+              e.select(e.training.Training, () => ({
                 id: true,
+                created_at: true,
+                updated_at: true,
                 name: true,
                 description: true,
-              },
-              icon_url: true,
-              filter_single: { id },
-            })),
-          ),
-        );
-    }
+                locations: true,
+                compulsory: true,
+                in_person: true,
+                enabled: true,
+                rep: {
+                  id: true,
+                  name: true,
+                  description: true,
+                },
+                icon_url: true,
+                filter_single: { id },
+              })),
+            ),
+          );
 
+    let training: training.Training;
     try {
-      return await fn();
+      training = await fn();
     } catch (error) {
       if (error instanceof InvalidValueError || error instanceof CardinalityViolationError) {
         throw new NotFoundException(`Training with id ${id} not found`, {
@@ -75,6 +73,25 @@ export class TrainingService {
       }
       throw error;
     }
+
+    // you only have editing if you're an H&S/admin anyway
+    if (training.rep || editing) {
+      return training;
+    }
+
+    if (training.id && rep_id) {
+      const doneUserTraining = await this.dbService.query(
+        e.op(
+          e.uuid(training.id),
+          "in",
+          e.select(e.users.Rep, () => ({ filter_single: { id: rep_id } })).training.rep.id,
+        ),
+      );
+      if (!doneUserTraining) {
+        throw new ForbiddenException(`Cannot access rep training ${rep_id} without performing user training first`);
+      }
+    }
+    return training;
 
     // try {
     //   return await this.dbService.query(
