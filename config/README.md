@@ -3,7 +3,7 @@
 ## WIP Docker development config
 
 ```
-# Gret this from 1Password
+# Get this from 1Password
 config/secret/op/1password-credentials.json needed
 
 # For DB cert use ../scripts/gen-cert.sh
