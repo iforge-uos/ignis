@@ -11,12 +11,6 @@ networks:
   op-internal:
     external: true
 
-configs:
-  anvil_config:
-    file: ../config/anvil/.env.production.tpl
-  mine_config:
-    file: ../config/mine/.env.production.tpl
-
 secrets:
   ca_cert:
     external: true
@@ -61,9 +55,6 @@ services:
         - "traefik.http.middlewares.anvil-cors.headers.accesscontrolallowmethods=GET,POST,PUT,DELETE,OPTIONS"
         - "traefik.http.middlewares.anvil-cors.headers.accesscontrolallowheaders=*"
         - "traefik.http.middlewares.anvil-cors.headers.accesscontrolalloworiginlist=https://${APP_DOMAIN}"
-    configs:
-      - source: anvil_config
-        target: /config/.env.production.tpl
     networks:
       - ignis-public
       - ignis-internal
@@ -149,9 +140,6 @@ services:
         - "traefik.http.routers.mine.tls.certresolver=letsencrypt"
         - "traefik.http.routers.mine.middlewares=mine-security"
         - "traefik.http.services.mine.loadbalancer.server.port=4000"
-    configs:
-      - source: mine_config
-        target: /config/.env.production.tpl
     networks:
       - ignis-public
       - ignis-internal
