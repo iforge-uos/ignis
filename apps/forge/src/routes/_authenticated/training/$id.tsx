@@ -101,7 +101,7 @@ const Component: React.FC = () => {
     }
 
     setButtonName("Next");
-    if (section.type_name === "training::TrainingPage") {
+    if (section.type_name === "training::Page") {
       const duration_ = section.duration_ ? Number.parseFloat(section.duration_) * 1000 : null;
       if (duration_) {
         setButtonDisabled(true);
@@ -186,7 +186,7 @@ const Component: React.FC = () => {
             <Button
               // if we're on a training page it doesn't matter if answers aren't selected
               disabled={
-                ["training::TrainingPage", undefined].includes(sections.at(-1)?.type_name)
+                ["training::Page", undefined].includes(sections.at(-1)?.type_name)
                   ? buttonDisabled
                   : answers.length === 0
               }

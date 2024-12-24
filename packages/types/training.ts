@@ -1,7 +1,7 @@
 import type { training } from "@dbschema/interfaces";
 
 export interface PageInteraction extends Omit<training.Page, "duration"> {
-  type_name: "training::TrainingPage";
+  type_name: "training::Page";
   duration_?: string; // duration in seconds as a float (but yes it really is a string)
 }
 export interface QuestionInteraction extends Omit<training.Question, "answers"> {
