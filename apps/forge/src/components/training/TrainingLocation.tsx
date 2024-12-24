@@ -30,14 +30,14 @@ export async function getData(location: LocationName): Promise<PartialTrainingWi
   return trainings;
 }
 
-interface LocationNameProps {
+interface TrainingLocationProps {
   location: LocationName;
   img: React.ReactNode;
   optionalTrainingText: string;
   trainings: PartialTrainingWithStatus[];
 }
 
-export function LocationName({ location, optionalTrainingText, img, trainings }: LocationNameProps) {
+export function TrainingLocation({ location, optionalTrainingText, img, trainings }: TrainingLocationProps) {
   const user = useUser();
   const name = toTitleCase(location.replace("_", " "));
   const isRep = !!user?.roles.some((role) => role.name === "Rep");
