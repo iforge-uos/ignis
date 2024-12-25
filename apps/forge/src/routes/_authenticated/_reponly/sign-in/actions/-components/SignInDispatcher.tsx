@@ -8,8 +8,8 @@ import { Button } from "@ui/components/ui/button";
 import { Loader } from "@ui/components/ui/loader";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useAtom } from 'jotai';
-import {activeLocationAtom, resetSessionAtom, sessionAtom} from "@/atoms/signInAppAtoms.ts";
+import { useAtom } from "jotai";
+import { activeLocationAtom, resetSessionAtom, sessionAtom } from "@/atoms/signInAppAtoms.ts";
 
 const SignInDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const queryClient = useQueryClient();
@@ -54,12 +54,12 @@ const SignInDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   });
 
   const successDisplay = (
-      <>
-        <div className="flex justify-items-center justify-center">
-          <h1 className="text-xl flex-auto">Success!</h1>
-          <p className="text-sm">Redirecting to sign-in page in ~{timeout / 1000} seconds...</p>
-        </div>
-      </>
+    <>
+      <div className="flex justify-items-center justify-center">
+        <h1 className="text-xl flex-auto">Success!</h1>
+        <p className="text-sm">Redirecting to sign-in page in ~{timeout / 1000} seconds...</p>
+      </div>
+    </>
   );
 
   const handleSecondaryClick = () => {
@@ -81,31 +81,31 @@ const SignInDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   }, [mutate]);
 
   return (
-      <>
-        <Card className="w-[700px]">
-          <CardHeader>
-            <CardTitle>Signing In</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {!(canContinue || error || isPending) && (
-                <Button onClick={() => mutate()} autoFocus={true} variant="outline" className="h-[200px] w-full">
-                  Sign in
-                </Button>
-            )}
-            {isPending && <Loader />}
-            {!isPending && error && !canContinue && errorDisplay({ error })}
-            {!isPending && canContinue && successDisplay}
-          </CardContent>
-          <CardFooter className="flex justify-between flex-row-reverse">
-            <Button onClick={handlePrimaryClick} disabled={!canContinue}>
-              Continue
+    <>
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle>Signing In</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {!(canContinue || error || isPending) && (
+            <Button onClick={() => mutate()} autoFocus={true} variant="outline" className="h-[200px] w-full">
+              Sign in
             </Button>
-            <Button onClick={handleSecondaryClick} variant="outline">
-              Go Back
-            </Button>
-          </CardFooter>
-        </Card>
-      </>
+          )}
+          {isPending && <Loader />}
+          {!isPending && error && !canContinue && errorDisplay({ error })}
+          {!isPending && canContinue && successDisplay}
+        </CardContent>
+        <CardFooter className="flex justify-between flex-row-reverse">
+          <Button onClick={handlePrimaryClick} disabled={!canContinue}>
+            Continue
+          </Button>
+          <Button onClick={handleSecondaryClick} variant="outline">
+            Go Back
+          </Button>
+        </CardFooter>
+      </Card>
+    </>
   );
 };
 

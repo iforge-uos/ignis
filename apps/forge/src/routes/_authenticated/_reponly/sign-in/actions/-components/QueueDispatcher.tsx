@@ -1,15 +1,15 @@
-import { useMutation } from "@tanstack/react-query";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card";
+import { activeLocationAtom, resetSessionAtom, sessionAtom } from "@/atoms/signInAppAtoms.ts";
 import { errorDisplay } from "@/components/errors/ErrorDisplay";
 import { PostQueue, PostQueueProps } from "@/services/sign_in/queueService";
 import { FlowStepComponent } from "@/types/signInActions";
+import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card";
 import { Loader } from "@ui/components/ui/loader";
+import { useAtom } from "jotai";
 import { useState } from "react";
 import { toast } from "sonner";
-import { useAtom } from 'jotai';
-import {activeLocationAtom, resetSessionAtom, sessionAtom} from "@/atoms/signInAppAtoms.ts";
 
 const QueueDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const [session] = useAtom(sessionAtom);
@@ -46,12 +46,12 @@ const QueueDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   });
 
   const successDisplay = (
-      <>
-        <div className="flex justify-items-center justify-center">
-          <h1 className="text-xl flex-auto">Success!</h1>
-          <p className="text-sm">Possibly redirecting to actions page in ~{timeout / 1000} seconds...</p>
-        </div>
-      </>
+    <>
+      <div className="flex justify-items-center justify-center">
+        <h1 className="text-xl flex-auto">Success!</h1>
+        <p className="text-sm">Possibly redirecting to actions page in ~{timeout / 1000} seconds...</p>
+      </div>
+    </>
   );
 
   const handleSecondaryClick = () => {
@@ -69,31 +69,31 @@ const QueueDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   };
 
   return (
-      <>
-        <Card className="w-[700px]">
-          <CardHeader>
-            <CardTitle>Adding User to Queue</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {!(canContinue || error || isPending) && (
-                <Button onClick={() => mutate()} autoFocus={true} variant="outline" className="h-[200px] w-full">
-                  Join Queue
-                </Button>
-            )}
-            {isPending && <Loader />}
-            {!isPending && error && !canContinue && errorDisplay({ error })}
-            {!isPending && canContinue && successDisplay}
-          </CardContent>
-          <CardFooter className="flex justify-between flex-row-reverse">
-            <Button onClick={handlePrimaryClick} disabled={!canContinue}>
-              Continue
+    <>
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle>Adding User to Queue</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {!(canContinue || error || isPending) && (
+            <Button onClick={() => mutate()} autoFocus={true} variant="outline" className="h-[200px] w-full">
+              Join Queue
             </Button>
-            <Button onClick={handleSecondaryClick} variant="outline">
-              Go Back
-            </Button>
-          </CardFooter>
-        </Card>
-      </>
+          )}
+          {isPending && <Loader />}
+          {!isPending && error && !canContinue && errorDisplay({ error })}
+          {!isPending && canContinue && successDisplay}
+        </CardContent>
+        <CardFooter className="flex justify-between flex-row-reverse">
+          <Button onClick={handlePrimaryClick} disabled={!canContinue}>
+            Continue
+          </Button>
+          <Button onClick={handleSecondaryClick} variant="outline">
+            Go Back
+          </Button>
+        </CardFooter>
+      </Card>
+    </>
   );
 };
 

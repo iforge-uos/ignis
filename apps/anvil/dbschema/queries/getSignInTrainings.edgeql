@@ -25,7 +25,8 @@ select assert_exists(
                 ) else {},
                 # if they're a rep they can sign in to use the machines they want even if the reps aren't trained
                 training::Selectability.REPS_UNTRAINED if (
-                    users::User is not users::Rep or .id not in location.supervisable_training.id
+                    # __source__ is not users::Rep or  # sadly cannot enable this
+                    .id not in location.supervisable_training.id
                 ) else {},
                 training::Selectability.IN_PERSON_MISSING if .in_person and not exists @in_person_created_at else {},
             })

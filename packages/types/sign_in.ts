@@ -71,6 +71,4 @@ export type Reason = PartialReason & {
   agreement?: std.BaseObject;
 };
 
-export type TrainingStatus = "SELECTABLE" | "UNSELECTABLE" | "DISABLED";
-
-export type CategoryTrainingMap = Record<TrainingStatus, Training[]>;
+export type TrainingSelectability = Training["selectable"][number];

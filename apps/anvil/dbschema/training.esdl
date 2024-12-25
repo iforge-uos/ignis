@@ -22,7 +22,7 @@ module training {
         }
         required description: str;
         training_lockout: duration;
-        multi pages: Page;
+        multi pages: TrainingPage;
         multi questions: Question;
         # should be required multi
         multi sections := (  # polymorphism my beloved
@@ -76,7 +76,7 @@ module training {
         # TODO consider adding stats? e.g. failure rate
     }
 
-    type Page extending Interactable {
+    type TrainingPage extending Interactable {
         required name: str;
         duration: duration;
     }

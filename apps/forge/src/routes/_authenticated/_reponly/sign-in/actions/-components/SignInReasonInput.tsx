@@ -1,3 +1,9 @@
+import {
+  activeLocationAtom,
+  sessionErroredAtom,
+  sessionSignInReasonAtom,
+  sessionUserAtom,
+} from "@/atoms/signInAppAtoms.ts";
 import { ErrorDisplayProps, errorDisplay } from "@/components/errors/ErrorDisplay";
 import { Category } from "@/components/icons/SignInReason";
 import { extractError } from "@/lib/utils";
@@ -10,15 +16,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@ui/components/ui/input";
 import { Loader } from "@ui/components/ui/loader";
 import Fuse from "fuse.js";
+import { useAtom } from "jotai";
 import React, { useEffect, useState } from "react";
 import { SignInReason } from "./SignInReason";
-import {useAtom} from "jotai";
-import {
-  activeLocationAtom,
-  sessionErroredAtom,
-  sessionSignInReasonAtom,
-  sessionUserAtom
-} from "@/atoms/signInAppAtoms.ts";
 
 export const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const [inputValue, setInputValue] = useState("");
@@ -49,12 +49,12 @@ export const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary })
     }
     if (signInReasons) {
       setFuse(
-          new Fuse(signInReasons, {
-            keys: ["name"],
-            includeScore: true,
-            threshold: 0.6,
-            ignoreLocation: true,
-          }),
+        new Fuse(signInReasons, {
+          keys: ["name"],
+          includeScore: true,
+          threshold: 0.6,
+          ignoreLocation: true,
+        }),
       );
     }
   }, [sessionErrored, signInReasons, selectedReason]);
@@ -129,9 +129,8 @@ export const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary })
     }
   };
 
-
   return (
-    <Card className="w-[700px]">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>Sign-In Reason Input</CardTitle>
         <CardDescription>Start typing to match your sign-in reason or pick a recent common reason:</CardDescription>

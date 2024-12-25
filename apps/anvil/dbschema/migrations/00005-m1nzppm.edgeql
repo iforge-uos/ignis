@@ -1,6 +1,9 @@
-CREATE MIGRATION m1cvlfi4unfhvry3yrqtktivwwypaojjpoj5lybyempqxbracx7zrq
-    ONTO m1mngcfp3ziedlm627t2vc2bdntf77sslql67exrvr2whyk2wdh4gq
+CREATE MIGRATION m1nzppmd2hd3hs4glv3tthtuf7vpfjybion47332hityyrwsxeqgwa
+    ONTO m17e2u7yo64hdudtuxx2dssutwwa6exjts4ea55vs623xgnvl2asoq
 {
+  CREATE ALIAS training::Page := (
+      training::TrainingPage
+  );
   ALTER TYPE sign_in::Location {
       ALTER LINK off_shift_reps {
           USING (WITH
@@ -38,9 +41,20 @@ CREATE MIGRATION m1cvlfi4unfhvry3yrqtktivwwypaojjpoj5lybyempqxbracx7zrq
       );
   };
   ALTER TYPE sign_in::Location {
-      ALTER LINK supervisable_training {
-          USING (SELECT
-              DISTINCT (.supervising_reps.supervisable_training)
+      CREATE MULTI LINK supervisable_training := (SELECT
+          DISTINCT (.supervising_reps.supervisable_training)
+      );
+  };
+  CREATE SCALAR TYPE sign_in::LocationStatus EXTENDING enum<OPEN, SOON, CLOSED>;
+  ALTER TYPE sign_in::Location {
+      ALTER PROPERTY status {
+          USING (WITH
+              current_time := 
+                  (SELECT
+                      cal::to_local_time(std::datetime_of_statement(), 'Europe/London')
+                  )
+          SELECT
+              (sign_in::LocationStatus.OPEN IF (std::count(.on_shift_reps) > 0) ELSE (sign_in::LocationStatus.SOON IF ((((.opening_time - <cal::relative_duration>'30m') <= current_time) AND (current_time <= (.closing_time - <cal::relative_duration>'30m'))) AND (std::datetime_get(std::datetime_of_statement(), 'isodow') IN .opening_days)) ELSE sign_in::LocationStatus.CLOSED))
           );
       };
   };
@@ -50,6 +64,11 @@ CREATE MIGRATION m1cvlfi4unfhvry3yrqtktivwwypaojjpoj5lybyempqxbracx7zrq
       };
   };
   ALTER TYPE training::UserTrainingSession RENAME TO training::Session;
-  CREATE SCALAR TYPE training::Selectability EXTENDING enum<NO_TRAINING, REVOKED, REPS_UNTRAINED, IN_PERSON_MISSING, SELECTABLE>;
+  ALTER TYPE users::User {
+      ALTER LINK training {
+          CREATE PROPERTY infraction: std::uuid;
+      };
+  };
+  CREATE SCALAR TYPE training::Selectability EXTENDING enum<NO_TRAINING, REVOKED, EXPIRED, REPS_UNTRAINED, IN_PERSON_MISSING>;
   ALTER SCALAR TYPE training::TrainingLocation RENAME TO training::LocationName;
 };

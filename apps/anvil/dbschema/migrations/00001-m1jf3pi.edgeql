@@ -1,7 +1,7 @@
 CREATE MIGRATION m1jf3piha2azx2oajs4efriawjwstpqiwgskmytiltwk4epf7mla4a
     ONTO initial
 {
-  CREATE MODULE auth IF NOT EXISTS;
+      CREATE MODULE auth IF NOT EXISTS;
   CREATE MODULE event IF NOT EXISTS;
   CREATE MODULE notification IF NOT EXISTS;
   CREATE MODULE sign_in IF NOT EXISTS;

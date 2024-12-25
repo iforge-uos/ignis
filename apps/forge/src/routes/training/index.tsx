@@ -44,7 +44,7 @@ export default function TrainingIndexPage() {
           <h3 className="text-2xl font-semibold text-center mb-4">Search for a course</h3>
           <Command
             ref={commandRef}
-            className="flex justify-center w-3/4 mx-auto max-w-[720px]"
+            className="flex justify-center w-3/4 mx-auto max-w-[720px] rounded-lg"
             onFocus={() => setHidden(false)}
           >
             <CommandInput placeholder="Enter all or part of a course name..." />

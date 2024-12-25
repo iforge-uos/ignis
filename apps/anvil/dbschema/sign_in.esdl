@@ -91,6 +91,8 @@ module sign_in {
         );
         multi supervisable_training := (
             select distinct .supervising_reps.supervisable_training
+            # silly cast incoming (sign_in::LocationName <: training::LocationName but gel doesn't recognise this)
+            filter <training::LocationName>(<str>__source__.name) in .locations
         );
 
         required max_count := (

@@ -1,7 +1,7 @@
 CREATE MIGRATION m1qb4x2zuzk5uqgw7p355fcxdblrcsn45ukn3fnhwcaho7y52y2rzq
     ONTO m17q4qvf66ftijtdy3tchfo6ausc5wyud7ggc4ffnulvni4ckofq3q
 {
-  ALTER TYPE sign_in::Location {
+      ALTER TYPE sign_in::Location {
       ALTER PROPERTY opening_days {
           ALTER ANNOTATION std::description := '1-7, the days of the week we are currently open, Monday (1) to Sunday (7)';
       };

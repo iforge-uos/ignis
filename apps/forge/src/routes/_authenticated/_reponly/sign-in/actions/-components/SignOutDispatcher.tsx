@@ -1,16 +1,15 @@
-import { PostSignOut, PostSignOutProps } from "@/services/sign_in/signInService";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card";
+import { activeLocationAtom, resetSessionAtom, sessionAtom } from "@/atoms/signInAppAtoms.ts";
 import { errorDisplay } from "@/components/errors/ErrorDisplay";
+import { PostSignOut, PostSignOutProps } from "@/services/sign_in/signInService";
 import { FlowStepComponent } from "@/types/signInActions";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card";
 import { Loader } from "@ui/components/ui/loader";
+import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useAtom } from 'jotai';
-import {activeLocationAtom, resetSessionAtom, sessionAtom} from "@/atoms/signInAppAtoms.ts";
-
 
 const SignOutDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const queryClient = useQueryClient();
@@ -47,12 +46,12 @@ const SignOutDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   });
 
   const successDisplay = (
-      <>
-        <div className="flex justify-items-center justify-center">
-          <h1 className="text-xl flex-auto">Success!</h1>
-          <p className="text-sm">Redirecting...</p>
-        </div>
-      </>
+    <>
+      <div className="flex justify-items-center justify-center">
+        <h1 className="text-xl flex-auto">Success!</h1>
+        <p className="text-sm">Redirecting...</p>
+      </div>
+    </>
   );
 
   const handleSecondaryClick = () => {
@@ -74,31 +73,31 @@ const SignOutDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   }, [mutate]);
 
   return (
-      <>
-        <Card className="w-[700px]">
-          <CardHeader>
-            <CardTitle>Signing Out</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {!(canContinue || error || isPending) && (
-                <Button onClick={() => mutate()} autoFocus={true} variant="default" className="h-[200px] w-full">
-                  Sign Out
-                </Button>
-            )}
-            {isPending && <Loader />}
-            {!isPending && error && !canContinue && errorDisplay({ error })}
-            {!isPending && canContinue && successDisplay}
-          </CardContent>
-          <CardFooter className="flex justify-between flex-row-reverse">
-            <Button onClick={handlePrimaryClick} disabled={!canContinue}>
-              Continue
+    <>
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle>Signing Out</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {!(canContinue || error || isPending) && (
+            <Button onClick={() => mutate()} autoFocus={true} variant="default" className="h-[200px] w-full">
+              Sign Out
             </Button>
-            <Button onClick={handleSecondaryClick} variant="outline">
-              Go Back
-            </Button>
-          </CardFooter>
-        </Card>
-      </>
+          )}
+          {isPending && <Loader />}
+          {!isPending && error && !canContinue && errorDisplay({ error })}
+          {!isPending && canContinue && successDisplay}
+        </CardContent>
+        <CardFooter className="flex justify-between flex-row-reverse">
+          <Button onClick={handlePrimaryClick} disabled={!canContinue}>
+            Continue
+          </Button>
+          <Button onClick={handleSecondaryClick} variant="outline">
+            Go Back
+          </Button>
+        </CardFooter>
+      </Card>
+    </>
   );
 };
 

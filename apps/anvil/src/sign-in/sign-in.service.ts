@@ -286,7 +286,7 @@ export class SignInService implements OnModuleInit {
         description: true,
         enabled: true,
         icon_url: true,
-        selectable: e.array(["NO_TRAINING" satisfies training.Selectability] as const),
+        selectable: e.array(["NO_TRAINING" satisfies training.Selectability]),
         filter: e.all(
           e.set(
             e.op(training_.id, "not in", e.cast(e.uuid, e.set(...training.map((training) => training.id)))),

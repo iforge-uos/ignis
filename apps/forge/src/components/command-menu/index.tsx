@@ -29,6 +29,7 @@ type ActiveContent = {
 
 export default function CommandMenu() {
   const [isOpen, setIsOpen] = useAtom(commandMenuIsOpenAtom);
+  const isMacOs = useShortcutKey() === "⌘";
   const navigateBase = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
   const [activeContent, setActiveContent] = useState<ActiveContent | null>(null);

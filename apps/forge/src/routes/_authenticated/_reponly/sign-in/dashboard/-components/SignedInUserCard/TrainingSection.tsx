@@ -23,7 +23,7 @@ import { useAtomValue } from "jotai";
 import { CalendarIcon } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
-import { getTrainingSelectabilityIcons } from "../../../actions/-components/ToolSelectionInput";
+// import { getTrainingSelectabilityIcons } from "../../../actions/-components/ToolSelectionInput";
 
 export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locationName: location, onShiftReps }) => {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
