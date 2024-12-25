@@ -1,13 +1,27 @@
-CREATE MIGRATION m1jf3piha2azx2oajs4efriawjwstpqiwgskmytiltwk4epf7mla4a
+CREATE MIGRATION m1lbnn7l7ljg4ii6ummqo73agf3xe6mclzgbhe3i5iwtwylxnbsrxq
     ONTO initial
 {
-      CREATE MODULE auth IF NOT EXISTS;
+  CREATE MODULE auth IF NOT EXISTS;
   CREATE MODULE event IF NOT EXISTS;
   CREATE MODULE notification IF NOT EXISTS;
   CREATE MODULE sign_in IF NOT EXISTS;
   CREATE MODULE team IF NOT EXISTS;
   CREATE MODULE training IF NOT EXISTS;
   CREATE MODULE users IF NOT EXISTS;
+  CREATE ABSTRACT TYPE training::Interactable {
+      CREATE REQUIRED PROPERTY content: std::str;
+      CREATE REQUIRED PROPERTY enabled: std::bool {
+          SET default := true;
+      };
+      CREATE REQUIRED PROPERTY index: std::int16;
+  };
+  CREATE TYPE training::TrainingPage EXTENDING training::Interactable {
+      CREATE PROPERTY duration: std::duration;
+      CREATE REQUIRED PROPERTY name: std::str;
+  };
+  CREATE ALIAS training::Page := (
+      training::TrainingPage
+  );
   CREATE ABSTRACT LINK default::timed {
       CREATE PROPERTY created_at: std::datetime {
           SET default := (std::datetime_of_statement());
@@ -50,30 +64,19 @@ CREATE MIGRATION m1jf3piha2azx2oajs4efriawjwstpqiwgskmytiltwk4epf7mla4a
           CREATE CONSTRAINT std::exclusive;
       };
   };
-  CREATE ABSTRACT TYPE training::Interactable {
-      CREATE REQUIRED PROPERTY content: std::str;
-      CREATE REQUIRED PROPERTY enabled: std::bool {
-          SET default := true;
-      };
-      CREATE REQUIRED PROPERTY index: std::int16;
-  };
   CREATE TYPE training::Answer {
       CREATE REQUIRED PROPERTY content: std::str;
       CREATE REQUIRED PROPERTY correct: std::bool {
           SET default := false;
       };
       CREATE PROPERTY description: std::str {
-          CREATE ANNOTATION std::description := "The text shown after a user passes their answer giving a lil' explaination about whatever they said.";
+          CREATE ANNOTATION std::description := "The text shown after a user passes their answer giving a lil' explanation about whatever they said.";
       };
   };
   CREATE SCALAR TYPE training::AnswerType EXTENDING enum<`SINGLE`, MULTI>;
   CREATE TYPE training::Question EXTENDING training::Interactable {
-      CREATE MULTI LINK answers: training::Answer;
+      CREATE REQUIRED MULTI LINK answers: training::Answer;
       CREATE REQUIRED PROPERTY type: training::AnswerType;
-  };
-  CREATE TYPE training::TrainingPage EXTENDING training::Interactable {
-      CREATE PROPERTY duration: std::duration;
-      CREATE REQUIRED PROPERTY name: std::str;
   };
   CREATE TYPE users::User EXTENDING default::Auditable {
       CREATE MULTI LINK permissions: auth::Permission;
@@ -122,7 +125,7 @@ CREATE MIGRATION m1jf3piha2azx2oajs4efriawjwstpqiwgskmytiltwk4epf7mla4a
           SET default := (users::RepStatus.ACTIVE);
       };
   };
-  CREATE SCALAR TYPE training::TrainingLocation EXTENDING enum<MAINSPACE, HEARTSPACE, GEORGE_PORTER>;
+  CREATE SCALAR TYPE training::LocationName EXTENDING enum<MAINSPACE, HEARTSPACE, GEORGE_PORTER>;
   CREATE TYPE training::Training EXTENDING default::Auditable {
       CREATE MULTI LINK pages: training::TrainingPage;
       CREATE MULTI LINK questions: training::Question;
@@ -132,8 +135,12 @@ CREATE MIGRATION m1jf3piha2azx2oajs4efriawjwstpqiwgskmytiltwk4epf7mla4a
           .index ASC
       );
       CREATE LINK rep: training::Training {
-          CREATE ANNOTATION std::description := 'Empty if the training is for reps.';
+          CREATE ANNOTATION std::description := 'The associated training that reps should have to supervise this. Empty if the training is for reps.';
       };
+      CREATE REQUIRED PROPERTY in_person: std::bool {
+          CREATE ANNOTATION std::description := 'Whether this training requires in person training.';
+      };
+      CREATE MULTI PROPERTY locations: training::LocationName;
       CREATE REQUIRED PROPERTY name: std::str;
       CREATE CONSTRAINT std::exclusive ON ((.name, .rep));
       CREATE INDEX fts::index ON (fts::with_options(.name, language := fts::Language.eng));
@@ -145,10 +152,7 @@ CREATE MIGRATION m1jf3piha2azx2oajs4efriawjwstpqiwgskmytiltwk4epf7mla4a
           SET default := true;
       };
       CREATE PROPERTY expires_after: std::duration;
-      CREATE REQUIRED PROPERTY in_person: std::bool {
-          CREATE ANNOTATION std::description := 'Whether this training requires in person training.';
-      };
-      CREATE MULTI PROPERTY locations: training::TrainingLocation;
+      CREATE PROPERTY icon_url: std::str;
       CREATE PROPERTY training_lockout: std::duration;
   };
   CREATE TYPE auth::BlacklistedToken {
@@ -172,11 +176,34 @@ CREATE MIGRATION m1jf3piha2azx2oajs4efriawjwstpqiwgskmytiltwk4epf7mla4a
       CREATE REQUIRED PROPERTY description: std::str;
       CREATE REQUIRED PROPERTY name: std::str;
   };
+  ALTER TYPE users::User {
+      CREATE MULTI LINK training: training::Training {
+          CREATE PROPERTY in_person_created_at: std::datetime;
+          CREATE PROPERTY created_at: std::datetime {
+              SET default := (std::datetime_of_statement());
+              SET readonly := true;
+          };
+          CREATE PROPERTY in_person_signed_off_by: std::uuid;
+          CREATE PROPERTY infraction: std::uuid;
+      };
+      CREATE MULTI LINK mailing_list_subscriptions: notification::MailingList;
+  };
+  ALTER TYPE users::Rep {
+      CREATE MULTI LINK supervisable_training := (WITH
+          current_training := 
+              .training
+      SELECT
+          .training
+      FILTER
+          ((EXISTS (.rep) AND (.rep IN current_training)) AND (NOT (.in_person) OR EXISTS (@in_person_created_at)))
+      );
+  };
   CREATE SCALAR TYPE sign_in::LocationName EXTENDING enum<MAINSPACE, HEARTSPACE>;
+  CREATE SCALAR TYPE sign_in::LocationStatus EXTENDING enum<OPEN, SOON, CLOSED>;
   CREATE TYPE sign_in::Location EXTENDING default::Auditable {
       CREATE REQUIRED PROPERTY closing_time: cal::local_time;
       CREATE MULTI PROPERTY opening_days: std::int16 {
-          CREATE ANNOTATION std::description := '0-6, the days of the week we are currently open, Sunday (0) to Saturday (6)';
+          CREATE ANNOTATION std::description := '1-7, the days of the week we are currently open, Monday (1) to Sunday (7)';
       };
       CREATE REQUIRED PROPERTY opening_time: cal::local_time;
       CREATE REQUIRED PROPERTY out_of_hours := (WITH
@@ -185,8 +212,11 @@ CREATE MIGRATION m1jf3piha2azx2oajs4efriawjwstpqiwgskmytiltwk4epf7mla4a
                   cal::to_local_time(std::datetime_of_statement(), 'Europe/London')
               )
       SELECT
-          NOT ((((.opening_time <= current_time) AND (current_time <= .closing_time)) AND (<std::int16>std::datetime_get(std::datetime_of_statement(), 'dow') IN .opening_days)))
+          NOT ((((.opening_time <= current_time) AND (current_time <= .closing_time)) AND (<std::int16>std::datetime_get(std::datetime_of_statement(), 'isodow') IN .opening_days)))
       );
+      CREATE REQUIRED PROPERTY name: sign_in::LocationName {
+          CREATE CONSTRAINT std::exclusive;
+      };
       CREATE REQUIRED PROPERTY in_of_hours_rep_multiplier: std::int16;
       CREATE REQUIRED PROPERTY max_users: std::int16;
       CREATE REQUIRED PROPERTY out_of_hours_rep_multiplier: std::int16;
@@ -194,11 +224,8 @@ CREATE MIGRATION m1jf3piha2azx2oajs4efriawjwstpqiwgskmytiltwk4epf7mla4a
           SET default := true;
           CREATE ANNOTATION std::description := 'Manually disable the queue.';
       };
-      CREATE REQUIRED PROPERTY name: sign_in::LocationName {
-          CREATE CONSTRAINT std::exclusive;
-      };
   };
-  CREATE TYPE training::UserTrainingSession EXTENDING default::Auditable {
+  CREATE TYPE training::Session EXTENDING default::Auditable {
       CREATE REQUIRED LINK training: training::Training;
       CREATE REQUIRED LINK user: users::User;
       CREATE CONSTRAINT std::exclusive ON ((.user, .training));
@@ -257,6 +284,7 @@ CREATE MIGRATION m1jf3piha2azx2oajs4efriawjwstpqiwgskmytiltwk4epf7mla4a
       CREATE REQUIRED PROPERTY content: std::str {
           CREATE ANNOTATION std::description := 'The content of the markdown file that are served to the user.';
       };
+      CREATE REQUIRED PROPERTY name: std::str;
   };
   CREATE TYPE sign_in::QueuePlace EXTENDING default::CreatedAt {
       CREATE REQUIRED LINK location: sign_in::Location;
@@ -293,24 +321,6 @@ CREATE MIGRATION m1jf3piha2azx2oajs4efriawjwstpqiwgskmytiltwk4epf7mla4a
       };
       CREATE REQUIRED PROPERTY type: users::InfractionType;
   };
-  ALTER TYPE users::User {
-      CREATE MULTI LINK mailing_list_subscriptions: notification::MailingList;
-      CREATE MULTI LINK agreements_signed: sign_in::Agreement {
-          CREATE PROPERTY created_at: std::datetime {
-              SET default := (std::datetime_of_statement());
-              SET readonly := true;
-          };
-      };
-      CREATE MULTI LINK training: training::Training {
-          CREATE PROPERTY created_at: std::datetime {
-              SET default := (std::datetime_of_statement());
-              SET readonly := true;
-          };
-          CREATE PROPERTY in_person_created_at: std::datetime;
-          CREATE PROPERTY in_person_signed_off_by: std::uuid;
-      };
-      CREATE MULTI LINK infractions: users::Infraction;
-  };
   ALTER TYPE notification::MailingList {
       CREATE MULTI LINK subscribers := (.<mailing_list_subscriptions[IS users::User]);
   };
@@ -331,6 +341,15 @@ CREATE MIGRATION m1jf3piha2azx2oajs4efriawjwstpqiwgskmytiltwk4epf7mla4a
           (.agreement = __source__)
       );
   };
+  ALTER TYPE users::User {
+      CREATE MULTI LINK agreements_signed: sign_in::Agreement {
+          CREATE PROPERTY created_at: std::datetime {
+              SET default := (std::datetime_of_statement());
+              SET readonly := true;
+          };
+      };
+      CREATE MULTI LINK infractions: users::Infraction;
+  };
   ALTER TYPE sign_in::Location {
       CREATE MULTI LINK sign_ins := (SELECT
           sign_in::SignIn
@@ -350,7 +369,7 @@ CREATE MIGRATION m1jf3piha2azx2oajs4efriawjwstpqiwgskmytiltwk4epf7mla4a
                   ((.user IS users::Rep) AND (.reason.name = 'Rep Off Shift'))
               )
       SELECT
-          rep_sign_ins.user
+          rep_sign_ins.user[IS users::Rep]
       );
       CREATE MULTI LINK on_shift_reps := (WITH
           rep_sign_ins := 
@@ -360,7 +379,7 @@ CREATE MIGRATION m1jf3piha2azx2oajs4efriawjwstpqiwgskmytiltwk4epf7mla4a
                   ((.user IS users::Rep) AND (.reason.name = 'Rep On Shift'))
               )
       SELECT
-          rep_sign_ins.user
+          rep_sign_ins.user[IS users::Rep]
       );
       CREATE MULTI LINK queued := (SELECT
           sign_in::QueuePlace
@@ -376,6 +395,11 @@ CREATE MIGRATION m1jf3piha2azx2oajs4efriawjwstpqiwgskmytiltwk4epf7mla4a
       );
       CREATE MULTI LINK supervising_reps := (SELECT
           ((.on_shift_reps UNION .off_shift_reps) IF .out_of_hours ELSE .on_shift_reps)
+      );
+      CREATE MULTI LINK supervisable_training := (SELECT
+          DISTINCT (.supervising_reps.supervisable_training)
+      FILTER
+          (<training::LocationName><std::str>__source__.name IN .locations)
       );
       CREATE REQUIRED PROPERTY max_count := (SELECT
           std::min({((SELECT
@@ -394,7 +418,7 @@ CREATE MIGRATION m1jf3piha2azx2oajs4efriawjwstpqiwgskmytiltwk4epf7mla4a
                   cal::to_local_time(std::datetime_of_statement(), 'Europe/London')
               )
       SELECT
-          ('open' IF (std::count(.on_shift_reps) > 0) ELSE ('soon' IF ((((.opening_time - <cal::relative_duration>'30m') <= current_time) AND (current_time <= (.closing_time - <cal::relative_duration>'30m'))) AND (std::datetime_get(std::datetime_of_statement(), 'dow') IN .opening_days)) ELSE 'closed'))
+          (sign_in::LocationStatus.OPEN IF (std::count(.on_shift_reps) > 0) ELSE (sign_in::LocationStatus.SOON IF ((((.opening_time - <cal::relative_duration>'30m') <= current_time) AND (current_time <= (.closing_time - <cal::relative_duration>'30m'))) AND (std::datetime_get(std::datetime_of_statement(), 'isodow') IN .opening_days)) ELSE sign_in::LocationStatus.CLOSED))
       );
   };
   ALTER TYPE team::Team {
@@ -430,4 +454,5 @@ CREATE MIGRATION m1jf3piha2azx2oajs4efriawjwstpqiwgskmytiltwk4epf7mla4a
       CREATE REQUIRED PROPERTY value: std::str;
   };
   CREATE SCALAR TYPE notification::DeliveryMethod EXTENDING enum<IN_APP, EMAIL>;
+  CREATE SCALAR TYPE training::Selectability EXTENDING enum<NO_TRAINING, REVOKED, EXPIRED, REPS_UNTRAINED, IN_PERSON_MISSING>;
 };
