@@ -1,4 +1,0 @@
-CREATE MIGRATION m16sy4emgjalrbjcx3fnw2pxnzkhqb4pglbcwxyjydy4padkbjmtcq
-    ONTO m1or2oemz3uamcal3wcb5iov5fn6wynp2bktywnen7jo4ohv6xcoaq
-{
-};
