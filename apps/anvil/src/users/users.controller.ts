@@ -4,7 +4,23 @@ import type { UpdateUserSchema } from "@dbschema/edgedb-zod/modules/users";
 import { sign_in, training, users } from "@ignis/types";
 import { LocationName } from "@ignis/types/sign_in";
 import type { Training, User } from "@ignis/types/users";
-import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, UseGuards } from "@nestjs/common";
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+  Req,
+  Res,
+  UseGuards,
+} from "@nestjs/common";
+import { Logger } from "@nestjs/common";
 import { Logger } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import type { z } from "zod";
@@ -46,6 +62,18 @@ export class UsersController {
     const data = Object.fromEntries(Object.entries(updateUserDto).filter(([key]) => key in EDITABLE_FIELDS));
     this.logger.log(`Updating self user with ID: ${user.id}, data: ${JSON.stringify(data)}`, UsersController.name);
     return this.usersService.update(user.id, data as z.infer<typeof UpdateUserSchema>);
+  }
+
+  @Get("search")
+  @IsAdmin()
+  async searchUsers(
+    @Query("query") query?: string,
+    @Query("limit", new ParseIntPipe({ optional: true })) limit?: number,
+  ) {
+    if (!query) {
+      throw new BadRequestException("No query provided");
+    }
+    return await this.usersService.searchUsers(query, limit || 10);
   }
 
   @Get(":id")

@@ -1,6 +1,7 @@
-CREATE MIGRATION m1jf3piha2azx2oajs4efriawjwstpqiwgskmytiltwk4epf7mla4a
+CREATE MIGRATION m1emttdizak6jmuqczu5fu7o37xqjw7gjwjujrkvkt7quh7flbze6q
     ONTO initial
 {
+  CREATE EXTENSION pg_trgm VERSION '1.6';
   CREATE MODULE auth IF NOT EXISTS;
   CREATE MODULE event IF NOT EXISTS;
   CREATE MODULE notification IF NOT EXISTS;
@@ -68,7 +69,7 @@ CREATE MIGRATION m1jf3piha2azx2oajs4efriawjwstpqiwgskmytiltwk4epf7mla4a
   };
   CREATE SCALAR TYPE training::AnswerType EXTENDING enum<`SINGLE`, MULTI>;
   CREATE TYPE training::Question EXTENDING training::Interactable {
-      CREATE MULTI LINK answers: training::Answer;
+      CREATE REQUIRED MULTI LINK answers: training::Answer;
       CREATE REQUIRED PROPERTY type: training::AnswerType;
   };
   CREATE TYPE training::TrainingPage EXTENDING training::Interactable {
@@ -132,7 +133,7 @@ CREATE MIGRATION m1jf3piha2azx2oajs4efriawjwstpqiwgskmytiltwk4epf7mla4a
           .index ASC
       );
       CREATE LINK rep: training::Training {
-          CREATE ANNOTATION std::description := 'Empty if the training is for reps.';
+          CREATE ANNOTATION std::description := 'The associated training that reps should have to supervise this. Empty if the training is for reps.';
       };
       CREATE REQUIRED PROPERTY name: std::str;
       CREATE CONSTRAINT std::exclusive ON ((.name, .rep));
@@ -145,6 +146,7 @@ CREATE MIGRATION m1jf3piha2azx2oajs4efriawjwstpqiwgskmytiltwk4epf7mla4a
           SET default := true;
       };
       CREATE PROPERTY expires_after: std::duration;
+      CREATE PROPERTY icon_url: std::str;
       CREATE REQUIRED PROPERTY in_person: std::bool {
           CREATE ANNOTATION std::description := 'Whether this training requires in person training.';
       };
@@ -158,25 +160,65 @@ CREATE MIGRATION m1jf3piha2azx2oajs4efriawjwstpqiwgskmytiltwk4epf7mla4a
           CREATE CONSTRAINT std::exclusive;
       };
   };
-  CREATE TYPE notification::Announcement EXTENDING default::Auditable {
-      CREATE MULTI LINK views: users::User {
-          CREATE PROPERTY viewed_at: std::datetime {
-              SET default := (std::datetime_of_statement());
-              SET readonly := true;
-          };
+  CREATE SCALAR TYPE notification::DeliveryMethod EXTENDING enum<BANNER, EMAIL, TRAY, POPUP, DISCORD>;
+  CREATE SCALAR TYPE notification::Status EXTENDING enum<DRAFT, REVIEW, QUEUED, SENDING, SENT, ERRORED>;
+  CREATE SCALAR TYPE notification::Type EXTENDING enum<GENERAL, REFERRAL_SUCCESS, NEW_ANNOUNCEMENT, QUEUE_SLOT_ACTIVE, HEALTH_AND_SAFETY, REMINDER, INFRACTION, ADMIN, EVENT, ADVERT, TRAINING, PRINTING, RECRUITMENT>;
+  CREATE TYPE notification::Notification EXTENDING default::Auditable {
+      CREATE REQUIRED PROPERTY content: std::str {
+          CREATE ANNOTATION std::description := 'The content (MARKDOWN) from plate';
       };
-      CREATE REQUIRED PROPERTY content: std::str;
-      CREATE REQUIRED PROPERTY title: std::str;
+      CREATE REQUIRED MULTI PROPERTY delivery_method: notification::DeliveryMethod;
+      CREATE REQUIRED PROPERTY dispatched_at: std::datetime {
+          SET default := (std::datetime_of_statement());
+          CREATE ANNOTATION std::description := "When the notification started rolling out or if it's scheduled when it will be dispatched.";
+      };
+      CREATE REQUIRED PROPERTY priority: std::int16 {
+          SET default := 0;
+          CREATE ANNOTATION std::description := 'The priority of the notification, defaults to zero. The higher the number the higher the priority. If there are two notifications trying to be used at the same time the higher priority one will take over. Otherwise the newer one prevails.';
+      };
+      CREATE REQUIRED PROPERTY status: notification::Status;
+      CREATE REQUIRED PROPERTY title: std::str {
+          CREATE ANNOTATION std::description := 'The heading of the rendered notification (web) or the subject of the rendered email';
+      };
+      CREATE REQUIRED PROPERTY type: notification::Type;
+  };
+  CREATE TYPE notification::AuthoredNotification EXTENDING notification::Notification {
+      CREATE LINK approved_by: users::Rep;
+      CREATE REQUIRED LINK author: users::User;
+      CREATE PROPERTY approved_on: std::datetime;
   };
   CREATE TYPE notification::MailingList EXTENDING default::Auditable {
       CREATE REQUIRED PROPERTY description: std::str;
       CREATE REQUIRED PROPERTY name: std::str;
   };
+  CREATE SCALAR TYPE notification::TargetTypes EXTENDING enum<ALL, USER, REPS, TEAM, MAILING_LIST>;
+  CREATE TYPE notification::Target {
+      CREATE LINK target_mailing_list: notification::MailingList {
+          CREATE ANNOTATION std::description := 'If the target_type is set to MAILING_LIST then this will be set otherwise its null';
+      };
+      CREATE LINK target_team: team::Team {
+          CREATE ANNOTATION std::description := 'If the target_type is set to TEAM then this will be set otherwise its null';
+      };
+      CREATE LINK target_user: users::User {
+          CREATE ANNOTATION std::description := 'If the target_type is set to USER then this will be set otherwise its null';
+      };
+      CREATE REQUIRED PROPERTY target_type: notification::TargetTypes;
+  };
+  ALTER TYPE notification::Notification {
+      CREATE REQUIRED LINK target: notification::Target {
+          CREATE ANNOTATION std::description := 'Who will be receiving the notification';
+      };
+  };
+  CREATE TYPE notification::SystemNotification EXTENDING notification::Notification {
+      CREATE REQUIRED PROPERTY source: std::str {
+          CREATE ANNOTATION std::description := 'The name of the service / module which caused this notification';
+      };
+  };
   CREATE SCALAR TYPE sign_in::LocationName EXTENDING enum<MAINSPACE, HEARTSPACE>;
   CREATE TYPE sign_in::Location EXTENDING default::Auditable {
       CREATE REQUIRED PROPERTY closing_time: cal::local_time;
       CREATE MULTI PROPERTY opening_days: std::int16 {
-          CREATE ANNOTATION std::description := '0-6, the days of the week we are currently open, Sunday (0) to Saturday (6)';
+          CREATE ANNOTATION std::description := '1-7, the days of the week we are currently open, Monday (1) to Sunday (7)';
       };
       CREATE REQUIRED PROPERTY opening_time: cal::local_time;
       CREATE REQUIRED PROPERTY out_of_hours := (WITH
@@ -185,7 +227,7 @@ CREATE MIGRATION m1jf3piha2azx2oajs4efriawjwstpqiwgskmytiltwk4epf7mla4a
                   cal::to_local_time(std::datetime_of_statement(), 'Europe/London')
               )
       SELECT
-          NOT ((((.opening_time <= current_time) AND (current_time <= .closing_time)) AND (<std::int16>std::datetime_get(std::datetime_of_statement(), 'dow') IN .opening_days)))
+          NOT ((((.opening_time <= current_time) AND (current_time <= .closing_time)) AND (<std::int16>std::datetime_get(std::datetime_of_statement(), 'isodow') IN .opening_days)))
       );
       CREATE REQUIRED PROPERTY in_of_hours_rep_multiplier: std::int16;
       CREATE REQUIRED PROPERTY max_users: std::int16;
@@ -257,6 +299,7 @@ CREATE MIGRATION m1jf3piha2azx2oajs4efriawjwstpqiwgskmytiltwk4epf7mla4a
       CREATE REQUIRED PROPERTY content: std::str {
           CREATE ANNOTATION std::description := 'The content of the markdown file that are served to the user.';
       };
+      CREATE REQUIRED PROPERTY name: std::str;
   };
   CREATE TYPE sign_in::QueuePlace EXTENDING default::CreatedAt {
       CREATE REQUIRED LINK location: sign_in::Location;
@@ -295,6 +338,11 @@ CREATE MIGRATION m1jf3piha2azx2oajs4efriawjwstpqiwgskmytiltwk4epf7mla4a
   };
   ALTER TYPE users::User {
       CREATE MULTI LINK mailing_list_subscriptions: notification::MailingList;
+      CREATE MULTI LINK notifications: notification::Notification {
+          CREATE PROPERTY acknowledged: std::datetime {
+              CREATE ANNOTATION std::description := 'Time the user has dismissed / marked as read / interacted with it (will be true if noti type is email & is delivered) otherwise empty';
+          };
+      };
       CREATE MULTI LINK agreements_signed: sign_in::Agreement {
           CREATE PROPERTY created_at: std::datetime {
               SET default := (std::datetime_of_statement());
@@ -313,16 +361,6 @@ CREATE MIGRATION m1jf3piha2azx2oajs4efriawjwstpqiwgskmytiltwk4epf7mla4a
   };
   ALTER TYPE notification::MailingList {
       CREATE MULTI LINK subscribers := (.<mailing_list_subscriptions[IS users::User]);
-  };
-  CREATE SCALAR TYPE notification::NotificationType EXTENDING enum<GENERAL, REFERRAL_SUCCESS, NEW_ANNOUNCEMENT, QUEUE_SLOT_ACTIVE>;
-  CREATE TYPE notification::Notification {
-      CREATE MULTI LINK users: users::User {
-          CREATE PROPERTY read: std::bool {
-              SET default := false;
-          };
-      };
-      CREATE REQUIRED PROPERTY content: std::str;
-      CREATE REQUIRED PROPERTY type: notification::NotificationType;
   };
   ALTER TYPE sign_in::Agreement {
       CREATE MULTI LINK reasons := (SELECT
@@ -394,7 +432,7 @@ CREATE MIGRATION m1jf3piha2azx2oajs4efriawjwstpqiwgskmytiltwk4epf7mla4a
                   cal::to_local_time(std::datetime_of_statement(), 'Europe/London')
               )
       SELECT
-          ('open' IF (std::count(.on_shift_reps) > 0) ELSE ('soon' IF ((((.opening_time - <cal::relative_duration>'30m') <= current_time) AND (current_time <= (.closing_time - <cal::relative_duration>'30m'))) AND (std::datetime_get(std::datetime_of_statement(), 'dow') IN .opening_days)) ELSE 'closed'))
+          ('open' IF (std::count(.on_shift_reps) > 0) ELSE ('soon' IF ((((.opening_time - <cal::relative_duration>'30m') <= current_time) AND (current_time <= (.closing_time - <cal::relative_duration>'30m'))) AND (std::datetime_get(std::datetime_of_statement(), 'isodow') IN .opening_days)) ELSE 'closed'))
       );
   };
   ALTER TYPE team::Team {
@@ -429,5 +467,4 @@ CREATE MIGRATION m1jf3piha2azx2oajs4efriawjwstpqiwgskmytiltwk4epf7mla4a
       CREATE ANNOTATION std::description := "A user's specific preference. Should only be inserted if not same as default";
       CREATE REQUIRED PROPERTY value: std::str;
   };
-  CREATE SCALAR TYPE notification::DeliveryMethod EXTENDING enum<IN_APP, EMAIL>;
 };
