@@ -16,12 +16,12 @@ import { Badge } from "@ui/components/ui/badge.tsx";
 import { Button } from "@ui/components/ui/button.tsx";
 import { Card } from "@ui/components/ui/card.tsx";
 import { Popover, PopoverContent, PopoverTrigger } from "@ui/components/ui/popover.tsx";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ui/components/ui/tooltip.tsx";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip.tsx";
 import { useAtom } from "jotai";
 import { LogOut, Plus } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
-import {activeLocationAtom} from "@/atoms/signInAppAtoms.ts";
+import { activeLocationAtom } from "@/atoms/signInAppAtoms.ts";
 
 interface SignInUserCardProps {
   user: PartialUserWithTeams;
@@ -34,43 +34,41 @@ interface SignInUserCardProps {
 }
 
 interface AddUserAttributesProps {
-    onShiftReps: PartialUserWithTeams[] | undefined;
-    user: PartialUserWithTeams;
-    activeLocation: LocationName;
+  onShiftReps: PartialUserWithTeams[] | undefined;
+  user: PartialUserWithTeams;
+  activeLocation: LocationName;
 }
 
 export function AddUserAttributes({ onShiftReps, user, activeLocation }: AddUserAttributesProps) {
-    return (
-        <Popover>
-            <TooltipProvider>
-                <Tooltip>
-                    <PopoverTrigger asChild>
-                        <TooltipTrigger asChild>
-                            <Button variant="warning" disabled={!onShiftReps}>
-                                <Plus className="stroke-warning-foreground" />
-                                <span className="text-warning-foreground ml-1.5">Add</span>
-                            </Button>
-                        </TooltipTrigger>
-                    </PopoverTrigger>
-                    <TooltipContent>Add in-person training and infractions.</TooltipContent>
-                </Tooltip>
-            </TooltipProvider>
-            <PopoverContent className="mt-2 ml-2 w-[350px] shadow-xl border-2 border-gray-200 dark:border-gray-700">
-                <ManageUserWidget user={user} onShiftReps={onShiftReps ?? []} locationName={activeLocation} />
-            </PopoverContent>
-        </Popover>
-    );
+  return (
+    <Popover>
+      <Tooltip>
+        <PopoverTrigger asChild>
+          <TooltipTrigger asChild>
+            <Button variant="warning" disabled={!onShiftReps}>
+              <Plus className="stroke-warning-foreground" />
+              <span className="text-warning-foreground ml-1.5">Add</span>
+            </Button>
+          </TooltipTrigger>
+        </PopoverTrigger>
+        <TooltipContent>Add in-person training and infractions.</TooltipContent>
+      </Tooltip>
+      <PopoverContent className="mt-2 ml-2 w-[350px] shadow-xl border-2 border-gray-200 dark:border-gray-700">
+        <ManageUserWidget user={user} onShiftReps={onShiftReps ?? []} locationName={activeLocation} />
+      </PopoverContent>
+    </Popover>
+  );
 }
 
 export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
-                                                                                 user,
-                                                                                 tools,
-                                                                                 reason,
-                                                                                 timeIn,
-                                                                                 onSignOut,
-                                                                                 onShiftReps,
-                                                                                 isAdmin = false,
-                                                                               }) => {
+  user,
+  tools,
+  reason,
+  timeIn,
+  onSignOut,
+  onShiftReps,
+  isAdmin = false,
+}) => {
   const [activeLocation] = useAtom(activeLocationAtom);
   const abortController = new AbortController();
   const queryClient = useQueryClient();
@@ -92,12 +90,12 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
     onSuccess: async () => {
       abortController.abort();
       toast.success(
-          <>
-            Successfully signed out{" "}
-            <a className="font-bold hover:underline underline-offset-4 hover:cursor-pointer" href={`/users/${user.id}`}>
-              {user.display_name}
-            </a>
-          </>,
+        <>
+          Successfully signed out{" "}
+          <a className="font-bold hover:underline underline-offset-4 hover:cursor-pointer" href={`/users/${user.id}`}>
+            {user.display_name}
+          </a>
+        </>,
       );
       onSignOut?.();
       await queryClient.invalidateQueries({ queryKey: ["locationStatus", "locationList", { activeLocation }] });
@@ -149,22 +147,18 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
       <TimeDisplay timeIn={timeIn ?? iForgeEpoch} />
       <div className="pt-4 border-t border-gray-700 flex justify-between">
         <AddUserAttributes onShiftReps={onShiftReps} user={user} activeLocation={activeLocation} />
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button onClick={handleSignOut} variant="destructive">
-                <LogOut />
-                <span className="ml-1.5">Sign Out</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Sign out User from the Active Location</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button onClick={handleSignOut} variant="destructive">
+              <LogOut />
+              <span className="ml-1.5">Sign Out</span>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Sign out User from the Active Location</p>
+          </TooltipContent>
+        </Tooltip>
       </div>
     </Card>
   );
 };
-
-

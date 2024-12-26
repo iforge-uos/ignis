@@ -17,7 +17,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "
 import { Popover, PopoverContent, PopoverTrigger } from "@ui/components/ui/popover";
 import { Separator } from "@ui/components/ui/separator.tsx";
 import { Skeleton } from "@ui/components/ui/skeleton.tsx";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ui/components/ui/tooltip.tsx";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip.tsx";
 
 const ActiveLocationSelector = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -96,58 +96,56 @@ const ActiveLocationSelector = () => {
       )}
       {activeLocationStatus && !isLoading && !isError && (
         <div className="flex flex-col space-y-2 w-full md:w-auto md:flex-row md:items-center md:space-y-0 md:space-x-2 md:h-10 md:whitespace-nowrap">
-          <TooltipProvider delayDuration={0}>
-            <Tooltip>
-              <TooltipTrigger>
-                <StatusBadge
-                  is_open={activeLocationStatus.status === "OPEN"}
-                  is_out_of_hours={activeLocationStatus.out_of_hours}
-                  className="w-full md:w-auto h-10 flex items-center justify-center"
-                />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>The space is marked as OPEN when there is at least one rep signed in.</p>
-                <p>It is closed otherwise.</p>
-                <p>
-                  Current opening hours are: {removeSuffix(activeLocationStatus.opening_time, ":00")} -{" "}
-                  {removeSuffix(activeLocationStatus.closing_time, ":00")}
-                </p>
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger>
-                <UserCount
-                  rep_count={activeLocationStatus.on_shift_rep_count}
-                  off_shift_rep_count={activeLocationStatus.off_shift_rep_count}
-                  user_count={activeLocationStatus.user_count}
-                  max_count={activeLocationStatus.max}
-                  className="w-full md:w-auto h-10 flex items-center justify-center md:whitespace-nowrap"
-                />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Click to view a more detailed breakdown of the user count.</p>
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger>
-                <QueueStatus
-                  queue_needed={activeLocationStatus.needs_queue}
-                  count_in_queue={activeLocationStatus.count_in_queue}
-                  className="w-full md:w-auto h-10 flex items-center justify-center"
-                />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>The Queue is only enabled when capacity is reached.</p>
-                <p>
-                  To view detailed queue status visit the{" "}
-                  <Link className="underline" to={"/sign-in/dashboard"}>
-                    dashboard
-                  </Link>
-                  .
-                </p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <StatusBadge
+                is_open={activeLocationStatus.status === "OPEN"}
+                is_out_of_hours={activeLocationStatus.out_of_hours}
+                className="w-full md:w-auto h-10 flex items-center justify-center"
+              />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>The space is marked as OPEN when there is at least one rep signed in.</p>
+              <p>It is closed otherwise.</p>
+              <p>
+                Current opening hours are: {removeSuffix(activeLocationStatus.opening_time, ":00")} -{" "}
+                {removeSuffix(activeLocationStatus.closing_time, ":00")}
+              </p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger>
+              <UserCount
+                rep_count={activeLocationStatus.on_shift_rep_count}
+                off_shift_rep_count={activeLocationStatus.off_shift_rep_count}
+                user_count={activeLocationStatus.user_count}
+                max_count={activeLocationStatus.max}
+                className="w-full md:w-auto h-10 flex items-center justify-center md:whitespace-nowrap"
+              />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Click to view a more detailed breakdown of the user count.</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger>
+              <QueueStatus
+                queue_needed={activeLocationStatus.needs_queue}
+                count_in_queue={activeLocationStatus.count_in_queue}
+                className="w-full md:w-auto h-10 flex items-center justify-center"
+              />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>The Queue is only enabled when capacity is reached.</p>
+              <p>
+                To view detailed queue status visit the{" "}
+                <Link className="underline" to={"/sign-in/dashboard"}>
+                  dashboard
+                </Link>
+                .
+              </p>
+            </TooltipContent>
+          </Tooltip>
         </div>
       )}
     </div>

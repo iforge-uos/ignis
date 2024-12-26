@@ -6,7 +6,7 @@ import { PartialLocation } from "@ignis/types/sign_in";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Separator } from "@ui/components/ui/separator";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ui/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip";
 import Balancer from "react-wrap-balancer";
 import { LocationIcon } from "../icons/Locations";
 import { DiscordIcon, GitHubIcon, InstagramIcon, LinkedInIcon, TwitterIcon, YouTubeIcon } from "../icons/Socials";
@@ -33,18 +33,16 @@ function LocationStatusTooltip({ location }: { location: PartialLocation }) {
       throw new Error("Unreachable"); // TODO make this grey if the backend is down
   }
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <div className="p-2 ml-0.5 hover:cursor-pointer">
-            <div className={`size-2 ${className} rounded-lg`} />
-          </div>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>{tooltip}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div className="p-2 ml-0.5 hover:cursor-pointer">
+          <div className={`size-2 ${className} rounded-lg`} />
+        </div>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>{tooltip}</p>
+      </TooltipContent>
+    </Tooltip>
   );
 }
 

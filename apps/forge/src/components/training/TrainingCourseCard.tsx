@@ -7,7 +7,7 @@ import { Link } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button";
 import { Card } from "@ui/components/ui/card";
 import { Separator } from "@ui/components/ui/separator";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ui/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip";
 import { EditIcon } from "lucide-react";
 
 interface TrainingCourseCardProps {
@@ -28,7 +28,7 @@ export default function TrainingCourseCard({ training, isRep, userTraining }: Tr
           src={training.icon_url}
         />
         {user?.roles.some((role) => role.name === "Admin" || role.name === "Training Editor") && (
-          <TooltipProvider>
+          <>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Link to="/training/$id/edit" params={training} className="contents">
@@ -49,7 +49,7 @@ export default function TrainingCourseCard({ training, isRep, userTraining }: Tr
               </TooltipTrigger>
               <TooltipContent>Edit Rep Training</TooltipContent>
             </Tooltip>
-          </TooltipProvider>
+          </>
         )}
       </div>
       <div className="px-4 pb-4 flex flex-col justify-between flex-grow">

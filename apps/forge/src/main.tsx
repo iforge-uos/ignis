@@ -9,16 +9,17 @@ import { HelmetProvider } from "react-helmet-async";
 import { GenericError } from "@/components/routing/GenericError";
 import { Loading } from "@/components/routing/Loading";
 import { NotFound } from "@/components/routing/NotFound";
-import {useUser} from "@/lib/utils.ts";
+import { useUser } from "@/lib/utils.ts";
 import { AuthProvider } from "@/providers/AuthProvider";
 import { routeTree } from "@/routeTree.gen.ts";
 import { Apps } from "@/types/app";
 import { Toaster } from "@ui/components/ui/sonner.tsx";
 import React from "react";
 
-import { DevTools } from 'jotai-devtools'
-import 'jotai-devtools/styles.css'
-import {ForgeRouterContext} from "@/routes/__root.tsx";
+import { DevTools } from "jotai-devtools";
+import "jotai-devtools/styles.css";
+import { ForgeRouterContext } from "@/routes/__root.tsx";
+import { TooltipProvider } from "@ui/components/ui/tooltip";
 
 // Begin Router
 const queryClient = new QueryClient();
@@ -27,7 +28,7 @@ const router = createRouter({
   routeTree,
   context: {
     queryClient,
-    user: undefined!
+    user: undefined!,
   },
   defaultPreload: "intent",
   // Since we're using React Query, we don't want loader calls to ever be stale
@@ -49,17 +50,17 @@ declare module "@tanstack/react-router" {
 }
 
 function App() {
-    const user = useUser();
+  const user = useUser();
 
-    return (
-        <RouterProvider
-            router={router}
-            context={{
-                queryClient,
-                user
-            }}
-        />
-    );
+  return (
+    <RouterProvider
+      router={router}
+      context={{
+        queryClient,
+        user,
+      }}
+    />
+  );
 }
 
 const rootElement = document.getElementById("root");
@@ -70,11 +71,13 @@ if (rootElement) {
       <QueryClientProvider client={queryClient}>
         <HelmetProvider>
           <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-                <AuthProvider>
-                  <DevTools position="bottom-right"/>
-                  <App />
-                  <Toaster />
-                </AuthProvider>
+            <TooltipProvider>
+              <AuthProvider>
+                <DevTools position="bottom-right" />
+                <App />
+                <Toaster />
+              </AuthProvider>
+            </TooltipProvider>
           </ThemeProvider>
         </HelmetProvider>
         <ReactQueryDevtools initialIsOpen={false} />
