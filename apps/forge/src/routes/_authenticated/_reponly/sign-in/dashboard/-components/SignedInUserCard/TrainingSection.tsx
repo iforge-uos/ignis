@@ -46,7 +46,7 @@ export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locatio
           <SelectContent>
             <SelectGroup>
               {remainingTrainings?.map((training) => {
-                const Icon = getTrainingSelectabilityIcons(training);
+                //const Icon = getTrainingSelectabilityIcons(training);
                 return (
                   <SelectItem
                     key={training.id}
@@ -54,7 +54,7 @@ export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locatio
                     disabled={training.selectable.length !== 1 && !training.selectable.includes("IN_PERSON_MISSING")}
                   >
                     <div>
-                      {Icon}
+                      {/* {Icon} */}
                       {training.name}
                     </div>
                   </SelectItem>
