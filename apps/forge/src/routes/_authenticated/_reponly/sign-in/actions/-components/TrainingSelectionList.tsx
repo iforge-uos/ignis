@@ -22,7 +22,6 @@ import {
   ChevronRight,
   Clock,
   HelpCircle,
-  Info,
   MapPin,
   Search,
   XCircle,
@@ -30,6 +29,7 @@ import {
 import React, { useState, useEffect, useRef, useMemo } from "react";
 
 interface TrainingCardInfo {
+  name: TrainingSelectability | "SELECTABLE" | "UNREACHABLE";
   icon: React.ElementType;
   colour: string;
   label: string;
@@ -37,6 +37,7 @@ interface TrainingCardInfo {
 }
 
 const SELECTABLE = {
+  name: "SELECTABLE",
   icon: CheckIcon,
   colour: cn("bg-emerald-500/90 dark:bg-emerald-500"),
   label: "Available",
@@ -44,6 +45,7 @@ const SELECTABLE = {
 } satisfies TrainingCardInfo;
 
 const NO_TRAINING = {
+  name: "NO_TRAINING",
   icon: AlertTriangle,
   colour: cn("bg-amber-500/90 dark:bg-amber-500"),
   label: "Not Complete",
@@ -51,6 +53,7 @@ const NO_TRAINING = {
 } satisfies TrainingCardInfo;
 
 const REPS_UNTRAINED = {
+  name: "REPS_UNTRAINED",
   icon: NoRepIcon,
   colour: cn("bg-orange-500/90 dark:bg-orange-500"),
   label: "Reps Untrained",
@@ -58,6 +61,7 @@ const REPS_UNTRAINED = {
 } satisfies TrainingCardInfo;
 
 const IN_PERSON_MISSING = {
+  name: "IN_PERSON_MISSING",
   icon: MapPin,
   colour: cn("bg-cyan-500/90 text-white dark:bg-cyan-500 dark:text-white"),
   label: "In-Person Required",
@@ -65,6 +69,7 @@ const IN_PERSON_MISSING = {
 } satisfies TrainingCardInfo;
 
 const REVOKED = {
+  name: "REVOKED",
   icon: Ban,
   colour: cn("bg-red-500/90 dark:bg-red-500"),
   label: "Revoked",
@@ -72,6 +77,7 @@ const REVOKED = {
 } satisfies TrainingCardInfo;
 
 const EXPIRED = {
+  name: "EXPIRED",
   icon: Clock,
   colour: cn("bg-purple-500/90 dark:bg-purple-500"),
   label: "Expired",
@@ -79,6 +85,7 @@ const EXPIRED = {
 } satisfies TrainingCardInfo;
 
 const UNREACHABLE = {
+  name: "UNREACHABLE",
   icon: HelpCircle,
   colour: "bg-zinc-800 dark:bg-zinc-900",
   label: "Unknown Status",
@@ -93,7 +100,7 @@ const STATUS_MAP: Record<TrainingSelectability, TrainingCardInfo> = {
   EXPIRED,
 };
 
-const getTrainingCardInfo = (training: Training): TrainingCardInfo[] => {
+export const getTrainingCardInfo = (training: Training): TrainingCardInfo[] => {
   if (!training.selectable.length) {
     return [SELECTABLE];
   }

@@ -3,8 +3,8 @@ import { iForgeEpoch } from "@/config/constants";
 import { ManageUserWidgetProps } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/ManageUserWidget.tsx";
 import addInPersonTraining from "@/services/users/addInPersonTraining.ts";
 import { getUserTrainingRemaining } from "@/services/users/getUserTrainingRemaining.ts";
-import type { LocationName } from "@ignis/types/sign_in.ts";
 import { useQuery } from "@tanstack/react-query";
+import { Badge } from "@ui/components/ui/badge";
 import { Button } from "@ui/components/ui/button.tsx";
 import { Calendar } from "@ui/components/ui/calendar.tsx";
 import { Label } from "@ui/components/ui/label.tsx";
@@ -17,13 +17,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@ui/components/ui/select.tsx";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip";
 import { cn } from "@ui/lib/utils.ts";
 import { format } from "date-fns";
 import { useAtomValue } from "jotai";
 import { CalendarIcon } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
-// import { getTrainingSelectabilityIcons } from "../../../actions/-components/ToolSelectionInput";
+import { getTrainingCardInfo } from "../../../actions/-components/TrainingSelectionList";
 
 export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locationName: location, onShiftReps }) => {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
@@ -43,24 +44,43 @@ export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locatio
           <SelectTrigger className="w-full mt-2">
             <SelectValue placeholder="Choose in person training" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {remainingTrainings?.map((training) => {
-                //const Icon = getTrainingSelectabilityIcons(training);
-                return (
-                  <SelectItem
-                    key={training.id}
-                    value={training.id}
-                    disabled={training.selectable.length !== 1 && !training.selectable.includes("IN_PERSON_MISSING")}
-                  >
-                    <div>
-                      {/* {Icon} */}
-                      {training.name}
-                    </div>
-                  </SelectItem>
-                );
-              }) || (
-                <SelectItem value={"unselectable"} disabled>
+          <SelectContent className="w-full">
+            <SelectGroup className="w-full">
+              {remainingTrainings
+                ?.sort((a, b) => a.name.localeCompare(b.name))
+                .map((training) => {
+                  const info = getTrainingCardInfo(training);
+                  return (
+                    <SelectItem
+                      key={training.id}
+                      value={training.id}
+                      disabled={
+                        !(training.selectable.length === 1 && training.selectable.includes("IN_PERSON_MISSING"))
+                      }
+                      className="w-full"
+                    >
+                      <div className="flex items-center justify-between w-full gap-4">
+                        <p className="min-w-[175px] flex-1">{training.name}</p>
+                        <div className="flex shrink-0 space-x-2 ml-auto">
+                          {info.map((entry) =>
+                            entry.name !== "IN_PERSON_MISSING" ? (
+                              <Badge
+                                key={entry.label}
+                                className={cn(
+                                  entry.colour,
+                                  "px-1.5 py-0.5 text-white font-medium rounded-sm border border-white/10 backdrop-blur-sm",
+                                )}
+                              >
+                                <entry.icon className="w-4 h-4" />
+                              </Badge>
+                            ) : null,
+                          )}
+                        </div>
+                      </div>
+                    </SelectItem>
+                  );
+                }) || (
+                <SelectItem value="unselectable" disabled className="w-full">
                   No available trainings
                 </SelectItem>
               )}
