@@ -375,7 +375,7 @@ export default function TrainingSelection({
         animate={{ opacity: 1 }}
         transition={{ duration: 0.2 }}
       >
-        <AnimatePresence mode="wait" initial={false}>
+        <AnimatePresence>
           {selectedTrainings.map((training) => (
             <motion.div key={training.id} variants={badgeVariants} animate="animate" exit="exit" layout>
               <Badge

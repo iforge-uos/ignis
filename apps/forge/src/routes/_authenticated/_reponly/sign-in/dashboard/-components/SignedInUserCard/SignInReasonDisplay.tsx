@@ -7,7 +7,14 @@ import { PartialUserWithTeams } from "@ignis/types/users";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Badge } from "@ui/components/ui/badge.tsx";
 import { Button } from "@ui/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@ui/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@ui/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip";
 import { useAtomValue } from "jotai";
 import { Edit } from "lucide-react";
@@ -92,8 +99,8 @@ export const SignInReasonWithToolsDisplay: React.FC<SignInReasonWithToolsDisplay
                   {tool}
                 </Badge>
               ))}
-              <DialogTrigger asChild>
-                <Tooltip>
+              <Tooltip>
+                <DialogTrigger>
                   <TooltipTrigger asChild>
                     <Button
                       variant="outline"
@@ -108,14 +115,15 @@ export const SignInReasonWithToolsDisplay: React.FC<SignInReasonWithToolsDisplay
                   <TooltipContent>
                     <p>Update user's tools</p>
                   </TooltipContent>
-                </Tooltip>
-              </DialogTrigger>
+                </DialogTrigger>
+              </Tooltip>
             </div>
           </div>
         </div>
         <DialogContent className="sm:max-w-[800px]">
           <DialogHeader>
             <DialogTitle>Update Sign-In Information</DialogTitle>
+            <DialogDescription>Update a users tools after they've signed in</DialogDescription>
           </DialogHeader>
           {isUserDataPending ? (
             <div>Loading...</div>
