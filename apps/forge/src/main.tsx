@@ -1,22 +1,22 @@
 import "@/index.css";
-import { ThemeProvider } from "@/providers/themeProvider";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { RouterProvider, createRouter } from "@tanstack/react-router";
-import ReactDOM from "react-dom/client";
-import { HelmetProvider } from "react-helmet-async";
-
 import { GenericError } from "@/components/routing/GenericError";
 import { Loading } from "@/components/routing/Loading";
 import { NotFound } from "@/components/routing/NotFound";
 import { useUser } from "@/lib/utils.ts";
 import { AuthProvider } from "@/providers/AuthProvider";
+import { ThemeProvider } from "@/providers/themeProvider";
 import { routeTree } from "@/routeTree.gen.ts";
 import { Apps } from "@/types/app";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { Toaster } from "@ui/components/ui/sonner.tsx";
-import React from "react";
-
 import { DevTools } from "jotai-devtools";
+import React from "react";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import ReactDOM from "react-dom/client";
+import { HelmetProvider } from "react-helmet-async";
 import "jotai-devtools/styles.css";
 import { ForgeRouterContext } from "@/routes/__root.tsx";
 import { TooltipProvider } from "@ui/components/ui/tooltip";
@@ -71,13 +71,15 @@ if (rootElement) {
       <QueryClientProvider client={queryClient}>
         <HelmetProvider>
           <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-            <TooltipProvider>
-              <AuthProvider>
-                <DevTools position="bottom-right" />
-                <App />
-                <Toaster />
-              </AuthProvider>
-            </TooltipProvider>
+            <DndProvider backend={HTML5Backend}>
+              <TooltipProvider>
+                <AuthProvider>
+                  <DevTools position="bottom-right" />
+                  <App />
+                  <Toaster />
+                </AuthProvider>
+              </TooltipProvider>
+            </DndProvider>
           </ThemeProvider>
         </HelmetProvider>
         <ReactQueryDevtools initialIsOpen={false} />

@@ -1,3 +1,4 @@
+import { activeLocationAtom } from "@/atoms/signInAppAtoms.ts";
 import { UserAvatar } from "@/components/avatar";
 import { TeamIcon } from "@/components/icons/Team.tsx";
 import { iForgeEpoch } from "@/config/constants.ts";
@@ -7,7 +8,7 @@ import { AdminDisplay } from "@/routes/_authenticated/_reponly/sign-in/dashboard
 import { ManageUserWidget } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/ManageUserWidget.tsx";
 import { SignInReasonWithToolsDisplay } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/SignInReasonDisplay.tsx";
 import { TimeDisplay } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/TimeDisplay.tsx";
-import { PostSignOut, PostSignOutProps } from "@/services/sign_in/signInService";
+import { PatchSignIn, PostSignOut, PostSignOutProps } from "@/services/sign_in/signInService";
 import type { LocationName, PartialReason } from "@ignis/types/sign_in.ts";
 import type { PartialUserWithTeams } from "@ignis/types/users.ts";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -17,11 +18,12 @@ import { Button } from "@ui/components/ui/button.tsx";
 import { Card } from "@ui/components/ui/card.tsx";
 import { Popover, PopoverContent, PopoverTrigger } from "@ui/components/ui/popover.tsx";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip.tsx";
+import { cn } from "@ui/lib/utils";
 import { useAtom } from "jotai";
 import { LogOut, Plus } from "lucide-react";
 import * as React from "react";
+import { useDrag } from "react-dnd";
 import { toast } from "sonner";
-import { activeLocationAtom } from "@/atoms/signInAppAtoms.ts";
 
 interface SignInUserCardProps {
   user: PartialUserWithTeams;
@@ -79,7 +81,7 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
     signal: abortController.signal,
   };
 
-  const { mutate } = useMutation({
+  const { mutate: signOutMutate } = useMutation({
     mutationKey: ["postSignOut", signOutProps],
     mutationFn: () => PostSignOut(signOutProps),
     retry: 0,
@@ -98,20 +100,55 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
         </>,
       );
       onSignOut?.();
-      await queryClient.invalidateQueries({ queryKey: ["locationStatus", "locationList", { activeLocation }] });
+      await queryClient.invalidateQueries({ queryKey: ["locationStatus"] });
+      await queryClient.invalidateQueries({ queryKey: ["locationList", activeLocation] });
     },
   });
 
   const handleSignOut = () => {
     if (window.confirm("Are you sure you want to sign out?")) {
-      mutate();
+      signOutMutate();
     }
   };
 
-  const shouldDisplayReason = !(reason?.name === REP_ON_SHIFT || reason?.name === REP_OFF_SHIFT);
+  const { mutate: updateSignInMutate } = useMutation({
+    mutationKey: ["patchSignIn", user.ucard_number],
+    mutationFn: (postBody: { tools?: string[]; reason?: PartialReason }) =>
+      PatchSignIn({
+        locationName: activeLocation,
+        uCardNumber: uCardNumberToString(user.ucard_number),
+        signal: abortController.signal,
+        postBody,
+      }),
+    onSuccess: () => {
+      toast.success("Successfully updated user sign-in information");
+      queryClient.invalidateQueries({ queryKey: ["locationStatus", "locationList", { activeLocation }] });
+    },
+    onError: (error) => {
+      console.error("Error updating sign-in information", error);
+      toast.error("Failed to update user sign-in information");
+    },
+  });
+
+  const canDrag = user.roles.some((r) => r.name === "Rep");
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: "SignedInUserCard",
+    canDrag,
+    item: { user, reason },
+    collect: (monitor) => ({
+      isDragging: !!monitor.isDragging(),
+      handlerId: monitor.getHandlerId(),
+    }),
+    // end: (item, monitor) => {
+    //   const dropResult = monitor.getDropResult<DropResult>();
+    //   if (item && dropResult) {
+    //     alert(`You dropped ${item.name} into ${dropResult.name}!`);
+    //   }
+    // },
+  }));
 
   return (
-    <Card className="bg-card w-[240px] md:w-[300px] p-4 rounded-sm flex flex-col justify-between text-black dark:text-white">
+    <Card className={cn("bg-card w-[240px] md:w-[300px] p-4 rounded-sm flex flex-col justify-between")} ref={drag}>
       <div>
         <div className="flex items-center justify-between mb-4 w-full space-x-2">
           <div className="w-2/3 p-1 flex-col">
@@ -134,15 +171,15 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
             </div>
           </div>
           <div className="w-1/3 aspect-square">
-            <UserAvatar user={user} className="w-full h-full aspect-square" />
+            <UserAvatar user={user} className="w-full h-full aspect-square" draggable={false} />
           </div>
         </div>
       </div>
       {isAdmin && <AdminDisplay user={user} />}
       <div className="flex-grow">
-        {shouldDisplayReason ? (
-          <SignInReasonWithToolsDisplay tools={tools!} reason={reason!} key={user.id} />
-        ) : undefined}
+        {!(reason?.name === REP_ON_SHIFT || reason?.name === REP_OFF_SHIFT) && (
+          <SignInReasonWithToolsDisplay user={user} tools={tools!} reason={reason!} key={user.id} />
+        )}
       </div>
       <TimeDisplay timeIn={timeIn ?? iForgeEpoch} />
       <div className="pt-4 border-t border-gray-700 flex justify-between">

@@ -67,8 +67,6 @@ import { createTabbablePlugin } from "@udecode/plate-tabbable";
 import { ELEMENT_TABLE, ELEMENT_TD, ELEMENT_TH, ELEMENT_TR, createTablePlugin } from "@udecode/plate-table";
 import { ELEMENT_TOGGLE, createTogglePlugin } from "@udecode/plate-toggle";
 import { createTrailingBlockPlugin } from "@udecode/plate-trailing-block";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
 
 import {
   autoformatArrow,

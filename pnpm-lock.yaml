@@ -4359,9 +4359,6 @@ packages:
   '@types/ldapjs@3.0.6':
     resolution: {integrity: sha512-E2Tn1ltJDYBsidOT9QG4engaQeQzRQ9aYNxVmjCkD33F7cIeLPgrRDXAYs0O35mK2YDU20c/+ZkNjeAPRGLM0Q==}
 
-  '@types/lodash@4.17.12':
-    resolution: {integrity: sha512-sviUmCE8AYdaF/KIHLDJBQgeYzPBI0vf/17NaYehBJfYD1j6/L95Slh07NlyK2iNyBNaEkb3En2jRt+a8y3xZQ==}
-
   '@types/lodash@4.17.13':
     resolution: {integrity: sha512-lfx+dftrEZcdBPczf9d0Qv0x+j/rfNCMuC6OcfXmO8gkfeNAY88PgKUbvG56whcN23gc27yenwF6oJZXGFpYxg==}
 
@@ -12223,7 +12220,7 @@ snapshots:
   '@jridgewell/trace-mapping@0.3.9':
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
-      '@jridgewell/sourcemap-codec': 1.4.15
+      '@jridgewell/sourcemap-codec': 1.5.0
 
   '@jsx-email/app-preview@1.2.6(@types/node@20.12.10)(@types/react-dom@18.3.1)(@types/react@18.3.1)(react@18.3.1)(rollup@4.27.2)(terser@5.31.0)(ts-node@10.9.2(@swc/core@1.9.2(@swc/helpers@0.5.13))(@types/node@20.12.10)(typescript@5.4.5))':
     dependencies:
@@ -15149,8 +15146,6 @@ snapshots:
   '@types/ldapjs@3.0.6':
     dependencies:
       '@types/node': 20.12.10
-
-  '@types/lodash@4.17.12': {}
 
   '@types/lodash@4.17.13': {}
 
@@ -22101,7 +22096,7 @@ snapshots:
     dependencies:
       '@juggle/resize-observer': 3.4.0
       '@types/is-hotkey': 0.1.10
-      '@types/lodash': 4.17.12
+      '@types/lodash': 4.17.13
       direction: 1.0.4
       is-hotkey: 0.2.0
       is-plain-object: 5.0.0
@@ -22509,7 +22504,7 @@ snapshots:
   terser@5.31.0:
     dependencies:
       '@jridgewell/source-map': 0.3.6
-      acorn: 8.11.3
+      acorn: 8.14.0
       commander: 2.20.3
       source-map-support: 0.5.21
 

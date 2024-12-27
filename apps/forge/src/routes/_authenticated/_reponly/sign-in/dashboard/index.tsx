@@ -1,20 +1,21 @@
+import { activeLocationAtom } from "@/atoms/signInAppAtoms";
 import ActiveLocationSelector from "@/components/sign-in/ActiveLocationSelector";
 import Title from "@/components/title";
+import { useUserRoles } from "@/hooks/useUserRoles.ts";
 import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants.ts";
 import { extractError } from "@/lib/utils.ts";
 import { SignInDrawer } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignInDrawer.tsx";
 import { dataForLocation } from "@/services/sign_in/locationService";
+import { useSignInReasons } from "@/services/sign_in/signInReasonService";
 import type { QueueEntry, SignInEntry } from "@ignis/types/sign_in.ts";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert.tsx";
 import { Loader } from "@ui/components/ui/loader.tsx";
+import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { QueuedDrawer } from "./-components/QueuedDraw";
-import { useAtom } from "jotai";
-import { activeLocationAtom } from "@/atoms/signInAppAtoms";
-import {useUserRoles} from "@/hooks/useUserRoles.ts";
 
 function SignInDashboard() {
   const queryClient = useQueryClient();
@@ -26,32 +27,6 @@ function SignInDashboard() {
   const [signInOffShiftReps, setSignInOffShiftReps] = useState<SignInEntry[]>([]);
   const isUserAdmin = useUserRoles().includes("admin");
 
-  const handleRemoveSignedInUser = async (userId: string) => {
-    setSignedInUsers((currentUsers) => currentUsers.filter((signIn) => signIn.user.id !== userId));
-    await queryClient.invalidateQueries({
-      queryKey: ["locationStatus", "locationList", { activeLocation }],
-    });
-  };
-
-  const handleRemoveSignedInRep = async (userId: string) => {
-    setSignedInReps((currentReps) => currentReps.filter((signIn) => signIn.user.id !== userId));
-    await queryClient.invalidateQueries({
-      queryKey: ["locationStatus", "locationList", { activeLocation }],
-    });
-  };
-
-  const handleRemoveSignedInOffShiftRep = async (userId: string) => {
-    setSignInOffShiftReps((currentOffShiftReps) => currentOffShiftReps.filter((signIn) => signIn.user.id !== userId));
-    await queryClient.invalidateQueries({
-      queryKey: ["locationStatus", "locationList", { activeLocation }],
-    });
-  };
-  const handleDequeue = async (userId: string) => {
-    setQueuedUsers((currentQueuedUsers) => currentQueuedUsers.filter((place) => place.user.id !== userId));
-    await queryClient.invalidateQueries({
-      queryKey: ["locationStatus", "locationList", { activeLocation }],
-    });
-  };
   const {
     data: locationList,
     isLoading,
@@ -91,6 +66,9 @@ function SignInDashboard() {
     }
   }, [locationList]);
   const onShiftReps = signedInReps.map((entry) => entry.user);
+  const { data: reasons } = useSignInReasons();
+  const repOnShiftReason = reasons?.find((reason) => reason.name === REP_ON_SHIFT);
+  const repOffShiftReason = reasons?.find((reason) => reason.name === REP_OFF_SHIFT);
 
   return (
     <>
@@ -104,27 +82,28 @@ function SignInDashboard() {
               <div id="rep-signin-shelf" className="flex-1 border-b-2 pb-5">
                 <SignInDrawer
                   title="On-Shift Reps"
-                  onSignOut={handleRemoveSignedInRep}
                   entries={signedInReps}
                   onShiftReps={onShiftReps}
                   startExpanded={true}
                   isAdmin={isUserAdmin}
+                  reason={repOnShiftReason}
+                  supportsDnd
                 />
               </div>
               <div id="off-shift-rep-signin-shelf" className="flex-1 border-b-2 pb-5">
                 <SignInDrawer
                   title="Off-Shift Reps"
-                  onSignOut={handleRemoveSignedInOffShiftRep}
                   entries={signInOffShiftReps}
                   onShiftReps={onShiftReps}
                   startExpanded={false}
                   isAdmin={isUserAdmin}
+                  reason={repOffShiftReason}
+                  supportsDnd
                 />
               </div>
               <div id="user-signin-shelf" className="mt-4 flex-1 border-b-2 pb-5">
                 <SignInDrawer
                   title="Users"
-                  onSignOut={handleRemoveSignedInUser}
                   entries={signedInUsers}
                   onShiftReps={onShiftReps}
                   startExpanded={true}
@@ -132,7 +111,7 @@ function SignInDashboard() {
                 />
               </div>
               <div id="queue-shelf" className="mt-4 flex-1">
-                <QueuedDrawer entries={queuedUsers} onDequeue={handleDequeue} />
+                <QueuedDrawer entries={queuedUsers} />
               </div>
             </div>
           )}

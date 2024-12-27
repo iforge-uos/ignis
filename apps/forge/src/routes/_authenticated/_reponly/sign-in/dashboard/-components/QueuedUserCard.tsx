@@ -43,7 +43,8 @@ export const QueuedUserCard: React.FC<QueuedUserCardProps> = ({ place, onDequeue
       abortController.abort();
       toast.success(`Successfully signed out ${place.user.display_name}`);
       onDequeue?.(place.user.id);
-      await queryClient.invalidateQueries({ queryKey: ["locationStatus", "locationList", { activeLocation }] });
+      await queryClient.invalidateQueries({ queryKey: ["locationStatus"] });
+      await queryClient.invalidateQueries({ queryKey: ["locationList", activeLocation] });
     },
   });
 

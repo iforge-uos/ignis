@@ -11,7 +11,7 @@ import { Checkbox } from "@ui/components/ui/checkbox";
 import { Input } from "@ui/components/ui/input";
 import { Kbd, Shortcut } from "@ui/components/ui/kbd";
 import { Label } from "@ui/components/ui/label";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ui/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip";
 import { AnimatePresence, motion } from "framer-motion";
 import Fuse from "fuse.js";
 import {
@@ -171,12 +171,18 @@ const TrainingSelectionCard = ({ training, index, toggleTraining, selected }: Tr
 
 interface TrainingSelectionProps {
   training: Training[];
+  initialSelection?: Training[];
   onSelectionChange: (selectedTrainings: Training[]) => void;
   onSubmit: () => void;
 }
 
-export default function TrainingSelection({ training, onSelectionChange, onSubmit }: TrainingSelectionProps) {
-  const [selectedTrainings, setSelectedTrainings] = useState<Training[]>([]);
+export default function TrainingSelection({
+  training,
+  onSelectionChange,
+  onSubmit,
+  initialSelection = [],
+}: TrainingSelectionProps) {
+  const [selectedTrainings, setSelectedTrainings] = useState<Training[]>(initialSelection);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [direction, setDirection] = useState(0);
@@ -289,122 +295,111 @@ export default function TrainingSelection({ training, onSelectionChange, onSubmi
   const shortcut = useShortcutKey();
 
   return (
-    <TooltipProvider>
-      <div className="space-y-4">
-        <div className="flex justify-between">
-          <div className="flex items-center space-x-2 relative w-[80%]">
-            <Search className="w-5 h-5 text-gray-400 absolute left-[18px]" />
-            <Input
-              type="text"
-              placeholder="Search trainings..."
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage(1);
-              }}
-              className="flex-grow pl-9"
-              ref={searchInputRef}
-            />
-            <Shortcut keys={[shortcut, "F"]} className="absolute right-2 text-xs text-muted-foreground" />
-          </div>
-          <div className="flex items-center gap-2">
-            <Checkbox id="only-complete" checked={Boolean(onlyComplete)} onCheckedChange={setOnlyComplete} />
-            <Label className="hover:cursor-pointer" htmlFor="only-complete">
-              Only complete
-            </Label>
-          </div>
+    <div className="space-y-4">
+      <div className="flex justify-between">
+        <div className="flex items-center space-x-2 relative w-[80%]">
+          <Search className="w-5 h-5 text-gray-400 absolute left-[18px]" />
+          <Input
+            type="text"
+            placeholder="Search trainings..."
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="flex-grow pl-9"
+            ref={searchInputRef}
+          />
+          <Shortcut keys={[shortcut, "F"]} className="absolute right-2 text-xs text-muted-foreground" />
         </div>
-
-        <AnimatePresence initial={false} mode="wait" custom={direction}>
-          <motion.div
-            key={currentPage}
-            custom={direction}
-            variants={pageTransition}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2"
-          >
-            {visibleTrainings.map((training, index) => (
-              <TrainingSelectionCard
-                key={training.id}
-                training={training}
-                index={index}
-                toggleTraining={toggleTraining}
-                selected={selectedTrainings.some((training_) => training_.id === training.id)}
-              />
-            ))}
-          </motion.div>
-        </AnimatePresence>
-        <motion.div
-          className="flex items-center justify-between"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.2 }}
-        >
-          <Button
-            onClick={() => changePage(Math.max(currentPage - 1, 1))}
-            disabled={currentPage === 1}
-            className="flex items-center space-x-2"
-          >
-            <ChevronLeft className="w-4 h-4" />
-            <span>Previous</span>
-            <Shortcut keys={["["]} className="ml-1 text-xs text-muted-foreground" />
-          </Button>
-          <span>
-            Page {currentPage} of {totalPages}
-          </span>
-          <Button
-            onClick={() => changePage(Math.min(currentPage + 1, totalPages))}
-            disabled={currentPage === totalPages}
-            className="flex items-center space-x-2"
-          >
-            <span>Next</span>
-            <ChevronRight className="w-4 h-4" />
-            <Shortcut keys={["]"]} className="ml-1 text-xs text-muted-foreground" />
-          </Button>
-        </motion.div>
-        <motion.div
-          className="flex flex-wrap gap-2"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.2 }}
-        >
-          <AnimatePresence>
-            {selectedTrainings.map((training) => {
-              return training ? (
-                <motion.div
-                  key={training.id}
-                  variants={badgeVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  layout
-                >
-                  <Badge
-                    variant="secondary"
-                    className="px-2 py-1 text-xs font-medium rounded-sm flex items-center bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100"
-                  >
-                    {training.name}
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-4 w-4 ml-2 p-0 hover:bg-zinc-200 dark:hover:bg-zinc-700"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleTraining(training);
-                      }}
-                    >
-                      <XCircle className="h-3 w-3" />
-                      <span className="sr-only">Remove</span>
-                    </Button>
-                  </Badge>
-                </motion.div>
-              ) : null;
-            })}
-          </AnimatePresence>
-        </motion.div>
+        <div className="flex items-center gap-2">
+          <Checkbox id="only-complete" checked={Boolean(onlyComplete)} onCheckedChange={setOnlyComplete} />
+          <Label className="hover:cursor-pointer" htmlFor="only-complete">
+            Only complete
+          </Label>
+        </div>
       </div>
-    </TooltipProvider>
+
+      <AnimatePresence initial={false} mode="wait" custom={direction}>
+        <motion.div
+          key={currentPage}
+          custom={direction}
+          variants={pageTransition}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2"
+        >
+          {visibleTrainings.map((training, index) => (
+            <TrainingSelectionCard
+              key={training.id}
+              training={training}
+              index={index}
+              toggleTraining={toggleTraining}
+              selected={selectedTrainings.some((training_) => training_.id === training.id)}
+            />
+          ))}
+        </motion.div>
+      </AnimatePresence>
+      <motion.div
+        className="flex items-center justify-between"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.2 }}
+      >
+        <Button
+          onClick={() => changePage(Math.max(currentPage - 1, 1))}
+          disabled={currentPage === 1}
+          className="flex items-center space-x-2"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          <span>Previous</span>
+          <Shortcut keys={["["]} className="ml-1 text-xs text-muted-foreground" />
+        </Button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+        <Button
+          onClick={() => changePage(Math.min(currentPage + 1, totalPages))}
+          disabled={currentPage === totalPages}
+          className="flex items-center space-x-2"
+        >
+          <span>Next</span>
+          <ChevronRight className="w-4 h-4" />
+          <Shortcut keys={["]"]} className="ml-1 text-xs text-muted-foreground" />
+        </Button>
+      </motion.div>
+      <motion.div
+        className="flex flex-wrap gap-2"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.2 }}
+      >
+        <AnimatePresence mode="wait" initial={false}>
+          {selectedTrainings.map((training) => (
+            <motion.div key={training.id} variants={badgeVariants} animate="animate" exit="exit" layout>
+              <Badge
+                variant="secondary"
+                className="px-2 py-1 text-xs font-medium rounded-sm flex items-center bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100"
+              >
+                {training.name}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-4 w-4 ml-2 p-0 hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleTraining(training);
+                  }}
+                >
+                  <XCircle className="h-3 w-3" />
+                  <span className="sr-only">Remove</span>
+                </Button>
+              </Badge>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </motion.div>
+    </div>
   );
 }

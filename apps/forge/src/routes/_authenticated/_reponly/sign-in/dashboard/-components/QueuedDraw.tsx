@@ -10,7 +10,7 @@ import { QueuedUserCard } from "./QueuedUserCard";
 // QueuedDrawer Props
 interface QueuedDrawerProps {
   entries: QueueEntry[];
-  onDequeue: (user_id: string) => void;
+  onDequeue?: (user_id: string) => void;
   startExpanded?: boolean;
 }
 
