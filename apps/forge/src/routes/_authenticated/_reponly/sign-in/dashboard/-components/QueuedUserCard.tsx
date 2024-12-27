@@ -72,19 +72,17 @@ export const QueuedUserCard: React.FC<QueuedUserCardProps> = ({ place, onDequeue
         </div>
       </div>
       {isAdmin && <AdminDisplay user={place.user} />}
-      <>
-        <div className="my-4 p-4 bg-muted text-muted-foreground rounded-sm h-[90%]">
-          <div className="border-gray-500 p-2 rounded-sm mb-2">
-            <div
-              className={`pb-2 h-full w-2/3 mr-auto ml-auto rounded-lg p-2 font-medium mb-1 text-center font-mono ${
-                canSignIn ? "bg-green-500" : "bg-red-500"
-              }`}
-            >
-              {canSignIn ? "Can" : "Cannot"} sign in
-            </div>
+      <div className="my-4 p-4 bg-muted text-muted-foreground rounded-sm h-[90%]">
+        <div className="border-gray-500 p-2 rounded-sm mb-2">
+          <div
+            className={`pb-2 h-full w-2/3 mr-auto ml-auto rounded-lg p-2 font-medium mb-1 text-center font-mono ${
+              canSignIn ? "bg-green-500" : "bg-red-500"
+            }`}
+          >
+            {canSignIn ? "Can" : "Cannot"} sign in
           </div>
         </div>
-      </>
+      </div>
       <TimeDisplay timeIn={place.created_at ?? iForgeEpoch} inText="Queued at:" durationText="Queuing for:" />
       <div className="pt-4 border-t border-gray-700 flex justify-end">
         <Tooltip>
