@@ -85,7 +85,7 @@ export default function TrainingIndexPage() {
                   <ImageGradient gradientColor="mainspace">
                     {/* TODO this doesn't cover the entirety of the box for some reason in lg */}
                     <img
-                      src={`${import.meta.env.VITE_CDN_URL}/files/mainspace_training.jpg`}
+                      src={`${import.meta.env.VITE_CDN_URL}/files/training/mainspace.jpg`}
                       alt="iForge Mainspace"
                       className="w-full object-fill"
                     />
@@ -108,7 +108,7 @@ export default function TrainingIndexPage() {
                 img={
                   <ImageGradient gradientColor="heartspace">
                     <img
-                      src={`${import.meta.env.VITE_CDN_URL}/files/heartspace_training.jpg`}
+                      src={`${import.meta.env.VITE_CDN_URL}/files/training/heartspace.jpg`}
                       alt="iForge Heartspace"
                       className="w-full object-fill"
                     />
@@ -131,7 +131,7 @@ export default function TrainingIndexPage() {
                 img={
                   <ImageGradient gradientColor="george-porter">
                     <img
-                      src={`${import.meta.env.VITE_CDN_URL}/files/george_porter_training.jpg`}
+                      src={`${import.meta.env.VITE_CDN_URL}/files/training/george_porter.jpg`}
                       alt="George Porter"
                       className="w-full object-fill"
                     />
@@ -158,7 +158,7 @@ export default function TrainingIndexPage() {
                 img={
                   <ImageGradient gradientColor="tick">
                     <img
-                      src={`${import.meta.env.VITE_CDN_URL}/files/approved_materials.jpg`}
+                      src={`${import.meta.env.VITE_CDN_URL}/files/training/approved_materials.jpg`}
                       alt="Approved materials"
                     />
                   </ImageGradient>
@@ -179,7 +179,10 @@ export default function TrainingIndexPage() {
               <IndexCard
                 img={
                   <ImageGradient gradientColor="cross">
-                    <img src={`${import.meta.env.VITE_CDN_URL}/files/risk_assessments.jpg`} alt="Risk Assessment" />
+                    <img
+                      src={`${import.meta.env.VITE_CDN_URL}/files/training/risk_assessments.jpg`}
+                      alt="Risk Assessment"
+                    />
                   </ImageGradient>
                 }
                 title={

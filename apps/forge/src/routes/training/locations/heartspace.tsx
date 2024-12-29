@@ -7,7 +7,7 @@ const Heartspace = () => (
     optionalTrainingText={"SLA 3D printer, sewing machines, and mug press"}
     img={
       <img
-        src={`${import.meta.env.VITE_CDN_URL}/files/heartspace_training.jpg`}
+        src={`${import.meta.env.VITE_CDN_URL}/files/training/heartspace.jpg`}
         alt={"Heartspace"}
         className={"absolute w-full object-fill"}
       />

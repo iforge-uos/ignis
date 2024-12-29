@@ -7,7 +7,7 @@ const GeorgePorter = () => (
     optionalTrainingText={"carbon fibre layup station"}
     img={
       <img
-        src={`${import.meta.env.VITE_CDN_URL}/files/george_porter_training.jpg`}
+        src={`${import.meta.env.VITE_CDN_URL}/files/training/george_porter.jpg`}
         alt={"George Porter"}
         className={"absolute w-full object-fill"}
       />

@@ -7,7 +7,7 @@ const Mainspace = () => (
     optionalTrainingText={"CNC mill, laser cutter, and 3D printer"}
     img={
       <img
-        src={`${import.meta.env.VITE_CDN_URL}/files/mainspace_training.jpg`}
+        src={`${import.meta.env.VITE_CDN_URL}/files/training/mainspace.jpg`}
         alt={"Mainspace"}
         className={"absolute w-full object-fill xl:top-[-350px] lg:top-[-250px] md:top-[-100px] sm:top-[-20px] top-0"}
       />

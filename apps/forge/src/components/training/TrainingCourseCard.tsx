@@ -25,7 +25,7 @@ export default function TrainingCourseCard({ training, isRep, userTraining }: Tr
           alt={training.name}
           className="w-full h-full object-scale-down aspect-[2/1]"
           height="200"
-          src={training.icon_url}
+          src={`${import.meta.env.VITE_CDN_URL}/files/machines/${training.icon_url}`}
         />
         {user?.roles.some((role) => role.name === "Admin" || role.name === "Training Editor") && (
           <>
