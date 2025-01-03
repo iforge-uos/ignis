@@ -234,7 +234,7 @@ export class TrainingService {
           ),
         );
         const session_training_id_selector = e.select(training_or_session.is(e.training.Session).training.id);
-        const is_training = e.op(training_or_session.__type__.name, "=", "training::Page");
+        const is_training = e.op(training_or_session.__type__.name, "=", "training::Training");
         return {
           id_: e.select(
             e.op(e.select(training_or_session.id), "if", is_training, "else", session_training_id_selector),
