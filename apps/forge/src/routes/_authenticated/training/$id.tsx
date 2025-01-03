@@ -101,7 +101,7 @@ const Component: React.FC = () => {
     }
 
     setButtonName("Next");
-    if (section.type_name === "training::Page") {
+    if (section.type_name === "training::TrainingPage") {
       const duration_ = section.duration_ ? Number.parseFloat(section.duration_) * 1000 : null;
       if (duration_) {
         setButtonDisabled(true);

@@ -127,7 +127,7 @@ function Component() {
                                     content: "",
                                     enabled: true,
                                     index: idx + 1,
-                                    type_name: "training::Page", // if the content contains a Checkbox or a RadioGroup it goes to a Question
+                                    type_name: "training::TrainingPage", // if the content contains a Checkbox or a RadioGroup it goes to a Question
                                     name: "",
                                     id: null as never as string, // we can't have an ID till it's committed to DB TODO idk how this actually works when we go to display them
                                   },
