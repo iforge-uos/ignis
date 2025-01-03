@@ -186,7 +186,7 @@ const Component: React.FC = () => {
             <Button
               // if we're on a training page it doesn't matter if answers aren't selected
               disabled={
-                ["training::Page", undefined].includes(sections.at(-1)?.type_name)
+                ["training::TrainingPage", undefined].includes(sections.at(-1)?.type_name)
                   ? buttonDisabled
                   : answers.length === 0
               }
