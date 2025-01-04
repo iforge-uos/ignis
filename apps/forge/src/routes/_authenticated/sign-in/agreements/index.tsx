@@ -28,8 +28,8 @@ export default function Component() {
       <p className="text-center mb-6">The signable agreements in the iForge.</p>
       <div
         className={`
-        grid 
-        ${filteredAgreements.length === 1 ? "grid-cols-1 max-w-md mx-auto" : "grid-cols-1 md:grid-cols-2"} 
+        grid
+        ${filteredAgreements.length === 1 ? "grid-cols-1 max-w-md mx-auto" : "grid-cols-1 md:grid-cols-2"}
         gap-6
       `}
       >
@@ -44,4 +44,5 @@ export default function Component() {
 export const Route = createFileRoute("/_authenticated/sign-in/agreements/")({
   component: Component,
   loader: getAgreements,
+  preload: false,
 });
