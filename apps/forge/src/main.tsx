@@ -20,9 +20,18 @@ import { HelmetProvider } from "react-helmet-async";
 import "jotai-devtools/styles.css";
 import { ForgeRouterContext } from "@/routes/__root.tsx";
 import { TooltipProvider } from "@ui/components/ui/tooltip";
+import { useHydrateAtoms } from "jotai/react/utils";
+import { queryClientAtom } from "jotai-tanstack-query";
+
 
 // Begin Router
 const queryClient = new QueryClient();
+
+const HydrateAtoms = ({ children }: { children: React.ReactNode }) => {
+	useHydrateAtoms([[queryClientAtom, queryClient]]);
+	return children;
+};
+
 
 const router = createRouter({
   routeTree,
@@ -69,6 +78,7 @@ if (rootElement) {
   ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
       <QueryClientProvider client={queryClient}>
+        <HydrateAtoms>
         <HelmetProvider>
           <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
             <DndProvider backend={HTML5Backend}>
@@ -83,6 +93,7 @@ if (rootElement) {
           </ThemeProvider>
         </HelmetProvider>
         <ReactQueryDevtools initialIsOpen={false} />
+        </HydrateAtoms>
       </QueryClientProvider>
     </React.StrictMode>,
   );
