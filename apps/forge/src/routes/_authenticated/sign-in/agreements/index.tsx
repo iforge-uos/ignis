@@ -5,17 +5,19 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Loader } from "@ui/components/ui/loader";
 import { AgreementCard } from "./-components/AgreementCard";
+import { Suspense } from "react";
 
-export default function Component() {
+function AgreementsList() {
   const roles = useUserRoles();
-  const { data: agreements, error, isPending } = useQuery({ queryKey: ["agreements"], queryFn: getAgreements }); // cannot use loader here
+  const { data: agreements = [] } = useQuery({ 
+    queryKey: ["agreements"], 
+    queryFn: getAgreements,
+    refetchOnMount: "always",
+    staleTime: 0,
+    networkMode: "always"
+  });
+
   const isRep = roles.includes("rep");
-  if (error) {
-    throw error;
-  }
-  if (isPending) {
-    return <Loader />;
-  }
 
   // Filter agreements based on user roles
   const filteredAgreements = agreements.filter((agreement) => {
@@ -46,6 +48,14 @@ export default function Component() {
         ))}
       </div>
     </div>
+  );
+}
+
+export default function Component() {
+  return (
+    <Suspense fallback={<Loader />}>
+      <AgreementsList />
+    </Suspense>
   );
 }
 

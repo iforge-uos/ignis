@@ -61,22 +61,26 @@ export const useVerifyAuthentication = () => {
         const userData = response.data;
         const lowercaseRoles = userData.roles.map((role) => role.name.toLowerCase());
 
-        // Update states sequentially
-        setUser(userData);
-        setOriginalUserRoles(lowercaseRoles);
-        setUserRoles(lowercaseRoles);
-        setAuthEffect(true);
-        isLoggedOutRef.current = false;
+        // Return a promise that resolves when all state updates are complete
+        return new Promise<void>((resolve) => {
+          // Update states sequentially
+          setUser(userData);
+          setOriginalUserRoles(lowercaseRoles);
+          setUserRoles(lowercaseRoles);
+          setAuthEffect(true);
+          isLoggedOutRef.current = false;
 
-        // Small delay before setting loading to false
-        setTimeout(() => {
-          if (mountedRef.current) {
-            setLoading(false);
-          }
-        }, 100);
+          // Resolve after a small delay to ensure state updates are processed
+          setTimeout(() => {
+            if (mountedRef.current) {
+              setLoading(false);
+              resolve();
+            }
+          }, 100);
+        });
       }
     } catch (error) {
-      console.error("Auth verification error:", error); // Debug log
+      console.error("Auth verification error:", error);
       if (!mountedRef.current) {
         setLoading(false);
         return;
@@ -122,5 +126,6 @@ export const useVerifyAuthentication = () => {
   return {
     user,
     loading: loading && !isLoggedOutRef.current, // Only show loading if not logged out
+    verifyAuthentication
   };
 };

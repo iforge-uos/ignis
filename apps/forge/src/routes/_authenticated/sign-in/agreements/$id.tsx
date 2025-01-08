@@ -7,9 +7,12 @@ import { Button } from "@ui/components/ui/button";
 import { Checkbox } from "@ui/components/ui/checkbox";
 import { Label } from "@ui/components/ui/label";
 import { Separator } from "@ui/components/ui/separator";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Markdown from "react-markdown";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
+import { useVerifyAuthentication } from "@/hooks/useVerifyAuthentication";
+import { getAgreements } from "@/services/root/getAgreements";
 
 export default function Component() {
   const { id } = Route.useParams();
@@ -18,6 +21,38 @@ export default function Component() {
   const [isChecked, setIsChecked] = useState<string | boolean>(false);
   const user = useUser()!;
   const navigator = useNavigate();
+  const queryClient = useQueryClient();
+  const { verifyAuthentication } = useVerifyAuthentication();
+
+  const handleSignAgreement = useCallback(async () => {
+    if (!isChecked) return;
+
+    try {
+      await axiosInstance.post(`/agreements/${id}`, { user });
+      
+      await Promise.all([
+        verifyAuthentication(),
+        queryClient.invalidateQueries({ queryKey: ["agreements"] })
+      ]);
+
+      await queryClient.ensureQueryData({
+        queryKey: ["agreements"],
+        queryFn: getAgreements
+      });
+
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      toast.success("Successfully signed agreement");
+      
+      navigator({ 
+        to: "/sign-in/agreements",
+        replace: true 
+      });
+    } catch (error) {
+      console.error("Error signing agreement:", error);
+      toast.error("Failed to sign agreement");
+    }
+  }, [isChecked, id, user, queryClient, verifyAuthentication, navigator]);
 
   return (
     <>
@@ -48,13 +83,7 @@ export default function Component() {
         <Button
           className="mt-4 w-full"
           disabled={!isChecked}
-          onClick={async () => {
-            if (isChecked) {
-              await axiosInstance.post(`/agreements/${id}`, { user });
-              toast.success("Successfully signed agreement");
-              return navigator({ to: "/sign-in/agreements" });
-            }
-          }}
+          onClick={handleSignAgreement}
         >
           Confirm
         </Button>
