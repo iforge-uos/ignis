@@ -4,8 +4,8 @@ select assert_exists(
         sections: {
             *,
             type_name := .__type__.name,
-            [is training::TrainingPage].name,
-            duration_ := duration_to_seconds([is training::TrainingPage].duration),
+            [is training::Page].name,
+            [is training::Page].duration,
             answers := [is training::Question].answers {
                 id,
                 content,

@@ -3,13 +3,14 @@
 import * as $ from "../reflection";
 import * as _ from "../imports";
 import type * as _std from "./std";
+import type * as _users from "./users";
 export type $CreatedAtλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
   "created_at": $.PropertyDesc<_std.$datetime, $.Cardinality.One, false, false, true, true>;
 }>;
 type $CreatedAt = $.ObjectType<"default::CreatedAt", $CreatedAtλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
 ]>;
-const $CreatedAt = $.makeType<$CreatedAt>(_.spec, "33123b54-8a32-11ef-9868-4bc3744c6ba0", _.syntax.literal);
+const $CreatedAt = $.makeType<$CreatedAt>(_.spec, "bbc94042-cad7-11ef-b1a6-afb0bea22682", _.syntax.literal);
 
 const CreatedAt: $.$expr_PathNode<$.TypeSet<$CreatedAt, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($CreatedAt, $.Cardinality.Many), null);
 
@@ -19,7 +20,7 @@ export type $AuditableλShape = $.typeutil.flatten<$CreatedAtλShape & {
 type $Auditable = $.ObjectType<"default::Auditable", $AuditableλShape, null, [
   ...$CreatedAt['__exclusives__'],
 ]>;
-const $Auditable = $.makeType<$Auditable>(_.spec, "331332de-8a32-11ef-a902-a510d5c36414", _.syntax.literal);
+const $Auditable = $.makeType<$Auditable>(_.spec, "bbcc1934-cad7-11ef-9603-a7aae8a86f9f", _.syntax.literal);
 
 const Auditable: $.$expr_PathNode<$.TypeSet<$Auditable, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Auditable, $.Cardinality.Many), null);
 
@@ -30,22 +31,44 @@ export type $TimedλShape = $.typeutil.flatten<$CreatedAtλShape & {
 type $Timed = $.ObjectType<"default::Timed", $TimedλShape, null, [
   ...$CreatedAt['__exclusives__'],
 ]>;
-const $Timed = $.makeType<$Timed>(_.spec, "333bbc9a-8a32-11ef-b2c6-f947aceed76b", _.syntax.literal);
+const $Timed = $.makeType<$Timed>(_.spec, "bcb5faf4-cad7-11ef-9620-5fb46dbbfe6b", _.syntax.literal);
 
 const Timed: $.$expr_PathNode<$.TypeSet<$Timed, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Timed, $.Cardinality.Many), null);
 
+export type $userλShape = $.typeutil.flatten<_users.$UserλShape & {
+}>;
+type $user = $.ObjectType<"default::user", $userλShape, null, [
+  ..._users.$User['__exclusives__'],
+]>;
+const $user = $.makeType<$user>(_.spec, "bbf43dec-cad7-11ef-9e5a-db67f3e4ffaf", _.syntax.literal);
+
+const user: $.$expr_PathNode<$.TypeSet<$user, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($user, $.Cardinality.Many), null);
+
+const $default__globals: {  user: _.syntax.$expr_Global<
+              // "default::user",
+              $user,
+              $.Cardinality.AtMostOne
+              >} = {  user: _.syntax.makeGlobal(
+              "default::user",
+              $.makeType(_.spec, "bbf43dec-cad7-11ef-9e5a-db67f3e4ffaf", _.syntax.literal),
+              $.Cardinality.AtMostOne) as any};
 
 
-export { $CreatedAt, CreatedAt, $Auditable, Auditable, $Timed, Timed };
+
+export { $CreatedAt, CreatedAt, $Auditable, Auditable, $Timed, Timed, $user, user };
 
 type __defaultExports = {
   "CreatedAt": typeof CreatedAt;
   "Auditable": typeof Auditable;
-  "Timed": typeof Timed
+  "Timed": typeof Timed;
+  "user": typeof user;
+  "global": typeof $default__globals
 };
 const __defaultExports: __defaultExports = {
   "CreatedAt": CreatedAt,
   "Auditable": Auditable,
-  "Timed": Timed
+  "Timed": Timed,
+  "user": user,
+  "global": $default__globals
 };
 export default __defaultExports;

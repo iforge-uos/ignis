@@ -11,13 +11,13 @@ export const PermissionSubjectSchema = z.enum(["ALL", "SELF", "USER"]);
 // #region auth::BlacklistedToken
 export const CreateBlacklistedTokenSchema = z.
   object({
-    expires: z.string().regex(/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d{3})?)?Z?$/), // std::datetime
+    expires: z.date(), // std::datetime
     token: z.string(), // std::str
   });
 
 export const UpdateBlacklistedTokenSchema = z.
   object({
-    expires: z.string().regex(/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d{3})?)?Z?$/), // std::datetime
+    expires: z.date(), // std::datetime
     token: z.string(), // std::str
   });
 // #endregion

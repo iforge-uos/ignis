@@ -2,10 +2,10 @@ with training := (
     select assert_exists(training::Training filter .id = <uuid>$id)
 ),
 user := (
-    select assert_exists(users::User filter .id = <uuid>$user_id)
+    select global default::user
 ),
 session := (
-    insert training::UserTrainingSession {
+    insert training::Session {
         training := training,
         user := (
             user if exists training.rep
@@ -15,21 +15,21 @@ session := (
         ),
     }
     # return the current session if the user has one
-    unless conflict on ((.user, .training)) # must be kept in-line with UserTrainingSession constraint
-    else (select training::UserTrainingSession)
+    unless conflict on ((.user, .training)) # must be kept in-line with Session constraint
+    else (select training::Session)
 ),
 select session {
     id,
     sections := (
         select session.training.sections {
-            # TrainingSection
+            # Section
             type_name := .__type__.name,
             id,
             index,
             content,
-            name := [is training::TrainingPage].name,
-            duration_ := duration_to_seconds([is training::TrainingPage].duration),
-            type := [is training::Question].type,
+            [is training::Page].name,
+            [is training::Page].duration,
+            [is training::Question].type,
             answers := [is training::Question].answers {
                 id,
                 content,

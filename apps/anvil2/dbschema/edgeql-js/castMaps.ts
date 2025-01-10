@@ -12,6 +12,7 @@ import type * as _sign_in from "./modules/sign_in";
 import type * as _schema from "./modules/schema";
 import type * as _notification from "./modules/notification";
 import type * as _fts from "./modules/fts";
+import type * as _extauth from "./modules/ext/auth";
 import type * as _event from "./modules/event";
 import type * as _cfg from "./modules/cfg";
 import type * as _cal from "./modules/cal";
@@ -21,7 +22,8 @@ export type scalarAssignableBy<T extends $.ScalarType> =
   T extends _users.$RepStatus ? _users.$RepStatus : 
   T extends _users.$Platform ? _users.$Platform : 
   T extends _users.$InfractionType ? _users.$InfractionType : 
-  T extends _training.$TrainingLocation ? _training.$TrainingLocation : 
+  T extends _training.$Selectability ? _training.$Selectability : 
+  T extends _training.$LocationName ? _training.$LocationName : 
   T extends _training.$AnswerType ? _training.$AnswerType : 
   T extends _sys.$VersionStage ? _sys.$VersionStage : 
   T extends _sys.$TransactionIsolation ? _sys.$TransactionIsolation : 
@@ -43,6 +45,7 @@ export type scalarAssignableBy<T extends $.ScalarType> =
   T extends _std.$JsonEmpty ? _std.$JsonEmpty : 
   T extends _std.$Endian ? _std.$Endian : 
   T extends _sign_in.$ReasonCategory ? _sign_in.$ReasonCategory : 
+  T extends _sign_in.$LocationStatus ? _sign_in.$LocationStatus : 
   T extends _sign_in.$LocationName ? _sign_in.$LocationName : 
   T extends _schema.$Volatility ? _schema.$Volatility : 
   T extends _schema.$TypeModifier ? _schema.$TypeModifier : 
@@ -58,7 +61,9 @@ export type scalarAssignableBy<T extends $.ScalarType> =
   T extends _schema.$Cardinality ? _schema.$Cardinality : 
   T extends _schema.$AccessPolicyAction ? _schema.$AccessPolicyAction : 
   T extends _schema.$AccessKind ? _schema.$AccessKind : 
-  T extends _notification.$NotificationType ? _notification.$NotificationType : 
+  T extends _notification.$Type ? _notification.$Type : 
+  T extends _notification.$TargetTypes ? _notification.$TargetTypes : 
+  T extends _notification.$Status ? _notification.$Status : 
   T extends _notification.$DeliveryMethod ? _notification.$DeliveryMethod : 
   T extends _fts.$document ? _fts.$document : 
   T extends _fts.$Weight ? _fts.$Weight : 
@@ -66,6 +71,9 @@ export type scalarAssignableBy<T extends $.ScalarType> =
   T extends _fts.$LuceneLanguage ? _fts.$LuceneLanguage : 
   T extends _fts.$Language ? _fts.$Language : 
   T extends _fts.$ElasticLanguage ? _fts.$ElasticLanguage : 
+  T extends _extauth.$SMTPSecurity ? _extauth.$SMTPSecurity : 
+  T extends _extauth.$JWTAlgo ? _extauth.$JWTAlgo : 
+  T extends _extauth.$FlowType ? _extauth.$FlowType : 
   T extends _event.$EventType ? _event.$EventType : 
   T extends _cfg.$memory ? _cfg.$memory : 
   T extends _cfg.$QueryCacheMode ? _cfg.$QueryCacheMode : 
@@ -85,7 +93,8 @@ export type scalarCastableFrom<T extends $.ScalarType> =
   T extends _users.$RepStatus ? _users.$RepStatus : 
   T extends _users.$Platform ? _users.$Platform : 
   T extends _users.$InfractionType ? _users.$InfractionType : 
-  T extends _training.$TrainingLocation ? _training.$TrainingLocation : 
+  T extends _training.$Selectability ? _training.$Selectability : 
+  T extends _training.$LocationName ? _training.$LocationName : 
   T extends _training.$AnswerType ? _training.$AnswerType : 
   T extends _sys.$VersionStage ? _sys.$VersionStage : 
   T extends _sys.$TransactionIsolation ? _sys.$TransactionIsolation : 
@@ -107,6 +116,7 @@ export type scalarCastableFrom<T extends $.ScalarType> =
   T extends _std.$JsonEmpty ? _std.$JsonEmpty : 
   T extends _std.$Endian ? _std.$Endian : 
   T extends _sign_in.$ReasonCategory ? _sign_in.$ReasonCategory : 
+  T extends _sign_in.$LocationStatus ? _sign_in.$LocationStatus : 
   T extends _sign_in.$LocationName ? _sign_in.$LocationName : 
   T extends _schema.$Volatility ? _schema.$Volatility : 
   T extends _schema.$TypeModifier ? _schema.$TypeModifier : 
@@ -122,7 +132,9 @@ export type scalarCastableFrom<T extends $.ScalarType> =
   T extends _schema.$Cardinality ? _schema.$Cardinality : 
   T extends _schema.$AccessPolicyAction ? _schema.$AccessPolicyAction : 
   T extends _schema.$AccessKind ? _schema.$AccessKind : 
-  T extends _notification.$NotificationType ? _notification.$NotificationType : 
+  T extends _notification.$Type ? _notification.$Type : 
+  T extends _notification.$TargetTypes ? _notification.$TargetTypes : 
+  T extends _notification.$Status ? _notification.$Status : 
   T extends _notification.$DeliveryMethod ? _notification.$DeliveryMethod : 
   T extends _fts.$document ? _fts.$document : 
   T extends _fts.$Weight ? _fts.$Weight : 
@@ -130,6 +142,9 @@ export type scalarCastableFrom<T extends $.ScalarType> =
   T extends _fts.$LuceneLanguage ? _fts.$LuceneLanguage : 
   T extends _fts.$Language ? _fts.$Language : 
   T extends _fts.$ElasticLanguage ? _fts.$ElasticLanguage : 
+  T extends _extauth.$SMTPSecurity ? _extauth.$SMTPSecurity : 
+  T extends _extauth.$JWTAlgo ? _extauth.$JWTAlgo : 
+  T extends _extauth.$FlowType ? _extauth.$FlowType : 
   T extends _event.$EventType ? _event.$EventType : 
   T extends _cfg.$memory ? _cfg.$memory : 
   T extends _cfg.$QueryCacheMode ? _cfg.$QueryCacheMode : 
@@ -169,8 +184,14 @@ type getSharedParentScalar<A, B> =
     :
     never
   :
-  A extends _training.$TrainingLocation ?
-    B extends _training.$TrainingLocation ?
+  A extends _training.$Selectability ?
+    B extends _training.$Selectability ?
+    B
+    :
+    never
+  :
+  A extends _training.$LocationName ?
+    B extends _training.$LocationName ?
     B
     :
     never
@@ -307,6 +328,12 @@ type getSharedParentScalar<A, B> =
     :
     never
   :
+  A extends _sign_in.$LocationStatus ?
+    B extends _sign_in.$LocationStatus ?
+    B
+    :
+    never
+  :
   A extends _sign_in.$LocationName ?
     B extends _sign_in.$LocationName ?
     B
@@ -397,8 +424,20 @@ type getSharedParentScalar<A, B> =
     :
     never
   :
-  A extends _notification.$NotificationType ?
-    B extends _notification.$NotificationType ?
+  A extends _notification.$Type ?
+    B extends _notification.$Type ?
+    B
+    :
+    never
+  :
+  A extends _notification.$TargetTypes ?
+    B extends _notification.$TargetTypes ?
+    B
+    :
+    never
+  :
+  A extends _notification.$Status ?
+    B extends _notification.$Status ?
     B
     :
     never
@@ -441,6 +480,24 @@ type getSharedParentScalar<A, B> =
   :
   A extends _fts.$ElasticLanguage ?
     B extends _fts.$ElasticLanguage ?
+    B
+    :
+    never
+  :
+  A extends _extauth.$SMTPSecurity ?
+    B extends _extauth.$SMTPSecurity ?
+    B
+    :
+    never
+  :
+  A extends _extauth.$JWTAlgo ?
+    B extends _extauth.$JWTAlgo ?
+    B
+    :
+    never
+  :
+  A extends _extauth.$FlowType ?
+    B extends _extauth.$FlowType ?
     B
     :
     never
@@ -558,8 +615,14 @@ function getSharedParentScalar<A extends $.ScalarType, B extends $.ScalarType>(a
     }
     throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
     }
-  if (a.__name__ === "training::TrainingLocation") {
-    if(b.__name__ === "training::TrainingLocation") {
+  if (a.__name__ === "training::Selectability") {
+    if(b.__name__ === "training::Selectability") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
+  if (a.__name__ === "training::LocationName") {
+    if(b.__name__ === "training::LocationName") {
       return b;
     }
     throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
@@ -696,6 +759,12 @@ function getSharedParentScalar<A extends $.ScalarType, B extends $.ScalarType>(a
     }
     throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
     }
+  if (a.__name__ === "sign_in::LocationStatus") {
+    if(b.__name__ === "sign_in::LocationStatus") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
   if (a.__name__ === "sign_in::LocationName") {
     if(b.__name__ === "sign_in::LocationName") {
       return b;
@@ -786,8 +855,20 @@ function getSharedParentScalar<A extends $.ScalarType, B extends $.ScalarType>(a
     }
     throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
     }
-  if (a.__name__ === "notification::NotificationType") {
-    if(b.__name__ === "notification::NotificationType") {
+  if (a.__name__ === "notification::Type") {
+    if(b.__name__ === "notification::Type") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
+  if (a.__name__ === "notification::TargetTypes") {
+    if(b.__name__ === "notification::TargetTypes") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
+  if (a.__name__ === "notification::Status") {
+    if(b.__name__ === "notification::Status") {
       return b;
     }
     throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
@@ -830,6 +911,24 @@ function getSharedParentScalar<A extends $.ScalarType, B extends $.ScalarType>(a
     }
   if (a.__name__ === "fts::ElasticLanguage") {
     if(b.__name__ === "fts::ElasticLanguage") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
+  if (a.__name__ === "ext::auth::SMTPSecurity") {
+    if(b.__name__ === "ext::auth::SMTPSecurity") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
+  if (a.__name__ === "ext::auth::JWTAlgo") {
+    if(b.__name__ === "ext::auth::JWTAlgo") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
+  if (a.__name__ === "ext::auth::FlowType") {
+    if(b.__name__ === "ext::auth::FlowType") {
       return b;
     }
     throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);

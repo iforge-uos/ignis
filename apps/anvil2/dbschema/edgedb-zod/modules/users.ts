@@ -15,10 +15,10 @@ export const RepStatusSchema = z.enum(["ACTIVE", "BREAK", "ALUMNI", "FUTURE", "R
 // #region users::Infraction
 export const CreateInfractionSchema = z.
   object({ // default::CreatedAt
-    created_at: z.string().regex(/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d{3})?)?Z?$/).optional(), // std::datetime
+    created_at: z.date().optional(), // std::datetime
   })
   .extend({ // users::Infraction
-    duration: z.never().optional(), // std::duration
+    duration: z.string().regex(/^(\d+(\.\d+)?\s(microseconds|milliseconds|seconds|minutes|hours)\s?)+$/).optional(), // std::duration
     reason: z.string(), // std::str
     resolved: z.boolean().optional(), // std::bool
     type: z.enum(["WARNING", "TEMP_BAN", "PERM_BAN", "RESTRICTION", "TRAINING_ISSUE"]), // users::InfractionType
@@ -28,7 +28,7 @@ export const UpdateInfractionSchema = z.
   object({ // default::CreatedAt
   })
   .extend({ // users::Infraction
-    duration: z.never().optional(), // std::duration
+    duration: z.string().regex(/^(\d+(\.\d+)?\s(microseconds|milliseconds|seconds|minutes|hours)\s?)+$/).optional(), // std::duration
     reason: z.string(), // std::str
     resolved: z.boolean().optional(), // std::bool
     type: z.enum(["WARNING", "TEMP_BAN", "PERM_BAN", "RESTRICTION", "TRAINING_ISSUE"]), // users::InfractionType
@@ -38,7 +38,7 @@ export const UpdateInfractionSchema = z.
 // #region users::Integration
 export const CreateIntegrationSchema = z.
   object({ // default::Auditable
-    updated_at: z.string().regex(/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d{3})?)?Z?$/).optional(), // std::datetime
+    updated_at: z.date().optional(), // std::datetime
   })
   .extend({ // users::Integration
     external_id: z.string(), // std::str
@@ -48,7 +48,7 @@ export const CreateIntegrationSchema = z.
 
 export const UpdateIntegrationSchema = z.
   object({ // default::Auditable
-    updated_at: z.string().regex(/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d{3})?)?Z?$/).optional(), // std::datetime
+    updated_at: z.date().optional(), // std::datetime
   })
   .extend({ // users::Integration
     external_id: z.string(), // std::str
@@ -108,7 +108,7 @@ export const UpdateSettingTemplateSchema = z.
 // #region users::User
 export const CreateUserSchema = z.
   object({ // default::Auditable
-    updated_at: z.string().regex(/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d{3})?)?Z?$/).optional(), // std::datetime
+    updated_at: z.date().optional(), // std::datetime
   })
   .extend({ // users::User
     first_name: z.string(), // std::str
@@ -124,7 +124,7 @@ export const CreateUserSchema = z.
 
 export const UpdateUserSchema = z.
   object({ // default::Auditable
-    updated_at: z.string().regex(/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d{3})?)?Z?$/).optional(), // std::datetime
+    updated_at: z.date().optional(), // std::datetime
   })
   .extend({ // users::User
     first_name: z.string(), // std::str

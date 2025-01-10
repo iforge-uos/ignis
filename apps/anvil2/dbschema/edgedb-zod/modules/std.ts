@@ -4,12 +4,16 @@ import { z } from "zod";
 export const boolSchema = z.boolean();
 // #endregion
 
+// #region std::bytes
+export const bytesSchema = z.never();
+// #endregion
+
 // #region std::datetime
-export const datetimeSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d{3})?)?Z?$/);
+export const datetimeSchema = z.date();
 // #endregion
 
 // #region std::duration
-export const durationSchema = z.never();
+export const durationSchema = z.string().regex(/^(\d+(\.\d+)?\s(microseconds|milliseconds|seconds|minutes|hours)\s?)+$/);
 // #endregion
 
 // #region std::int16
