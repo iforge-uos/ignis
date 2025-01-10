@@ -10,6 +10,7 @@ import _auth from "./modules/auth";
 import _cal from "./modules/cal";
 import _cfg from "./modules/cfg";
 import _event from "./modules/event";
+import _ext from "./modules/ext";
 import _fts from "./modules/fts";
 import _notification from "./modules/notification";
 import _schema from "./modules/schema";
@@ -30,6 +31,7 @@ const ExportDefault: typeof _std &
   "cal": typeof _cal;
   "cfg": typeof _cfg;
   "event": typeof _event;
+  "ext": typeof _ext;
   "fts": typeof _fts;
   "notification": typeof _notification;
   "schema": typeof _schema;
@@ -50,6 +52,7 @@ const ExportDefault: typeof _std &
   "cal": _cal,
   "cfg": _cfg,
   "event": _event,
+  "ext": _ext,
   "fts": _fts,
   "notification": _notification,
   "schema": _schema,

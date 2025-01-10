@@ -38,13 +38,22 @@ module users {
                 default := datetime_of_statement();
             }
             in_person_created_at: datetime;
-            in_person_signed_off_by: uuid;  # a rep ID, hopefully can be migrated to the actual object when the requirement for these to be scalars is lifed.
+            in_person_signed_off_by: uuid;  # a rep ID, hopefully can be migrated to the actual object when the requirement for these to be scalars is lifted.
+            infraction: uuid;  # same as above
         }
-        multi permissions: auth::Permission;
-        multi roles: auth::Role;
+
+        required identity: ext::auth::Identity;
+        multi roles: Role;
+
         multi infractions: Infraction;
 
         multi mailing_list_subscriptions: notification::MailingList;
+        multi notifications: notification::Notification {
+            acknowledged: datetime {
+                annotation description := "Time the user has dismissed / marked as read / interacted with it (will be true if noti type is email & is delivered) otherwise empty";
+            }
+        };
+
         multi referrals: User {
             created_at: datetime {
                 readonly := true;
@@ -52,6 +61,17 @@ module users {
                 # rewrite insert using (datetime_of_statement())  // might be possible see EdgeDB/edgedb#6467
             };
         }
+
+        access policy rep_or_higher
+            allow all
+            using (exists ({"Rep", "Desk", "Admin"} intersect global default::user.roles.name)) {
+                errmessage := "Only reps can see everyone's profile"
+            };
+        access policy view_self
+            allow all
+            using (global default::user ?= __subject__) {
+                errmessage := 'Can only view your own profile'
+            };
     }
 
     scalar type RepStatus extending enum<
@@ -69,6 +89,21 @@ module users {
         required status: RepStatus {
             default := RepStatus.ACTIVE;
         }
+        multi supervisable_training := (
+            with current_training := .training,  # need to store this in a local var cause otherwise it doesn't work
+            select .training
+            filter (
+                exists .rep and  # it's user training
+                .rep in current_training and  # they have the rep training in their own training
+                (not .in_person or exists @in_person_created_at)  # must also have the in person training
+            )
+        );
+    }
+
+    type Role {
+        required name: str {
+            constraint exclusive;
+        };
     }
 
     # N.B. make sure to update in forge/lib/constants
@@ -90,7 +125,76 @@ module users {
         };
         ends_at := .created_at + .duration;
         duration: duration;
-    }
+
+        access policy desk_or_higher
+            allow all
+            using (exists ({"Desk", "Admin"} intersect global default::user.roles.name)) {
+                errmessage := "Only the desk account or admins can update infractions"
+            };
+
+        # trigger log_insert after insert for each do (
+        #     net::http::schedule_request(
+        #         (select global default::INFRACTIONS_WEBHOOK_URL),
+        #         method := net::http::Method.POST,
+        #         headers := [('Content-Type', 'application/json')],
+        #         body := <bytes>str_format($${
+        #             "embeds": [{
+        #                 "title": "User Infraction Added to {user_name}",
+        #                 "description": "Type: {type}\nReason: {reason}\nResolved: {resolved}\n\n{ends_at}",
+        #                 "color": 10953233,
+        #                 "url": "https://iforge.sheffield.ac.uk/users/{user_id}",
+        #                 "thumbnail": {
+        #                     "url": "{user_profile_picture}"
+        #                 }
+        #             }]}$$,
+        #             (select {
+        #                 user_id := __new__.user.id,
+        #                 user_name := __new__.user.name,
+        #                 user_profile_picture := __new__.user.profile_picture,
+        #                 ends_at := (
+        #                     "Ends <t:" ++ datetime_get(__new__.ends_at, "epochseconds") ++ ">"
+        #                     if exists __new__.duration
+        #                     else ""
+        #                 ),
+        #                 type := __new__.type,
+        #                 reason := __new__.reason,
+        #                 resolved := __new__.resolved,
+        #             })
+        #         )
+        #     )
+        # );
+        # trigger log_update after update for each do (
+        #     net::http::schedule_request(
+        #         (select global default::INFRACTIONS_WEBHOOK_URL),
+        #         method := net::http::Method.POST,
+        #         headers := [('Content-Type', 'application/json')],
+        #         body := <bytes>str_format($${
+        #             "embeds": [{
+        #                 "title": "User Infraction Updated for {user_name}",
+        #                 "description": "Type: {type}\nReason: {reason}\nResolved: {resolved}\n\n{ends_at}",
+        #                 "color": 10953233,
+        #                 "url": "https://iforge.sheffield.ac.uk/users/{user_id}",
+        #                 "thumbnail": {
+        #                     "url": "{user_profile_picture}"
+        #                 }
+        #             }]}$$,
+        #             (select {
+        #                 user_id := __new__.user.id,
+        #                 user_name := __new__.user.name,
+        #                 user_profile_picture := __new__.user.profile_picture,
+        #                 ends_at := (
+        #                     "Ends <t:" ++ datetime_get(__new__.ends_at, "epochseconds") ++ ">"
+        #                     if exists __new__.duration
+        #                     else ""
+        #                 ),
+        #                 type := __new__.type,
+        #                 reason := __new__.reason,
+        #                 resolved := __new__.resolved,
+        #             })
+        #         )
+        #     )
+        # );
+      }
 
     type SettingTemplate {
         required key: str {

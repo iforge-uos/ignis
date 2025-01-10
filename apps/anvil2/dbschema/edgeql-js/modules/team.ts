@@ -4,20 +4,23 @@ import * as $ from "../reflection";
 import * as _ from "../imports";
 import type * as _std from "./std";
 import type * as _users from "./users";
+import type * as _notification from "./notification";
 export type $TeamλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
   "description": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "name": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "tag": $.PropertyDesc<_std.$str, $.Cardinality.One, true, false, false, false>;
-  "all_members": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, true,  false, false>;
   "members": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, true,  false, false>;
+  "all_members": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, true,  false, false>;
   "<teams[is users::Rep]": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<target_team[is notification::Target]": $.LinkDesc<_notification.$Target, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<target_team": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<teams": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
 type $Team = $.ObjectType<"team::Team", $TeamλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
   {tag: {__element__: _std.$str, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
 ]>;
-const $Team = $.makeType<$Team>(_.spec, "33149dc2-8a32-11ef-91fd-8db6f73ca50f", _.syntax.literal);
+const $Team = $.makeType<$Team>(_.spec, "bfc4755e-cad7-11ef-bfe4-e7de1352b49c", _.syntax.literal);
 
 const Team: $.$expr_PathNode<$.TypeSet<$Team, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Team, $.Cardinality.Many), null);
 

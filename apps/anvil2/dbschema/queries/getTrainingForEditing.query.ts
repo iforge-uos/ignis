@@ -10,7 +10,7 @@ export type GetTrainingForEditingReturns = {
   "sections": Array<{
     "type_name": string;
     "name": string | null;
-    "duration_": string | null;
+    "duration": Duration | null;
     "answers": Array<{
       "id": string;
       "content": string;
@@ -21,18 +21,32 @@ export type GetTrainingForEditingReturns = {
     "id": string;
     "index": number;
   }>;
-  "compulsory": boolean;
-  "description": string;
   "updated_at": Date;
   "id": string;
   "created_at": Date;
-  "name": string;
-  "enabled": boolean;
-  "expires_after": Duration | null;
   "in_person": boolean;
   "locations": Array<("MAINSPACE" | "HEARTSPACE" | "GEORGE_PORTER")>;
-  "training_lockout": Duration | null;
+  "name": string;
+  "compulsory": boolean;
+  "description": string;
+  "enabled": boolean;
+  "expires_after": Duration | null;
   "icon_url": string | null;
+  "training_lockout": Duration | null;
+  "rep": {
+    "updated_at": Date;
+    "id": string;
+    "created_at": Date;
+    "in_person": boolean;
+    "locations": Array<("MAINSPACE" | "HEARTSPACE" | "GEORGE_PORTER")>;
+    "name": string;
+    "compulsory": boolean;
+    "description": string;
+    "enabled": boolean;
+    "expires_after": Duration | null;
+    "icon_url": string | null;
+    "training_lockout": Duration | null;
+  } | null;
   "pages": Array<{
     "index": number;
     "enabled": boolean;
@@ -42,26 +56,12 @@ export type GetTrainingForEditingReturns = {
     "name": string;
   }>;
   "questions": Array<{
+    "type": ("SINGLE" | "MULTI");
     "index": number;
     "enabled": boolean;
     "content": string;
     "id": string;
-    "type": ("SINGLE" | "MULTI");
   }>;
-  "rep": {
-    "compulsory": boolean;
-    "description": string;
-    "updated_at": Date;
-    "id": string;
-    "created_at": Date;
-    "name": string;
-    "enabled": boolean;
-    "expires_after": Duration | null;
-    "in_person": boolean;
-    "locations": Array<("MAINSPACE" | "HEARTSPACE" | "GEORGE_PORTER")>;
-    "training_lockout": Duration | null;
-    "icon_url": string | null;
-  } | null;
 };
 
 export function getTrainingForEditing(client: Executor, args: GetTrainingForEditingArgs): Promise<GetTrainingForEditingReturns> {
@@ -72,8 +72,8 @@ select assert_exists(
         sections: {
             *,
             type_name := .__type__.name,
-            [is training::TrainingPage].name,
-            duration_ := duration_to_seconds([is training::TrainingPage].duration),
+            [is training::Page].name,
+            [is training::Page].duration,
             answers := [is training::Question].answers {
                 id,
                 content,

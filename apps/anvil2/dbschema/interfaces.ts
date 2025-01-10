@@ -25,8 +25,8 @@ export namespace auth {
   export type PermissionAction = "READ" | "UPDATE" | "CREATE" | "DELETE";
   export type PermissionSubject = "ALL" | "SELF" | "USER";
   export interface Role extends std.$Object {
-    "permissions": Permission[];
     "name": string;
+    "permissions": Permission[];
   }
 }
 export namespace cfg {
@@ -100,23 +100,33 @@ export namespace $default {
     "ends_at"?: Date | null;
     "duration": edgedb.Duration;
   }
+  export interface user extends users.User {}
 }
 export type CreatedAt = $default.CreatedAt;
 export type Auditable = $default.Auditable;
 export type Timed = $default.Timed;
-export namespace event {
-  export interface Event extends $default.CreatedAt {
-    "attendees": users.User[];
-    "organiser": users.User;
-    "description"?: string | null;
-    "ends_at"?: Date | null;
-    "starts_at": Date;
-    "title": string;
-    "type": EventType;
-  }
-  export type EventType = "WORKSHOP" | "LECTURE" | "MEETUP" | "HACKATHON" | "EXHIBITION" | "WEBINAR";
-}
+export type user = $default.user;
 export namespace users {
+  export interface User extends $default.Auditable {
+    "identity"?: ext.auth.Identity | null;
+    "roles": auth.Role[];
+    "permissions": auth.Permission[];
+    "referrals": User[];
+    "first_name": string;
+    "last_name"?: string | null;
+    "display_name": string;
+    "email": string;
+    "organisational_unit": string;
+    "profile_picture"?: string | null;
+    "pronouns"?: string | null;
+    "ucard_number": number;
+    "username": string;
+    "agreements_signed": sign_in.Agreement[];
+    "training": training.Training[];
+    "infractions": Infraction[];
+    "mailing_list_subscriptions": notification.MailingList[];
+    "notifications": notification.Notification[];
+  }
   export interface Infraction extends $default.CreatedAt {
     "user": User;
     "duration"?: edgedb.Duration | null;
@@ -133,27 +143,10 @@ export namespace users {
     "external_email": string;
   }
   export type Platform = "DISCORD" | "GITHUB";
-  export interface User extends $default.Auditable {
-    "permissions": auth.Permission[];
-    "roles": auth.Role[];
-    "referrals": User[];
-    "first_name": string;
-    "last_name"?: string | null;
-    "display_name": string;
-    "email": string;
-    "organisational_unit": string;
-    "profile_picture"?: string | null;
-    "pronouns"?: string | null;
-    "ucard_number": number;
-    "username": string;
-    "mailing_list_subscriptions": notification.MailingList[];
-    "agreements_signed": sign_in.Agreement[];
-    "training": training.Training[];
-    "infractions": Infraction[];
-  }
   export interface Rep extends User {
-    "teams": team.Team[];
     "status": RepStatus;
+    "supervisable_training": training.Training[];
+    "teams": team.Team[];
   }
   export type RepStatus = "ACTIVE" | "BREAK" | "ALUMNI" | "FUTURE" | "REMOVED";
   export interface SettingTemplate extends std.$Object {
@@ -166,6 +159,291 @@ export namespace users {
     "value": string;
   }
 }
+export namespace ext {
+  export namespace auth {
+    export interface ProviderConfig extends cfg.ConfigObject {
+      "name": string;
+    }
+    export interface OAuthProviderConfig extends ProviderConfig {
+      "name": string;
+      "secret": string;
+      "client_id": string;
+      "display_name": string;
+      "additional_scope"?: string | null;
+    }
+    export interface AppleOAuthProvider extends OAuthProviderConfig {
+      "name": string;
+      "display_name": string;
+    }
+    export interface Auditable extends std.$Object {
+      "created_at": Date;
+      "modified_at": Date;
+    }
+    export interface AuthConfig extends cfg.ExtensionConfig {
+      "providers": ProviderConfig[];
+      "ui"?: UIConfig | null;
+      "app_name"?: string | null;
+      "logo_url"?: string | null;
+      "dark_logo_url"?: string | null;
+      "brand_color"?: string | null;
+      "auth_signing_key"?: string | null;
+      "token_time_to_live"?: edgedb.Duration | null;
+      "allowed_redirect_urls": string[];
+    }
+    export interface AzureOAuthProvider extends OAuthProviderConfig {
+      "name": string;
+      "display_name": string;
+    }
+    export interface Identity extends Auditable {
+      "issuer": string;
+      "subject": string;
+    }
+    export interface ClientTokenIdentity extends Identity {}
+    export interface DiscordOAuthProvider extends OAuthProviderConfig {
+      "name": string;
+      "display_name": string;
+    }
+    export interface Factor extends Auditable {
+      "identity": LocalIdentity;
+    }
+    export interface EmailFactor extends Factor {
+      "email": string;
+      "verified_at"?: Date | null;
+    }
+    export interface EmailPasswordFactor extends EmailFactor {
+      "email": string;
+      "password_hash": string;
+    }
+    export interface EmailPasswordProviderConfig extends ProviderConfig {
+      "name": string;
+      "require_verification": boolean;
+    }
+    export type FlowType = "PKCE" | "Implicit";
+    export interface GitHubOAuthProvider extends OAuthProviderConfig {
+      "name": string;
+      "display_name": string;
+    }
+    export interface GoogleOAuthProvider extends OAuthProviderConfig {
+      "name": string;
+      "display_name": string;
+    }
+    export type JWTAlgo = "RS256" | "HS256";
+    export interface LocalIdentity extends Identity {
+      "subject": string;
+    }
+    export interface MagicLinkFactor extends EmailFactor {
+      "email": string;
+    }
+    export interface MagicLinkProviderConfig extends ProviderConfig {
+      "name": string;
+      "token_time_to_live": edgedb.Duration;
+    }
+    export interface PKCEChallenge extends Auditable {
+      "challenge": string;
+      "auth_token"?: string | null;
+      "refresh_token"?: string | null;
+      "identity"?: Identity | null;
+    }
+    export interface SMTPConfig extends cfg.ExtensionConfig {
+      "sender"?: string | null;
+      "host"?: string | null;
+      "port"?: number | null;
+      "username"?: string | null;
+      "password"?: string | null;
+      "security": SMTPSecurity;
+      "validate_certs": boolean;
+      "timeout_per_email": edgedb.Duration;
+      "timeout_per_attempt": edgedb.Duration;
+    }
+    export type SMTPSecurity = "PlainText" | "TLS" | "STARTTLS" | "STARTTLSOrPlainText";
+    export interface SlackOAuthProvider extends OAuthProviderConfig {
+      "name": string;
+      "display_name": string;
+    }
+    export interface UIConfig extends cfg.ConfigObject {
+      "redirect_to": string;
+      "redirect_to_on_signup"?: string | null;
+      "flow_type": FlowType;
+      "app_name"?: string | null;
+      "logo_url"?: string | null;
+      "dark_logo_url"?: string | null;
+      "brand_color"?: string | null;
+    }
+    export interface WebAuthnAuthenticationChallenge extends Auditable {
+      "challenge": Uint8Array;
+      "factors": WebAuthnFactor[];
+    }
+    export interface WebAuthnFactor extends EmailFactor {
+      "user_handle": Uint8Array;
+      "credential_id": Uint8Array;
+      "public_key": Uint8Array;
+    }
+    export interface WebAuthnProviderConfig extends ProviderConfig {
+      "name": string;
+      "relying_party_origin": string;
+      "require_verification": boolean;
+    }
+    export interface WebAuthnRegistrationChallenge extends Auditable {
+      "challenge": Uint8Array;
+      "email": string;
+      "user_handle": Uint8Array;
+    }
+  }
+  export namespace pg_trgm {
+    export interface Config extends cfg.ExtensionConfig {
+      "similarity_threshold": number;
+      "word_similarity_threshold": number;
+      "strict_word_similarity_threshold": number;
+    }
+  }
+}
+export namespace sign_in {
+  export interface Agreement extends $default.CreatedAt {
+    "version": number;
+    "content": string;
+    "name": string;
+    "reasons": Reason[];
+    "content_hash": Uint8Array;
+  }
+  export interface Location extends $default.Auditable {
+    "closing_time": edgedb.LocalTime;
+    "opening_days": number[];
+    "opening_time": edgedb.LocalTime;
+    "out_of_hours": boolean;
+    "name": LocationName;
+    "in_of_hours_rep_multiplier": number;
+    "max_users": number;
+    "out_of_hours_rep_multiplier": number;
+    "queue_enabled": boolean;
+    "sign_ins": SignIn[];
+    "off_shift_reps": users.Rep[];
+    "on_shift_reps": users.Rep[];
+    "supervising_reps": users.Rep[];
+    "supervisable_training": training.Training[];
+    "max_count": number;
+    "can_sign_in": boolean;
+    "queued": QueuePlace[];
+    "queue_in_use": boolean;
+    "status": LocationStatus;
+    "queued_users_that_can_sign_in": users.User[];
+  }
+  export type LocationName = "MAINSPACE" | "HEARTSPACE";
+  export type LocationStatus = "OPEN" | "SOON" | "CLOSED";
+  export interface QueuePlace extends $default.CreatedAt {
+    "user": users.User;
+    "location": Location;
+    "notified_at"?: Date | null;
+    "ends_at"?: Date | null;
+  }
+  export interface Reason extends $default.CreatedAt {
+    "name": string;
+    "agreement"?: Agreement | null;
+    "category": ReasonCategory;
+  }
+  export type ReasonCategory = "UNIVERSITY_MODULE" | "CO_CURRICULAR_GROUP" | "PERSONAL_PROJECT" | "SOCIETY" | "REP_SIGN_IN" | "EVENT";
+  export interface SignIn extends $default.Timed {
+    "user": users.User;
+    "location": Location;
+    "signed_out": boolean;
+    "reason": Reason;
+    "tools": string[];
+  }
+  export interface UserRegistration extends $default.CreatedAt {
+    "location": Location;
+    "user": users.User;
+  }
+}
+export namespace training {
+  export interface Answer extends std.$Object {
+    "content": string;
+    "correct": boolean;
+    "description"?: string | null;
+  }
+  export type AnswerType = "SINGLE" | "MULTI";
+  export interface Interactable extends std.$Object {
+    "content": string;
+    "enabled": boolean;
+    "index": number;
+  }
+  export type LocationName = "MAINSPACE" | "HEARTSPACE" | "GEORGE_PORTER";
+  export interface TrainingPage extends Interactable {
+    "duration"?: edgedb.Duration | null;
+    "name": string;
+  }
+  export interface Page extends TrainingPage {}
+  export interface Question extends Interactable {
+    "answers": Answer[];
+    "type": AnswerType;
+  }
+  export type Selectability = "NO_TRAINING" | "REVOKED" | "EXPIRED" | "REPS_UNTRAINED" | "IN_PERSON_MISSING";
+  export interface Session extends $default.Auditable {
+    "training": Training;
+    "user": users.User;
+    "index": number;
+  }
+  export interface Training extends $default.Auditable {
+    "rep"?: Training | null;
+    "in_person": boolean;
+    "locations": LocationName[];
+    "pages": TrainingPage[];
+    "questions": Question[];
+    "sections": TrainingPage | Question[];
+    "name": string;
+    "compulsory": boolean;
+    "description": string;
+    "enabled": boolean;
+    "expires_after"?: edgedb.Duration | null;
+    "icon_url"?: string | null;
+    "training_lockout"?: edgedb.Duration | null;
+  }
+}
+export namespace notification {
+  export interface Notification extends $default.Auditable {
+    "content": string;
+    "delivery_method": DeliveryMethod[];
+    "dispatched_at": Date;
+    "priority": number;
+    "status": Status;
+    "title": string;
+    "type": Type;
+    "target": Target;
+  }
+  export interface AuthoredNotification extends Notification {
+    "approved_by"?: users.Rep | null;
+    "author": users.User;
+    "approved_on"?: Date | null;
+  }
+  export type DeliveryMethod = "BANNER" | "EMAIL" | "TRAY" | "POPUP" | "DISCORD";
+  export interface MailingList extends $default.Auditable {
+    "description": string;
+    "name": string;
+    "subscribers": users.User[];
+  }
+  export type Status = "DRAFT" | "REVIEW" | "QUEUED" | "SENDING" | "SENT" | "ERRORED";
+  export interface SystemNotification extends Notification {
+    "source": string;
+  }
+  export interface Target extends std.$Object {
+    "target_mailing_list"?: MailingList | null;
+    "target_team"?: team.Team | null;
+    "target_user"?: users.User | null;
+    "target_type": TargetTypes;
+  }
+  export type TargetTypes = "ALL" | "USER" | "REPS" | "TEAM" | "MAILING_LIST";
+  export type Type = "GENERAL" | "REFERRAL_SUCCESS" | "NEW_ANNOUNCEMENT" | "QUEUE_SLOT_ACTIVE" | "HEALTH_AND_SAFETY" | "REMINDER" | "INFRACTION" | "ADMIN" | "EVENT" | "ADVERT" | "TRAINING" | "PRINTING" | "RECRUITMENT";
+}
+export namespace event {
+  export interface Event extends $default.CreatedAt {
+    "attendees": users.User[];
+    "organiser": users.User;
+    "description"?: string | null;
+    "ends_at"?: Date | null;
+    "starts_at": Date;
+    "title": string;
+    "type": EventType;
+  }
+  export type EventType = "WORKSHOP" | "LECTURE" | "MEETUP" | "HACKATHON" | "EXHIBITION" | "WEBINAR";
+}
 export namespace fts {
   export type ElasticLanguage = "ara" | "bul" | "cat" | "ces" | "ckb" | "dan" | "deu" | "ell" | "eng" | "eus" | "fas" | "fin" | "fra" | "gle" | "glg" | "hin" | "hun" | "hye" | "ind" | "ita" | "lav" | "nld" | "nor" | "por" | "ron" | "rus" | "spa" | "swe" | "tha" | "tur" | "zho" | "edb_Brazilian" | "edb_ChineseJapaneseKorean";
   export type Language = "ara" | "hye" | "eus" | "cat" | "dan" | "nld" | "eng" | "fin" | "fra" | "deu" | "ell" | "hin" | "hun" | "ind" | "gle" | "ita" | "nor" | "por" | "ron" | "rus" | "spa" | "swe" | "tur";
@@ -173,24 +451,14 @@ export namespace fts {
   export type PGLanguage = "xxx_simple" | "ara" | "hye" | "eus" | "cat" | "dan" | "nld" | "eng" | "fin" | "fra" | "deu" | "ell" | "hin" | "hun" | "ind" | "gle" | "ita" | "lit" | "npi" | "nor" | "por" | "ron" | "rus" | "srp" | "spa" | "swe" | "tam" | "tur" | "yid";
   export type Weight = "A" | "B" | "C" | "D";
 }
-export namespace notification {
-  export interface Announcement extends $default.Auditable {
-    "views": users.User[];
-    "content": string;
-    "title": string;
-  }
-  export type DeliveryMethod = "IN_APP" | "EMAIL";
-  export interface MailingList extends $default.Auditable {
+export namespace team {
+  export interface Team extends std.$Object {
     "description": string;
     "name": string;
-    "subscribers": users.User[];
+    "tag": string;
+    "members": users.Rep[];
+    "all_members": users.Rep[];
   }
-  export interface Notification extends std.$Object {
-    "users": users.User[];
-    "content": string;
-    "type": NotificationType;
-  }
-  export type NotificationType = "GENERAL" | "REFERRAL_SUCCESS" | "NEW_ANNOUNCEMENT" | "QUEUE_SLOT_ACTIVE";
 }
 export namespace schema {
   export type AccessKind = "Select" | "UpdateRead" | "UpdateWrite" | "Delete" | "Insert";
@@ -415,111 +683,6 @@ export namespace sys {
   export type TransactionIsolation = "RepeatableRead" | "Serializable";
   export type VersionStage = "dev" | "alpha" | "beta" | "rc" | "final";
 }
-export namespace sign_in {
-  export interface Agreement extends $default.CreatedAt {
-    "content_hash": string;
-    "version": number;
-    "content": string;
-    "reasons": Reason[];
-    "name": string;
-  }
-  export interface Location extends $default.Auditable {
-    "closing_time": edgedb.LocalTime;
-    "opening_time": edgedb.LocalTime;
-    "in_of_hours_rep_multiplier": number;
-    "max_users": number;
-    "out_of_hours_rep_multiplier": number;
-    "queue_enabled": boolean;
-    "name": LocationName;
-    "sign_ins": SignIn[];
-    "off_shift_reps": users.User[];
-    "on_shift_reps": users.User[];
-    "queued": QueuePlace[];
-    "queued_users_that_can_sign_in": users.User[];
-    "supervising_reps": users.User[];
-    "max_count": number;
-    "can_sign_in": boolean;
-    "queue_in_use": boolean;
-    "opening_days": number[];
-    "out_of_hours": boolean;
-    "status": string;
-  }
-  export type LocationName = "MAINSPACE" | "HEARTSPACE";
-  export interface QueuePlace extends $default.CreatedAt {
-    "location": Location;
-    "user": users.User;
-    "notified_at"?: Date | null;
-    "ends_at"?: Date | null;
-  }
-  export interface Reason extends $default.CreatedAt {
-    "agreement"?: Agreement | null;
-    "name": string;
-    "category": ReasonCategory;
-  }
-  export type ReasonCategory = "UNIVERSITY_MODULE" | "CO_CURRICULAR_GROUP" | "PERSONAL_PROJECT" | "SOCIETY" | "REP_SIGN_IN" | "EVENT";
-  export interface SignIn extends $default.Timed {
-    "location": Location;
-    "signed_out": boolean;
-    "user": users.User;
-    "tools": string[];
-    "reason": Reason;
-  }
-  export interface UserRegistration extends $default.CreatedAt {
-    "location": Location;
-    "user": users.User;
-  }
-}
-export namespace team {
-  export interface Team extends std.$Object {
-    "description": string;
-    "name": string;
-    "tag": string;
-    "all_members": users.Rep[];
-    "members": users.Rep[];
-  }
-}
-export namespace training {
-  export interface Answer extends std.$Object {
-    "content": string;
-    "correct": boolean;
-    "description"?: string | null;
-  }
-  export type AnswerType = "SINGLE" | "MULTI";
-  export interface Interactable extends std.$Object {
-    "content": string;
-    "enabled": boolean;
-    "index": number;
-  }
-  export interface Question extends Interactable {
-    "type": AnswerType;
-    "answers": Answer[];
-  }
-  export interface Training extends $default.Auditable {
-    "pages": TrainingPage[];
-    "questions": Question[];
-    "sections": Question | TrainingPage[];
-    "name": string;
-    "compulsory": boolean;
-    "description": string;
-    "enabled": boolean;
-    "expires_after"?: edgedb.Duration | null;
-    "in_person": boolean;
-    "locations": TrainingLocation[];
-    "training_lockout"?: edgedb.Duration | null;
-    "rep"?: Training | null;
-    "icon_url"?: string | null;
-  }
-  export type TrainingLocation = "MAINSPACE" | "HEARTSPACE" | "GEORGE_PORTER";
-  export interface TrainingPage extends Interactable {
-    "duration"?: edgedb.Duration | null;
-    "name": string;
-  }
-  export interface UserTrainingSession extends $default.Auditable {
-    "training": Training;
-    "user": users.User;
-    "index": number;
-  }
-}
 export interface types {
   "std": {
     "BaseObject": std.BaseObject;
@@ -561,21 +724,92 @@ export interface types {
     "CreatedAt": $default.CreatedAt;
     "Auditable": $default.Auditable;
     "Timed": $default.Timed;
-  };
-  "event": {
-    "Event": event.Event;
-    "EventType": event.EventType;
+    "user": $default.user;
   };
   "users": {
+    "User": users.User;
     "Infraction": users.Infraction;
     "InfractionType": users.InfractionType;
     "Integration": users.Integration;
     "Platform": users.Platform;
-    "User": users.User;
     "Rep": users.Rep;
     "RepStatus": users.RepStatus;
     "SettingTemplate": users.SettingTemplate;
     "UserSettingValue": users.UserSettingValue;
+  };
+  "ext": {
+    "auth": {
+      "ProviderConfig": ext.auth.ProviderConfig;
+      "OAuthProviderConfig": ext.auth.OAuthProviderConfig;
+      "AppleOAuthProvider": ext.auth.AppleOAuthProvider;
+      "Auditable": ext.auth.Auditable;
+      "AuthConfig": ext.auth.AuthConfig;
+      "AzureOAuthProvider": ext.auth.AzureOAuthProvider;
+      "Identity": ext.auth.Identity;
+      "ClientTokenIdentity": ext.auth.ClientTokenIdentity;
+      "DiscordOAuthProvider": ext.auth.DiscordOAuthProvider;
+      "Factor": ext.auth.Factor;
+      "EmailFactor": ext.auth.EmailFactor;
+      "EmailPasswordFactor": ext.auth.EmailPasswordFactor;
+      "EmailPasswordProviderConfig": ext.auth.EmailPasswordProviderConfig;
+      "FlowType": ext.auth.FlowType;
+      "GitHubOAuthProvider": ext.auth.GitHubOAuthProvider;
+      "GoogleOAuthProvider": ext.auth.GoogleOAuthProvider;
+      "JWTAlgo": ext.auth.JWTAlgo;
+      "LocalIdentity": ext.auth.LocalIdentity;
+      "MagicLinkFactor": ext.auth.MagicLinkFactor;
+      "MagicLinkProviderConfig": ext.auth.MagicLinkProviderConfig;
+      "PKCEChallenge": ext.auth.PKCEChallenge;
+      "SMTPConfig": ext.auth.SMTPConfig;
+      "SMTPSecurity": ext.auth.SMTPSecurity;
+      "SlackOAuthProvider": ext.auth.SlackOAuthProvider;
+      "UIConfig": ext.auth.UIConfig;
+      "WebAuthnAuthenticationChallenge": ext.auth.WebAuthnAuthenticationChallenge;
+      "WebAuthnFactor": ext.auth.WebAuthnFactor;
+      "WebAuthnProviderConfig": ext.auth.WebAuthnProviderConfig;
+      "WebAuthnRegistrationChallenge": ext.auth.WebAuthnRegistrationChallenge;
+    };
+    "pg_trgm": {
+      "Config": ext.pg_trgm.Config;
+    };
+  };
+  "sign_in": {
+    "Agreement": sign_in.Agreement;
+    "Location": sign_in.Location;
+    "LocationName": sign_in.LocationName;
+    "LocationStatus": sign_in.LocationStatus;
+    "QueuePlace": sign_in.QueuePlace;
+    "Reason": sign_in.Reason;
+    "ReasonCategory": sign_in.ReasonCategory;
+    "SignIn": sign_in.SignIn;
+    "UserRegistration": sign_in.UserRegistration;
+  };
+  "training": {
+    "Answer": training.Answer;
+    "AnswerType": training.AnswerType;
+    "Interactable": training.Interactable;
+    "LocationName": training.LocationName;
+    "TrainingPage": training.TrainingPage;
+    "Page": training.Page;
+    "Question": training.Question;
+    "Selectability": training.Selectability;
+    "Session": training.Session;
+    "Training": training.Training;
+  };
+  "notification": {
+    "Notification": notification.Notification;
+    "AuthoredNotification": notification.AuthoredNotification;
+    "DeliveryMethod": notification.DeliveryMethod;
+    "MailingList": notification.MailingList;
+    "Status": notification.Status;
+    "SystemNotification": notification.SystemNotification;
+    "Target": notification.Target;
+    "TargetTypes": notification.TargetTypes;
+    "Type": notification.Type;
+  };
+  "event": {
+    "Event": event.Event;
+    "EventType": event.EventType;
   };
   "fts": {
     "ElasticLanguage": fts.ElasticLanguage;
@@ -584,12 +818,8 @@ export interface types {
     "PGLanguage": fts.PGLanguage;
     "Weight": fts.Weight;
   };
-  "notification": {
-    "Announcement": notification.Announcement;
-    "DeliveryMethod": notification.DeliveryMethod;
-    "MailingList": notification.MailingList;
-    "Notification": notification.Notification;
-    "NotificationType": notification.NotificationType;
+  "team": {
+    "Team": team.Team;
   };
   "schema": {
     "AccessKind": schema.AccessKind;
@@ -658,29 +888,6 @@ export interface types {
     "Role": sys.Role;
     "TransactionIsolation": sys.TransactionIsolation;
     "VersionStage": sys.VersionStage;
-  };
-  "sign_in": {
-    "Agreement": sign_in.Agreement;
-    "Location": sign_in.Location;
-    "LocationName": sign_in.LocationName;
-    "QueuePlace": sign_in.QueuePlace;
-    "Reason": sign_in.Reason;
-    "ReasonCategory": sign_in.ReasonCategory;
-    "SignIn": sign_in.SignIn;
-    "UserRegistration": sign_in.UserRegistration;
-  };
-  "team": {
-    "Team": team.Team;
-  };
-  "training": {
-    "Answer": training.Answer;
-    "AnswerType": training.AnswerType;
-    "Interactable": training.Interactable;
-    "Question": training.Question;
-    "Training": training.Training;
-    "TrainingLocation": training.TrainingLocation;
-    "TrainingPage": training.TrainingPage;
-    "UserTrainingSession": training.UserTrainingSession;
   };
 }
 
