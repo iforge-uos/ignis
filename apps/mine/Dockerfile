@@ -20,4 +20,4 @@ COPY --from=op /usr/local/bin/op /usr/local/bin/op
 USER iforge
 
 EXPOSE 4000
-CMD ["/usr/local/bin/op", "run", "--env-file=/config/.env.production.tpl", "--", "/app/mine"]
+CMD ["/usr/local/bin/op", "run", "--env-file=/app/mine/.env.production.tpl", "--", "/app/mine"]
