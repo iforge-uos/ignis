@@ -132,68 +132,48 @@ module users {
                 errmessage := "Only the desk account or admins can update infractions"
             };
 
-        # trigger log_insert after insert for each do (
-        #     net::http::schedule_request(
-        #         (select global default::INFRACTIONS_WEBHOOK_URL),
-        #         method := net::http::Method.POST,
-        #         headers := [('Content-Type', 'application/json')],
-        #         body := <bytes>str_format($${
-        #             "embeds": [{
-        #                 "title": "User Infraction Added to {user_name}",
-        #                 "description": "Type: {type}\nReason: {reason}\nResolved: {resolved}\n\n{ends_at}",
-        #                 "color": 10953233,
-        #                 "url": "https://iforge.sheffield.ac.uk/users/{user_id}",
-        #                 "thumbnail": {
-        #                     "url": "{user_profile_picture}"
-        #                 }
-        #             }]}$$,
-        #             (select {
-        #                 user_id := __new__.user.id,
-        #                 user_name := __new__.user.name,
-        #                 user_profile_picture := __new__.user.profile_picture,
-        #                 ends_at := (
-        #                     "Ends <t:" ++ datetime_get(__new__.ends_at, "epochseconds") ++ ">"
-        #                     if exists __new__.duration
-        #                     else ""
-        #                 ),
-        #                 type := __new__.type,
-        #                 reason := __new__.reason,
-        #                 resolved := __new__.resolved,
-        #             })
-        #         )
-        #     )
-        # );
-        # trigger log_update after update for each do (
-        #     net::http::schedule_request(
-        #         (select global default::INFRACTIONS_WEBHOOK_URL),
-        #         method := net::http::Method.POST,
-        #         headers := [('Content-Type', 'application/json')],
-        #         body := <bytes>str_format($${
-        #             "embeds": [{
-        #                 "title": "User Infraction Updated for {user_name}",
-        #                 "description": "Type: {type}\nReason: {reason}\nResolved: {resolved}\n\n{ends_at}",
-        #                 "color": 10953233,
-        #                 "url": "https://iforge.sheffield.ac.uk/users/{user_id}",
-        #                 "thumbnail": {
-        #                     "url": "{user_profile_picture}"
-        #                 }
-        #             }]}$$,
-        #             (select {
-        #                 user_id := __new__.user.id,
-        #                 user_name := __new__.user.name,
-        #                 user_profile_picture := __new__.user.profile_picture,
-        #                 ends_at := (
-        #                     "Ends <t:" ++ datetime_get(__new__.ends_at, "epochseconds") ++ ">"
-        #                     if exists __new__.duration
-        #                     else ""
-        #                 ),
-        #                 type := __new__.type,
-        #                 reason := __new__.reason,
-        #                 resolved := __new__.resolved,
-        #             })
-        #         )
-        #     )
-        # );
+        trigger log_insert after insert for each do (
+            net::http::schedule_request(
+                (select global default::INFRACTIONS_WEBHOOK_URL),
+                method := net::http::Method.POST,
+                headers := [('Content-Type', 'application/json')],
+                body := <bytes>$${
+                    "embeds": [{
+                        "title": "User Infraction Added to \(__new__.user.name)",
+                        "description": "Type: \(__new__.type)\nReason: \(__new__.reason)\nResolved: \(__new__.resolved)\n\n\(
+                            "Ends <t:" ++ datetime_get(__new__.ends_at, "epochseconds") ++ ">"
+                            if exists __new__.duration
+                            else ""
+                        )",
+                        "color": 10953233,
+                        "url": "https://iforge.sheffield.ac.uk/users/\(__new__.user.id)",
+                        "thumbnail": {
+                            "url": "\(__new__.user.profile_picture)"
+                        }
+                    }]}$$,
+            )
+        );
+        trigger log_update after update for each do (
+            net::http::schedule_request(
+                (select global default::INFRACTIONS_WEBHOOK_URL),
+                method := net::http::Method.POST,
+                headers := [('Content-Type', 'application/json')],
+                body := <bytes>$${
+                    "embeds": [{
+                        "title": "User Infraction Updated for \(__new__.user.name)",
+                        "description": "Type: \(__new__.type)\nReason: \(__new__.reason)\nResolved: \(__new__.resolved)\n\n\(
+                            "Ends <t:" ++ datetime_get(__new__.ends_at, "epochseconds") ++ ">"
+                            if exists __new__.duration
+                            else ""
+                        )",
+                        "color": 10953233,
+                        "url": "https://iforge.sheffield.ac.uk/users/\(__new__.user.id)",
+                        "thumbnail": {
+                            "url": "\(__new__.user.profile_picture)"
+                        }
+                    }]}$$,
+            )
+        );
       }
 
     type SettingTemplate {
