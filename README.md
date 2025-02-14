@@ -10,20 +10,6 @@ DESCRIPTION COMING SOON
 
 Each [app](/apps) has installation instructions in its README.
 
-## Docker Compose
+## Docker
 
-```
-# First create the secret dirs
-mkdir -p ./config/secret/{db,op}
-
-# Then create the cert
-./scripts/gen-cert.sh
-
-# Get the 1password-credentials.json and place it in ./config/secret/op
-
-# Next gen the docker compose env from the template
-pnpm env:gen
-
-# Docker compose up
-docker compose up -d
-```
+Docker instructions soon tm
