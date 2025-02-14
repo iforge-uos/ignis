@@ -1,5 +1,5 @@
 import { IsRep } from "@/auth/authorization/decorators/check-roles-decorator";
-import { CaslAbilityGuard } from "@/auth/authorization/guards/casl-ability.guard";
+import { CaslRoleGuard } from "@/auth/authorization/guards/casl-role.guard";
 import { ErrorCodes } from "@/shared/constants/ErrorCodes";
 import { IdempotencyCache } from "@/shared/decorators/idempotency.decorator";
 import { ldapLibraryToUcardNumber } from "@/shared/functions/utils";
@@ -28,7 +28,7 @@ import { FinaliseSignInDto, UpdateSignInDto } from "./dto/sigs-in-dto";
 import { SignInService } from "./sign-in.service";
 
 @Controller("location/:location")
-@UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
+@UseGuards(AuthGuard("jwt"), CaslRoleGuard)
 export class SignInController {
   constructor(
     private readonly signInService: SignInService,

@@ -42,14 +42,14 @@ export class TrainingController {
   }
 
   @Post(":id/start")
-  @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
+  @UseGuards(AuthGuard("jwt"))
   async startTraining(@Param("id") id: string, @GetUser() user: User) {
     this.logger.log(`Starting training with ID: ${id} for user with ID: ${user.id}`, TrainingController.name);
     return this.trainingService.startTraining(id, user.id);
   }
 
   @Post("interact/:interaction_id")
-  @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
+  @UseGuards(AuthGuard("jwt"))
   async interactWithTraining(
     @Body("session_id") session_id: string,
     @Param("interaction_id") interaction_id: string,

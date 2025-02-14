@@ -20,7 +20,7 @@ import type {
 import { UsersService } from "./users.service";
 
 @Controller("users")
-@UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
+@UseGuards(AuthGuard("jwt"))
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,

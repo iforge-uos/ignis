@@ -45,13 +45,13 @@ export class RootController {
 
   @Get("sign-in/:id")
   @IsRep() // TODO figure out how to make READ SELF work with this might be best handled in service tbh
-  @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
+  @UseGuards(AuthGuard("jwt"))
   async getSignIn(@Param("id") id: string) {
     return await this.rootService.getSignIn(id);
   }
 
   @Get("sign-in-reasons-last-update")
-  @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
+  @UseGuards(AuthGuard("jwt"))
   async optionsSignInReasons(@Res() resp: Response) {
     this.logger.log("Retrieving sign-in reasons last update", RootController.name);
     const last_modified = await this.signInService.getReasonsLastUpdate();
@@ -60,7 +60,7 @@ export class RootController {
   }
 
   @Get("sign-in-reasons")
-  @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
+  @UseGuards(AuthGuard("jwt"))
   async getSignInReasons() {
     this.logger.log("Retrieving sign-in reasons", RootController.name);
     return await this.signInService.getReasons();
@@ -68,21 +68,21 @@ export class RootController {
 
   @Post("sign-in-reasons")
   @IdempotencyCache(60)
-  @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
+  @UseGuards(AuthGuard("jwt"))
   async addSignInReason(@Body() reason: CreateReasonDto) {
     this.logger.log("Adding sign-in reason", RootController.name);
     return await this.signInService.addReason(reason);
   }
 
   @Delete("sign-in-reasons/:id")
-  @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
+  @UseGuards(AuthGuard("jwt"))
   async deleteSignInReason(@Param("id") id: string) {
     this.logger.log(`Deleting sign-in reason with ID: ${id}`, RootController.name);
     return await this.signInService.deleteReason(id);
   }
 
   @Get("agreements")
-  @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
+  @UseGuards(AuthGuard("jwt"))
   async getAgreements() {
     this.logger.log("Retrieving agreements", RootController.name);
     return this.rootService.getAgreements();
@@ -90,7 +90,7 @@ export class RootController {
 
   @Post("agreements")
   @IsAdmin()
-  @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
+  @UseGuards(AuthGuard("jwt"))
   @IdempotencyCache(60)
   async createAgreement(@Body() body: CreateAgreementDto) {
     this.logger.log("Creating agreement", RootController.name);
@@ -98,7 +98,7 @@ export class RootController {
   }
 
   @Get("agreements/:agreement_id")
-  @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
+  @UseGuards(AuthGuard("jwt"))
   async getAgreement(@Param("agreement_id") reason_id: string) {
     this.logger.log(`Retrieving agreement with ID: ${reason_id}`, RootController.name);
     return await this.rootService.getAgreement(reason_id);
@@ -106,7 +106,7 @@ export class RootController {
 
   @Post("agreements/:agreement_id")
   @IdempotencyCache(60)
-  @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
+  @UseGuards(AuthGuard("jwt"))
   async signAgreement(@Param("agreement_id") agreement_id: string, @GetUser() user: User) {
     this.logger.log(`Signing agreement with ID: ${agreement_id} by user with ID: ${user.id}`, RootController.name);
     return await this.rootService.signAgreement(agreement_id, user);
@@ -114,7 +114,7 @@ export class RootController {
 
   @Patch("agreements/:agreement_id")
   @IsAdmin()
-  @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
+  @UseGuards(AuthGuard("jwt"))
   async updateAgreement(@Param("agreement_id") agreement_id: string, @Body() body: UpdateAgreementDto) {
     this.logger.log(`Updating agreement with ID: ${agreement_id}`, RootController.name);
     return await this.rootService.updateAgreement(agreement_id, body.name, body.reason_ids, body.content);
@@ -123,7 +123,7 @@ export class RootController {
   @Post("test_email")
   @IsAdmin()
   @IdempotencyCache(60)
-  @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
+  @UseGuards(AuthGuard("jwt"))
   async testEmail(@GetUser() user: User) {
     this.logger.log(`Sending email to ${user.email}`, RootController.name);
     return await this.emailService.sendWelcomeEmail(user);
@@ -131,14 +131,14 @@ export class RootController {
 
   @Get("teams")
   @IsRep()
-  @UseGuards(AuthGuard("jwt"), CaslAbilityGuard)
+  @UseGuards(AuthGuard("jwt"))
   async getTeams() {
     this.logger.log("Retrieving teams", RootController.name);
     return await this.rootService.getTeams();
   }
 
   //@Get("autocomplete") Removed as unused
-  // @UseGuards(AuthGuard('jwt'), CaslAbilityGuard)
+  // @UseGuards(AuthGuard('jwt'))
   // @IsAdmin()
   async getAutocomplete(@Query("email") email: string) {
     this.logger.log(`Retrieving autocomplete suggestions for email: ${email}`, RootController.name);

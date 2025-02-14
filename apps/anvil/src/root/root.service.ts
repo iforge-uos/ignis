@@ -52,6 +52,7 @@ export class RootService {
         id: true,
         name: true,
         created_at: true,
+        updated_at: true,
         version: true,
         content: true,
         reasons: {
