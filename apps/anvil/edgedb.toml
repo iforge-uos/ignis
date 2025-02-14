@@ -1,2 +1,2 @@
-[edgedb]
-server-version = "5.4"
+[instance]
+server-version = "nightly"

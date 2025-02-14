@@ -27,6 +27,7 @@ module users {
         }
 
         multi agreements_signed: sign_in::Agreement {
+            version_signed: int16;
             created_at: datetime {
                 readonly := true;
                 default := datetime_of_statement();
@@ -41,11 +42,19 @@ module users {
             in_person_signed_off_by: uuid;  # a rep ID, hopefully can be migrated to the actual object when the requirement for these to be scalars is lifted.
             infraction: uuid;  # same as above
         }
-        multi permissions: auth::Permission;
-        multi roles: auth::Role;
+
+        required identity: ext::auth::Identity;
+        multi roles: Role;
+
         multi infractions: Infraction;
 
         multi mailing_list_subscriptions: notification::MailingList;
+        multi notifications: notification::Notification {
+            acknowledged: datetime {
+                annotation description := "Time the user has dismissed / marked as read / interacted with it (will be true if noti type is email & is delivered) otherwise empty";
+            }
+        };
+
         multi referrals: User {
             created_at: datetime {
                 readonly := true;
@@ -53,6 +62,17 @@ module users {
                 # rewrite insert using (datetime_of_statement())  // might be possible see EdgeDB/edgedb#6467
             };
         }
+
+        access policy rep_or_higher
+            allow all
+            using (exists ({"Rep", "Desk", "Admin"} intersect global default::user.roles.name)) {
+                errmessage := "Only reps can see everyone's profile"
+            };
+        access policy view_self
+            allow all
+            using (global default::user ?= __subject__) {
+                errmessage := 'Can only view your own profile'
+            };
     }
 
     scalar type RepStatus extending enum<
@@ -81,6 +101,12 @@ module users {
         );
     }
 
+    type Role {
+        required name: str {
+            constraint exclusive;
+        };
+    }
+
     # N.B. make sure to update in forge/lib/constants
     scalar type InfractionType extending enum<
         WARNING,
@@ -100,6 +126,55 @@ module users {
         };
         ends_at := .created_at + .duration;
         duration: duration;
+
+        access policy desk_or_higher
+            allow all
+            using (exists ({"Desk", "Admin"} intersect global default::user.roles.name)) {
+                errmessage := "Only the desk account or admins can update infractions"
+            };
+
+    #     trigger log_insert after insert for each do (
+    #         net::http::schedule_request(
+    #             (select global default::INFRACTIONS_WEBHOOK_URL),
+    #             method := net::http::Method.POST,
+    #             headers := [('Content-Type', 'application/json')],
+    #             body := <bytes>$${
+    #                 "embeds": [{
+    #                     "title": "User Infraction Added to \(__new__.user.name)",
+    #                     "description": "Type: \(__new__.type)\nReason: \(__new__.reason)\nResolved: \(__new__.resolved)\n\n\(
+    #                         "Ends <t:" ++ datetime_get(__new__.ends_at, "epochseconds") ++ ">"
+    #                         if exists __new__.duration
+    #                         else ""
+    #                     )",
+    #                     "color": 10953233,
+    #                     "url": "https://iforge.sheffield.ac.uk/users/\(__new__.user.id)",
+    #                     "thumbnail": {
+    #                         "url": "\(__new__.user.profile_picture)"
+    #                     }
+    #                 }]}$$,
+    #         )
+    #     );
+    #     trigger log_update after update for each do (
+    #         net::http::schedule_request(
+    #             (select global default::INFRACTIONS_WEBHOOK_URL),
+    #             method := net::http::Method.POST,
+    #             headers := [('Content-Type', 'application/json')],
+    #             body := <bytes>$${
+    #                 "embeds": [{
+    #                     "title": "User Infraction Updated for \(__new__.user.name)",
+    #                     "description": "Type: \(__new__.type)\nReason: \(__new__.reason)\nResolved: \(__new__.resolved)\n\n\(
+    #                         "Ends <t:" ++ datetime_get(__new__.ends_at, "epochseconds") ++ ">"
+    #                         if exists __new__.duration
+    #                         else ""
+    #                     )",
+    #                     "color": 10953233,
+    #                     "url": "https://iforge.sheffield.ac.uk/users/\(__new__.user.id)",
+    #                     "thumbnail": {
+    #                         "url": "\(__new__.user.profile_picture)"
+    #                     }
+    #                 }]}$$,
+    #         )
+    #     );
     }
 
     type SettingTemplate {

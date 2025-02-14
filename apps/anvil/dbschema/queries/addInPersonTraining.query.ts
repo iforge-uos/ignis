@@ -4,8 +4,8 @@ import type {Executor} from "edgedb";
 
 export type AddInPersonTrainingArgs = {
   readonly "rep_id": string;
-  readonly "training_id": string;
   readonly "created_at": Date;
+  readonly "training_id": string;
   readonly "id": string;
 };
 

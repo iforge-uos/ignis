@@ -61,19 +61,68 @@ module training {
             )
         );
         constraint exclusive on ((.name, .rep));
+
+        access policy desk_or_higher_edit
+            allow all
+            using (
+                with user := global default::user,
+                select (
+                    exists ({"Admin"} intersect user.roles.name)
+                    or (user is users::Rep and exists ({"H&S"} intersect user[is users::Rep].teams.name))
+                ) ?? false
+            ) {
+                errmessage := "Only H&S members or admins can update training"
+            };
+         access policy allow_reps_view_rep  # FIXME this doesn't work
+            deny all
+            using (
+                with user := global default::user,
+                select (
+                    user is not users::Rep and not exists .rep
+                ) ?? false
+            ) {
+                errmessage := "Only reps can view rep training"
+            };
+        access policy select_if_completed_basic
+            allow select
+            using (
+                with user := global default::user,
+                select (
+                    not exists .rep and __subject__ in user.training.rep
+                )
+            ) {
+                errmessage := "Only H&S members or admins can update training"
+            };
+        access policy everyone
+            allow select
     }
 
     abstract type Interactable {
+        required parent: Training;  # edgedb/edgedb#7209
         # required parent := (
-        #     select assert_exists(Training filter __source__ in .sections)
-        # );  # ideal solution which doesn't require hard link
+        #     select assert_exists(assert_single(Training filter __subject__ in .sections))
+        # }  # ideal solution is a compute but we need this now
         required index: int16;
         required content: str;
         required enabled: bool {
             default := true;
         }
-        # constraint exclusive on ((.parent, .index));  # edgedb/edgedb#7209
+        constraint exclusive on ((.parent, .index));
+
         # TODO consider adding stats? e.g. failure rate
+        access policy desk_or_higher_edit
+            allow all
+            using (
+                with user := global default::user,
+                select (
+                    exists ({"Admin"} intersect user.roles.name)
+                    or user is users::Rep and exists ({"H&S"} intersect user[is users::Rep].teams.name)
+                ) ?? false
+            ) {
+                errmessage := "Only H&S members or admins can update training"
+            };
+        access policy everyone
+            allow select
     }
 
     type TrainingPage extending Interactable {
@@ -101,6 +150,20 @@ module training {
         description: str {
             annotation description := "The text shown after a user passes their answer giving a lil' explanation about whatever they said."
         }
+
+        access policy h_and_s_or_higher
+            allow all
+            using (
+                with user := global default::user,
+                select (
+                    exists ({"Admin"} intersect user.roles.name)
+                    or user is users::Rep and exists ({"H&S"} intersect user[is users::Rep].teams.name)
+                ) ?? false
+            ) {
+                errmessage := "Only H&S members or admins can update training"
+            };
+        access policy everyone
+            allow select
     }
 
     type Session extending default::Auditable {
@@ -111,5 +174,14 @@ module training {
             default := 0;
         }
         constraint exclusive on ((.user, .training));  # must be kept inline with TrainingService.startTraining's unlessConflict
+
+        access policy allow_self
+            allow all
+            using (
+                with user := global default::user,
+                select exists ({"Admin"} intersect user.roles.name) or user ?= .user
+            ) {
+                errmessage := "Only self/admins can view sessions"
+            };
     }
 }

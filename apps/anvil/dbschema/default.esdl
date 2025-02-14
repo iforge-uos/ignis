@@ -1,4 +1,16 @@
+# using future simple_scoping;
+
+using extension pg_trgm;
+using extension auth;
+using extension pgcrypto;
+
 module default {
+    global user := assert_single((
+        select users::User
+        filter .identity = global ext::auth::ClientTokenIdentity
+    ));
+    global INFRACTIONS_WEBHOOK_URL: str;
+
     abstract type CreatedAt {
         required created_at: datetime {
             readonly := true;

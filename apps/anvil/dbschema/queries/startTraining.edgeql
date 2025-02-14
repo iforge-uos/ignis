@@ -2,7 +2,7 @@ with training := (
     select assert_exists(training::Training filter .id = <uuid>$id)
 ),
 user := (
-    select assert_exists(users::User filter .id = <uuid>$user_id)
+    select global default::user
 ),
 session := (
     insert training::Session {
@@ -27,9 +27,9 @@ select session {
             id,
             index,
             content,
-            name := [is training::Page].name,
-            duration_ := duration_to_seconds([is training::Page].duration),
-            type := [is training::Question].type,
+            [is training::Page].name,
+            [is training::Page].duration,
+            [is training::Question].type,
             answers := [is training::Question].answers {
                 id,
                 content,

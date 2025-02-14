@@ -9,6 +9,17 @@ module sign_in {
         );
 
         constraint exclusive on (.user) except (.signed_out);
+
+        access policy desk_or_higher
+            allow all
+            using (exists ({"Desk", "Admin"} intersect global default::user.roles.name)) {
+                errmessage := "Only the desk account or admins can operate on all sign-ins"
+            };
+        access policy view_self
+            allow select
+            using (global default::user ?= .user) {
+                errmessage := 'Can only view your own sign-ins'
+            };
     }
 
     # N.B. make sure to update in forge/lib/constants
@@ -38,13 +49,9 @@ module sign_in {
         # required short_term_closures: tuple<starts_at: datetime, ends_at: datetime>;
 
         multi sign_ins := (
-            select SignIn
-            filter not .signed_out and .location = __source__
+            select .<location[is SignIn] filter not .signed_out
         );
-        multi queued := (
-            select QueuePlace
-            filter .location = __source__
-        );
+        multi queued := .<location[is QueuePlace];
 
         required out_of_hours := (
             with current_time := (
@@ -127,12 +134,26 @@ module sign_in {
             select (
                 select .queued filter .ends_at >= datetime_of_statement()
             ).user
-        )
+        );
+
+        access policy desk_or_higher  # TODO this probably breaks when you do
+            allow all
+            using (exists ({"Desk", "Admin"} intersect global default::user.roles.name)) {
+                errmessage := "Only the desk account or admins can update location info"
+            };
     }
 
     type UserRegistration extending default::CreatedAt {
         required location: Location;
-        required user: users::User;
+        required user: users::User {
+            constraint exclusive;
+        }
+
+        access policy desk_or_higher
+            allow all
+            using (exists ({"Desk", "Admin"} intersect global default::user.roles.name)) {
+                errmessage := "Only the desk account or admins can update registrations"
+            };
     }
 
     type QueuePlace extending default::CreatedAt {  # TODO consider storing these permanently
@@ -143,7 +164,22 @@ module sign_in {
         notified_at: datetime {
             annotation description := "The time the user was emailed that they have a slot."
         }
-        ends_at := .notified_at + <cal::relative_duration>"15m";
+        ends_at := .notified_at + <cal::relative_duration>"20m";
+
+        trigger prohibit_queue after insert for each do (
+            select assert(__new__.location.queue_in_use, message := "Queue has been manually disabled")
+        );
+
+        access policy desk_or_higher
+            allow all
+            using (exists ({"Desk", "Admin"} intersect global default::user.roles.name)) {
+                errmessage := "Only the desk account or admins can update registrations"
+            };
+        access policy edit_self
+            allow all
+            using (global default::user ?= .user) {
+                errmessage := "Only the desk account or admins can update registrations"
+            };
     }
 
     scalar type ReasonCategory extending enum<
@@ -162,24 +198,43 @@ module sign_in {
         required category: ReasonCategory;
         agreement: Agreement;
         index on ((.name));
+
+        access policy desk_or_higher
+            allow all
+            using (exists ({"Desk", "Admin"} intersect global default::user.roles.name)) {
+                errmessage := "Only the desk account or admins can update reasons"
+            };
     }
 
-    type Agreement extending default::CreatedAt {
+    type Agreement extending default::Auditable {
         required name: str;
-        multi reasons := (
-            select Reason filter .agreement = __source__
-        );
+        multi reasons := .<agreement[is Reason];
         required content: str {
             annotation description := "The content of the markdown file that are served to the user."
-            # annotation description := "The bytes of the PDF file that are served to the UI."
         }
-        required content_hash: str {
-            annotation description := "The hash of the content of the markdown file."
+        # implementation detail caused by not being able to index on contents over some large number of characters
+        required _content_hash: bytes {
+            default := ext::pgcrypto::digest(.content, 'sha256');
+            rewrite update using (
+                ext::pgcrypto::digest(.content, 'sha256')
+            )
         }
         required version: int16 {
             default := 1;
+            rewrite update using (
+                # updating the name shouldn't trigger everyone to re-sign
+                .version + 1 if __subject__.content != __old__.content else .version
+                # TODO make this make a request to the server to send out a notification to make everyone re-sign
+                # using ext::net or the events system
+            )
         }
 
-        constraint exclusive on ((.version, .content_hash));
+        constraint exclusive on ((.version, ._content_hash));
+
+        access policy admin_only
+            allow all
+            using (exists ({"Desk", "Admin"} intersect global default::user.roles.name)) {
+                errmessage := "Only the desk account or admins can update agreements"
+            };
     }
 }
