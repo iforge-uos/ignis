@@ -367,7 +367,7 @@ export class SignInService implements OnModuleInit {
     const { is_rep, agreements_signed } = await this.dbService.query(
       e.assert_exists(
         e.select(e.users.User, (user) => ({
-          agreements_signed: true,
+          agreements_signed: {id: true, "@version_signed": true},
           is_rep: e.op(user.__type__.name, "=", "users::Rep"),
           filter_single: { ucard_number },
         })),
@@ -377,19 +377,22 @@ export class SignInService implements OnModuleInit {
     // check for the user agreement
     const user_agreement = await this.dbService.query(
       e.assert_exists(
-        e.select(e.sign_in.Reason, (reason) => ({
-          filter_single: e.op(reason.category, "=", e.sign_in.ReasonCategory.PERSONAL_PROJECT),
-        })).agreement,
+        e.select(
+          e.select(e.sign_in.Reason, (reason) => ({
+            filter_single: e.op(reason.category, "=", e.sign_in.ReasonCategory.PERSONAL_PROJECT),
+          })).agreement,
+          () => ({ id: true, version: true })
+        ),
       ),
     );
-    if (!agreements_signed.some((agreement) => agreement.id === user_agreement.id)) {
+    if (!agreements_signed.some((agreement) => agreement.id === user_agreement.id && agreement["@version_signed"] === user_agreement.version)) {
       throw new BadRequestException("User agreement not signed.");
     }
 
     const query = e.assert_exists(
       e.select(e.sign_in.Reason, () => ({
         name: true,
-        agreement: true,
+        agreement: { id: true, version: true },
         category: true,
         filter_single: { id: reason_id },
       })),
@@ -400,7 +403,7 @@ export class SignInService implements OnModuleInit {
       throw new BadRequestException("User has somehow passed a rep reason");
     }
 
-    if (agreement && !agreements_signed.some((agreement_) => agreement_.id === agreement.id)) {
+    if (agreement && !agreements_signed.some((agreement_) => agreement_.id === agreement.id && agreement_["@version_signed"] === agreement.version)) {
       throw new BadRequestException(`Agreement ${agreement.id} for ${name} not signed.`);
     }
 

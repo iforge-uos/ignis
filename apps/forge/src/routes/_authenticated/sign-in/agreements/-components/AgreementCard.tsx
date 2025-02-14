@@ -93,7 +93,7 @@ export function AgreementCard({ agreement }: AgreementCardProps) {
                   className="text-muted-foreground dark:text-muted-foreground-dark border-muted-foreground dark:border-muted-foreground-dark"
                 >
                   <Calendar className="mr-2 h-4 w-4" />
-                  {new Date(agreement.created_at).toLocaleDateString()}
+                  {new Date(agreement.updated_at).toLocaleDateString()}
                 </Badge>
                 <Badge
                   variant="outline"

@@ -29,7 +29,7 @@ export default function Component() {
 
     try {
       await axiosInstance.post(`/agreements/${id}`, { user });
-      
+
       await Promise.all([
         verifyAuthentication(),
         queryClient.invalidateQueries({ queryKey: ["agreements"] })
@@ -43,10 +43,10 @@ export default function Component() {
       await new Promise(resolve => setTimeout(resolve, 100));
 
       toast.success("Successfully signed agreement");
-      
-      navigator({ 
+
+      navigator({
         to: "/sign-in/agreements",
-        replace: true 
+        replace: true
       });
     } catch (error) {
       console.error("Error signing agreement:", error);
@@ -69,7 +69,7 @@ export default function Component() {
         </div>
         <Separator className="mt-5 mb-5" />
         <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-          Last Updated: {new Date(agreement?.created_at!).toLocaleDateString()}
+          Last Updated: {new Date(agreement?.updated_at!).toLocaleDateString()}
         </p>{" "}
         <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Version: {agreement?.version}</p>
         {/* TODO include the sign in reasons this is valid for somehow sign for a user if we're an admin? */}
