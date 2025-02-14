@@ -10,10 +10,6 @@ export class CleanupProcessor {
   @Process("removeExpiredTokens")
   async handleRemoveExpiredTokens(job: Job) {
     const currentDate = new Date();
-    await e
-      .delete(e.auth.BlacklistedToken, (token) => ({
-        filter: e.op(token.expires, ">", currentDate),
-      }))
-      .run(this.db);
+
   }
 }

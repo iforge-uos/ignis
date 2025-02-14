@@ -90,7 +90,7 @@ export class RootService {
   }
 
   async createAgreement(name: string, reason_ids: string[], content: string) {
-    const agreement = e.insert(e.sign_in.Agreement, { name, content, content_hash: computeHash(content) });
+    const agreement = e.insert(e.sign_in.Agreement, { name, content });
 
     // update each SignInReason to link to the new Agreement
     return await this.dbService.query(
@@ -140,7 +140,6 @@ export class RootService {
     const new_agreement = e.insert(e.sign_in.Agreement, {
       name,
       content,
-      content_hash: computeHash(content),
       version: e.op(current_agreement.version, "+", 1),
     });
 
@@ -173,8 +172,9 @@ export class RootService {
           filter_single: { id: user.id },
           set: {
             agreements_signed: {
-              "+=": e.select(e.sign_in.Agreement, () => ({
+              "+=": e.select(e.sign_in.Agreement, (agreement) => ({
                 filter_single: { id },
+                "@version_signed": agreement.version,
               })),
             },
           },

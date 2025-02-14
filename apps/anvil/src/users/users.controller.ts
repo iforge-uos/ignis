@@ -1,5 +1,4 @@
-import { CheckAbilities } from "@/auth/authorization/decorators/check-abilities-decorator";
-import { IsAdmin } from "@/auth/authorization/decorators/check-roles-decorator";
+import { IsAdmin, IsRep } from "@/auth/authorization/decorators/check-roles-decorator";
 import { CaslAbilityGuard } from "@/auth/authorization/guards/casl-ability.guard";
 import type { UpdateUserSchema } from "@dbschema/edgedb-zod/modules/users";
 import { sign_in, training, users } from "@ignis/types";
@@ -29,28 +28,25 @@ export class UsersController {
   ) {}
 
   @Post()
-  @CheckAbilities(["CREATE"], "USER")
   async create(@Body() createUserDto: CreateUserDto) {
     this.logger.log(`Creating user with data: ${JSON.stringify(createUserDto)}`, UsersController.name);
     return this.usersService.create(createUserDto);
   }
 
   @Get()
-  @CheckAbilities(["READ"], "USER")
+  @IsRep()
   async findAll() {
     this.logger.log("Retrieving all users", UsersController.name);
     return this.usersService.findAll();
   }
 
   @Get("me")
-  @CheckAbilities(["READ"], "SELF")
   async findSelf(@GetUser() user: User) {
     this.logger.log(`Retrieving self user with ID: ${user.id}`, UsersController.name);
     return user;
   }
 
   @Patch("me")
-  @CheckAbilities(["UPDATE"], "SELF")
   async updateSelf(@GetUser() user: User, @Body() updateUserDto: UpdateUserDto) {
     const EDITABLE_FIELDS = ["display_name", "pronouns"];
     const data = Object.fromEntries(Object.entries(updateUserDto).filter(([key]) => key in EDITABLE_FIELDS));
@@ -59,7 +55,7 @@ export class UsersController {
   }
 
   @Get(":id")
-  @CheckAbilities(["READ"], "USER")
+  @IsRep()
   async findOne(@Param("id") id: string) {
     this.logger.log(`Retrieving user with ID: ${id}`, UsersController.name);
     const user = await this.usersService.findOne(id);
@@ -71,28 +67,28 @@ export class UsersController {
   }
 
   @Patch(":id")
-  @CheckAbilities(["UPDATE"], "USER")
+  @IsRep()
   async update(@Param("id") id: string, @Body() updateUserDto: UpdateUserDto) {
     this.logger.log(`Updating user with ID: ${id}, data: ${JSON.stringify(updateUserDto)}`, UsersController.name);
     return this.usersService.update(id, updateUserDto);
   }
 
   @Delete(":id")
-  @CheckAbilities(["DELETE"], "USER")
+  @IsRep()
   async remove(@Param("id") id: string) {
     this.logger.log(`Removing user with ID: ${id}`, UsersController.name);
     return this.usersService.remove(id);
   }
 
   @Get(":id/training")
-  @CheckAbilities(["READ"], "USER")
+  @IsRep()
   async getTraining(@Param("id") id: string): Promise<Training[]> {
     this.logger.log(`Retrieving training for user with ID: ${id}`, UsersController.name);
     return this.usersService.getUserTraining(id);
   }
 
   @Get(":id/training/remaining/:location")
-  @CheckAbilities(["READ"], "USER")
+  @IsRep()
   async getRemainingTraining(
     @Param("id") id: string,
     @Param("location") location: LocationName,
@@ -116,7 +112,7 @@ export class UsersController {
   }
 
   @Delete(":id/training/:training_id")
-  @CheckAbilities(["READ"], "USER")
+  @IsRep()
   async revokeTraining(
     @Param("id") id: string,
     @Param("training_id") training_id: string,
@@ -144,7 +140,7 @@ export class UsersController {
   }
 
   @Get(":id/sign-ins")
-  @CheckAbilities(["READ"], "USER")
+  @IsRep()
   async getSignIns(@Param("id") id: string) {
     this.logger.log(`Retrieving sign-ins for user with ID: ${id}`, UsersController.name);
     return this.usersService.signInStats(id);

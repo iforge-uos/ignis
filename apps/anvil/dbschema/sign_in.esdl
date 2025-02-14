@@ -10,16 +10,7 @@ module sign_in {
 
         constraint exclusive on (.user) except (.signed_out);
 
-        access policy desk_or_higher
-            allow all
-            using (exists ({"Desk", "Admin"} intersect global default::user.roles.name)) {
-                errmessage := "Only the desk account or admins can operate on all sign-ins"
-            };
-        access policy view_self
-            allow select
-            using (global default::user ?= .user) {
-                errmessage := 'Can only view your own sign-ins'
-            };
+
     }
 
     # N.B. make sure to update in forge/lib/constants
@@ -136,11 +127,7 @@ module sign_in {
             ).user
         );
 
-        access policy desk_or_higher  # TODO this probably breaks when you do
-            allow all
-            using (exists ({"Desk", "Admin"} intersect global default::user.roles.name)) {
-                errmessage := "Only the desk account or admins can update location info"
-            };
+
     }
 
     type UserRegistration extending default::CreatedAt {
@@ -149,11 +136,7 @@ module sign_in {
             constraint exclusive;
         }
 
-        access policy desk_or_higher
-            allow all
-            using (exists ({"Desk", "Admin"} intersect global default::user.roles.name)) {
-                errmessage := "Only the desk account or admins can update registrations"
-            };
+
     }
 
     type QueuePlace extending default::CreatedAt {  # TODO consider storing these permanently
@@ -170,16 +153,7 @@ module sign_in {
             select assert(__new__.location.queue_in_use, message := "Queue has been manually disabled")
         );
 
-        access policy desk_or_higher
-            allow all
-            using (exists ({"Desk", "Admin"} intersect global default::user.roles.name)) {
-                errmessage := "Only the desk account or admins can update registrations"
-            };
-        access policy edit_self
-            allow all
-            using (global default::user ?= .user) {
-                errmessage := "Only the desk account or admins can update registrations"
-            };
+
     }
 
     scalar type ReasonCategory extending enum<
@@ -199,11 +173,7 @@ module sign_in {
         agreement: Agreement;
         index on ((.name));
 
-        access policy desk_or_higher
-            allow all
-            using (exists ({"Desk", "Admin"} intersect global default::user.roles.name)) {
-                errmessage := "Only the desk account or admins can update reasons"
-            };
+
     }
 
     type Agreement extending default::Auditable {
@@ -231,10 +201,5 @@ module sign_in {
 
         constraint exclusive on ((.version, ._content_hash));
 
-        access policy admin_only
-            allow all
-            using (exists ({"Desk", "Admin"} intersect global default::user.roles.name)) {
-                errmessage := "Only the desk account or admins can update agreements"
-            };
     }
 }

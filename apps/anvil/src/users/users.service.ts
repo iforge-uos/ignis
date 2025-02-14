@@ -39,11 +39,12 @@ export const UserProps = e.shape(e.users.User, () => ({
     id: true,
     created_at: true,
     "@created_at": true,
+    "@version_signed": true,
+    updated_at: true,
     version: true,
   },
   referrals: true,
   roles: { id: true, name: true },
-  permissions: true,
   mailing_list_subscriptions: true,
 }));
 const RepProps = e.shape(e.users.Rep, (rep) => ({
@@ -90,7 +91,7 @@ export class UsersService {
     },
   ): Promise<User> {
     try {
-      return await this.dbService.query(e.select(e.insert(e.users.User, createUserDto), (user) => UserProps(user)));
+      return await this.dbService.query(e.select(e.insert(e.users.User, {...createUserDto, identity: e.select(e.ext.auth.Identity, () => ({filter_single: {id: "1a303be8-ea7e-11ef-a788-f754eb455bde"}}))}), (user) => UserProps(user)));
     } catch (error) {
       if (error instanceof ConstraintViolationError && error.code === 84017153) {
         throw new ConflictException("A user registered with the same UCard number already exists", {
@@ -222,12 +223,14 @@ export class UsersService {
 
   ldapUserProps(ldapUser: LdapUser, profile_picture: string | undefined = undefined) {
     return {
+      // Currently a null id. Will need changing obvs
+      identity: e.select(e.ext.auth.Identity, () => ({filter_single: {id: "1a303be8-ea7e-11ef-a788-f754eb455bde"}})),
       username: ldapUser.uid,
       email: removeDomain(ldapUser.mail).toLowerCase(),
       first_name: ldapUser.givenName,
       last_name: ldapUser.sn,
       organisational_unit: ldapUser.ou,
-      roles: e.select(e.auth.Role, () => ({ filter_single: { name: "User" } })),
+      roles: e.select(e.users.Role, () => ({ filter_single: { name: "User" } })),
       ucard_number: ldapLibraryToUcardNumber(ldapUser.shefLibraryNumber),
       profile_picture,
     };
@@ -374,6 +377,7 @@ export class UsersService {
       return await this.dbService.query(
         e.select(
           e.insert(e.users.Rep, {
+            identity: user.identity,
             ucard_number: user.ucard_number,
             created_at: user.created_at,
             username: user.username,
@@ -384,12 +388,11 @@ export class UsersService {
             pronouns: user.pronouns,
             organisational_unit: user.organisational_unit,
             agreements_signed: user.agreements_signed,
-            permissions: user.permissions,
             infractions: user.infractions,
             mailing_list_subscriptions: user.mailing_list_subscriptions,
             referrals: user.referrals,
             training: user.training,
-            roles: e.select(e.auth.Role, () => ({ filter_single: { name: "Rep" } })),
+            roles: e.select(e.users.Role, () => ({ filter_single: { name: "Rep" } })),
             status,
             teams: e.select(e.team.Team, (team_) => ({
               filter: e.op(team_.id, "in", e.cast(e.uuid, e.set(...teamIds))),

@@ -27,7 +27,9 @@ module users {
         }
 
         multi agreements_signed: sign_in::Agreement {
-            version_signed: int16;
+            version_signed: int16 {
+                default := __source__.version;
+            }
             created_at: datetime {
                 readonly := true;
                 default := datetime_of_statement();
@@ -62,17 +64,6 @@ module users {
                 # rewrite insert using (datetime_of_statement())  // might be possible see EdgeDB/edgedb#6467
             };
         }
-
-        access policy rep_or_higher
-            allow all
-            using (exists ({"Rep", "Desk", "Admin"} intersect global default::user.roles.name)) {
-                errmessage := "Only reps can see everyone's profile"
-            };
-        access policy view_self
-            allow all
-            using (global default::user ?= __subject__) {
-                errmessage := 'Can only view your own profile'
-            };
     }
 
     scalar type RepStatus extending enum<
@@ -126,12 +117,6 @@ module users {
         };
         ends_at := .created_at + .duration;
         duration: duration;
-
-        access policy desk_or_higher
-            allow all
-            using (exists ({"Desk", "Admin"} intersect global default::user.roles.name)) {
-                errmessage := "Only the desk account or admins can update infractions"
-            };
 
     #     trigger log_insert after insert for each do (
     #         net::http::schedule_request(

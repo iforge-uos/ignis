@@ -37,7 +37,7 @@ export class TrainingService {
 
   async getTraining(id: string, editing?: boolean, rep_id?: string): Promise<training.Training> {
     const fn = editing
-      ? () => getTrainingForEditing(this.dbService.client, { id }) as Promise<training.Training>
+      ? () => getTrainingForEditing(this.dbService.client, { id }) as unknown as Promise<training.Training>
       : () =>
           this.dbService.query(
             e.assert_exists(

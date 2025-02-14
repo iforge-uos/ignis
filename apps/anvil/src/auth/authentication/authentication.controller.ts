@@ -144,12 +144,6 @@ export class AuthenticationController {
     }
 
     private async refreshTokens(refreshToken: string, requiredRole?: string) {
-        const isBlacklisted = await this.blacklistService.isTokenBlacklisted(refreshToken);
-        if (isBlacklisted) {
-            this.logger.warn("The refresh token is blacklisted", AuthenticationController.name);
-            throw new UnauthorizedException("The refresh token is no longer valid");
-        }
-
         const payload = await this.authService.validateRefreshToken(refreshToken);
 
         const user = await this.usersService.findOne(payload.sub);
@@ -165,6 +159,7 @@ export class AuthenticationController {
         }
 
         const expiryDate = this.authService.getExpiryDate(refreshToken);
+        console.log("Got useer", JSON.stringify(user))
 
         await this.blacklistService.addToBlacklist(refreshToken, expiryDate);
 

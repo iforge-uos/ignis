@@ -19,8 +19,6 @@ import { LdapModule } from "./ldap/ldap.module";
 import { RootController } from "./root/root.controller";
 import { RootModule } from "./root/root.module";
 import { RootService } from "./root/root.service";
-import { SeederModule } from "./seeder/seeder.module";
-import { SeederService } from "./seeder/seeder.service";
 import { SignInController } from "./sign-in/sign-in.controller";
 import { SignInModule } from "./sign-in/sign-in.module";
 import { SignInService } from "./sign-in/sign-in.service";
@@ -53,7 +51,6 @@ import { UsersModule } from "./users/users.module";
     ]),
     AuthorizationModule,
     EmailModule,
-    SeederModule,
     SignInModule,
     BullModule.registerQueue({ name: "email" }),
     RootModule,
@@ -64,7 +61,6 @@ import { UsersModule } from "./users/users.module";
       provide: APP_PIPE,
       useClass: ZodValidationPipe,
     },
-    SeederService,
     TrainingService,
     SignInService,
     EmailService,

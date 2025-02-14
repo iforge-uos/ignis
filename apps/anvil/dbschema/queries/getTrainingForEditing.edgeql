@@ -5,7 +5,7 @@ select assert_exists(
             *,
             type_name := .__type__.name,
             [is training::Page].name,
-            [is training::Page].duration,
+            duration_ := duration_to_seconds([is training::Page].duration),
             answers := [is training::Question].answers {
                 id,
                 content,

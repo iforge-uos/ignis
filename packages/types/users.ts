@@ -1,4 +1,4 @@
-import { auth, helper, std, users } from "@dbschema/interfaces";
+import { helper, std, users } from "@dbschema/interfaces";
 import { LocationName } from "./sign_in";
 export type { CreateUserDto, UpdateUserDto } from "@/users/dto/users.dto";
 import type { CalendarDatum } from "@nivo/calendar";
@@ -14,7 +14,7 @@ export type PartialUser = {
   ucard_number: number;
   created_at: Date;
   profile_picture?: string | null;
-  roles: Omit<auth.Role, "permissions">[];
+  roles: users.Role[];
 };
 
 export type ShortTeam = {
@@ -32,12 +32,13 @@ export type PartialUserWithTeams = PartialUser & {
 export type User = helper.Props<users.User> &
   Omit<
     Record<NonNullable<helper.linkKeys<users.User>>, std.BaseObject[]>,
-    "infractions" | "roles" | "agreements_signed" | "training"
+    "infractions" | "roles" | "agreements_signed" | "training" | "identity" | "notifications"
   > & {
-    roles: Omit<auth.Role, "permissions">[];
+    roles: users.Role[];
     agreements_signed: {
       id: string;
       "@created_at": Date | null;
+      "@version_signed": number | null;
       version: number;
     }[];
     profile_picture?: string | null;

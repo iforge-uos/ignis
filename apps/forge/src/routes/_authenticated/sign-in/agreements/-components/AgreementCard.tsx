@@ -26,7 +26,7 @@ export function AgreementCard({ agreement }: AgreementCardProps) {
     const user_agreement = user.agreements_signed.find((agreement_) => agreement.id === agreement_.id);
 
     if (user_agreement !== undefined) {
-      if (user_agreement.version === agreement.version) {
+      if (user_agreement["@version_signed"] === agreement.version) {
         return {
           status: "Signed",
           badgeVariant: "default",
