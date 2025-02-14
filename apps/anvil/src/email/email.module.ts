@@ -1,3 +1,4 @@
+import { EdgeDBService } from "@/edgedb/edgedb.service";
 import { BullModule } from "@nestjs/bull";
 import { Logger, Module } from "@nestjs/common";
 import { EmailController } from "./email.controller";
@@ -14,7 +15,7 @@ import { EmailService } from "./email.service";
           host: process.env.REDIS_HOST,
           port: process.env.REDIS_PORT,
           db: process.env.REDIS_DB,
-          password: process.env.REDIS_PASSWORD
+          password: process.env.REDIS_PASSWORD,
         };
 
         const limiter: any = {
@@ -28,8 +29,9 @@ import { EmailService } from "./email.service";
         };
       },
     }),
+    EdgeDBService,
   ],
   controllers: [EmailController],
-  providers: [EmailService, EmailProcessor, Logger],
+  providers: [EmailService, EmailProcessor, Logger, EdgeDBService],
 })
-export class EmailModule { }
+export class EmailModule {}
