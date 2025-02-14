@@ -28,7 +28,7 @@ module users {
 
         multi agreements_signed: sign_in::Agreement {
             version_signed: int16 {
-                default := __source__.version;
+                # default := __source__.version;
             }
             created_at: datetime {
                 readonly := true;
