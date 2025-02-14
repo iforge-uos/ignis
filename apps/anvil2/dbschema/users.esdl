@@ -27,6 +27,7 @@ module users {
         }
 
         multi agreements_signed: sign_in::Agreement {
+            version_signed: int16;
             created_at: datetime {
                 readonly := true;
                 default := datetime_of_statement();

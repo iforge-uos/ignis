@@ -206,7 +206,7 @@ module sign_in {
             };
     }
 
-    type Agreement extending default::CreatedAt {
+    type Agreement extending default::Auditable {
         required name: str;
         multi reasons := .<agreement[is Reason];
         required content: str {
