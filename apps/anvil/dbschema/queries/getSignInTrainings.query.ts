@@ -58,7 +58,6 @@ select assert_exists(
                 training::Selectability.REPS_UNTRAINED if (
                     # TODO is this bugged
                     .id not in location.supervisable_training.id if users::User is not users::Rep else true,
-                    users::User is not users::Rep or .id not in location.supervisable_training.id
                 ) else <training::Selectability>{},
                 training::Selectability.IN_PERSON_MISSING if .in_person and not exists @in_person_created_at else <training::Selectability>{},
             })
