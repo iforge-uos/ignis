@@ -1,11 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
-import Title from "@/components/title";
-import { Button } from "@ui/components/ui/button.tsx";
 import axiosInstance from "@/api/axiosInstance.ts";
+import Title from "@/components/title";
+import { createFileRoute } from "@tanstack/react-router";
+import { Button } from "@ui/components/ui/button.tsx";
 
 const EmailIndexPage = () => {
   const handleSendEmail = async () => {
     try {
+      // await axiosInstance.post("/email/agreement_update"); // Make the POST request to the endpoint
       await axiosInstance.post("/test_email"); // Make the POST request to the endpoint
       console.log("Email sent successfully");
     } catch (error) {

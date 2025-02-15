@@ -29,9 +29,9 @@ export function AgreementUpdate(
 ) {
   return (
     <Email
-      preview="An important update to User Agreement"
-      title="iForge place available"
-      heading={`The ${agreement.name} Has Been Updated, Please Re-sign It`}
+      preview="An important update to the User Agreement"
+      title="iForge Agreement Updated"
+      heading={`The ${agreement.name} Has Been Updated`}
     >
       <Hr />
       <Container>
@@ -41,7 +41,7 @@ export function AgreementUpdate(
           Please can you{" "}
           <Link href={`https://iforge.sheffield.ac.uk/sign-in/agreements/${agreement.id}`}>
             sign the newest version of the {agreement.name}.
-          </Link>
+          </Link>{" "}
           As you won't be able to sign in with the {agreement.reasons.map((r) => r.name)} reason(s) without it.
         </Text>
       </Container>

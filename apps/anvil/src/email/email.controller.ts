@@ -1,5 +1,5 @@
 import { IsAdmin } from "@/auth/authorization/decorators/check-roles-decorator";
-import { Controller, Get, UseGuards } from "@nestjs/common";
+import { Controller, Get, Post, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { EmailService } from "./email.service";
 
@@ -8,9 +8,11 @@ import { EmailService } from "./email.service";
 export class EmailController {
   constructor(private readonly emailService: EmailService) {}
 
-  @Get("agreement_update")
+  @Post("agreement_update")
   @IsAdmin()
   async sendAgreementUpdate() {
+    console.log("Sending agreement update email out, this will take a while...");
     await this.emailService.sendAgreementUpdate();
+    console.log("Finished adding to queue");
   }
 }

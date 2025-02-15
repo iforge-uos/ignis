@@ -10,7 +10,7 @@ import { Queue } from "bull";
 import { render } from "jsx-email";
 import { z } from "zod";
 import { SendEmailSchema } from "./dto/send-email.dto";
-import AgreementUpdate from "./templates/agreement_update";
+import { AgreementUpdate } from "./templates/agreement_update";
 import Queued from "./templates/queued";
 import { Unqueued } from "./templates/unqueued";
 import { WelcomeEmail } from "./templates/welcome";
@@ -87,7 +87,8 @@ export class EmailService {
         filter: e.op(
           e.op(e.uuid(agreement.id), "in", user.agreements_signed.id),
           "and",
-          e.op(user.agreements_signed["@version_signed"], "!=", agreement.version),
+          // e.op(user.agreements_signed["@version_signed"], "!=", agreement.version),
+          e.op(user.ucard_number, "=", 786768),
         ),
         ...PartialUserProps(user),
       })),

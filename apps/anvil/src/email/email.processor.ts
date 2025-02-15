@@ -6,6 +6,7 @@ import { Job } from "bull";
 import { SentMessageInfo } from "nodemailer/lib/smtp-transport";
 import { SendEmailSchema } from "./dto/send-email.dto";
 import { z } from "zod";
+const fs = require("fs");
 
 @Processor("email")
 export class EmailProcessor {
@@ -39,6 +40,18 @@ export class EmailProcessor {
       text: plainTextMessage, // Use plainTextMessage
       html: message,
     };
+
+    // Log email content to a file for debugging/auditing
+    const logPath = "./email-logs.txt";
+    const logContent = `
+    Time: ${new Date().toISOString()}
+    To: ${mailOptions.to}
+    Subject: ${mailOptions.subject}
+    Text: ${mailOptions.text}
+    HTML: ${mailOptions.html}
+    ----------------------------------------
+    `;
+    fs.appendFileSync(logPath, logContent);
 
     try {
       await this.transporter.sendMail(mailOptions);
