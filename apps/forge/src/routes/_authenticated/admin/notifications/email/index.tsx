@@ -6,8 +6,8 @@ import { Button } from "@ui/components/ui/button.tsx";
 const EmailIndexPage = () => {
   const handleSendEmail = async () => {
     try {
-      // await axiosInstance.post("/email/agreement_update"); // Make the POST request to the endpoint
-      await axiosInstance.post("/test_email"); // Make the POST request to the endpoint
+      await axiosInstance.post("/email/agreement_update"); // Make the POST request to the endpoint
+      // await axiosInstance.post("/test_email"); // Make the POST request to the endpoint
       console.log("Email sent successfully");
     } catch (error) {
       console.error("Error sending email:", error);
