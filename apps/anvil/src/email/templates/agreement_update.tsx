@@ -42,7 +42,7 @@ export function AgreementUpdate(
           <Link href={`https://iforge.sheffield.ac.uk/sign-in/agreements/${agreement.id}`}>
             sign the newest version of the {agreement.name}.
           </Link>{" "}
-          As you won't be able to sign in with the {agreement.reasons.map((r) => r.name)} reason(s) without it.
+          As you won't be able to sign in without it.
         </Text>
       </Container>
     </Email>
