@@ -41,18 +41,6 @@ export class EmailProcessor {
       html: message,
     };
 
-    // Log email content to a file for debugging/auditing
-    const logPath = "./email-logs.txt";
-    const logContent = `
-    Time: ${new Date().toISOString()}
-    To: ${mailOptions.to}
-    Subject: ${mailOptions.subject}
-    Text: ${mailOptions.text}
-    HTML: ${mailOptions.html}
-    ----------------------------------------
-    `;
-    fs.appendFileSync(logPath, logContent);
-
     try {
       await this.transporter.sendMail(mailOptions);
       this.logger.debug("Email sent successfully", EmailProcessor.name);

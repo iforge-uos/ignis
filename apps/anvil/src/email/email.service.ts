@@ -87,8 +87,7 @@ export class EmailService {
         filter: e.op(
           e.op(e.uuid(agreement.id), "in", user.agreements_signed.id),
           "and",
-          // e.op(user.agreements_signed["@version_signed"], "!=", agreement.version),
-          e.op(user.ucard_number, "=", 786768),
+          e.op(user.agreements_signed["@version_signed"], "!=", agreement.version),
         ),
         ...PartialUserProps(user),
       })),
