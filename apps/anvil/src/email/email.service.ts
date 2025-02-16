@@ -24,13 +24,14 @@ export class EmailService {
     private readonly dbService: EdgeDBService,
   ) {}
 
-  async sendEmail(dto: z.infer<typeof SendEmailSchema>) {
+  async sendEmail(dto: z.infer<typeof SendEmailSchema>, delay = 0) {
     this.logger.debug("Adding email to queue...", EmailService.name);
 
     const priority = dto.priority || 2; // Default to medium priority if not specified
 
     await this.emailQueue.add("sendEmail", dto, {
       priority,
+      delay, // added delay to throttle sending
       attempts: 5, // Number of attempts to retry the job
       backoff: 3000, // Delay where retries will be processed (in ms)
     });
@@ -41,14 +42,18 @@ export class EmailService {
   async sendHtml(
     element: React.JSX.Element,
     dto: Omit<z.infer<typeof SendEmailSchema>, "message" | "plainTextMessage">,
+    delay = 0,
   ) {
-    await this.sendEmail({
-      message: await render(element, { minify: true }),
-      plainTextMessage: await render(element, {
-        plainText: true,
-      }),
-      ...dto,
-    });
+    await this.sendEmail(
+      {
+        message: await render(element, { minify: true }),
+        plainTextMessage: await render(element, {
+          plainText: true,
+        }),
+        ...dto,
+      },
+      delay,
+    );
   }
 
   async sendWelcomeEmail(recipient: PartialUser) {
@@ -93,11 +98,17 @@ export class EmailService {
       })),
     );
 
-    for (const user of users) {
-      await this.sendHtml(AgreementUpdate({ agreement, user }), {
-        recipients: [`${user.email}@sheffield.ac.uk`],
-        subject: "An update to our Agreement",
-      });
+    for (const [index, user] of users.entries()) {
+      // add incremental delay (e.g. 1000ms between each email)
+      const delay = index * 1000;
+      await this.sendHtml(
+        AgreementUpdate({ agreement, user }),
+        {
+          recipients: [`${user.email}@sheffield.ac.uk`],
+          subject: "An update to our Agreement",
+        },
+        delay,
+      );
     }
   }
 }
