@@ -3,7 +3,7 @@ import { iForgeEpoch } from "@/config/constants";
 import { ManageUserWidgetProps } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/ManageUserWidget.tsx";
 import addInPersonTraining from "@/services/users/addInPersonTraining.ts";
 import { getUserTrainingRemaining } from "@/services/users/getUserTrainingRemaining.ts";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Badge } from "@ui/components/ui/badge";
 import { Button } from "@ui/components/ui/button.tsx";
 import { Calendar } from "@ui/components/ui/calendar.tsx";
@@ -35,6 +35,7 @@ export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locatio
     queryKey: ["userTrainingRemaining", user.id],
     queryFn: () => getUserTrainingRemaining(user.id, activeLocation),
   });
+  const queryClient = useQueryClient();
 
   return (
     <>
@@ -146,14 +147,14 @@ export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locatio
         <Button
           type="submit"
           className="w-1/2 mt-2 flex items-center justify-center"
-          onClick={() => {
+          onClick={async () => {
             try {
-              addInPersonTraining(user.id, training!, { rep_id: repSigningOff!, created_at: date! }).then(() =>
-                toast.success("Successfully submitted"),
-              );
+              await addInPersonTraining(user.id, training!, { rep_id: repSigningOff!, created_at: date! });
             } catch (e) {
               return toast.error(`Failed to submit contact the IT Team ${e}`);
             }
+            await queryClient.invalidateQueries({ queryKey: ["userTrainingRemaining", user.id] });
+            toast.success("Successfully submitted");
           }}
           disabled={!(training && date && repSigningOff)}
         >

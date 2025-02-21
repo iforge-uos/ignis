@@ -120,9 +120,10 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
         signal: abortController.signal,
         postBody,
       }),
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success("Successfully updated user sign-in information");
-      queryClient.invalidateQueries({ queryKey: ["locationStatus", "locationList", { activeLocation }] });
+      await queryClient.invalidateQueries({ queryKey: ["locationStatus"] });
+      await queryClient.invalidateQueries({ queryKey: ["locationList", activeLocation] });
     },
     onError: (error) => {
       console.error("Error updating sign-in information", error);
