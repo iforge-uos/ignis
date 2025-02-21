@@ -83,7 +83,9 @@ export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locatio
                   })
               ) : (
                 <SelectItem value={"unselectable"} disabled>
-                  No available trainings to add. Have they completed the online training?
+                  No available trainings to add.
+                  <br />
+                  Have they completed the online training?
                 </SelectItem>
               )}
             </SelectGroup>
