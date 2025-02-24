@@ -4,9 +4,9 @@ import type {Executor} from "edgedb";
 
 export type AddInPersonTrainingArgs = {
   readonly "rep_id": string;
-  readonly "training_id": string;
-  readonly "created_at": Date;
   readonly "id": string;
+  readonly "created_at": Date;
+  readonly "training_id": string;
 };
 
 export type AddInPersonTrainingReturns = {
@@ -15,25 +15,17 @@ export type AddInPersonTrainingReturns = {
 
 export function addInPersonTraining(client: Executor, args: AddInPersonTrainingArgs): Promise<AddInPersonTrainingReturns> {
   return client.queryRequiredSingle(`\
-with rep := (
-    select users::Rep
-    filter .id = <uuid>$rep_id
-),
-user := (
-    update users::User
-    filter .id = <uuid>$id
-    set {
-        training += (
-            select .training {
-                @created_at := @created_at,
-                @infraction := @infraction,
-                @in_person_created_at := <datetime>$created_at,
-                @in_person_signed_off_by := assert_exists(rep.id),
-            }
-            filter .id = <uuid>$training_id
-        )
-    }
-)
-select assert_exists(user);`, args);
+with
+    rep := <users::Rep><uuid>$rep_id,
+    user := <users::User><uuid>$id,
+update user
+set {
+    training := (
+        select .training {
+            @in_person_created_at := <datetime>$created_at,
+            @in_person_signed_off_by := rep.id,
+        } filter .id =  <uuid>$training_id
+    )
+}`, args);
 
 }
