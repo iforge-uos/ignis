@@ -320,20 +320,19 @@ export class UsersService {
           infractions: {
             "+=": infraction,
           },
-          training: e.op(
-            e.assert_exists(
-              e.select(user.training, () => ({
+          training: {
+            "+=": e.assert_exists(
+              e.select(user.training, (training) => ({
                 filter_single: {
                   id: training_id,
                 },
                 "@infraction": infraction,
+                "@created_at": training["@created_at"],
+                "@in_person_created_at": training["@in_person_created_at"],
+                "@in_person_signed_off_by": training["@in_person_signed_off_by"],
               })),
             ),
-            "union",
-            e.select(user.training, (t) => ({
-              filter: e.op(t.id, "!=", training_id),
-            })),
-          ),
+          },
         },
       })),
     );
