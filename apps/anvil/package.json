@@ -48,7 +48,7 @@
     "cookie-parser": "^1.4.7",
     "csv-parse": "^5.6.0",
     "edgedb": "1.6.0-canary.20250213T002813",
-    "edgedb-zod": "github:iforge-uos/edgedb-zod",
+    "edgedb-zod": "github:iforge-uos/edgedb-zod#4e3c01b2ceba7c3d6c6e8b6617b076423ae33237",
     "glob": "^10.4.5",
     "googleapis": "^133.0.0",
     "handlebars": "^4.7.8",

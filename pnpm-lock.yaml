@@ -99,8 +99,8 @@ importers:
         specifier: 1.6.0-canary.20250213T002813
         version: 1.6.0-canary.20250213T002813
       edgedb-zod:
-        specifier: github:iforge-uos/edgedb-zod
-        version: https://codeload.github.com/iforge-uos/edgedb-zod/tar.gz/3253a51019c6ee046fe38cf244a88fe8a7b7ebc4
+        specifier: github:iforge-uos/edgedb-zod#4e3c01b2ceba7c3d6c6e8b6617b076423ae33237
+        version: https://codeload.github.com/iforge-uos/edgedb-zod/tar.gz/4e3c01b2ceba7c3d6c6e8b6617b076423ae33237
       glob:
         specifier: ^10.4.5
         version: 10.4.5
@@ -6489,8 +6489,8 @@ packages:
   ecdsa-sig-formatter@1.0.11:
     resolution: {integrity: sha512-nagl3RYrbNv6kQkeJIpt6NJZy8twLB/2vtz6yN9Z4vRKHN4/QZJIEbqohALSgwKdnksuY3k5Addp5lg8sVoVcQ==}
 
-  edgedb-zod@https://codeload.github.com/iforge-uos/edgedb-zod/tar.gz/3253a51019c6ee046fe38cf244a88fe8a7b7ebc4:
-    resolution: {tarball: https://codeload.github.com/iforge-uos/edgedb-zod/tar.gz/3253a51019c6ee046fe38cf244a88fe8a7b7ebc4}
+  edgedb-zod@https://codeload.github.com/iforge-uos/edgedb-zod/tar.gz/4e3c01b2ceba7c3d6c6e8b6617b076423ae33237:
+    resolution: {tarball: https://codeload.github.com/iforge-uos/edgedb-zod/tar.gz/4e3c01b2ceba7c3d6c6e8b6617b076423ae33237}
     version: 0.1.0
     hasBin: true
 
@@ -7901,6 +7901,7 @@ packages:
     resolution: {integrity: sha512-Quz3MvAwHxVYNXsOByL7xI5EB2WYOeFswqaHIA3qOK3isRWTxiplBEocmmru6XmxDB2L7jDNYtYA4FyimoAFEw==}
     engines: {node: '>=8.17.0'}
     hasBin: true
+    bundledDependencies: []
 
   jsonfile@4.0.0:
     resolution: {integrity: sha512-m6F1R3z8jjlf2imQHS2Qez5sjKWQzbuuhuJ/FKYFRZvPE3PuHcSMVZzfsLhGVOkfd20obL5SWEBew5ShlquNxg==}
@@ -15084,7 +15085,7 @@ snapshots:
       '@tanstack/virtual-file-routes': 1.81.9
       prettier: 3.3.3
       tsx: 4.19.2
-      zod: 3.23.8
+      zod: 3.24.2
 
   '@tanstack/router-plugin@1.81.9(vite@5.4.11(@types/node@22.9.0)(terser@5.39.0))(webpack@5.97.1(@swc/core@1.9.2(@swc/helpers@0.5.13)))':
     dependencies:
@@ -15105,7 +15106,7 @@ snapshots:
       babel-dead-code-elimination: 1.0.6
       chokidar: 3.6.0
       unplugin: 1.16.0
-      zod: 3.23.8
+      zod: 3.24.2
     optionalDependencies:
       vite: 5.4.11(@types/node@22.9.0)(terser@5.39.0)
       webpack: 5.97.1(@swc/core@1.9.2(@swc/helpers@0.5.13))
@@ -17627,7 +17628,7 @@ snapshots:
     dependencies:
       safe-buffer: 5.2.1
 
-  edgedb-zod@https://codeload.github.com/iforge-uos/edgedb-zod/tar.gz/3253a51019c6ee046fe38cf244a88fe8a7b7ebc4:
+  edgedb-zod@https://codeload.github.com/iforge-uos/edgedb-zod/tar.gz/4e3c01b2ceba7c3d6c6e8b6617b076423ae33237:
     dependencies:
       '@iarna/toml': 2.2.5
       edgedb: 1.6.0-canary.20250213T002813
