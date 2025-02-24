@@ -48,7 +48,7 @@ module users {
         required identity: ext::auth::Identity;
         multi roles: Role;
 
-        multi infractions: Infraction;
+        multi infractions := .<user[is Infraction];
 
         multi mailing_list_subscriptions: notification::MailingList;
         multi notifications: notification::Notification {
