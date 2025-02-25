@@ -1,9 +1,9 @@
-import {UsersService} from "@/users/users.service";
-import type {User} from "@ignis/types/users";
-import {Injectable, UnauthorizedException} from "@nestjs/common";
-import {JwtService} from "@nestjs/jwt";
-import {CookieOptions, Response} from "express";
-import {JwtPayload} from "../interfaces/jwtpayload.interface";
+import { UsersService } from "@/users/users.service";
+import type { User } from "@ignis/types/users";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import { CookieOptions, Response } from "express";
+import { JwtPayload } from "../interfaces/jwtpayload.interface";
 
 const ms = require("ms");
 
@@ -49,7 +49,7 @@ export class AuthenticationService {
     }
   }
 
-  async validateAccessToken(accessToken: string, requiredRole?: string): Promise<User> {
+  async validateAccessToken(accessToken: string, requiredRoles?: string[]): Promise<User> {
     try {
       const payload = await this.jwtService.verifyAsync(accessToken);
       const user = await this.usersService.findOne(payload.sub);
@@ -58,7 +58,7 @@ export class AuthenticationService {
         throw new UnauthorizedException("User not found");
       }
 
-      if (requiredRole && !user.roles.some((role) => role.name === requiredRole)) {
+      if (requiredRoles && !user.roles.some((role) => requiredRoles?.includes(role.name))) {
         throw new UnauthorizedException("User does not have the required role");
       }
 
@@ -101,7 +101,6 @@ export class AuthenticationService {
       expires: csrfTokenExpiresIn,
     });
   }
-
 
   clearAuthCookies(res: Response) {
     const cookieOptions: CookieOptions = {

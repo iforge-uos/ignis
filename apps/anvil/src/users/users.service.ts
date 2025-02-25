@@ -7,6 +7,7 @@ import { ldapLibraryToUcardNumber, removeDomain } from "@/shared/functions/utils
 import e from "@dbschema/edgeql-js";
 import { addInPersonTraining } from "@dbschema/queries/addInPersonTraining.query";
 import { GetSignInTrainingsReturns, getSignInTrainings } from "@dbschema/queries/getSignInTrainings.query";
+import { revokeTraining } from "@dbschema/queries/revokeTraining.query";
 import { sign_in, users } from "@ignis/types";
 import { LocationName } from "@ignis/types/sign_in";
 import { Rep, RepStatus, SignInStat, Training, User } from "@ignis/types/users";
@@ -306,40 +307,12 @@ export class UsersService {
   }
 
   async revokeTraining(id: string, training_id: string, data: RevokeTrainingDto) {
-    const user = e.assert_exists(e.select(e.users.User, () => ({ filter_single: { id } })));
-    const infraction = e.insert(e.users.Infraction, {
-      user,
-      reason: data.reason,
-      resolved: true,
-      type: e.users.InfractionType.TRAINING_ISSUE,
-    });
-
-    await this.dbService.query(
-      e.update(user, () => ({
-        set: {
-          infractions: {
-            "+=": infraction,
-          },
-          training: e.op(
-            e.assert_exists(
-              e.select(user.training, () => ({
-                filter_single: {
-                  id: training_id,
-                },
-                "@infraction": infraction,
-              })),
-            ),
-            "union",
-            e.select(user.training, (t) => ({
-              filter: e.op(t.id, "!=", training_id),
-            })),
-          ),
-        },
-      })),
-    );
+    await revokeTraining(this.dbService.client, { id, training_id, reason: data.reason });
     await this.dbService.query(
       e.delete(e.training.Session, (session) => ({
-        filter_single: e.all(e.set(e.op(session.training.id, "=", e.uuid(training_id)), e.op(session.user, "=", user))),
+        filter_single: e.all(
+          e.set(e.op(session.training.id, "=", e.uuid(training_id)), e.op(session.user.id, "=", e.uuid(id))),
+        ),
       })),
     );
   }
