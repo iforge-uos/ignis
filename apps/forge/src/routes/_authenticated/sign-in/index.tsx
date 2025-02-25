@@ -7,7 +7,7 @@ import { World } from "@ui/components/globe.tsx";
 import { Button } from "@ui/components/ui/button.tsx";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card.tsx";
 import { Separator } from "@ui/components/ui/separator";
-import { Book, Coins, MessageCircleMore } from "lucide-react";
+import { Book, Coins, MessageCircleMore, ShoppingCart } from "lucide-react";
 
 const globeConfig = {
   pointSize: 4,
@@ -404,6 +404,13 @@ const SignInIndexAppComponent = () => {
       linkText: "Join",
       externalLink: import.meta.env.VITE_DISCORD_URL,
     },
+    {
+      title: "Top up till credit",
+      description: "Add money to your till balance to make purchases in the iForge.",
+      icon: <Coins className="h-8 w-8 text-neutral-500" />,
+      linkText: "Top Up",
+      externalLink: "https://onlinepayments.shef.ac.uk/papercut",
+    },
   ];
   const roles = useUserRoles();
   const isRep = roles.some((role) => role === "rep");
@@ -414,7 +421,7 @@ const SignInIndexAppComponent = () => {
       {
         title: "Purchase Form",
         description: "Add Items that need to be purchased to the list via the purchase form!",
-        icon: <Coins className="h-8 w-8 text-neutral-500" />,
+        icon: <ShoppingCart className="h-8 w-8 text-neutral-500" />,
         linkText: "Buy",
         externalLink:
           "https://docs.google.com/forms/d/e/1FAIpQLScdLTE7eXqGQRa3e0UfymYo8qjlNTyu5xfIyArMG0wGQgHjyw/viewform",
