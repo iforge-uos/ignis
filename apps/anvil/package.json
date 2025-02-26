@@ -7,12 +7,12 @@
   "private": true,
   "scripts": {
     "build": "nest build",
-    "start": "cross-env OP_ACCOUNT=iforge.1password.com op run --env-file=../../config/anvil/.env.development.tpl -- nest start",
-    "dev": "cross-env OP_ACCOUNT=iforge.1password.com op run --env-file=../../config/anvil/.env.development.tpl -- nest start --watch --preserveWatchOutput",
-    "start:debug": "cross-env OP_ACCOUNT=iforge.1password.com op run --env-file=../../config/anvil/.env.development.tpl -- nest start --debug --watch --preserveWatchOutput",
-    "start:prod": "cross-env OP_ACCOUNT=iforge.1password.com op run --env-file=../../config/anvil/.env.production.tpl -- node dist/src/main",
+    "start": "cross-env OP_ACCOUNT=iforge.1password.com op run --env-file=./.env.development.tpl -- nest start",
+    "dev": "cross-env OP_ACCOUNT=iforge.1password.com op run --env-file=./.env.development.tpl -- nest start --watch --preserveWatchOutput",
+    "start:debug": "cross-env OP_ACCOUNT=iforge.1password.com op run --env-file=./.env.development.tpl -- nest start --debug --watch --preserveWatchOutput",
+    "start:prod": "cross-env OP_ACCOUNT=iforge.1password.com op run --env-file=./.env.production.tpl -- node dist/src/main",
     "start:prod:docker": "node dist/src/main.js",
-    "start:email": "cross-env OP_ACCOUNT=iforge.1password.com op run --env-file=../../config/anvil/.env.development.tpl -- email preview src/email/templates",
+    "start:email": "cross-env OP_ACCOUNT=iforge.1password.com op run --env-file=./.env.development.tpl -- email preview src/email/templates",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -107,19 +107,13 @@
     "typescript": "^5.7.3"
   },
   "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
+    "moduleFileExtensions": ["js", "json", "ts"],
     "rootDir": "src",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
+    "collectCoverageFrom": ["**/*.(t|j)s"],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   }
