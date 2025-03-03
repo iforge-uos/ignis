@@ -837,4 +837,14 @@ export class SignInService implements OnModuleInit {
       )
       .then(({ common, default_ }) => [...default_, ...common].map((reason) => ({ id: reason.id_, ...reason })));
   }
+
+  async supervisingReps(name: LocationName) {
+    return e
+      .select(e.select(e.sign_in.Location, () => ({ filter_single: { name } })).supervising_reps, () => ({
+        id: true,
+        display_name: true,
+        supervisable_training: true,
+      }))
+      .run(this.dbService.client);
+  }
 }

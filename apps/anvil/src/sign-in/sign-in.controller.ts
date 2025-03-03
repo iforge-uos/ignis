@@ -181,4 +181,10 @@ export class SignInController {
   async getPopularSignInReasons(@Param("location") location: LocationName, @Query("rep") rep: string) {
     return this.signInService.getPopularReasons(location, rep === "true");
   }
+
+  @Get("/supervising-reps")
+  @IsRep()
+  async getSupervisingReps(@Param("location") location: LocationName) {
+    return this.signInService.supervisingReps(location);
+  }
 }

@@ -1,6 +1,7 @@
 import { activeLocationAtom } from "@/atoms/signInAppAtoms";
 import { iForgeEpoch } from "@/config/constants";
 import { ManageUserWidgetProps } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/ManageUserWidget.tsx";
+import { getSupervisingReps } from "@/services/sign_in/getSupervisableTraining";
 import addInPersonTraining from "@/services/users/addInPersonTraining.ts";
 import { getUserTrainingRemaining } from "@/services/users/getUserTrainingRemaining.ts";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -26,7 +27,7 @@ import * as React from "react";
 import { toast } from "sonner";
 import { getTrainingCardInfo } from "../../../actions/-components/TrainingSelectionList";
 
-export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locationName: location, onShiftReps }) => {
+export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locationName: location }) => {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [repSigningOff, setRepSigningOff] = React.useState<string>();
   const [training, setTraining] = React.useState<string>();
@@ -34,6 +35,10 @@ export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locatio
   const { data: remainingTrainings } = useQuery({
     queryKey: ["userTrainingRemaining", user.id],
     queryFn: () => getUserTrainingRemaining(user.id, activeLocation),
+  });
+  const { data: onShiftReps } = useQuery({
+    queryKey: ["supervisingReps"],
+    queryFn: () => getSupervisingReps(activeLocation),
   });
   const queryClient = useQueryClient();
 
@@ -119,18 +124,21 @@ export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locatio
       </div>
       <div className="m-2">
         <Label>Verified by</Label>
-        <Select required onValueChange={setRepSigningOff}>
+        <Select required onValueChange={setRepSigningOff} disabled={!training}>
           <SelectTrigger className="mt-2">
             <SelectValue placeholder="Choose an on shift Rep" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
               {onShiftReps && onShiftReps.length > 0 ? (
-                onShiftReps.map((rep) => (
-                  <SelectItem value={rep.id} key={rep.id}>
-                    {rep.display_name}
-                  </SelectItem>
-                ))
+                onShiftReps.map(
+                  (rep) =>
+                    rep.supervisable_training.some((t) => t.id === training) && (
+                      <SelectItem value={rep.id} key={rep.id}>
+                        {rep.display_name}
+                      </SelectItem>
+                    ),
+                )
               ) : (
                 <SelectItem className="w-fit" value={"unselectable"} disabled>
                   <p>

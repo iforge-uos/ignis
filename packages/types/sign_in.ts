@@ -72,3 +72,11 @@ export type Reason = PartialReason & {
 };
 
 export type TrainingSelectability = Training["selectable"][number];
+
+export type SupervisingRep = {
+  id: string;
+  supervisable_training: {
+    id: string;
+  }[];
+  display_name: string;
+}[];
