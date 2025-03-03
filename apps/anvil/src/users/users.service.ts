@@ -320,20 +320,11 @@ export class UsersService {
   async addInfraction(id: string, data: CreateInfractionDto) {
     const user = e.assert_exists(e.select(e.users.User, () => ({ filter_single: { id } })));
     return this.dbService.query(
-      e.update(user, () => ({
-        set: {
-          infractions: {
-            "+=": e.insert(e.users.Infraction, {
-              user,
-              created_at: data.created_at,
-              reason: data.reason,
-              resolved: data.resolved,
-              type: data.type,
-              duration: data.duration ? new Duration(0, 0, 0, 0, data.duration) : undefined,
-            }),
-          },
-        },
-      })),
+      e.insert(e.users.Infraction, {
+        user,
+        ...data,
+        duration: data.duration ? new Duration(0, 0, 0, 0, data.duration) : undefined,
+      }),
     );
   }
 
@@ -361,7 +352,6 @@ export class UsersService {
             pronouns: user.pronouns,
             organisational_unit: user.organisational_unit,
             agreements_signed: user.agreements_signed,
-            infractions: user.infractions,
             mailing_list_subscriptions: user.mailing_list_subscriptions,
             referrals: user.referrals,
             training: user.training,

@@ -6,13 +6,13 @@ import {
 import { createZodDto } from "nestjs-zod";
 import { z } from "zod";
 
-export class CreateUserDto extends createZodDto(CreateUserSchema) {}
-export class UpdateUserDto extends createZodDto(UpdateUserSchema) {}
+export class CreateUserDto extends createZodDto(CreateUserSchema.omit({ created_at: true, updated_at: true })) {}
+export class UpdateUserDto extends createZodDto(UpdateUserSchema.omit({ updated_at: true })) {}
 
 const CreateInfractionSchema = CreateInfractionSchema_.omit({ duration: true }).extend({
   duration: z.number().optional(),
 });
-export class CreateInfractionDto extends createZodDto(CreateInfractionSchema) {}
+export class CreateInfractionDto extends createZodDto(CreateInfractionSchema.omit({ created_at: true })) {}
 
 export const AddInPersonTrainingSchema = z.object({
   rep_id: z.string(),
