@@ -6,7 +6,7 @@ import {
 import { createZodDto } from "nestjs-zod";
 import { z } from "zod";
 
-export class CreateUserDto extends createZodDto(CreateUserSchema.omit({ created_at: true, updated_at: true })) {}
+export class CreateUserDto extends createZodDto(CreateUserSchema.omit({ updated_at: true })) {}
 export class UpdateUserDto extends createZodDto(UpdateUserSchema.omit({ updated_at: true })) {}
 
 const CreateInfractionSchema = CreateInfractionSchema_.omit({ duration: true }).extend({

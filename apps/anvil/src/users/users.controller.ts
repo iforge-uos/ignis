@@ -27,12 +27,6 @@ export class UsersController {
     private readonly logger: Logger,
   ) {}
 
-  @Post()
-  async create(@Body() createUserDto: CreateUserDto) {
-    this.logger.log(`Creating user with data: ${JSON.stringify(createUserDto)}`, UsersController.name);
-    return this.usersService.create(createUserDto);
-  }
-
   @Get()
   @IsRep()
   async findAll() {

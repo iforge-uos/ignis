@@ -84,25 +84,6 @@ export class UsersService {
     private readonly ldapService: LdapService,
   ) {}
 
-  /** Insert a user into the database. Take extra care that the ucard_number is a valid thing to insert */
-  async create(
-    createUserDto: Omit<CreateUserDto, "ucard_number"> & {
-      ucard_number: any;
-      roles?: any;
-    },
-  ): Promise<User> {
-    try {
-      return await this.dbService.query(e.select(e.insert(e.users.User, {...createUserDto, identity: e.select(e.ext.auth.Identity, () => ({filter_single: {id: "1a303be8-ea7e-11ef-a788-f754eb455bde"}}))}), (user) => UserProps(user)));
-    } catch (error) {
-      if (error instanceof ConstraintViolationError && error.code === 84017153) {
-        throw new ConflictException("A user registered with the same UCard number already exists", {
-          cause: error.toString(),
-        });
-      }
-      throw error;
-    }
-  }
-
   async findAll(): Promise<User[]> {
     return await this.dbService.query(e.select(e.users.User, (user) => UserProps(user)));
   }
