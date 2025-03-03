@@ -103,11 +103,8 @@ module sign_in {
         );
 
         required can_sign_in := (
-            select (
-                # the hard cap assuming you're signing in as a user, on shift reps skip this check
-                count(.sign_ins) < .max_count
-                and (.max_count + count(.supervising_reps) - count(.sign_ins)) >= 0
-            )
+            # the hard cap assuming you're signing in as a user, on shift reps skip this check
+            select count(.sign_ins) < .max_count
         );
 
         required queue_enabled: bool {
