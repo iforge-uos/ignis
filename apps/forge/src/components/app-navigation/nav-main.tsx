@@ -21,12 +21,11 @@ interface NavMainProps {
 
 export function NavMain({ items }: NavMainProps) {
   const userRoles = useUserRoles();
-  const { toggleSidebar, open} = useSidebar()
+  const { toggleSidebar, openMobile, isMobile } = useSidebar()
 
-  // function that toggles sidebar if its not open when button is clicked
-  const toggleSidebarIfClosed = () => {
-    if(!open) {
-      toggleSidebar()
+  const handleClick = () => {
+    if (isMobile && openMobile) {
+      toggleSidebar();
     }
   }
 
@@ -41,7 +40,6 @@ export function NavMain({ items }: NavMainProps) {
     return item.requiredRoles.every((requiredRole) => userRoles.includes(requiredRole.toLowerCase()));
   });
 
-
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
@@ -51,13 +49,13 @@ export function NavMain({ items }: NavMainProps) {
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
                 {item.items && item.items.length > 0 ? (
-                  <SidebarMenuButton tooltip={item.title} onClick={toggleSidebarIfClosed}>
+                  <SidebarMenuButton tooltip={item.title} onClick={handleClick}>
                     {item.icon && <item.icon />}
                     <span>{item.title}</span>
                     <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                   </SidebarMenuButton>
                 ) : (
-                  <Link to={item.url}>
+                  <Link to={item.url} onClick={handleClick}>
                     <SidebarMenuButton tooltip={item.title}>
                       {item.icon && <item.icon />}
                       <span>{item.title}</span>
@@ -71,7 +69,7 @@ export function NavMain({ items }: NavMainProps) {
                     {item.items.map((subItem) => (
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton asChild>
-                          <Link to={subItem.url}>
+                          <Link to={subItem.url} onClick={handleClick}>
                             {subItem.icon && <subItem.icon />}
                             <span>{subItem.title}</span>
                           </Link>

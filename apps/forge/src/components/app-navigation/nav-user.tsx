@@ -18,16 +18,27 @@ import { BadgeCheck, Bell, ChevronsUpDown, LogIn, LogOut, Moon, Settings, Sun } 
 
 export function NavUser() {
   const user = useUser();
-  const { isMobile, state } = useSidebar();
+  const { isMobile, state, toggleSidebar, openMobile } = useSidebar();
   const { setTheme, theme } = useTheme();
 
   const metaKey = useShortcutKey();
 
   const isMinimized = state === "collapsed";
 
+  const handleClick = () => {
+    if (isMobile && openMobile) {
+      toggleSidebar();
+    }
+  };
+
+  const handleThemeClick = () => {
+    setTheme(theme === "light" ? "dark" : "light");
+    handleClick();
+  };
+
   if (!user) {
     return (
-      <Link to="/sign-in/dashboard" className="w-full">
+      <Link to="/sign-in/dashboard" className="w-full" onClick={handleClick}>
         <Button
           variant="default"
           size={isMinimized ? "icon" : "default"}
@@ -78,27 +89,27 @@ export function NavUser() {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
-                <Link to="/user/me">
+                <Link to="/user/me" onClick={handleClick}>
                   <BadgeCheck className="mr-2 h-4 w-4" />
                   Profile
                   <Shortcut keys={[metaKey, "P"]} className="ml-auto" />
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild disabled>
-                <Link to="/user/settings">
+                <Link to="/user/settings" onClick={handleClick}>
                   <Settings className="mr-2 h-4 w-4" />
                   Settings
                   <Shortcut keys={[metaKey, "S"]} className="ml-auto" />
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild disabled>
-                <Link to="">
+                <Link to="" onClick={handleClick}>
                   <Bell className="mr-2 h-4 w-4" />
                   Notifications
                   <Shortcut keys={[metaKey, "N"]} className="ml-auto" />
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
+              <DropdownMenuItem onClick={handleThemeClick}>
                 {theme === "light" ? <Moon className="mr-2 h-4 w-4" /> : <Sun className="mr-2 h-4 w-4" />}
                 {theme === "light" ? "Dark" : "Light"} mode
                 <Shortcut keys={[metaKey, "T"]} className="ml-auto" />
@@ -106,7 +117,7 @@ export function NavUser() {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link to="/auth/logout">
+              <Link to="/auth/logout" onClick={handleClick}>
                 <LogOut className="mr-2 h-4 w-4" />
                 Log out
                 <Shortcut keys={[metaKey, "Q"]} className="ml-auto" />
