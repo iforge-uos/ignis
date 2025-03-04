@@ -10,7 +10,6 @@ import { Apps } from "@/types/app";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
-import { Toaster } from "@ui/components/ui/sonner.tsx";
 import { DevTools } from "jotai-devtools";
 import React from "react";
 import { DndProvider } from "react-dnd";
@@ -84,7 +83,6 @@ if (rootElement) {
                   <AuthProvider>
                     <DevTools position="bottom-right" />
                     <App />
-                    <Toaster richColors />
                   </AuthProvider>
                 </TooltipProvider>
               </DndProvider>

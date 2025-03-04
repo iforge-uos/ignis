@@ -8,9 +8,11 @@ import { Loading } from "@/components/routing/Loading.tsx";
 import { NotFound } from "@/components/routing/NotFound.tsx";
 import UCardReader from "@/components/ucard-reader";
 import { useUser } from "@/lib/utils.ts";
+import { useTheme } from "@/providers/themeProvider/use-theme";
 import { SidebarInset, SidebarProvider } from "@ignis/ui/components/ui/sidebar";
 import { QueryClient } from "@tanstack/react-query";
 import { Outlet, ScrollRestoration, createRootRouteWithContext } from "@tanstack/react-router";
+import { Toaster } from "@ui/components/ui/sonner";
 import React, { Suspense } from "react";
 
 const TanStackRouterDevtools = import.meta.env.PROD
@@ -32,6 +34,7 @@ export function RootComponentInner({ children }: { children: React.ReactNode }) 
       <Suspense>
         <TanStackRouterDevtools position="bottom-right" />
       </Suspense>
+      <Toaster richColors theme={useTheme().normalisedTheme} />
     </>
   );
 }
