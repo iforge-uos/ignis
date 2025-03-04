@@ -9,8 +9,6 @@ module sign_in {
         );
 
         constraint exclusive on (.user) except (.signed_out);
-
-
     }
 
     # N.B. make sure to update in forge/lib/constants
@@ -80,7 +78,7 @@ module sign_in {
         );
         multi off_shift_reps := (
             with rep_sign_ins := (
-                select .sign_ins filter .user is users::Rep and .reason.name = "Rep Off Shift"
+                select .sign_ins filter .user is users::Rep and .reason.name != "Rep On Shift"
             ),
             select rep_sign_ins.user[is users::Rep]
         );
@@ -94,9 +92,11 @@ module sign_in {
         );
 
         required max_count := (
+            with
+                multiplier := .out_of_hours_rep_multiplier if .out_of_hours else .in_of_hours_rep_multiplier
             select min(
                 {
-                    (select .out_of_hours_rep_multiplier if .out_of_hours else .in_of_hours_rep_multiplier) * count(.supervising_reps),
+                    multiplier * count(.supervising_reps) + count(.off_shift_reps),
                     .max_users,
                 }
             )
