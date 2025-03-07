@@ -16,7 +16,7 @@ export function Queued({ id = "0000-0000-0000-0000", location = "{location}" }: 
         <Text>
           Hey there!
           <br />
-          You've been added to the queue at {new Date(new Date().getTime() + 1000 * 60 * 15).toLocaleTimeString()}.
+          You've been added to the queue at {new Date(new Date().getTime()).toLocaleTimeString()}.
           You'll get an email when a place is available.
         </Text>
 
