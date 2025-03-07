@@ -1,0 +1,1 @@
+EDGEDB_DSN="op://IT/Ignis Env - DEVELOPMENT/Anvil/EDGEDB_DSN"
