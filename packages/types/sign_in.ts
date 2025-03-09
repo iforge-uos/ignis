@@ -1,5 +1,7 @@
 import { sign_in, std, training } from "@dbschema/interfaces";
 import { GetSignInTrainingsReturns } from "@dbschema/queries/getSignInTrainings.query";
+import { Temporal } from "@js-temporal/polyfill";
+import { LocalTime } from "edgedb";
 import * as users from "./users";
 
 export type {
@@ -37,12 +39,12 @@ export type PartialLocation = {
   on_shift_rep_count: number;
   off_shift_rep_count: number;
   user_count: number;
-  max: number;
+  max_count: number;
   queue_in_use: boolean;
   out_of_hours: boolean;
-  count_in_queue: number;
-  opening_time: string;
-  closing_time: string;
+  queued: number;
+  opening_time: LocalTime | Temporal.PlainTime;
+  closing_time: LocalTime | Temporal.PlainTime;
 };
 
 /** The type of the location/:location endpoint storing data on who's logged in for the dashboard  */

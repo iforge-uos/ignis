@@ -1,7 +1,6 @@
 import { activeLocationAtom } from "@/atoms/signInAppAtoms.ts";
 import { UserAvatar } from "@/components/avatar";
 import { TeamIcon } from "@/components/icons/Team.tsx";
-import { iForgeEpoch } from "@/config/constants.ts";
 import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants.ts";
 import { uCardNumberToString } from "@/lib/utils.ts";
 import { AdminDisplay } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/AdminDisplay.tsx";
@@ -182,7 +181,7 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
           <SignInReasonWithToolsDisplay user={user} tools={tools!} reason={reason!} key={user.id} />
         )}
       </div>
-      <TimeDisplay timeIn={timeIn ?? iForgeEpoch} />
+      <TimeDisplay timeIn={timeIn} />
       <div className="pt-4 border-t border-gray-700 flex justify-between">
         <AddUserAttributes onShiftReps={onShiftReps} user={user} activeLocation={activeLocation} />
         <Tooltip>

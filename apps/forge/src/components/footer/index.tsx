@@ -3,14 +3,21 @@
 import { Entries, removeSuffix, toTitleCase } from "@/lib/utils";
 import { locationStatus } from "@/services/sign_in/locationService";
 import { PartialLocation } from "@ignis/types/sign_in";
+import { LocationIcon } from "@ignis/ui/components/icons/Locations";
+import {
+  DiscordIcon,
+  GitHubIcon,
+  InstagramIcon,
+  LinkedInIcon,
+  TwitterIcon,
+  YouTubeIcon,
+} from "@ignis/ui/components/icons/Socials";
+import { IForgeLogo } from "@ignis/ui/components/icons/iforge";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Separator } from "@ui/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip";
 import Balancer from "react-wrap-balancer";
-import { LocationIcon } from "../icons/Locations";
-import { DiscordIcon, GitHubIcon, InstagramIcon, LinkedInIcon, TwitterIcon, YouTubeIcon } from "../icons/Socials";
-import { IForgeLogo } from "../icons/iforge";
 
 function LocationStatusTooltip({ location }: { location: PartialLocation }) {
   let className: string;

@@ -22,7 +22,7 @@ DISCORD_CLIENT_CALLBACK_URL="http://127.0.0.1:3000/v1/authentication/discord/cal
 # AUTH
 JWT_SECRET="op://Employee/JWT Secret Key/password"
 CSRF_SECRET="op://Employee/CSRF Secret Key/password"
-CSRF_EXCLUDE_ROUTES=v1/authentication/login,POST;v1/authentication/refresh,POST
+CSRF_EXCLUDE_ROUTES="v1/authentication/login,POST;v1/authentication/refresh,POST"
 ACCESS_TOKEN_EXPIRES_IN="1h"
 REFRESH_TOKEN_EXPIRES_IN="7d"
 ADMIN_ROLE="5ea86cc8-f86c-11ee-8cfe-bfcf9fe5f446"
@@ -45,7 +45,7 @@ REDIS_DB="0"
 REDIS_PASSWORD="op://Employee/Ignis Redis Password/password"
 
 # CDN
-CDN_URL="http://[::]:4000"
+CDN_URL="http://127.0.0.1:4000"
 
 # Front End
 FRONT_END_URL="http://127.0.0.1:8000"

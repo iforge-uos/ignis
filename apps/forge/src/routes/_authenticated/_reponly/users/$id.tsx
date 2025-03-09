@@ -6,7 +6,7 @@ import { getUser } from "@/services/users/getUser.ts";
 import getUserSignIns from "@/services/users/getUserSignIns.ts";
 import { getUserTraining } from "@/services/users/getUserTraining.ts";
 import { Training } from "@ignis/types/users.ts";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { Badge } from "@ui/components/ui/badge.tsx";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@ui/components/ui/table.tsx";
 import { Check, X } from "lucide-react";
@@ -143,11 +143,7 @@ export const Route = createFileRoute("/_authenticated/_reponly/users/$id")({
   loader: async ({ params }) => {
     const userId = params.id;
     if (userId === undefined) {
-      return {
-        user: null,
-        trainings: [],
-        signIns: [],
-      };
+      throw notFound();
     }
     const [user, trainings, signIns] = await Promise.all([
       getUser(userId),

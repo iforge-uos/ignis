@@ -12,7 +12,7 @@ import { Input } from "@ui/components/ui/input";
 import { Separator } from "@ui/components/ui/separator";
 import { Sheet, SheetContent } from "@ui/components/ui/sheet";
 import { Skeleton } from "@ui/components/ui/skeleton";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ui/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip";
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;

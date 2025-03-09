@@ -21,6 +21,8 @@ import { ForgeRouterContext } from "@/routes/__root.tsx";
 import { TooltipProvider } from "@ui/components/ui/tooltip";
 import { queryClientAtom } from "jotai-tanstack-query";
 import { useHydrateAtoms } from "jotai/react/utils";
+import { Temporal, toTemporalInstant } from "@js-temporal/polyfill";
+import { Toaster } from "@ui/components/ui/sonner";
 
 // Begin Router
 const queryClient = new QueryClient();
@@ -69,6 +71,14 @@ function App() {
   );
 }
 
+declare global {
+  interface Date {
+    toTemporalInstant(): Temporal.Instant;
+  }
+}
+
+Date.prototype.toTemporalInstant = toTemporalInstant;
+
 const rootElement = document.getElementById("root");
 
 if (rootElement) {
@@ -83,6 +93,7 @@ if (rootElement) {
                   <AuthProvider>
                     <DevTools position="bottom-right" />
                     <App />
+                    <Toaster richColors />
                   </AuthProvider>
                 </TooltipProvider>
               </DndProvider>

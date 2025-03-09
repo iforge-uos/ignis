@@ -18,6 +18,7 @@
     "@ignis/ts-config": "workspace:*",
     "@ignis/types": "workspace:*",
     "@ignis/ui": "workspace:*",
+    "@js-temporal/polyfill": "^0.4.4",
     "@nivo/calendar": "^0.87.0",
     "@radix-ui/react-aspect-ratio": "^1.1.0",
     "@radix-ui/react-dialog": "^1.1.2",
@@ -51,7 +52,6 @@
     "masonic": "^4.0.1",
     "md5": "^2.3.0",
     "memoize-one": "^6.0.0",
-    "next-themes": "^0.3.0",
     "postcss": "^8.4.49",
     "react": "^18.3.1",
     "react-cookie": "^7.2.2",
@@ -75,7 +75,7 @@
     "tailwindcss": "^3.4.15",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^10.0.0",
-    "zod": "^3.23.8"
+    "zod": "^3.24.0"
   },
   "devDependencies": {
     "@tanstack/router-cli": "^1.81.9",

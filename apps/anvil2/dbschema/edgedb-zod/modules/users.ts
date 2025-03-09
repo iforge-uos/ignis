@@ -15,10 +15,10 @@ export const RepStatusSchema = z.enum(["ACTIVE", "BREAK", "ALUMNI", "FUTURE", "R
 // #region users::Infraction
 export const CreateInfractionSchema = z.
   object({ // default::CreatedAt
-    created_at: z.date().optional(), // std::datetime
+    created_at: z.string().datetime({ offset: true }).optional(), // std::datetime
   })
   .extend({ // users::Infraction
-    duration: z.string().regex(/^(\d+(\.\d+)?\s(microseconds|milliseconds|seconds|minutes|hours)\s?)+$/).optional(), // std::duration
+    duration: z.string().duration().optional(), // std::duration
     reason: z.string(), // std::str
     resolved: z.boolean().optional(), // std::bool
     type: z.enum(["WARNING", "TEMP_BAN", "PERM_BAN", "RESTRICTION", "TRAINING_ISSUE"]), // users::InfractionType
@@ -28,7 +28,7 @@ export const UpdateInfractionSchema = z.
   object({ // default::CreatedAt
   })
   .extend({ // users::Infraction
-    duration: z.string().regex(/^(\d+(\.\d+)?\s(microseconds|milliseconds|seconds|minutes|hours)\s?)+$/).optional(), // std::duration
+    duration: z.string().duration().optional(), // std::duration
     reason: z.string(), // std::str
     resolved: z.boolean().optional(), // std::bool
     type: z.enum(["WARNING", "TEMP_BAN", "PERM_BAN", "RESTRICTION", "TRAINING_ISSUE"]), // users::InfractionType
@@ -38,7 +38,10 @@ export const UpdateInfractionSchema = z.
 // #region users::Integration
 export const CreateIntegrationSchema = z.
   object({ // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: z.string().datetime({ offset: true }).optional(), // std::datetime
+  })
+  .extend({ // default::CreatedAt
+    created_at: z.string().datetime({ offset: true }).optional(), // std::datetime
   })
   .extend({ // users::Integration
     external_id: z.string(), // std::str
@@ -48,7 +51,9 @@ export const CreateIntegrationSchema = z.
 
 export const UpdateIntegrationSchema = z.
   object({ // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: z.string().datetime({ offset: true }).optional(), // std::datetime
+  })
+  .extend({ // default::CreatedAt
   })
   .extend({ // users::Integration
     external_id: z.string(), // std::str
@@ -63,12 +68,18 @@ export const CreateRepSchema = z.
     first_name: z.string(), // std::str
     last_name: z.string().optional(), // std::str
     display_name: z.string().optional(), // std::str
-    email: z.string().regex(/[\w\-\.]+/), // std::str
+    email: z.string().regex(/select std::re_test(r'[\w\-\.]+', __subject__)/), // std::str
     organisational_unit: z.string(), // std::str
     profile_picture: z.string().optional(), // std::str
     pronouns: z.string().optional(), // std::str
-    ucard_number: z.number().int().min(0).max(2147483647), // std::int32
+    ucard_number: z.number().int().min(-2147483648).max(2147483647), // std::int32
     username: z.string(), // std::str
+  })
+  .extend({ // default::Auditable
+    updated_at: z.string().datetime({ offset: true }).optional(), // std::datetime
+  })
+  .extend({ // default::CreatedAt
+    created_at: z.string().datetime({ offset: true }).optional(), // std::datetime
   })
   .extend({ // users::Rep
     status: z.enum(["ACTIVE", "BREAK", "ALUMNI", "FUTURE", "REMOVED"]).optional(), // users::RepStatus
@@ -79,15 +90,32 @@ export const UpdateRepSchema = z.
     first_name: z.string(), // std::str
     last_name: z.string().optional(), // std::str
     display_name: z.string().optional(), // std::str
-    email: z.string().regex(/[\w\-\.]+/), // std::str
+    email: z.string().regex(/select std::re_test(r'[\w\-\.]+', __subject__)/), // std::str
     organisational_unit: z.string(), // std::str
     profile_picture: z.string().optional(), // std::str
     pronouns: z.string().optional(), // std::str
-    ucard_number: z.number().int().min(0).max(2147483647), // std::int32
+    ucard_number: z.number().int().min(-2147483648).max(2147483647), // std::int32
     username: z.string(), // std::str
+  })
+  .extend({ // default::Auditable
+    updated_at: z.string().datetime({ offset: true }).optional(), // std::datetime
+  })
+  .extend({ // default::CreatedAt
   })
   .extend({ // users::Rep
     status: z.enum(["ACTIVE", "BREAK", "ALUMNI", "FUTURE", "REMOVED"]).optional(), // users::RepStatus
+  });
+// #endregion
+
+// #region users::Role
+export const CreateRoleSchema = z.
+  object({
+    name: z.string(), // std::str
+  });
+
+export const UpdateRoleSchema = z.
+  object({
+    name: z.string(), // std::str
   });
 // #endregion
 
@@ -108,33 +136,38 @@ export const UpdateSettingTemplateSchema = z.
 // #region users::User
 export const CreateUserSchema = z.
   object({ // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: z.string().datetime({ offset: true }).optional(), // std::datetime
+  })
+  .extend({ // default::CreatedAt
+    created_at: z.string().datetime({ offset: true }).optional(), // std::datetime
   })
   .extend({ // users::User
     first_name: z.string(), // std::str
     last_name: z.string().optional(), // std::str
     display_name: z.string().optional(), // std::str
-    email: z.string().regex(/[\w\-\.]+/), // std::str
+    email: z.string().regex(/select std::re_test(r'[\w\-\.]+', __subject__)/), // std::str
     organisational_unit: z.string(), // std::str
     profile_picture: z.string().optional(), // std::str
     pronouns: z.string().optional(), // std::str
-    ucard_number: z.number().int().min(0).max(2147483647), // std::int32
+    ucard_number: z.number().int().min(-2147483648).max(2147483647), // std::int32
     username: z.string(), // std::str
   });
 
 export const UpdateUserSchema = z.
   object({ // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: z.string().datetime({ offset: true }).optional(), // std::datetime
+  })
+  .extend({ // default::CreatedAt
   })
   .extend({ // users::User
     first_name: z.string(), // std::str
     last_name: z.string().optional(), // std::str
     display_name: z.string().optional(), // std::str
-    email: z.string().regex(/[\w\-\.]+/), // std::str
+    email: z.string().regex(/select std::re_test(r'[\w\-\.]+', __subject__)/), // std::str
     organisational_unit: z.string(), // std::str
     profile_picture: z.string().optional(), // std::str
     pronouns: z.string().optional(), // std::str
-    ucard_number: z.number().int().min(0).max(2147483647), // std::int32
+    ucard_number: z.number().int().min(-2147483648).max(2147483647), // std::int32
     username: z.string(), // std::str
   });
 // #endregion

@@ -1,4 +1,6 @@
 import { sign_in } from "@dbschema/interfaces";
+import { Temporal } from "@js-temporal/polyfill";
+import { Duration } from "edgedb";
 import { PartialReason } from "./sign_in";
 import { PartialUser } from "./users";
 
@@ -18,7 +20,7 @@ export type SignIn = {
   id: string;
   created_at: Date;
   ends_at: Date | null;
-  duration: number;
+  duration: Temporal.Duration | Duration; // number of seconds
   location: { name: sign_in.LocationName };
   signed_out: boolean | null;
   tools: string[];

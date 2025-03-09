@@ -10,13 +10,14 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button";
 import { Separator } from "@ui/components/ui/separator";
+import { CirclePlus } from "lucide-react";
 import ImageGradient from "./ImageGradient";
 import TrainingCourseCard from "./TrainingCourseCard";
 import { CirclePlus } from "lucide-react";
 
 // don't ask why this is in the components folder
 export async function getData(location: LocationName): Promise<PartialTrainingWithStatus[]> {
-  const [trainings, statuses]: any = await Promise.all([getLocation(location), getStatus(location)]);
+  const [trainings, statuses]: any = await Promise.all([getLocation(location), getStatus(location)]); // FIXME needs to not call status if not authed
   for (const training of trainings) {
     training.status = statuses[training.id];
     if (training.rep) {

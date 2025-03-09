@@ -1,19 +1,31 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "jsx": "react",
     "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "node",
+    "jsx": "react-jsx",
+    "lib": ["ES2022"],
+    "moduleDetection": "force",
+    "useDefineForClassFields": true,
+    "module": "ES2022",
+
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "types": ["node"],
+
+    "noImplicitOverride": true,
+    "noUncheckedIndexedAccess": true,
+    "noEmit": true,
+    "noUncheckedSideEffectImports": true,
+    "isolatedModules": true,
     "outDir": "./dist",
     "rootDir": "./",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": "./",
+    "baseUrl": ".",
     "rootDirs": ["./src", "./dbschema"],
     "paths": {
-      "@/": ["./src/*"],
       "@/*": ["./src/*"],
       "@dbschema/*": ["./dbschema/*"]
     },

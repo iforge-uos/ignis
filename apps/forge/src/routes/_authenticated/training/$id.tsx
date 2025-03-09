@@ -4,6 +4,7 @@ import { TrainingHeader } from "@/components/training/TrainingHeader";
 import { cn } from "@/lib/utils";
 import { get } from "@/services/training/get";
 import type { InteractionResponse, Section, Training } from "@ignis/types/training";
+import { Temporal } from "@js-temporal/polyfill";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button";
 import { Checkbox } from "@ui/components/ui/checkbox";
@@ -37,8 +38,8 @@ const Component: React.FC = () => {
   const [buttonDisabled, setButtonDisabled] = React.useState<boolean>(false);
   const [sections, setSections] = React.useState<Section[]>([]);
   const [progress, setProgress] = React.useState(0);
-  const [_, setDelay] = React.useState<number | null>(null);
-  const [duration, setDuration] = React.useState<number | null>(null);
+  const [_, setDelay] = React.useState<number | null | undefined>(null);
+  const [duration, setDuration] = React.useState<number | null | undefined>(null);
   const [answers, setAnswers] = React.useState<{ id: string }[]>([]);
 
   React.useEffect(() => {
@@ -102,12 +103,12 @@ const Component: React.FC = () => {
 
     setButtonName("Next");
     if (section.type_name === "training::TrainingPage") {
-      const duration_ = section.duration_ ? Number.parseFloat(section.duration_) * 1000 : null;
-      if (duration_) {
+      if (section.duration) {
         setButtonDisabled(true);
       }
-      setDelay(duration_);
-      setDuration(duration_);
+      const seconds = (section.duration as Temporal.Duration | null)?.total("seconds");
+      setDelay(seconds);
+      setDuration(seconds);
     }
   };
 

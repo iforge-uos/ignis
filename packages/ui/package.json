@@ -85,7 +85,6 @@
     "framer-motion": "^11.11.9",
     "input-otp": "^1.2.4",
     "lucide-react": "^0.383.0",
-    "next-themes": "^0.2.1",
     "postcss": "^8.4.47",
     "react": "^18.3.1",
     "react-day-picker": "^8.10.1",
@@ -110,9 +109,10 @@
     "three": "^0.163.0",
     "three-globe": "^2.33.0",
     "vaul": "^0.9.9",
-    "zod": "^3.23.8"
+    "zod": "^3.24.0"
   },
   "devDependencies": {
-    "@types/three": "^0.163.0"
+    "@types/three": "^0.163.0",
+    "@types/node": "^22.13.1"
   }
 }

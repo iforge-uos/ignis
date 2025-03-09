@@ -1,6 +1,6 @@
-import { Category } from "@/components/icons/SignInReason.tsx";
 import { cn } from "@/lib/utils.ts";
 import { PartialReason } from "@ignis/types/sign_in.ts";
+import { Category } from "@ui/components/icons/SignInReason.tsx";
 import { Badge } from "@ui/components/ui/badge.tsx";
 import { Kbd } from "@ui/components/ui/kbd";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip.tsx";

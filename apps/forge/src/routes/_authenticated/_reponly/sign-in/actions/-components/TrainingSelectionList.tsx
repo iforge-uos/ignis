@@ -377,27 +377,35 @@ export default function TrainingSelection({
       >
         <AnimatePresence>
           {selectedTrainings.map((training) => (
-            <motion.div key={training.id} variants={badgeVariants} animate="animate" exit="exit" layout>
-              <Badge
-                variant="secondary"
-                className="px-2 py-1 text-xs font-medium rounded-sm flex items-center bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100"
-              >
-                {training.name}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-4 w-4 ml-2 p-0 hover:bg-zinc-200 dark:hover:bg-zinc-700"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleTraining(training);
-                  }}
+
+              <motion.div
+                key={training.id}
+                variants={badgeVariants}
+
+                animate="animate"
+                exit="exit"
+                layout>
+
+                <Badge
+                  variant="secondary"
+                  className="px-2 py-1 text-xs font-medium rounded-sm flex items-center bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100"
                 >
-                  <XCircle className="h-3 w-3" />
-                  <span className="sr-only">Remove</span>
-                </Button>
-              </Badge>
-            </motion.div>
-          ))}
+                  {training.name}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-4 w-4 ml-2 p-0 hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleTraining(training);
+                    }}
+                  >
+                    <XCircle className="h-3 w-3" />
+                    <span className="sr-only">Remove</span>
+                  </Button>
+                </Badge>
+              </motion.div>
+            ) )}
         </AnimatePresence>
       </motion.div>
     </div>

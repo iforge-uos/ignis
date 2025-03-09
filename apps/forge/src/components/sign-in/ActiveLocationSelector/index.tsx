@@ -9,7 +9,7 @@ import { activeLocationAtom, locationStatusesAtom } from "@/atoms/signInAppAtoms
 import { QueueStatus } from "@/components/sign-in/ActiveLocationSelector/QueueStatus.tsx";
 import { StatusBadge } from "@/components/sign-in/ActiveLocationSelector/StatusBadge.tsx";
 import { UserCount } from "@/components/sign-in/ActiveLocationSelector/UserCount.tsx";
-import { cn, removeSuffix, toTitleCase } from "@/lib/utils";
+import { cn, toTitleCase } from "@/lib/utils";
 import { LocationName } from "@ignis/types/sign_in";
 
 import { Button } from "@ui/components/ui/button";
@@ -96,7 +96,7 @@ const ActiveLocationSelector = () => {
       )}
       {activeLocationStatus && !isLoading && !isError && (
         <div className="flex flex-col space-y-2 w-full md:w-auto md:flex-row md:items-center md:space-y-0 md:space-x-2 md:h-10 md:whitespace-nowrap">
-          <Tooltip>
+          <Tooltip delayDuration={0}>
             <TooltipTrigger>
               <StatusBadge
                 is_open={activeLocationStatus.status === "OPEN"}
@@ -108,18 +108,18 @@ const ActiveLocationSelector = () => {
               <p>The space is marked as OPEN when there is at least one rep signed in.</p>
               <p>It is closed otherwise.</p>
               <p>
-                Current opening hours are: {removeSuffix(activeLocationStatus.opening_time, ":00")} -{" "}
-                {removeSuffix(activeLocationStatus.closing_time, ":00")}
+                Current opening hours are: {activeLocationStatus.opening_time.toString({ smallestUnit: "minute" })} -{" "}
+                {activeLocationStatus.closing_time.toString({ smallestUnit: "minute" })}
               </p>
             </TooltipContent>
           </Tooltip>
-          <Tooltip>
+          <Tooltip delayDuration={0}>
             <TooltipTrigger>
               <UserCount
                 rep_count={activeLocationStatus.on_shift_rep_count}
                 off_shift_rep_count={activeLocationStatus.off_shift_rep_count}
                 user_count={activeLocationStatus.user_count}
-                max_count={activeLocationStatus.max}
+                max_count={activeLocationStatus.max_count}
                 className="w-full md:w-auto h-10 flex items-center justify-center md:whitespace-nowrap"
               />
             </TooltipTrigger>
@@ -127,11 +127,11 @@ const ActiveLocationSelector = () => {
               <p>Click to view a more detailed breakdown of the user count.</p>
             </TooltipContent>
           </Tooltip>
-          <Tooltip>
+          <Tooltip delayDuration={0}>
             <TooltipTrigger>
               <QueueStatus
-                queue_needed={activeLocationStatus.needs_queue}
-                count_in_queue={activeLocationStatus.count_in_queue}
+                needs_queue={activeLocationStatus.queue_in_use}
+                queued={activeLocationStatus.queued}
                 className="w-full md:w-auto h-10 flex items-center justify-center"
               />
             </TooltipTrigger>

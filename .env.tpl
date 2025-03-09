@@ -6,4 +6,5 @@ EDGEDB_SERVER_TLS_KEY_FILE=/ignis_certs/ignis_key.pem
 EDGEDB_SERVER_TLS_CERT_FILE=/ignis_certs/ignis_cert.pem
 EDGEDB_SERVER_USER="op://IT/Ignis EdgeDB Docker Prod/username"
 EDGEDB_SERVER_PASSWORD="op://IT/Ignis EdgeDB Docker Prod/password"
+INFRACTIONS_WEBHOOK_URL="op://IT/Infractions Webhook/url"
 REDIS_PASSWORD="op://IT/Ignis Redis Password/password"

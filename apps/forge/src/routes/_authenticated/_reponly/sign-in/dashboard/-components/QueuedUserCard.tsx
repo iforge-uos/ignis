@@ -1,6 +1,6 @@
 import { activeLocationAtom } from "@/atoms/signInAppAtoms.ts";
 import { UserAvatar } from "@/components/avatar";
-import { iForgeEpoch } from "@/config/constants";
+import { useUserRoles } from "@/hooks/useUserRoles.ts";
 import { useUserRoles } from "@/hooks/useUserRoles.ts";
 import { DeleteQueue } from "@/services/sign_in/queueService";
 import { QueueEntry } from "@ignis/types/sign_in";
@@ -54,7 +54,7 @@ export const QueuedUserCard: React.FC<QueuedUserCardProps> = ({ place, onDequeue
     }
   };
 
-  const canSignIn = place.ends_at?.getTime() ?? Number.NEGATIVE_INFINITY > new Date().getTime();
+  const canSignIn = !!place.ends_at;
 
   return (
     <Card className="bg-card w-[240px] md:w-[300px] p-4 rounded-sm flex flex-col justify-between text-black dark:text-white">
@@ -77,14 +77,18 @@ export const QueuedUserCard: React.FC<QueuedUserCardProps> = ({ place, onDequeue
         <div className="border-gray-500 p-2 rounded-sm mb-2">
           <div
             className={`pb-2 h-full w-2/3 mr-auto ml-auto rounded-lg p-2 font-medium mb-1 text-center font-mono ${
-              canSignIn ? "bg-green-500" : "bg-red-500"
+              canSignIn ? "bg-tick" : "bg-cross"
             }`}
           >
             {canSignIn ? "Can" : "Cannot"} sign in
           </div>
         </div>
       </div>
-      <TimeDisplay timeIn={place.created_at ?? iForgeEpoch} inText="Queued at:" durationText="Queuing for:" />
+      <TimeDisplay
+        timeIn={canSignIn ? place.notified_at! : place.created_at}
+        inText={canSignIn ? "Available from:" : "Queued at:"}
+        durationText={canSignIn ? "Time remaining:" : "Queuing for:"}
+      />
       <div className="pt-4 border-t border-gray-700 flex justify-end">
         <Tooltip>
           <TooltipTrigger asChild>

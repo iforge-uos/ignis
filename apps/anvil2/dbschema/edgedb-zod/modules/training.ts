@@ -29,30 +29,40 @@ export const CreateInteractableSchema = z.
   object({
     content: z.string(), // std::str
     enabled: z.boolean().optional(), // std::bool
-    index: z.number().int().min(0).max(65535), // std::int16
+    index: z.number().int().min(-32768).max(32767), // std::int16
   });
 
 export const UpdateInteractableSchema = z.
   object({
     content: z.string(), // std::str
     enabled: z.boolean().optional(), // std::bool
-    index: z.number().int().min(0).max(65535), // std::int16
+    index: z.number().int().min(-32768).max(32767), // std::int16
   });
 // #endregion
 
 // #region training::Page
 export const CreatePageSchema = z.
   object({ // training::TrainingPage
-    duration: z.string().regex(/^(\d+(\.\d+)?\s(microseconds|milliseconds|seconds|minutes|hours)\s?)+$/).optional(), // std::duration
+    duration: z.string().duration().optional(), // std::duration
     name: z.string(), // std::str
+  })
+  .extend({ // training::Interactable
+    content: z.string(), // std::str
+    enabled: z.boolean().optional(), // std::bool
+    index: z.number().int().min(-32768).max(32767), // std::int16
   })
   .extend({ // training::Page
   });
 
 export const UpdatePageSchema = z.
   object({ // training::TrainingPage
-    duration: z.string().regex(/^(\d+(\.\d+)?\s(microseconds|milliseconds|seconds|minutes|hours)\s?)+$/).optional(), // std::duration
+    duration: z.string().duration().optional(), // std::duration
     name: z.string(), // std::str
+  })
+  .extend({ // training::Interactable
+    content: z.string(), // std::str
+    enabled: z.boolean().optional(), // std::bool
+    index: z.number().int().min(-32768).max(32767), // std::int16
   })
   .extend({ // training::Page
   });
@@ -63,7 +73,7 @@ export const CreateQuestionSchema = z.
   object({ // training::Interactable
     content: z.string(), // std::str
     enabled: z.boolean().optional(), // std::bool
-    index: z.number().int().min(0).max(65535), // std::int16
+    index: z.number().int().min(-32768).max(32767), // std::int16
   })
   .extend({ // training::Question
     type: z.enum(["SINGLE", "MULTI"]), // training::AnswerType
@@ -73,7 +83,7 @@ export const UpdateQuestionSchema = z.
   object({ // training::Interactable
     content: z.string(), // std::str
     enabled: z.boolean().optional(), // std::bool
-    index: z.number().int().min(0).max(65535), // std::int16
+    index: z.number().int().min(-32768).max(32767), // std::int16
   })
   .extend({ // training::Question
     type: z.enum(["SINGLE", "MULTI"]), // training::AnswerType
@@ -83,25 +93,33 @@ export const UpdateQuestionSchema = z.
 // #region training::Session
 export const CreateSessionSchema = z.
   object({ // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: z.string().datetime({ offset: true }).optional(), // std::datetime
+  })
+  .extend({ // default::CreatedAt
+    created_at: z.string().datetime({ offset: true }).optional(), // std::datetime
   })
   .extend({ // training::Session
-    index: z.number().int().min(0).max(65535).optional(), // std::int16
+    index: z.number().int().min(-32768).max(32767).optional(), // std::int16
   });
 
 export const UpdateSessionSchema = z.
   object({ // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: z.string().datetime({ offset: true }).optional(), // std::datetime
+  })
+  .extend({ // default::CreatedAt
   })
   .extend({ // training::Session
-    index: z.number().int().min(0).max(65535).optional(), // std::int16
+    index: z.number().int().min(-32768).max(32767).optional(), // std::int16
   });
 // #endregion
 
 // #region training::Training
 export const CreateTrainingSchema = z.
   object({ // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: z.string().datetime({ offset: true }).optional(), // std::datetime
+  })
+  .extend({ // default::CreatedAt
+    created_at: z.string().datetime({ offset: true }).optional(), // std::datetime
   })
   .extend({ // training::Training
     in_person: z.boolean(), // std::bool
@@ -110,14 +128,16 @@ export const CreateTrainingSchema = z.
     compulsory: z.boolean().optional(), // std::bool
     description: z.string(), // std::str
     enabled: z.boolean().optional(), // std::bool
-    expires_after: z.string().regex(/^(\d+(\.\d+)?\s(microseconds|milliseconds|seconds|minutes|hours)\s?)+$/).optional(), // std::duration
+    expires_after: z.string().duration().optional(), // std::duration
     icon_url: z.string().optional(), // std::str
-    training_lockout: z.string().regex(/^(\d+(\.\d+)?\s(microseconds|milliseconds|seconds|minutes|hours)\s?)+$/).optional(), // std::duration
+    training_lockout: z.string().duration().optional(), // std::duration
   });
 
 export const UpdateTrainingSchema = z.
   object({ // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: z.string().datetime({ offset: true }).optional(), // std::datetime
+  })
+  .extend({ // default::CreatedAt
   })
   .extend({ // training::Training
     in_person: z.boolean(), // std::bool
@@ -126,9 +146,9 @@ export const UpdateTrainingSchema = z.
     compulsory: z.boolean().optional(), // std::bool
     description: z.string(), // std::str
     enabled: z.boolean().optional(), // std::bool
-    expires_after: z.string().regex(/^(\d+(\.\d+)?\s(microseconds|milliseconds|seconds|minutes|hours)\s?)+$/).optional(), // std::duration
+    expires_after: z.string().duration().optional(), // std::duration
     icon_url: z.string().optional(), // std::str
-    training_lockout: z.string().regex(/^(\d+(\.\d+)?\s(microseconds|milliseconds|seconds|minutes|hours)\s?)+$/).optional(), // std::duration
+    training_lockout: z.string().duration().optional(), // std::duration
   });
 // #endregion
 
@@ -137,10 +157,10 @@ export const CreateTrainingPageSchema = z.
   object({ // training::Interactable
     content: z.string(), // std::str
     enabled: z.boolean().optional(), // std::bool
-    index: z.number().int().min(0).max(65535), // std::int16
+    index: z.number().int().min(-32768).max(32767), // std::int16
   })
   .extend({ // training::TrainingPage
-    duration: z.string().regex(/^(\d+(\.\d+)?\s(microseconds|milliseconds|seconds|minutes|hours)\s?)+$/).optional(), // std::duration
+    duration: z.string().duration().optional(), // std::duration
     name: z.string(), // std::str
   });
 
@@ -148,10 +168,10 @@ export const UpdateTrainingPageSchema = z.
   object({ // training::Interactable
     content: z.string(), // std::str
     enabled: z.boolean().optional(), // std::bool
-    index: z.number().int().min(0).max(65535), // std::int16
+    index: z.number().int().min(-32768).max(32767), // std::int16
   })
   .extend({ // training::TrainingPage
-    duration: z.string().regex(/^(\d+(\.\d+)?\s(microseconds|milliseconds|seconds|minutes|hours)\s?)+$/).optional(), // std::duration
+    duration: z.string().duration().optional(), // std::duration
     name: z.string(), // std::str
   });
 // #endregion

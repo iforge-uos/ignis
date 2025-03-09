@@ -1,8 +1,10 @@
 import type { training } from "@dbschema/interfaces";
+import { Temporal } from "@js-temporal/polyfill";
+import { Duration } from "edgedb";
 
 export interface PageInteraction extends Omit<training.Page, "duration"> {
   type_name: "training::TrainingPage";
-  duration_?: string; // duration in seconds as a float (but yes it really is a string)
+  duration?: Temporal.Duration | Duration; // duration in seconds as a float (but yes it really is a string)
 }
 export interface QuestionInteraction extends Omit<training.Question, "answers"> {
   type_name: "training::Question";

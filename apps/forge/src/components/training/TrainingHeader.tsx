@@ -1,12 +1,12 @@
 import { LOCATIONS, TRAINING_LOCATIONS } from "@/lib/constants";
 import { ALL_TAGS, TrainingForTags, serializeTrainingTags, toTitleCase, trainingTags } from "@/lib/utils";
 import { LocationName, Training } from "@ignis/types/training";
+import { LocationIcon } from "@ignis/ui/components/icons/Locations";
 import MultipleSelector, { Option } from "@ui/components/multi-select";
 import { Badge } from "@ui/components/ui/badge";
 import { Separator } from "@ui/components/ui/separator";
 import { format } from "date-fns";
 import React from "react";
-import { LocationIcon } from "../icons/Locations";
 
 interface BaseTrainingHeaderProps {
   data: Training;

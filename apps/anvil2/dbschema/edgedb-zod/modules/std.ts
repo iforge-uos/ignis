@@ -8,24 +8,28 @@ export const boolSchema = z.boolean();
 export const bytesSchema = z.never();
 // #endregion
 
+// #region std::cal::local_time
+export const calSchema = z.never();
+// #endregion
+
 // #region std::datetime
-export const datetimeSchema = z.date();
+export const datetimeSchema = z.string().datetime({ offset: true });
 // #endregion
 
 // #region std::duration
-export const durationSchema = z.string().regex(/^(\d+(\.\d+)?\s(microseconds|milliseconds|seconds|minutes|hours)\s?)+$/);
+export const durationSchema = z.string().duration();
 // #endregion
 
 // #region std::int16
-export const int16Schema = z.number().int().min(0).max(65535);
+export const int16Schema = z.number().int().min(-32768).max(32767);
 // #endregion
 
 // #region std::int32
-export const int32Schema = z.number().int().min(0).max(2147483647);
+export const int32Schema = z.number().int().min(-2147483648).max(2147483647);
 // #endregion
 
 // #region std::int64
-export const int64Schema = z.number().int().min(0);
+export const int64Schema = z.bigint().min(-9223372036854775808n).max(9223372036854775807n);
 // #endregion
 
 // #region std::str

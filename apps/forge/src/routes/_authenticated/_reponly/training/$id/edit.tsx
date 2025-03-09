@@ -5,12 +5,8 @@ import { get } from "@/services/training/get";
 import { LocationName, Section, Training } from "@ignis/types/training";
 import { createFileRoute, deepEqual } from "@tanstack/react-router";
 import { PlateEditor } from "@ui/components/plate-ui/plate-editor";
-import { Badge } from "@ui/components/ui/badge";
 import { Button } from "@ui/components/ui/button";
 import { Input } from "@ui/components/ui/input";
-import { Label } from "@ui/components/ui/label";
-import { RadioGroup } from "@ui/components/ui/radio-group";
-import { RadioGroupItem } from "@ui/components/ui/radio-group";
 import { Separator } from "@ui/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip";
 import { EyeIcon, EyeOffIcon, HourglassIcon, InfoIcon, PlusIcon, TrashIcon } from "lucide-react";
@@ -101,77 +97,75 @@ function Component() {
                         editorProps={{ disabled: !section.enabled }}
                       />
                     </div>
-                    <div className="flex">
-                      <div className="flex flex-col">
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="outline"
-                              className="rounded-none rounded-tr-md h-full"
-                              onClick={() => updateSection(idx, "enabled", !section.enabled)}
-                            >
-                              {section.enabled ? <EyeIcon /> : <EyeOffIcon />}
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>{section.enabled ? "Hide" : "Unhide"} Section</TooltipContent>
-                        </Tooltip>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="success"
-                              className="rounded-none h-full"
-                              onClick={() => {
-                                setSections([
-                                  ...sections.slice(0, idx + 1),
-                                  {
-                                    content: "",
-                                    enabled: true,
-                                    index: idx + 1,
-                                    type_name: "training::TrainingPage", // if the content contains a Checkbox or a RadioGroup it goes to a Question
-                                    name: "",
-                                    id: null as never as string, // we can't have an ID till it's committed to DB TODO idk how this actually works when we go to display them
-                                  },
-                                  ...sections.slice(idx + 1).map((section) => ({
-                                    ...section,
-                                    index: section.index + 1,
-                                  })),
-                                ]);
-                              }}
-                            >
-                              <PlusIcon />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Add new section below</TooltipContent>
-                        </Tooltip>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="info"
-                              className="rounded-none h-full"
-                              disabled={section.type_name === "training::Question"}
-                            >
-                              <HourglassIcon />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Adjust the amount of time the page must be viewed for</TooltipContent>
-                        </Tooltip>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="destructive"
-                              className="rounded-none rounded-br-md h-full"
-                              onClick={() => {
-                                if (confirm("Delete this section?")) {
-                                  setSections(sections.filter((_, idx_) => idx !== idx_));
-                                }
-                              }}
-                            >
-                              <TrashIcon />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Delete section</TooltipContent>
-                        </Tooltip>
-                      </div>
+                    <div className="flex flex-col">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className="rounded-none rounded-tr-md h-full"
+                            onClick={() => updateSection(idx, "enabled", !section.enabled)}
+                          >
+                            {section.enabled ? <EyeIcon /> : <EyeOffIcon />}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>{section.enabled ? "Hide" : "Unhide"} Section</TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="success"
+                            className="rounded-none h-full"
+                            onClick={() => {
+                              setSections([
+                                ...sections.slice(0, idx + 1),
+                                {
+                                  content: "",
+                                  enabled: true,
+                                  index: idx + 1,
+                                  type_name: "training::TrainingPage", // if the content contains a Checkbox or a RadioGroup it goes to a Question
+                                  name: "",
+                                  id: null as never as string, // we can't have an ID till it's committed to DB TODO idk how this actually works when we go to display them
+                                },
+                                ...sections.slice(idx + 1).map((section) => ({
+                                  ...section,
+                                  index: section.index + 1,
+                                })),
+                              ]);
+                            }}
+                          >
+                            <PlusIcon />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Add new section below</TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="info"
+                            className="rounded-none h-full"
+                            disabled={section.type_name === "training::Question"}
+                          >
+                            <HourglassIcon />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Adjust the amount of time the page must be viewed for</TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="destructive"
+                            className="rounded-none rounded-br-md h-full"
+                            onClick={() => {
+                              if (confirm("Delete this section?")) {
+                                setSections(sections.filter((_, idx_) => idx !== idx_));
+                              }
+                            }}
+                          >
+                            <TrashIcon />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Delete section</TooltipContent>
+                      </Tooltip>
                     </div>
                   </div>
                 </div>

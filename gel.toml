@@ -1,5 +1,8 @@
 [instance]
-server-version = "6.0-beta.2"
+server-version = "nightly"
 
 [project]
 schema-dir = "apps/anvil2/dbschema"
+
+[hooks]
+schema.update.after = "pnpm regen"
