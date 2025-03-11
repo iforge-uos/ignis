@@ -51,7 +51,7 @@ export const CreateuserSchema = z.
     first_name: z.string(), // std::str
     last_name: z.string().optional(), // std::str
     display_name: z.string().optional(), // std::str
-    email: z.string().regex(/select std::re_test(r'[\w\-\.]+', __subject__)/), // std::str
+    email: z.string().regex(/'[\w\-\.]+/), // std::str
     organisational_unit: z.string(), // std::str
     profile_picture: z.string().optional(), // std::str
     pronouns: z.string().optional(), // std::str
@@ -72,7 +72,7 @@ export const UpdateuserSchema = z.
     first_name: z.string(), // std::str
     last_name: z.string().optional(), // std::str
     display_name: z.string().optional(), // std::str
-    email: z.string().regex(/select std::re_test(r'[\w\-\.]+', __subject__)/), // std::str
+    email: z.string().regex(/[\w\-\.]+/), // std::str
     organisational_unit: z.string(), // std::str
     profile_picture: z.string().optional(), // std::str
     pronouns: z.string().optional(), // std::str
