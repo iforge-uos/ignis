@@ -121,7 +121,7 @@ class UoSClient extends Client {
       first_name: user.givenName,
       last_name: user.sn,
       organisational_unit: user.ou,
-      roles: e.select(e.auth.Role, () => ({ filter_single: { name: "User" } })),
+      roles: e.select(e.users.Role, () => ({ filter_single: { name: "User" } })),
       ucard_number: ldapLibraryToUcardNumber(user.shefLibraryNumber),
     };
   }

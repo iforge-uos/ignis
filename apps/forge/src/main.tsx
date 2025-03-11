@@ -11,21 +11,30 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { DevTools } from "jotai-devtools";
-import React from "react";
+import React, { useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import ReactDOM from "react-dom/client";
 import { HelmetProvider } from "react-helmet-async";
 import "jotai-devtools/styles.css";
 import { ForgeRouterContext } from "@/routes/__root.tsx";
+import type { ORPCRouter } from "@ignis/types/orpc";
+import { Temporal, toTemporalInstant } from "@js-temporal/polyfill";
+import { createORPCClient } from "@orpc/client";
+import { RPCLink } from "@orpc/client/fetch";
+import { createORPCReactQueryUtils } from "@orpc/react-query";
+import { Toaster } from "@ui/components/ui/sonner";
 import { TooltipProvider } from "@ui/components/ui/tooltip";
 import { queryClientAtom } from "jotai-tanstack-query";
 import { useHydrateAtoms } from "jotai/react/utils";
-import { Temporal, toTemporalInstant } from "@js-temporal/polyfill";
-import { Toaster } from "@ui/components/ui/sonner";
+import { ORPCContext } from "./providers/orpcProvider";
 
 // Begin Router
 const queryClient = new QueryClient();
+
+const link = new RPCLink({
+  url: "http://localhost:3000/rpc",
+});
 
 const HydrateAtoms = ({ children }: { children: React.ReactNode }) => {
   useHydrateAtoms([[queryClientAtom, queryClient]]);
@@ -37,6 +46,7 @@ const router = createRouter({
   context: {
     queryClient,
     user: undefined!,
+    orpc: undefined!,
   },
   defaultPreload: "intent",
   // Since we're using React Query, we don't want loader calls to ever be stale
@@ -59,15 +69,20 @@ declare module "@tanstack/react-router" {
 
 function App() {
   const user = useUser();
+  const [client] = useState<ORPCRouter>(() => createORPCClient(link));
+  const [orpc] = useState(() => createORPCReactQueryUtils(client));
 
   return (
-    <RouterProvider
-      router={router}
-      context={{
-        queryClient,
-        user,
-      }}
-    />
+    <ORPCContext.Provider value={orpc}>
+      <RouterProvider
+        router={router}
+        context={{
+          queryClient,
+          user,
+          orpc,
+        }}
+      />
+    </ORPCContext.Provider>
   );
 }
 

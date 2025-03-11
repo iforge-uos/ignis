@@ -1,16 +1,16 @@
+import auth from "@/auth";
 // @IdempotencyCache(60)
 import email from "@/email";
 import { pub } from "@/router";
 import { QueuePlaceShape } from "@/utils/queries";
 import { ensureUser } from "@/utils/sign-in";
-import { ldapLibraryToUcardNumber } from "@/utils/signin.utils";
+import { ldapLibraryToUcardNumber } from "@/utils/sign-in";
 import { LocationNameSchema } from "@dbschema/edgedb-zod/modules/sign_in";
 import e, { $infer } from "@dbschema/edgeql-js";
-import { TRPCError } from "@trpc/server";
 import { AccessError, ConstraintViolationError } from "gel";
 import { z } from "zod";
 import { remove } from "./$id";
-import auth from "@/auth";
+import Logger from "@/utils/logger";
 
 export const addInPerson = pub
   .route({
@@ -23,10 +23,7 @@ export const addInPerson = pub
       ucard_number: z.string().regex(/\d{9,}/),
     }),
   )
-  .use()
-  .handler(async ({ input: { location, ucard_number }, context: { db, logger } }) => {
-    logger.info(`Adding UCard number: ${ucard_number} to queue in-person at location: ${location}`);
-
+  .handler(async ({ input: { location, ucard_number }, context: { db }, errors }) => {
     let place: $infer<typeof QueuePlaceShape>[number];
     try {
       place = await e
@@ -48,8 +45,7 @@ export const addInPerson = pub
         .run(db);
     } catch (error: any) {
       if (error instanceof AccessError) {
-        throw new TRPCError({
-          code: "PRECONDITION_FAILED",
+        throw errors.QUEUE_DISABLED({
           cause: error,
           message: error.message,
         });
@@ -62,17 +58,12 @@ export const addInPerson = pub
         });
       }
 
-      logger.error(`Error adding user ${ucard_number} to queue at ${location}: ${error.message}`);
-
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to add user to queue",
-      });
+      throw error;
     }
 
     await email.sendQueuedEmail(place, location);
 
-    logger.debug(`Sent queued email to user ${place.user.display_name} (${place.user.ucard_number})`);
+    Logger.debug(`Sent queued email to user ${place.user.display_name} (${place.user.ucard_number})`);
 
     return place;
   });

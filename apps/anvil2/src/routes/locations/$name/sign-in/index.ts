@@ -1,6 +1,6 @@
-import { router } from "@/router";
+import { deskOrAdmin } from "@/router";
 import { history } from "./history";
 
-export const signInRouter = router({
+export const signInRouter = deskOrAdmin.prefix("/sign-in").router({
   history,
 });

@@ -9,6 +9,7 @@ import { NotFound } from "@/components/routing/NotFound.tsx";
 import UCardReader from "@/components/ucard-reader";
 import { useUser } from "@/lib/utils.ts";
 import { useTheme } from "@/providers/themeProvider/use-theme";
+import type { ORPCRouter } from "@ignis/types/orpc";
 import { SidebarInset, SidebarProvider } from "@ignis/ui/components/ui/sidebar";
 import { QueryClient } from "@tanstack/react-query";
 import { Outlet, ScrollRestoration, createRootRouteWithContext } from "@tanstack/react-router";
@@ -66,6 +67,7 @@ function RootComponent() {
 export interface ForgeRouterContext {
   user: ReturnType<typeof useUser>;
   queryClient: QueryClient;
+  orpc: ORPCRouter;
 }
 
 export const Route = createRootRouteWithContext<ForgeRouterContext>()({

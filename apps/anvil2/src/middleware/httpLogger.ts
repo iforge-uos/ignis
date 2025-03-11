@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import Logger from "@/utils/logger.utils";
+import Logger from "@/utils/logger";
 
 export function httpLogger(req: Request, res: Response, next: NextFunction) {
   const { method, url } = req;

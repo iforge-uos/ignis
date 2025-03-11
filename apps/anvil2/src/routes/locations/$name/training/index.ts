@@ -29,16 +29,7 @@ export const all = pub
             })),
           ),
           "else",
-          e.op(
-            "Retake",
-            "if",
-            e.op(
-              "exists",
-              e.select(e.user.training, (training_) => ({ filter_single: e.op(training, "=", training_) })),
-            ),
-            "else",
-            "Start",
-          ),
+          e.op("Retake", "if", e.op(training, "in", e.user.training), "else", "Start"),
         ),
         filter: e.all(e.set(e.op(name, "in", training.locations), training.enabled)),
       }))

@@ -6,7 +6,7 @@ import { signInsRouter } from "./sign-ins";
 import { teamsRouter } from "./teams";
 import { trainingRouter } from "./training";
 
-const appRouter = pub.router({
+export const router = pub.router({
   agreements: agreementsRouter,
   locations: locationsRouter,
   notifications: notificationsRouter,
@@ -17,4 +17,4 @@ const appRouter = pub.router({
 
 // Export type router type signature,
 // NOT the router itself.
-export type AppRouter = typeof appRouter;
+export type Router = typeof router;

@@ -169,5 +169,5 @@ const NotificationDashboard = () => {
 
 export const Route = createFileRoute("/_authenticated/admin/notifications/dashboard")({
   component: NotificationDashboard,
-  loader: getMailingLists,
+  loader: ({ context: { orpc } }) => orpc.notifications.mailingList.all(),
 });

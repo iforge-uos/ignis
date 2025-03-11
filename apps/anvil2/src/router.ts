@@ -1,24 +1,5 @@
-import e from "@dbschema/edgeql-js";
-import { AuthRequest } from "@gel/auth-express";
-import { os, ORPCError, createRouterClient } from "@orpc/server";
-import { Response } from "express";
-import { z } from "zod";
-import config from "./config";
-import { getDBConfig } from "./config/db";
-import edgedb from "./db";
-import { RepShape, UserShape } from "./utils/queries";
-
-// created for each request
-const createContext = async ({ req, res }: NodeHTTPCreateContextFnOptions<AuthRequest, Response>) => {
-  return {
-    user: await e.assert_single(e.select(e.user, UserShape)).run(edgedb),
-    session: req.session,
-    db: edgedb.withGlobals({ ...config.db.globals }),
-    res,
-    logger: config.logging.logger,
-  };
-};
-export type Context = Awaited<ReturnType<typeof createContext>>;
+import { os } from "@orpc/server";
+import { Context } from ".";
 
 // Define context type for full type inference
 export const pub = os.$context<Context>().$route({

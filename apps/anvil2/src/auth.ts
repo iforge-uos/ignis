@@ -2,11 +2,12 @@
 
 import e from "@dbschema/edgeql-js";
 import { CallbackRequest } from "@gel/auth-express";
+import { ORPCError } from "@orpc/server";
 import axios from "axios";
+import { Response } from "express";
 import { auth, onUserInsert } from "./db";
 import ldap from "./ldap";
 import { PartialUserShape } from "./utils/queries";
-import { ORPCError } from "@orpc/server";
 
 interface GoogleUser {
   family_name: string;
@@ -30,7 +31,7 @@ export async function getUserProfile(providerToken: any): Promise<GoogleUser> {
 
 export default auth.createOAuthRouter("/auth/oauth", {
   callback: [
-    async (req: CallbackRequest, res) => {
+    async (req: CallbackRequest, _: Response) => {
       const profile = await getUserProfile(req.tokenData?.provider_token);
       if (req.isSignUp) {
         const ldapUser = await ldap.lookupByEmail(profile.email);
