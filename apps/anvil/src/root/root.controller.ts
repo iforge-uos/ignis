@@ -1,3 +1,4 @@
+import { exec } from "node:child_process";
 import { IsAdmin, IsRep } from "@/auth/authorization/decorators/check-roles-decorator";
 import { CaslAbilityGuard } from "@/auth/authorization/guards/casl-ability.guard";
 import { EmailService } from "@/email/email.service";
@@ -143,5 +144,24 @@ export class RootController {
   async getAutocomplete(@Query("email") email: string) {
     this.logger.log(`Retrieving autocomplete suggestions for email: ${email}`, RootController.name);
     return await this.googleService.autocompleteEmails(email);
+  }
+
+  @IsAdmin()
+  @Get("gel-ui-auth")
+  @UseGuards(AuthGuard("jwt"))
+  async getGelUiUrl(@GetUser() user: User) {
+    this.logger.log(`Retrieving Gel UI URL for ${user.display_name} ${user.id}`, RootController.name);
+
+    return new Promise((resolve, reject) => {
+      exec("gel ui --print-url", (error, stdout, stderr) => {
+        if (error) {
+          this.logger.error(`Error executing gel ui command: ${error.message}`, RootController.name);
+          reject(error);
+          return;
+        }
+
+        resolve(stdout.trim().match(/authToken=(.*)/)?.[0]);
+      });
+    });
   }
 }
