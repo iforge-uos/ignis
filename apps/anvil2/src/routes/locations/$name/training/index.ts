@@ -20,7 +20,7 @@ export const all = pub
       .select(e.training.Training, (training) => ({
         ...TrainingForLocationShape(training),
         status: e.op(
-          "Resume",
+          "Resume" as const,
           "if",
           e.op(
             "exists",
@@ -29,7 +29,7 @@ export const all = pub
             })),
           ),
           "else",
-          e.op("Retake", "if", e.op(training, "in", e.user.training), "else", "Start"),
+          e.op("Retake" as const, "if", e.op(training, "in", e.user.training), "else", "Start" as const),
         ),
         filter: e.all(e.set(e.op(name, "in", training.locations), training.enabled)),
       }))

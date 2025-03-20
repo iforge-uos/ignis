@@ -3,7 +3,7 @@ import e from "@dbschema/edgeql-js";
 import { z } from "zod";
 
 export const get = rep
-  .route({ path: "/{id}" })
+  .route({ path: "/" })
   .input(z.object({ id: z.string().uuid() }))
   .handler(async ({ input: { id }, context: { db } }) =>
     e
@@ -15,7 +15,7 @@ export const get = rep
   );
 
 export const remove = deskOrAdmin
-  .route({ method: "DELETE", path: "/{id}" })
+  .route({ method: "DELETE", path: "/" })
   .input(z.object({ id: z.string().uuid() }))
   .handler(async ({ input: { id }, context: { db } }) =>
     e
@@ -26,3 +26,5 @@ export const remove = deskOrAdmin
       )
       .run(db),
   );
+
+export const idRouter = rep.prefix("/{id}").router({ get, remove });

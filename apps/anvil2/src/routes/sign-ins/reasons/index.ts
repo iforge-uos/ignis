@@ -1,7 +1,7 @@
 import { auth } from "@/router";
 import { CreateReasonSchema } from "@dbschema/edgedb-zod/modules/sign_in";
 import e from "@dbschema/edgeql-js";
-import { get, remove } from "./$id";
+import { get, idRouter, remove } from "./$id";
 
 export const all = auth
   .route({ path: "/" })
@@ -30,7 +30,6 @@ export const lastUpdate = auth.route({ path: "/last-update" }).handler(async ({ 
 
 export const reasonsRouter = auth.prefix("/reasons").router({
   all,
-  get,
-  remove,
   lastUpdate,
+  ...idRouter,
 });

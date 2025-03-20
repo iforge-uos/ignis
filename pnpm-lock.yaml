@@ -15,8 +15,8 @@ importers:
         specifier: ^7.0.3
         version: 7.0.3
       turbo:
-        specifier: ^2.4.2
-        version: 2.4.2
+        specifier: ^2.4.4
+        version: 2.4.4
 
   apps/anvil2:
     dependencies:
@@ -42,14 +42,14 @@ importers:
         specifier: ^0.4.4
         version: 0.4.4
       '@orpc/openapi':
-        specifier: ^0.38.0
-        version: 0.38.0(hono@4.7.0)(next@15.1.7(@babel/core@7.26.8)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+        specifier: ^0.49.0
+        version: 0.49.0(hono@4.7.0)(next@15.1.7(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@orpc/server':
-        specifier: ^0.38.0
-        version: 0.38.0(hono@4.7.0)(next@15.1.7(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+        specifier: ^0.49.0
+        version: 0.49.0(hono@4.7.0)(next@15.1.7(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@orpc/zod':
-        specifier: ^0.38.0
-        version: 0.38.0(@orpc/openapi@0.38.0(hono@4.7.0)(next@15.1.7(@babel/core@7.26.8)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)))(@orpc/server@0.38.0(hono@4.7.0)(next@15.1.7(@babel/core@7.26.8)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)))
+        specifier: ^0.49.0
+        version: 0.49.0(@orpc/contract@0.49.0)(@orpc/server@0.49.0(hono@4.7.0)(next@15.1.7(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)))(hono@4.7.0)(next@15.1.7(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@sentry/node':
         specifier: ^9.5.0
         version: 9.5.0
@@ -2051,11 +2051,20 @@ packages:
   '@orpc/client@0.47.0':
     resolution: {integrity: sha512-60nua9H1EATguRcwzC+izmGksK9HOOHS16aiCYiFCpyTnUBk3+hvmcsaCT9KQDaosAez309E51kzm0QHzQkpTA==}
 
+  '@orpc/client@0.49.0':
+    resolution: {integrity: sha512-BwUKDo1wJrRlqbsLgqvNpsuUxP1LBxn7zl6Di5p8eY3eB/+A5kE6l02HlBjfOpWKRCcZunnv2gFOVNJJnZAHsg==}
+
   '@orpc/contract@0.38.0':
     resolution: {integrity: sha512-bfqHbe59rKImKYl0w5COZ5xoQNcqTDcD8j8nDcoFT7KmA0L7+kOtOVYPxV1GY9zcSAolS8ygBXCLNZ8FhJM+1g==}
 
-  '@orpc/openapi@0.38.0':
-    resolution: {integrity: sha512-vxcr9RZ15tAcH4W0efFaC2YRsu3uyGmx1uKmvj7QsjeaUjO8QJv6CyOydphHNoJ2rEyGMjZFdbOJ9kOnwcNhTg==}
+  '@orpc/contract@0.49.0':
+    resolution: {integrity: sha512-PNYDmPPePQYndNG9Vt/6mX92rCA+5x7VVw4AUPquieQ/THUXssqq/y44ZacG+0oj4km9//hbkDQc6WDLlOY9pw==}
+
+  '@orpc/openapi-client@0.49.0':
+    resolution: {integrity: sha512-e/Lx+mfwiSfVhyTdygk/2r2X+5dxZSi2gCENMp7+sPIgKZTwJtarEfkjWyNeBte0EBPRpWo8LK0ZqZAMAKzcsw==}
+
+  '@orpc/openapi@0.49.0':
+    resolution: {integrity: sha512-g7ndQ5K0srCLQVUUWKrlx42GCh+IvI2YnkXaURyM8I3InSOptMm6qk2R565Z4AkWklYVMoR/sGfueOFbBPAiFQ==}
 
   '@orpc/react-query@0.47.0':
     resolution: {integrity: sha512-8laL6lod3zDNJma0fmz8iZTqtn87DKQN//RwoTbqWyIRWyc2XMoL3E5nT6GCX4+kLDe+t+xZiubobof9mezSbg==}
@@ -2070,23 +2079,41 @@ packages:
       hono: '>=4.6.0'
       next: '>=14.0.0'
 
+  '@orpc/server@0.49.0':
+    resolution: {integrity: sha512-4UKyS+MX8KTpW/E1N2WsUCU/pK34Pp9crI/o4lfRm52LLTFej8oWpBiyox0HLXb+5YMAJtTkFI2DV+O2TndRDw==}
+    peerDependencies:
+      hono: '>=4.6.0'
+      next: '>=14.0.0'
+
   '@orpc/shared@0.38.0':
     resolution: {integrity: sha512-275/2bkSDg0B5JTPhgj4Yb4IwiNeTWeKGWzBK68nLyk26HtgW7VryP2yRJnV9YhsFCiGvdzsP4yLL6D4NpPedw==}
 
   '@orpc/shared@0.47.0':
     resolution: {integrity: sha512-feSAU+dQqidsCjKZAliTHvKDjUHNYRADuW3Rh9QHMQw9FwJ5Xpm2Vlxwyceh35UP+qJ7evaFntpMDD41LOy1tA==}
 
+  '@orpc/shared@0.49.0':
+    resolution: {integrity: sha512-cMkuIqemzNi1IqJysff42Ba3OtRypv24Cg8T6HjdpPCurcGFh7249AkOCi6kWhIJSQW0B8OTH5Q8pHvw9a1rEQ==}
+
   '@orpc/standard-server-fetch@0.47.0':
     resolution: {integrity: sha512-zoMgniiTO7FwvfWidDu8AGHxKpq8+N/umRjdtNniNtbQI2R9ll1sQXGdN6C03HjYLDDh+BK2uVyoDM8gIPNGlg==}
+
+  '@orpc/standard-server-fetch@0.49.0':
+    resolution: {integrity: sha512-eYUvwV9sAgvTXJhNs/cZ0XYjdqO1Zi8tmMtREh4KURh/o8wg2/S7MKsHkN8443drdnB3psm4BvkJrA7d1hIJRw==}
+
+  '@orpc/standard-server-node@0.49.0':
+    resolution: {integrity: sha512-5bH4NXE84S0lYsH2DOwI0obUcBZJUYJuXOezHGl+jZGz5MA6EWDHOiLON5hoOca8E4EfufuVdRbRHvAfgB3lBg==}
 
   '@orpc/standard-server@0.47.0':
     resolution: {integrity: sha512-QJD1Ek0TXo1OERX9tSa+V9pGRw3un7njYAvHSkokQLzGvyl5kRdOSXLLzDlmjm3g2+5E5AYipSGpk6NW7EztfA==}
 
-  '@orpc/zod@0.38.0':
-    resolution: {integrity: sha512-jPkAXPD7wbclM67sjumI+GDQhDv/AlQuf4slBV5bLFw+LVVEypboc2EN4DVekZG0DjKH15YcblToqViacFnTeA==}
+  '@orpc/standard-server@0.49.0':
+    resolution: {integrity: sha512-gnFi+EAxWkEU5nrcEnwcfyxsyVFL/IAFcTGHO2hC+EPaa/r9eOrvUOZT593euNvR+zj69lEq9RXwEURNhjO0Ng==}
+
+  '@orpc/zod@0.49.0':
+    resolution: {integrity: sha512-qrN9UXdV2vWFdm6xgnidF2r9sGt6pdraYpOfY50C08aboZJjHXdo4rMX9kusMZXeNjWmAdr7vGOGlrNOaHTlig==}
     peerDependencies:
-      '@orpc/openapi': 0.38.0
-      '@orpc/server': 0.38.0
+      '@orpc/contract': 0.49.0
+      '@orpc/server': 0.49.0
 
   '@parcel/watcher-android-arm64@2.5.1':
     resolution: {integrity: sha512-KF8+j9nNbUN8vzOFDpRMsaKBHZ/mcjEjMToVMJOhTozkDonQFFrRcfdLWn6yWKCmJKmdVxSgHiYvTCef4/qcBA==}
@@ -4308,9 +4335,9 @@ packages:
     peerDependencies:
       vite: ^4.2.0 || ^5.0.0 || ^6.0.0
 
-  abbrev@3.0.0:
-    resolution: {integrity: sha512-+/kfrslGQ7TNV2ecmQwMJj/B65g5KVq1/L3SGVZ3tCYGqlzFuFCGBZJtMP99wH3NpEUyAjn0zPdPUg0D+DwrOA==}
-    engines: {node: ^18.17.0 || >=20.5.0}
+  abbrev@2.0.0:
+    resolution: {integrity: sha512-6/mh1E2u2YgEsCHdY0Yx5oW+61gZU+1vXaoiHHrpKeuRNNgFvS+/jrwHiQhB5apAf5oB7UB7E19ol2R2LKH8hQ==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
 
   abstract-logging@2.0.1:
     resolution: {integrity: sha512-2BjRTZxTPvheOvGbBslFSYOUkr+SjPtOnrLP33f+VIWLzezQpZcqVg7ja3L4dBXmzzgwT+a029jRx5PCi3JuiA==}
@@ -4560,6 +4587,9 @@ packages:
 
   caniuse-lite@1.0.30001699:
     resolution: {integrity: sha512-b+uH5BakXZ9Do9iK+CkDmctUSEqZl+SP056vc5usa0PL+ev5OHw003rZXcnjNDv3L8P5j6rwT6C0BPKSikW08w==}
+
+  caniuse-lite@1.0.30001706:
+    resolution: {integrity: sha512-3ZczoTApMAZwPKYWmwVbQMFpXBDds3/0VciVoUwPUbldlYyVLmRVuRs/PcUZtHpbLRpzzDvrvnFuREsGt6lUug==}
 
   ccount@2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
@@ -4828,6 +4858,9 @@ packages:
 
   css-selector-parser@3.0.5:
     resolution: {integrity: sha512-3itoDFbKUNx1eKmVpYMFyqKX04Ww9osZ+dLgrk6GEv6KMVeXUhUnp4I5X+evw+u3ZxVU6RFXSSRxlTeMh8bA+g==}
+
+  css-selector-parser@3.1.1:
+    resolution: {integrity: sha512-Y+DuvJ7JAjpL1f4DeILe5sXCC3kRXMl0DxM4lAWbS8/jEZ29o3V0L5TL6zIifj4Csmj6c+jiF2ENjida2OVOGA==}
 
   css-tree@2.2.1:
     resolution: {integrity: sha512-OA0mILzGc1kCOCSJerOeqDxDQ4HOh+G8NbOJFOTgOCzpw7fCBubk0fEyxp8AgOL/jvLgYA/uV0cMbe43ElF1JA==}
@@ -5384,9 +5417,6 @@ packages:
     resolution: {integrity: sha512-Wrk35e8ydCKDj/ArClo1VrPVmN8zph5V4AtHwIuHhvMXsKf73UT3BOD+azBIW+3wOJ4FhEH7zyaJCFvChjYvMA==}
     engines: {'0': node >=0.6.0}
 
-  fast-content-type-parse@2.0.1:
-    resolution: {integrity: sha512-nGqtvLrj5w0naR6tDPfB4cUmYCqouzyQiz6C5y/LtcDllJdrcc6WaWW6iXyIIOErTa/XRybj28aasdn4LkVk6Q==}
-
   fast-deep-equal@3.1.3:
     resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
 
@@ -5676,6 +5706,9 @@ packages:
 
   hast-util-select@6.0.3:
     resolution: {integrity: sha512-OVRQlQ1XuuLP8aFVLYmC2atrfWHS5UD3shonxpnyrjcCkwtvmt/+N6kYJdcY4mkMJhxp4kj2EFIxQ9kvkkt/eQ==}
+
+  hast-util-select@6.0.4:
+    resolution: {integrity: sha512-RqGS1ZgI0MwxLaKLDxjprynNzINEkRHY2i8ln4DDjgv9ZhcYVIHN9rlpiYsqtFwrgpYU361SyWDQcGNIBVu3lw==}
 
   hast-util-to-estree@3.1.1:
     resolution: {integrity: sha512-IWtwwmPskfSmma9RpzCappDUitC8t5jhAynHhc1m2+5trOgsrp7txscUSavc5Ic8PATyAjfrCK1wgtxh2cICVQ==}
@@ -6019,8 +6052,8 @@ packages:
       react:
         optional: true
 
-  js-beautify@1.15.3:
-    resolution: {integrity: sha512-rKKGuyTxGNlyN4EQKWzNndzXpi0bOl8Gl8YQAW1as/oMz0XhD6sHJO1hTvoBDOSzKuJb9WkwoAb34FfdkKMv2A==}
+  js-beautify@1.15.4:
+    resolution: {integrity: sha512-9/KXeZUKKJwqCXUdBxFJ3vPh467OCckSBmYDwSK/EtV090K+iMJ7zx2S3HLVDIWFQdqMIsZWbnaGiba18aWhaA==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -6061,7 +6094,6 @@ packages:
     resolution: {integrity: sha512-Quz3MvAwHxVYNXsOByL7xI5EB2WYOeFswqaHIA3qOK3isRWTxiplBEocmmru6XmxDB2L7jDNYtYA4FyimoAFEw==}
     engines: {node: '>=8.17.0'}
     hasBin: true
-    bundledDependencies: []
 
   jsonwebtoken@9.0.2:
     resolution: {integrity: sha512-PRp66vJ865SSqOlgqS8hujT5U4AOgMfhrwYIuIhfKaoSCZcirrmASQr8CX7cUg+RMih+hgznrjp99o+W4pJLHQ==}
@@ -6593,6 +6625,11 @@ packages:
   mz@2.7.0:
     resolution: {integrity: sha512-z81GNO7nnYMEhrGh9LeymoE4+Yr0Wn5McHIZMK5cfQCl+NDX08sCZgUc9/6MHni9IWuFLm1Z3HTCXu2z9fN62Q==}
 
+  nanoid@3.3.11:
+    resolution: {integrity: sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==}
+    engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
+    hasBin: true
+
   nanoid@3.3.8:
     resolution: {integrity: sha512-WNLf5Sd8oZxOm+TzppcYk8gVOgP+l58xNy58D0nbUnOxOWRWvlcCV4kUF7ltmI6PsrLl/BgKEyS4mqsGChFN0w==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
@@ -6646,9 +6683,9 @@ packages:
     resolution: {integrity: sha512-SQ3wZCExjeSatLE/HBaXS5vqUOQk6GtBdIIKxiFdmm01mOQZX/POJkO3SUX1wDiYcwUOJwT23scFSC9fY2H8IA==}
     engines: {node: '>=6.0.0'}
 
-  nopt@8.1.0:
-    resolution: {integrity: sha512-ieGu42u/Qsa4TFktmaKEwM6MQH0pOWnaB3htzh0JRtx84+Mebc0cbZYN5bC+6WTZ4+77xrL9Pn5m7CV6VIkV7A==}
-    engines: {node: ^18.17.0 || >=20.5.0}
+  nopt@7.2.1:
+    resolution: {integrity: sha512-taM24ViiimT/XntxbPyJQzCG+p4EKOpgD3mxFwW38mGjVUrfERQOeY4EDHjdnptttfHuHQXFx+lTP08Q+mLa/w==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
     hasBin: true
 
   normalize-path@3.0.0:
@@ -6701,8 +6738,8 @@ packages:
     resolution: {integrity: sha512-7x81NCL719oNbsq/3mh+hVrAWmFuEYUqrq/Iw3kUzH8ReypT9QQ0BLoJS7/G9k6N81XjW4qHWtjWwe/9eLy1EQ==}
     engines: {node: '>=12'}
 
-  openapi3-ts@4.4.0:
-    resolution: {integrity: sha512-9asTNB9IkKEzWMcHmVZE7Ts3kC9G7AFHfs8i7caD8HbI76gEjdkId4z/AkP83xdZsH7PLAnnbl47qZkXuxpArw==}
+  openapi-types@12.1.3:
+    resolution: {integrity: sha512-N4YtSYJqghVu4iek2ZUvcN/0aqH1kRDuNqzcycDxhOUpg7GdvLa2F3DgS6yBNhInhv2r/6I0Flkn7CqL8+nIcw==}
 
   optics-ts@2.4.1:
     resolution: {integrity: sha512-HaYzMHvC80r7U/LqAd4hQyopDezC60PO2qF5GuIwALut2cl5rK1VWHsqTp0oqoJJWjiv6uXKqsO+Q2OO0C3MmQ==}
@@ -6970,6 +7007,9 @@ packages:
 
   property-information@6.5.0:
     resolution: {integrity: sha512-PgTgs/BlvHxOu8QuEN7wi5A0OmXaBcHpmCSTehcs6Uuu9IkDIEo13Hy7n898RHfrQ49vKCoGeWZSaAK01nwVig==}
+
+  property-information@7.0.0:
+    resolution: {integrity: sha512-7D/qOz/+Y4X/rzSB6jKxKUsQnphO046ei8qxG59mtM3RG3DHgTK81HrxrmoDVINJb8NKT5ZsRbwHvQ6B68Iyhg==}
 
   proto-list@1.2.4:
     resolution: {integrity: sha512-vtK/94akxsTMhe0/cbfpR+syPuszcuwhqVjJq26CuNDgFGj682oRBXOP5MJpv2r7JtE8MsiepGIqvvOTBwn2vA==}
@@ -7380,8 +7420,8 @@ packages:
   rehype-minify-css-style@4.0.1:
     resolution: {integrity: sha512-vIYlkQx0vvstzUk7XKc//i5HOklD7N84jaRq22XzOqxgf8bpGF9Jl90V4T+OUepX110UMEltv1rHl57lpAQjjg==}
 
-  rehype-minify-enumerated-attribute@5.0.1:
-    resolution: {integrity: sha512-w3mva9U3XwlyjjZ6+epr9NJrpqYamlOQRvttyGQCEmWXqy3DGS3vjQ9KYpqSDEGHS2g4qtGjoq7C7sYYPlzQXQ==}
+  rehype-minify-enumerated-attribute@5.0.2:
+    resolution: {integrity: sha512-B4laV6OHZAtXnvfNQw17q9a2TIzSCLM5gGc0Hv8Cn2Zun7Ri0hz5wKRULy0yelAyBZfTMbjM/euR2kHAmQHITw==}
 
   rehype-minify-media-attribute@4.0.1:
     resolution: {integrity: sha512-J6W+RceuJ07PQcHUTBfFEgxw5buGvwY901PQMGSQJBoWkfe7vJhXSPwZJ5EdIeAMbh0vYpc80k//FNfFUhqKXg==}
@@ -8020,41 +8060,41 @@ packages:
   tunnel-rat@0.1.2:
     resolution: {integrity: sha512-lR5VHmkPhzdhrM092lI2nACsLO4QubF0/yoOhzX7c+wIpbN1GjHNzCc91QlpxBi+cnx8vVJ+Ur6vL5cEoQPFpQ==}
 
-  turbo-darwin-64@2.4.2:
-    resolution: {integrity: sha512-HFfemyWB60CJtEvVQj9yby5rkkWw9fLAdLtAPGtPQoU3tKh8t/uzCAZKso2aPVbib9vGUuGbPGoGpaRXdVhj5g==}
+  turbo-darwin-64@2.4.4:
+    resolution: {integrity: sha512-5kPvRkLAfmWI0MH96D+/THnDMGXlFNmjeqNRj5grLKiry+M9pKj3pRuScddAXPdlxjO5Ptz06UNaOQrrYGTx1g==}
     cpu: [x64]
     os: [darwin]
 
-  turbo-darwin-arm64@2.4.2:
-    resolution: {integrity: sha512-uwSx1dsBSSFeEC0nxyx2O219FEsS/haiESaWwE9JI8mHkQK61s6w6fN2G586krKxyNam4AIxRltleL+O2Em94g==}
+  turbo-darwin-arm64@2.4.4:
+    resolution: {integrity: sha512-/gtHPqbGQXDFhrmy+Q/MFW2HUTUlThJ97WLLSe4bxkDrKHecDYhAjbZ4rN3MM93RV9STQb3Tqy4pZBtsd4DfCw==}
     cpu: [arm64]
     os: [darwin]
 
-  turbo-linux-64@2.4.2:
-    resolution: {integrity: sha512-Fy/uL8z/LAYcPbm7a1LwFnTY9pIi5FAi12iuHsgB7zHjdh4eeIKS2NIg4nroAmTcUTUZ0/cVTo4bDOCUcS3aKw==}
+  turbo-linux-64@2.4.4:
+    resolution: {integrity: sha512-SR0gri4k0bda56hw5u9VgDXLKb1Q+jrw4lM7WAhnNdXvVoep4d6LmnzgMHQQR12Wxl3KyWPbkz9d1whL6NTm2Q==}
     cpu: [x64]
     os: [linux]
 
-  turbo-linux-arm64@2.4.2:
-    resolution: {integrity: sha512-AEA0d8h5W/K6iiXfEgiNwWt0yqRL1NpBs8zQCLdc4/L7WeYeJW3sORWX8zt7xhutF/KW9gTm8ehKpiK6cCIsAA==}
+  turbo-linux-arm64@2.4.4:
+    resolution: {integrity: sha512-COXXwzRd3vslQIfJhXUklgEqlwq35uFUZ7hnN+AUyXx7hUOLIiD5NblL+ETrHnhY4TzWszrbwUMfe2BYWtaPQg==}
     cpu: [arm64]
     os: [linux]
 
   turbo-stream@2.4.0:
     resolution: {integrity: sha512-FHncC10WpBd2eOmGwpmQsWLDoK4cqsA/UT/GqNoaKOQnT8uzhtCbg3EoUDMvqpOSAI0S26mr0rkjzbOO6S3v1g==}
 
-  turbo-windows-64@2.4.2:
-    resolution: {integrity: sha512-CybtIZ9wRgnnNFVN9En9G+rxsO+mwU81fvW4RpE8BWyNEkhQ8J28qYf4PaimueMxGHHp/28i/G7Kcdn2GAWG0g==}
+  turbo-windows-64@2.4.4:
+    resolution: {integrity: sha512-PV9rYNouGz4Ff3fd6sIfQy5L7HT9a4fcZoEv8PKRavU9O75G7PoDtm8scpHU10QnK0QQNLbE9qNxOAeRvF0fJg==}
     cpu: [x64]
     os: [win32]
 
-  turbo-windows-arm64@2.4.2:
-    resolution: {integrity: sha512-7V0yneVPL8Y3TgrkUIjw7Odmwu1tHnyIiPHFM7eFcA7U+H6hPXyCxge7nC3wOKfjhKCQqUm+Vf/k6kjmLz5G4g==}
+  turbo-windows-arm64@2.4.4:
+    resolution: {integrity: sha512-403sqp9t5sx6YGEC32IfZTVWkRAixOQomGYB8kEc6ZD+//LirSxzeCHCnM8EmSXw7l57U1G+Fb0kxgTcKPU/Lg==}
     cpu: [arm64]
     os: [win32]
 
-  turbo@2.4.2:
-    resolution: {integrity: sha512-Qxi0ioQCxMRUCcHKHZkTnYH8e7XCpNfg9QiJcyfWIc+ZXeaCjzV5rCGlbQlTXMAtI8qgfP8fZADv3CFtPwqdPQ==}
+  turbo@2.4.4:
+    resolution: {integrity: sha512-N9FDOVaY3yz0YCOhYIgOGYad7+m2ptvinXygw27WPLQvcZDl3+0Sa77KGVlLSiuPDChOUEnTKE9VJwLSi9BPGQ==}
     hasBin: true
 
   type-check@0.3.2:
@@ -9185,7 +9225,7 @@ snapshots:
   '@jsx-email/plugin-inline@1.0.1(jsx-email@2.7.0)':
     dependencies:
       '@adobe/css-tools': 4.4.2
-      hast-util-select: 6.0.3
+      hast-util-select: 6.0.4
       hast-util-to-string: 3.0.1
       jsx-email: 2.7.0(@jsx-email/plugin-inline@1.0.1)(@jsx-email/plugin-minify@1.0.2)(@jsx-email/plugin-pretty@1.0.0)(@types/node@22.13.1)(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(react@18.3.1)(ts-node@10.9.2(@swc/core@1.10.15(@swc/helpers@0.5.15))(@types/node@22.13.1)(typescript@5.7.3))(typescript@5.7.3)
       unist-util-remove: 4.0.0
@@ -9196,7 +9236,7 @@ snapshots:
       jsx-email: 2.7.0(@jsx-email/plugin-inline@1.0.1)(@jsx-email/plugin-minify@1.0.2)(@jsx-email/plugin-pretty@1.0.0)(@types/node@22.13.1)(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(react@18.3.1)(ts-node@10.9.2(@swc/core@1.10.15(@swc/helpers@0.5.15))(@types/node@22.13.1)(typescript@5.7.3))(typescript@5.7.3)
       rehype-minify-attribute-whitespace: 4.0.1
       rehype-minify-css-style: 4.0.1
-      rehype-minify-enumerated-attribute: 5.0.1
+      rehype-minify-enumerated-attribute: 5.0.2
       rehype-minify-media-attribute: 4.0.1
       rehype-minify-meta-color: 4.0.1
       rehype-minify-meta-content: 4.0.1
@@ -9833,22 +9873,43 @@ snapshots:
       '@orpc/standard-server': 0.47.0
       '@orpc/standard-server-fetch': 0.47.0
 
+  '@orpc/client@0.49.0':
+    dependencies:
+      '@orpc/shared': 0.49.0
+      '@orpc/standard-server': 0.49.0
+      '@orpc/standard-server-fetch': 0.49.0
+
   '@orpc/contract@0.38.0':
     dependencies:
       '@orpc/shared': 0.38.0
       '@standard-schema/spec': 1.0.0
 
-  '@orpc/openapi@0.38.0(hono@4.7.0)(next@15.1.7(@babel/core@7.26.8)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
+  '@orpc/contract@0.49.0':
     dependencies:
-      '@orpc/contract': 0.38.0
-      '@orpc/server': 0.38.0(hono@4.7.0)(next@15.1.7(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@orpc/shared': 0.38.0
-      escape-string-regexp: 5.0.0
-      fast-content-type-parse: 2.0.1
+      '@orpc/client': 0.49.0
+      '@orpc/shared': 0.49.0
+      '@orpc/standard-server': 0.49.0
+      '@standard-schema/spec': 1.0.0
+
+  '@orpc/openapi-client@0.49.0':
+    dependencies:
+      '@orpc/client': 0.49.0
+      '@orpc/shared': 0.49.0
+      '@orpc/standard-server': 0.49.0
+
+  '@orpc/openapi@0.49.0(hono@4.7.0)(next@15.1.7(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
+    dependencies:
+      '@orpc/client': 0.49.0
+      '@orpc/contract': 0.49.0
+      '@orpc/openapi-client': 0.49.0
+      '@orpc/server': 0.49.0(hono@4.7.0)(next@15.1.7(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@orpc/shared': 0.49.0
+      '@orpc/standard-server': 0.49.0
+      '@orpc/standard-server-fetch': 0.49.0
+      '@orpc/standard-server-node': 0.49.0
       json-schema-typed: 8.0.1
-      openapi3-ts: 4.4.0
+      openapi-types: 12.1.3
       rou3: 0.5.1
-      wildcard-match: 5.1.4
     transitivePeerDependencies:
       - hono
       - next
@@ -9866,7 +9927,18 @@ snapshots:
       '@orpc/shared': 0.38.0
       '@tinyhttp/content-disposition': 2.2.2
       hono: 4.7.0
-      next: 15.1.7(@babel/core@7.26.8)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      next: 15.1.7(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+
+  '@orpc/server@0.49.0(hono@4.7.0)(next@15.1.7(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
+    dependencies:
+      '@orpc/client': 0.49.0
+      '@orpc/contract': 0.49.0
+      '@orpc/shared': 0.49.0
+      '@orpc/standard-server': 0.49.0
+      '@orpc/standard-server-fetch': 0.49.0
+      '@orpc/standard-server-node': 0.49.0
+      hono: 4.7.0
+      next: 15.1.7(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
   '@orpc/shared@0.38.0':
     dependencies:
@@ -9878,25 +9950,48 @@ snapshots:
       radash: 12.1.0
       type-fest: 4.34.1
 
+  '@orpc/shared@0.49.0':
+    dependencies:
+      radash: 12.1.0
+      type-fest: 4.34.1
+
   '@orpc/standard-server-fetch@0.47.0':
     dependencies:
       '@orpc/shared': 0.47.0
       '@orpc/standard-server': 0.47.0
+
+  '@orpc/standard-server-fetch@0.49.0':
+    dependencies:
+      '@orpc/shared': 0.49.0
+      '@orpc/standard-server': 0.49.0
+
+  '@orpc/standard-server-node@0.49.0':
+    dependencies:
+      '@orpc/shared': 0.49.0
+      '@orpc/standard-server': 0.49.0
 
   '@orpc/standard-server@0.47.0':
     dependencies:
       '@orpc/shared': 0.47.0
       '@tinyhttp/content-disposition': 2.2.2
 
-  '@orpc/zod@0.38.0(@orpc/openapi@0.38.0(hono@4.7.0)(next@15.1.7(@babel/core@7.26.8)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)))(@orpc/server@0.38.0(hono@4.7.0)(next@15.1.7(@babel/core@7.26.8)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)))':
+  '@orpc/standard-server@0.49.0':
     dependencies:
-      '@orpc/openapi': 0.38.0(hono@4.7.0)(next@15.1.7(@babel/core@7.26.8)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@orpc/server': 0.38.0(hono@4.7.0)(next@15.1.7(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@orpc/shared': 0.38.0
-      '@standard-schema/spec': 1.0.0
-      json-schema-typed: 8.0.1
+      '@orpc/shared': 0.49.0
+      '@tinyhttp/content-disposition': 2.2.2
+
+  '@orpc/zod@0.49.0(@orpc/contract@0.49.0)(@orpc/server@0.49.0(hono@4.7.0)(next@15.1.7(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)))(hono@4.7.0)(next@15.1.7(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
+    dependencies:
+      '@orpc/contract': 0.49.0
+      '@orpc/openapi': 0.49.0(hono@4.7.0)(next@15.1.7(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@orpc/server': 0.49.0(hono@4.7.0)(next@15.1.7(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@orpc/shared': 0.49.0
+      escape-string-regexp: 5.0.0
       wildcard-match: 5.1.4
       zod: 3.24.2
+    transitivePeerDependencies:
+      - hono
+      - next
 
   '@parcel/watcher-android-arm64@2.5.1':
     optional: true
@@ -12426,7 +12521,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  abbrev@3.0.0: {}
+  abbrev@2.0.0: {}
 
   abstract-logging@2.0.1: {}
 
@@ -12672,6 +12767,8 @@ snapshots:
       three: 0.163.0
 
   caniuse-lite@1.0.30001699: {}
+
+  caniuse-lite@1.0.30001706: {}
 
   ccount@2.0.1: {}
 
@@ -12949,6 +13046,8 @@ snapshots:
       nth-check: 2.1.1
 
   css-selector-parser@3.0.5: {}
+
+  css-selector-parser@3.1.1: {}
 
   css-tree@2.2.1:
     dependencies:
@@ -13555,8 +13654,6 @@ snapshots:
 
   extsprintf@1.4.1: {}
 
-  fast-content-type-parse@2.0.1: {}
-
   fast-deep-equal@3.1.3: {}
 
   fast-glob@3.3.3:
@@ -13901,6 +13998,24 @@ snapshots:
       hast-util-whitespace: 3.0.0
       nth-check: 2.1.1
       property-information: 6.5.0
+      space-separated-tokens: 2.0.2
+      unist-util-visit: 5.0.0
+      zwitch: 2.0.4
+
+  hast-util-select@6.0.4:
+    dependencies:
+      '@types/hast': 3.0.4
+      '@types/unist': 3.0.3
+      bcp-47-match: 2.0.3
+      comma-separated-tokens: 2.0.3
+      css-selector-parser: 3.1.1
+      devlop: 1.1.0
+      direction: 2.0.1
+      hast-util-has-property: 3.0.0
+      hast-util-to-string: 3.0.1
+      hast-util-whitespace: 3.0.0
+      nth-check: 2.1.1
+      property-information: 7.0.0
       space-separated-tokens: 2.0.2
       unist-util-visit: 5.0.0
       zwitch: 2.0.4
@@ -14298,13 +14413,13 @@ snapshots:
       '@types/react': 18.3.18
       react: 18.3.1
 
-  js-beautify@1.15.3:
+  js-beautify@1.15.4:
     dependencies:
       config-chain: 1.1.13
       editorconfig: 1.0.4
       glob: 10.4.5
       js-cookie: 3.0.5
-      nopt: 8.1.0
+      nopt: 7.2.1
 
   js-cookie@3.0.5: {}
 
@@ -15256,21 +15371,23 @@ snapshots:
       object-assign: 4.1.1
       thenify-all: 1.6.0
 
+  nanoid@3.3.11: {}
+
   nanoid@3.3.8: {}
 
   negotiator@0.6.3: {}
 
-  next@15.1.7(@babel/core@7.26.8)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  next@15.1.7(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@next/env': 15.1.7
       '@swc/counter': 0.1.3
       '@swc/helpers': 0.5.15
       busboy: 1.6.0
-      caniuse-lite: 1.0.30001699
+      caniuse-lite: 1.0.30001706
       postcss: 8.4.31
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      styled-jsx: 5.1.6(@babel/core@7.26.8)(react@18.3.1)
+      styled-jsx: 5.1.6(react@18.3.1)
     optionalDependencies:
       '@next/swc-darwin-arm64': 15.1.7
       '@next/swc-darwin-x64': 15.1.7
@@ -15301,9 +15418,9 @@ snapshots:
 
   nodemailer@6.10.0: {}
 
-  nopt@8.1.0:
+  nopt@7.2.1:
     dependencies:
-      abbrev: 3.0.0
+      abbrev: 2.0.0
 
   normalize-path@3.0.0: {}
 
@@ -15354,9 +15471,7 @@ snapshots:
       is-docker: 2.2.1
       is-wsl: 2.2.0
 
-  openapi3-ts@4.4.0:
-    dependencies:
-      yaml: 2.7.0
+  openapi-types@12.1.3: {}
 
   optics-ts@2.4.1: {}
 
@@ -15553,7 +15668,7 @@ snapshots:
 
   postcss@8.4.31:
     dependencies:
-      nanoid: 3.3.8
+      nanoid: 3.3.11
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
@@ -15587,7 +15702,7 @@ snapshots:
     dependencies:
       condense-newlines: 0.2.1
       extend-shallow: 2.0.1
-      js-beautify: 1.15.3
+      js-beautify: 1.15.4
 
   prism-react-renderer@2.4.1(react@18.3.1):
     dependencies:
@@ -15611,6 +15726,8 @@ snapshots:
       react-is: 16.13.1
 
   property-information@6.5.0: {}
+
+  property-information@7.0.0: {}
 
   proto-list@1.2.4: {}
 
@@ -16062,12 +16179,12 @@ snapshots:
       hast-util-to-string: 3.0.1
       unist-util-visit: 5.0.0
 
-  rehype-minify-enumerated-attribute@5.0.1:
+  rehype-minify-enumerated-attribute@5.0.2:
     dependencies:
       '@types/hast': 3.0.4
-      hast-util-select: 6.0.3
+      hast-util-select: 6.0.4
       html-enumerated-attributes: 1.1.1
-      property-information: 6.5.0
+      property-information: 7.0.0
       space-separated-tokens: 2.0.2
       unist-util-visit: 5.0.0
 
@@ -16588,12 +16705,10 @@ snapshots:
     dependencies:
       inline-style-parser: 0.2.4
 
-  styled-jsx@5.1.6(@babel/core@7.26.8)(react@18.3.1):
+  styled-jsx@5.1.6(react@18.3.1):
     dependencies:
       client-only: 0.0.1
       react: 18.3.1
-    optionalDependencies:
-      '@babel/core': 7.26.8
 
   subarg@1.0.0:
     dependencies:
@@ -16902,34 +17017,34 @@ snapshots:
       - immer
       - react
 
-  turbo-darwin-64@2.4.2:
+  turbo-darwin-64@2.4.4:
     optional: true
 
-  turbo-darwin-arm64@2.4.2:
+  turbo-darwin-arm64@2.4.4:
     optional: true
 
-  turbo-linux-64@2.4.2:
+  turbo-linux-64@2.4.4:
     optional: true
 
-  turbo-linux-arm64@2.4.2:
+  turbo-linux-arm64@2.4.4:
     optional: true
 
   turbo-stream@2.4.0: {}
 
-  turbo-windows-64@2.4.2:
+  turbo-windows-64@2.4.4:
     optional: true
 
-  turbo-windows-arm64@2.4.2:
+  turbo-windows-arm64@2.4.4:
     optional: true
 
-  turbo@2.4.2:
+  turbo@2.4.4:
     optionalDependencies:
-      turbo-darwin-64: 2.4.2
-      turbo-darwin-arm64: 2.4.2
-      turbo-linux-64: 2.4.2
-      turbo-linux-arm64: 2.4.2
-      turbo-windows-64: 2.4.2
-      turbo-windows-arm64: 2.4.2
+      turbo-darwin-64: 2.4.4
+      turbo-darwin-arm64: 2.4.4
+      turbo-linux-64: 2.4.4
+      turbo-linux-arm64: 2.4.4
+      turbo-windows-64: 2.4.4
+      turbo-windows-arm64: 2.4.4
 
   type-check@0.3.2:
     dependencies:

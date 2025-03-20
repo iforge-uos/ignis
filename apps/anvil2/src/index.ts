@@ -5,7 +5,7 @@ import { OpenAPIHandler } from "@orpc/openapi/node";
 import { ORPCError, onError } from "@orpc/server";
 import { RouterClient } from "@orpc/server";
 import { CORSPlugin } from "@orpc/server/plugins";
-import { ZodAutoCoercePlugin } from "@orpc/zod";
+import { ZodSmartCoercionPlugin } from "@orpc/zod";
 import * as Sentry from "@sentry/node";
 import cookieParser from "cookie-parser";
 import express, { Response } from "express";
@@ -36,7 +36,7 @@ const createContext = async ({ req, res }: { req: AuthRequest; res: Response }) 
 export type Context = Awaited<ReturnType<typeof createContext>>;
 
 const openAPIHandler = new OpenAPIHandler(router, {
-  plugins: [new ZodAutoCoercePlugin(), new CORSPlugin()],
+  plugins: [new ZodSmartCoercionPlugin(), new CORSPlugin()],
   interceptors: [
     onError((error) => {
       // Some errors can be suppressed so just re-throw

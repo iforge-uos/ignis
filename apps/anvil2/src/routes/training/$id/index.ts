@@ -49,7 +49,7 @@ export const getForEditing = rep
       await getTrainingForEditing(db, { id }),
   );
 
-export const trainingRouter = pub.prefix("/{id}").router({
+export const idRouter = pub.prefix("/{id}").router({
   get,
   getForEditing,
   start,

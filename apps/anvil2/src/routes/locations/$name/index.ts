@@ -11,7 +11,7 @@ import { trainingRouter } from "./training";
 
 export const get = rep
   .input(LocationNameSchema)
-  .route({ path: "/locations/{name}" })
+  .route({ path: "/" })
   .handler(
     async ({ input: name, context: { db } }): Promise<Location> =>
       await e

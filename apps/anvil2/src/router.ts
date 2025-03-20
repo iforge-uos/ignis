@@ -55,6 +55,27 @@ export const deskOrAdmin = auth.use(orRoleGated("Desk", "Admin"));
 //   await next();
 // });
 
-export const transaction = pub.middleware(async ({ context, next }) =>
-  context.db.transaction(async (tx) => next({ context: { tx, ...context } })),
+export class RollbackTransaction extends Error {
+  readonly data: any;
+  constructor(data: any) {
+    super("Rolled back transaction");
+    this.data = data;
+  }
+}
+
+/**
+ * Middleware to wrap a route in a transaction.
+ * Using the return value of a rolled back function is UB.
+ */
+export const transaction = pub.middleware(async ({ context, next, ...rest }) =>
+  context.db.transaction(async (tx) => {
+    try {
+      return await next({ context: { tx, ...context, ...rest } });
+    } catch (err) {
+      if (err instanceof RollbackTransaction) {
+        throw err;
+      }
+      return undefined as any;
+    }
+  }),
 );
