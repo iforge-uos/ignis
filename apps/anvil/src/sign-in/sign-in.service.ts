@@ -447,7 +447,7 @@ export class SignInService implements OnModuleInit {
       });
     }
     const { infractions } = user;
-    const active_infractions = infractions.filter((infraction) => infraction.resolved); // the final boss of iForge rep'ing enters
+    const active_infractions = infractions.filter((infraction) => !infraction.resolved); // the final boss of iForge rep'ing enters
     return { infractions: active_infractions };
   }
 
