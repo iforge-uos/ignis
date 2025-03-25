@@ -1,5 +1,7 @@
 {
+  "workspaceFolder": "/workspace",
   "name": "Ignis",
+  "forwardPorts": [3000, 8000, 4000],
   "portsAttributes": {
     "3000": {
       "label": "anvil",
@@ -17,13 +19,38 @@
       "requireLocalPort": true
     }
   },
-  "dockerComposeFile": [
-    "../docker-compose.yml",
-    "docker-compose.yml"
-  ],
-  service: "",
+  "dockerComposeFile": ["docker-compose.yml"],
+  "remoteUser": "iforge",
+  "updateRemoteUserUID": true,
+  "service": "devcontainer",
+  "initializeCommand": [".devcontainer/env-setup.sh"],
+  "updateContentCommand": "mkdir -p config/secret/db config/secret/op",
+  "features": {
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.12"
+    },
+    "ghcr.io/flexwie/devcontainer-features/op:1": {}
+  },
   "mounts": [
-    "source=${localWorkspaceFolderBasename}-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
-    "source=${localWorkspaceFolder} ,target=/code,type=bind,consistency=cached"
+    "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
   ],
+  // Add these settings
+  "hostRequirements": {
+    "memory": "8gb",
+    "cpus": 4,
+    "storage": "32gb"
+  },
+  "shutdownAction": "stopCompose",
+  "waitFor": "updateContentCommand",
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-azuretools.vscode-docker"],
+      "settings": {
+        "files.watcherExclude": {
+          "**/target": true,
+          "**/node_modules": true
+        }
+      }
+    }
+  }
 }

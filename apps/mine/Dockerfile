@@ -36,4 +36,4 @@ USER iforge
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 CMD wget -q --spider http://localhost:4000/health || exit 1
 
 EXPOSE 4000
-CMD ["/usr/local/bin/op", "run", "--env-file=/config/.env.production.tpl", "--", "/app/mine"]
+CMD ["/usr/local/bin/op", "run", "--env-file=/app/mine/.env.production.tpl", "--", "/app/mine"]

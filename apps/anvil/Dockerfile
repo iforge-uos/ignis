@@ -1,5 +1,5 @@
 FROM 1password/op:2 as op
-FROM node:20-alpine AS deps
+FROM node:22-alpine AS deps
 WORKDIR /app
 
 # Setup PNPM
@@ -22,15 +22,14 @@ WORKDIR /app
 # Generate any needed files https://discord.com/channels/841451783728529451/1122688204152246282/1123031495121051739 <- maybe dooable
 #WORKDIR /app/apps/anvil
 #RUN pnpm regen
-RUN pnpm deploy --filter=anvil --prod /prod/forge
+RUN pnpm deploy --filter=anvil --prod /prod/anvil
 RUN pnpm exec turbo build
 
 
 FROM node:20-slim AS anvil
 WORKDIR /app
-COPY --from=build /prod/forge ./
 COPY --from=build /app/apps/anvil/dist ./dist
-
+COPY --from=build /app/apps/anvil/.env.production.tpl ./dist
 # Create iforge user and set ownership
 RUN useradd -m iforge
 RUN chown -R iforge:iforge /app
@@ -43,4 +42,4 @@ USER iforge
 
 EXPOSE 3000
 ENV NODE_PATH=/app/node_modules
-CMD ["/usr/local/bin/op", "run", "--env-file=/config/.env.production.tpl", "--", "node", "dist/src/main.js"]
+CMD ["/usr/local/bin/op", "run", "--env-file=/app/dist/.env.production.tpl", "--", "node", "dist/src/main.js"]
