@@ -1,7 +1,7 @@
 import { auth } from "@/router";
 import e from "@dbschema/edgeql-js";
 import { z } from "zod";
-import { get } from "./$id";
+import { idRouter } from "./$id";
 
 export const all = auth
   .route({ path: "/" })
@@ -22,6 +22,6 @@ export const all = auth
   );
 
 export const mailingListRouters = auth.prefix("/mailing-lists").router({
-  get,
   all,
+  ...idRouter,
 });

@@ -1,30 +1,16 @@
-import email from "@/email";
-import ldap from "@/ldap";
-import { auth, deskOrAdmin, rep } from "@/router";
-import { LocationParams } from "@/utils/queries";
-import { ensureUser, ldapLibraryToUcardNumber } from "@/utils/sign-in";
-import { CreateSignInSchema, LocationNameSchema } from "@dbschema/edgedb-zod/modules/sign_in";
+import { deskOrAdmin, transaction } from "@/router";
+import { ensureUser } from "@/utils/sign-in";
 import e from "@dbschema/edgeql-js";
-import { users } from "@ignis/types";
-import { SignIn } from "@ignis/types/root";
-import { Location, LocationName } from "@ignis/types/sign_in";
-import { User } from "@ignis/types/users";
-import { Client } from "gel";
-import { z } from "zod";
-
-export const signInInfo = auth
-  .route({ path: "/{ucard_number}" })
-  .input(z.object({ name: LocationNameSchema, ucard_number: z.string().regex(/\d{9,}/) }))
-  .handler(async ({ input, ctx: { db } }) => {
-    const { user, name } = await ensureUser({ input, ctx: { db } }); // FIXME this has to do something different or store the knowledge that they just registered. If the signing in rep misses the prompt we are shit outta luck? Can we hold back registering till theyre on the line?
-    if (user?.location && user.location !== name) {
-      throw new TRPCError({
-        message: "User is already signed in at a different location, please sign out there before signing in.",
-        code: "BAD_REQUEST",
-      });
-    }
-    return user;
-  });
+import { SignInErrors, SignInStepInput, SignInStepOutput } from "./_flows/_types";
+import agreements from "./_flows/agreements";
+import cancel from "./_flows/cancel";
+import finalise from "./_flows/finalise";
+import initialise from "./_flows/initialise";
+import personalToolsAndMaterials from "./_flows/personal-tools-and-materials";
+import queue from "./_flows/queue";
+import reasons from "./_flows/reasons";
+import register from "./_flows/register";
+import tools from "./_flows/tools";
 
 function isRep(params: { id: string } | { ucard_number: number } | { username: string }) {
   return e.op(
@@ -35,125 +21,143 @@ function isRep(params: { id: string } | { ucard_number: number } | { username: s
   );
 }
 
-export type Step = "REGISTER" | "QUEUE" | "AGREEMENTS" | "REASON" | "TRAINING";
-
-const signIn = deskOrAdmin
-  .input(
-    z.object({
-      name: LocationNameSchema,
-      ucard_number: z.string().regex(/\d{9,}/),
-      data: CreateSignInSchema.extend({
-        reason_id: z.string(),
-      }),
-    }),
-  )
+export const signIn = deskOrAdmin
   .route({ method: "POST", path: "/{ucard_number}" })
-  .handler(async ({ input, ctx: { db, logger } }) => {
-    const { user, name, data } = await ensureUser({ input, ctx: { db } });
-    logger.info(`Signing in UCard number: ${input.ucard_number} at location: ${name}`);
-    if (user.is_rep) {
-      return {
-        step: 2,
-      };
+  .use(transaction)
+  .input(SignInStepInput)
+  .output(SignInStepOutput)
+  .errors(SignInErrors)
+  .handler(async (arg) => {
+    const {
+      input,
+      context: { tx },
+      signal,
+    } = arg;
+
+    const user = await ensureUser({ ...input, db: tx });
+
+    signal?.addEventListener("abort", async () => {
+      await cancel({ ...arg, input: { ...input, type: "CANCEL" }, user });
+    });
+
+    switch (input.type) {
+      case "INITIALISE":
+        return await initialise({ ...arg, user, input });
+      case "QUEUE":
+        return await queue({ ...arg, user, input });
+      case "REGISTER":
+        return await register({ ...arg, user, input });
+      case "AGREEMENTS":
+        return await agreements({ ...arg, user, input });
+      case "REASON":
+        return await reasons({ ...arg, user, input });
+      case "TOOLS":
+        return await tools({ ...arg, user, input });
+      case "PERSONAL_TOOLS_AND_MATERIALS":
+        return await personalToolsAndMaterials({ ...arg, user, input });
+      case "FINALISE":
+        return await finalise({ ...arg, user, input });
+      case "CANCEL":
+        return await cancel({ ...arg, user, input });
     }
   });
 
-async function preSignInChecks(location: LocationName, ucard_number: number, post: boolean = false) {
-  if ((await this.getAvailableCapacity(location)) <= 0) {
-    if (await this.queueInUse(location)) {
-      this.logger.log(
-        `Queue in use, Checking if user: ${ucard_number} has queued at location: ${location}`,
-        SignInService.name,
-      );
-      await this.assertHasQueued(location, ucard_number);
-    } else {
-      throw new HttpException(
-        "Failed to sign in, we are at max capacity. Consider using the queue",
-        HttpStatus.SERVICE_UNAVAILABLE,
-      );
-    }
-  }
-  if (post) {
-    // try and delete them from the queue if they're signing in for real
-    await this.dbService.query(
-      e.delete(e.sign_in.QueuePlace, (place) => ({
-        filter_single: e.op(place.user.ucard_number, "=", ucard_number),
-      })),
-    );
-  }
+// async function preSignInChecks(location: LocationName, ucard_number: number, post: boolean = false) {
+//   if ((await this.getAvailableCapacity(location)) <= 0) {
+//     if (await this.queueInUse(location)) {
+//       this.logger.log(
+//         `Queue in use, Checking if user: ${ucard_number} has queued at location: ${location}`,
+//         SignInService.name,
+//       );
+//       await this.assertHasQueued(location, ucard_number);
+//     } else {
+//       throw new HttpException(
+//         "Failed to sign in, we are at max capacity. Consider using the queue",
+//         HttpStatus.SERVICE_UNAVAILABLE,
+//       );
+//     }
+//   }
+//   if (post) {
+//     // try and delete them from the queue if they're signing in for real
+//     await this.dbService.query(
+//       e.delete(e.sign_in.QueuePlace, (place) => ({
+//         filter_single: e.op(place.user.ucard_number, "=", ucard_number),
+//       })),
+//     );
+//   }
 
-  const user = await this.dbService.query(
-    e.select(e.users.User, () => ({
-      filter_single: { ucard_number },
-      infractions: { type: true, duration: true, reason: true, resolved: true, id: true, created_at: true },
-    })),
-  );
-  if (!user) {
-    throw new NotFoundException({
-      message: `User with UCard number ${ucard_number} is not registered`,
-      code: ErrorCodes.not_registered,
-    });
-  }
-  const { infractions } = user;
-  const active_infractions = infractions.filter((infraction) => infraction.resolved); // the final boss of iForge rep'ing enters
-  return { infractions: active_infractions };
-}
+//   const user = await this.dbService.query(
+//     e.select(e.users.User, () => ({
+//       filter_single: { ucard_number },
+//       infractions: { type: true, duration: true, reason: true, resolved: true, id: true, created_at: true },
+//     })),
+//   );
+//   if (!user) {
+//     throw new NotFoundException({
+//       message: `User with UCard number ${ucard_number} is not registered`,
+//       code: ErrorCodes.not_registered,
+//     });
+//   }
+//   const { infractions } = user;
+//   const active_infractions = infractions.filter((infraction) => infraction.resolved); // the final boss of iForge rep'ing enters
+//   return { infractions: active_infractions };
+// }
 
-async function repSignIn(db: Client, name: LocationName, ucard_number: number, reason_id: string) {
-  const { reason, reason_name } = await this.verifyReason(reason_id, ucard_number);
+// async function repSignIn(db: Client, name: LocationName, ucard_number: number, reason_id: string) {
+//   const { reason, reason_name } = await this.verifyReason(reason_id, ucard_number);
 
-  if (reason_name !== REP_ON_SHIFT && !(await LocationParams.out_of_hours.run(db, { name }))) {
-    await this.preSignInChecks(name, ucard_number, /* post */ true);
-  }
+//   if (reason_name !== REP_ON_SHIFT && !(await LocationParams.out_of_hours.run(db, { name }))) {
+//     await this.preSignInChecks(name, ucard_number, /* post */ true);
+//   }
 
-  // TODO this should be client side?
-  const user = e.assert_exists(
-    e.select(e.users.Rep, () => ({
-      filter_single: { ucard_number },
-    })),
-  );
+//   // TODO this should be client side?
+//   const user = e.assert_exists(
+//     e.select(e.users.Rep, () => ({
+//       filter_single: { ucard_number },
+//     })),
+//   );
 
-  const missing = await this.dbService.query(
-    e.select(e.op(compulsory, "except", user.training), () => ({ name: true, id: true })),
-  );
+//   const missing = await this.dbService.query(
+//     e.select(e.op(compulsory, "except", user.training), () => ({ name: true, id: true })),
+//   );
 
-  if (missing.length > 0) {
-    throw new BadRequestException({
-      message: `Rep hasn't completed compulsory on shift-trainings. Missing: ${missing
-        .map((training) => training.name)
-        .join(", ")}`,
-      code: ErrorCodes.compulsory_training_missing,
-    });
-  }
+//   if (missing.length > 0) {
+//     throw new BadRequestException({
+//       message: `Rep hasn't completed compulsory on shift-trainings. Missing: ${missing
+//         .map((training) => training.name)
+//         .join(", ")}`,
+//       code: ErrorCodes.compulsory_training_missing,
+//     });
+//   }
 
-  try {
-    return await e
-      .insert(e.sign_in.SignIn, {
-        location: LocationParams,
-        user,
-        tools: [],
-        reason,
-      })
-      .run(db, { name });
-  } catch (error) {
-    if (error instanceof ConstraintViolationError) {
-      throw new BadRequestException({
-        message: `Rep ${ucard_number} already signed in`,
-        code: ErrorCodes.already_signed_in_to_location,
-      });
-    }
-    if (error instanceof InvalidValueError) {
-      throw new BadRequestException(
-        {
-          message: `User ${ucard_number} attempting to sign in is not a rep`,
-          code: ErrorCodes.not_rep,
-        },
-        { cause: error.toString() },
-      );
-    }
-    throw error;
-  }
-}
+//   try {
+//     return await e
+//       .insert(e.sign_in.SignIn, {
+//         location: LocationParams,
+//         user,
+//         tools: [],
+//         reason,
+//       })
+//       .run(db, { name });
+//   } catch (error) {
+//     if (error instanceof ConstraintViolationError) {
+//       throw new BadRequestException({
+//         message: `Rep ${ucard_number} already signed in`,
+//         code: ErrorCodes.already_signed_in_to_location,
+//       });
+//     }
+//     if (error instanceof InvalidValueError) {
+//       throw new BadRequestException(
+//         {
+//           message: `User ${ucard_number} attempting to sign in is not a rep`,
+//           code: ErrorCodes.not_rep,
+//         },
+//         { cause: error.toString() },
+//       );
+//     }
+//     throw error;
+//   }
+// }
 
 // @Patch("sign-in/:ucard_number")
 // @IsRep()

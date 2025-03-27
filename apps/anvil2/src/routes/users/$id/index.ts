@@ -31,7 +31,7 @@ export const update = auth
     e.select(e.assert_exists(e.update(e.users.User, () => ({ filter_single: { id }, set: rest }))), UserShape).run(db),
   );
 
-export const userRouter = auth.prefix("/{id}").router({
+export const idRouter = auth.prefix("/{id}").router({
   training: trainingRouter,
   get,
   update,

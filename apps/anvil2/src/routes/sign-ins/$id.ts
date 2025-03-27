@@ -1,7 +1,6 @@
 import { auth } from "@/router";
 import { PartialUserShape } from "@/utils/queries";
 import e from "@dbschema/edgeql-js";
-import { SignIn } from "@ignis/types/root";
 import { z } from "zod";
 
 export const get = auth

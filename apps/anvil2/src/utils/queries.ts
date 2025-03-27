@@ -20,6 +20,7 @@ export const UserShape = e.shape(e.users.User, () => ({
     id: true,
     created_at: true,
     "@created_at": true,
+    "@version_signed": true,
     version: true,
   },
   referrals: true,
@@ -37,6 +38,7 @@ export const RepShape = e.shape(e.users.Rep, (rep) => ({
 export const InfractionShape = e.shape(e.users.Infraction, () => ({
   id: true,
   created_at: true,
+  duration: true,
   reason: true,
   type: true,
   resolved: true,
@@ -92,7 +94,7 @@ export const TrainingForLocationShape = e.shape(e.training.Training, () => ({
   },
   icon_url: true,
   enabled: true,
-  status: "Start",
+  status: "Start" as const,
 }));
 
 export const QueuePlaceShape = e.shape(e.sign_in.QueuePlace, () => ({

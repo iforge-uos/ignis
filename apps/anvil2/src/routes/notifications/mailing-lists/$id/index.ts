@@ -15,3 +15,5 @@ export const get = auth
       )
       .run(db),
   );
+
+export const idRouter = auth.prefix("/{id}").router({ get });
