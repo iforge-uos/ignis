@@ -1,6 +1,6 @@
 import { sign_in } from "@dbschema/interfaces";
 import { Temporal } from "@js-temporal/polyfill";
-import { Duration } from "edgedb";
+import { Duration } from "gel";
 import { PartialReason } from "./sign_in";
 import { PartialUser } from "./users";
 

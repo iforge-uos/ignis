@@ -1,6 +1,6 @@
-import { iForgeEpoch } from "@/config/constants.ts";
+import { iForgeEpoch } from "@/config/constants";
 import { Temporal } from "@js-temporal/polyfill";
-import { Badge } from "@ui/components/ui/badge.tsx";
+import { Badge } from "@ui/components/ui/badge";
 import { format } from "date-fns";
 import * as React from "react";
 

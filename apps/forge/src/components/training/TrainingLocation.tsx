@@ -1,5 +1,5 @@
 import Title from "@/components/title";
-import { locationNameToCSSName } from "@/config/constants.ts";
+import { locationNameToCSSName } from "@/config/constants";
 import { toTitleCase, useUser } from "@/lib/utils";
 import { getLocation } from "@/services/training/getLocation";
 import { getStatus } from "@/services/training/getStatus";

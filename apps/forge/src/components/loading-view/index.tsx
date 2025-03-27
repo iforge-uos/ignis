@@ -1,6 +1,6 @@
 import Title from "@/components/title";
 import ActiveLocationSelector from "@/components/sign-in/actions/ActiveLocationSelector";
-import { Loader } from "@ui/components/ui/loader.tsx";
+import { Loader } from "@ui/components/ui/loader";
 
 const LoadingView = () => {
   return (

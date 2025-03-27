@@ -1,5 +1,5 @@
 import axiosInstance from "@/api/axiosInstance";
-import { ShortTeamWithDesc } from "@ignis/types/users.ts";
+import { ShortTeamWithDesc } from "@ignis/types/users";
 
 export async function getTeams(): Promise<ShortTeamWithDesc[]> {
   try {

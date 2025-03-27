@@ -1,11 +1,11 @@
 import { activeLocationAtom } from "@/atoms/signInAppAtoms";
 import { uCardNumberToString } from "@/lib/utils";
-import { SignInReason } from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SignInReason.tsx";
+import { SignInReason } from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SignInReason";
 import { GetSignIn, PatchSignIn } from "@/services/sign_in/signInService";
-import { PartialReason, Training, User } from "@ignis/types/sign_in.ts";
+import { PartialReason, Training, User } from "@ignis/types/sign_in";
 import { PartialUserWithTeams } from "@ignis/types/users";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Badge } from "@ui/components/ui/badge.tsx";
+import { Badge } from "@ui/components/ui/badge";
 import { Button } from "@ui/components/ui/button";
 import {
   Dialog,

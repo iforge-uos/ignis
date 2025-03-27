@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import Title from "@/components/title";
-import { RouteUnfinished } from "@/components/routing/RouteUnfinished.tsx";
+import { RouteUnfinished } from "@/components/routing/RouteUnfinished";
 
 const PrintingAppIndexComponent = () => {
   return (

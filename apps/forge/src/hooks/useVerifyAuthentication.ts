@@ -5,8 +5,8 @@ import {
   originalUserRolesAtom,
   userAtom,
   userRolesAtom,
-} from "@/atoms/authSessionAtoms.ts";
-import { User } from "@ignis/types/users.ts";
+} from "@/atoms/authSessionAtoms";
+import { User } from "@ignis/types/users";
 import { AxiosError } from "axios";
 import { useAtom } from "jotai";
 import { useCallback, useEffect, useRef } from "react";

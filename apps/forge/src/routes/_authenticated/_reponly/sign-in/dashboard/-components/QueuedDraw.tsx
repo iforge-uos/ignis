@@ -1,8 +1,8 @@
-import type { QueueEntry } from "@ignis/types/sign_in.ts";
+import type { QueueEntry } from "@ignis/types/sign_in";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
-import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert.tsx";
-import { Button } from "@ui/components/ui/button.tsx";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@ui/components/ui/collapsible.tsx";
+import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert";
+import { Button } from "@ui/components/ui/button";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@ui/components/ui/collapsible";
 import { ArrowDownIcon, ArrowRightIcon, Ban } from "lucide-react";
 import { FC, useState } from "react";
 import { QueuedUserCard } from "./QueuedUserCard";

@@ -1,9 +1,9 @@
-import { cn } from "@/lib/utils.ts";
-import { PartialReason } from "@ignis/types/sign_in.ts";
-import { Category } from "@ui/components/icons/SignInReason.tsx";
-import { Badge } from "@ui/components/ui/badge.tsx";
+import { cn } from "@/lib/utils";
+import { PartialReason } from "@ignis/types/sign_in";
+import { Category } from "@ui/components/icons/SignInReason";
+import { Badge } from "@ui/components/ui/badge";
 import { Kbd } from "@ui/components/ui/kbd";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip.tsx";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip";
 
 export const SignInReason = ({
   reason,

@@ -1,15 +1,15 @@
-import { INFRACTION_TYPES } from "@/lib/constants.ts";
-import { toTitleCase } from "@/lib/utils.ts";
-import addInfraction from "@/services/users/addInfraction.ts";
-import { getUserTraining } from "@/services/users/getUserTraining.ts";
-import revokeTraining from "@/services/users/revokeTraining.ts";
-import type { LocationName } from "@ignis/types/sign_in.ts";
-import type { InfractionType, PartialUserWithTeams } from "@ignis/types/users.ts";
+import { INFRACTION_TYPES } from "@/lib/constants";
+import { toTitleCase } from "@/lib/utils";
+import addInfraction from "@/services/users/addInfraction";
+import { getUserTraining } from "@/services/users/getUserTraining";
+import revokeTraining from "@/services/users/revokeTraining";
+import type { LocationName } from "@ignis/types/sign_in";
+import type { InfractionType, PartialUserWithTeams } from "@ignis/types/users";
 import { useQuery } from "@tanstack/react-query";
-import DatePickerWithRange from "@ui/components/date-picker-with-range.tsx";
-import { Button } from "@ui/components/ui/button.tsx";
-import { Checkbox } from "@ui/components/ui/checkbox.tsx";
-import { Label } from "@ui/components/ui/label.tsx";
+import DatePickerWithRange from "@ui/components/date-picker-with-range";
+import { Button } from "@ui/components/ui/button";
+import { Checkbox } from "@ui/components/ui/checkbox";
+import { Label } from "@ui/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -17,8 +17,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@ui/components/ui/select.tsx";
-import { Textarea } from "@ui/components/ui/textarea.tsx";
+} from "@ui/components/ui/select";
+import { Textarea } from "@ui/components/ui/textarea";
 import { addDays, startOfDay } from "date-fns";
 import * as React from "react";
 import { DateRange } from "react-day-picker";

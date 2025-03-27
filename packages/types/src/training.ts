@@ -1,6 +1,6 @@
 import type { training } from "@dbschema/interfaces";
 import { Temporal } from "@js-temporal/polyfill";
-import { Duration } from "edgedb";
+import { Duration } from "gel";
 
 export interface PageInteraction extends Omit<training.Page, "duration"> {
   type_name: "training::TrainingPage";

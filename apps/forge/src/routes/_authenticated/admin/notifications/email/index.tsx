@@ -1,7 +1,7 @@
-import axiosInstance from "@/api/axiosInstance.ts";
+import axiosInstance from "@/api/axiosInstance";
 import Title from "@/components/title";
 import { createFileRoute } from "@tanstack/react-router";
-import { Button } from "@ui/components/ui/button.tsx";
+import { Button } from "@ui/components/ui/button";
 
 const EmailIndexPage = () => {
   const handleSendEmail = async () => {

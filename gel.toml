@@ -2,7 +2,7 @@
 server-version = "nightly"
 
 [project]
-schema-dir = "apps/anvil2/dbschema"
+schema-dir = "pacakges/dbschema"
 
 [hooks]
 schema.update.after = "pnpm regen"

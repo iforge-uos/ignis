@@ -1,5 +1,5 @@
 import Title from "@/components/title";
-import { Loader } from "@ui/components/ui/loader.tsx";
+import { Loader } from "@ui/components/ui/loader";
 
 export const Loading = () => {
   return (

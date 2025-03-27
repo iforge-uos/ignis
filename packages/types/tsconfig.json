@@ -1,22 +1,19 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "module": "ES2022",
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "ES2022",
-    "moduleResolution": "bundler",
-    "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
+    "emitDeclarationOnly": true,
+    "rootDir": "./src",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["../../apps/anvil2/src/*"],
-      "@dbschema/*": ["../../apps/anvil2/dbschema/*"]
-    },
-    "incremental": true,
-    "skipLibCheck": true,
-    "strict": true
-  }
+      "@anvil/*": ["../../apps/anvil2/src/*"],
+      "@dbschema/*": ["../dbschema/*"],
+      "@ignis/types/*": ["./src/*"]
+    }
+  },
+  "include": ["./src/**/*"],
+  "exclude": ["node_modules", "dist"],
+  "references": [
+    { "path": "../dbschema" }
+  ]
 }

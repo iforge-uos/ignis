@@ -1,5 +1,5 @@
 import { UserAvatar } from "@/components/avatar";
-import { LocationIcon } from "@/components/icons/Locations";
+import { LocationIcon } from "@ui/components/icons/Locations";
 import Title from "@/components/title";
 import { toTitleCase, useUser } from "@/lib/utils";
 import { getSignIn } from "@/services/root/getSigIn";

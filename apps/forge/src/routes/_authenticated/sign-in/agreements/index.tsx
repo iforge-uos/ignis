@@ -1,5 +1,5 @@
 import Title from "@/components/title";
-import { useUserRoles } from "@/hooks/useUserRoles.ts";
+import { useUserRoles } from "@/hooks/useUserRoles";
 import { getAgreements } from "@/services/root/getAgreements";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";

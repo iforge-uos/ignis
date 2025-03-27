@@ -1,7 +1,7 @@
-import { activeLocationAtom } from "@/atoms/signInAppAtoms.ts";
+import { activeLocationAtom } from "@/atoms/signInAppAtoms";
 import { UserAvatar } from "@/components/avatar";
-import { useUserRoles } from "@/hooks/useUserRoles.ts";
-import { useUserRoles } from "@/hooks/useUserRoles.ts";
+import { useUserRoles } from "@/hooks/useUserRoles";
+import { useUserRoles } from "@/hooks/useUserRoles";
 import { DeleteQueue } from "@/services/sign_in/queueService";
 import { QueueEntry } from "@ignis/types/sign_in";
 import { useMutation, useQueryClient } from "@tanstack/react-query";

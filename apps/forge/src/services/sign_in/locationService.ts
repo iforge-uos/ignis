@@ -1,5 +1,5 @@
-import axiosInstance from "@/api/axiosInstance.ts";
-import {Location, LocationName, PartialLocation} from "@ignis/types/sign_in.ts";
+import axiosInstance from "@/api/axiosInstance";
+import {Location, LocationName, PartialLocation} from "@ignis/types/sign_in";
 
 export const locationStatus = async (): Promise<{ [KeyT in LocationName]: PartialLocation }> => {
   try {

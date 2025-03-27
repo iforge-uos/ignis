@@ -9,13 +9,12 @@
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
-    "type-check": "tsc",
+    "type-check": "tsc -b",
     "preview": "vite preview"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
     "@ignis/errors": "workspace:*",
-    "@ignis/ts-config": "workspace:*",
     "@ignis/types": "workspace:*",
     "@ignis/ui": "workspace:*",
     "@js-temporal/polyfill": "^0.4.4",
@@ -35,8 +34,7 @@
     "@tanstack/react-table": "^8.20.5",
     "@tanstack/router-devtools": "1.62.1",
     "@udecode/plate-serializer-md": "^33.0.0",
-    "autoprefixer": "^10.4.20",
-    "axios": "^1.7.7",
+    "autoprefixer": "^10.4.20",    "axios": "^1.7.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.4",
@@ -76,6 +74,7 @@
     "tailwind-scrollbar": "^3.1.0",
     "tailwindcss": "^3.4.15",
     "tailwindcss-animate": "^1.0.7",
+    "three": "^0.163.0",
     "uuid": "^10.0.0",
     "zod": "^3.24.0"
   },

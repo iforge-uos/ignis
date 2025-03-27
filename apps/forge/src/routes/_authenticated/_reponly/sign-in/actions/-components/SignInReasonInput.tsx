@@ -3,9 +3,9 @@ import {
   sessionErroredAtom,
   sessionSignInReasonAtom,
   sessionUserAtom,
-} from "@/atoms/signInAppAtoms.ts";
+} from "@/atoms/signInAppAtoms";
 import { ErrorDisplayProps, errorDisplay } from "@/components/errors/ErrorDisplay";
-import { Category } from "@/components/icons/SignInReason";
+import { Category } from "@ui/components/icons/SignInReason";
 import { extractError } from "@/lib/utils";
 import { getCommonReasons, useSignInReasons } from "@/services/sign_in/signInReasonService";
 import { FlowStepComponent } from "@/types/signInActions";

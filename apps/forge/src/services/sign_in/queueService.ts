@@ -1,4 +1,4 @@
-import axiosInstance from "@/api/axiosInstance.ts";
+import axiosInstance from "@/api/axiosInstance";
 import { LocationName } from "@ignis/types/sign_in";
 import axios from "axios";
 

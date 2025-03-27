@@ -1,11 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import React, { useEffect } from "react";
 import Title from "@/components/title";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@ui/components/ui/card.tsx";
-import { Button } from "@ui/components/ui/button.tsx";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@ui/components/ui/card";
+import { Button } from "@ui/components/ui/button";
 import { EnvelopeOpenIcon } from "@radix-ui/react-icons";
 import { useAtom } from "jotai";
-import { previousPathnameAtom } from "@/atoms/authSessionAtoms.ts";
+import { previousPathnameAtom } from "@/atoms/authSessionAtoms";
 
 const Index: React.FC = () => {
   const [, setPreviousPathname] = useAtom(previousPathnameAtom);

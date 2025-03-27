@@ -1,7 +1,7 @@
-import { Badge } from "@ui/components/ui/badge.tsx";
-import { PartialUserWithTeams } from "@ignis/types/users.ts";
+import { Badge } from "@ui/components/ui/badge";
+import { PartialUserWithTeams } from "@ignis/types/users";
 import * as React from "react";
-import { USER_EMAIL_DOMAIN } from "@/config/constants.ts";
+import { USER_EMAIL_DOMAIN } from "@/config/constants";
 
 interface AdminDisplayProps {
   user: PartialUserWithTeams;

@@ -1,6 +1,6 @@
 import DotIndicator from "@/components/dot-indicator";
-import { HeartspaceIcon, MainspaceIcon } from "@/components/icons/Locations";
-import { IForgeLogo } from "@/components/icons/iforge";
+import { HeartspaceIcon, MainspaceIcon } from "@ui/components/icons/Locations";
+import { IForgeLogo } from "@ui/components/icons/iforge";
 import Title from "@/components/title";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@ui/components/ui/accordion";

@@ -1,4 +1,4 @@
-import { originalUserRolesAtom, userAtom } from "@/atoms/authSessionAtoms.ts";
+import { originalUserRolesAtom, userAtom } from "@/atoms/authSessionAtoms";
 import { Apps } from "@/types/app";
 import { ErrorCodes } from "@ignis/errors";
 import { deserializeMd as deserializeMd_ } from "@udecode/plate-serializer-md";

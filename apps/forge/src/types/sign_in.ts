@@ -1,5 +1,5 @@
 import { sign_in } from "@ignis/types";
-import {Reason, Training } from "@ignis/types/sign_in.ts";
+import {Reason, Training } from "@ignis/types/sign_in";
 
 // TODO IDEALLY THIS WOULD BE A SESSION PER FLOW TYPE BUT I DON'T WANT TO REFACTOR THE WHOLE THING RN
 export interface SignInSession {

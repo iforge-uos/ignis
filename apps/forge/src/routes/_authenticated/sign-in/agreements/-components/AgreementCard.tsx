@@ -1,5 +1,5 @@
 import { useUser } from "@/lib/utils";
-import { Agreement } from "@ignis/types/root.ts";
+import { Agreement } from "@ignis/types/root";
 import { useNavigate } from "@tanstack/react-router";
 import { Badge, BadgeProps } from "@ui/components/ui/badge";
 import { Card, CardContent } from "@ui/components/ui/card";

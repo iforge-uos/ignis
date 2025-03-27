@@ -1,6 +1,5 @@
 import { helper, std, users } from "@dbschema/interfaces";
 import { LocationName } from "./sign_in";
-export type { CreateUserDto, UpdateUserDto } from "@/users/dto/users.dto";
 import type { CalendarDatum } from "@nivo/calendar";
 import { training } from "./";
 

@@ -9,7 +9,7 @@ import { Loader } from "@ui/components/ui/loader";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useAtom } from "jotai";
-import { activeLocationAtom, resetSessionAtom, sessionAtom } from "@/atoms/signInAppAtoms.ts";
+import { activeLocationAtom, resetSessionAtom, sessionAtom } from "@/atoms/signInAppAtoms";
 
 const SignInDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const queryClient = useQueryClient();

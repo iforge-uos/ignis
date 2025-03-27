@@ -1,6 +1,6 @@
 // src/hooks/useAuth.ts
 import { useAtom } from "jotai";
-import { isAuthenticatedAtom, loadingAtom, userAtom } from "@/atoms/authSessionAtoms.ts";
+import { isAuthenticatedAtom, loadingAtom, userAtom } from "@/atoms/authSessionAtoms";
 
 export function useAuth() {
   const [isAuthenticated] = useAtom(isAuthenticatedAtom);

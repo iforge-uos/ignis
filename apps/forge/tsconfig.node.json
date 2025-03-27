@@ -1,3 +1,0 @@
-{
-  "extends": "@ignis/ts-config/vite.node.json"
-}

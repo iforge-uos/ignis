@@ -1,14 +1,8 @@
 import { sign_in, std, training } from "@dbschema/interfaces";
 import { GetSignInTrainingsReturns } from "@dbschema/queries/getSignInTrainings.query";
 import { Temporal } from "@js-temporal/polyfill";
-import { LocalTime } from "edgedb";
+import { LocalTime } from "gel";
 import * as users from "./users";
-
-export type {
-  CreateSignInDto,
-  FinaliseSignInDto,
-  UpdateSignInDto,
-} from "@/sign-in/dto/sigs-in-dto";
 
 /** All the locations amiable to login to */
 export type LocationName = sign_in.LocationName;

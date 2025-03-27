@@ -3,7 +3,7 @@ import { CommandConfig, commandConfig } from "@/config/commands";
 import { useFilteredCommands } from "@/hooks/useFilteredCommands";
 import { useShortcutKey } from "@/lib/utils";
 import { RoutePath } from "@/types/router";
-import { Card, CardContent, CardFooter } from "@ignis/ui/components/ui/card.tsx";
+import { Card, CardContent, CardFooter } from "@ignis/ui/components/ui/card";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button";
 import {

@@ -1,6 +1,6 @@
 import { AppSwitcher } from "@/components/app-navigation/app-switcher";
 import { NavMain } from "@/components/app-navigation/nav-main";
-import {NavSearch} from "@/components/app-navigation/nav-search.tsx";
+import {NavSearch} from "@/components/app-navigation/nav-search";
 import { NavSub } from "@/components/app-navigation/nav-sub";
 import { NavUser } from "@/components/app-navigation/nav-user";
 import { appConfig } from "@/config/nav";

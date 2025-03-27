@@ -1,6 +1,6 @@
 import { authEffectAtom } from "@/atoms/authSessionAtoms";
 import Title from "@/components/title";
-import { useLogout } from "@/hooks/useLogout.ts";
+import { useLogout } from "@/hooks/useLogout";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import { useEffect } from "react";

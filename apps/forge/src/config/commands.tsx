@@ -1,5 +1,5 @@
-import { RoleSelector } from "@/components/command-menu/actions/role-selector.tsx";
-import { CommandAction } from "@/types/commands.ts";
+import { RoleSelector } from "@/components/command-menu/actions/role-selector";
+import { CommandAction } from "@/types/commands";
 import {
   DramaIcon,
   LayoutDashboard,

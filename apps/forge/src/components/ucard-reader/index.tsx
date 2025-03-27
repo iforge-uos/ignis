@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useAtom, useSetAtom } from "jotai";
 import { activeLocationAtom, sessionAtom } from "@/atoms/signInAppAtoms";
-import { useUserRoles } from "@/hooks/useUserRoles.ts";
+import { useUserRoles } from "@/hooks/useUserRoles";
 
 export default function UCardReader() {
   const [keysPressed, setKeysPressed] = useState<{ key: string; timestamp: number }[]>([]);

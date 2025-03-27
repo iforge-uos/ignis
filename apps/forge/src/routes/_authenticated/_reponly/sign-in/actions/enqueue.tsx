@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import ActiveLocationSelector from "@/components/sign-in/ActiveLocationSelector";
-import SignInActionsManager from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SignInManager.tsx";
-import { FlowType } from "@/types/signInActions.ts";
+import SignInActionsManager from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SignInManager";
+import { FlowType } from "@/types/signInActions";
 import Title from "@/components/title";
 
 const EnqueueComponent = () => {

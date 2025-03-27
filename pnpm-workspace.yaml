@@ -4,5 +4,3 @@ packages:
   - 'apps/*'
   # all packages in subdirs of packages/ and components/
   - 'packages/*'
-  # monorepo tooling (e.g. scripts, config files etc. )
-  - 'tooling/*'

@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils.ts";
-import { Badge } from "@ui/components/ui/badge.tsx";
+import { cn } from "@/lib/utils";
+import { Badge } from "@ui/components/ui/badge";
 import { Ban } from "lucide-react";
 import React from "react";
 

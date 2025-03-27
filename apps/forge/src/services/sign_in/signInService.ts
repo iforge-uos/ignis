@@ -1,5 +1,5 @@
-import axiosInstance from "@/api/axiosInstance.ts";
-import { FinaliseSignInDto, LocationName, User } from "@ignis/types/sign_in.ts";
+import axiosInstance from "@/api/axiosInstance";
+import { FinaliseSignInDto, LocationName, User } from "@ignis/types/sign_in";
 
 export interface GetSignInProps {
   locationName: LocationName;

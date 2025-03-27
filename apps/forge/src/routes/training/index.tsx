@@ -1,8 +1,8 @@
-import { GeorgePorterIcon, HeartspaceIcon, LocationIcon, MainspaceIcon } from "@/components/icons/Locations";
+import { GeorgePorterIcon, HeartspaceIcon, MainspaceIcon } from "@ui/components/icons/Locations";
 import Title from "@/components/title";
 import ImageGradient from "@/components/training/ImageGradient";
 import { useUser } from "@/lib/utils";
-import IndexCard from "@/routes/training/-components/IndexCard.tsx";
+import IndexCard from "@/routes/training/-components/IndexCard";
 import { getAll } from "@/services/training/getAll";
 import { training } from "@ignis/types";
 import { Link, createFileRoute } from "@tanstack/react-router";

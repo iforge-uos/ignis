@@ -1,5 +1,5 @@
-import axiosInstance from "@/api/axiosInstance.ts";
-import { SIGN_IN_REASONS_STORAGE_KEY } from "@/config/constants.ts";
+import axiosInstance from "@/api/axiosInstance";
+import { SIGN_IN_REASONS_STORAGE_KEY } from "@/config/constants";
 import { LocationName, PartialReason, Reason } from "@ignis/types/sign_in";
 import { UseQueryResult, useQuery } from "@tanstack/react-query";
 

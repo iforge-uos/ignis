@@ -1,4 +1,4 @@
-import { Apps } from "@/types/app.ts";
+import { Apps } from "@/types/app";
 import { LucideIcon } from "lucide-react";
 import { RoutePath } from "@/types/router";
 

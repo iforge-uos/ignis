@@ -1,6 +1,6 @@
 import Title from "@/components/title";
 import { Link } from "@tanstack/react-router";
-import { Button } from "@ui/components/ui/button.tsx";
+import { Button } from "@ui/components/ui/button";
 
 export const GenericError = () => {
   return (

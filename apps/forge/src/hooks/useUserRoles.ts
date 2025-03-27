@@ -1,4 +1,4 @@
-import { userRolesAtom } from "@/atoms/authSessionAtoms.ts";
+import { userRolesAtom } from "@/atoms/authSessionAtoms";
 import { useAtom } from "jotai";
 
 /**

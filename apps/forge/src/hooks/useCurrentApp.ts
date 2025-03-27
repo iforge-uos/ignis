@@ -1,4 +1,4 @@
-import { Apps } from "@/types/app.ts";
+import { Apps } from "@/types/app";
 import { useLocation } from "@tanstack/react-router";
 import { useMemo } from "react";
 

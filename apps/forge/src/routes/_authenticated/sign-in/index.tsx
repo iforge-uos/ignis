@@ -1,11 +1,11 @@
 import ActiveLocationSelector from "@/components/sign-in/ActiveLocationSelector";
 import Title from "@/components/title";
-import { useUserRoles } from "@/hooks/useUserRoles.ts";
-import SignInActionsManager from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SignInManager.tsx";
+import { useUserRoles } from "@/hooks/useUserRoles";
+import SignInActionsManager from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SignInManager";
 import { createFileRoute } from "@tanstack/react-router";
-import { World } from "@ui/components/globe.tsx";
-import { Button } from "@ui/components/ui/button.tsx";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card.tsx";
+import { World } from "@ui/components/globe";
+import { Button } from "@ui/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card";
 import { Separator } from "@ui/components/ui/separator";
 import { Book, Coins, MessageCircleMore, ShoppingCart } from "lucide-react";
 

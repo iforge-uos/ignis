@@ -1,5 +1,5 @@
 // Define possible action types
-import { RoutePath } from "@/types/router.ts";
+import { RoutePath } from "@/types/router";
 import { ReactNode } from "react";
 
 export type NavigateAction = {

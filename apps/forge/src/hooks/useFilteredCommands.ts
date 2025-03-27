@@ -1,5 +1,5 @@
-import { CommandConfig, commandConfig } from "@/config/commands.tsx";
-import { useOriginalUserRoles } from "@/lib/utils.ts";
+import { CommandConfig, commandConfig } from "@/config/commands";
+import { useOriginalUserRoles } from "@/lib/utils";
 
 export function useFilteredCommands() {
   const userRoles = useOriginalUserRoles();

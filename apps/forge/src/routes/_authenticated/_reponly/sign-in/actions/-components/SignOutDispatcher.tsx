@@ -1,4 +1,4 @@
-import { activeLocationAtom, resetSessionAtom, sessionAtom } from "@/atoms/signInAppAtoms.ts";
+import { activeLocationAtom, resetSessionAtom, sessionAtom } from "@/atoms/signInAppAtoms";
 import { errorDisplay } from "@/components/errors/ErrorDisplay";
 import { PostSignOut, PostSignOutProps } from "@/services/sign_in/signInService";
 import { FlowStepComponent } from "@/types/signInActions";

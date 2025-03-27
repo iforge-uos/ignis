@@ -1,4 +1,4 @@
-import {cn} from "@/lib/utils.ts";
+import {cn} from "@/lib/utils";
 import { Separator } from "@ui/components/ui/separator";
 import { Moon } from "lucide-react";
 import React from "react";

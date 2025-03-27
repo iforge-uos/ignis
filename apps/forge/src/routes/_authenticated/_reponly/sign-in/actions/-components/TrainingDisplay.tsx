@@ -1,5 +1,5 @@
-import { Training } from "@ignis/types/sign_in.ts";
-import { Button } from "@ui/components/ui/button.tsx";
+import { Training } from "@ignis/types/sign_in";
+import { Button } from "@ui/components/ui/button";
 import React from "react";
 
 interface TrainingDisplayProps {

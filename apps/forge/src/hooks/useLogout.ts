@@ -1,5 +1,5 @@
 import axiosInstance from "@/api/axiosInstance";
-import {authEffectAtom, loadingAtom} from "@/atoms/authSessionAtoms.ts";
+import {authEffectAtom, loadingAtom} from "@/atoms/authSessionAtoms";
 import { useNavigate } from "@tanstack/react-router";
 import axios from "axios";
 import { useAtom } from "jotai";

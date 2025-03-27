@@ -6,18 +6,18 @@ import {
   sessionTrainingAtom,
   sessionUcardNumberAtom,
   sessionUserAtom,
-} from "@/atoms/signInAppAtoms.ts";
-import { SelectedTrainingPipDisplay } from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SelectedTrainingPipDisplay.tsx";
-import ToolSelectionList from "@/routes/_authenticated/_reponly/sign-in/actions/-components/TrainingSelectionList.tsx";
+} from "@/atoms/signInAppAtoms";
+import { SelectedTrainingPipDisplay } from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SelectedTrainingPipDisplay";
+import ToolSelectionList from "@/routes/_authenticated/_reponly/sign-in/actions/-components/TrainingSelectionList";
 import { GetSignIn, GetSignInProps } from "@/services/sign_in/signInService";
-import { FlowStepComponent } from "@/types/signInActions.ts";
-import { Training, User } from "@ignis/types/sign_in.ts";
+import { FlowStepComponent } from "@/types/signInActions";
+import { Training, User } from "@ignis/types/sign_in";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { useQuery } from "@tanstack/react-query";
-import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert.tsx";
-import { Button } from "@ui/components/ui/button.tsx";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card.tsx";
-import { Loader } from "@ui/components/ui/loader.tsx";
+import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert";
+import { Button } from "@ui/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card";
+import { Loader } from "@ui/components/ui/loader";
 import { useAtom } from "jotai";
 import { useCallback, useEffect, useMemo, useState } from "react";
 

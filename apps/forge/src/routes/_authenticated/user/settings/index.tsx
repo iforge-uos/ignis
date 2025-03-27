@@ -1,6 +1,6 @@
 import Title from "@/components/title";
 import { createFileRoute } from "@tanstack/react-router";
-import { RouteUnfinished } from "@/components/routing/RouteUnfinished.tsx";
+import { RouteUnfinished } from "@/components/routing/RouteUnfinished";
 
 const UserSettingsPageComponent = () => {
   return (

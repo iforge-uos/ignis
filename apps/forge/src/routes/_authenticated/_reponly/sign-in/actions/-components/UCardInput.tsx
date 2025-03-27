@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@ui/components/ui/input-otp";
 import { useState } from "react";
 import { useAtom, useSetAtom } from "jotai";
-import { initializeSessionAtom, sessionUcardNumberAtom, sessionUserAtom } from "@/atoms/signInAppAtoms.ts";
+import { initializeSessionAtom, sessionUcardNumberAtom, sessionUserAtom } from "@/atoms/signInAppAtoms";
 
 const UCardInput: FlowStepComponent = ({ onPrimary }) => {
   const [uCardNumber, setUcardNumber] = useAtom(sessionUcardNumberAtom);

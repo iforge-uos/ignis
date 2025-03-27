@@ -1,14 +1,14 @@
 import { UserAvatar } from "@/components/avatar";
-import { LocationIcon } from "@/components/icons/Locations";
+import { LocationIcon } from "@ui/components/icons/Locations";
 import Title from "@/components/title";
-import SignInChart from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignInChart.tsx";
-import { getUser } from "@/services/users/getUser.ts";
-import getUserSignIns from "@/services/users/getUserSignIns.ts";
-import { getUserTraining } from "@/services/users/getUserTraining.ts";
-import { Training } from "@ignis/types/users.ts";
+import SignInChart from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignInChart";
+import { getUser } from "@/services/users/getUser";
+import getUserSignIns from "@/services/users/getUserSignIns";
+import { getUserTraining } from "@/services/users/getUserTraining";
+import { Training } from "@ignis/types/users";
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import { Badge } from "@ui/components/ui/badge.tsx";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@ui/components/ui/table.tsx";
+import { Badge } from "@ui/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@ui/components/ui/table";
 import { Check, X } from "lucide-react";
 
 export default function Component() {

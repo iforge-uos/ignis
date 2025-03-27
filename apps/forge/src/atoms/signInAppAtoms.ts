@@ -1,6 +1,6 @@
 // src/atoms/session/signInAppAtoms.ts
 
-import { locationStatus } from "@/services/sign_in/locationService.ts";
+import { locationStatus } from "@/services/sign_in/locationService";
 import { SignInSession } from "@/types/sign_in";
 import { LocationName } from "@ignis/types/sign_in";
 import { atom } from "jotai";

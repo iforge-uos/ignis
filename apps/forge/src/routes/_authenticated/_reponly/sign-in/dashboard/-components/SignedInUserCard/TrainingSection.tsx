@@ -1,15 +1,15 @@
 import { activeLocationAtom } from "@/atoms/signInAppAtoms";
 import { iForgeEpoch } from "@/config/constants";
-import { ManageUserWidgetProps } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/ManageUserWidget.tsx";
+import { ManageUserWidgetProps } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/ManageUserWidget";
 import { getSupervisingReps } from "@/services/sign_in/getSupervisableTraining";
-import addInPersonTraining from "@/services/users/addInPersonTraining.ts";
-import { getUserTrainingRemaining } from "@/services/users/getUserTrainingRemaining.ts";
+import addInPersonTraining from "@/services/users/addInPersonTraining";
+import { getUserTrainingRemaining } from "@/services/users/getUserTrainingRemaining";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Badge } from "@ui/components/ui/badge";
-import { Button } from "@ui/components/ui/button.tsx";
-import { Calendar } from "@ui/components/ui/calendar.tsx";
-import { Label } from "@ui/components/ui/label.tsx";
-import { Popover, PopoverContent, PopoverTrigger } from "@ui/components/ui/popover.tsx";
+import { Button } from "@ui/components/ui/button";
+import { Calendar } from "@ui/components/ui/calendar";
+import { Label } from "@ui/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@ui/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -17,9 +17,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@ui/components/ui/select.tsx";
+} from "@ui/components/ui/select";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip";
-import { cn } from "@ui/lib/utils.ts";
+import { cn } from "@ui/lib/utils";
 import { format } from "date-fns";
 import { useAtomValue } from "jotai";
 import { CalendarIcon } from "lucide-react";

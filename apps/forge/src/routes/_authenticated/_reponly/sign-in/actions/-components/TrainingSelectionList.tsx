@@ -1,7 +1,7 @@
 "use client";
 
-import { NoRepIcon } from "@/components/icons/NoRep";
-import { RepIcon } from "@/components/icons/Rep";
+import { NoRepIcon } from "@ui/components/icons/NoRep";
+import { RepIcon } from "@ui/components/icons/Rep";
 import { cn, useShortcutKey } from "@/lib/utils";
 import { Training, TrainingSelectability } from "@ignis/types/sign_in";
 import { Badge } from "@ui/components/ui/badge";

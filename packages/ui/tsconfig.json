@@ -1,14 +1,20 @@
 {
-  "extends": "@ignis/ts-config/react.json",
-  "include": ["."],
-  "exclude": ["dist", "build", "node_modules"],
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": ".",
+    "emitDeclarationOnly": true,
+    "outDir": "./dist",
+    "rootDir": ".",
     "paths": {
       "@/*": ["./*"],
       "@ui/*": ["./*"],
-      "@ui/components/ui*": ["./components/ui*"]
+      "@ui/components/ui*": ["./components/ui*"],
+      "@ignis/types": ["../types/src/index"],
+      "@ignis/types/*": ["../types/src/*"]
     }
-  }
+  },
+  "include": ["./**/*"],
+  "exclude": ["node_modules", "dist"],
+  "references": [
+    { "path": "../types" }
+  ]
 }
-

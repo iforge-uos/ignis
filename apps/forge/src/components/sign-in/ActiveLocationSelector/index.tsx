@@ -5,19 +5,19 @@ import { MessageCircleWarning } from "lucide-react";
 import { useState } from "react";
 import { PulseLoader } from "react-spinners";
 
-import { activeLocationAtom, locationStatusesAtom } from "@/atoms/signInAppAtoms.ts";
-import { QueueStatus } from "@/components/sign-in/ActiveLocationSelector/QueueStatus.tsx";
-import { StatusBadge } from "@/components/sign-in/ActiveLocationSelector/StatusBadge.tsx";
-import { UserCount } from "@/components/sign-in/ActiveLocationSelector/UserCount.tsx";
+import { activeLocationAtom, locationStatusesAtom } from "@/atoms/signInAppAtoms";
+import { QueueStatus } from "@/components/sign-in/ActiveLocationSelector/QueueStatus";
+import { StatusBadge } from "@/components/sign-in/ActiveLocationSelector/StatusBadge";
+import { UserCount } from "@/components/sign-in/ActiveLocationSelector/UserCount";
 import { cn, toTitleCase } from "@/lib/utils";
 import { LocationName } from "@ignis/types/sign_in";
 
 import { Button } from "@ui/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@ui/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@ui/components/ui/popover";
-import { Separator } from "@ui/components/ui/separator.tsx";
-import { Skeleton } from "@ui/components/ui/skeleton.tsx";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip.tsx";
+import { Separator } from "@ui/components/ui/separator";
+import { Skeleton } from "@ui/components/ui/skeleton";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip";
 
 const ActiveLocationSelector = () => {
   const [open, setOpen] = useState<boolean>(false);

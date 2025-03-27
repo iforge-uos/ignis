@@ -1,11 +1,11 @@
-import TeamIcon from "@/components/icons/Team.tsx";
-import { ManageUserWidgetProps } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/ManageUserWidget.tsx";
-import { getTeams } from "@/services/users/getTeams.ts";
-import promoteToRep from "@/services/users/promoteToRep.ts";
+import { TeamIcon } from "@ui/components/icons/Team";
+import { ManageUserWidgetProps } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/ManageUserWidget";
+import { getTeams } from "@/services/users/getTeams";
+import promoteToRep from "@/services/users/promoteToRep";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ShortTeam } from "@ignis/types/users.ts";
+import { ShortTeam } from "@ignis/types/users";
 import { useQuery } from "@tanstack/react-query";
-import { Button } from "@ui/components/ui/button.tsx";
+import { Button } from "@ui/components/ui/button";
 import {
   Form,
   FormControl,
@@ -14,9 +14,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@ui/components/ui/form.tsx";
-import { Loader } from "@ui/components/ui/loader.tsx";
-import MultiSelectFormField from "@ui/components/ui/multi-select.tsx";
+} from "@ui/components/ui/form";
+import { Loader } from "@ui/components/ui/loader";
+import MultiSelectFormField from "@ui/components/ui/multi-select";
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";

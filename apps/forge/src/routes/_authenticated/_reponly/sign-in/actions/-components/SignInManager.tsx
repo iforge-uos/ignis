@@ -4,15 +4,15 @@ import {
   sessionAtom,
   sessionNavigationBacktrackingAtom,
   sessionUserAtom
-} from "@/atoms/signInAppAtoms.ts";
-import useDoubleTapEscape from "@/hooks/useDoubleTapEscape.ts";
-import QueueDispatcher from "@/routes/_authenticated/_reponly/sign-in/actions/-components/QueueDispatcher.tsx";
-import SignInDispatcher from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SignInDispatcher.tsx";
-import SignInFlowProgress from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SignInFlowProgress.tsx";
-import SignInReasonInput from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SignInReasonInput.tsx";
-import SignOutDispatcher from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SignOutDispatcher.tsx";
-import ToolSelectionInput from "@/routes/_authenticated/_reponly/sign-in/actions/-components/ToolSelectionInput.tsx";
-import UCardInput from "@/routes/_authenticated/_reponly/sign-in/actions/-components/UCardInput.tsx";
+} from "@/atoms/signInAppAtoms";
+import useDoubleTapEscape from "@/hooks/useDoubleTapEscape";
+import QueueDispatcher from "@/routes/_authenticated/_reponly/sign-in/actions/-components/QueueDispatcher";
+import SignInDispatcher from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SignInDispatcher";
+import SignInFlowProgress from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SignInFlowProgress";
+import SignInReasonInput from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SignInReasonInput";
+import SignOutDispatcher from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SignOutDispatcher";
+import ToolSelectionInput from "@/routes/_authenticated/_reponly/sign-in/actions/-components/ToolSelectionInput";
+import UCardInput from "@/routes/_authenticated/_reponly/sign-in/actions/-components/UCardInput";
 import {
   AnyStep,
   EnqueueSteps,
@@ -22,13 +22,13 @@ import {
   SignInSteps,
   SignOutSteps,
   flowTypeToPrintTable,
-} from "@/types/signInActions.ts";
-import { SignInSession } from "@/types/sign_in.ts";
+} from "@/types/signInActions";
+import { SignInSession } from "@/types/sign_in";
 import { useNavigate } from "@tanstack/react-router";
-import { Button } from "@ui/components/ui/button.tsx";
+import { Button } from "@ui/components/ui/button";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import React, { ReactElement, useEffect, useLayoutEffect, useState } from "react";
-import SigningInUserCard from "./SigningInUserCard.tsx";
+import SigningInUserCard from "./SigningInUserCard";
 
 const flowConfig: FlowConfiguration = {
   [FlowType.SignIn]: {

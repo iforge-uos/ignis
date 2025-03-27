@@ -1,14 +1,20 @@
 {
-  "extends": "@ignis/ts-config/vite.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "esModuleInterop": true,
-    "baseUrl": ".",
+    "jsx": "react-jsx",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@dbschema/*": ["../anvil/dbschema/*"],
+      "@dbschema/*": ["../../packages/dbschema/*"],
+      "@types/*": ["../../packages/types/*"],
       "@ui/*": ["../../packages/ui/*"],
-      "@ui/components/*": ["../../packages/ui/components/*"],
-      "@ui/components/ui/*": ["../../packages/ui/components/ui/*"]
+      "@ignis/types": ["../../packages/types/src/index"],
+      "@ignis/types/*": ["../../packages/types/src/*"]
     }
-  }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

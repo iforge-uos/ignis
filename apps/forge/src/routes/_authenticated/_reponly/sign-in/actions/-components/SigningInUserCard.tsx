@@ -1,10 +1,10 @@
 import { UserAvatar } from "@/components/avatar";
-import { TeamIcon } from "@/components/icons/Team.tsx";
-import {cn} from "@/lib/utils.ts";
+import { TeamIcon } from "@ui/components/icons/Team";
+import {cn} from "@/lib/utils";
 import { sign_in } from "@ignis/types";
 import { Link } from "@tanstack/react-router";
-import { Badge } from "@ui/components/ui/badge.tsx";
-import { Card } from "@ui/components/ui/card.tsx";
+import { Badge } from "@ui/components/ui/badge";
+import { Card } from "@ui/components/ui/card";
 
 
 interface SigningInUserCardProps {
