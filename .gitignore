@@ -13,3 +13,4 @@ deploy/container-images/**
 *.rdb
 
 **/dist/**
+*.tsbuildinfo
