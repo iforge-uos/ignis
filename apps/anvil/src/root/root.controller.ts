@@ -164,4 +164,9 @@ export class RootController {
       });
     });
   }
+
+  @Get("healthz")
+  healthzCheck() {
+    return { status: "ok" };
+  }
 }
