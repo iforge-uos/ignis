@@ -1,0 +1,60 @@
+name: Build All
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-all:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Notify Discord Build Start
+        uses: tsickert/discord-webhook@v6.0.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_CICD_WEBHOOK_NOTI_URL}}
+          embed-title: "Starting Application Build Process"
+          embed-color: 15548997 # Yellowish
+          embed-description: "Building and pushing Anvil, Mine, and Forge images to GHCR..."
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Anvil image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: apps/anvil/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}/anvil:latest
+
+      - name: Build and push Mine image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: apps/mine/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}/mine:latest
+
+      - name: Build and push Forge image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: apps/forge/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}/forge:latest
+
+      - name: Notify Discord Build Success
+        uses: tsickert/discord-webhook@v6.0.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_CICD_WEBHOOK_NOTI_URL}}
+          embed-title: "Application Build Process Complete"
+          embed-color: 5763719 # Greenish
+          embed-description: "Anvil, Mine, and Forge images successfully built and pushed to GHCR."

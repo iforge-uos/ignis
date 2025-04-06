@@ -1,0 +1,102 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gel
+  namespace: gel
+  labels:
+    app: gel
+    layer: infrastructure
+    component: database
+  annotations:
+    operator.1password.io/auto-restart: "true"
+spec:
+  replicas: 1   
+  selector:
+    matchLabels:
+      app: gel
+  template:
+    metadata:
+      labels:
+        app: gel
+    spec:
+      # Wait for PostgreSQL to be ready before starting Gel
+      initContainers:
+      - name: wait-for-postgres
+        image: postgres:16
+        command: ['sh', '-c', 
+          'until pg_isready -h gel-postgres-rw -p 5432; do echo waiting for postgres; sleep 2; done;']
+      containers:
+      - name: gel
+        image: geldata/gel:nightly
+        ports:
+        - name: gel
+          containerPort: 5656  # HTTPS port for Gel server
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+        env:
+        # Server configuration
+        - name: GEL_PORT
+          value: "5656"
+        - name: GEL_SERVER_ADMIN_UI
+          value: "enabled"
+        - name: GEL_HOST
+          value: "0.0.0.0"
+        - name: GEL_SERVER_INSTANCE_NAME
+          value: "ignis"
+        # Security configuration
+        - name: GEL_SERVER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: gel-server-password
+              key: password
+        - name: GEL_SERVER_TLS_CERT_MODE
+          value: "require_file"
+        - name: GEL_SERVER_TLS_CERT_FILE
+          value: "/var/lib/gel/tls/tls.crt"
+        - name: GEL_SERVER_TLS_KEY_FILE
+          value: "/var/lib/gel/tls/tls.key"
+        - name: GEL_SERVER_SECURITY
+          value: "strict"
+        # Database connection using DSN from secret
+        - name: GEL_SERVER_BACKEND_DSN
+          valueFrom:
+            secretKeyRef:
+              name: gel-postgres-user
+              key: dsn
+        args: ["server"]  # Let the entrypoint script handle the binary
+        volumeMounts:
+        - name: gel-data
+          mountPath: /var/lib/gel/data
+        - name: tls-secret
+          mountPath: /var/lib/gel/tls
+        # Health checks
+        readinessProbe:
+          httpGet:
+            path: /server/status/ready
+            port: 5656
+            scheme: HTTPS
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /server/status/alive
+            port: 5656
+            scheme: HTTPS
+          initialDelaySeconds: 45
+          periodSeconds: 20
+          timeoutSeconds: 5
+          failureThreshold: 3
+      volumes:
+      - name: gel-data
+        persistentVolumeClaim:
+          claimName: gel-data
+      - name: tls-secret
+        secret:
+          secretName: gel-server-tls

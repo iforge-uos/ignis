@@ -23,7 +23,7 @@ ENV VITE_API_URL="https://iforge.sheffield.ac.uk/api/v1"
 RUN pnpm exec turbo build
 
 
-FROM nginx:alpine as forge
+FROM nginx:alpine AS forge
 WORKDIR /app
 COPY --from=build /app/apps/forge/dist /usr/share/nginx/html
 COPY --from=build /prod/forge/nginx.conf /etc/nginx/conf.d/default.conf

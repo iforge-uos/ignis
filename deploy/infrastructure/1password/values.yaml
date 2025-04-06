@@ -1,0 +1,72 @@
+connect:
+  # We'll set this via --set-file during installation
+  credentials: ""
+  
+  resources:
+    api:
+      requests:
+        memory: "128Mi"
+        cpu: "100m"
+      limits:
+        memory: "256Mi"
+        cpu: "500m"
+    sync:
+      requests:
+        memory: "128Mi"
+        cpu: "100m"
+      limits:
+        memory: "256Mi"
+        cpu: "500m"
+
+operator:
+  create: true
+  # We'll set this via --set during installation
+  token:
+    value: ""
+  
+  # Configure which namespaces to watch
+  watchNamespace: "{1password,gel,valkey}"
+  
+  # RBAC configuration
+  rbac:
+    create: true
+    clusterRole:
+      extraRules:
+        - apiGroups: ["onepassword.com"]
+          resources: ["onepassworditems"]
+          verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+        - apiGroups: [""]
+          resources: ["secrets"]
+          verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+        - apiGroups: ["apps"]
+          resources: ["deployments"]
+          verbs: ["get", "list", "watch", "update", "patch"]
+    
+    # Add role bindings for each namespace
+    roleBindings:
+      - name: onepassword-connect-operator-gel
+        namespace: gel
+        rules:
+          - apiGroups: ["onepassword.com"]
+            resources: ["onepassworditems"]
+            verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+          - apiGroups: [""]
+            resources: ["secrets"]
+            verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+      - name: onepassword-connect-operator-valkey
+        namespace: valkey
+        rules:
+          - apiGroups: ["onepassword.com"]
+            resources: ["onepassworditems"]
+            verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+          - apiGroups: [""]
+            resources: ["secrets"]
+            verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "50m"
+    limits:
+      memory: "128Mi"
+      cpu: "100m" 

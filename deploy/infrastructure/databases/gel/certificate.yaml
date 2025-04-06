@@ -1,0 +1,64 @@
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: gel-selfsigned-issuer
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: gel-ca
+  namespace: gel
+spec:
+  commonName: "Gel Root CA"
+  secretName: gel-ca
+  duration: 87600h # 10 years
+  isCA: true
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  issuerRef:
+    name: gel-selfsigned-issuer
+    kind: ClusterIssuer
+    group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: gel-ca-issuer
+  namespace: gel
+spec:
+  ca:
+    secretName: gel-ca
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: gel-server-cert
+  namespace: gel
+spec:
+  commonName: gel.gel.svc.cluster.local
+  dnsNames:
+  - gel.gel.svc.cluster.local
+  - gel.gel.svc
+  - gel
+  - localhost
+  ipAddresses:
+  - 127.0.0.1
+  secretName: gel-server-tls
+  duration: 8760h # 1 year
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  usages:
+  - server auth
+  - client auth
+  issuerRef:
+    name: gel-ca-issuer
+    kind: Issuer
+    group: cert-manager.io
+  subject:
+    organizations:
+    - iForge

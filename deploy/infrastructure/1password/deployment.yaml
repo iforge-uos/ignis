@@ -1,0 +1,106 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: onepassword-connect
+  namespace: 1password
+  labels:
+    app: onepassword-connect
+    layer: infrastructure
+    component: secrets-management
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: onepassword-connect
+  template:
+    metadata:
+      labels:
+        app: onepassword-connect
+    spec:
+      containers:
+        - name: connect-api
+          image: 1password/connect-api:latest
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          env:
+            - name: OP_SESSION
+              valueFrom:
+                secretKeyRef:
+                  name: op-credentials
+                  key: op-session
+            - name: OP_HTTP_PORT
+              value: "8080"
+            - name: OP_BUS_PORT
+              value: "11220"
+            - name: OP_BUS_PEERS
+              value: "localhost:11221"
+          volumeMounts:
+            - name: op-credentials
+              mountPath: "/home/opuser/.op"
+              readOnly: true
+            - name: shared-data
+              mountPath: "/home/opuser/.op/data"
+          readinessProbe:
+            httpGet:
+              path: /heartbeat
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /heartbeat
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20
+        - name: connect-sync
+          image: 1password/connect-sync:latest
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          env:
+            - name: OP_SESSION
+              valueFrom:
+                secretKeyRef:
+                  name: op-credentials
+                  key: op-session
+            - name: OP_HTTP_PORT
+              value: "8081"
+            - name: OP_BUS_PORT
+              value: "11221"
+            - name: OP_BUS_PEERS
+              value: "localhost:11220"
+          volumeMounts:
+            - name: op-credentials
+              mountPath: "/home/opuser/.op"
+              readOnly: true
+            - name: shared-data
+              mountPath: "/home/opuser/.op/data"
+          readinessProbe:
+            httpGet:
+              path: /heartbeat
+              port: 8081
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /heartbeat
+              port: 8081
+            initialDelaySeconds: 15
+            periodSeconds: 20
+      volumes:
+        - name: op-credentials
+          secret:
+            secretName: op-credentials
+        - name: shared-data
+          emptyDir: {} 

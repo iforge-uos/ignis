@@ -1,0 +1,59 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: gel-postgres
+  namespace: gel
+  labels:
+    app: gel-postgres
+    component: database
+    layer: infrastructure
+  annotations:
+    operator.1password.io/auto-restart: "true"
+spec:
+  instances: 3  # Run 3 PostgreSQL instances for high availability
+  
+  # PostgreSQL configuration
+  postgresql:
+    parameters:
+      max_connections: "100"     # Maximum number of concurrent connections
+      shared_buffers: "128MB"    # Memory for caching and shared buffers
+    pg_hba:
+      - "host all all all scram-sha-256"
+      - "host all all 10.0.0.0/8 scram-sha-256"  # Allow pod-to-pod communication
+
+  # Enable superuser access
+  enableSuperuserAccess: true
+  superuserSecret:
+    name: gel-postgres-superuser  # This secret is managed by 1Password
+
+  # Bootstrap configuration
+  bootstrap:
+    initdb:
+      database: gel
+      owner: iforge
+      secret:
+        name: gel-postgres-user
+      
+  # Persistent storage configuration
+  storage:
+    size: "10Gi"                   # Storage size per instance
+    storageClass: "local-path"     # Using local-path storage class
+    
+    
+  # Enable Prometheus monitoring
+  monitoring:
+    enablePodMonitor: true
+    
+  # Backup configuration
+  backup:
+    retentionPolicy: "30d"       # Keep backups for 30 days
+    
+  # Resource allocation per instance
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "1000m"
+      memory: "2Gi"
+      

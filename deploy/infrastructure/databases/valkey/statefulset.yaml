@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: valkey
+  namespace: valkey
+  labels:
+    app: valkey
+    layer: infrastructure
+    component: database
+  annotations:
+    operator.1password.io/auto-restart: "true"
+spec:
+  serviceName: valkey
+  replicas: 3
+  selector:
+    matchLabels:
+      app: valkey
+  template:
+    metadata:
+      labels:
+        app: valkey
+    spec:
+      containers:
+      - name: valkey
+        image: valkey/valkey:latest
+        ports:
+        - name: valkey
+          containerPort: 6379
+        - name: cluster
+          containerPort: 16379
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        env:
+        - name: VALKEY_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: valkey-password
+              key: password
+              optional: false
+        - name: VALKEY_EXTRA_FLAGS
+          value: "--requirepass $(VALKEY_PASSWORD)"
+        - name: VALKEY_CLUSTER_ENABLED
+          value: "yes"
+        - name: VALKEY_CLUSTER_CONFIG_FILE
+          value: "/valkey/nodes.conf"
+        volumeMounts:
+        - name: data
+          mountPath: /valkey
+        readinessProbe:
+          tcpSocket:
+            port: 6379
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 6379
+          initialDelaySeconds: 15
+          periodSeconds: 20
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi 

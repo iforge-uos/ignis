@@ -11,3 +11,5 @@ deploy/container-images/**
 **/secret/**
 .env
 *.rdb
+deploy/secret/** 
+.scratch/**

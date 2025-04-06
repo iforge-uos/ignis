@@ -1,5 +1,4 @@
-FROM 1password/op:2 as op
-FROM node:20-alpine AS deps
+FROM node:22-alpine AS deps
 WORKDIR /app
 
 # Setup PNPM
@@ -17,30 +16,45 @@ COPY apps/anvil/package.json ./apps/anvil/package.json
 RUN pnpm install --frozen-lockfile
 COPY apps/anvil ./apps/anvil
 
-FROM deps AS build
+# Fetch gel-cli image in its own stage
+FROM geldata/gel-cli AS gel
+# Copy gel binary and run regeneration steps
+FROM deps AS regen
 WORKDIR /app
-# Generate any needed files https://discord.com/channels/841451783728529451/1122688204152246282/1123031495121051739 <- maybe dooable
-#WORKDIR /app/apps/anvil
-#RUN pnpm regen
-RUN pnpm deploy --filter=anvil --prod /prod/forge
+COPY --from=gel /usr/bin/gel /usr/bin/gel
+
+# Create /prod directory before switching user
+RUN mkdir /prod
+
+# Create a non-root user and set ownership
+RUN adduser -D -h /home/iforge -s /bin/sh iforge
+RUN chown -R iforge:iforge /app /prod
+USER iforge
+
+WORKDIR /app/apps/anvil
+RUN gel project init --non-interactive --server-instance="ignis" && \
+    pnpm regen
+WORKDIR /app
+
+# Build the app once all the CICD generated files are available
+FROM regen AS build
+WORKDIR /app
+RUN pnpm deploy --filter=anvil --prod /prod/anvil
 RUN pnpm exec turbo build
 
 
-FROM node:20-slim AS anvil
+# Final Stage
+FROM node:22-slim AS anvil
 WORKDIR /app
-COPY --from=build /prod/forge ./
+COPY --from=build /prod/anvil ./
 COPY --from=build /app/apps/anvil/dist ./dist
 
 # Create iforge user and set ownership
 RUN useradd -m iforge
 RUN chown -R iforge:iforge /app
 
-# Copy 1Password home directory from the op image
-COPY --from=op --chown=iforge:iforge /home/opuser/ /home/iforge/
-COPY --from=op /usr/local/bin/op /usr/local/bin/op
-
 USER iforge
 
 EXPOSE 3000
 ENV NODE_PATH=/app/node_modules
-CMD ["/usr/local/bin/op", "run", "--env-file=/config/.env.production.tpl", "--", "node", "dist/src/main.js"]
+CMD ["node", "dist/src/main.js"]
