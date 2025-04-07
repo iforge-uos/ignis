@@ -178,7 +178,7 @@ async fn files_upload(
 }
 
 // Simple health check endpoint
-#[actix_web::get("/health")]
+#[actix_web::get("/healthz")]
 async fn health_check() -> impl Responder {
     HttpResponse::Ok().body("OK")
 }
