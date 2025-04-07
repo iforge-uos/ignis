@@ -1,16 +1,18 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: anvil-service
+  name: forge-service
   namespace: ignis
   labels:
-    app: anvil
+    app: forge
+    app.kubernetes.io/name: forge
+    app.kubernetes.io/part-of: ignis
 spec:
   selector:
-    app: anvil
+    app: forge
   ports:
     - name: http
       protocol: TCP
       port: 80
-      targetPort: 3000
+      targetPort: http 
   type: ClusterIP 
