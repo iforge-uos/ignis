@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: anvil-service
+  namespace: ignis
+  labels:
+    app: anvil
+spec:
+  selector:
+    app: anvil
+  ports:
+    - name: http
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: ClusterIP 

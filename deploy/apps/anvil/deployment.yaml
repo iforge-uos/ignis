@@ -1,0 +1,268 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: anvil
+  namespace: ignis
+  labels:
+    app: anvil
+  annotations:
+    operator.1password.io/auto-restart: "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: anvil
+  template:
+    metadata:
+      labels:
+        app: anvil
+    spec:
+      containers:
+      - name: anvil
+        image: ghcr.io/iforge-uos/ignis/anvil:latest
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 3000
+        resources:
+          requests:
+            memory: "1024Mi"
+            cpu: "400m"
+          limits:
+            memory: "2048Mi"
+            cpu: "800m"
+        env:
+        # LDAP Configuration
+        - name: LDAP_HOST
+          valueFrom:
+            secretKeyRef:
+              name: anvil-ldap 
+              key: LDAP_HOST
+        - name: LDAP_PORT
+          valueFrom:
+            secretKeyRef:
+              name: anvil-ldap
+              key: LDAP_PORT
+        - name: LDAP_BASE
+          value: "dc=shefuniad,dc=shef,dc=ac,dc=uk"
+        - name: LDAP_USER
+          valueFrom:
+            secretKeyRef:
+              name: anvil-ldap
+              key: LDAP_USER
+        - name: LDAP_PASS
+          valueFrom:
+            secretKeyRef:
+              name: anvil-ldap
+              key: LDAP_PASS
+        - name: LDAP_DEFAULT_ATTRIBUTES
+          valueFrom:
+            secretKeyRef:
+              name: anvil-ldap
+              key: LDAP_DEFAULT_ATTRIBUTES
+        - name: LDAP_SSL
+          valueFrom:
+            secretKeyRef:
+              name: anvil-ldap
+              key: LDAP_SSL
+        # Google OAuth2 Configuration
+        - name: GOOGLE_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: anvil-oauth2-google 
+              key: GOOGLE_CLIENT_ID
+        - name: GOOGLE_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: anvil-oauth2-google 
+              key: GOOGLE_CLIENT_SECRET
+        - name: GOOGLE_CLIENT_CALLBACK_URL
+          valueFrom:
+            secretKeyRef:
+              name: anvil-oauth2-google 
+              key: GOOGLE_CLIENT_CALLBACK_URL
+        - name: GOOGLE_SERVICE_ACCOUNT_EMAIL
+          valueFrom:
+            secretKeyRef:
+              name: anvil-oauth2-google 
+              key: GOOGLE_SERVICE_ACCOUNT_EMAIL
+        - name: GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: anvil-oauth2-google 
+              key: GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY
+
+        # Discord OAuth2 Configuration
+        - name: DISCORD_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: anvil-oauth2-discord 
+              key: DISCORD_CLIENT_ID
+        - name: DISCORD_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: anvil-oauth2-discord 
+              key: DISCORD_CLIENT_SECRET
+        - name: DISCORD_CLIENT_CALLBACK_URL
+          valueFrom:
+            secretKeyRef:
+              name: anvil-oauth2-discord 
+              key: DISCORD_CLIENT_CALLBACK_URL
+        # Authentication Configuration
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: anvil-auth
+              key: JWT_SECRET
+        - name: CSRF_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: anvil-auth
+              key: CSRF_SECRET
+        - name: CSRF_EXCLUDE_ROUTES
+          valueFrom:
+            secretKeyRef:
+              name: anvil-auth
+              key: CSRF_EXCLUDE_ROUTES
+        - name: ACCESS_TOKEN_EXPIRES_IN
+          valueFrom:
+            secretKeyRef:
+              name: anvil-auth
+              key: ACCESS_TOKEN_EXPIRES_IN
+        - name: REFRESH_TOKEN_EXPIRES_IN
+          valueFrom:
+            secretKeyRef:
+              name: anvil-auth
+              key: REFRESH_TOKEN_EXPIRES_IN
+        - name: ADMIN_ROLE
+          valueFrom:
+            secretKeyRef:
+              name: anvil-auth
+              key: ADMIN_ROLE
+        # Email Configuration
+        - name: EMAIL_HOST
+          valueFrom:
+            secretKeyRef:
+              # Production Placeholder
+              name: anvil-email
+              key: EMAIL_HOST
+        - name: EMAIL_PORT
+          valueFrom:
+            secretKeyRef:
+              # Production Placeholder
+              name: anvil-email
+              key: EMAIL_PORT
+        - name: EMAIL_USER
+          valueFrom:
+            secretKeyRef:
+              # Production Placeholder
+              name: anvil-email
+              key: EMAIL_USER
+        - name: EMAIL_PASS
+          valueFrom:
+            secretKeyRef:
+              # Production Placeholder
+              name: anvil-email
+              key: EMAIL_PASS
+        - name: EMAIL_FROM
+          valueFrom:
+            secretKeyRef:
+              name: anvil-email
+              key: EMAIL_FROM
+        - name: EMAIL_LOCAL_DOMAIN
+          valueFrom:
+            secretKeyRef:
+              name: anvil-email
+              key: EMAIL_LOCAL_DOMAIN
+        - name: EMAIL_SMTP_REQUIRE_TLS
+          valueFrom:
+            secretKeyRef:
+              name: anvil-email
+              key: EMAIL_SMTP_REQUIRE_TLS
+        - name: EMAIL_RATE_MAX
+          valueFrom:
+            secretKeyRef:
+              name: anvil-email
+              key: EMAIL_RATE_MAX
+        - name: EMAIL_RATE_DURATION
+          valueFrom:
+            secretKeyRef:
+              name: anvil-email
+              key: EMAIL_RATE_DURATION
+        # Redis Configuration
+        - name: REDIS_HOST
+          # Use Valkey service FQDN because it's in a different namespace
+          value: "valkey.valkey.svc.cluster.local"
+        - name: REDIS_PORT
+          value: "6379"
+        - name: REDIS_DB
+          value: "0"
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: valkey-password
+              key: password
+        # CDN Configuration
+        - name: CDN_URL
+          value: "https://cdn.iforge.sheffield.ac.uk"
+        # Production value
+        - name: ANVIL_PORT
+          value: "3000"
+        # Front End Configuration
+        - name: FRONT_END_URL
+          # Production value
+          value: "https://iforge.sheffield.ac.uk"
+        # Gel Connection Configuration (replace EDGEDB_DSN)
+        - name: GEL_HOST
+          value: "gel.gel.svc.cluster.local"
+        - name: GEL_PORT
+          value: "5656"
+        - name: GEL_DATABASE
+          value: "main" 
+        - name: GEL_USER
+          value: "edgedb"
+        - name: GEL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: gel-server-password 
+              key: password
+        # Direct EDGEDB_DSN from 1Password
+        - name: EDGEDB_DSN
+          valueFrom:
+            secretKeyRef:
+              name: gel-server-password
+              key: GEL_DSN
+
+        - name: NODE_EXTRA_CA_CERTS
+          # Point to the mounted Gel CA certificate
+          value: "/etc/ssl/certs/gel-ca.crt" 
+        # Logging Configuration
+        - name: LOG_LEVEL
+          # Production value
+          value: "info"
+        readinessProbe: 
+          httpGet:
+            path: /v1/healthz
+            port: 3000
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        livenessProbe: 
+          httpGet:
+            path: /v1/healthz
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 20 
+        # Add Volume Mount for Gel CA Cert
+        volumeMounts:
+        - name: gel-ca
+          mountPath: /etc/ssl/certs/gel-ca.crt
+          subPath: ca-bundle.crt # Mount the cert from the ConfigMap's key
+          readOnly: true
+      # Add Volume for Gel CA Cert Secret
+      volumes:
+      - name: gel-ca
+        configMap:
+          name: shared-gel-ca
+          items:
+          - key: ca-bundle.crt
+            path: ca-bundle.crt

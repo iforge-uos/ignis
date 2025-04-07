@@ -1,0 +1,24 @@
+# deploy/infrastructure/certs/trust-bundle.yaml
+apiVersion: trust.cert-manager.io/v1alpha1
+kind: Bundle
+metadata:
+  name: shared-gel-ca
+  # Bundles are typically managed in the cert-manager namespace
+  # Or adjust if your cert-manager runs elsewhere
+  namespace: cert-manager # Make sure this matches your cert-manager installation namespace
+spec:
+  sources:
+  - secret:
+      # Source secret MUST be in the same namespace as the Bundle ('cert-manager')
+      name: "gel-ca" # The CA secret name 
+      key: "tls.crt"
+  target:
+    configMap:
+      # Name field is removed - name defaults to the Bundle metadata name ('shared-gel-ca')
+      key: "ca-bundle.crt" # The key name within the target ConfigMap
+    # Target namespaces matching this label selector
+    namespaceSelector:
+      matchLabels:
+        # Standard label Kubernetes adds to namespaces. 
+        # Verify your 'ignis' namespace has this label or adjust the selector.
+        kubernetes.io/metadata.name: ignis 

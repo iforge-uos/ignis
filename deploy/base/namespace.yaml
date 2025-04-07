@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  # Ensure the name is 'ignis'
+  name: ignis
+  # Add any labels or annotations common to the namespace if needed
+  # labels:
+  #   team: my-team 

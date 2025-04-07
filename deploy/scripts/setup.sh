@@ -6,8 +6,8 @@ INFRA_DIR="${SCRIPT_DIR}/../infrastructure"
 
 # Default values
 CREDENTIALS_PATH="${INFRA_DIR}/../secret/1password-credentials.json"
-NAMESPACES=("1password" "gel" "valkey")
-WATCH_NAMESPACES="1password,gel,valkey"
+NAMESPACES=("1password" "gel" "valkey" "ignis")
+WATCH_NAMESPACES="1password,gel,valkey,ignis"
 CERT_MANAGER_VERSION="v1.13.3"
 METRICS_SERVER_VERSION="0.7.2"
 TRUST_CERTS=false
@@ -119,6 +119,10 @@ install_cert_manager() {
     --version ${CERT_MANAGER_VERSION} \
     --set installCRDs=true \
     --wait
+ helm upgrade trust-manager jetstack/trust-manager \
+    --install \
+    --namespace cert-manager \
+    --wait
 
   # Wait for cert-manager webhook to be ready
   echo "Waiting for cert-manager webhook to be ready..."
@@ -156,7 +160,73 @@ setup_certificates() {
   if [ -f "${INFRA_DIR}/databases/gel/certificate.yaml" ]; then
     echo "Applying Gel certificates..."
     kubectl apply -f "${INFRA_DIR}/databases/gel/certificate.yaml"
+
+    # Add a small wait for the secret to potentially be created by cert-manager
+    echo "Waiting briefly for gel-ca secret to be created..."
+    sleep 10 
+  else
+    echo "Warning: Gel certificate file not found at ${INFRA_DIR}/databases/gel/certificate.yaml"
   fi
+}
+
+# Function to copy the gel-ca secret to the cert-manager namespace
+copy_gel_ca_to_cert_manager() {
+  echo "Copying gel-ca secret from 'gel' to 'cert-manager' namespace..."
+  # Check if the source secret exists
+  if kubectl get secret gel-ca -n gel > /dev/null 2>&1; then
+    # Get the secret, change namespace, remove resourceVersion/uid, and apply
+    kubectl get secret gel-ca -n gel -o json | \
+      jq 'del(.metadata.resourceVersion, .metadata.uid, .metadata.creationTimestamp, .metadata.annotations) | .metadata.namespace="cert-manager"' | \
+      kubectl apply -f -
+  else
+    echo "Warning: Source secret 'gel-ca' not found in namespace 'gel'. Skipping copy."
+  fi
+}
+
+# Function to setup the cert-manager trust Bundle
+setup_trust_bundle() {
+  echo "Setting up cert-manager trust Bundle..."
+  if [ -f "${INFRA_DIR}/certs/trust-bundle.yaml" ]; then
+    kubectl apply -f "${INFRA_DIR}/certs/trust-bundle.yaml"
+  else
+    echo "Warning: Trust bundle file not found at ${INFRA_DIR}/certs/trust-bundle.yaml"
+  fi
+}
+
+# Function to setup RBAC for cross-namespace secret access
+setup_cross_namespace_rbac() {
+  echo "Setting up RBAC for cross-namespace secret access (ignis -> gel)..."
+
+  # Define the Role in the 'gel' namespace
+  cat <<EOF | kubectl apply -f -
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: gel-secrets-reader
+  namespace: gel
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  resourceNames: ["gel-server-password", "gel-ca"] # Specific secrets anvil needs
+  verbs: ["get"]
+EOF
+
+  # Define the RoleBinding in the 'gel' namespace
+  cat <<EOF | kubectl apply -f -
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: read-gel-secrets-for-anvil
+  namespace: gel
+subjects:
+- kind: ServiceAccount
+  name: default # Assuming anvil uses the default SA in the ignis namespace
+  namespace: ignis
+roleRef:
+  kind: Role
+  name: gel-secrets-reader # Name of the Role defined above
+  apiGroup: rbac.authorization.k8s.io
+EOF
 }
 
 # Function to verify installations
@@ -195,6 +265,9 @@ install_metrics_server
 install_cnpg
 install_1password
 setup_certificates
+copy_gel_ca_to_cert_manager
+setup_trust_bundle
+setup_cross_namespace_rbac
 verify_installations
 
 # Trust certificates if requested
