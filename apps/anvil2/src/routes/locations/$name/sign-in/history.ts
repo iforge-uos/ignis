@@ -1,7 +1,7 @@
 import { deskOrAdmin } from "@/router";
 import { PartialUserShape } from "@/utils/queries";
-import { LocationNameSchema } from "@dbschema/edgedb-zod/modules/sign_in";
-import e from "@dbschema/edgeql-js";
+import { LocationNameSchema } from "@db/zod/modules/sign_in";
+import e from "@db/edgeql-js";
 import { z } from "zod";
 
 export const history = deskOrAdmin

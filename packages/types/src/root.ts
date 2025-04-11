@@ -1,4 +1,4 @@
-import { sign_in } from "@dbschema/interfaces";
+import { sign_in } from "@db/interfaces";
 import { Temporal } from "@js-temporal/polyfill";
 import { Duration } from "gel";
 import { PartialReason } from "./sign_in";

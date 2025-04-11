@@ -1,7 +1,7 @@
 import { auth, rep } from "@/router";
 import { UserShape } from "@/utils/queries";
-import { UpdateUserSchema } from "@dbschema/edgedb-zod/modules/users";
-import e from "@dbschema/edgeql-js";
+import { UpdateUserSchema } from "@db/zod/modules/users";
+import e from "@db/edgeql-js";
 import { z } from "zod";
 import { signAgreement } from "./agreements.$agreement_id";
 import { addInfraction } from "./infractions";

@@ -1,4 +1,4 @@
-import type { training } from "@dbschema/interfaces";
+import type { training } from "@db/interfaces";
 import { Temporal } from "@js-temporal/polyfill";
 import { Duration } from "gel";
 

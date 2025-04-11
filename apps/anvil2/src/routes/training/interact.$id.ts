@@ -1,7 +1,7 @@
-import { auth } from "@/router";
-import e from "@dbschema/edgeql-js";
-import type { training } from "@dbschema/interfaces";
-import { getTrainingNextSection } from "@dbschema/queries/getTrainingNextSection.query";
+import { auth, transaction } from "@/router";
+import e from "@db/edgeql-js";
+import type { training } from "@db/interfaces";
+import { getTrainingNextSection } from "@db/queries/getTrainingNextSection.query";
 import { Temporal } from "@js-temporal/polyfill";
 import { Duration } from "gel";
 import { z } from "zod";
@@ -23,6 +23,7 @@ export type InteractionResponse = PageInteraction | QuestionInteraction | WrongA
 
 export const interact = auth
   .route({ path: "/interact/{interaction_id}" })
+  .use(transaction)
   .input(
     z.object({
       session_id: z.string().uuid(),
@@ -31,9 +32,8 @@ export const interact = auth
     }),
   )
   .handler(
-    async ({ input: { session_id, interaction_id, answers }, context: { db } }): Promise<InteractionResponse> =>
-      // TODO per-session locks to prevent funny things happening
-      await db.transaction(async (tx) => {
+    async ({ input: { session_id, interaction_id, answers }, context: { tx } }): Promise<InteractionResponse> =>{
+        // TODO per-session locks to prevent funny things happening
         const session = await e
           .assert_exists(
             e.select(e.training.Session, (session) => ({
@@ -123,5 +123,4 @@ export const interact = auth
           .run(tx);
 
         return next_section as InteractionResponse;
-      }),
-  );
+  });

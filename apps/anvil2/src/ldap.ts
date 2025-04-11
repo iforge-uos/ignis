@@ -1,4 +1,4 @@
-import e from "@dbschema/edgeql-js";
+import e from "@db/edgeql-js";
 import { Client, Entry } from "ldapts";
 import { Logger } from "winston";
 import { z } from "zod";

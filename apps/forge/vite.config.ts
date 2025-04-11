@@ -18,7 +18,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      "@dbschema": path.resolve(__dirname, "../anvil/dbschema/"),
+      "@db": path.resolve(__dirname, "../../packages/db/"),
       "@ui": path.resolve(__dirname, "../../packages/ui"),
       "@ui/components": path.resolve(__dirname, "../../packages/ui/components/ui"),
       "@ui/components/ui/": path.resolve(__dirname, "../../packages/ui/components/ui"),

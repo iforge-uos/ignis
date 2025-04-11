@@ -1,5 +1,5 @@
-import { notification } from "@dbschema/interfaces";
-import { std } from "@dbschema/interfaces";
+import { notification } from "@db/interfaces";
+import { std } from "@db/interfaces";
 
 export type Notification = notification.Notification;
 

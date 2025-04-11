@@ -1,7 +1,7 @@
 import { pub } from "@/router";
 import { LocationStatusShape } from "@/utils/queries";
-import { LocationNameSchema } from "@dbschema/edgedb-zod/modules/sign_in";
-import e from "@dbschema/edgeql-js";
+import { LocationNameSchema } from "@db/zod/modules/sign_in";
+import e from "@db/edgeql-js";
 import type { PartialLocation } from "@ignis/types/sign_in";
 import { z } from "zod";
 

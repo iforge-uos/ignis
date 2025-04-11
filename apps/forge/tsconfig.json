@@ -8,7 +8,7 @@
     "noEmit": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@dbschema/*": ["../../packages/dbschema/*"],
+      "@db/*": ["../../packages/db/*"],
       "@types/*": ["../../packages/types/*"],
       "@ui/*": ["../../packages/ui/*"],
       "@ignis/types": ["../../packages/types/src/index"],
@@ -21,6 +21,6 @@
     { "path": "../../packages/types" },
     { "path": "../../packages/errors" },
     { "path": "../../packages/ui" },
-    { "path": "../../packages/dbschema" }
+    { "path": "../../packages/db" }
   ]
 }

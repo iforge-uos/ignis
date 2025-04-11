@@ -1,8 +1,8 @@
 import { UUID } from "node:crypto";
-import { repProcedure } from "@/router";
-import { CreateInfractionSchema, RepStatusSchema } from "@dbschema/edgedb-zod/modules/users";
-import e from "@dbschema/edgeql-js";
-import { helper, users } from "@dbschema/interfaces";
+import { rep } from "@/router";
+import { CreateInfractionSchema, RepStatusSchema } from "@db/zod/modules/users";
+import e from "@db/edgeql-js";
+import { helper, users } from "@db/interfaces";
 import { Duration } from "gel";
 import { z } from "zod";
 
@@ -10,7 +10,7 @@ import { z } from "zod";
 // along with this, we must copy all the links from users."User.x" to users."Rep.x".
 // as for why we do this. It is so so so much nicer than the alternative of doing this in gel
 // (it took 2 rep cycles to figure out how to do this in gel, and then they released full psql support)
-export const promote = repProcedure
+export const promote = rep
   .meta({ openapi: { method: "POST", path: "/users/{id}/promote", protect: true } })
   .input(z.object({ id: z.string().uuid(), team_ids: z.array(z.string().uuid()), status: RepStatusSchema }))
   .handler(async ({ input: { id, team_ids, status }, context: { db, logger } }) => {

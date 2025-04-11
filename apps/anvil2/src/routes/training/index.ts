@@ -1,6 +1,6 @@
 import { pub } from "@/router";
-import e from "@dbschema/edgeql-js";
-import { training } from "@dbschema/interfaces";
+import { training } from "@db/interfaces";
+import e from "@db/edgeql-js";
 import { get } from "./$id";
 import { idRouter } from "./$id";
 

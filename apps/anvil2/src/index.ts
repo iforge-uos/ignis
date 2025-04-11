@@ -1,6 +1,8 @@
 import "./instrument";
-import e from "@dbschema/edgeql-js";
+import e from "@db/edgeql-js";
 import { AuthRequest, CallbackRequest } from "@gel/auth-express";
+import { Temporal } from "@js-temporal/polyfill";
+import { StandardRPCCustomJsonSerializer } from "@orpc/client/standard";
 import { OpenAPIHandler } from "@orpc/openapi/node";
 import { ORPCError, onError } from "@orpc/server";
 import { RouterClient } from "@orpc/server";
@@ -9,12 +11,13 @@ import { ZodSmartCoercionPlugin } from "@orpc/zod";
 import * as Sentry from "@sentry/node";
 import cookieParser from "cookie-parser";
 import express, { Response } from "express";
-import { AccessError, CardinalityViolationError, InvalidArgumentError } from "gel";
+import { AccessError, CardinalityViolationError, Duration, InvalidArgumentError } from "gel";
 import authRoute from "./auth";
 import config from "./config";
 import client, { auth, onUserInsert } from "./db";
 import { router } from "./routes";
 import { UserShape } from "./utils/queries";
+
 const app = express();
 
 app.use(express.json());
@@ -35,8 +38,16 @@ const createContext = async ({ req, res }: { req: AuthRequest; res: Response }) 
 };
 export type Context = Awaited<ReturnType<typeof createContext>>;
 
+export const durationSerializer: StandardRPCCustomJsonSerializer = {
+  type: 21,
+  condition: (data) => data instanceof Duration || data instanceof Temporal.Duration,
+  serialize: (data) => data.toJSON(),
+  deserialize: Temporal.Duration.from,
+};
+
 const openAPIHandler = new OpenAPIHandler(router, {
   plugins: [new ZodSmartCoercionPlugin(), new CORSPlugin()],
+  customJsonSerializers: [],
   interceptors: [
     onError((error) => {
       // Some errors can be suppressed so just re-throw

@@ -1,0 +1,21 @@
+{
+  "name": "@ignis/db",
+  "version": "1.0.0",
+  "private": true,
+  "author": "iForge IT team",
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "gel": "2.0.1",
+    "@gel/generate": "0.6.2",
+    "@js-temporal/polyfill": "^0.4.4",
+    "gel-zod": "github:iforge-uos/edgedb-zod#a506a36834b9a028ce4f8ae3764cdb70e57b1a67",
+    "zod": "3.24.2"
+  },
+  "scripts": {
+    "interfaces": "pnpm exec generate interfaces -I ignis",
+    "edgeql-js": "pnpm exec generate edgeql-js --target=ts -I ignis",
+    "queries": "pnpm exec generate queries --target=ts -I ignis",
+    "zod": "python3 gen-zod.py",
+    "regen": "pnpm run \"/interfaces|edgeql|queries|zod/\""
+  }
+}

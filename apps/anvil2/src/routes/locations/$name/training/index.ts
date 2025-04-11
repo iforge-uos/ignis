@@ -1,20 +1,21 @@
 import { auth, pub } from "@/router";
 import { TrainingForLocationShape } from "@/utils/queries";
-import { LocationNameSchema } from "@dbschema/edgedb-zod/modules/training";
-import e from "@dbschema/edgeql-js";
+import e from "@db/edgeql-js";
+import { LocationNameSchema } from "@db/zod/modules/training";
 import { z } from "zod";
 
 export const all = pub
   .route({ path: "/" })
   .input(z.object({ name: LocationNameSchema }))
   .handler(async ({ input: { name }, context: { db, user } }) => {
-    if (!user)
+    if (!user) {
       return e
         .select(e.training.Training, (training) => ({
           ...TrainingForLocationShape(training),
           filter: e.all(e.set(e.op(name, "in", training.locations), e.op("exists", training.rep), training.enabled)),
         }))
         .run(db);
+    }
 
     return e
       .select(e.training.Training, (training) => ({

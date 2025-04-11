@@ -1,6 +1,6 @@
 import { auth } from "@/router";
 import { UserShape } from "@/utils/queries";
-import e from "@dbschema/edgeql-js";
+import e from "@db/edgeql-js";
 import { idRouter } from "./$id";
 
 export const all = auth

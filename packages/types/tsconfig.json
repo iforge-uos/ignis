@@ -7,13 +7,11 @@
     "baseUrl": ".",
     "paths": {
       "@anvil/*": ["../../apps/anvil2/src/*"],
-      "@dbschema/*": ["../dbschema/*"],
+      "@db/*": ["../db/*"],
       "@ignis/types/*": ["./src/*"]
     }
   },
   "include": ["./src/**/*"],
   "exclude": ["node_modules", "dist"],
-  "references": [
-    { "path": "../dbschema" }
-  ]
+  "references": [{ "path": "../db" }]
 }

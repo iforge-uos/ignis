@@ -1,9 +1,0 @@
-{
-  "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "emitDeclarationOnly": true,
-    "outDir": "./dist"
-  },
-  "include": ["edgeql-js/**/*.ts"],
-  "exclude": ["node_modules", "dist"]
-}

@@ -1,5 +1,5 @@
 import { auth } from "@/router";
-import e from "@dbschema/edgeql-js";
+import e from "@db/edgeql-js";
 import { Temporal } from "@js-temporal/polyfill";
 import { z } from "zod";
 

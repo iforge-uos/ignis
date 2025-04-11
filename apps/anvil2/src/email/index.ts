@@ -7,8 +7,8 @@ import { render } from "jsx-email";
 import nodemailer from "nodemailer";
 import { Logger } from "winston";
 import { z } from "zod";
-import { Template as Queued } from "./templates/queued";
-import { Template as Unqueued } from "./templates/unqueued";
+// import { Template as Queued } from "../../../../packages/email/queued";
+// import { Template as Unqueued } from "../../../../packages/email/unqueued";
 // import WelcomeEmail from "./templates/welcome";
 
 export type SendEmailSchema = z.infer<typeof SendEmailSchema>;

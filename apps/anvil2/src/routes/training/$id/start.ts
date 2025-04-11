@@ -1,5 +1,5 @@
 import { auth } from "@/router";
-import { startTraining } from "@dbschema/queries/startTraining.query";
+import { startTraining } from "@db/queries/startTraining.query";
 import { z } from "zod";
 
 export const start = auth

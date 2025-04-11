@@ -1,11 +1,10 @@
 import { RollbackTransaction } from "@/router";
 import { ErrorMap } from "@orpc/server";
 import { z } from "zod";
-import { InputStep, SignInParams, createStepSchema } from "./_types";
+import { InputStep, SignInParams, createInputStep, createOutputStep } from "./_types";
 
-const Step = createStepSchema("CANCEL");
-export const Input = Step.and(InputStep);
-export const Output = Step.extend({});
+export const Input = createInputStep("CANCEL").and(InputStep);
+export const Output = createOutputStep([]).extend({});
 export const Errors = {} as const satisfies ErrorMap;
 
 export default async function ({}: SignInParams<z.infer<typeof Input>>): Promise<z.infer<typeof Output>> {

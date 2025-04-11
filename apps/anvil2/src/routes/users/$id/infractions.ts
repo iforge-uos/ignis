@@ -1,6 +1,6 @@
 import { rep } from "@/router";
-import { CreateInfractionSchema } from "@dbschema/edgedb-zod/modules/users";
-import e from "@dbschema/edgeql-js";
+import { CreateInfractionSchema } from "@db/zod/modules/users";
+import e from "@db/edgeql-js";
 import { Duration } from "gel";
 import { z } from "zod";
 

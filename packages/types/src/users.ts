@@ -1,4 +1,4 @@
-import { helper, std, users } from "@dbschema/interfaces";
+import { helper, std, users } from "@db/interfaces";
 import { LocationName } from "./sign_in";
 import type { CalendarDatum } from "@nivo/calendar";
 import { training } from "./";

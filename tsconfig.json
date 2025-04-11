@@ -2,11 +2,11 @@
   "files": [],
   "extends": "./tsconfig.base.json",
   "references": [
-    { "path": "./packages/dbschema" }, 
-    { "path": "./packages/errors" }, 
-    { "path": "./packages/types" }, 
-    { "path": "./packages/ui" }, 
-    { "path": "./apps/forge" }, 
+    { "path": "./packages/db" },
+    { "path": "./packages/errors" },
+    { "path": "./packages/types" },
+    { "path": "./packages/ui" },
+    { "path": "./apps/forge" },
     { "path": "./apps/anvil2" }
   ]
 }

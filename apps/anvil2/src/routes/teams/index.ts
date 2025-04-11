@@ -1,6 +1,6 @@
 import { rep } from "@/router";
 import { TeamShape } from "@/utils/queries";
-import e from "@dbschema/edgeql-js";
+import e from "@db/edgeql-js";
 import { get } from "./$id";
 import { allAssignable } from "./assignable";
 

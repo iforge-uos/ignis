@@ -1,10 +1,9 @@
 import { ErrorMap } from "@orpc/server";
 import { z } from "zod";
-import { InputStep, SignInParams, createStepSchema } from "./_types";
+import { InputStep, SignInParams, createInputStep, createOutputStep } from "./_types";
 
-const Step = createStepSchema("REGISTER");
-export const Input = Step.extend({}).and(InputStep);
-export const Output = Step.extend({});
+export const Input = createInputStep("REGISTER").extend({}).and(InputStep);
+export const Output = createOutputStep([]).extend({});
 export const Errors = {} as const satisfies ErrorMap;
 
 export default async function ({

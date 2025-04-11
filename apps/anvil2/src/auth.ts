@@ -1,6 +1,6 @@
 // TODO stuff for idocs
 
-import e from "@dbschema/edgeql-js";
+import e from "@db/edgeql-js";
 import { CallbackRequest } from "@gel/auth-express";
 import { ORPCError } from "@orpc/server";
 import axios from "axios";

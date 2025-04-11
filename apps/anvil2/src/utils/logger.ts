@@ -1,7 +1,7 @@
 import winston from "winston";
 import DailyRotateFile from "winston-daily-rotate-file";
 import path from "node:path";
-import { getEnvVariable } from "@/utils/config.utils";
+import { getEnvVariable } from "@/utils/config";
 
 const logDir = "logs";
 

@@ -1,6 +1,6 @@
 import { auth } from "@/router";
 import { InfractionShape, RepShape, UserShape } from "@/utils/queries";
-import e from "@dbschema/edgeql-js";
+import e from "@db/edgeql-js";
 
 export const me = auth.route({ method: "GET", path: "/users/@me" }).handler(async ({ context: { db } }) =>
   e

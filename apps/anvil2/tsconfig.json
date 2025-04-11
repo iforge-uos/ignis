@@ -1,18 +1,20 @@
 {
   "extends": "../../tsconfig.base.json",
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "../../packages/email"],
   "compilerOptions": {
     "outDir": "./dist",
     "noEmit": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@dbschema/*": ["../../packages/dbschema/*"],
+      "@db/*": ["../../packages/db/*"],
       "@ignis/types": ["../../packages/types/src/index"],
-      "@ignis/types/*": ["../../packages/types/src/*"]
+      "@ignis/types/*": ["../../packages/types/src/*"],
+      "@ignis/email/*": ["../../packages/email/*"]
     }
   },
   "references": [
     { "path": "../../packages/types" },
-    { "path": "../../packages/dbschema" }
+    { "path": "../../packages/db" },
+    { "path": "../../packages/email" }
   ]
 }

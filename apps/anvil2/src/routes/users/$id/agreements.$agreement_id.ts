@@ -1,5 +1,5 @@
 import { rep } from "@/router";
-import e from "@dbschema/edgeql-js";
+import e from "@db/edgeql-js";
 import { z } from "zod";
 
 export const signAgreement = rep

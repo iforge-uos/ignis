@@ -21,7 +21,7 @@
     },
     "regen": {
       "dependsOn": ["^build"],
-      "outputs": ["dbschema/**"]
+      "outputs": ["db/**"]
     },
     "generate": {
       "outputs": ["../../node_modules/.prisma/**", ".contentlayer/**"]

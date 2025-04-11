@@ -2,7 +2,7 @@
 server-version = "nightly"
 
 [project]
-schema-dir = "pacakges/dbschema"
+schema-dir = "packages/db"
 
 [hooks]
 schema.update.after = "pnpm regen"

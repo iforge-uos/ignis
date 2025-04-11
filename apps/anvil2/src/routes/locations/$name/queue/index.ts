@@ -1,75 +1,34 @@
-import auth from "@/auth";
-// @IdempotencyCache(60)
-import email from "@/email";
-import { pub } from "@/router";
-import { QueuePlaceShape } from "@/utils/queries";
-import { ensureUser } from "@/utils/sign-in";
-import { ldapLibraryToUcardNumber } from "@/utils/sign-in";
-import { LocationNameSchema } from "@dbschema/edgedb-zod/modules/sign_in";
-import e, { $infer } from "@dbschema/edgeql-js";
-import { AccessError, ConstraintViolationError } from "gel";
+import { auth } from "@/router";
+import e from "@db/edgeql-js";
+import { LocationNameSchema } from "@db/zod/modules/sign_in";
 import { z } from "zod";
+import { SignInErrors } from "../sign-in/_flows/_types";
+import queue from "../sign-in/_flows/queue";
 import { remove } from "./$id";
-import Logger from "@/utils/logger";
 
-export const addInPerson = pub
+export const add = auth
   .route({
     method: "POST",
-    path: "/{ucard_number}",
+    path: "/",
   })
+  .errors(SignInErrors)
   .input(
     z.object({
-      location: LocationNameSchema,
-      ucard_number: z.string().regex(/\d{9,}/),
+      name: LocationNameSchema,
     }),
   )
-  .handler(async ({ input: { location, ucard_number }, context: { db }, errors }) => {
-    let place: $infer<typeof QueuePlaceShape>[number];
-    try {
-      place = await e
-        .select(
-          e.insert(e.sign_in.QueuePlace, {
-            user: e.assert_exists(
-              e.select(e.users.User, () => ({
-                filter_single: {
-                  ucard_number: ldapLibraryToUcardNumber(ucard_number),
-                },
-              })),
-            ),
-            location: e.select(e.sign_in.Location, () => ({
-              filter_single: { name: location },
-            })),
-          }),
-          QueuePlaceShape,
-        )
-        .run(db);
-    } catch (error: any) {
-      if (error instanceof AccessError) {
-        throw errors.QUEUE_DISABLED({
-          cause: error,
-          message: error.message,
-        });
-      }
-      if (error instanceof ConstraintViolationError) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          cause: error,
-          message: "The user is already in the queue",
-        });
-      }
-
-      throw error;
-    }
-
-    await email.sendQueuedEmail(place, location);
-
-    Logger.debug(`Sent queued email to user ${place.user.display_name} (${place.user.ucard_number})`);
-
-    return place;
+  .handler(async ({ input: { name }, context, errors }) => {
+    const $location = e.assert_exists(e.select(e.sign_in.Location, () => ({ filter_single: { name } })));
+    return await queue({
+      $user: e.user as any, // TODO figure out how to remove the any
+      $location,
+      errors,
+      context: { ...context, tx: context.db },
+      input: { name, type: "QUEUE", ucard_number: "" },
+    });
   });
 
-export const queueRouter = pub.prefix("/").router({
-  // add
-  addInPerson, // TODO after sign in refactor to only have sign in have like 1 button (Scan card) make this call
+export const queueRouter = auth.prefix("/queue").router({
+  add,
   remove,
 });

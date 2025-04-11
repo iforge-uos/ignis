@@ -1,4 +1,4 @@
-import e from "@dbschema/edgeql-js";
+import e from "@db/edgeql-js";
 
 export const PartialUserShape = e.shape(e.users.User, () => ({
   // Fairly minimal, useful for templating

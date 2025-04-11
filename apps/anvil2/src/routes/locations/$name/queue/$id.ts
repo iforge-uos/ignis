@@ -1,6 +1,6 @@
 import { pub } from "@/router";
-import { LocationNameSchema } from "@dbschema/edgedb-zod/modules/sign_in";
-import e from "@dbschema/edgeql-js";
+import { LocationNameSchema } from "@db/zod/modules/sign_in";
+import e from "@db/edgeql-js";
 import { z } from "zod";
 
 // @IdempotencyCache(60)

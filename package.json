@@ -5,11 +5,7 @@
   "author": "iForge IT team",
   "license": "GPL-3.0-or-later",
   "private": true,
-  "workspaces": [
-    "packages/*",
-    "apps/*",
-    "tooling/*"
-  ],
+  "workspaces": ["packages/*", "apps/*", "tooling/*"],
   "scripts": {
     "dev": "turbo run dev",
     "env:gen": "OP_ACCOUNT=iforge.1password.com op inject -f -i .env.tpl -o .env",
@@ -20,18 +16,19 @@
     "clean:emitted": "find . -name \"*.js.map\" -o -name \"*.d.ts.map\" -o -name \"*.js\" -type f -not -path \"*/node_modules/*\" -not -path \"*/dist/*\" | grep -v \"package.json\" | grep -v \"turbo.json\" | grep -v \".eslintrc.js\" | grep -v \"next.config.js\" | xargs rm -f",
     "clean:all": "pnpm clean && pnpm clean:emitted",
     "build": "pnpm build:packages && pnpm build:apps",
-    "build:packages": "pnpm build:dbschema && pnpm build:errors && pnpm build:types && pnpm build:ui",
+    "build:packages": "pnpm build:db && pnpm build:errors && pnpm build:types && pnpm build:ui",
     "build:apps": "pnpm --filter forge build && pnpm --filter anvil2 build",
-    "build:dbschema": "pnpm --filter dbschema exec npx tsc --skipLibCheck",
+    "build:db": "pnpm --filter db exec npx tsc --skipLibCheck",
     "build:errors": "pnpm --filter errors exec npx tsc --skipLibCheck",
     "build:types": "pnpm --filter types exec npx tsc --skipLibCheck",
     "build:ui": "pnpm --filter ui exec npx tsc --skipLibCheck",
-    "build:watch": "pnpm --filter dbschema exec npx tsc --skipLibCheck --watch",
+    "build:watch": "pnpm --filter db exec npx tsc --skipLibCheck --watch",
     "lint:fix": "turbo lint:fix --continue",
     "format": "biome format .",
     "format:fix": "biome format . --write",
-    "email": "cross-env OP_ACCOUNT=iforge.1password.com op run --env-file=config/anvil/.env.development.tpl -- pnpm --filter anvil-2 exec email preview src/email/templates",
-    "email-check": "cross-env OP_ACCOUNT=iforge.1password.com op run --env-file=config/anvil/.env.development.tpl -- pnpm --filter anvil-2 exec email check"
+    "email": "pnpm --filter email email",
+    "email-check": "pnpm --filter email email-check",
+    "regen": "pnpm --filter db regen"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

@@ -1,6 +1,6 @@
 import { auth, pub, rep } from "@/router";
-import e from "@dbschema/edgeql-js";
-import { getTrainingForEditing } from "@dbschema/queries/getTrainingForEditing.query";
+import e from "@db/edgeql-js";
+import { getTrainingForEditing } from "@db/queries/getTrainingForEditing.query";
 import { z } from "zod";
 import { start } from "./start";
 

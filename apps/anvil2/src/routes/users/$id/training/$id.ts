@@ -1,7 +1,6 @@
-import { auth, rep, transaction } from "@/router";
-import { TrainingShape } from "@/utils/queries";
-import e from "@dbschema/edgeql-js";
-import { addInPersonTraining } from "@dbschema/queries/addInPersonTraining.query";
+import { rep, transaction } from "@/router";
+import e from "@db/edgeql-js";
+import { addInPersonTraining } from "@db/queries/addInPersonTraining.query";
 import { z } from "zod";
 
 export const createInPerson = rep
@@ -10,7 +9,7 @@ export const createInPerson = rep
     z.object({
       id: z.string().uuid(),
       training_id: z.string().uuid(),
-      created_at: z.string().datetime(),
+      created_at: z.date(),
       rep_id: z.string().uuid(),
     }),
   )
@@ -19,7 +18,6 @@ export const createInPerson = rep
       id,
       training_id,
       ...data,
-      created_at: new Date(data.created_at),
     }),
   );
 
@@ -32,6 +30,7 @@ export const remove = rep
       reason: z.string().min(1),
     }),
   )
+  .output(z.void())
   .use(transaction)
   .handler(async ({ input: { id, training_id, reason }, context: { tx } }) => {
     const user = e.assert_exists(

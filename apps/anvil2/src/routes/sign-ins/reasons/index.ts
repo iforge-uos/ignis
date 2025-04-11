@@ -1,7 +1,7 @@
 import { auth } from "@/router";
-import { CreateReasonSchema } from "@dbschema/edgedb-zod/modules/sign_in";
-import e from "@dbschema/edgeql-js";
-import { get, idRouter, remove } from "./$id";
+import { CreateReasonSchema } from "@db/zod/modules/sign_in";
+import e from "@db/edgeql-js";
+import { idRouter } from "./$id";
 
 export const all = auth
   .route({ path: "/" })

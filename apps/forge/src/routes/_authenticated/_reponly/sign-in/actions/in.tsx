@@ -8,7 +8,7 @@ const InComponent = () => {
   return (
     <>
       <div className="p-4 mt-1">
-        <Title prompt="Signin User" />
+        <Title prompt="Sign in User" />
         <ActiveLocationSelector />
         <SignInActionsManager initialFlow={FlowType.SignIn} />
       </div>

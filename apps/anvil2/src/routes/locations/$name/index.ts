@@ -1,7 +1,7 @@
 import { rep } from "@/router";
 import { PartialUserShape } from "@/utils/queries";
-import { LocationNameSchema } from "@dbschema/edgedb-zod/modules/sign_in";
-import e from "@dbschema/edgeql-js";
+import { LocationNameSchema } from "@db/zod/modules/sign_in";
+import e from "@db/edgeql-js";
 import { Location } from "@ignis/types/sign_in";
 import { commonReasons } from "./common-reasons";
 import { queueRouter } from "./queue";

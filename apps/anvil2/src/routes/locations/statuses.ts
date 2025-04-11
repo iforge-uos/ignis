@@ -1,6 +1,6 @@
 import { pub } from "@/router";
 import { LocationStatusShape } from "@/utils/queries";
-import e from "@dbschema/edgeql-js";
+import e from "@db/edgeql-js";
 import { LocationName, PartialLocation } from "@ignis/types/sign_in";
 
 export const statuses = pub

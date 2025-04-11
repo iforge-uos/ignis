@@ -1,6 +1,6 @@
 import { auth } from "@/router";
-import { LocationNameSchema } from "@dbschema/edgedb-zod/modules/sign_in";
-import { getSignInTrainings } from "@dbschema/queries/getSignInTrainings.query";
+import { LocationNameSchema } from "@db/zod/modules/sign_in";
+import { getSignInTrainings } from "@db/queries/getSignInTrainings.query";
 import { z } from "zod";
 
 export const inPersonRemaining = auth

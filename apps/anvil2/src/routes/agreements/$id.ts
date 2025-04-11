@@ -1,7 +1,7 @@
 import { auth, pub } from "@/router";
 import { AgreementShape } from "@/utils/queries";
-import { UpdateAgreementSchema } from "@dbschema/edgedb-zod/modules/sign_in";
-import e from "@dbschema/edgeql-js";
+import { UpdateAgreementSchema } from "@db/zod/modules/sign_in";
+import e from "@db/edgeql-js";
 import { z } from "zod";
 
 export const get = pub

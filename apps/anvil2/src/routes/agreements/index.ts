@@ -1,7 +1,7 @@
 import { pub } from "@/router";
 import { AgreementShape } from "@/utils/queries";
-import { CreateAgreementSchema } from "@dbschema/edgedb-zod/modules/sign_in";
-import e from "@dbschema/edgeql-js";
+import { CreateAgreementSchema } from "@db/zod/modules/sign_in";
+import e from "@db/edgeql-js";
 import { Agreement } from "@ignis/types/root";
 import { z } from "zod";
 import { get, update } from "./$id";

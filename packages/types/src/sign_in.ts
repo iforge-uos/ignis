@@ -1,5 +1,5 @@
-import { sign_in, std, training } from "@dbschema/interfaces";
-import { GetSignInTrainingsReturns } from "@dbschema/queries/getSignInTrainings.query";
+import { sign_in, std, training } from "@db/interfaces";
+import { GetSignInTrainingsReturns } from "@db/queries/getSignInTrainings.query";
 import { Temporal } from "@js-temporal/polyfill";
 import { LocalTime } from "gel";
 import * as users from "./users";

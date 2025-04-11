@@ -1,6 +1,6 @@
 import { onUserInsert } from "@/db";
 import ldap from "@/ldap";
-import e, { type $infer } from "@dbschema/edgeql-js";
+import e, { type $infer } from "@db/edgeql-js";
 import { LocationName, User } from "@ignis/types/sign_in";
 import { ORPCError } from "@orpc/server";
 import { Executor } from "gel";
