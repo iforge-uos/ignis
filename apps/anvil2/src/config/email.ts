@@ -1,4 +1,4 @@
-import { getEnvBoolean, getEnvNumber, getEnvVariable } from "@/utils/config.utils";
+import { getEnvBoolean, getEnvNumber, getEnvVariable } from "@/utils/config";
 import { EmailConfig } from "./types";
 
 export const getEmailConfig = (): EmailConfig => ({

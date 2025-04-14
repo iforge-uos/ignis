@@ -1,5 +1,5 @@
 import { LdapConfig } from "./types";
-import { getEnvVariable, getEnvNumber, getEnvBoolean, getEnvArray } from "@/utils/config.utils";
+import { getEnvVariable, getEnvNumber, getEnvBoolean, getEnvArray } from "@/utils/config";
 
 export const getLdapConfig = (): LdapConfig => ({
   host: getEnvVariable("LDAP_HOST"),

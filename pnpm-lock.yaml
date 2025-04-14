@@ -50,9 +50,15 @@ importers:
       '@sentry/node':
         specifier: ^9.5.0
         version: 9.5.0
+      axios:
+        specifier: ^1.7.7
+        version: 1.8.2
       bull:
         specifier: ^4.16.5
         version: 4.16.5
+      cookie-parser:
+        specifier: ^1.4.7
+        version: 1.4.7
       cors:
         specifier: ^2.8.5
         version: 2.8.5
@@ -99,6 +105,9 @@ importers:
       '@orpc/client':
         specifier: ^0.49.0
         version: 0.49.0
+      '@types/cookie-parser':
+        specifier: ^1.4.8
+        version: 1.4.8(@types/express@4.17.21)
       '@types/express':
         specifier: ^4.17.21
         version: 4.17.21
@@ -117,6 +126,9 @@ importers:
       tsconfig-paths:
         specifier: ^4.2.0
         version: 4.2.0
+      tsx:
+        specifier: ^4.19.3
+        version: 4.19.3
 
   apps/forge:
     dependencies:
@@ -3594,6 +3606,11 @@ packages:
   '@types/connect@3.4.38':
     resolution: {integrity: sha512-K6uROf1LD88uDQqJCktA4yzL1YYAK6NgfsI0v/mTgyPKWsX1CnJ0XPSDhViejru1GcRkLWb8RlzFYJRqGUbaug==}
 
+  '@types/cookie-parser@1.4.8':
+    resolution: {integrity: sha512-l37JqFrOJ9yQfRQkljb41l0xVphc7kg5JTjjr+pLRZ0IyZ49V4BQ8vbF4Ut2C2e+WH4al3xD3ZwYwIUfnbT4NQ==}
+    peerDependencies:
+      '@types/express': '*'
+
   '@types/cookie@0.6.0':
     resolution: {integrity: sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA==}
 
@@ -5843,6 +5860,7 @@ packages:
     resolution: {integrity: sha512-Quz3MvAwHxVYNXsOByL7xI5EB2WYOeFswqaHIA3qOK3isRWTxiplBEocmmru6XmxDB2L7jDNYtYA4FyimoAFEw==}
     engines: {node: '>=8.17.0'}
     hasBin: true
+    bundledDependencies: []
 
   jsx-email@2.7.1:
     resolution: {integrity: sha512-N958st14J3W5HrfO5/DKawdgTnCZTdl0xewCcjOnYudv81VI2iAO7BGK7nbDSBnFD7T2+Fzo4RwQWuZzSAZSyA==}
@@ -11120,6 +11138,10 @@ snapshots:
   '@types/connect@3.4.38':
     dependencies:
       '@types/node': 22.13.10
+
+  '@types/cookie-parser@1.4.8(@types/express@4.17.21)':
+    dependencies:
+      '@types/express': 4.17.21
 
   '@types/cookie@0.6.0': {}
 

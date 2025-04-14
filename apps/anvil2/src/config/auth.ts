@@ -1,5 +1,5 @@
 import { AuthConfig } from "./types";
-import { getEnvArray, getEnvVariable } from "@/utils/config.utils";
+import { getEnvArray, getEnvVariable } from "@/utils/config";
 
 export const getAuthConfig = (): AuthConfig => ({
   csrfSecret: getEnvVariable("CSRF_SECRET"),

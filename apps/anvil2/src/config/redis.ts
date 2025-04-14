@@ -1,5 +1,5 @@
 import { RedisConfig } from "./types";
-import { getEnvVariable, getEnvNumber } from "@/utils/config.utils";
+import { getEnvVariable, getEnvNumber } from "@/utils/config";
 
 export const getRedisConfig = (): RedisConfig => ({
   host: getEnvVariable("REDIS_HOST"),
