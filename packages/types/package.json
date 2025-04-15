@@ -2,6 +2,7 @@
   "name": "@ignis/types",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "author": "iForge IT team",
   "license": "GPL-3.0-or-later",
   "main": "./dist/src/index.js",

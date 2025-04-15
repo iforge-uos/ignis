@@ -9,7 +9,7 @@
   "type": "module",
   "scripts": {
     "start": "node dist/index.js",
-    "dev": "tsx --watch src/index.ts",
+    "dev": "OP_ACCOUNT=iforge.1password.com op run --env-file=../../config/anvil/.env.development.tpl -- tsx --watch src/index.ts",
     "test": "tsx src/test.mts",
     "build": "tsc",
     "regen": "pnpm --filter db regen"

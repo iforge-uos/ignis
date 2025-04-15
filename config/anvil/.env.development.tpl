@@ -52,3 +52,5 @@ FRONT_END_URL="http://127.0.0.1:8000"
 
 # Logging
 LOG_LEVEL=debug
+
+INFRACTIONS_WEBHOOK_URL="op://IT/Infractions Webhook/url"
