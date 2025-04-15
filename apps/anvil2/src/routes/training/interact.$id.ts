@@ -63,7 +63,7 @@ export const interact = auth
           }));
 
           // eq on a normal set is element-wise, need casting to an array
-          if (await e.op(e.array_agg(their_answers), "=", e.array_agg(correct_answers)).run(tx)) {
+          if (await e.op(e.array_agg(their_answers), "!=", e.array_agg(correct_answers)).run(tx)) {
             return {
               type_name: "training::WrongAnswers",
             }; // TODO kick out?
