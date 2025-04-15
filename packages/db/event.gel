@@ -22,5 +22,6 @@ module event {
                 # rewrite insert using (datetime_of_statement())
             };
         }
+        # on insert add to short term closures? also add location
     }
 }

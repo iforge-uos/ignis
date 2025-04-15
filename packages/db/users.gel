@@ -27,6 +27,7 @@ module users {
         }
 
         multi sign_ins := .<user[is sign_in::SignIn];
+        multi bookings := .<user[is machines::Booking];
         multi agreements_signed: sign_in::Agreement {
             version_signed: int16;
             created_at: datetime {
@@ -56,13 +57,14 @@ module users {
             }
         };
 
-        multi referrals: User {
-            created_at: datetime {
-                readonly := true;
-                default := datetime_of_statement();
-                # rewrite insert using (datetime_of_statement())  // might be possible see EdgeDB/edgedb#6467
-            };
-        }
+        # Maybe one day if we become unbroke
+        # multi referrals: User {
+        #     created_at: datetime {
+        #         readonly := true;
+        #         default := datetime_of_statement();
+        #         # rewrite insert using (datetime_of_statement())  // might be possible see EdgeDB/edgedb#6467
+        #     };
+        # }
 
         access policy rep_or_higher
             allow all
