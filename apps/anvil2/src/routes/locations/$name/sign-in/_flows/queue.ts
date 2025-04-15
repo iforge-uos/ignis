@@ -2,16 +2,19 @@ import email from "@/email";
 import Logger from "@/utils/logger";
 import { QueuePlaceShape } from "@/utils/queries";
 import e, { $infer } from "@db/edgeql-js";
-import { CreateQueuePlaceSchema } from "@db/zod/modules/sign_in";
 import { ErrorMap } from "@orpc/server";
 import { AccessError, ConstraintViolationError } from "gel";
 import { z } from "zod";
-import { InputStep, SignInParams, createInputStep, createOutputStep } from "./_types";
+import { InputStep, OutputStep, SignInParams, createInputStep,  } from "./_types";
+import { sign_in } from "@db/interfaces";
 
 export const Input = createInputStep("QUEUE").extend({}).and(InputStep);
-export const Output = createOutputStep(["FINALISE"]).extend({
-  place: CreateQueuePlaceSchema.extend({ user: PartialUserSchema }),
-});
+
+export interface Output extends OutputStep {
+  type: "FINALISE"
+  place: sign_in.QueuePlace
+}
+
 export const Errors = {
   QUEUE_DISABLED: {
     status: 503,
@@ -25,7 +28,7 @@ export const Errors = {
 
 export default async function (
   { $user, $location, errors, context: { tx } }: Omit<SignInParams<z.infer<typeof Input>>, "user">, // cannot use user as it cannot be passed from the queue.add endpoint
-): Promise<z.infer<typeof Output>> {
+): Promise<Output> {
   let place: $infer<typeof QueuePlaceShape>[number];
   try {
     place = await e

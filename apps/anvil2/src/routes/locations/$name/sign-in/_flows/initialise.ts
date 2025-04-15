@@ -5,10 +5,14 @@ import { LocationNameSchema } from "@db/zod/modules/sign_in";
 import { CreateInfractionSchema } from "@db/zod/modules/users";
 import { ErrorMap } from "@orpc/server";
 import { z } from "zod";
-import { InputStep, SignInParams, createInputStep, createOutputStep } from "./_types";
+import { InputStep, OutputStep, SignInParams, createInputStep } from "./_types";
 
 export const Input = createInputStep("INITIALISE").extend({}).and(InputStep);
-export const Output = createOutputStep(["QUEUE", "SIGN_OUT", "REASON", "AGREEMENTS"]).extend({ user: SignInUser });
+
+export interface Output extends OutputStep {
+  type: "QUEUE" | "SIGN_OUT" | "REASON" | "AGREEMENTS";
+  user: SignInUser;
+}
 
 export const Errors = {
   USER_HAS_ACTIVE_INFRACTIONS: {
@@ -34,7 +38,7 @@ export default async function ({
   input: { name },
   context: { tx },
   errors,
-}: SignInParams<z.infer<typeof Input>>): Promise<z.infer<typeof Output>> {
+}: SignInParams<z.infer<typeof Input>>): Promise<Output> {
   const unresolvedInfractions = user.infractions.filter((i) => !i.resolved);
   // TODO move to front end
   // for (const infraction of unresolvedInfractions) {

@@ -2,10 +2,12 @@ import Logger from "@/utils/logger";
 import e from "@db/edgeql-js";
 import { ErrorMap } from "@orpc/server";
 import { z } from "zod";
-import { InputStep, SignInParams, SignInStepInput, StepType, createInputStep, createOutputStep } from "./_types";
+import { InputStep, OutputStep, SignInParams, SignInStepInput, StepType, createInputStep } from "./_types";
 
 export const Input = createInputStep("FINALISE").extend({}).and(InputStep);
-export const Output = createOutputStep([]).extend({});
+
+export interface Output extends OutputStep {}
+
 export const Errors = {} as const satisfies ErrorMap;
 
 type SignInStepToType = {
@@ -29,14 +31,14 @@ export default async function ({
   context,
   $location,
   $user,
-}: SignInParams<z.infer<typeof Input>>): Promise<z.infer<typeof Output>> {
+}: SignInParams<z.infer<typeof Input>>): Promise<Output> {
   Logger.info(`Signing in user ${user.ucard_number}`);
 
   const inputs = flattenPrevious(input);
   e.insert(e.sign_in.SignIn, {
     location: $location,
     user: $user,
-    reason: e.select(e.sign_in.Reason, () => ({filter_single: inputs.REASON.reason})),
-    tools: inputs.TOOLS.tools
+    reason: e.select(e.sign_in.Reason, () => ({ filter_single: inputs.REASON.reason })),
+    tools: inputs.TOOLS.tools,
   });
 }

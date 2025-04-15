@@ -1,16 +1,26 @@
 import { AgreementShape } from "@/utils/queries";
 import e from "@db/edgeql-js";
 import { Agreement } from "@db/edgeql-js/modules/sign_in";
+import { training } from "@db/interfaces";
 import { getSignInTrainings } from "@db/queries/getSignInTrainings.query";
 import { CreateAgreementSchema } from "@db/zod/modules/sign_in";
 import { ErrorMap } from "@orpc/server";
 import { z } from "zod";
-import { InputStep, SignInParams, createInputStep, createOutputStep } from "./_types";
+import { InputStep, OutputStep, SignInParams, createInputStep } from "./_types";
 
 export const Input = createInputStep("REASON")
   .extend({ reason: z.object({ id: z.string().uuid() }) })
   .and(InputStep);
-export const Output = createOutputStep(["TOOLS"]);
+
+interface ToolsOutput extends OutputStep {
+  type: "TOOLS";
+  rep_sign_in_dequeuing: boolean;
+  training: Awaited<ReturnType<typeof getSignInTrainings>>["training"];
+}
+interface FinaliseOutput extends OutputStep {
+  type: "FINALISE";
+}
+export type Output = ToolsOutput | FinaliseOutput;
 
 export const Errors = {
   USER_AGREEMENT_NOT_SIGNED: {
@@ -30,10 +40,11 @@ export const Errors = {
 
 export default async function ({
   $user,
+  $location,
   input: { reason, name: location },
   context: { tx },
   errors,
-}: SignInParams<z.infer<typeof Input>>): Promise<z.infer<typeof Output>> {
+}: SignInParams<z.infer<typeof Input>>): Promise<Output> {
   const userAgreement = e.assert_exists(
     e.select(e.sign_in.Reason, (reason) => ({
       filter_single: e.op(reason.category, "=", e.sign_in.ReasonCategory.PERSONAL_PROJECT),
@@ -97,10 +108,10 @@ export default async function ({
     };
   }
 
-  const { training } = await getSignInTrainings(tx, { id, name, name_: name });
+  const { training } = await getSignInTrainings(tx, { id, name: location, name_: location });
 
-  const all_training = (await this.dbService.query(
-    e.select(e.training.Training, (training_) => ({
+  const all_training = (await e
+    .select(e.training.Training, (training_) => ({
       id: true,
       name: true,
       compulsory: true,
@@ -114,16 +125,25 @@ export default async function ({
         e.set(
           e.op(training_.id, "not in", e.cast(e.uuid, e.set(...training.map((training) => training.id)))),
           e.op("exists", training_.rep),
-          e.op(e.cast(e.training.LocationName, name), "in", training_.locations),
+          e.op(location, "in", training_.locations),
           training_.enabled,
         ),
       ),
-    })),
-  )) as Training[];
+    }))
+    .run(tx)) as typeof training;
 
   // return [...training, ...all_training];
 
   return {
     type: "TOOLS",
+    rep_sign_in_dequeuing:
+      reason_name === "Rep On Shift" &&
+      (await e
+        .op(
+          "exists",
+          e.select($location.queued, (place) => ({ filter: e.op("not", e.op("exists", place.notified_at)) })),
+        )
+        .run(tx)),
+    training: [...training, ...all_training],
   };
 }

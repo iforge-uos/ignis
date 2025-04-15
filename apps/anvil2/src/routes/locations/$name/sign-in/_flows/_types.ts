@@ -31,8 +31,9 @@ type InputStep = z.infer<typeof BaseInputStep> & {
 export const InputStep: z.ZodType<InputStep> = BaseInputStep.extend({
   previous: z.lazy(() => SignInStepInput.optional()),
 });
-export const createOutputStep = <U extends StepType, T extends Readonly<[U, ...U[]]>>(type: T) =>
-  z.object({ type: z.enum(type) }); // many:1
+export interface OutputStep {
+  type: StepType;
+}
 
 import type { signIn } from "../$ucard";
 import { Errors as AgreementsErrors, Input as AgreementsInput, Output as AgreementsOutput } from "./agreements";
@@ -70,22 +71,32 @@ export const SignInStepInput = z.discriminatedUnion(
   SignInStepInputTuple as any,
 ) as any as typeof SignInStepInputAsUnion;
 
-const SignInStepOutputTuple = [
-  RegisterOutput,
-  QueueOutput,
-  AgreementsOutput,
-  ReasonOutput,
-  ToolsOutput,
-  MailingListsOutput,
-  PersonalToolsAndMaterialsOutput,
-  FinaliseOutput,
-  CancelOutput,
-  InitialiseOutput,
-] as const;
-if (Object.keys(StepType.Values).length !== SignInStepInputTuple.length)
-  throw Error(`Not all sign in types seem to be imported ${Object.keys(StepType.Values)}`);
+// const SignInStepOutputTuple = [
+//   RegisterOutput,
+//   QueueOutput,
+//   AgreementsOutput,
+//   ReasonOutput,
+//   ToolsOutput,
+//   MailingListsOutput,
+//   PersonalToolsAndMaterialsOutput,
+//   FinaliseOutput,
+//   CancelOutput,
+//   InitialiseOutput,
+// ] as const;
+// if (Object.keys(StepType.Values).length !== SignInStepInputTuple.length)
+//   throw Error(`Not all sign in types seem to be imported ${Object.keys(StepType.Values)}`);
 
-export const SignInStepOutput = z.discriminatedUnion("type", SignInStepOutputTuple);
+export type SignInStepOutput =
+  | RegisterOutput
+  | QueueOutput
+  | AgreementsOutput
+  | ReasonOutput
+  | ToolsOutput
+  | MailingListsOutput
+  | PersonalToolsAndMaterialsOutput
+  | FinaliseOutput
+  | CancelOutput
+  | InitialiseOutput;
 
 const _LOCATION_QUERY = e.assert_exists(
   e.select(e.sign_in.Location, () => ({ filter_single: { name: "MAINSPACE" as const } })),

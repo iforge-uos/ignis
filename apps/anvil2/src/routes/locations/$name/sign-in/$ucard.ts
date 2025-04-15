@@ -2,7 +2,8 @@ import { deskOrAdmin, transaction } from "@/router";
 import { exhaustiveGuard } from "@/utils/base";
 import { ensureUser } from "@/utils/sign-in";
 import e from "@db/edgeql-js";
-import { SignInErrors, SignInStepInput, SignInStepOutput } from "./_flows/_types";
+import { z } from "zod";
+import { SignInErrors, SignInStepInput } from "./_flows/_types";
 import agreements from "./_flows/agreements";
 import cancel from "./_flows/cancel";
 import finalise from "./_flows/finalise";
@@ -14,20 +15,11 @@ import reasons from "./_flows/reasons";
 import register from "./_flows/register";
 import tools from "./_flows/tools";
 
-function isRep(params: { id: string } | { ucard_number: number } | { username: string }) {
-  return e.op(
-    "exists",
-    e.select(e.users.Rep, () => ({
-      filter_single: params,
-    })),
-  );
-}
-
 export const signIn = deskOrAdmin
   .route({ method: "POST", path: "/{ucard_number}" })
-  .use(transaction)
+  // .use(transaction)
   .input(SignInStepInput)
-  .output(SignInStepOutput)
+  .output(z.any())
   .errors(SignInErrors)
   .handler(async (arg) => {
     const {
@@ -68,4 +60,4 @@ export const signIn = deskOrAdmin
       default:
         exhaustiveGuard(input);
     }
-  });
+  })

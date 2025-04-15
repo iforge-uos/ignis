@@ -77,17 +77,7 @@ export class RollbackTransaction extends Error {
 
 /**
  * Middleware to wrap a route in a transaction.
- * Using the return value of a rolled back function is UB.
  */
-export const transaction = pub.middleware(async ({ context, next }, _, _output: MiddlewareOutputFn<void>) =>
-  context.db.transaction(async (tx) => {
-    try {
-      return await next({ context: { tx, ...context } });
-    } catch (err) {
-      if (err instanceof RollbackTransaction) {
-        throw err;
-      }
-      return undefined as any;
-    }
-  }),
-);
+export const transaction = pub
+  .$context<{ user: NonNullable<Context["user"]>; db: Context["db"] }>()
+  .middleware(async ({ context, next }) => context.db.transaction(async (tx) => next({ context: { tx, ...context } })));
