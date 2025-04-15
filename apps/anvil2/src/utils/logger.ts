@@ -1,5 +1,4 @@
 import winston from "winston";
-import DailyRotateFile from "winston-daily-rotate-file";
 import path from "node:path";
 import { getEnvVariable } from "@/utils/config";
 
@@ -33,22 +32,6 @@ const logLevel = getEnvVariable("LOG_LEVEL", "info");
 
 const transports = [
   new winston.transports.Console(),
-  new DailyRotateFile({
-    filename: path.join(logDir, "application-%DATE%.log"),
-    datePattern: "YYYY-MM-DD",
-    zippedArchive: true,
-    maxSize: "20m",
-    maxFiles: "14d",
-    level: logLevel,
-  }),
-  new DailyRotateFile({
-    filename: path.join(logDir, "error-%DATE%.log"),
-    datePattern: "YYYY-MM-DD",
-    zippedArchive: true,
-    maxSize: "20m",
-    maxFiles: "14d",
-    level: "error",
-  }),
 ];
 
 const Logger = winston.createLogger({
