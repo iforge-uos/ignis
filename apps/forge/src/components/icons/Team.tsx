@@ -17,8 +17,23 @@ import {
 } from "lucide-react";
 import * as React from "react";
 
-export default function Team({ team, ...props }: { team: string } & React.ComponentProps<LucideIcon>) {
-  switch (removeSuffix(team, "Team").trim()) {
+type TeamName =
+  | "IT"
+  | "3DP"
+  | "Hardware"
+  | "Publicity"
+  | "Events"
+  | "Relations"
+  | "Operations"
+  | "Recruitment & Development"
+  | "Health & Safety"
+  | "Inclusions"
+  | "Unsorted Reps"
+  | "Future Reps"
+  | "Staff"
+
+export default function Team({ team, ...props }: { team: TeamName } & React.ComponentProps<LucideIcon>) {
+  switch (team) {
     case "IT":
       return <Computer {...props} />;
     case "3DP":
