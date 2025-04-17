@@ -6,6 +6,7 @@ import { signInsRouter } from "./sign-ins";
 import { teamsRouter } from "./teams";
 import { trainingRouter } from "./training";
 import { usersRouter } from "./users";
+import { deployRouter } from "./deploy";
 
 export const router = pub.router({
   agreements: agreementsRouter,
@@ -15,6 +16,7 @@ export const router = pub.router({
   teams: teamsRouter,
   training: trainingRouter,
   users: usersRouter,
+  deploy: deployRouter,
 });
 
 // Export type router type signature,
