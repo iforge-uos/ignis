@@ -5,4 +5,6 @@ export const getAuthConfig = (): AuthConfig => ({
   csrfSecret: getEnvVariable("CSRF_SECRET"),
   csrfExcludeRoutes: getEnvArray("CSRF_EXCLUDE_ROUTES"),
   adminRole: getEnvVariable("ADMIN_ROLE"),
+  repRole: [],
+  jwtSecret: ""
 });

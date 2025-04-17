@@ -1,12 +1,13 @@
 import { auth, pub } from "@/router";
 import { AgreementShape } from "@/utils/queries";
-import { UpdateAgreementSchema } from "@db/zod/modules/sign_in";
 import e from "@db/edgeql-js";
+import { UpdateAgreementSchema } from "@db/zod/modules/sign_in";
+import { os } from "@orpc/server";
 import { z } from "zod";
 
 export const get = pub
-  .route({ path: "/{id}" })
-  .input(z.object({ id: z.string().uuid() }))
+  .route({ path: "/" })
+  .input(z.object({ id: z.uuid() }))
   .handler(
     async ({ input: { id }, context: { db } }) =>
       await e
@@ -20,6 +21,7 @@ export const get = pub
   );
 
 export const update = auth
+  .route({ method: "POST", path: "/" })
   .input(
     UpdateAgreementSchema.omit({
       _content_hash: true,
@@ -27,9 +29,8 @@ export const update = auth
       version: true,
     })
       .partial({ content: true, name: true })
-      .extend({ id: z.string().uuid() }),
+      .extend({ id: z.uuid() }),
   )
-  .route({ method: "POST", path: "/{id}" })
   .handler(
     async ({ input, context: { db } }) =>
       await e
@@ -44,3 +45,8 @@ export const update = auth
         )
         .run(db),
   );
+
+export const idRouter = os.prefix("/{id}").router({
+  get,
+  update,
+});

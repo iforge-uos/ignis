@@ -61,6 +61,7 @@ export type $LocationλShape = $.typeutil.flatten<_default.$AuditableλShape & {
   "out_of_hours_rep_multiplier": $.PropertyDesc<_std.$int16, $.Cardinality.One, false, false, false, false>;
   "queue_enabled": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, true>;
   "sign_ins": $.LinkDesc<$SignIn, $.Cardinality.Many, {}, false, true,  false, false>;
+  "off_shift_reps": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, true,  false, false>;
   "on_shift_reps": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, true,  false, false>;
   "supervising_reps": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, true,  false, false>;
   "supervisable_training": $.LinkDesc<_training.$Training, $.Cardinality.Many, {}, false, true,  false, false>;
@@ -68,7 +69,6 @@ export type $LocationλShape = $.typeutil.flatten<_default.$AuditableλShape & {
   "queue_in_use": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, true, false, false>;
   "status": $.PropertyDesc<$LocationStatus, $.Cardinality.One, false, true, false, false>;
   "queued_users_that_can_sign_in": $.LinkDesc<_users.$User, $.Cardinality.Many, {}, false, true,  false, false>;
-  "off_shift_reps": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, true,  false, false>;
   "in_hours_rep_multiplier": $.PropertyDesc<_std.$int16, $.Cardinality.One, false, false, false, false>;
   "can_sign_in": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, true, false, false>;
   "max_count": $.PropertyDesc<_std.$int64, $.Cardinality.One, false, true, false, false>;

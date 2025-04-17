@@ -8,7 +8,7 @@ export const commonReasons = auth
   .input(
     z.object({
       name: LocationNameSchema,
-      is_rep: z.oboolean(),
+      is_rep: z.boolean().optional(),
     }),
   )
   .route({ path: "/common-reasons" })

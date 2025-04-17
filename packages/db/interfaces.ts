@@ -234,10 +234,10 @@ export namespace users {
     "ucard_number": number;
     "username": string;
     "agreements_signed": sign_in.Agreement[];
+    "infractions": Infraction[];
     "mailing_list_subscriptions": notification.MailingList[];
     "notifications": notification.Notification[];
     "training": training.Training[];
-    "infractions": Infraction[];
     "sign_ins": sign_in.SignIn[];
   }
   export interface Infraction extends $default.CreatedAt {
@@ -518,6 +518,7 @@ export namespace sign_in {
     "out_of_hours_rep_multiplier": number;
     "queue_enabled": boolean;
     "sign_ins": SignIn[];
+    "off_shift_reps": users.Rep[];
     "on_shift_reps": users.Rep[];
     "supervising_reps": users.Rep[];
     "supervisable_training": training.Training[];
@@ -525,7 +526,6 @@ export namespace sign_in {
     "queue_in_use": boolean;
     "status": LocationStatus;
     "queued_users_that_can_sign_in": users.User[];
-    "off_shift_reps": users.Rep[];
     "in_hours_rep_multiplier": number;
     "can_sign_in": boolean;
     "max_count": number;

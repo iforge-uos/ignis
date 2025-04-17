@@ -15,6 +15,8 @@ export interface AuthConfig {
   csrfSecret: string;
   csrfExcludeRoutes: string[];
   adminRole: string;
+  repRole: string[];
+  jwtSecret: string;
 }
 
 export interface EmailConfig extends SMTPTransport.Options {

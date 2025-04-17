@@ -25,7 +25,7 @@
 			"",
 			"export const get = ${1|pub,rep,authed|}",
 			"  .route({ method: \"GET\", path: \"/${2:path}/{id}\" } )",
-			"  .input(z.object({ id: z.string().uuid() }))",
+			"  .input(z.object({ id: z.uuid() }))",
 			"  .handler(async ({ input: { id }, context: { db } }) => ",
 			"    e.assert_exists(",
 			"      e..select(e.${4:module}.${5:Model}, () => ({",

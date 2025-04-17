@@ -5,7 +5,7 @@ import { z } from "zod";
 
 export const get = auth
   .route({ path: "/{id}" })
-  .input(z.object({ id: z.string().uuid() }))
+  .input(z.object({ id: z.uuid() }))
   .handler(async ({ input: { id }, context: { db } }) =>
     e
       .assert_exists(

@@ -3,8 +3,8 @@ import e from "@db/edgeql-js";
 import { z } from "zod";
 
 export const signAgreement = rep
-  .input(z.object({ id: z.string().uuid(), agreement_id: z.string().uuid() }))
   .route({ method: "POST", path: "/agreements/{agreement_id}" })
+  .input(z.object({ id: z.uuid(), agreement_id: z.uuid() }))
   .handler(async ({ input: { id, agreement_id }, context: { db } }) =>
     e
       .assert_exists(

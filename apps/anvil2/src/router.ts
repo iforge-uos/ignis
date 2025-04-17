@@ -2,7 +2,7 @@ import { os, ErrorMap, MiddlewareOutputFn } from "@orpc/server";
 import { z } from "zod";
 import { Context } from ".";
 
-export const pub = os.$context<Context>();
+export const pub = os.$context<Context>().$route({ method: "GET" });
 
 export const auth = pub
   .errors({
@@ -19,7 +19,7 @@ export const auth = pub
     });
   });
 
-const RoleGatedError = z.object({ current: z.array(z.object({ id: z.string().uuid(), name: z.string() })) });
+const RoleGatedError = z.object({ current: z.array(z.object({ id: z.uuid(), name: z.string() })) });
 const ROLE_GATED_ERRORS = {
   ROLE_GATED: {
     message: "You are not able to use this method based on your roles",

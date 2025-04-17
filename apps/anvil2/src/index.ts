@@ -3,20 +3,23 @@ import e from "@db/edgeql-js";
 import { AuthRequest, CallbackRequest } from "@gel/auth-express";
 import { Temporal } from "@js-temporal/polyfill";
 import { StandardRPCCustomJsonSerializer } from "@orpc/client/standard";
+import { AnySchema } from "@orpc/contract";
+import { ConditionalSchemaConverter, JSONSchema, OpenAPIGenerator, SchemaConvertOptions } from "@orpc/openapi";
 import { OpenAPIHandler } from "@orpc/openapi/node";
 import { ORPCError, onError } from "@orpc/server";
 import { RouterClient } from "@orpc/server";
-import { CORSPlugin } from "@orpc/server/plugins";
+import { CORSPlugin, SimpleCsrfProtectionHandlerPlugin } from "@orpc/server/plugins";
 import { ZodSmartCoercionPlugin } from "@orpc/zod";
 import * as Sentry from "@sentry/node";
 import cookieParser from "cookie-parser";
 import express, { Response } from "express";
 import { AccessError, CardinalityViolationError, Duration, InvalidArgumentError } from "gel";
+import z from "zod";
 import authRoute from "./auth";
 import config from "./config";
 import client, { auth, onUserInsert } from "./db";
 import { router } from "./routes";
-import { UserShape } from "./utils/queries";
+import { RepShape, UserShape } from "./utils/queries";
 
 const app = express();
 
@@ -24,13 +27,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(auth.createSessionMiddleware());
+app.disable('x-powered-by');
 
 app.use(authRoute);
 
 // created for each request
 const createContext = async ({ req, res }: { req: AuthRequest; res: Response }) => {
   return {
-    user: await e.assert_single(e.select(e.user, UserShape)).run(client),
+    user: await e
+      .assert_exists(e.select(e.users.Rep, (u) => ({ ...RepShape(u), filter_single: { username: "eik21jh" } })))
+      .run(client),
     session: req.session,
     db: client.withGlobals({ ...config.db.globals }),
     res,
@@ -45,9 +51,14 @@ export const durationSerializer: StandardRPCCustomJsonSerializer = {
   deserialize: Temporal.Duration.from,
 };
 
-const openAPIHandler = new OpenAPIHandler(router, {
-  plugins: [new ZodSmartCoercionPlugin(), new CORSPlugin()],
-  customJsonSerializers: [],
+const handler = new OpenAPIHandler(router, {
+  plugins: [
+    // biome-ignore:
+    // new ZodSmartCoercionPlugin(),
+    new CORSPlugin(),
+    // new SimpleCsrfProtectionHandlerPlugin(),
+  ],
+  customJsonSerializers: [durationSerializer],
   interceptors: [
     onError((error) => {
       // Some errors can be suppressed so just re-throw
@@ -71,13 +82,54 @@ const openAPIHandler = new OpenAPIHandler(router, {
       }
 
       Sentry.captureException(error);
+      console.error(error);
       throw error;
     }),
   ],
 });
 
+class ZodToJsonSchemaConverter implements ConditionalSchemaConverter {
+  condition(schema: AnySchema | undefined): boolean {
+    return schema !== undefined && schema["~standard"].vendor === "zod";
+  }
+
+  convert(
+    schema: AnySchema | undefined,
+    _options: SchemaConvertOptions,
+  ): [required: boolean, jsonSchema: Exclude<JSONSchema, boolean>] {
+    // Most JSON schema converters do not convert the `required` property separately, so returning `true` is acceptable here.
+    return [true, z.toJSONSchema(schema as any, { unrepresentable: "any" })];
+  }
+}
+
+const spec = await new OpenAPIGenerator({
+  schemaConverters: [new ZodToJsonSchemaConverter()],
+}).generate(router, {
+  info: {
+    title: "iForge API",
+    version: "2.0.0",
+  },
+  servers: [{ url: "/api" } /** Should use absolute URLs in production */],
+  security: [{ bearerAuth: [] }],
+  components: {
+    securitySchemes: {
+      bearerAuth: {
+        type: "http",
+        scheme: "bearer",
+      },
+    },
+  },
+});
+
 app.use("/api/*", async (req, res, next) => {
-  const { matched } = await openAPIHandler.handle(req, res, {
+  if (req.originalUrl === "/api/spec.json") {
+    return res.json(spec);
+  }
+  if (req.originalUrl === "/api/spec.html") {
+    return res.sendFile("spec.html", { root: "src" });
+  }
+
+  const { matched } = await handler.handle(req, res, {
     prefix: "/api",
     context: await createContext({ req, res }),
   });

@@ -5,14 +5,15 @@ import e, { $infer } from "@db/edgeql-js";
 import { ErrorMap } from "@orpc/server";
 import { AccessError, ConstraintViolationError } from "gel";
 import { z } from "zod";
-import { InputStep, OutputStep, SignInParams, createInputStep,  } from "./_types";
+import { OutputStep, SignInParams } from "./_types";
+import { createInputStep, InputStep } from "./_input";
 import { sign_in } from "@db/interfaces";
 
 export const Input = createInputStep("QUEUE").extend({}).and(InputStep);
 
 export interface Output extends OutputStep {
-  type: "FINALISE"
-  place: sign_in.QueuePlace
+  type: "FINALISE";
+  place: sign_in.QueuePlace;
 }
 
 export const Errors = {

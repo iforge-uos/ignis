@@ -25,7 +25,6 @@ export const UserShape = e.shape(e.users.User, () => ({
   },
   referrals: true,
   roles: { id: true, name: true },
-  permissions: true,
   mailing_list_subscriptions: true,
 }));
 
@@ -55,7 +54,7 @@ export const LocationStatusShape = e.shape(e.sign_in.Location, (location) => ({
   off_shift_rep_count: e.count(location.off_shift_reps),
   user_count: e.count(location.sign_ins),
   max_count: true,
-  queued: e.count(location.queued),
+  queued_count: e.count(location.queued),
   out_of_hours: true,
   name: true,
   status: true,

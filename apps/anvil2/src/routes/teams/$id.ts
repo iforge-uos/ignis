@@ -6,7 +6,7 @@ import { z } from "zod";
 
 export const get = rep
   .route({ path: "/{id}" })
-  .input(z.object({ id: z.string().uuid() }))
+  .input(z.object({ id: z.uuid() }))
   .handler(async ({ input: { id }, context: { db } }) =>
     e
       .select(e.team.Team, (team) => ({

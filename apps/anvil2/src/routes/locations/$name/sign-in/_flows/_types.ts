@@ -21,7 +21,6 @@ export const StepType = z.enum([
 ]);
 
 export type StepType = z.infer<typeof StepType>;
-export const createInputStep = <S extends StepType>(type: S) => z.object({ type: z.literal(type) }); // 1:1
 
 // lil hack for recursive types
 const BaseInputStep = z.object({ name: LocationNameSchema, ucard_number: z.string().regex(/\d{9,}/) });
@@ -31,6 +30,7 @@ type InputStep = z.infer<typeof BaseInputStep> & {
 export const InputStep: z.ZodType<InputStep> = BaseInputStep.extend({
   previous: z.lazy(() => SignInStepInput.optional()),
 });
+
 export interface OutputStep {
   type: StepType;
 }
@@ -48,7 +48,12 @@ import { Errors as RegisterErrors, Input as RegisterInput, Output as RegisterOut
 import { Errors as ToolsErrors, Input as ToolsInput, Output as ToolsOutput } from "./tools";
 
 // sadly lil hack means no discriminatedUnion, easily >:)
-const SignInStepInputTuple = [
+// if (Object.keys(StepType.Values).length !== SignInStepInputTuple.length)
+// throw Error(`Not all sign in types seem to be imported ${new Set(Object.keys(StepType.Values)).difference(new Set(SignInStepInputTuple.map(t => t._type.type)))}`);
+
+// we have no real type difference between the union and the discriminatedUnion here (type is required though they
+// aren't enforced as unique). So we should use the benefits of the union version which works
+export const SignInStepInput = z.union([
   RegisterInput,
   QueueInput,
   AgreementsInput,
@@ -59,17 +64,7 @@ const SignInStepInputTuple = [
   FinaliseInput,
   CancelInput,
   InitialiseInput,
-] as const;
-const SignInStepInputAsUnion = z.union(SignInStepInputTuple);
-if (Object.keys(StepType.Values).length !== SignInStepInputTuple.length)
-  throw Error(`Not all sign in types seem to be imported ${Object.keys(StepType.Values)}`);
-
-// we have no real type difference between the union and the discriminatedUnion here (type is required though they
-// aren't enforced as unique). So we should use the benefits of the union version which works
-export const SignInStepInput = z.discriminatedUnion(
-  "type",
-  SignInStepInputTuple as any,
-) as any as typeof SignInStepInputAsUnion;
+]);
 
 // const SignInStepOutputTuple = [
 //   RegisterOutput,

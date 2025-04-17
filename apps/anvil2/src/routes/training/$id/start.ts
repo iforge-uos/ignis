@@ -6,7 +6,7 @@ export const start = auth
   .route({ path: "/start" })
   .input(
     z.object({
-      id: z.string().uuid(),
+      id: z.uuid(),
     }),
   )
   .handler(async ({ input: { id }, context: { db } }) => startTraining(db, { id }));

@@ -3,8 +3,8 @@ import e from "@db/edgeql-js";
 import { z } from "zod";
 
 export const get = auth
-  .route({ path: "/{id}" })
-  .input(z.object({ id: z.string().uuid() }))
+  .route({ path: "/" })
+  .input(z.object({ id: z.uuid() }))
   .handler(async ({ context: { db }, input: { id } }) =>
     e
       .assert_exists(

@@ -5,7 +5,8 @@ import { LocationNameSchema } from "@db/zod/modules/sign_in";
 import { CreateInfractionSchema } from "@db/zod/modules/users";
 import { ErrorMap } from "@orpc/server";
 import { z } from "zod";
-import { InputStep, OutputStep, SignInParams, createInputStep } from "./_types";
+import {  OutputStep, SignInParams, } from "./_types";
+import { createInputStep, InputStep } from "./_input";
 
 export const Input = createInputStep("INITIALISE").extend({}).and(InputStep);
 

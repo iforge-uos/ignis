@@ -53,6 +53,7 @@ export type $UserλShape = $.typeutil.flatten<_default.$AuditableλShape & {
     "@created_at": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne>;
     "@version_signed": $.PropertyDesc<_std.$int16, $.Cardinality.AtMostOne>;
   }, false, false, false, false>;
+  "infractions": $.LinkDesc<$Infraction, $.Cardinality.Many, {}, false, true,  false, false>;
   "mailing_list_subscriptions": $.LinkDesc<_notification.$MailingList, $.Cardinality.Many, {}, false, false,  false, false>;
   "notifications": $.LinkDesc<_notification.$Notification, $.Cardinality.Many, {
     "@acknowledged": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne>;
@@ -63,8 +64,8 @@ export type $UserλShape = $.typeutil.flatten<_default.$AuditableλShape & {
     "@in_person_signed_off_by": $.PropertyDesc<_std.$uuid, $.Cardinality.AtMostOne>;
     "@infraction": $.PropertyDesc<_std.$uuid, $.Cardinality.AtMostOne>;
   }, false, false, false, false>;
-  "infractions": $.LinkDesc<$Infraction, $.Cardinality.Many, {}, false, true,  false, false>;
   "sign_ins": $.LinkDesc<_sign_in.$SignIn, $.Cardinality.Many, {}, false, true,  false, false>;
+  "<user[is users::UserSettingValue]": $.LinkDesc<$UserSettingValue, $.Cardinality.Many, {}, false, false,  false, false>;
   "<referrals[is users::User]": $.LinkDesc<$User, $.Cardinality.Many, {}, false, false,  false, false>;
   "<referrals[is user]": $.LinkDesc<_default.$user, $.Cardinality.Many, {}, false, false,  false, false>;
   "<attendees[is event::Event]": $.LinkDesc<_event.$Event, $.Cardinality.Many, {}, false, false,  false, false>;
@@ -79,7 +80,6 @@ export type $UserλShape = $.typeutil.flatten<_default.$AuditableλShape & {
   "<user[is users::Infraction]": $.LinkDesc<$Infraction, $.Cardinality.Many, {}, false, false,  false, false>;
   "<subscribers[is notification::MailingList]": $.LinkDesc<_notification.$MailingList, $.Cardinality.Many, {}, false, false,  false, false>;
   "<queued_users_that_can_sign_in[is sign_in::Location]": $.LinkDesc<_sign_in.$Location, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<user[is users::UserSettingValue]": $.LinkDesc<$UserSettingValue, $.Cardinality.Many, {}, false, false,  false, false>;
   "<attendees": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<author": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<organiser": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
@@ -140,11 +140,11 @@ export type $RepλShape = $.typeutil.flatten<$UserλShape & {
   "status": $.PropertyDesc<$RepStatus, $.Cardinality.One, false, false, false, true>;
   "supervisable_training": $.LinkDesc<_training.$Training, $.Cardinality.Many, {}, false, true,  false, false>;
   "<approved_by[is notification::AuthoredNotification]": $.LinkDesc<_notification.$AuthoredNotification, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<off_shift_reps[is sign_in::Location]": $.LinkDesc<_sign_in.$Location, $.Cardinality.Many, {}, false, false,  false, false>;
   "<on_shift_reps[is sign_in::Location]": $.LinkDesc<_sign_in.$Location, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<supervising_reps[is sign_in::Location]": $.LinkDesc<_sign_in.$Location, $.Cardinality.Many, {}, false, false,  false, false>;
   "<all_members[is team::Team]": $.LinkDesc<_team.$Team, $.Cardinality.Many, {}, false, false,  false, false>;
   "<members[is team::Team]": $.LinkDesc<_team.$Team, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<off_shift_reps[is sign_in::Location]": $.LinkDesc<_sign_in.$Location, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<supervising_reps[is sign_in::Location]": $.LinkDesc<_sign_in.$Location, $.Cardinality.Many, {}, false, false,  false, false>;
   "<all_members": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<approved_by": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<members": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;

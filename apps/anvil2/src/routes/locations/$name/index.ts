@@ -1,8 +1,9 @@
 import { rep } from "@/router";
 import { PartialUserShape } from "@/utils/queries";
-import { LocationNameSchema } from "@db/zod/modules/sign_in";
 import e from "@db/edgeql-js";
+import { LocationNameSchema } from "@db/zod/modules/sign_in";
 import { Location } from "@ignis/types/sign_in";
+import z from "zod";
 import { commonReasons } from "./common-reasons";
 import { queueRouter } from "./queue";
 import { signInRouter } from "./sign-in";
@@ -10,10 +11,10 @@ import { status } from "./status";
 import { trainingRouter } from "./training";
 
 export const get = rep
-  .input(LocationNameSchema)
+  .input(z.object({ name: LocationNameSchema }))
   .route({ path: "/" })
   .handler(
-    async ({ input: name, context: { db } }): Promise<Location> =>
+    async ({ input: { name }, context: { db } }): Promise<Location> =>
       await e
         .assert_exists(
           e.select(e.sign_in.Location, () => ({

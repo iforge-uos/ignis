@@ -9,8 +9,8 @@
     "gel": "2.0.1",
     "@gel/generate": "0.6.2",
     "@js-temporal/polyfill": "^0.4.4",
-    "gel-zod": "github:iforge-uos/edgedb-zod#a506a36834b9a028ce4f8ae3764cdb70e57b1a67",
-    "zod": "3.24.2"
+    "gel-zod": "github:iforge-uos/edgedb-zod#c501a0eeb2e23d37c50e4a45053ca875a4b73e8c",
+    "zod": "4.0.0-beta.20250414T061543"
   },
   "scripts": {
     "interfaces": "pnpm exec generate interfaces -I ignis",

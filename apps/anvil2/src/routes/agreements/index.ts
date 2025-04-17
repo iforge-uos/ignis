@@ -1,24 +1,24 @@
 import { pub } from "@/router";
 import { AgreementShape } from "@/utils/queries";
-import { CreateAgreementSchema } from "@db/zod/modules/sign_in";
 import e from "@db/edgeql-js";
+import { CreateAgreementSchema } from "@db/zod/modules/sign_in";
 import { Agreement } from "@ignis/types/root";
 import { z } from "zod";
-import { get, update } from "./$id";
+import { get, idRouter, update } from "./$id";
 
 export const all = pub
-  .route({ path: "/agreements" })
+  .route({ path: "/" })
   .handler(async ({ context: { db } }) => await e.select(e.sign_in.Agreement, AgreementShape).run(db));
 
 export const create = pub
-  .route({ method: "POST", path: "/agreements" })
+  .route({ method: "POST", path: "/" })
   .input(
     CreateAgreementSchema.omit({
       _content_hash: true,
       created_at: true,
       updated_at: true,
       version: true,
-    }).extend({ reasons: z.array(z.string().uuid()) }),
+    }).extend({ reasons: z.array(z.uuid()) }),
   )
   .handler(async ({ context: { db }, input }): Promise<Agreement> => {
     const updatedReasons = e.update(e.sign_in.Reason, (reason) => ({
@@ -38,6 +38,5 @@ export const create = pub
 export const agreementsRouter = pub.prefix("/agreements").router({
   all,
   create,
-  get,
-  update,
+  ...idRouter,
 });

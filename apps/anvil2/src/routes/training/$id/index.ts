@@ -5,10 +5,10 @@ import { z } from "zod";
 import { start } from "./start";
 
 export const get = auth
-  .route({ path: "/{id}" })
+  .route({ path: "/" })
   .input(
     z.object({
-      id: z.string().uuid(),
+      id: z.uuid(),
     }),
   )
   .handler(async ({ input: { id }, context: { db } }) => {
@@ -37,10 +37,10 @@ export const get = auth
   });
 
 export const getForEditing = rep
-  .route({ path: "/{id}/edit" })
+  .route({ path: "/edit" })
   .input(
     z.object({
-      id: z.string().uuid(),
+      id: z.uuid(),
     }),
   )
   .handler(

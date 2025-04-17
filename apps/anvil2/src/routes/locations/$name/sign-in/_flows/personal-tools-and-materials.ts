@@ -1,6 +1,7 @@
 import { ErrorMap } from "@orpc/server";
 import { z } from "zod";
-import { InputStep, OutputStep, SignInParams, createInputStep } from "./_types";
+import {  OutputStep, SignInParams, } from "./_types";
+import { createInputStep, InputStep } from "./_input";
 
 export const Input = createInputStep("PERSONAL_TOOLS_AND_MATERIALS").extend({}).and(InputStep);
 

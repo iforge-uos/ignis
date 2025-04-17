@@ -15,11 +15,11 @@ export const calSchema = z.never();
 // #endregion
 
 // #region std::datetime
-export const datetimeSchema = z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")), (z.string().datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))]);
+export const datetimeSchema = z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")), (z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))]);
 // #endregion
 
 // #region std::duration
-export const durationSchema = z.union([z.instanceof(Temporal.Duration), z.instanceof(Duration).transform(Temporal.Duration.from), (z.string().duration().transform((dur) => Temporal.Duration.from(dur)))]);
+export const durationSchema = z.union([z.instanceof(Temporal.Duration), z.instanceof(Duration).transform(Temporal.Duration.from), (z.iso.duration().transform((dur) => Temporal.Duration.from(dur)))]);
 // #endregion
 
 // #region std::int16
@@ -39,7 +39,7 @@ export const strSchema = z.string();
 // #endregion
 
 // #region std::uuid
-export const uuidSchema = z.string().uuid();
+export const uuidSchema = z.uuid();
 // #endregion
 
         

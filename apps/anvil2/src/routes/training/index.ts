@@ -1,8 +1,8 @@
-import { pub } from "@/router";
-import { training } from "@db/interfaces";
+import { auth, pub } from "@/router";
 import e from "@db/edgeql-js";
-import { get } from "./$id";
+import { training } from "@db/interfaces";
 import { idRouter } from "./$id";
+import { interact } from "./interact.$interaction_id";
 
 export interface AllTraining {
   id: string;
@@ -36,4 +36,5 @@ export const all = pub.route({ path: "/" }).handler(
 export const trainingRouter = pub.prefix("/training").router({
   all,
   ...idRouter,
+  interact,
 });

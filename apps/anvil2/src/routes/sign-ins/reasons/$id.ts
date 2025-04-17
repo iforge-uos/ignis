@@ -4,7 +4,7 @@ import { z } from "zod";
 
 export const get = rep
   .route({ path: "/" })
-  .input(z.object({ id: z.string().uuid() }))
+  .input(z.object({ id: z.uuid() }))
   .handler(async ({ input: { id }, context: { db } }) =>
     e
       .select(e.sign_in.Reason, () => ({
@@ -16,7 +16,7 @@ export const get = rep
 
 export const remove = deskOrAdmin
   .route({ method: "DELETE", path: "/" })
-  .input(z.object({ id: z.string().uuid() }))
+  .input(z.object({ id: z.uuid() }))
   .handler(async ({ input: { id }, context: { db } }) =>
     e
       .assert_exists(

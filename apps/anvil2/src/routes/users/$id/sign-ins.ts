@@ -5,7 +5,7 @@ import { z } from "zod";
 
 export const signIns = auth
   .route({ path: "/sign-ins" })
-  .input(z.object({ id: z.string().uuid() }))
+  .input(z.object({ id: z.uuid() }))
   .handler(async ({ input: { id }, context: { db } }) =>
     e
       .group(

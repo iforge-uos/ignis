@@ -4,7 +4,7 @@ import { createClient } from "gel";
 import config from "./config";
 import email from "./email";
 
-const client = createClient();
+const client = createClient().withConfig({ apply_access_policies: false });
 
 export const auth = createExpressAuth(client, {
   baseUrl: config.frontend.url,

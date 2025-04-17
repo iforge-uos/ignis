@@ -4,11 +4,11 @@ import e from "@db/edgeql-js";
 import { z } from "zod";
 
 export const search = auth
-  .route({ method: "GET", path: "/users/search" })
+  .route({ method: "GET", path: "/search" })
   .input(
     z.object({
       query: z.string().min(1),
-      limit: z.number().min(1).max(100).default(1),
+      limit: z.coerce.number().min(1).max(100).default(1),
     }),
   )
   .handler(
@@ -46,7 +46,7 @@ export const search = auth
             ),
           })),
           (user) => ({
-            ...UserShape,
+            ...UserShape(user),
             filter: e.op(user.similarity, ">", 0.3),
             order_by: {
               expression: user.similarity,

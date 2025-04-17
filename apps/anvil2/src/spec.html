@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>iForge API</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Favicon -->
+    <link rel="icon" href="https://iforge.sheffield.ac.uk/favicon.svg" />
+    <!-- Placeholder, will be overridden by script -->
+
+    <!-- Dynamic Favicon Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function setFavicon() {
+                const link = document.createElement('link'),
+                    oldLink = document.getElementById('dynamic-favicon');
+                link.id = 'dynamic-favicon';
+                link.rel = 'icon';
+                link.href = window.matchMedia('(prefers-color-scheme: dark)').matches
+                    ? 'https://iforge.sheffield.ac.uk/favicon-dark.svg'
+                    : 'https://iforge.sheffield.ac.uk/favicon.svg';
+                if (oldLink) {
+                    document.head.removeChild(oldLink);
+                }
+                document.head.appendChild(link);
+            }
+
+            setFavicon();
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setFavicon);
+        });
+    </script>
+</head>
+
+<body>
+    <script id="api-reference" data-url="/api/spec.json" data-configuration="">
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('api-reference').dataset.configuration = JSON.stringify({
+                authentication: {
+                    preferredSecurityScheme: 'bearerAuth',
+                    http: {
+                        bearer: { token: 'default-token' },
+                    },
+                },
+            }).replaceAll('"', '&quot;')
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
+</body>
+
+</html>

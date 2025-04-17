@@ -1,13 +1,13 @@
 import { auth } from "@/router";
-import { LocationNameSchema } from "@db/zod/modules/sign_in";
 import { getSignInTrainings } from "@db/queries/getSignInTrainings.query";
+import { LocationNameSchema } from "@db/zod/modules/sign_in";
 import { z } from "zod";
 
 export const inPersonRemaining = auth
   .route({ path: "/in-person/{location}" })
   .input(
     z.object({
-      id: z.string().uuid(),
+      id: z.uuid(),
       location: LocationNameSchema,
     }),
   )

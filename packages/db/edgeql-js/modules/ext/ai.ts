@@ -442,6 +442,12 @@ type searchλFuncExpr<
 > = $.$expr_Function<
   $.NamedTupleType<{object: $.AnyObjectType, distance: _std.$float64}>, $.cardutil.overrideLowerBound<$.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.paramCardinality<P2>>, "Zero">
 >;
+type searchλFuncExpr2<
+  P1 extends $.TypeSet<$.AnyObjectType>,
+  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$str>>,
+> = $.$expr_Function<
+  $.NamedTupleType<{object: $.AnyObjectType, distance: _std.$float64}>, $.cardutil.overrideLowerBound<$.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.paramCardinality<P2>>, "Zero">
+>;
 /**
  * 
          Search an object using its ext::ai::index index.
@@ -456,9 +462,25 @@ function search<
   object: P1,
   query: P2,
 ): searchλFuncExpr<P1, P2>;
+/**
+ * 
+         Search an object using its ext::ai::index index.
+         Gets an embedding for the query from the ai provider then
+         returns objects that match the specified semantic query and the
+         similarity score.
+     
+ */
+function search<
+  P1 extends $.TypeSet<$.AnyObjectType>,
+  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$str>>,
+>(
+  object: P1,
+  query: P2,
+): searchλFuncExpr2<P1, P2>;
 function search(...args: any[]) {
   const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('ext::ai::search', args, _.spec, [
     {args: [{typeId: "00000000-0000-0000-0000-000000000003", optional: false, setoftype: false, variadic: false}, {typeId: "a2e5149c-6c82-58a4-a588-c4a064088ad5", optional: false, setoftype: false, variadic: false}], returnTypeId: "e192a3f3-7f95-53e9-a954-697d4bebfd84", returnTypemod: "OptionalType"},
+    {args: [{typeId: "00000000-0000-0000-0000-000000000003", optional: false, setoftype: false, variadic: false}, {typeId: "00000000-0000-0000-0000-000000000101", optional: false, setoftype: false, variadic: false}], returnTypeId: "e192a3f3-7f95-53e9-a954-697d4bebfd84", returnTypemod: "OptionalType"},
   ]);
   return _.syntax.$expressionify({
     __kind__: $.ExpressionKind.Function,

@@ -7,7 +7,7 @@ import { inPersonRemaining } from "./in-person.$location";
 
 export const all = auth
   .meta({ path: "/" })
-  .input(z.object({ id: z.string().uuid() }))
+  .input(z.object({ id: z.uuid() }))
   .handler(async ({ input: { id }, context: { db } }) => {
     const { training } = await e
       .assert_exists(

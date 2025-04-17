@@ -32,7 +32,7 @@ type Lookup = <FieldsT extends (keyof LdapUser)[]>(
 ) => Promise<Pick<LdapUser, FieldsT[number]> | null>;
 
 class UoSClient extends Client {
-  private defaultAttributes = Object.keys(LdapUserSchema.keyof().Values) as (keyof LdapUser)[];
+  private defaultAttributes = Object.keys(LdapUserSchema.def.shape) as (keyof LdapUser)[];
   private logger: Logger;
   private retryCount = 0;
   private readonly maxRetries = 3;

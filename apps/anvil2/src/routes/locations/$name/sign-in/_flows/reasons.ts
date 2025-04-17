@@ -6,10 +6,11 @@ import { getSignInTrainings } from "@db/queries/getSignInTrainings.query";
 import { CreateAgreementSchema } from "@db/zod/modules/sign_in";
 import { ErrorMap } from "@orpc/server";
 import { z } from "zod";
-import { InputStep, OutputStep, SignInParams, createInputStep } from "./_types";
+import { InputStep, createInputStep } from "./_input";
+import { OutputStep, SignInParams } from "./_types";
 
 export const Input = createInputStep("REASON")
-  .extend({ reason: z.object({ id: z.string().uuid() }) })
+  .extend({ reason: z.object({ id: z.uuid() }) })
   .and(InputStep);
 
 interface ToolsOutput extends OutputStep {
@@ -32,7 +33,7 @@ export const Errors = {
     message: "Agreement for inputted reason not signed.",
     status: 400,
     data: z.object({
-      reason: z.object({ name: z.string(), id: z.string().uuid() }),
+      reason: z.object({ name: z.string(), id: z.uuid() }),
       agreement: CreateAgreementSchema,
     }),
   },

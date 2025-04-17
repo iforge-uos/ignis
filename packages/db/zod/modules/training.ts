@@ -45,7 +45,7 @@ export const UpdateInteractableSchema = z.
 // #region training::Page
 export const CreatePageSchema = z.
   object({ // training::TrainingPage
-    duration: z.union([z.instanceof(Temporal.Duration), z.instanceof(Duration).transform(Temporal.Duration.from), (z.string().duration().transform((dur) => Temporal.Duration.from(dur)))]).nullable(), // std::duration
+    duration: z.union([z.instanceof(Temporal.Duration), z.instanceof(Duration).transform(Temporal.Duration.from), (z.iso.duration().transform((dur) => Temporal.Duration.from(dur)))]).nullable(), // std::duration
     name: z.string(), // std::str
   })
   .extend({ // training::Interactable
@@ -58,7 +58,7 @@ export const CreatePageSchema = z.
 
 export const UpdatePageSchema = z.
   object({ // training::TrainingPage
-    duration: z.union([z.instanceof(Temporal.Duration), z.instanceof(Duration).transform(Temporal.Duration.from), (z.string().duration().transform((dur) => Temporal.Duration.from(dur)))]).nullable(), // std::duration
+    duration: z.union([z.instanceof(Temporal.Duration), z.instanceof(Duration).transform(Temporal.Duration.from), (z.iso.duration().transform((dur) => Temporal.Duration.from(dur)))]).nullable(), // std::duration
     name: z.string(), // std::str
   })
   .extend({ // training::Interactable
@@ -95,10 +95,10 @@ export const UpdateQuestionSchema = z.
 // #region training::Session
 export const CreateSessionSchema = z.
   object({ // default::Auditable
-    updated_at: z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")), (z.string().datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))]).optional(), // std::datetime
+    updated_at: z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")), (z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))]).optional(), // std::datetime
   })
   .extend({ // default::CreatedAt
-    created_at: z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")), (z.string().datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))]).optional(), // std::datetime
+    created_at: z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")), (z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))]).optional(), // std::datetime
   })
   .extend({ // training::Session
     index: z.number().int().min(-32768).max(32767).optional(), // std::int16
@@ -106,7 +106,7 @@ export const CreateSessionSchema = z.
 
 export const UpdateSessionSchema = z.
   object({ // default::Auditable
-    updated_at: z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")), (z.string().datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))]).optional(), // std::datetime
+    updated_at: z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")), (z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))]).optional(), // std::datetime
   })
   .extend({ // default::CreatedAt
   })
@@ -118,10 +118,10 @@ export const UpdateSessionSchema = z.
 // #region training::Training
 export const CreateTrainingSchema = z.
   object({ // default::Auditable
-    updated_at: z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")), (z.string().datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))]).optional(), // std::datetime
+    updated_at: z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")), (z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))]).optional(), // std::datetime
   })
   .extend({ // default::CreatedAt
-    created_at: z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")), (z.string().datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))]).optional(), // std::datetime
+    created_at: z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")), (z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))]).optional(), // std::datetime
   })
   .extend({ // training::Training
     in_person: z.boolean(), // std::bool
@@ -130,14 +130,14 @@ export const CreateTrainingSchema = z.
     compulsory: z.boolean().optional(), // std::bool
     description: z.string(), // std::str
     enabled: z.boolean().optional(), // std::bool
-    expires_after: z.union([z.instanceof(Temporal.Duration), z.instanceof(Duration).transform(Temporal.Duration.from), (z.string().duration().transform((dur) => Temporal.Duration.from(dur)))]).nullable(), // std::duration
+    expires_after: z.union([z.instanceof(Temporal.Duration), z.instanceof(Duration).transform(Temporal.Duration.from), (z.iso.duration().transform((dur) => Temporal.Duration.from(dur)))]).nullable(), // std::duration
     icon_url: z.string().nullable(), // std::str
-    training_lockout: z.union([z.instanceof(Temporal.Duration), z.instanceof(Duration).transform(Temporal.Duration.from), (z.string().duration().transform((dur) => Temporal.Duration.from(dur)))]).nullable(), // std::duration
+    training_lockout: z.union([z.instanceof(Temporal.Duration), z.instanceof(Duration).transform(Temporal.Duration.from), (z.iso.duration().transform((dur) => Temporal.Duration.from(dur)))]).nullable(), // std::duration
   });
 
 export const UpdateTrainingSchema = z.
   object({ // default::Auditable
-    updated_at: z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")), (z.string().datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))]).optional(), // std::datetime
+    updated_at: z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")), (z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))]).optional(), // std::datetime
   })
   .extend({ // default::CreatedAt
   })
@@ -148,9 +148,9 @@ export const UpdateTrainingSchema = z.
     compulsory: z.boolean().optional(), // std::bool
     description: z.string(), // std::str
     enabled: z.boolean().optional(), // std::bool
-    expires_after: z.union([z.instanceof(Temporal.Duration), z.instanceof(Duration).transform(Temporal.Duration.from), (z.string().duration().transform((dur) => Temporal.Duration.from(dur)))]).nullable(), // std::duration
+    expires_after: z.union([z.instanceof(Temporal.Duration), z.instanceof(Duration).transform(Temporal.Duration.from), (z.iso.duration().transform((dur) => Temporal.Duration.from(dur)))]).nullable(), // std::duration
     icon_url: z.string().nullable(), // std::str
-    training_lockout: z.union([z.instanceof(Temporal.Duration), z.instanceof(Duration).transform(Temporal.Duration.from), (z.string().duration().transform((dur) => Temporal.Duration.from(dur)))]).nullable(), // std::duration
+    training_lockout: z.union([z.instanceof(Temporal.Duration), z.instanceof(Duration).transform(Temporal.Duration.from), (z.iso.duration().transform((dur) => Temporal.Duration.from(dur)))]).nullable(), // std::duration
   });
 // #endregion
 
@@ -162,7 +162,7 @@ export const CreateTrainingPageSchema = z.
     index: z.number().int().min(-32768).max(32767), // std::int16
   })
   .extend({ // training::TrainingPage
-    duration: z.union([z.instanceof(Temporal.Duration), z.instanceof(Duration).transform(Temporal.Duration.from), (z.string().duration().transform((dur) => Temporal.Duration.from(dur)))]).nullable(), // std::duration
+    duration: z.union([z.instanceof(Temporal.Duration), z.instanceof(Duration).transform(Temporal.Duration.from), (z.iso.duration().transform((dur) => Temporal.Duration.from(dur)))]).nullable(), // std::duration
     name: z.string(), // std::str
   });
 
@@ -173,7 +173,7 @@ export const UpdateTrainingPageSchema = z.
     index: z.number().int().min(-32768).max(32767), // std::int16
   })
   .extend({ // training::TrainingPage
-    duration: z.union([z.instanceof(Temporal.Duration), z.instanceof(Duration).transform(Temporal.Duration.from), (z.string().duration().transform((dur) => Temporal.Duration.from(dur)))]).nullable(), // std::duration
+    duration: z.union([z.instanceof(Temporal.Duration), z.instanceof(Duration).transform(Temporal.Duration.from), (z.iso.duration().transform((dur) => Temporal.Duration.from(dur)))]).nullable(), // std::duration
     name: z.string(), // std::str
   });
 // #endregion

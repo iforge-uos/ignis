@@ -7,10 +7,10 @@ export const createInPerson = rep
   .route({ method: "POST", path: "/{training_id}" })
   .input(
     z.object({
-      id: z.string().uuid(),
-      training_id: z.string().uuid(),
+      id: z.uuid(),
+      training_id: z.uuid(),
       created_at: z.date(),
-      rep_id: z.string().uuid(),
+      rep_id: z.uuid(),
     }),
   )
   .handler(async ({ input: { id, training_id, ...data }, context: { db } }) =>
@@ -25,8 +25,8 @@ export const remove = rep
   .route({ method: "DELETE", path: "/{training_id}" })
   .input(
     z.object({
-      id: z.string().uuid(),
-      training_id: z.string().uuid(),
+      id: z.uuid(),
+      training_id: z.uuid(),
       reason: z.string().min(1),
     }),
   )

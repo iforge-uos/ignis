@@ -1,12 +1,14 @@
 import Logger from "@/utils/logger";
 import e from "@db/edgeql-js";
+import { SignIn } from "@ignis/types/root";
 import { ErrorMap } from "@orpc/server";
 import { z } from "zod";
-import { InputStep, OutputStep, SignInParams, SignInStepInput, StepType, createInputStep } from "./_types";
+import { OutputStep, StepType, SignInStepInput, SignInParams } from "./_types";
+import { createInputStep, InputStep } from "./_input";
 
 export const Input = createInputStep("FINALISE").extend({}).and(InputStep);
 
-export interface Output extends OutputStep {}
+export interface Output extends OutputStep, SignIn {}
 
 export const Errors = {} as const satisfies ErrorMap;
 
@@ -28,17 +30,24 @@ const flattenPrevious = (input: z.infer<typeof SignInStepInput>, ret: any = {}):
 export default async function ({
   user,
   input,
-  context,
+  context: { tx },
   $location,
   $user,
 }: SignInParams<z.infer<typeof Input>>): Promise<Output> {
   Logger.info(`Signing in user ${user.ucard_number}`);
 
   const inputs = flattenPrevious(input);
-  e.insert(e.sign_in.SignIn, {
-    location: $location,
-    user: $user,
-    reason: e.select(e.sign_in.Reason, () => ({ filter_single: inputs.REASON.reason })),
-    tools: inputs.TOOLS.tools,
-  });
+  return await e
+    .select(
+      e.insert(e.sign_in.SignIn, {
+        location: $location,
+        user: $user,
+        reason: e.select(e.sign_in.Reason, () => ({ filter_single: inputs.REASON.reason })),
+        tools: inputs.TOOLS.tools,
+      }),
+      () => ({
+        type: "FINALISE",
+      }),
+    )
+    .run(tx);
 }

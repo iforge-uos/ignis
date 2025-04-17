@@ -7,9 +7,6 @@ module tools {
 
     type Tool {
         required name: str;
-        required photo: str {
-            annotation description := "A photo on mine of the tool mainly for maintenance purposes so we know which is which"
-        };
         # multi responsible_rep: Rep;  # could potentially use new notifications?
 
         required multi training: training::Training;
@@ -75,7 +72,7 @@ module tools {
         #     };
         access policy too_short
             allow insert, update
-            using (.tool.is_bookable and .duration >= (.tool.min_booking_time ?? <duration>"")) {
+            using (.tool.is_bookable and .duration >= (.tool.min_booking_time ?? <duration>"PT1h")) {
                 errmessage := "Booking is too short, must be at least \(to_str(duration_to_seconds(.min_booking_time) / 60)) minutes"
             };
 

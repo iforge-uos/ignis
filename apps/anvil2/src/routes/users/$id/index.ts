@@ -1,7 +1,7 @@
 import { auth, rep } from "@/router";
 import { UserShape } from "@/utils/queries";
-import { UpdateUserSchema } from "@db/zod/modules/users";
 import e from "@db/edgeql-js";
+import { UpdateUserSchema } from "@db/zod/modules/users";
 import { z } from "zod";
 import { signAgreement } from "./agreements.$agreement_id";
 import { addInfraction } from "./infractions";
@@ -9,7 +9,7 @@ import { trainingRouter } from "./training";
 
 export const get = auth
   .route({ path: "/" })
-  .input(z.object({ id: z.string().uuid() }))
+  .input(z.object({ id: z.uuid() }))
   .handler(async ({ input: { id }, context: { db } }) =>
     e.assert_exists(e.select(e.users.User, (user) => ({ ...UserShape(user), filter_single: { id } }))).run(db),
   );
@@ -24,7 +24,7 @@ export const update = auth
       username: true,
       updated_at: true,
     }).extend({
-      id: z.string().uuid(),
+      id: z.uuid(),
     }),
   )
   .handler(async ({ input: { id, ...rest }, context: { db } }) =>

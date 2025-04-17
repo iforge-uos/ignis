@@ -5,7 +5,7 @@ import { idRouter } from "./$id";
 
 export const all = auth
   .route({ path: "/" })
-  .input(z.object({ include_subscribers: z.oboolean() }))
+  .input(z.object({ include_subscribers: z.boolean().optional() }))
   .handler(async ({ context: { db }, input: { include_subscribers } }) =>
     e
       .assert_exists(

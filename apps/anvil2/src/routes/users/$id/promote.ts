@@ -1,8 +1,8 @@
 import { UUID } from "node:crypto";
 import { rep } from "@/router";
-import { CreateInfractionSchema, RepStatusSchema } from "@db/zod/modules/users";
 import e from "@db/edgeql-js";
 import { helper, users } from "@db/interfaces";
+import { CreateInfractionSchema, RepStatusSchema } from "@db/zod/modules/users";
 import { Duration } from "gel";
 import { z } from "zod";
 
@@ -12,7 +12,7 @@ import { z } from "zod";
 // (it took 2 rep cycles to figure out how to do this in gel, and then they released full psql support)
 export const promote = rep
   .meta({ openapi: { method: "POST", path: "/users/{id}/promote", protect: true } })
-  .input(z.object({ id: z.string().uuid(), team_ids: z.array(z.string().uuid()), status: RepStatusSchema }))
+  .input(z.object({ id: z.uuid(), team_ids: z.array(z.uuid()), status: RepStatusSchema }))
   .handler(async ({ input: { id, team_ids, status }, context: { db, logger } }) => {
     const { links, rep_type_id } = (await e
       .select({
