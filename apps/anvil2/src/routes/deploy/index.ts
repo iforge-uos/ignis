@@ -1,7 +1,5 @@
 import { pub } from "@/router";
 
-export const healthz = pub
-  .route({ method: "GET", path: "/healthz" })
-  .handler(async () => ({"status": "ok"}));
+export const healthz = pub.route({ method: "GET", path: "/healthz" }).handler(async () => ({ status: "ok" }));
 
-export const usersRouter = pub.prefix("/").router({ healthz });
+export const deployRouter = pub.prefix("/").router({ healthz });

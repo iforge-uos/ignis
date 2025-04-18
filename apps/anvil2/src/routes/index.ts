@@ -1,12 +1,13 @@
 import { pub } from "@/router";
 import { agreementsRouter } from "./agreements";
+import { authRouter } from "./auth";
+import { deployRouter } from "./deploy";
 import { locationsRouter } from "./locations";
 import { notificationsRouter } from "./notifications";
 import { signInsRouter } from "./sign-ins";
 import { teamsRouter } from "./teams";
 import { trainingRouter } from "./training";
 import { usersRouter } from "./users";
-import { deployRouter } from "./deploy";
 
 export const router = pub.router({
   agreements: agreementsRouter,
@@ -19,6 +20,4 @@ export const router = pub.router({
   deploy: deployRouter,
 });
 
-// Export type router type signature,
-// NOT the router itself.
 export type Router = typeof router;

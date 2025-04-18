@@ -13,7 +13,6 @@ import { Separator } from "@ui/components/ui/separator";
 import { CirclePlus } from "lucide-react";
 import ImageGradient from "./ImageGradient";
 import TrainingCourseCard from "./TrainingCourseCard";
-import { CirclePlus } from "lucide-react";
 
 // don't ask why this is in the components folder
 export async function getData(location: LocationName): Promise<PartialTrainingWithStatus[]> {

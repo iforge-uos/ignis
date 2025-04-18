@@ -23,7 +23,7 @@ const Index: React.FC = () => {
           <CardDescription className="text-center">Please chose a method to login with</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Link to={`${import.meta.env.VITE_API_URL}/authentication/login`} className="flex justify-center">
+          <Link to={`${import.meta.env.VITE_API_URL}/auth/oauth/?provider=builtin::oauth_google`} className="flex justify-center">
             <Button>
               <EnvelopeOpenIcon className="mr-2 h-4 w-4" /> Login with Google
             </Button>

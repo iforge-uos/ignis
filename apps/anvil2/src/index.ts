@@ -15,10 +15,10 @@ import cookieParser from "cookie-parser";
 import express, { Response } from "express";
 import { AccessError, CardinalityViolationError, Duration, InvalidArgumentError } from "gel";
 import z from "zod";
-import authRoute from "./auth";
 import config from "./config";
 import client, { auth, onUserInsert } from "./db";
 import { router } from "./routes";
+import authRoute from "./routes/auth";
 import { RepShape, UserShape } from "./utils/queries";
 
 const app = express();
@@ -27,7 +27,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(auth.createSessionMiddleware());
-app.disable('x-powered-by');
+app.disable("x-powered-by");
 
 app.use(authRoute);
 
@@ -53,9 +53,9 @@ export const durationSerializer: StandardRPCCustomJsonSerializer = {
 
 const handler = new OpenAPIHandler(router, {
   plugins: [
-    // biome-ignore:
+    // biome-ignore format:
     // new ZodSmartCoercionPlugin(),
-    new CORSPlugin(),
+    new CORSPlugin({ origin: process.env.FRONT_END_URL as string, credentials: true }),
     // new SimpleCsrfProtectionHandlerPlugin(),
   ],
   customJsonSerializers: [durationSerializer],
@@ -141,8 +141,8 @@ app.use("/api/*", async (req, res, next) => {
   next();
 });
 
-app.listen(4000, () => {
-  console.log("Server is running on port 4000");
+app.listen(3000, () => {
+  console.log("Server is running on port 3000");
 });
 
 export type ORPCRouter = RouterClient<typeof router, Context>;

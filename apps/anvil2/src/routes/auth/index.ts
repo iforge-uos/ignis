@@ -1,13 +1,25 @@
-// TODO stuff for idocs
-
+import { auth as expressAuth, onUserInsert } from "@/db";
+import ldap from "@/ldap";
+import { auth, pub } from "@/router";
+import verifyJWT from "@/utils/auth";
+import { PartialUserShape } from "@/utils/queries";
 import e from "@db/edgeql-js";
 import { CallbackRequest } from "@gel/auth-express";
 import { ORPCError } from "@orpc/server";
 import axios from "axios";
 import { Response } from "express";
-import { auth, onUserInsert } from "./db";
-import ldap from "./ldap";
-import { PartialUserShape } from "./utils/queries";
+import z from "zod";
+
+export const verify = pub
+  .route({ method: "GET", path: "/auth/verify" })
+  .input(z.object({ token: z.base64url() }))
+  .handler(async ({ input: { token } }) => verifyJWT(token));
+
+export const signOut = auth
+  .route({ method: "GET", path: "/auth/sign-out" })
+  .handler(async ({context: {res, req}}) => expressAuth.signout(req, res));
+
+export const authRouter = pub.router({ verify });
 
 interface GoogleUser {
   family_name: string;
@@ -29,7 +41,7 @@ export async function getUserProfile(providerToken: any): Promise<GoogleUser> {
   return data;
 }
 
-export default auth.createOAuthRouter("/auth/oauth", {
+export default expressAuth.createOAuthRouter("/api/auth/oauth", {
   callback: [
     async (req: CallbackRequest, _: Response) => {
       const profile = await getUserProfile(req.tokenData?.provider_token);

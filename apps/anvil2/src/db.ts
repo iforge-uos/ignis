@@ -7,7 +7,7 @@ import email from "./email";
 const client = createClient().withConfig({ apply_access_policies: false });
 
 export const auth = createExpressAuth(client, {
-  baseUrl: config.frontend.url,
+  baseUrl: "http://127.0.0.1:3000",
   // authCookieName: "",
 });
 

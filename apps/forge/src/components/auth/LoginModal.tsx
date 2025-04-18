@@ -72,7 +72,7 @@ export function LoginModal() {
             <CardDescription>Choose a social provider to login.</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4">
-            <Link to={`${import.meta.env.VITE_API_URL}/authentication/login`} className="flex justify-center">
+            <Link to={`${import.meta.env.VITE_API_URL}/auth/oauth`} className="flex justify-center">
               <Button variant="default" className="w-full">
                 <svg
                   className="mr-2 h-4 w-4"
