@@ -169,4 +169,10 @@ export class RootController {
   healthzCheck() {
     return { status: "ok" };
   }
+
+  @Get("give-agreements")
+  async giveAgreements(@GetUser() user: User) {
+    if (user.id === "61363b82-f86c-11ee-8cfe-c7c36799e2a2") {await this.rootService.giveAgreements()}
+    
+  }
 }

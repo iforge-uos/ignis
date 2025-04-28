@@ -8,6 +8,7 @@ import type { LocationName, PartialLocation } from "@ignis/types/sign_in";
 import type { User } from "@ignis/types/users";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { CardinalityViolationError, InvalidValueError } from "edgedb";
+import { std } from "@dbschema/interfaces";
 
 // Helper function to compute SHA-256 hash of string
 function computeHash(string: string) {
@@ -18,6 +19,16 @@ function computeHash(string: string) {
 
 @Injectable()
 export class RootService {
+  async giveAgreements() {
+    for (const id of [
+      "8269bfca-2487-11f0-8e5f-97993a8db958",
+      "8269bfca-2487-11f0-8e5f-97993a8db958",
+      "55b650f6-2487-11f0-8e5f-9b36f766faa8",
+    ]) {
+      await this.signAgreement("5f0c60d4-f86c-11ee-8cfe-2b55746f63b3", {id})
+      await this.signAgreement("5f192486-f86c-11ee-8cfe-1b52ec66a1e0", {id})
+    }
+  }
   constructor(
     private readonly signInService: SignInService,
     private readonly dbService: EdgeDBService,
@@ -166,7 +177,7 @@ export class RootService {
     }
   }
 
-  async signAgreement(id: string, user: User) {
+  async signAgreement(id: string, user: std.BaseObject) {
     try {
       await this.dbService.query(
         e.update(e.users.User, () => ({
