@@ -84,7 +84,7 @@ export const QueuedUserCard: React.FC<QueuedUserCardProps> = ({ place, onDequeue
           </div>
         </div>
       </div>
-      <TimeDisplay timeIn={place.created_at ?? iForgeEpoch} inText="Queued at:" durationText="Queuing for:" />
+      <TimeDisplay timeIn={place.created_at ?? iForgeEpoch} inText="Queued at:" durationText={canSignIn ? "Time Left:" : "Queuing for:"} />
       <div className="pt-4 border-t border-gray-700 flex justify-end">
         <Tooltip>
           <TooltipTrigger asChild>
