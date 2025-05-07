@@ -57,7 +57,7 @@ export const QueuedUserCard: React.FC<QueuedUserCardProps> = ({ place, onDequeue
   const canSignIn = place.ends_at?.getTime() ?? Number.NEGATIVE_INFINITY > new Date().getTime();
 
   const now = new Date();
-  const durationObj = intervalToDuration({ start: place.created_at ?? iForgeEpoch, end: now});
+  const durationObj = intervalToDuration({ start: place.created_at, end: now});
   const newDurationValue = (durationObj.hours ?? 0) * 60 * 60 + (durationObj.minutes ?? 0) * 60 + (durationObj.seconds ?? 0);
 
   return (
