@@ -57,7 +57,7 @@ export const QueuedUserCard: React.FC<QueuedUserCardProps> = ({ place, onDequeue
   const canSignIn = place.ends_at?.getTime() ?? Number.NEGATIVE_INFINITY > new Date().getTime();
 
   const now = new Date();
-  const durationObj = intervalToDuration({ start: place.created_at, end: now});
+  const durationObj = intervalToDuration({ start: place.ends_at ?? place.created_at, end: now});
   const newDurationValue = (durationObj.hours ?? 0) * 60 * 60 + (durationObj.minutes ?? 0) * 60 + (durationObj.seconds ?? 0);
 
   return (
@@ -88,7 +88,7 @@ export const QueuedUserCard: React.FC<QueuedUserCardProps> = ({ place, onDequeue
           </div>
         </div>
       </div>
-      <TimeDisplay timeIn={place.created_at ?? iForgeEpoch} inText="Queued at:" durationText={canSignIn ? newDurationValue > 0 ? "Overdue By:" : "Time Left:" : "Queuing for:"} />
+      <TimeDisplay timeIn={place.ends_at ?? place.created_at} inText="Queued at:" durationText={canSignIn ? newDurationValue > 0 ? "Overdue By:" : "Time Left:" : "Queuing for:"} />
       <div className="pt-4 border-t border-gray-700 flex justify-end">
         <Tooltip>
           <TooltipTrigger asChild>
