@@ -1,4 +1,5 @@
 import TeamIcon from "@/components/icons/Team.tsx";
+import { removeSuffix } from "@/lib/utils";
 import { ManageUserWidgetProps } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/ManageUserWidget.tsx";
 import { getTeams } from "@/services/users/getTeams.ts";
 import promoteToRep from "@/services/users/promoteToRep.ts";
@@ -73,7 +74,7 @@ export const TeamManagementSection: React.FC<ManageUserWidgetProps> = ({ user })
   const teamsList = teams.map((team) => ({
     value: team.id,
     label: team.name,
-    icon: () => <TeamIcon team={team.name} className="stroke-black dark:stroke-white mr-1 h-4 w-4" />,
+    icon: () => <TeamIcon team={removeSuffix(team.name, "Team").trim()} className="stroke-black dark:stroke-white mr-1 h-4 w-4" />,
   }));
 
   return (

@@ -14,6 +14,7 @@ import { Delete } from "lucide-react";
 import { toast } from "sonner";
 import { AdminDisplay } from "./SignedInUserCard/AdminDisplay";
 import { TimeDisplay } from "./SignedInUserCard/TimeDisplay";
+import {intervalToDuration } from "date-fns";
 
 interface QueuedUserCardProps {
   place: QueueEntry;
