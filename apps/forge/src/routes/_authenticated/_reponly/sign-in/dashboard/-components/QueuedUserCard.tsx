@@ -82,7 +82,7 @@ export const QueuedUserCard: React.FC<QueuedUserCardProps> = ({ place, onDequeue
         <div className="border-gray-500 p-2 rounded-sm mb-2">
           <div
             className={`pb-2 h-full w-2/3 mr-auto ml-auto rounded-lg p-2 font-medium mb-1 text-center font-mono ${
-              canSignIn ? newDurationValue > 0 ? "bg-orange-500" : "bg-green-500" : "bg-red-500"
+              canSignIn ? newDurationValue > 0 ? "bg-red-950" : "bg-green-500" : "bg-red-500"
             }`}
           >
             {canSignIn ? newDurationValue > 0 ? "Missed" : "Can" : "Cannot"} sign in
