@@ -1,3 +1,4 @@
+import { RouteUnfinished } from "@/components/routing/RouteUnfinished";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/socials")({ staticData: { title: "Socials" } });
+export const Route = createFileRoute("/socials")({ component: RouteUnfinished });

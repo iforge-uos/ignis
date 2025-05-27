@@ -102,5 +102,4 @@ export default function Component() {
 export const Route = createFileRoute("/_authenticated/sign-in/$id")({
   loader: async ({ params }) => await getSignIn(params.id),
   component: Component,
-  staticData: { title: "Sign In" },
 });

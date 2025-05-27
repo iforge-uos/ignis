@@ -62,9 +62,6 @@ declare module "@tanstack/react-router" {
     router: typeof router;
     routeContext: ForgeRouterContext;
   }
-  interface StaticDataRouteOption {
-    title?: Apps;
-  }
 }
 
 function App() {
