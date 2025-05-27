@@ -10,5 +10,5 @@ export interface Output extends OutputStep {}
 export const Errors = {} as const satisfies ErrorMap;
 
 export default async function ({ user, input, context }: SignInParams<z.infer<typeof Input>>): Promise<Output> {
-  input;
+  
 }

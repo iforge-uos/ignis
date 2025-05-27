@@ -23,7 +23,7 @@ export const StepType = z.enum([
 export type StepType = z.infer<typeof StepType>;
 
 // lil hack for recursive types
-const BaseInputStep = z.object({ name: LocationNameSchema, ucard_number: z.string().regex(/\d{9,}/) });
+export const BaseInputStep = z.object({ name: LocationNameSchema, ucard_number: z.string().regex(/\d{9,}/) });
 type InputStep = z.infer<typeof BaseInputStep> & {
   previous?: z.infer<typeof SignInStepInput>;
 };
