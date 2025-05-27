@@ -2,7 +2,7 @@ import { exec } from "node:child_process";
 import { admin } from "@/router";
 import Logger from "@/utils/logger";
 
-export const getGelUI = admin.route({ path: "/admin/db/ui" }).handler(async () => {
+export const getGelUI = admin.route({ path: "/db/ui" }).handler(async () => {
   Logger.info("Retrieving Gel UI URL");
 
   const url = await new Promise<string>((resolve, reject) => {
@@ -22,8 +22,4 @@ export const getGelUI = admin.route({ path: "/admin/db/ui" }).handler(async () =
   });
 
   return url.match(/authToken=(.*)/)?.[1]!;
-});
-
-export const dbRouter = admin.router({
-  getGelUI,
 });
