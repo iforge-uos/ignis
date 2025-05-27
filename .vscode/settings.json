@@ -1,5 +1,6 @@
 {
   "cSpell.words": [
+    "errmessage",
     "heartspace",
     "ignis",
     "interactable",
@@ -10,5 +11,6 @@
     "supervisable",
     "tribool",
     "ucard"
-  ]
+  ],
+  "python.analysis.typeCheckingMode": "off"
 }
