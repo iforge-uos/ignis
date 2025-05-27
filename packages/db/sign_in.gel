@@ -51,8 +51,9 @@ module sign_in {
         multi sign_ins := (
             select .<location[is SignIn] filter not .signed_out
         );
-        multi queued := .<location[is QueuePlace];
-
+        multi queued := (
+            select .<location[is QueuePlace] filter .ends_at < datetime_of_statement()
+        );
         required out_of_hours := (
             with current_time := (
                 select cal::to_local_time(datetime_of_statement(), "Europe/London")
@@ -156,7 +157,7 @@ module sign_in {
             };
     }
 
-    type QueuePlace extending default::CreatedAt {  # TODO consider storing these permanently
+    type QueuePlace extending default::CreatedAt {
         required user: users::User {
             constraint exclusive;
         }
