@@ -1,20 +1,21 @@
 import "./instrument";
 import e from "@db/edgeql-js";
-import { AuthRequest, CallbackRequest } from "@gel/auth-express";
+import { AuthRequest } from "@gel/auth-express";
 import { Temporal } from "@js-temporal/polyfill";
 import { StandardRPCCustomJsonSerializer } from "@orpc/client/standard";
-import { AnySchema } from "@orpc/contract";
-import { ConditionalSchemaConverter, JSONSchema, OpenAPIGenerator, SchemaConvertOptions } from "@orpc/openapi";
 import { OpenAPIHandler } from "@orpc/openapi/node";
+import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
 import { ORPCError, onError } from "@orpc/server";
 import { RouterClient } from "@orpc/server";
-import { CORSPlugin, SimpleCsrfProtectionHandlerPlugin } from "@orpc/server/plugins";
-import { ZodSmartCoercionPlugin } from "@orpc/zod";
+import { CORSPlugin } from "@orpc/server/plugins";
+import {
+  experimental_ZodSmartCoercionPlugin as ZodSmartCoercionPlugin,
+  experimental_ZodToJsonSchemaConverter as ZodToJsonSchemaConverter,
+} from "@orpc/zod/zod4";
 import * as Sentry from "@sentry/node";
 import cookieParser from "cookie-parser";
 import express, { Response } from "express";
 import { AccessError, CardinalityViolationError, Duration, InvalidArgumentError } from "gel";
-import z from "zod";
 import config from "./config";
 import client, { auth, onUserInsert } from "./db";
 import { router } from "./routes";
@@ -33,12 +34,14 @@ app.use(authRoute);
 
 // created for each request
 const createContext = async ({ req, res }: { req: AuthRequest; res: Response }) => {
+  const db = req.session?.client ?? client;
   return {
     user: await e
       .assert_exists(e.select(e.users.Rep, (u) => ({ ...RepShape(u), filter_single: { username: "eik21jh" } })))
-      .run(client),
+      .run(db),
     session: req.session,
-    db: client.withGlobals({ ...config.db.globals }),
+    db: db.withGlobals({ ...config.db.globals }),
+    req,
     res,
   };
 };
@@ -54,9 +57,28 @@ export const durationSerializer: StandardRPCCustomJsonSerializer = {
 const handler = new OpenAPIHandler(router, {
   plugins: [
     // biome-ignore format:
-    // new ZodSmartCoercionPlugin(),
+    new ZodSmartCoercionPlugin(),
     new CORSPlugin({ origin: process.env.FRONT_END_URL as string, credentials: true }),
     // new SimpleCsrfProtectionHandlerPlugin(),
+    new OpenAPIReferencePlugin({
+      schemaConverters: [new ZodToJsonSchemaConverter()],
+      specGenerateOptions: {
+        info: {
+          title: "iForge API",
+          version: "2.0.0",
+        },
+      },
+      // servers: [{ url: "/api" } /** Should use absolute URLs in production */],
+      // security: [{ bearerAuth: [] }],
+      // components: {
+      //   securitySchemes: {
+      //     bearerAuth: {
+      //       type: "http",
+      //       scheme: "bearer",
+      //     },
+      //   },
+      // },
+    }),
   ],
   customJsonSerializers: [durationSerializer],
   interceptors: [
@@ -88,43 +110,7 @@ const handler = new OpenAPIHandler(router, {
   ],
 });
 
-class ZodToJsonSchemaConverter implements ConditionalSchemaConverter {
-  condition(schema: AnySchema | undefined): boolean {
-    return schema !== undefined && schema["~standard"].vendor === "zod";
-  }
-
-  convert(
-    schema: AnySchema | undefined,
-    _options: SchemaConvertOptions,
-  ): [required: boolean, jsonSchema: Exclude<JSONSchema, boolean>] {
-    // Most JSON schema converters do not convert the `required` property separately, so returning `true` is acceptable here.
-    return [true, z.toJSONSchema(schema as any, { unrepresentable: "any" })];
-  }
-}
-
-const spec = await new OpenAPIGenerator({
-  schemaConverters: [new ZodToJsonSchemaConverter()],
-}).generate(router, {
-  info: {
-    title: "iForge API",
-    version: "2.0.0",
-  },
-  servers: [{ url: "/api" } /** Should use absolute URLs in production */],
-  security: [{ bearerAuth: [] }],
-  components: {
-    securitySchemes: {
-      bearerAuth: {
-        type: "http",
-        scheme: "bearer",
-      },
-    },
-  },
-});
-
 app.use("/api/*", async (req, res, next) => {
-  if (req.originalUrl === "/api/spec.json") {
-    return res.json(spec);
-  }
   if (req.originalUrl === "/api/spec.html") {
     return res.sendFile("spec.html", { root: "src" });
   }
