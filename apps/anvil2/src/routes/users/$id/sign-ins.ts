@@ -1,7 +1,7 @@
 import { auth } from "@/router";
 import e from "@db/edgeql-js";
 import { Temporal } from "@js-temporal/polyfill";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const signIns = auth
   .route({ path: "/sign-ins" })

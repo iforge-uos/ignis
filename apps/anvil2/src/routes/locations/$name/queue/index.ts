@@ -1,7 +1,7 @@
 import { auth } from "@/router";
 import e from "@db/edgeql-js";
 import { LocationNameSchema } from "@db/zod/modules/sign_in";
-import { z } from "zod";
+import { z } from "zod/v4";
 import { SignInErrors } from "../sign-in/_flows/_types";
 import queue from "../sign-in/_flows/queue";
 import { remove } from "./$id";

@@ -4,7 +4,7 @@ import type { training } from "@db/interfaces";
 import { getTrainingNextSection } from "@db/queries/getTrainingNextSection.query";
 import { Temporal } from "@js-temporal/polyfill";
 import { Duration } from "gel";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export interface PageInteraction extends Omit<training.Page, "duration"> {
   type_name: "training::TrainingPage";

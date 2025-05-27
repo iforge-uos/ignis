@@ -7,4 +7,5 @@ export * as event from "./modules/event";
 export * as notification from "./modules/notification";
 export * as sign_in from "./modules/sign_in";
 export * as team from "./modules/team";
+export * as tools from "./modules/tools";
 export * as training from "./modules/training";

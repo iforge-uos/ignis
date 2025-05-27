@@ -4,7 +4,7 @@ import { QueuePlaceShape } from "@/utils/queries";
 import e, { $infer } from "@db/edgeql-js";
 import { ErrorMap } from "@orpc/server";
 import { AccessError, ConstraintViolationError } from "gel";
-import { z } from "zod";
+import { z } from "zod/v4";
 import { OutputStep, SignInParams } from "./_types";
 import { createInputStep, InputStep } from "./_input";
 import { sign_in } from "@db/interfaces";

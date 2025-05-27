@@ -20,7 +20,7 @@ import MultiSelectFormField from "@ui/components/ui/multi-select";
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 const FormSchema = z.object({
   teams: z.array(z.string()).min(1).nonempty("Please select at least one team."),

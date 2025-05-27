@@ -1,5 +1,5 @@
 import { ErrorMap } from "@orpc/server";
-import { z } from "zod";
+import { z } from "zod/v4";
 import {  OutputStep, SignInParams, } from "./_types";
 import { createInputStep, InputStep } from "./_input";
 

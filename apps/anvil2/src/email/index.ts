@@ -6,7 +6,7 @@ import Bull from "bull";
 import { render } from "jsx-email";
 import nodemailer from "nodemailer";
 import { Logger } from "winston";
-import { z } from "zod";
+import { z } from "zod/v4";
 // import { Template as Queued } from "../../../../packages/email/queued";
 // import { Template as Unqueued } from "../../../../packages/email/unqueued";
 // import WelcomeEmail from "./templates/welcome";

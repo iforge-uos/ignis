@@ -1,9 +1,9 @@
 import { pub } from "@/router";
 import { LocationStatusShape } from "@/utils/queries";
-import { LocationNameSchema } from "@db/zod/modules/sign_in";
 import e from "@db/edgeql-js";
-import type { PartialLocation } from "@ignis/types/sign_in";
-import { z } from "zod";
+import { LocationNameSchema } from "@db/zod/modules/sign_in";
+import { PartialLocation } from "@ignis/types/sign_in";
+import { z } from "zod/v4";
 
 export const status = pub
   .input(z.object({ name: LocationNameSchema }))

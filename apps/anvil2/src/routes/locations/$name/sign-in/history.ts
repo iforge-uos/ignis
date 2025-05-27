@@ -1,8 +1,8 @@
 import { deskOrAdmin } from "@/router";
 import { PartialUserShape } from "@/utils/queries";
-import { LocationNameSchema } from "@db/zod/modules/sign_in";
 import e from "@db/edgeql-js";
-import { z } from "zod";
+import { LocationNameSchema } from "@db/zod/modules/sign_in";
+import { z } from "zod/v4";
 
 export const history = deskOrAdmin
   .route({ path: "/history" })

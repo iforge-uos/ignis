@@ -3,7 +3,7 @@ import e from "@db/edgeql-js";
 import { LocationNameSchema } from "@db/zod/modules/sign_in";
 import { ErrorMap, ORPCErrorConstructorMap } from "@orpc/server";
 import type { Executor } from "gel";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const StepType = z.enum([
   "REGISTER",

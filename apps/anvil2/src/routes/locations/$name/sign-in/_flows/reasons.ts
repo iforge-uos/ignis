@@ -5,7 +5,7 @@ import { training } from "@db/interfaces";
 import { getSignInTrainings } from "@db/queries/getSignInTrainings.query";
 import { CreateAgreementSchema } from "@db/zod/modules/sign_in";
 import { ErrorMap } from "@orpc/server";
-import { z } from "zod";
+import { z } from "zod/v4";
 import { InputStep, createInputStep } from "./_input";
 import { OutputStep, SignInParams } from "./_types";
 

@@ -3,7 +3,7 @@ import { AgreementShape } from "@/utils/queries";
 import e from "@db/edgeql-js";
 import { CreateAgreementSchema } from "@db/zod/modules/sign_in";
 import { Agreement } from "@ignis/types/root";
-import { z } from "zod";
+import { z } from "zod/v4";
 import { get, idRouter, update } from "./$id";
 
 export const all = pub

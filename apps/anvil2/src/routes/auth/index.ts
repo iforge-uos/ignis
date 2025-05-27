@@ -8,7 +8,7 @@ import { CallbackRequest } from "@gel/auth-express";
 import { ORPCError } from "@orpc/server";
 import axios from "axios";
 import { Response } from "express";
-import z from "zod";
+import z from "zod/v4";
 
 export const verify = pub
   .route({ method: "GET", path: "/auth/verify" })

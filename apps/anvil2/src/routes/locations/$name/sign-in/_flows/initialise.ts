@@ -4,7 +4,7 @@ import e from "@db/edgeql-js";
 import { LocationNameSchema } from "@db/zod/modules/sign_in";
 import { CreateInfractionSchema } from "@db/zod/modules/users";
 import { ErrorMap } from "@orpc/server";
-import { z } from "zod";
+import { z } from "zod/v4";
 import {  OutputStep, SignInParams, } from "./_types";
 import { createInputStep, InputStep } from "./_input";
 

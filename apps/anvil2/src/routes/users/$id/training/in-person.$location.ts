@@ -1,7 +1,7 @@
 import { auth } from "@/router";
 import { getSignInTrainings } from "@db/queries/getSignInTrainings.query";
 import { LocationNameSchema } from "@db/zod/modules/sign_in";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const inPersonRemaining = auth
   .route({ path: "/in-person/{location}" })

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 import type { InputStep as I, StepType } from "./_types";
 
 export const createInputStep = <S extends StepType>(type: S) => z.object({ type: z.literal(type) }); // 1:1

@@ -1,7 +1,7 @@
 import { auth, pub, rep } from "@/router";
 import e from "@db/edgeql-js";
 import { getTrainingForEditing } from "@db/queries/getTrainingForEditing.query";
-import { z } from "zod";
+import { z } from "zod/v4";
 import { start } from "./start";
 
 export const get = auth

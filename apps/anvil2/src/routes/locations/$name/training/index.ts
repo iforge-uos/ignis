@@ -2,7 +2,7 @@ import { auth, pub } from "@/router";
 import { TrainingForLocationShape } from "@/utils/queries";
 import e from "@db/edgeql-js";
 import { LocationNameSchema } from "@db/zod/modules/training";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const all = pub
   .route({ path: "/" })

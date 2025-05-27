@@ -1,7 +1,7 @@
 import { auth } from "@/router";
 import { PartialUserShape } from "@/utils/queries";
 import e from "@db/edgeql-js";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const get = auth
   .route({ path: "/{id}" })

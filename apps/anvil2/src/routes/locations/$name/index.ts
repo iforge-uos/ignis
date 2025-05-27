@@ -3,7 +3,7 @@ import { PartialUserShape } from "@/utils/queries";
 import e from "@db/edgeql-js";
 import { LocationNameSchema } from "@db/zod/modules/sign_in";
 import { Location } from "@ignis/types/sign_in";
-import z from "zod";
+import z from "zod/v4";
 import { commonReasons } from "./common-reasons";
 import { queueRouter } from "./queue";
 import { signInRouter } from "./sign-in";

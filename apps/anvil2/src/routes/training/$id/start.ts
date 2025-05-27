@@ -1,6 +1,6 @@
 import { auth } from "@/router";
 import { startTraining } from "@db/queries/startTraining.query";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const start = auth
   .route({ path: "/start" })

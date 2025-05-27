@@ -1,5 +1,5 @@
 import { os, ErrorMap, MiddlewareOutputFn } from "@orpc/server";
-import { z } from "zod";
+import { z } from "zod/v4";
 import { Context } from ".";
 
 export const pub = os.$context<Context>().$route({ method: "GET" });

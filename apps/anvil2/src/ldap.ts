@@ -1,7 +1,7 @@
 import e from "@db/edgeql-js";
 import { Client, Entry } from "ldapts";
 import { Logger } from "winston";
-import { z } from "zod";
+import { z } from "zod/v4";
 import config from "./config";
 import { sleep } from "./utils/base";
 import { ldapLibraryToUcardNumber, removeDomain } from "./utils/sign-in";

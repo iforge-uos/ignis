@@ -36,7 +36,7 @@ export type PartialLocation = {
   max_count: number;
   queue_in_use: boolean;
   out_of_hours: boolean;
-  queued: number;
+  queued_count: number;
   opening_time: LocalTime | Temporal.PlainTime;
   closing_time: LocalTime | Temporal.PlainTime;
 };

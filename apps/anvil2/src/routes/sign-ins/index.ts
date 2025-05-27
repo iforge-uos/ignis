@@ -1,5 +1,5 @@
 import { rep } from "@/router";
-import { z } from "zod";
+import { z } from "zod/v4";
 import { get } from "./$id";
 import { reasonsRouter } from "./reasons";
 

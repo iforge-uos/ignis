@@ -1,7 +1,7 @@
 import { rep } from "@/router";
 import e from "@db/edgeql-js";
 import { CreateInfractionSchema } from "@db/zod/modules/users";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const addInfraction = rep
   .route({ method: "POST", path: "/infractions" })

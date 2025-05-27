@@ -1,6 +1,6 @@
 import { deskOrAdmin, rep } from "@/router";
 import e from "@db/edgeql-js";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const get = rep
   .route({ path: "/" })

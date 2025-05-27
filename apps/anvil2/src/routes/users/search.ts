@@ -1,14 +1,14 @@
 import { auth } from "@/router";
 import { UserShape } from "@/utils/queries";
 import e from "@db/edgeql-js";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const search = auth
   .route({ method: "GET", path: "/search" })
   .input(
     z.object({
       query: z.string().min(1),
-      limit: z.coerce.number().min(1).max(100).default(1),
+      limit: z.number().min(1).max(100).default(1),
     }),
   )
   .handler(

@@ -2,7 +2,7 @@ import { auth } from "@/router";
 import { PERSONAL, REP_OFF_SHIFT, REP_ON_SHIFT } from "@/utils/sign-in";
 import e from "@db/edgeql-js";
 import { LocationNameSchema } from "@db/zod/modules/sign_in";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const commonReasons = auth
   .input(

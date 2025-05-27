@@ -3,7 +3,7 @@ import { AgreementShape } from "@/utils/queries";
 import e from "@db/edgeql-js";
 import { UpdateAgreementSchema } from "@db/zod/modules/sign_in";
 import { os } from "@orpc/server";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const get = pub
   .route({ path: "/" })
