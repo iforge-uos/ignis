@@ -17,7 +17,11 @@ export const verify = pub
 
 export const signOut = auth
   .route({ method: "GET", path: "/auth/sign-out" })
-  .handler(async ({context: {res, req}}) => expressAuth.signout(req, res));
+  .handler(async ({ context: { req, res } }) =>
+    expressAuth.signout(req, res, (err) => {
+      if (err instanceof Error) throw err;
+    }),
+  );
 
 export const authRouter = pub.router({ verify });
 
