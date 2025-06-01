@@ -1,6 +1,6 @@
 import { Temporal } from "@js-temporal/polyfill";
 import { Duration } from "gel";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 // #region sign_in::LocationName
 export const LocationNameSchema = z.enum(["MAINSPACE", "HEARTSPACE"]);
@@ -11,31 +11,62 @@ export const LocationStatusSchema = z.enum(["OPEN", "SOON", "CLOSED"]);
 // #endregion
 
 // #region sign_in::ReasonCategory
-export const ReasonCategorySchema = z.enum(["UNIVERSITY_MODULE", "CO_CURRICULAR_GROUP", "PERSONAL_PROJECT", "SOCIETY", "REP_SIGN_IN", "EVENT"]);
+export const ReasonCategorySchema = z.enum([
+  "UNIVERSITY_MODULE",
+  "CO_CURRICULAR_GROUP",
+  "PERSONAL_PROJECT",
+  "SOCIETY",
+  "REP_SIGN_IN",
+  "EVENT",
+]);
 // #endregion
 
 // #region sign_in::Agreement
-export const CreateAgreementSchema = z.
-  object({ // default::Auditable
-    updated_at: z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")), (z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))]).optional(), // std::datetime
+export const CreateAgreementSchema = z
+  .object({
+    // default::Auditable
+    updated_at: z
+      .union([
+        z.instanceof(Temporal.ZonedDateTime),
+        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
+        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
+      ])
+      .optional(), // std::datetime
   })
-  .extend({ // default::CreatedAt
-    created_at: z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")), (z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))]).optional(), // std::datetime
+  .extend({
+    // default::CreatedAt
+    created_at: z
+      .union([
+        z.instanceof(Temporal.ZonedDateTime),
+        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
+        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
+      ])
+      .optional(), // std::datetime
   })
-  .extend({ // sign_in::Agreement
+  .extend({
+    // sign_in::Agreement
     content: z.string(), // std::str
     _content_hash: z.never().optional(), // std::bytes
     version: z.number().int().min(-32768).max(32767).optional(), // std::int16
     name: z.string(), // std::str
   });
 
-export const UpdateAgreementSchema = z.
-  object({ // default::Auditable
-    updated_at: z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")), (z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))]).optional(), // std::datetime
+export const UpdateAgreementSchema = z
+  .object({
+    // default::Auditable
+    updated_at: z
+      .union([
+        z.instanceof(Temporal.ZonedDateTime),
+        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
+        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
+      ])
+      .optional(), // std::datetime
   })
-  .extend({ // default::CreatedAt
+  .extend({
+    // default::CreatedAt
   })
-  .extend({ // sign_in::Agreement
+  .extend({
+    // sign_in::Agreement
     content: z.string(), // std::str
     _content_hash: z.never().optional(), // std::bytes
     version: z.number().int().min(-32768).max(32767).optional(), // std::int16
@@ -44,14 +75,29 @@ export const UpdateAgreementSchema = z.
 // #endregion
 
 // #region sign_in::Location
-export const CreateLocationSchema = z.
-  object({ // default::Auditable
-    updated_at: z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")), (z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))]).optional(), // std::datetime
+export const CreateLocationSchema = z
+  .object({
+    // default::Auditable
+    updated_at: z
+      .union([
+        z.instanceof(Temporal.ZonedDateTime),
+        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
+        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
+      ])
+      .optional(), // std::datetime
   })
-  .extend({ // default::CreatedAt
-    created_at: z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")), (z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))]).optional(), // std::datetime
+  .extend({
+    // default::CreatedAt
+    created_at: z
+      .union([
+        z.instanceof(Temporal.ZonedDateTime),
+        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
+        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
+      ])
+      .optional(), // std::datetime
   })
-  .extend({ // sign_in::Location
+  .extend({
+    // sign_in::Location
     closing_time: z.never(), // std::cal::local_time
     opening_days: z.number().int().min(-32768).max(32767), // std::int16
     opening_time: z.never(), // std::cal::local_time
@@ -62,13 +108,22 @@ export const CreateLocationSchema = z.
     in_hours_rep_multiplier: z.number().int().min(-32768).max(32767), // std::int16
   });
 
-export const UpdateLocationSchema = z.
-  object({ // default::Auditable
-    updated_at: z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")), (z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))]).optional(), // std::datetime
+export const UpdateLocationSchema = z
+  .object({
+    // default::Auditable
+    updated_at: z
+      .union([
+        z.instanceof(Temporal.ZonedDateTime),
+        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
+        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
+      ])
+      .optional(), // std::datetime
   })
-  .extend({ // default::CreatedAt
+  .extend({
+    // default::CreatedAt
   })
-  .extend({ // sign_in::Location
+  .extend({
+    // sign_in::Location
     closing_time: z.never(), // std::cal::local_time
     opening_days: z.number().int().min(-32768).max(32767), // std::int16
     opening_time: z.never(), // std::cal::local_time
@@ -81,77 +136,155 @@ export const UpdateLocationSchema = z.
 // #endregion
 
 // #region sign_in::QueuePlace
-export const CreateQueuePlaceSchema = z.
-  object({ // default::CreatedAt
-    created_at: z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")), (z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))]).optional(), // std::datetime
+export const CreateQueuePlaceSchema = z
+  .object({
+    // default::CreatedAt
+    created_at: z
+      .union([
+        z.instanceof(Temporal.ZonedDateTime),
+        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
+        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
+      ])
+      .optional(), // std::datetime
   })
-  .extend({ // sign_in::QueuePlace
-    notified_at: z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")), (z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))]).nullable(), // std::datetime
+  .extend({
+    // sign_in::QueuePlace
+    notified_at: z
+      .union([
+        z.instanceof(Temporal.ZonedDateTime),
+        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
+        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
+      ])
+      .nullable(), // std::datetime
   });
 
-export const UpdateQueuePlaceSchema = z.
-  object({ // default::CreatedAt
+export const UpdateQueuePlaceSchema = z
+  .object({
+    // default::CreatedAt
   })
-  .extend({ // sign_in::QueuePlace
-    notified_at: z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")), (z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))]).nullable(), // std::datetime
+  .extend({
+    // sign_in::QueuePlace
+    notified_at: z
+      .union([
+        z.instanceof(Temporal.ZonedDateTime),
+        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
+        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
+      ])
+      .nullable(), // std::datetime
   });
 // #endregion
 
 // #region sign_in::Reason
-export const CreateReasonSchema = z.
-  object({ // default::CreatedAt
-    created_at: z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")), (z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))]).optional(), // std::datetime
+export const CreateReasonSchema = z
+  .object({
+    // default::CreatedAt
+    created_at: z
+      .union([
+        z.instanceof(Temporal.ZonedDateTime),
+        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
+        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
+      ])
+      .optional(), // std::datetime
   })
-  .extend({ // sign_in::Reason
+  .extend({
+    // sign_in::Reason
     name: z.string(), // std::str
-    category: z.enum(["UNIVERSITY_MODULE", "CO_CURRICULAR_GROUP", "PERSONAL_PROJECT", "SOCIETY", "REP_SIGN_IN", "EVENT"]), // sign_in::ReasonCategory
+    category: z.enum([
+      "UNIVERSITY_MODULE",
+      "CO_CURRICULAR_GROUP",
+      "PERSONAL_PROJECT",
+      "SOCIETY",
+      "REP_SIGN_IN",
+      "EVENT",
+    ]), // sign_in::ReasonCategory
   });
 
-export const UpdateReasonSchema = z.
-  object({ // default::CreatedAt
+export const UpdateReasonSchema = z
+  .object({
+    // default::CreatedAt
   })
-  .extend({ // sign_in::Reason
+  .extend({
+    // sign_in::Reason
     name: z.string(), // std::str
-    category: z.enum(["UNIVERSITY_MODULE", "CO_CURRICULAR_GROUP", "PERSONAL_PROJECT", "SOCIETY", "REP_SIGN_IN", "EVENT"]), // sign_in::ReasonCategory
+    category: z.enum([
+      "UNIVERSITY_MODULE",
+      "CO_CURRICULAR_GROUP",
+      "PERSONAL_PROJECT",
+      "SOCIETY",
+      "REP_SIGN_IN",
+      "EVENT",
+    ]), // sign_in::ReasonCategory
   });
 // #endregion
 
 // #region sign_in::SignIn
-export const CreateSignInSchema = z.
-  object({ // default::Timed
-    ends_at: z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")), (z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))]).nullable(), // std::datetime
+export const CreateSignInSchema = z
+  .object({
+    // default::Timed
+    ends_at: z
+      .union([
+        z.instanceof(Temporal.ZonedDateTime),
+        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
+        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
+      ])
+      .nullable(), // std::datetime
   })
-  .extend({ // default::CreatedAt
-    created_at: z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")), (z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))]).optional(), // std::datetime
+  .extend({
+    // default::CreatedAt
+    created_at: z
+      .union([
+        z.instanceof(Temporal.ZonedDateTime),
+        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
+        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
+      ])
+      .optional(), // std::datetime
   })
-  .extend({ // sign_in::SignIn
+  .extend({
+    // sign_in::SignIn
     tools: z.string().array(), // array<std::str>
   });
 
-export const UpdateSignInSchema = z.
-  object({ // default::Timed
-    ends_at: z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")), (z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))]).nullable(), // std::datetime
+export const UpdateSignInSchema = z
+  .object({
+    // default::Timed
+    ends_at: z
+      .union([
+        z.instanceof(Temporal.ZonedDateTime),
+        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
+        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
+      ])
+      .nullable(), // std::datetime
   })
-  .extend({ // default::CreatedAt
+  .extend({
+    // default::CreatedAt
   })
-  .extend({ // sign_in::SignIn
+  .extend({
+    // sign_in::SignIn
     tools: z.string().array(), // array<std::str>
   });
 // #endregion
 
 // #region sign_in::UserRegistration
-export const CreateUserRegistrationSchema = z.
-  object({ // default::CreatedAt
-    created_at: z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")), (z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))]).optional(), // std::datetime
+export const CreateUserRegistrationSchema = z
+  .object({
+    // default::CreatedAt
+    created_at: z
+      .union([
+        z.instanceof(Temporal.ZonedDateTime),
+        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
+        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
+      ])
+      .optional(), // std::datetime
   })
-  .extend({ // sign_in::UserRegistration
+  .extend({
+    // sign_in::UserRegistration
   });
 
-export const UpdateUserRegistrationSchema = z.
-  object({ // default::CreatedAt
+export const UpdateUserRegistrationSchema = z
+  .object({
+    // default::CreatedAt
   })
-  .extend({ // sign_in::UserRegistration
+  .extend({
+    // sign_in::UserRegistration
   });
 // #endregion
-
-        
