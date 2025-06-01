@@ -6,3 +6,4 @@ export const locationsRouter = auth.prefix("/locations").router({
   statuses,
   ...nameRoutes,
 });
+ 

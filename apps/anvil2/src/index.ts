@@ -1,8 +1,7 @@
 import "./instrument";
 import e from "@db/edgeql-js";
 import { AuthRequest } from "@gel/auth-express";
-import { Temporal } from "@js-temporal/polyfill";
-import { StandardRPCCustomJsonSerializer } from "@orpc/client/standard";
+import serialisers from "@ignis/serialiser";
 import { OpenAPIHandler } from "@orpc/openapi/node";
 import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
 import { ORPCError, onError } from "@orpc/server";
@@ -15,7 +14,7 @@ import {
 import * as Sentry from "@sentry/node";
 import cookieParser from "cookie-parser";
 import express, { Response } from "express";
-import { AccessError, CardinalityViolationError, Duration, InvalidArgumentError } from "gel";
+import { AccessError, CardinalityViolationError, InvalidArgumentError } from "gel";
 import config from "./config";
 import client, { auth, onUserInsert } from "./db";
 import { router } from "./routes";
@@ -47,13 +46,6 @@ const createContext = async ({ req, res }: { req: AuthRequest; res: Response }) 
 };
 export type Context = Awaited<ReturnType<typeof createContext>>;
 
-export const durationSerializer: StandardRPCCustomJsonSerializer = {
-  type: 21,
-  condition: (data) => data instanceof Duration || data instanceof Temporal.Duration,
-  serialize: (data) => data.toJSON(),
-  deserialize: Temporal.Duration.from,
-};
-
 const handler = new OpenAPIHandler(router, {
   plugins: [
     // biome-ignore format:
@@ -80,7 +72,7 @@ const handler = new OpenAPIHandler(router, {
       // },
     }),
   ],
-  customJsonSerializers: [durationSerializer],
+  customJsonSerializers: serialisers,
   interceptors: [
     onError((error) => {
       // Some errors can be suppressed so just re-throw

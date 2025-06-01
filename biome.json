@@ -48,7 +48,8 @@
       },
       "correctness": {
         "useHookAtTopLevel": "error",
-        "noUnusedVariables": "warn"
+        "noUnusedVariables": "warn",
+        "noConstantCondition": "off"
       }
     }
   }

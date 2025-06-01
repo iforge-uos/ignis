@@ -66,20 +66,6 @@ export const SignInStepInput = z.union([
   InitialiseInput,
 ]);
 
-// const SignInStepOutputTuple = [
-//   RegisterOutput,
-//   QueueOutput,
-//   AgreementsOutput,
-//   ReasonOutput,
-//   ToolsOutput,
-//   MailingListsOutput,
-//   PersonalToolsAndMaterialsOutput,
-//   FinaliseOutput,
-//   CancelOutput,
-//   InitialiseOutput,
-// ] as const;
-// if (Object.keys(StepType.Values).length !== SignInStepInputTuple.length)
-//   throw Error(`Not all sign in types seem to be imported ${Object.keys(StepType.Values)}`);
 
 export type SignInStepOutput =
   | RegisterOutput
