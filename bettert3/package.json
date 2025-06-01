@@ -1,0 +1,23 @@
+{
+  "name": "my-better-t-app",
+  "private": true,
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "check": "biome check --write .",
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "check-types": "turbo check-types",
+    "dev:native": "turbo -F native dev",
+    "dev:web": "turbo -F web dev",
+    "dev:server": "turbo -F server dev"
+  },
+  "dependencies": {
+    "@orpc/tanstack-query": "^0.0.1"
+  },
+  "devDependencies": {
+    "turbo": "^2.4.2",
+    "cross-env": "^7.0.3",
+    "@biomejs/biome": "1.9.4"
+  },
+  "packageManager": "bun@1.2.15"
+}
