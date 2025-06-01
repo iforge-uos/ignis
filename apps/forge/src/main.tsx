@@ -6,27 +6,27 @@ import { useUser } from "@/lib/utils";
 import { AuthProvider } from "@/providers/AuthProvider";
 import { ThemeProvider } from "@/providers/themeProvider";
 import { routeTree } from "@/routeTree.gen";
-import { Apps } from "@/types/app";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { RouterProvider, createRouter } from "@tanstack/react-router";
-import { DevTools } from "jotai-devtools";
-import React, { useState } from "react";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import ReactDOM from "react-dom/client";
-import { HelmetProvider } from "react-helmet-async";
-import "jotai-devtools/styles.css";
 import { ForgeRouterContext } from "@/routes/__root";
 import type { ORPCRouter } from "@ignis/types/orpc";
 import { Temporal, toTemporalInstant } from "@js-temporal/polyfill";
 import { createORPCClient } from "@orpc/client";
 import { RPCLink } from "@orpc/client/fetch";
 import { createORPCReactQueryUtils } from "@orpc/react-query";
+import * as Sentry from "@sentry/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { Toaster } from "@ui/components/ui/sonner";
 import { TooltipProvider } from "@ui/components/ui/tooltip";
+import { DevTools } from "jotai-devtools";
+import "jotai-devtools/styles.css";
 import { queryClientAtom } from "jotai-tanstack-query";
 import { useHydrateAtoms } from "jotai/react/utils";
+import React, { useState } from "react";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import ReactDOM from "react-dom/client";
+import { HelmetProvider } from "react-helmet-async";
 import { ORPCContext } from "./providers/orpcProvider";
 
 // Begin Router
@@ -90,6 +90,16 @@ declare global {
 }
 
 Date.prototype.toTemporalInstant = toTemporalInstant;
+
+Sentry.init({
+  dsn: "https://893631a88ccccc18a9b65d8b5c3e1395@o4507082090414080.ingest.de.sentry.io/4508127275122768",
+  integrations: [Sentry.browserTracingIntegration()],
+  // @ts-ignore its find and replaced
+  tracesSampleRate: '%MODE%' === "development" ? 1.0 : 0.1,
+  // Set `tracePropagationTargets` to control for which URLs distributed tracing should be enabled
+  tracePropagationTargets: ["localhost", /^https:\/\/api.iforge.sheffield.ac.uk/],
+  sendDefaultPii: false,
+});
 
 const rootElement = document.getElementById("root");
 
