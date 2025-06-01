@@ -55,17 +55,14 @@ export namespace ai_rep {
 export namespace cfg {
   export interface ConfigObject extends std.BaseObject {}
   export interface AbstractConfig extends ConfigObject {
-    "extensions": ExtensionConfig[];
+    "default_transaction_access_mode": sys.TransactionAccessMode;
     "session_idle_timeout": gel.Duration;
     "default_transaction_isolation": sys.TransactionIsolation;
-    "default_transaction_access_mode": sys.TransactionAccessMode;
     "default_transaction_deferrable": sys.TransactionDeferrability;
     "session_idle_transaction_timeout": gel.Duration;
     "query_execution_timeout": gel.Duration;
     "listen_port": number;
     "listen_addresses": string[];
-    "auth": Auth[];
-    "email_providers": EmailProviderConfig[];
     "current_email_provider_name"?: string | null;
     "allow_dml_in_functions"?: boolean | null;
     "allow_bare_ddl"?: AllowBareDDL | null;
@@ -89,13 +86,16 @@ export namespace cfg {
     "force_database_error"?: string | null;
     "_pg_prepared_statement_cache_size": number;
     "track_query_stats"?: QueryStatsOption | null;
+    "extensions": ExtensionConfig[];
+    "auth": Auth[];
+    "email_providers": EmailProviderConfig[];
   }
   export type AllowBareDDL = "AlwaysAllow" | "NeverAllow";
   export interface Auth extends ConfigObject {
     "priority": number;
     "user": string[];
-    "method"?: AuthMethod | null;
     "comment"?: string | null;
+    "method"?: AuthMethod | null;
   }
   export interface AuthMethod extends ConfigObject {
     "transports": ConnectionTransport[];
@@ -159,7 +159,6 @@ export namespace sys {
   }
   export type OutputFormat = "BINARY" | "JSON" | "JSON_ELEMENTS" | "NONE";
   export interface QueryStats extends ExternalObject {
-    "branch"?: Branch | null;
     "query"?: string | null;
     "query_type"?: QueryType | null;
     "tag"?: string | null;
@@ -188,6 +187,7 @@ export namespace sys {
     "rows"?: number | null;
     "stats_since"?: Date | null;
     "minmax_stats_since"?: Date | null;
+    "branch"?: Branch | null;
   }
   export type QueryType = "EdgeQL" | "SQL";
   export interface Role extends SystemObject, schema.InheritingObject, schema.AnnotationSubject {
@@ -221,9 +221,6 @@ export type Timed = $default.Timed;
 export type user = $default.user;
 export namespace users {
   export interface User extends $default.Auditable {
-    "identity": ext.auth.Identity;
-    "referrals": User[];
-    "roles": Role[];
     "first_name": string;
     "last_name"?: string | null;
     "display_name": string;
@@ -233,32 +230,35 @@ export namespace users {
     "pronouns"?: string | null;
     "ucard_number": number;
     "username": string;
+    "identity": ext.auth.Identity;
+    "roles": Role[];
+    "training": training.Training[];
     "agreements_signed": sign_in.Agreement[];
-    "infractions": Infraction[];
     "mailing_list_subscriptions": notification.MailingList[];
     "notifications": notification.Notification[];
-    "training": training.Training[];
+    "infractions": Infraction[];
     "sign_ins": sign_in.SignIn[];
+    "bookings": tools.Booking[];
   }
   export interface Infraction extends $default.CreatedAt {
-    "user": User;
     "duration"?: gel.Duration | null;
     "ends_at"?: Date | null;
     "reason": string;
     "resolved": boolean;
     "type": InfractionType;
+    "user": User;
   }
   export type InfractionType = "WARNING" | "TEMP_BAN" | "PERM_BAN" | "RESTRICTION" | "TRAINING_ISSUE";
   export interface Integration extends $default.Auditable {
     "external_id": string;
     "platform": Platform;
-    "user": User;
     "external_email": string;
+    "user": User;
   }
   export type Platform = "DISCORD" | "GITHUB";
   export interface Rep extends User {
-    "teams": team.Team[];
     "status": RepStatus;
+    "teams": team.Team[];
     "supervisable_training": training.Training[];
   }
   export type RepStatus = "ACTIVE" | "BREAK" | "ALUMNI" | "FUTURE" | "REMOVED";
@@ -270,9 +270,9 @@ export namespace users {
     "default_value": string;
   }
   export interface UserSettingValue extends std.$Object {
+    "value": string;
     "template": SettingTemplate;
     "user": User;
-    "value": string;
   }
 }
 export namespace ext {
@@ -296,9 +296,6 @@ export namespace ext {
       "modified_at": Date;
     }
     export interface AuthConfig extends cfg.ExtensionConfig {
-      "providers": ProviderConfig[];
-      "ui"?: UIConfig | null;
-      "webhooks": WebhookConfig[];
       "app_name"?: string | null;
       "logo_url"?: string | null;
       "dark_logo_url"?: string | null;
@@ -306,6 +303,9 @@ export namespace ext {
       "auth_signing_key"?: string | null;
       "token_time_to_live"?: gel.Duration | null;
       "allowed_redirect_urls": string[];
+      "providers": ProviderConfig[];
+      "ui"?: UIConfig | null;
+      "webhooks": WebhookConfig[];
     }
     export interface AzureOAuthProvider extends OAuthProviderConfig {
       "name": string;
@@ -465,6 +465,17 @@ export namespace ext {
       "api_style": ProviderAPIStyle;
     }
     export interface MistralSmallModel extends TextGenerationModel {}
+    export interface OllamaBgeM3Model extends EmbeddingModel {}
+    export interface OllamaLlama_3_2_Model extends TextGenerationModel {}
+    export interface OllamaLlama_3_3_Model extends TextGenerationModel {}
+    export interface OllamaNomicEmbedTextModel extends EmbeddingModel {}
+    export interface OllamaProviderConfig extends ProviderConfig {
+      "name": string;
+      "display_name": string;
+      "api_url": string;
+      "secret": string;
+      "api_style": ProviderAPIStyle;
+    }
     export interface OpenAIGPT_3_5_TurboModel extends TextGenerationModel {}
     export interface OpenAIGPT_4_Model extends TextGenerationModel {}
     export interface OpenAIGPT_4_TurboModel extends TextGenerationModel {}
@@ -484,7 +495,7 @@ export namespace ext {
     export interface OpenAI_O1_PreviewModel extends TextGenerationModel {}
     export interface PixtralLargeModel extends TextGenerationModel {}
     export interface PixtralModel extends TextGenerationModel {}
-    export type ProviderAPIStyle = "OpenAI" | "Anthropic";
+    export type ProviderAPIStyle = "OpenAI" | "Anthropic" | "Ollama";
   }
   export namespace pg_trgm {
     export interface Config extends cfg.ExtensionConfig {
@@ -498,6 +509,51 @@ export namespace ext {
       "probes": number;
       "ef_search": number;
     }
+  }
+}
+export namespace training {
+  export interface Answer extends std.$Object {
+    "content": string;
+    "correct": boolean;
+    "description"?: string | null;
+  }
+  export type AnswerType = "SINGLE" | "MULTI";
+  export interface Interactable extends std.$Object {
+    "content": string;
+    "enabled": boolean;
+    "index": number;
+    "parent": Training;
+  }
+  export type LocationName = "MAINSPACE" | "HEARTSPACE" | "GEORGE_PORTER";
+  export interface TrainingPage extends Interactable {
+    "duration"?: gel.Duration | null;
+    "name": string;
+  }
+  export interface Page extends TrainingPage {}
+  export interface Question extends Interactable {
+    "type": AnswerType;
+    "answers": Answer[];
+  }
+  export type Selectability = "NO_TRAINING" | "REVOKED" | "EXPIRED" | "REPS_UNTRAINED" | "IN_PERSON_MISSING";
+  export interface Session extends $default.Auditable {
+    "index": number;
+    "user": users.User;
+    "training": Training;
+  }
+  export interface Training extends $default.Auditable {
+    "in_person": boolean;
+    "locations": LocationName[];
+    "name": string;
+    "compulsory": boolean;
+    "description": string;
+    "enabled": boolean;
+    "expires_after"?: gel.Duration | null;
+    "icon_url"?: string | null;
+    "training_lockout"?: gel.Duration | null;
+    "rep"?: Training | null;
+    "pages": TrainingPage[];
+    "questions": Question[];
+    "sections": TrainingPage | Question[];
   }
 }
 export namespace sign_in {
@@ -517,40 +573,40 @@ export namespace sign_in {
     "max_users": number;
     "out_of_hours_rep_multiplier": number;
     "queue_enabled": boolean;
+    "status": LocationStatus;
+    "in_hours_rep_multiplier": number;
+    "max_count": number;
+    "can_sign_in": boolean;
+    "queue_in_use": boolean;
+    "available_capacity": number;
     "sign_ins": SignIn[];
-    "off_shift_reps": users.Rep[];
     "on_shift_reps": users.Rep[];
+    "off_shift_reps": users.Rep[];
     "supervising_reps": users.Rep[];
     "supervisable_training": training.Training[];
     "queued": QueuePlace[];
-    "queue_in_use": boolean;
-    "status": LocationStatus;
     "queued_users_that_can_sign_in": users.User[];
-    "in_hours_rep_multiplier": number;
-    "can_sign_in": boolean;
-    "max_count": number;
-    "available_capacity": number;
   }
   export type LocationName = "MAINSPACE" | "HEARTSPACE";
   export type LocationStatus = "OPEN" | "SOON" | "CLOSED";
   export interface QueuePlace extends $default.CreatedAt {
-    "location": Location;
-    "user": users.User;
     "notified_at"?: Date | null;
     "ends_at"?: Date | null;
+    "user": users.User;
+    "location": Location;
   }
   export interface Reason extends $default.CreatedAt {
     "name": string;
-    "agreement"?: Agreement | null;
     "category": ReasonCategory;
+    "agreement"?: Agreement | null;
   }
   export type ReasonCategory = "UNIVERSITY_MODULE" | "CO_CURRICULAR_GROUP" | "PERSONAL_PROJECT" | "SOCIETY" | "REP_SIGN_IN" | "EVENT";
   export interface SignIn extends $default.Timed {
-    "location": Location;
     "signed_out": boolean;
-    "reason": Reason;
-    "user": users.User;
     "tools": string[];
+    "user": users.User;
+    "location": Location;
+    "reason": Reason;
   }
   export interface UserRegistration extends $default.CreatedAt {
     "location": Location;
@@ -573,9 +629,9 @@ export namespace notification {
     "target": users.User | team.Team | event.Event | AllTarget | MailingList[];
   }
   export interface AuthoredNotification extends Notification {
+    "approved_on"?: Date | null;
     "approved_by"?: users.Rep | null;
     "author": users.User;
-    "approved_on"?: Date | null;
   }
   export type DeliveryMethod = "BANNER" | "EMAIL" | "TRAY" | "POPUP" | "DISCORD";
   export interface MailingList extends $default.Auditable {
@@ -589,67 +645,46 @@ export namespace notification {
   }
   export type Type = "ADMIN" | "ADVERT" | "ANNOUNCEMENT" | "EVENT" | "HEALTH_AND_SAFETY" | "INFRACTION" | "PRINTING" | "QUEUE_SLOT_ACTIVE" | "RECRUITMENT" | "REFERRAL" | "REMINDER" | "TRAINING";
 }
-export namespace training {
-  export interface Answer extends std.$Object {
-    "content": string;
-    "correct": boolean;
-    "description"?: string | null;
-  }
-  export type AnswerType = "SINGLE" | "MULTI";
-  export interface Interactable extends std.$Object {
-    "content": string;
-    "enabled": boolean;
-    "index": number;
-    "parent": Training;
-  }
-  export type LocationName = "MAINSPACE" | "HEARTSPACE" | "GEORGE_PORTER";
-  export interface TrainingPage extends Interactable {
-    "duration"?: gel.Duration | null;
-    "name": string;
-  }
-  export interface Page extends TrainingPage {}
-  export interface Question extends Interactable {
-    "answers": Answer[];
-    "type": AnswerType;
-  }
-  export type Selectability = "NO_TRAINING" | "REVOKED" | "EXPIRED" | "REPS_UNTRAINED" | "IN_PERSON_MISSING";
-  export interface Session extends $default.Auditable {
+export namespace tools {
+  export interface Booking extends $default.Auditable {
+    "ends_at": Date;
+    "starts_at": Date;
+    "duration": gel.Duration;
+    "cancelled"?: boolean | null;
     "user": users.User;
-    "index": number;
-    "training": Training;
+    "tool": Tool;
   }
-  export interface Training extends $default.Auditable {
-    "rep"?: Training | null;
-    "in_person": boolean;
-    "locations": LocationName[];
-    "pages": TrainingPage[];
+  export type Status = "NOMINAL" | "IN_USE" | "OUT_OF_ORDER";
+  export interface Tool extends std.$Object {
+    "is_bookable": boolean;
+    "status": Status;
+    "min_booking_time"?: gel.Duration | null;
+    "max_booking_daily"?: gel.Duration | null;
+    "max_booking_weekly"?: gel.Duration | null;
     "name": string;
-    "compulsory": boolean;
-    "description": string;
-    "enabled": boolean;
-    "expires_after"?: gel.Duration | null;
-    "icon_url"?: string | null;
-    "training_lockout"?: gel.Duration | null;
-    "questions": Question[];
-    "sections": TrainingPage | Question[];
+    "location": sign_in.Location;
+    "training": training.Training[];
+    "bookings": Booking[];
   }
 }
 export namespace event {
   export interface Event extends $default.CreatedAt {
-    "attendees": users.User[];
-    "organiser": users.User;
-    "description"?: string | null;
     "ends_at"?: Date | null;
     "starts_at": Date;
     "title": string;
-    "type": EventType;
+    "type": Type;
+    "description": string;
+    "attendees": users.User[];
+    "interested": users.User[];
+    "organiser": users.User[];
   }
-  export type EventType = "WORKSHOP" | "LECTURE" | "MEETUP" | "HACKATHON" | "EXHIBITION" | "WEBINAR";
+  export type Type = "WORKSHOP" | "LECTURE" | "MEETUP" | "HACKATHON" | "EXHIBITION" | "WEBINAR";
 }
 export namespace team {
+  export type Name = "IT" | "3DP" | "Hardware" | "Publicity" | "Events" | "Relations" | "Operations" | "Recruitment & Development" | "Health & Safety" | "Inclusions" | "Unsorted Reps" | "Future Reps" | "Staff";
   export interface Team extends std.$Object {
-    "description": string;
     "name": string;
+    "description": string;
     "tag": string;
     "all_members": users.Rep[];
     "members": users.Rep[];
@@ -670,20 +705,20 @@ export namespace schema {
     "is_final": boolean;
   }
   export interface InheritingObject extends SubclassableObject {
+    "inherited_fields"?: string[] | null;
     "bases": InheritingObject[];
     "ancestors": InheritingObject[];
-    "inherited_fields"?: string[] | null;
   }
   export interface AnnotationSubject extends $Object {
     "annotations": Annotation[];
   }
   export interface AccessPolicy extends InheritingObject, AnnotationSubject {
-    "subject": ObjectType;
     "access_kinds": AccessKind[];
     "condition"?: string | null;
     "action": AccessPolicyAction;
     "expr"?: string | null;
     "errmessage"?: string | null;
+    "subject": ObjectType;
   }
   export type AccessPolicyAction = "Allow" | "Deny";
   export interface Alias extends AnnotationSubject {
@@ -701,30 +736,29 @@ export namespace schema {
   export interface PrimitiveType extends Type {}
   export interface CollectionType extends PrimitiveType {}
   export interface Array extends CollectionType {
-    "element_type": Type;
     "dimensions"?: number[] | null;
+    "element_type": Type;
   }
   export interface ArrayExprAlias extends Array {}
   export interface CallableObject extends AnnotationSubject {
+    "return_typemod"?: TypeModifier | null;
     "params": Parameter[];
     "return_type"?: Type | null;
-    "return_typemod"?: TypeModifier | null;
   }
   export type Cardinality = "One" | "Many";
   export interface VolatilitySubject extends $Object {
     "volatility"?: Volatility | null;
   }
   export interface Cast extends AnnotationSubject, VolatilitySubject {
-    "from_type"?: Type | null;
-    "to_type"?: Type | null;
     "allow_implicit"?: boolean | null;
     "allow_assignment"?: boolean | null;
+    "from_type"?: Type | null;
+    "to_type"?: Type | null;
   }
   export interface ConsistencySubject extends InheritingObject, AnnotationSubject {
     "constraints": Constraint[];
   }
   export interface Constraint extends CallableObject, InheritingObject {
-    "params": Parameter[];
     "expr"?: string | null;
     "subjectexpr"?: string | null;
     "finalexpr"?: string | null;
@@ -732,6 +766,7 @@ export namespace schema {
     "delegated"?: boolean | null;
     "except_expr"?: string | null;
     "subject"?: ConsistencySubject | null;
+    "params": Parameter[];
   }
   export interface Delta extends $Object {
     "parents": Delta[];
@@ -747,19 +782,19 @@ export namespace schema {
   }
   export interface FutureBehavior extends $Object {}
   export interface Global extends AnnotationSubject {
-    "target"?: Type | null;
+    "default"?: string | null;
     "required"?: boolean | null;
     "cardinality"?: Cardinality | null;
     "expr"?: string | null;
-    "default"?: string | null;
+    "target"?: Type | null;
   }
   export interface Index extends InheritingObject, AnnotationSubject {
     "expr"?: string | null;
     "except_expr"?: string | null;
     "deferrability"?: IndexDeferrability | null;
     "deferred"?: boolean | null;
-    "params": Parameter[];
     "kwargs"?: {name: string, expr: string}[] | null;
+    "params": Parameter[];
   }
   export type IndexDeferrability = "Prohibited" | "Permitted" | "Required";
   export interface Pointer extends ConsistencySubject, AnnotationSubject {
@@ -774,21 +809,21 @@ export namespace schema {
     "rewrites": Rewrite[];
   }
   export interface Source extends $Object {
-    "indexes": Index[];
     "pointers": Pointer[];
+    "indexes": Index[];
   }
   export interface Link extends Pointer, Source {
-    "target"?: ObjectType | null;
-    "properties": Property[];
     "on_target_delete"?: TargetDeleteAction | null;
     "on_source_delete"?: SourceDeleteAction | null;
+    "target"?: ObjectType | null;
+    "properties": Property[];
   }
   export interface Migration extends AnnotationSubject, $Object {
-    "parents": Migration[];
     "script": string;
     "sdl"?: string | null;
     "message"?: string | null;
     "generated_by"?: MigrationGeneratedBy | null;
+    "parents": Migration[];
   }
   export type MigrationGeneratedBy = "DevMode" | "DDLStatement";
   export interface Module extends AnnotationSubject, $Object {}
@@ -797,27 +832,27 @@ export namespace schema {
   }
   export interface MultiRangeExprAlias extends MultiRange {}
   export interface ObjectType extends Source, ConsistencySubject, InheritingObject, Type, AnnotationSubject {
-    "union_of": ObjectType[];
-    "intersection_of": ObjectType[];
-    "access_policies": AccessPolicy[];
-    "triggers": Trigger[];
     "compound_type": boolean;
     "is_compound_type": boolean;
+    "union_of": ObjectType[];
+    "intersection_of": ObjectType[];
     "links": Link[];
     "properties": Property[];
+    "access_policies": AccessPolicy[];
+    "triggers": Trigger[];
   }
   export interface Operator extends CallableObject, VolatilitySubject {
     "operator_kind"?: OperatorKind | null;
-    "abstract"?: boolean | null;
     "is_abstract"?: boolean | null;
+    "abstract"?: boolean | null;
   }
   export type OperatorKind = "Infix" | "Postfix" | "Prefix" | "Ternary";
   export interface Parameter extends $Object {
-    "type": Type;
     "typemod": TypeModifier;
     "kind": ParameterKind;
     "num": number;
     "default"?: string | null;
+    "type": Type;
   }
   export type ParameterKind = "VariadicParam" | "NamedOnlyParam" | "PositionalParam";
   export interface Property extends Pointer {}
@@ -827,9 +862,9 @@ export namespace schema {
   }
   export interface RangeExprAlias extends Range {}
   export interface Rewrite extends InheritingObject, AnnotationSubject {
-    "subject": Pointer;
     "kind": TriggerKind;
     "expr": string;
+    "subject": Pointer;
   }
   export type RewriteKind = "Update" | "Insert";
   export interface ScalarType extends PrimitiveType, ConsistencySubject, AnnotationSubject {
@@ -840,12 +875,12 @@ export namespace schema {
   export type SourceDeleteAction = "DeleteTarget" | "Allow" | "DeleteTargetIfOrphan";
   export type TargetDeleteAction = "Restrict" | "DeleteSource" | "Allow" | "DeferredRestrict";
   export interface Trigger extends InheritingObject, AnnotationSubject {
-    "subject": ObjectType;
     "timing": TriggerTiming;
     "kinds": TriggerKind[];
     "scope": TriggerScope;
     "expr"?: string | null;
     "condition"?: string | null;
+    "subject": ObjectType;
   }
   export type TriggerKind = "Update" | "Delete" | "Insert";
   export type TriggerScope = "All" | "Each";
@@ -855,8 +890,8 @@ export namespace schema {
     "element_types": TupleElement[];
   }
   export interface TupleElement extends std.BaseObject {
-    "type": Type;
     "name"?: string | null;
+    "type": Type;
   }
   export interface TupleExprAlias extends Tuple {}
   export type TypeModifier = "SetOfType" | "OptionalType" | "SingletonType";
@@ -1011,6 +1046,11 @@ export interface types {
       "MistralNemo": ext.ai.MistralNemo;
       "MistralProviderConfig": ext.ai.MistralProviderConfig;
       "MistralSmallModel": ext.ai.MistralSmallModel;
+      "OllamaBgeM3Model": ext.ai.OllamaBgeM3Model;
+      "OllamaLlama_3_2_Model": ext.ai.OllamaLlama_3_2_Model;
+      "OllamaLlama_3_3_Model": ext.ai.OllamaLlama_3_3_Model;
+      "OllamaNomicEmbedTextModel": ext.ai.OllamaNomicEmbedTextModel;
+      "OllamaProviderConfig": ext.ai.OllamaProviderConfig;
       "OpenAIGPT_3_5_TurboModel": ext.ai.OpenAIGPT_3_5_TurboModel;
       "OpenAIGPT_4_Model": ext.ai.OpenAIGPT_4_Model;
       "OpenAIGPT_4_TurboModel": ext.ai.OpenAIGPT_4_TurboModel;
@@ -1034,6 +1074,18 @@ export interface types {
       "Config": ext.pgvector.Config;
     };
   };
+  "training": {
+    "Answer": training.Answer;
+    "AnswerType": training.AnswerType;
+    "Interactable": training.Interactable;
+    "LocationName": training.LocationName;
+    "TrainingPage": training.TrainingPage;
+    "Page": training.Page;
+    "Question": training.Question;
+    "Selectability": training.Selectability;
+    "Session": training.Session;
+    "Training": training.Training;
+  };
   "sign_in": {
     "Agreement": sign_in.Agreement;
     "Location": sign_in.Location;
@@ -1056,23 +1108,17 @@ export interface types {
     "SystemNotification": notification.SystemNotification;
     "Type": notification.Type;
   };
-  "training": {
-    "Answer": training.Answer;
-    "AnswerType": training.AnswerType;
-    "Interactable": training.Interactable;
-    "LocationName": training.LocationName;
-    "TrainingPage": training.TrainingPage;
-    "Page": training.Page;
-    "Question": training.Question;
-    "Selectability": training.Selectability;
-    "Session": training.Session;
-    "Training": training.Training;
+  "tools": {
+    "Booking": tools.Booking;
+    "Status": tools.Status;
+    "Tool": tools.Tool;
   };
   "event": {
     "Event": event.Event;
-    "EventType": event.EventType;
+    "Type": event.Type;
   };
   "team": {
+    "Name": team.Name;
     "Team": team.Team;
   };
   "schema": {

@@ -1,10 +1,10 @@
-# module `3dp` {
+# module printing {
 #     type Printer {
 #         name: str
 #         hostname: str
 #         remote_ip: str
 #         status: PrinterStatus
-#         type: PLA | PETG | RESIN
+#         type: PLA | TPU | PETG | RESIN
 #         location
 #         prints
 #     }

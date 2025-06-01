@@ -6,6 +6,8 @@ import * as literal from "./literal";
 import type * as _std from "./modules/std";
 import type * as _users from "./modules/users";
 import type * as _training from "./modules/training";
+import type * as _tools from "./modules/tools";
+import type * as _team from "./modules/team";
 import type * as _sys from "./modules/sys";
 import type * as _stdpg from "./modules/std/pg";
 import type * as _stdnethttp from "./modules/std/net/http";
@@ -29,6 +31,8 @@ export type scalarAssignableBy<T extends $.ScalarType> =
   T extends _training.$Selectability ? _training.$Selectability : 
   T extends _training.$LocationName ? _training.$LocationName : 
   T extends _training.$AnswerType ? _training.$AnswerType : 
+  T extends _tools.$Status ? _tools.$Status : 
+  T extends _team.$Name ? _team.$Name : 
   T extends _sys.$VersionStage ? _sys.$VersionStage : 
   T extends _sys.$TransactionIsolation ? _sys.$TransactionIsolation : 
   T extends _sys.$TransactionDeferrability ? _sys.$TransactionDeferrability : 
@@ -103,7 +107,7 @@ export type scalarAssignableBy<T extends $.ScalarType> =
   T extends _extai.$IndexType ? _extai.$IndexType : 
   T extends _extai.$DistanceFunction ? _extai.$DistanceFunction : 
   T extends _extai.$ChatParticipantRole ? _extai.$ChatParticipantRole : 
-  T extends _event.$EventType ? _event.$EventType : 
+  T extends _event.$Type ? _event.$Type : 
   T extends _cfg.$memory ? _cfg.$memory : 
   T extends _cfg.$StoreMigrationSDL ? _cfg.$StoreMigrationSDL : 
   T extends _cfg.$SMTPSecurity ? _cfg.$SMTPSecurity : 
@@ -121,6 +125,8 @@ export type scalarCastableFrom<T extends $.ScalarType> =
   T extends _training.$Selectability ? _training.$Selectability : 
   T extends _training.$LocationName ? _training.$LocationName : 
   T extends _training.$AnswerType ? _training.$AnswerType : 
+  T extends _tools.$Status ? _tools.$Status : 
+  T extends _team.$Name ? _team.$Name : 
   T extends _sys.$VersionStage ? _sys.$VersionStage : 
   T extends _sys.$TransactionIsolation ? _sys.$TransactionIsolation : 
   T extends _sys.$TransactionDeferrability ? _sys.$TransactionDeferrability : 
@@ -195,7 +201,7 @@ export type scalarCastableFrom<T extends $.ScalarType> =
   T extends _extai.$IndexType ? _extai.$IndexType : 
   T extends _extai.$DistanceFunction ? _extai.$DistanceFunction : 
   T extends _extai.$ChatParticipantRole ? _extai.$ChatParticipantRole : 
-  T extends _event.$EventType ? _event.$EventType : 
+  T extends _event.$Type ? _event.$Type : 
   T extends _cfg.$memory ? _cfg.$memory : 
   T extends _cfg.$StoreMigrationSDL ? _cfg.$StoreMigrationSDL : 
   T extends _cfg.$SMTPSecurity ? _cfg.$SMTPSecurity : 
@@ -244,6 +250,18 @@ type getSharedParentScalar<A, B> =
   :
   A extends _training.$AnswerType ?
     B extends _training.$AnswerType ?
+    B
+    :
+    never
+  :
+  A extends _tools.$Status ?
+    B extends _tools.$Status ?
+    B
+    :
+    never
+  :
+  A extends _team.$Name ?
+    B extends _team.$Name ?
     B
     :
     never
@@ -716,8 +734,8 @@ type getSharedParentScalar<A, B> =
     :
     never
   :
-  A extends _event.$EventType ?
-    B extends _event.$EventType ?
+  A extends _event.$Type ?
+    B extends _event.$Type ?
     B
     :
     never
@@ -807,6 +825,18 @@ function getSharedParentScalar<A extends $.ScalarType, B extends $.ScalarType>(a
     }
   if (a.__name__ === "training::AnswerType") {
     if(b.__name__ === "training::AnswerType") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
+  if (a.__name__ === "tools::Status") {
+    if(b.__name__ === "tools::Status") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
+  if (a.__name__ === "team::Name") {
+    if(b.__name__ === "team::Name") {
       return b;
     }
     throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
@@ -1279,8 +1309,8 @@ function getSharedParentScalar<A extends $.ScalarType, B extends $.ScalarType>(a
     }
     throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
     }
-  if (a.__name__ === "event::EventType") {
-    if(b.__name__ === "event::EventType") {
+  if (a.__name__ === "event::Type") {
+    if(b.__name__ === "event::Type") {
       return b;
     }
     throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);

@@ -3,46 +3,49 @@
 import * as $ from "../reflection";
 import * as _ from "../imports";
 import type * as _default from "./default";
-import type * as _users from "./users";
 import type * as _std from "./std";
-export type $EventType = {
-  "WORKSHOP": $.$expr_Literal<$EventType>;
-  "LECTURE": $.$expr_Literal<$EventType>;
-  "MEETUP": $.$expr_Literal<$EventType>;
-  "HACKATHON": $.$expr_Literal<$EventType>;
-  "EXHIBITION": $.$expr_Literal<$EventType>;
-  "WEBINAR": $.$expr_Literal<$EventType>;
-} & $.EnumType<"event::EventType", ["WORKSHOP", "LECTURE", "MEETUP", "HACKATHON", "EXHIBITION", "WEBINAR"]>;
-const EventType: $EventType = $.makeType<$EventType>(_.spec, "2a1b71a4-f86c-11ee-a7c6-8fd6344eb0e6", _.syntax.literal);
+import type * as _users from "./users";
+export type $Type = {
+  "WORKSHOP": $.$expr_Literal<$Type>;
+  "LECTURE": $.$expr_Literal<$Type>;
+  "MEETUP": $.$expr_Literal<$Type>;
+  "HACKATHON": $.$expr_Literal<$Type>;
+  "EXHIBITION": $.$expr_Literal<$Type>;
+  "WEBINAR": $.$expr_Literal<$Type>;
+} & $.EnumType<"event::Type", ["WORKSHOP", "LECTURE", "MEETUP", "HACKATHON", "EXHIBITION", "WEBINAR"]>;
+const Type: $Type = $.makeType<$Type>(_.spec, "97a8ff3c-3aac-11f0-8661-15ba60aad963", _.syntax.literal);
 
 export type $EventλShape = $.typeutil.flatten<_default.$CreatedAtλShape & {
-  "attendees": $.LinkDesc<_users.$User, $.Cardinality.AtLeastOne, {
-    "@registered_at": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne>;
-  }, false, false, false, false>;
-  "organiser": $.LinkDesc<_users.$User, $.Cardinality.One, {}, false, false,  false, false>;
-  "description": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "ends_at": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne, false, false, false, false>;
   "starts_at": $.PropertyDesc<_std.$datetime, $.Cardinality.One, false, false, false, false>;
   "title": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
-  "type": $.PropertyDesc<$EventType, $.Cardinality.One, false, false, false, false>;
+  "type": $.PropertyDesc<$Type, $.Cardinality.One, false, false, false, false>;
+  "description": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
+  "attendees": $.LinkDesc<_users.$User, $.Cardinality.Many, {
+    "@registered_at": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne>;
+  }, false, false, false, false>;
+  "interested": $.LinkDesc<_users.$User, $.Cardinality.Many, {
+    "@registered_at": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne>;
+  }, false, false, false, false>;
+  "organiser": $.LinkDesc<_users.$User, $.Cardinality.AtLeastOne, {}, false, false,  false, false>;
 }>;
 type $Event = $.ObjectType<"event::Event", $EventλShape, null, [
   ..._default.$CreatedAt['__exclusives__'],
 ], "event::Event">;
-const $Event = $.makeType<$Event>(_.spec, "2a1b87a3-f86c-11ee-a18c-118b431adf11", _.syntax.literal);
+const $Event = $.makeType<$Event>(_.spec, "97a90e14-3aac-11f0-b669-55c7d15630f2", _.syntax.literal);
 
 const Event: $.$expr_PathNode<$.TypeSet<$Event, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Event, $.Cardinality.Many), null);
 
 
 
-export { EventType, $Event, Event };
+export { Type, $Event, Event };
 
 type __defaultExports = {
-  "EventType": typeof EventType;
+  "Type": typeof Type;
   "Event": typeof Event
 };
 const __defaultExports: __defaultExports = {
-  "EventType": EventType,
+  "Type": Type,
   "Event": Event
 };
 export default __defaultExports;

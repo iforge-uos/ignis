@@ -27,7 +27,7 @@ module users {
         }
 
         multi sign_ins := .<user[is sign_in::SignIn];
-        multi bookings := .<user[is machines::Booking];
+        multi bookings := .<user[is tools::Booking];
         multi agreements_signed: sign_in::Agreement {
             version_signed: int16;
             created_at: datetime {

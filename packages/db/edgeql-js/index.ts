@@ -13,11 +13,12 @@ import _notification from "./modules/notification";
 import _schema from "./modules/schema";
 import _sign_in from "./modules/sign_in";
 import _sys from "./modules/sys";
+import _team from "./modules/team";
+import _tools from "./modules/tools";
 import _training from "./modules/training";
 import _users from "./modules/users";
 import _ai_rep from "./modules/ai_rep";
 import _default from "./modules/default";
-import _team from "./modules/team";
 
 const ExportDefault: typeof _std & 
   typeof _default & 
@@ -31,11 +32,12 @@ const ExportDefault: typeof _std &
   "schema": typeof _schema;
   "sign_in": typeof _sign_in;
   "sys": typeof _sys;
+  "team": typeof _team;
+  "tools": typeof _tools;
   "training": typeof _training;
   "users": typeof _users;
   "ai_rep": typeof _ai_rep;
   "default": typeof _default;
-  "team": typeof _team;
 } = {
   ..._std,
   ..._default,
@@ -49,11 +51,12 @@ const ExportDefault: typeof _std &
   "schema": _schema,
   "sign_in": _sign_in,
   "sys": _sys,
+  "team": _team,
+  "tools": _tools,
   "training": _training,
   "users": _users,
   "ai_rep": _ai_rep,
   "default": _default,
-  "team": _team,
 };
 const Cardinality = $.Cardinality;
 type Cardinality = $.Cardinality;

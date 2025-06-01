@@ -115,7 +115,6 @@ const $ExtensionPackageMigration = $.makeType<$ExtensionPackageMigration>(_.spec
 const ExtensionPackageMigration: $.$expr_PathNode<$.TypeSet<$ExtensionPackageMigration, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($ExtensionPackageMigration, $.Cardinality.Many), null);
 
 export type $QueryStatsλShape = $.typeutil.flatten<$ExternalObjectλShape & {
-  "branch": $.LinkDesc<$Branch, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
   "query": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "query_type": $.PropertyDesc<$QueryType, $.Cardinality.AtMostOne, false, false, false, false>;
   "tag": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
@@ -144,6 +143,7 @@ export type $QueryStatsλShape = $.typeutil.flatten<$ExternalObjectλShape & {
   "rows": $.PropertyDesc<_std.$int64, $.Cardinality.AtMostOne, false, false, false, false>;
   "stats_since": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne, false, false, false, false>;
   "minmax_stats_since": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne, false, false, false, false>;
+  "branch": $.LinkDesc<$Branch, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
 }>;
 type $QueryStats = $.ObjectType<"sys::QueryStats", $QueryStatsλShape, null, [
   ...$ExternalObject['__exclusives__'],
@@ -170,27 +170,6 @@ type $Role = $.ObjectType<"sys::Role", $RoleλShape, null, [
 const $Role = $.makeType<$Role>(_.spec, "04d3804d-c37f-5969-86b2-a24309653b14", _.syntax.literal);
 
 const Role: $.$expr_PathNode<$.TypeSet<$Role, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Role, $.Cardinality.Many), null);
-
-type get_current_branchλFuncExpr = $.$expr_Function<
-  _std.$str, $.Cardinality.One
->;
-/**
- * Return the name of the current database branch as a string.
- */
-function get_current_branch(): get_current_branchλFuncExpr;
-function get_current_branch(...args: any[]) {
-  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('sys::get_current_branch', args, _.spec, [
-    {args: [], returnTypeId: "00000000-0000-0000-0000-000000000101"},
-  ]);
-  return _.syntax.$expressionify({
-    __kind__: $.ExpressionKind.Function,
-    __element__: returnType,
-    __cardinality__: cardinality,
-    __name__: "sys::get_current_branch",
-    __args__: positionalArgs,
-    __namedargs__: namedArgs,
-  }) as any;
-};
 
 type reset_query_statsλFuncExpr<
   NamedArgs extends {
@@ -332,6 +311,68 @@ function get_current_database(...args: any[]) {
   }) as any;
 };
 
+type get_current_branchλFuncExpr = $.$expr_Function<
+  _std.$str, $.Cardinality.One
+>;
+/**
+ * Return the name of the current database branch as a string.
+ */
+function get_current_branch(): get_current_branchλFuncExpr;
+function get_current_branch(...args: any[]) {
+  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('sys::get_current_branch', args, _.spec, [
+    {args: [], returnTypeId: "00000000-0000-0000-0000-000000000101"},
+  ]);
+  return _.syntax.$expressionify({
+    __kind__: $.ExpressionKind.Function,
+    __element__: returnType,
+    __cardinality__: cardinality,
+    __name__: "sys::get_current_branch",
+    __args__: positionalArgs,
+    __namedargs__: namedArgs,
+  }) as any;
+};
+
+type approximate_countλFuncExpr<
+  NamedArgs extends {
+    "ignore_subtypes"?: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bool>>,
+  },
+  P1 extends $.TypeSet<_schema.$ObjectType>,
+> = $.$expr_Function<
+  _std.$number, $.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.optionalParamCardinality<NamedArgs["ignore_subtypes"]>>
+>;
+type approximate_countλFuncExpr2<
+  P1 extends $.TypeSet<_schema.$ObjectType>,
+> = $.$expr_Function<
+  _std.$number, $.cardutil.paramCardinality<P1>
+>;
+function approximate_count<
+  NamedArgs extends {
+    "ignore_subtypes"?: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bool>>,
+  },
+  P1 extends $.TypeSet<_schema.$ObjectType>,
+>(
+  namedArgs: NamedArgs,
+  type: P1,
+): approximate_countλFuncExpr<NamedArgs, P1>;
+function approximate_count<
+  P1 extends $.TypeSet<_schema.$ObjectType>,
+>(
+  type: P1,
+): approximate_countλFuncExpr2<P1>;
+function approximate_count(...args: any[]) {
+  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('sys::approximate_count', args, _.spec, [
+    {args: [{typeId: "2662a1b4-4f3f-5875-b6eb-ce52101a90a3", optional: false, setoftype: false, variadic: false}], namedArgs: {"ignore_subtypes": {typeId: "00000000-0000-0000-0000-000000000109", optional: true, setoftype: false, variadic: false}}, returnTypeId: "00000000-0000-0000-0000-0000000001ff"},
+  ]);
+  return _.syntax.$expressionify({
+    __kind__: $.ExpressionKind.Function,
+    __element__: returnType,
+    __cardinality__: cardinality,
+    __name__: "sys::approximate_count",
+    __args__: positionalArgs,
+    __namedargs__: namedArgs,
+  }) as any;
+};
+
 
 
 export { OutputFormat, QueryType, TransactionAccessMode, TransactionDeferrability, TransactionIsolation, VersionStage, $SystemObject, SystemObject, $ExternalObject, ExternalObject, $Branch, Branch, $Database, Database, $ExtensionPackage, ExtensionPackage, $ExtensionPackageMigration, ExtensionPackageMigration, $QueryStats, QueryStats, $Role, Role };
@@ -351,13 +392,14 @@ type __defaultExports = {
   "ExtensionPackageMigration": typeof ExtensionPackageMigration;
   "QueryStats": typeof QueryStats;
   "Role": typeof Role;
-  "get_current_branch": typeof get_current_branch;
   "reset_query_stats": typeof reset_query_stats;
   "get_version": typeof get_version;
   "get_version_as_str": typeof get_version_as_str;
   "get_instance_name": typeof get_instance_name;
   "get_transaction_isolation": typeof get_transaction_isolation;
-  "get_current_database": typeof get_current_database
+  "get_current_database": typeof get_current_database;
+  "get_current_branch": typeof get_current_branch;
+  "approximate_count": typeof approximate_count
 };
 const __defaultExports: __defaultExports = {
   "OutputFormat": OutputFormat,
@@ -374,12 +416,13 @@ const __defaultExports: __defaultExports = {
   "ExtensionPackageMigration": ExtensionPackageMigration,
   "QueryStats": QueryStats,
   "Role": Role,
-  "get_current_branch": get_current_branch,
   "reset_query_stats": reset_query_stats,
   "get_version": get_version,
   "get_version_as_str": get_version_as_str,
   "get_instance_name": get_instance_name,
   "get_transaction_isolation": get_transaction_isolation,
-  "get_current_database": get_current_database
+  "get_current_database": get_current_database,
+  "get_current_branch": get_current_branch,
+  "approximate_count": approximate_count
 };
 export default __defaultExports;

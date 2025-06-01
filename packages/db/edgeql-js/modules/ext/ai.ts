@@ -27,7 +27,8 @@ const IndexType: $IndexType = $.makeType<$IndexType>(_.spec, "10d78b63-7cec-5d40
 export type $ProviderAPIStyle = {
   "OpenAI": $.$expr_Literal<$ProviderAPIStyle>;
   "Anthropic": $.$expr_Literal<$ProviderAPIStyle>;
-} & $.EnumType<"ext::ai::ProviderAPIStyle", ["OpenAI", "Anthropic"]>;
+  "Ollama": $.$expr_Literal<$ProviderAPIStyle>;
+} & $.EnumType<"ext::ai::ProviderAPIStyle", ["OpenAI", "Anthropic", "Ollama"]>;
 const ProviderAPIStyle: $ProviderAPIStyle = $.makeType<$ProviderAPIStyle>(_.spec, "fb68201d-f255-5e54-9eda-90118467d590", _.syntax.literal);
 
 export type $ModelλShape = $.typeutil.flatten<_std.$BaseObjectλShape & {
@@ -106,7 +107,7 @@ export type $ProviderConfigλShape = $.typeutil.flatten<_cfg.$ConfigObjectλShap
 type $ProviderConfig = $.ObjectType<"ext::ai::ProviderConfig", $ProviderConfigλShape, null, [
   ..._cfg.$ConfigObject['__exclusives__'],
   {name: {__element__: _std.$str, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
-], "ext::ai::AnthropicProviderConfig" | "ext::ai::CustomProviderConfig" | "ext::ai::MistralProviderConfig" | "ext::ai::OpenAIProviderConfig">;
+], "ext::ai::AnthropicProviderConfig" | "ext::ai::CustomProviderConfig" | "ext::ai::MistralProviderConfig" | "ext::ai::OllamaProviderConfig" | "ext::ai::OpenAIProviderConfig">;
 const $ProviderConfig = $.makeType<$ProviderConfig>(_.spec, "b3da3af2-6dc0-5e6d-94fe-9e9d95bb6ada", _.syntax.literal);
 
 const ProviderConfig: $.$expr_PathNode<$.TypeSet<$ProviderConfig, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($ProviderConfig, $.Cardinality.Many), null);
@@ -278,6 +279,57 @@ const $MistralSmallModel = $.makeType<$MistralSmallModel>(_.spec, "b990f170-257c
 
 const MistralSmallModel: $.$expr_PathNode<$.TypeSet<$MistralSmallModel, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($MistralSmallModel, $.Cardinality.Many), null);
 
+export type $OllamaBgeM3ModelλShape = $.typeutil.flatten<$EmbeddingModelλShape & {
+}>;
+type $OllamaBgeM3Model = $.ObjectType<"ext::ai::OllamaBgeM3Model", $OllamaBgeM3ModelλShape, null, [
+  ...$EmbeddingModel['__exclusives__'],
+], never>;
+const $OllamaBgeM3Model = $.makeType<$OllamaBgeM3Model>(_.spec, "4dd35449-9ebe-5da6-87dc-035376804b73", _.syntax.literal);
+
+const OllamaBgeM3Model: $.$expr_PathNode<$.TypeSet<$OllamaBgeM3Model, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($OllamaBgeM3Model, $.Cardinality.Many), null);
+
+export type $OllamaLlama_3_2_ModelλShape = $.typeutil.flatten<$TextGenerationModelλShape & {
+}>;
+type $OllamaLlama_3_2_Model = $.ObjectType<"ext::ai::OllamaLlama_3_2_Model", $OllamaLlama_3_2_ModelλShape, null, [
+  ...$TextGenerationModel['__exclusives__'],
+], never>;
+const $OllamaLlama_3_2_Model = $.makeType<$OllamaLlama_3_2_Model>(_.spec, "ff9675f0-51c1-5fc1-91c7-0d540d029e12", _.syntax.literal);
+
+const OllamaLlama_3_2_Model: $.$expr_PathNode<$.TypeSet<$OllamaLlama_3_2_Model, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($OllamaLlama_3_2_Model, $.Cardinality.Many), null);
+
+export type $OllamaLlama_3_3_ModelλShape = $.typeutil.flatten<$TextGenerationModelλShape & {
+}>;
+type $OllamaLlama_3_3_Model = $.ObjectType<"ext::ai::OllamaLlama_3_3_Model", $OllamaLlama_3_3_ModelλShape, null, [
+  ...$TextGenerationModel['__exclusives__'],
+], never>;
+const $OllamaLlama_3_3_Model = $.makeType<$OllamaLlama_3_3_Model>(_.spec, "f02ae7b3-5fc9-5ac4-80fe-703b4c6073e3", _.syntax.literal);
+
+const OllamaLlama_3_3_Model: $.$expr_PathNode<$.TypeSet<$OllamaLlama_3_3_Model, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($OllamaLlama_3_3_Model, $.Cardinality.Many), null);
+
+export type $OllamaNomicEmbedTextModelλShape = $.typeutil.flatten<$EmbeddingModelλShape & {
+}>;
+type $OllamaNomicEmbedTextModel = $.ObjectType<"ext::ai::OllamaNomicEmbedTextModel", $OllamaNomicEmbedTextModelλShape, null, [
+  ...$EmbeddingModel['__exclusives__'],
+], never>;
+const $OllamaNomicEmbedTextModel = $.makeType<$OllamaNomicEmbedTextModel>(_.spec, "73ef8fa8-c501-5498-b946-32ffa6f60661", _.syntax.literal);
+
+const OllamaNomicEmbedTextModel: $.$expr_PathNode<$.TypeSet<$OllamaNomicEmbedTextModel, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($OllamaNomicEmbedTextModel, $.Cardinality.Many), null);
+
+export type $OllamaProviderConfigλShape = $.typeutil.flatten<Omit<$ProviderConfigλShape, "name" | "display_name" | "api_url" | "secret" | "api_style"> & {
+  "name": $.PropertyDesc<_std.$str, $.Cardinality.One, true, false, true, true>;
+  "display_name": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, true, true>;
+  "api_url": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, true, true>;
+  "secret": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, true, true>;
+  "api_style": $.PropertyDesc<$ProviderAPIStyle, $.Cardinality.One, false, false, false, true>;
+}>;
+type $OllamaProviderConfig = $.ObjectType<"ext::ai::OllamaProviderConfig", $OllamaProviderConfigλShape, null, [
+  ...$ProviderConfig['__exclusives__'],
+  {name: {__element__: _std.$str, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
+], "ext::ai::OllamaProviderConfig">;
+const $OllamaProviderConfig = $.makeType<$OllamaProviderConfig>(_.spec, "f5e0e8f7-27ff-5b17-b5b1-4dae9c672340", _.syntax.literal);
+
+const OllamaProviderConfig: $.$expr_PathNode<$.TypeSet<$OllamaProviderConfig, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($OllamaProviderConfig, $.Cardinality.Many), null);
+
 export type $OpenAIGPT_3_5_TurboModelλShape = $.typeutil.flatten<$TextGenerationModelλShape & {
 }>;
 type $OpenAIGPT_3_5_TurboModel = $.ObjectType<"ext::ai::OpenAIGPT_3_5_TurboModel", $OpenAIGPT_3_5_TurboModelλShape, null, [
@@ -409,6 +461,62 @@ const $PixtralModel = $.makeType<$PixtralModel>(_.spec, "56c15b6b-2b92-571a-a8d6
 
 const PixtralModel: $.$expr_PathNode<$.TypeSet<$PixtralModel, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($PixtralModel, $.Cardinality.Many), null);
 
+type searchλFuncExpr<
+  P1 extends $.TypeSet<$.AnyObjectType>,
+  P2 extends $.TypeSet<$.ArrayType<_std.$float32>>,
+> = $.$expr_Function<
+  $.NamedTupleType<{object: $.AnyObjectType, distance: _std.$float64}>, $.cardutil.overrideLowerBound<$.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.paramCardinality<P2>>, "Zero">
+>;
+type searchλFuncExpr2<
+  P1 extends $.TypeSet<$.AnyObjectType>,
+  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$str>>,
+> = $.$expr_Function<
+  $.NamedTupleType<{object: $.AnyObjectType, distance: _std.$float64}>, $.cardutil.overrideLowerBound<$.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.paramCardinality<P2>>, "Zero">
+>;
+/**
+ * 
+        Search an object using its ext::ai::index index.
+        Returns objects that match the specified semantic query and the
+        similarity score.
+    
+ */
+function search<
+  P1 extends $.TypeSet<$.AnyObjectType>,
+  P2 extends $.TypeSet<$.ArrayType<_std.$float32>>,
+>(
+  object: P1,
+  query: P2,
+): searchλFuncExpr<P1, P2>;
+/**
+ * 
+        Search an object using its ext::ai::index index.
+        Gets an embedding for the query from the ai provider then
+        returns objects that match the specified semantic query and the
+        similarity score.
+    
+ */
+function search<
+  P1 extends $.TypeSet<$.AnyObjectType>,
+  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$str>>,
+>(
+  object: P1,
+  query: P2,
+): searchλFuncExpr2<P1, P2>;
+function search(...args: any[]) {
+  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('ext::ai::search', args, _.spec, [
+    {args: [{typeId: "00000000-0000-0000-0000-000000000003", optional: false, setoftype: false, variadic: false}, {typeId: "a2e5149c-6c82-58a4-a588-c4a064088ad5", optional: false, setoftype: false, variadic: false}], returnTypeId: "e192a3f3-7f95-53e9-a954-697d4bebfd84", returnTypemod: "OptionalType"},
+    {args: [{typeId: "00000000-0000-0000-0000-000000000003", optional: false, setoftype: false, variadic: false}, {typeId: "00000000-0000-0000-0000-000000000101", optional: false, setoftype: false, variadic: false}], returnTypeId: "e192a3f3-7f95-53e9-a954-697d4bebfd84", returnTypemod: "OptionalType"},
+  ]);
+  return _.syntax.$expressionify({
+    __kind__: $.ExpressionKind.Function,
+    __element__: returnType,
+    __cardinality__: cardinality,
+    __name__: "ext::ai::search",
+    __args__: positionalArgs,
+    __namedargs__: namedArgs,
+  }) as any;
+};
+
 type to_contextλFuncExpr<
   P1 extends $.TypeSet<$.AnyObjectType>,
 > = $.$expr_Function<
@@ -436,65 +544,9 @@ function to_context(...args: any[]) {
   }) as any;
 };
 
-type searchλFuncExpr<
-  P1 extends $.TypeSet<$.AnyObjectType>,
-  P2 extends $.TypeSet<$.ArrayType<_std.$float32>>,
-> = $.$expr_Function<
-  $.NamedTupleType<{object: $.AnyObjectType, distance: _std.$float64}>, $.cardutil.overrideLowerBound<$.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.paramCardinality<P2>>, "Zero">
->;
-type searchλFuncExpr2<
-  P1 extends $.TypeSet<$.AnyObjectType>,
-  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$str>>,
-> = $.$expr_Function<
-  $.NamedTupleType<{object: $.AnyObjectType, distance: _std.$float64}>, $.cardutil.overrideLowerBound<$.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.paramCardinality<P2>>, "Zero">
->;
-/**
- * 
-         Search an object using its ext::ai::index index.
-         Returns objects that match the specified semantic query and the
-         similarity score.
-     
- */
-function search<
-  P1 extends $.TypeSet<$.AnyObjectType>,
-  P2 extends $.TypeSet<$.ArrayType<_std.$float32>>,
->(
-  object: P1,
-  query: P2,
-): searchλFuncExpr<P1, P2>;
-/**
- * 
-         Search an object using its ext::ai::index index.
-         Gets an embedding for the query from the ai provider then
-         returns objects that match the specified semantic query and the
-         similarity score.
-     
- */
-function search<
-  P1 extends $.TypeSet<$.AnyObjectType>,
-  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$str>>,
->(
-  object: P1,
-  query: P2,
-): searchλFuncExpr2<P1, P2>;
-function search(...args: any[]) {
-  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('ext::ai::search', args, _.spec, [
-    {args: [{typeId: "00000000-0000-0000-0000-000000000003", optional: false, setoftype: false, variadic: false}, {typeId: "a2e5149c-6c82-58a4-a588-c4a064088ad5", optional: false, setoftype: false, variadic: false}], returnTypeId: "e192a3f3-7f95-53e9-a954-697d4bebfd84", returnTypemod: "OptionalType"},
-    {args: [{typeId: "00000000-0000-0000-0000-000000000003", optional: false, setoftype: false, variadic: false}, {typeId: "00000000-0000-0000-0000-000000000101", optional: false, setoftype: false, variadic: false}], returnTypeId: "e192a3f3-7f95-53e9-a954-697d4bebfd84", returnTypemod: "OptionalType"},
-  ]);
-  return _.syntax.$expressionify({
-    __kind__: $.ExpressionKind.Function,
-    __element__: returnType,
-    __cardinality__: cardinality,
-    __name__: "ext::ai::search",
-    __args__: positionalArgs,
-    __namedargs__: namedArgs,
-  }) as any;
-};
 
 
-
-export { ChatParticipantRole, DistanceFunction, IndexType, ProviderAPIStyle, $Model, Model, $TextGenerationModel, TextGenerationModel, $AnthropicClaude3HaikuModel, AnthropicClaude3HaikuModel, $AnthropicClaude3OpusModel, AnthropicClaude3OpusModel, $AnthropicClaude3SonnetModel, AnthropicClaude3SonnetModel, $AnthropicClaude_3_5_HaikuModel, AnthropicClaude_3_5_HaikuModel, $AnthropicClaude_3_5_SonnetModel, AnthropicClaude_3_5_SonnetModel, $ProviderConfig, ProviderConfig, $AnthropicProviderConfig, AnthropicProviderConfig, $ChatPrompt, ChatPrompt, $ChatPromptMessage, ChatPromptMessage, $CodestralMamba, CodestralMamba, $CodestralModel, CodestralModel, $Config, Config, $CustomProviderConfig, CustomProviderConfig, $EmbeddingModel, EmbeddingModel, $Ministral_3B_Model, Ministral_3B_Model, $Ministral_8B_Model, Ministral_8B_Model, $MistralEmbedModel, MistralEmbedModel, $MistralLargeModel, MistralLargeModel, $MistralMediumModel, MistralMediumModel, $MistralNemo, MistralNemo, $MistralProviderConfig, MistralProviderConfig, $MistralSmallModel, MistralSmallModel, $OpenAIGPT_3_5_TurboModel, OpenAIGPT_3_5_TurboModel, $OpenAIGPT_4_Model, OpenAIGPT_4_Model, $OpenAIGPT_4_TurboModel, OpenAIGPT_4_TurboModel, $OpenAIGPT_4_TurboPreviewModel, OpenAIGPT_4_TurboPreviewModel, $OpenAIGPT_4o_MiniModel, OpenAIGPT_4o_MiniModel, $OpenAIGPT_4o_Model, OpenAIGPT_4o_Model, $OpenAIProviderConfig, OpenAIProviderConfig, $OpenAITextEmbedding3LargeModel, OpenAITextEmbedding3LargeModel, $OpenAITextEmbedding3SmallModel, OpenAITextEmbedding3SmallModel, $OpenAITextEmbeddingAda002Model, OpenAITextEmbeddingAda002Model, $OpenAI_O1_MiniModel, OpenAI_O1_MiniModel, $OpenAI_O1_PreviewModel, OpenAI_O1_PreviewModel, $PixtralLargeModel, PixtralLargeModel, $PixtralModel, PixtralModel };
+export { ChatParticipantRole, DistanceFunction, IndexType, ProviderAPIStyle, $Model, Model, $TextGenerationModel, TextGenerationModel, $AnthropicClaude3HaikuModel, AnthropicClaude3HaikuModel, $AnthropicClaude3OpusModel, AnthropicClaude3OpusModel, $AnthropicClaude3SonnetModel, AnthropicClaude3SonnetModel, $AnthropicClaude_3_5_HaikuModel, AnthropicClaude_3_5_HaikuModel, $AnthropicClaude_3_5_SonnetModel, AnthropicClaude_3_5_SonnetModel, $ProviderConfig, ProviderConfig, $AnthropicProviderConfig, AnthropicProviderConfig, $ChatPrompt, ChatPrompt, $ChatPromptMessage, ChatPromptMessage, $CodestralMamba, CodestralMamba, $CodestralModel, CodestralModel, $Config, Config, $CustomProviderConfig, CustomProviderConfig, $EmbeddingModel, EmbeddingModel, $Ministral_3B_Model, Ministral_3B_Model, $Ministral_8B_Model, Ministral_8B_Model, $MistralEmbedModel, MistralEmbedModel, $MistralLargeModel, MistralLargeModel, $MistralMediumModel, MistralMediumModel, $MistralNemo, MistralNemo, $MistralProviderConfig, MistralProviderConfig, $MistralSmallModel, MistralSmallModel, $OllamaBgeM3Model, OllamaBgeM3Model, $OllamaLlama_3_2_Model, OllamaLlama_3_2_Model, $OllamaLlama_3_3_Model, OllamaLlama_3_3_Model, $OllamaNomicEmbedTextModel, OllamaNomicEmbedTextModel, $OllamaProviderConfig, OllamaProviderConfig, $OpenAIGPT_3_5_TurboModel, OpenAIGPT_3_5_TurboModel, $OpenAIGPT_4_Model, OpenAIGPT_4_Model, $OpenAIGPT_4_TurboModel, OpenAIGPT_4_TurboModel, $OpenAIGPT_4_TurboPreviewModel, OpenAIGPT_4_TurboPreviewModel, $OpenAIGPT_4o_MiniModel, OpenAIGPT_4o_MiniModel, $OpenAIGPT_4o_Model, OpenAIGPT_4o_Model, $OpenAIProviderConfig, OpenAIProviderConfig, $OpenAITextEmbedding3LargeModel, OpenAITextEmbedding3LargeModel, $OpenAITextEmbedding3SmallModel, OpenAITextEmbedding3SmallModel, $OpenAITextEmbeddingAda002Model, OpenAITextEmbeddingAda002Model, $OpenAI_O1_MiniModel, OpenAI_O1_MiniModel, $OpenAI_O1_PreviewModel, OpenAI_O1_PreviewModel, $PixtralLargeModel, PixtralLargeModel, $PixtralModel, PixtralModel };
 
 type __defaultExports = {
   "ChatParticipantRole": typeof ChatParticipantRole;
@@ -525,6 +577,11 @@ type __defaultExports = {
   "MistralNemo": typeof MistralNemo;
   "MistralProviderConfig": typeof MistralProviderConfig;
   "MistralSmallModel": typeof MistralSmallModel;
+  "OllamaBgeM3Model": typeof OllamaBgeM3Model;
+  "OllamaLlama_3_2_Model": typeof OllamaLlama_3_2_Model;
+  "OllamaLlama_3_3_Model": typeof OllamaLlama_3_3_Model;
+  "OllamaNomicEmbedTextModel": typeof OllamaNomicEmbedTextModel;
+  "OllamaProviderConfig": typeof OllamaProviderConfig;
   "OpenAIGPT_3_5_TurboModel": typeof OpenAIGPT_3_5_TurboModel;
   "OpenAIGPT_4_Model": typeof OpenAIGPT_4_Model;
   "OpenAIGPT_4_TurboModel": typeof OpenAIGPT_4_TurboModel;
@@ -539,8 +596,8 @@ type __defaultExports = {
   "OpenAI_O1_PreviewModel": typeof OpenAI_O1_PreviewModel;
   "PixtralLargeModel": typeof PixtralLargeModel;
   "PixtralModel": typeof PixtralModel;
-  "to_context": typeof to_context;
-  "search": typeof search
+  "search": typeof search;
+  "to_context": typeof to_context
 };
 const __defaultExports: __defaultExports = {
   "ChatParticipantRole": ChatParticipantRole,
@@ -571,6 +628,11 @@ const __defaultExports: __defaultExports = {
   "MistralNemo": MistralNemo,
   "MistralProviderConfig": MistralProviderConfig,
   "MistralSmallModel": MistralSmallModel,
+  "OllamaBgeM3Model": OllamaBgeM3Model,
+  "OllamaLlama_3_2_Model": OllamaLlama_3_2_Model,
+  "OllamaLlama_3_3_Model": OllamaLlama_3_3_Model,
+  "OllamaNomicEmbedTextModel": OllamaNomicEmbedTextModel,
+  "OllamaProviderConfig": OllamaProviderConfig,
   "OpenAIGPT_3_5_TurboModel": OpenAIGPT_3_5_TurboModel,
   "OpenAIGPT_4_Model": OpenAIGPT_4_Model,
   "OpenAIGPT_4_TurboModel": OpenAIGPT_4_TurboModel,
@@ -585,7 +647,7 @@ const __defaultExports: __defaultExports = {
   "OpenAI_O1_PreviewModel": OpenAI_O1_PreviewModel,
   "PixtralLargeModel": PixtralLargeModel,
   "PixtralModel": PixtralModel,
-  "to_context": to_context,
-  "search": search
+  "search": search,
+  "to_context": to_context
 };
 export default __defaultExports;

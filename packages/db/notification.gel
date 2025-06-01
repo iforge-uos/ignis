@@ -2,7 +2,7 @@ module notification {
     type MailingList extending default::Auditable {
         required name: str;
         required description: str;
-        multi link subscribers := .<mailing_list_subscriptions[is users::User];
+        multi subscribers := .<mailing_list_subscriptions[is users::User];
     }
 
     scalar type Type extending enum<

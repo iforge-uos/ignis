@@ -100,7 +100,7 @@ export type $BaseObjectλShape = $.typeutil.flatten<{
 }>;
 type $BaseObject = $.ObjectType<"std::BaseObject", $BaseObjectλShape, null, [
   {id: {__element__: $uuid, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
-], "ai_rep::Question" | "cfg::Auth" | "cfg::DatabaseConfig" | "cfg::BranchConfig" | "cfg::Config" | "cfg::InstanceConfig" | "cfg::JWT" | "cfg::Password" | "cfg::SCRAM" | "cfg::SMTPProviderConfig" | "cfg::Trust" | "cfg::mTLS" | "users::User" | "default::user" | "event::Event" | "ext::ai::AnthropicProviderConfig" | "ext::ai::ChatPrompt" | "ext::ai::ChatPromptMessage" | "ext::ai::Config" | "ext::ai::CustomProviderConfig" | "ext::ai::MistralProviderConfig" | "ext::ai::OpenAIProviderConfig" | "ext::auth::AppleOAuthProvider" | "ext::auth::AuthConfig" | "ext::auth::AzureOAuthProvider" | "ext::auth::Identity" | "ext::auth::ClientTokenIdentity" | "ext::auth::DiscordOAuthProvider" | "ext::auth::EmailFactor" | "ext::auth::EmailPasswordFactor" | "ext::auth::EmailPasswordProviderConfig" | "ext::auth::GitHubOAuthProvider" | "ext::auth::GoogleOAuthProvider" | "ext::auth::LocalIdentity" | "ext::auth::MagicLinkFactor" | "ext::auth::MagicLinkProviderConfig" | "ext::auth::OpenIDConnectProvider" | "ext::auth::PKCEChallenge" | "ext::auth::SlackOAuthProvider" | "ext::auth::UIConfig" | "ext::auth::WebAuthnAuthenticationChallenge" | "ext::auth::WebAuthnFactor" | "ext::auth::WebAuthnProviderConfig" | "ext::auth::WebAuthnRegistrationChallenge" | "ext::auth::WebhookConfig" | "ext::pg_trgm::Config" | "ext::pgvector::Config" | "notification::AllTarget" | "notification::Notification" | "notification::AuthoredNotification" | "notification::MailingList" | "notification::SystemNotification" | "schema::AccessPolicy" | "schema::Alias" | "schema::Annotation" | "schema::Array" | "schema::ArrayExprAlias" | "schema::Cast" | "schema::Constraint" | "schema::Delta" | "schema::Extension" | "schema::Function" | "schema::FutureBehavior" | "schema::Global" | "schema::Index" | "schema::Link" | "schema::Migration" | "schema::Module" | "schema::MultiRange" | "schema::MultiRangeExprAlias" | "schema::ObjectType" | "schema::Operator" | "schema::Parameter" | "schema::Property" | "schema::PseudoType" | "schema::Range" | "schema::RangeExprAlias" | "schema::Rewrite" | "schema::ScalarType" | "schema::Trigger" | "schema::Tuple" | "schema::TupleElement" | "schema::TupleExprAlias" | "sign_in::Agreement" | "sign_in::Location" | "sign_in::QueuePlace" | "sign_in::Reason" | "sign_in::SignIn" | "sign_in::UserRegistration" | "std::net::http::Response" | "std::net::http::ScheduledRequest" | "sys::Branch" | "sys::Database" | "sys::ExtensionPackage" | "sys::ExtensionPackageMigration" | "sys::QueryStats" | "sys::Role" | "team::Team" | "training::Answer" | "training::TrainingPage" | "training::Page" | "training::Question" | "training::Session" | "training::Training" | "users::Infraction" | "users::Integration" | "users::Rep" | "users::Role" | "users::SettingTemplate" | "users::UserSettingValue">;
+], "ai_rep::Question" | "cfg::Auth" | "cfg::DatabaseConfig" | "cfg::BranchConfig" | "cfg::Config" | "cfg::InstanceConfig" | "cfg::JWT" | "cfg::Password" | "cfg::SCRAM" | "cfg::SMTPProviderConfig" | "cfg::Trust" | "cfg::mTLS" | "users::User" | "default::user" | "event::Event" | "ext::ai::AnthropicProviderConfig" | "ext::ai::ChatPrompt" | "ext::ai::ChatPromptMessage" | "ext::ai::Config" | "ext::ai::CustomProviderConfig" | "ext::ai::MistralProviderConfig" | "ext::ai::OllamaProviderConfig" | "ext::ai::OpenAIProviderConfig" | "ext::auth::AppleOAuthProvider" | "ext::auth::AuthConfig" | "ext::auth::AzureOAuthProvider" | "ext::auth::Identity" | "ext::auth::ClientTokenIdentity" | "ext::auth::DiscordOAuthProvider" | "ext::auth::EmailFactor" | "ext::auth::EmailPasswordFactor" | "ext::auth::EmailPasswordProviderConfig" | "ext::auth::GitHubOAuthProvider" | "ext::auth::GoogleOAuthProvider" | "ext::auth::LocalIdentity" | "ext::auth::MagicLinkFactor" | "ext::auth::MagicLinkProviderConfig" | "ext::auth::OpenIDConnectProvider" | "ext::auth::PKCEChallenge" | "ext::auth::SlackOAuthProvider" | "ext::auth::UIConfig" | "ext::auth::WebAuthnAuthenticationChallenge" | "ext::auth::WebAuthnFactor" | "ext::auth::WebAuthnProviderConfig" | "ext::auth::WebAuthnRegistrationChallenge" | "ext::auth::WebhookConfig" | "ext::pg_trgm::Config" | "ext::pgvector::Config" | "notification::AllTarget" | "notification::Notification" | "notification::AuthoredNotification" | "notification::MailingList" | "notification::SystemNotification" | "schema::AccessPolicy" | "schema::Alias" | "schema::Annotation" | "schema::Array" | "schema::ArrayExprAlias" | "schema::Cast" | "schema::Constraint" | "schema::Delta" | "schema::Extension" | "schema::Function" | "schema::FutureBehavior" | "schema::Global" | "schema::Index" | "schema::Link" | "schema::Migration" | "schema::Module" | "schema::MultiRange" | "schema::MultiRangeExprAlias" | "schema::ObjectType" | "schema::Operator" | "schema::Parameter" | "schema::Property" | "schema::PseudoType" | "schema::Range" | "schema::RangeExprAlias" | "schema::Rewrite" | "schema::ScalarType" | "schema::Trigger" | "schema::Tuple" | "schema::TupleElement" | "schema::TupleExprAlias" | "sign_in::Agreement" | "sign_in::Location" | "sign_in::QueuePlace" | "sign_in::Reason" | "sign_in::SignIn" | "sign_in::UserRegistration" | "std::net::http::Response" | "std::net::http::ScheduledRequest" | "sys::Branch" | "sys::Database" | "sys::ExtensionPackage" | "sys::ExtensionPackageMigration" | "sys::QueryStats" | "sys::Role" | "team::Team" | "tools::Booking" | "tools::Tool" | "training::Answer" | "training::TrainingPage" | "training::Page" | "training::Question" | "training::Session" | "training::Training" | "users::Infraction" | "users::Integration" | "users::Rep" | "users::Role" | "users::SettingTemplate" | "users::UserSettingValue">;
 const $BaseObject = $.makeType<$BaseObject>(_.spec, "0d14e49f-d9f9-51f0-b8f4-c432982cbac2", _.syntax.literal);
 
 const BaseObject: $.$expr_PathNode<$.TypeSet<$BaseObject, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($BaseObject, $.Cardinality.Many), null);
@@ -109,7 +109,7 @@ export type $Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape = $.typeutil.flatten
 }>;
 type $Object_8ce8c71ee4fa5f73840c22d7eaa58588 = $.ObjectType<"std::Object", $Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape, null, [
   ...$BaseObject['__exclusives__'],
-], "ai_rep::Question" | "users::User" | "default::user" | "event::Event" | "notification::AllTarget" | "notification::Notification" | "notification::AuthoredNotification" | "notification::MailingList" | "notification::SystemNotification" | "sign_in::Agreement" | "sign_in::Location" | "sign_in::QueuePlace" | "sign_in::Reason" | "sign_in::SignIn" | "sign_in::UserRegistration" | "team::Team" | "training::Answer" | "training::TrainingPage" | "training::Page" | "training::Question" | "training::Session" | "training::Training" | "users::Infraction" | "users::Integration" | "users::Rep" | "users::Role" | "users::SettingTemplate" | "users::UserSettingValue">;
+], "ai_rep::Question" | "users::User" | "default::user" | "event::Event" | "notification::AllTarget" | "notification::Notification" | "notification::AuthoredNotification" | "notification::MailingList" | "notification::SystemNotification" | "sign_in::Agreement" | "sign_in::Location" | "sign_in::QueuePlace" | "sign_in::Reason" | "sign_in::SignIn" | "sign_in::UserRegistration" | "team::Team" | "tools::Booking" | "tools::Tool" | "training::Answer" | "training::TrainingPage" | "training::Page" | "training::Question" | "training::Session" | "training::Training" | "users::Infraction" | "users::Integration" | "users::Rep" | "users::Role" | "users::SettingTemplate" | "users::UserSettingValue">;
 export type $Object = $Object_8ce8c71ee4fa5f73840c22d7eaa58588
 const $Object_8ce8c71ee4fa5f73840c22d7eaa58588 = $.makeType<$Object_8ce8c71ee4fa5f73840c22d7eaa58588>(_.spec, "8ce8c71e-e4fa-5f73-840c-22d7eaa58588", _.syntax.literal);
 
@@ -4805,11 +4805,16 @@ type to_bytesλFuncExpr<
   $bytes, $.cardutil.paramCardinality<P1>
 >;
 type to_bytesλFuncExpr2<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$uuid>>,
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$json>>,
 > = $.$expr_Function<
   $bytes, $.cardutil.paramCardinality<P1>
 >;
 type to_bytesλFuncExpr3<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$uuid>>,
+> = $.$expr_Function<
+  $bytes, $.cardutil.paramCardinality<P1>
+>;
+type to_bytesλFuncExpr4<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$number>>,
   P2 extends _.castMaps.orScalarLiteral<$.TypeSet<$Endian>>,
 > = $.$expr_Function<
@@ -4824,13 +4829,21 @@ function to_bytes<
   s: P1,
 ): to_bytesλFuncExpr<P1>;
 /**
+ * Convert a json value to a binary UTF-8 string.
+ */
+function to_bytes<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$json>>,
+>(
+  j: P1,
+): to_bytesλFuncExpr2<P1>;
+/**
  * Convert an UUID to binary format.
  */
 function to_bytes<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$uuid>>,
 >(
   val: P1,
-): to_bytesλFuncExpr2<P1>;
+): to_bytesλFuncExpr3<P1>;
 /**
  * Convert an int16 using specified endian binary format.
  */
@@ -4840,10 +4853,11 @@ function to_bytes<
 >(
   val: P1,
   endian: P2,
-): to_bytesλFuncExpr3<P1, P2>;
+): to_bytesλFuncExpr4<P1, P2>;
 function to_bytes(...args: any[]) {
   const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('std::to_bytes', args, _.spec, [
     {args: [{typeId: "00000000-0000-0000-0000-000000000101", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000102"},
+    {args: [{typeId: "00000000-0000-0000-0000-00000000010f", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000102"},
     {args: [{typeId: "00000000-0000-0000-0000-000000000100", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000102"},
     {args: [{typeId: "00000000-0000-0000-0000-0000000001ff", optional: false, setoftype: false, variadic: false}, {typeId: "e4a1d11b-227e-5744-a0c9-31f9cd756e7b", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000102"},
   ]);
