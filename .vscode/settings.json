@@ -8,6 +8,8 @@
     "makerspace",
     "ORPC",
     "Selectability",
+    "serialisers",
+    "serialiser",
     "supervisable",
     "tribool",
     "ucard"
