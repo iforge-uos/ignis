@@ -1,0 +1,34 @@
+module event {
+    scalar type Type extending enum<
+        WORKSHOP,
+        LECTURE,
+        MEETUP,
+        HACKATHON,
+        EXHIBITION,
+        WEBINAR,
+    >;
+
+    type Event extending default::CreatedAt {
+        required title: str;
+        required description: str;
+        required type: Type;
+        required starts_at: datetime;
+        ends_at: datetime;
+        required multi organiser: users::User;
+        multi attendees: users::User {
+            registered_at: datetime {
+                readonly := true;
+                default := datetime_of_statement();
+                # rewrite insert using (datetime_of_statement())
+            };
+        }
+        multi interested: users::User {
+            registered_at: datetime {
+                readonly := true;
+                default := datetime_of_statement();
+                # rewrite insert using (datetime_of_statement())
+            };
+        }
+        # on insert add to short term closures? also add location
+    }
+}

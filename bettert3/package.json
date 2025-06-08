@@ -6,17 +6,10 @@
     "check": "biome check --write .",
     "dev": "turbo dev",
     "build": "turbo build",
-    "check-types": "turbo check-types",
-    "dev:native": "turbo -F native dev",
-    "dev:web": "turbo -F web dev",
-    "dev:server": "turbo -F server dev"
-  },
-  "dependencies": {
-    "@orpc/tanstack-query": "^0.0.1"
+    "check-types": "turbo check-types"
   },
   "devDependencies": {
-    "turbo": "^2.4.2",
-    "cross-env": "^7.0.3",
+    "turbo": "^2.5.4",
     "@biomejs/biome": "1.9.4"
   },
   "packageManager": "bun@1.2.15"

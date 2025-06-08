@@ -1,12 +1,12 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "vcs": {
     "enabled": false,
     "clientKind": "git",
     "useIgnoreFile": true
   },
   "files": {
-    "ignore": ["apps/web/src/routeTree.gen.ts"]
+    "ignore": ["apps/forge/src/routeTree.gen.ts"]
   },
   "formatter": {
     "enabled": true,
@@ -20,7 +20,23 @@
     "rules": {
       "recommended": true,
       "correctness": {
+        "useHookAtTopLevel": "error",
+        "noUnusedVariables": "warn",
+        "noConstantCondition": "off",
         "useExhaustiveDependencies": "info"
+      },
+      "suspicious": {
+        "noExplicitAny": "off"
+      },
+      "style": {
+        "noNonNullAssertion": "off",
+        "useCollapsedElseIf": "warn",
+        "useShorthandArrayType": "error",
+        "useImportType": "off"
+      },
+      "complexity": {
+        "useSimplifiedLogicExpression": "warn",
+        "noUselessTernary": "warn"
       },
       "nursery": {
         "useSortedClasses": {
@@ -35,7 +51,16 @@
   },
   "javascript": {
     "formatter": {
-      "quoteStyle": "double"
+      "quoteStyle": "double",
+      "trailingCommas": "all",
+      "lineWidth": 120,
+      "indentWidth": 2,
+      "indentStyle": "space"
+    }
+  },
+  "json": {
+    "parser": {
+      "allowComments": true
     }
   }
 }

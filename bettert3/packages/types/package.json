@@ -1,0 +1,38 @@
+{
+  "name": "@packages/types",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "author": "iForge IT team",
+  "license": "GPL-3.0-or-later",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/src/index.js",
+      "require": "./dist/src/index.js",
+      "types": "./dist/src/index.d.ts"
+    },
+    "./*": {
+      "import": "./dist/src/*.js",
+      "require": "./dist/src/*.js",
+      "types": "./dist/src/*.d.ts"
+    }
+  },
+  "dependencies": {
+    "@nivo/calendar": "^0.85.1",
+    "@trpc/client": "^10.45.2",
+    "@trpc/server": "^10.45.2",
+    "react-dom": "^18.3.1",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@js-temporal/polyfill": "^0.4.4",
+    "@orpc/server": "^0.38.0",
+    "gel": "2.0.1"
+  }
+}

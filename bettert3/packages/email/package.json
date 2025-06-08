@@ -1,0 +1,7 @@
+{
+  "name": "@packages/email",
+  "scripts": {
+    "email": "cross-env OP_ACCOUNT=iforge.1password.com op run --env-file=config/anvil/.env.development.tpl -- pnpm --filter anvil-2 exec email preview src/email/templates",
+    "email-check": "cross-env OP_ACCOUNT=iforge.1password.com op run --env-file=config/anvil/.env.development.tpl -- pnpm --filter anvil-2 exec email check"
+  }
+}

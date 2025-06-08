@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "emitDeclarationOnly": true,
+    "outDir": "./dist",
+    "rootDir": "./",
+    "composite": true
+  },
+  "include": [
+    "edgeql-js/**/*.ts",
+    "zod/**/*.ts",
+    "queries/**/*.ts",
+    "interfaces.ts"
+  ],
+  "exclude": ["node_modules", "dist"]
+}

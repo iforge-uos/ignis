@@ -1,0 +1,8 @@
+[instance]
+server-version = "nightly"
+
+[project]
+schema-dir = "packages/db"
+
+[hooks]
+schema.update.after = "pnpm regen"

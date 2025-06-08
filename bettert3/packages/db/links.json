@@ -1,0 +1,5870 @@
+[
+    {
+      "source": {
+        "__type__": {
+          "name": "schema::ObjectType"
+        },
+        "computed_fields": [
+
+        ],
+        "builtin": false,
+        "internal": false,
+        "name": "users::UserSettingValue",
+        "id": "2a76c6dc-f86c-11ee-9ee4-71b05cf6817c",
+        "indexes": [
+          {
+            "inherited_fields": [
+              "deferred"
+            ],
+            "computed_fields": [
+
+            ],
+            "builtin": false,
+            "internal": false,
+            "name": "__::idx",
+            "id": "2a7a2a82-f86c-11ee-9886-41a189663c02",
+            "abstract": false,
+            "is_abstract": false,
+            "final": false,
+            "is_final": false,
+            "expr": "(.user, .template)",
+            "except_expr": null,
+            "deferrability": "Prohibited",
+            "deferred": false,
+            "kwargs": [
+
+            ],
+            "@owned": true,
+            "@is_owned": true
+          }
+        ],
+        "pointers": [
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a76fa8b-f86c-11ee-9fcb-b7fa18c40640",
+            "name": "__type__",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "protected",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a77885b-f86c-11ee-b538-07302edc5ce6",
+            "name": "id",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": "std::uuid_generate_v1mc()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a78bc0d-f86c-11ee-9ed1-9bcc952d2194",
+            "name": "template",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a7931df-f86c-11ee-8eda-955ca7157756",
+            "name": "user",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a7a5c71-f86c-11ee-bf8f-1ba182845734",
+            "name": "value",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          }
+        ]
+      },
+      "target": {
+        "id": "29c43a34-f86c-11ee-a6b1-c1a89f83e7fe",
+        "name": "users::User",
+        "internal": false,
+        "builtin": false,
+        "computed_fields": [
+
+        ],
+        "final": false,
+        "is_final": false,
+        "abstract": false,
+        "is_abstract": false,
+        "inherited_fields": [
+
+        ],
+        "from_alias": false,
+        "is_from_alias": false,
+        "expr": null,
+        "compound_type": false,
+        "is_compound_type": false
+      },
+      "secret": false,
+      "expr": null,
+      "default": null,
+      "readonly": false,
+      "required": true,
+      "cardinality": "One",
+      "inherited_fields": [
+
+      ],
+      "computed_fields": [
+
+      ],
+      "builtin": false,
+      "internal": false,
+      "name": "user",
+      "id": "2a7931df-f86c-11ee-8eda-955ca7157756",
+      "abstract": false,
+      "is_abstract": false,
+      "final": false,
+      "is_final": false,
+      "on_target_delete": "Restrict",
+      "on_source_delete": "Allow"
+    },
+    {
+      "source": {
+        "__type__": {
+          "name": "schema::ObjectType"
+        },
+        "computed_fields": [
+
+        ],
+        "builtin": false,
+        "internal": false,
+        "name": "users::User",
+        "id": "29c43a34-f86c-11ee-a6b1-c1a89f83e7fe",
+        "indexes": [
+
+        ],
+        "pointers": [
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29c47200-f86c-11ee-9f66-2d0d38b6ba68",
+            "name": "__type__",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "protected",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29c4e729-f86c-11ee-abbd-27eeed70dd05",
+            "name": "updated_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": "std::datetime_of_statement()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29c548dc-f86c-11ee-9695-2d0917e474dc",
+            "name": "id",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": "std::uuid_generate_v1mc()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29c66828-f86c-11ee-ba5e-275d2f7a8eed",
+            "name": "created_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": "std::datetime_of_statement()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "f85203ec-e827-11ef-a64a-3ffa9a7079ff",
+            "name": "identity",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29c7910a-f86c-11ee-9886-f9226f5d08d5",
+            "name": "referrals",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29c72ca2-f86c-11ee-8221-739a489b9062",
+            "name": "roles",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29c8d127-f86c-11ee-bafe-9b5037c53c00",
+            "name": "first_name",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29c8f872-f86c-11ee-ab76-d11ca45efa61",
+            "name": "last_name",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29cac4b0-f86c-11ee-9788-ddd5ce90f29a",
+            "name": "display_name",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": "(std::str_trim(((.first_name ++ ' ') ++ .last_name)) if (.last_name ?!= '') else .first_name)",
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29ccc4fd-f86c-11ee-b6cf-153860adac52",
+            "name": "email",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29d14be7-f86c-11ee-abb9-552899651c62",
+            "name": "organisational_unit",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29d1806f-f86c-11ee-8e05-d1e0efd939f9",
+            "name": "profile_picture",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29d1bcdb-f86c-11ee-8e00-7dcb399f7407",
+            "name": "pronouns",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29d1df0c-f86c-11ee-8720-3db2d778aa01",
+            "name": "ucard_number",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29d2bded-f86c-11ee-8580-5f027a80efa3",
+            "name": "username",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a3625cc-f86c-11ee-a825-5535a98b5db5",
+            "name": "agreements_signed",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a3b11e2-f86c-11ee-bd5f-235cfd8cdca6",
+            "name": "infractions",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+              "target",
+              "required"
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": ".<user[is users::Infraction]",
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a34e7bb-f86c-11ee-a91f-afb3888af15a",
+            "name": "mailing_list_subscriptions",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "f8577bf6-e827-11ef-a0c0-6793c5031a2b",
+            "name": "notifications",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a3859cf-f86c-11ee-8706-771f662cb92a",
+            "name": "training",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "04398974-1a13-11f0-be4d-4f4a382de57e",
+            "name": "sign_ins",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+              "target",
+              "required"
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": ".<user[is sign_in::SignIn]",
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          }
+        ]
+      },
+      "target": {
+        "id": "29c43a34-f86c-11ee-a6b1-c1a89f83e7fe",
+        "name": "users::User",
+        "internal": false,
+        "builtin": false,
+        "computed_fields": [
+
+        ],
+        "final": false,
+        "is_final": false,
+        "abstract": false,
+        "is_abstract": false,
+        "inherited_fields": [
+
+        ],
+        "from_alias": false,
+        "is_from_alias": false,
+        "expr": null,
+        "compound_type": false,
+        "is_compound_type": false
+      },
+      "secret": false,
+      "expr": null,
+      "default": null,
+      "readonly": false,
+      "required": false,
+      "cardinality": "Many",
+      "inherited_fields": [
+
+      ],
+      "computed_fields": [
+
+      ],
+      "builtin": false,
+      "internal": false,
+      "name": "referrals",
+      "id": "29c7910a-f86c-11ee-9886-f9226f5d08d5",
+      "abstract": false,
+      "is_abstract": false,
+      "final": false,
+      "is_final": false,
+      "on_target_delete": "Restrict",
+      "on_source_delete": "Allow"
+    },
+    {
+      "source": {
+        "__type__": {
+          "name": "schema::ObjectType"
+        },
+        "computed_fields": [
+
+        ],
+        "builtin": false,
+        "internal": false,
+        "name": "default::user",
+        "id": "f872e3be-e827-11ef-8e98-513f26e778c2",
+        "indexes": [
+
+        ],
+        "pointers": [
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "f872e9d6-e827-11ef-9309-f951e65fdb3f",
+            "name": "id",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": "std::uuid_generate_v1mc()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "f872ef62-e827-11ef-8d52-8b74b30a0f8f",
+            "name": "__type__",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "protected",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "f87312bc-e827-11ef-9921-d3a1bb2fa16f",
+            "name": "identity",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "f87346b0-e827-11ef-b5ac-61f51a8273b1",
+            "name": "referrals",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "f87356c8-e827-11ef-b8fb-53ae8de4a760",
+            "name": "roles",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "f87384ae-e827-11ef-94c0-615b958bc821",
+            "name": "created_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": "std::datetime_of_statement()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "f8738a62-e827-11ef-9d76-bdef48372e31",
+            "name": "display_name",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": "(std::str_trim(((.first_name ++ ' ') ++ .last_name)) if (.last_name ?!= '') else .first_name)",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "f8738f08-e827-11ef-98cd-7703a7d4ab0f",
+            "name": "email",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "f8739372-e827-11ef-914f-ff5dc702b004",
+            "name": "first_name",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "f87397d2-e827-11ef-99ed-9b15c7d9326b",
+            "name": "last_name",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "One",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "f8739c46-e827-11ef-b2a2-478e92f630af",
+            "name": "organisational_unit",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "f873a0a6-e827-11ef-8af9-1be7d940db07",
+            "name": "profile_picture",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "One",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "f873a510-e827-11ef-a101-4901b83e2e61",
+            "name": "pronouns",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "One",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "f873a9a2-e827-11ef-8217-81b6217dcb36",
+            "name": "ucard_number",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "f873aec0-e827-11ef-bd79-c18c0c1ed9a1",
+            "name": "updated_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": "std::datetime_of_statement()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "f873b410-e827-11ef-9b3b-d59fa5169848",
+            "name": "username",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "f872fcc8-e827-11ef-8f78-c1851db3f8ec",
+            "name": "agreements_signed",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "f8731e92-e827-11ef-9e82-19cd5c49aa20",
+            "name": "infractions",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "computable",
+              "cardinality",
+              "target",
+              "readonly",
+              "required",
+              "computed_link_alias",
+              "computed_link_alias_is_backward",
+              "expr"
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": ".<user[is users::Infraction]",
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "f8732a18-e827-11ef-9a16-09da7d64ae82",
+            "name": "mailing_list_subscriptions",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "f87336d4-e827-11ef-ace0-151326c03a13",
+            "name": "notifications",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "f87367da-e827-11ef-a5eb-43f18d07ec0d",
+            "name": "training",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "0447cc64-1a13-11f0-84d8-e1abae49f670",
+            "name": "sign_ins",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "computable",
+              "cardinality",
+              "target",
+              "readonly",
+              "required",
+              "computed_link_alias",
+              "computed_link_alias_is_backward",
+              "expr"
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": ".<user[is sign_in::SignIn]",
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          }
+        ]
+      },
+      "target": {
+        "id": "29c43a34-f86c-11ee-a6b1-c1a89f83e7fe",
+        "name": "users::User",
+        "internal": false,
+        "builtin": false,
+        "computed_fields": [
+
+        ],
+        "final": false,
+        "is_final": false,
+        "abstract": false,
+        "is_abstract": false,
+        "inherited_fields": [
+
+        ],
+        "from_alias": false,
+        "is_from_alias": false,
+        "expr": null,
+        "compound_type": false,
+        "is_compound_type": false
+      },
+      "secret": false,
+      "expr": null,
+      "default": null,
+      "readonly": false,
+      "required": false,
+      "cardinality": "Many",
+      "inherited_fields": [
+        "cardinality",
+        "readonly",
+        "target"
+      ],
+      "computed_fields": [
+
+      ],
+      "builtin": false,
+      "internal": false,
+      "name": "referrals",
+      "id": "f87346b0-e827-11ef-b5ac-61f51a8273b1",
+      "abstract": false,
+      "is_abstract": false,
+      "final": false,
+      "is_final": false,
+      "on_target_delete": "Restrict",
+      "on_source_delete": "Allow"
+    },
+    {
+      "source": {
+        "__type__": {
+          "name": "schema::ObjectType"
+        },
+        "computed_fields": [
+
+        ],
+        "builtin": false,
+        "internal": false,
+        "name": "event::Event",
+        "id": "2a1b87a3-f86c-11ee-a18c-118b431adf11",
+        "indexes": [
+
+        ],
+        "pointers": [
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a1bb936-f86c-11ee-a8e6-333992503670",
+            "name": "__type__",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "protected",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a1c32cb-f86c-11ee-a5d1-c9d76dc95253",
+            "name": "created_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": "std::datetime_of_statement()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a1c9a02-f86c-11ee-b76a-b70178a95690",
+            "name": "id",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": "std::uuid_generate_v1mc()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a1dbf85-f86c-11ee-aab9-c558f94d6a4d",
+            "name": "attendees",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "Many",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a1f0afa-f86c-11ee-b975-2f9c17e656c4",
+            "name": "organiser",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a1f7329-f86c-11ee-8117-7d9fdf001002",
+            "name": "description",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a1f8fff-f86c-11ee-8b06-5f9019f28b46",
+            "name": "ends_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a1fb1a8-f86c-11ee-8427-b5268f9d75e2",
+            "name": "starts_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a1fce39-f86c-11ee-8309-418f1f505eb8",
+            "name": "title",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a1fead8-f86c-11ee-9980-a3bc5aa1ff3d",
+            "name": "type",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          }
+        ]
+      },
+      "target": {
+        "id": "29c43a34-f86c-11ee-a6b1-c1a89f83e7fe",
+        "name": "users::User",
+        "internal": false,
+        "builtin": false,
+        "computed_fields": [
+
+        ],
+        "final": false,
+        "is_final": false,
+        "abstract": false,
+        "is_abstract": false,
+        "inherited_fields": [
+
+        ],
+        "from_alias": false,
+        "is_from_alias": false,
+        "expr": null,
+        "compound_type": false,
+        "is_compound_type": false
+      },
+      "secret": false,
+      "expr": null,
+      "default": null,
+      "readonly": false,
+      "required": true,
+      "cardinality": "Many",
+      "inherited_fields": [
+
+      ],
+      "computed_fields": [
+
+      ],
+      "builtin": false,
+      "internal": false,
+      "name": "attendees",
+      "id": "2a1dbf85-f86c-11ee-aab9-c558f94d6a4d",
+      "abstract": false,
+      "is_abstract": false,
+      "final": false,
+      "is_final": false,
+      "on_target_delete": "Restrict",
+      "on_source_delete": "Allow"
+    },
+    {
+      "source": {
+        "__type__": {
+          "name": "schema::ObjectType"
+        },
+        "computed_fields": [
+
+        ],
+        "builtin": false,
+        "internal": false,
+        "name": "event::Event",
+        "id": "2a1b87a3-f86c-11ee-a18c-118b431adf11",
+        "indexes": [
+
+        ],
+        "pointers": [
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a1bb936-f86c-11ee-a8e6-333992503670",
+            "name": "__type__",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "protected",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a1c32cb-f86c-11ee-a5d1-c9d76dc95253",
+            "name": "created_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": "std::datetime_of_statement()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a1c9a02-f86c-11ee-b76a-b70178a95690",
+            "name": "id",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": "std::uuid_generate_v1mc()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a1dbf85-f86c-11ee-aab9-c558f94d6a4d",
+            "name": "attendees",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "Many",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a1f0afa-f86c-11ee-b975-2f9c17e656c4",
+            "name": "organiser",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a1f7329-f86c-11ee-8117-7d9fdf001002",
+            "name": "description",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a1f8fff-f86c-11ee-8b06-5f9019f28b46",
+            "name": "ends_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a1fb1a8-f86c-11ee-8427-b5268f9d75e2",
+            "name": "starts_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a1fce39-f86c-11ee-8309-418f1f505eb8",
+            "name": "title",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a1fead8-f86c-11ee-9980-a3bc5aa1ff3d",
+            "name": "type",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          }
+        ]
+      },
+      "target": {
+        "id": "29c43a34-f86c-11ee-a6b1-c1a89f83e7fe",
+        "name": "users::User",
+        "internal": false,
+        "builtin": false,
+        "computed_fields": [
+
+        ],
+        "final": false,
+        "is_final": false,
+        "abstract": false,
+        "is_abstract": false,
+        "inherited_fields": [
+
+        ],
+        "from_alias": false,
+        "is_from_alias": false,
+        "expr": null,
+        "compound_type": false,
+        "is_compound_type": false
+      },
+      "secret": false,
+      "expr": null,
+      "default": null,
+      "readonly": false,
+      "required": true,
+      "cardinality": "One",
+      "inherited_fields": [
+
+      ],
+      "computed_fields": [
+
+      ],
+      "builtin": false,
+      "internal": false,
+      "name": "organiser",
+      "id": "2a1f0afa-f86c-11ee-b975-2f9c17e656c4",
+      "abstract": false,
+      "is_abstract": false,
+      "final": false,
+      "is_final": false,
+      "on_target_delete": "Restrict",
+      "on_source_delete": "Allow"
+    },
+    {
+      "source": {
+        "__type__": {
+          "name": "schema::ObjectType"
+        },
+        "computed_fields": [
+
+        ],
+        "builtin": false,
+        "internal": false,
+        "name": "users::Rep",
+        "id": "29d3a9e9-f86c-11ee-a74e-5775b41138aa",
+        "indexes": [
+
+        ],
+        "pointers": [
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29d4154f-f86c-11ee-86f7-794d919dd261",
+            "name": "__type__",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "protected",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29d4c014-f86c-11ee-9f6b-8b2f6d40fe6c",
+            "name": "username",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29d59bdc-f86c-11ee-a5c3-e92ed8fb53fe",
+            "name": "ucard_number",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29d6713a-f86c-11ee-8000-f9ebc04d7d86",
+            "name": "pronouns",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "One",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29d69191-f86c-11ee-800f-f189541c2f13",
+            "name": "profile_picture",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "One",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29d6b99f-f86c-11ee-bcd0-ff844d083d07",
+            "name": "organisational_unit",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29d6dc92-f86c-11ee-9656-ad68c002baa4",
+            "name": "email",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29d86524-f86c-11ee-87b8-7184b6299574",
+            "name": "last_name",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "One",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29d88639-f86c-11ee-9094-e7988e897e5f",
+            "name": "first_name",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29d8ab58-f86c-11ee-9556-c56f83615797",
+            "name": "display_name",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": "(std::str_trim(((.first_name ++ ' ') ++ .last_name)) if (.last_name ?!= '') else .first_name)",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29db739e-f86c-11ee-98ad-53446448ee41",
+            "name": "roles",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29da8d58-f86c-11ee-ad3c-a58549b8e29a",
+            "name": "referrals",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "f854ca96-e827-11ef-8027-f37926a793a4",
+            "name": "identity",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29dc5ff7-f86c-11ee-a47c-4dfcc252982e",
+            "name": "created_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": "std::datetime_of_statement()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29dcc2c4-f86c-11ee-94aa-7f3cf45ad51e",
+            "name": "id",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": "std::uuid_generate_v1mc()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29e755ad-f86c-11ee-8fc7-33924e6a82c0",
+            "name": "updated_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": "std::datetime_of_statement()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29e7c261-f86c-11ee-8976-518d6d2f589a",
+            "name": "teams",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "Many",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29e9c275-f86c-11ee-b460-71470929332a",
+            "name": "status",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": "users::RepStatus.ACTIVE",
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a376466-f86c-11ee-b396-0396950dde39",
+            "name": "agreements_signed",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a3bb845-f86c-11ee-87f5-512182b61f13",
+            "name": "infractions",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "computable",
+              "cardinality",
+              "target",
+              "readonly",
+              "required",
+              "computed_link_alias",
+              "computed_link_alias_is_backward",
+              "expr"
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": ".<user[is users::Infraction]",
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a359ac6-f86c-11ee-b53d-831a6a481dfd",
+            "name": "mailing_list_subscriptions",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "f857e9f6-e827-11ef-b8e5-1941eb220cdf",
+            "name": "notifications",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a39cc8e-f86c-11ee-955b-79e822dcab40",
+            "name": "training",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "7d1464bc-c275-11ef-87aa-adb616c425d4",
+            "name": "supervisable_training",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+              "target",
+              "required"
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": "with current_training :=  .training select .training filter ((EXISTS (.rep) AND (.rep IN current_training)) AND (NOT (.in_person) OR EXISTS (@in_person_created_at)))",
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "0439c146-1a13-11f0-9ac8-e7b3979179bb",
+            "name": "sign_ins",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "computable",
+              "cardinality",
+              "target",
+              "readonly",
+              "required",
+              "computed_link_alias",
+              "computed_link_alias_is_backward",
+              "expr"
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": ".<user[is sign_in::SignIn]",
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          }
+        ]
+      },
+      "target": {
+        "id": "29c43a34-f86c-11ee-a6b1-c1a89f83e7fe",
+        "name": "users::User",
+        "internal": false,
+        "builtin": false,
+        "computed_fields": [
+
+        ],
+        "final": false,
+        "is_final": false,
+        "abstract": false,
+        "is_abstract": false,
+        "inherited_fields": [
+
+        ],
+        "from_alias": false,
+        "is_from_alias": false,
+        "expr": null,
+        "compound_type": false,
+        "is_compound_type": false
+      },
+      "secret": false,
+      "expr": null,
+      "default": null,
+      "readonly": false,
+      "required": false,
+      "cardinality": "Many",
+      "inherited_fields": [
+        "cardinality",
+        "readonly",
+        "target"
+      ],
+      "computed_fields": [
+
+      ],
+      "builtin": false,
+      "internal": false,
+      "name": "referrals",
+      "id": "29da8d58-f86c-11ee-ad3c-a58549b8e29a",
+      "abstract": false,
+      "is_abstract": false,
+      "final": false,
+      "is_final": false,
+      "on_target_delete": "Restrict",
+      "on_source_delete": "Allow"
+    },
+    {
+      "source": {
+        "__type__": {
+          "name": "schema::ObjectType"
+        },
+        "computed_fields": [
+
+        ],
+        "builtin": false,
+        "internal": false,
+        "name": "notification::AuthoredNotification",
+        "id": "ff316ec8-e827-11ef-bdf1-f363b9ffd9bc",
+        "indexes": [
+
+        ],
+        "pointers": [
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "ff3198b2-e827-11ef-8935-dd6568020e9e",
+            "name": "__type__",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "protected",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "ff32e00a-e827-11ef-a44a-63db9353ca99",
+            "name": "type",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "ff327d5e-e827-11ef-815f-574d592d169f",
+            "name": "title",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "ff328d08-e827-11ef-bd35-2b9012ad146a",
+            "name": "status",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "ff31cdaa-e827-11ef-9fcb-317b1c45861a",
+            "name": "priority",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": "0",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "ff31f5fa-e827-11ef-82d2-19a26fe2f684",
+            "name": "dispatched_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": "std::datetime_of_statement()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "ff329f1e-e827-11ef-8d7c-33aeedcd82f0",
+            "name": "delivery_method",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "Many",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "ff32f126-e827-11ef-a1c1-bb7030330b8c",
+            "name": "content",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "ff322584-e827-11ef-963b-2327034237de",
+            "name": "created_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": "std::datetime_of_statement()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "ff3302ba-e827-11ef-9e1f-cb750bd7d261",
+            "name": "id",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": "std::uuid_generate_v1mc()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "ff3252e8-e827-11ef-b6de-6d69a77bb432",
+            "name": "updated_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": "std::datetime_of_statement()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "ff33932e-e827-11ef-8061-35580f0ef458",
+            "name": "approved_by",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "ff33c254-e827-11ef-bbf6-7b80ab34545f",
+            "name": "author",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "ff33ee00-e827-11ef-9522-c795d1e81513",
+            "name": "approved_on",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "ff32adba-e827-11ef-a293-6b684e5c4040",
+            "name": "target",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "Many",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          }
+        ]
+      },
+      "target": {
+        "id": "29c43a34-f86c-11ee-a6b1-c1a89f83e7fe",
+        "name": "users::User",
+        "internal": false,
+        "builtin": false,
+        "computed_fields": [
+
+        ],
+        "final": false,
+        "is_final": false,
+        "abstract": false,
+        "is_abstract": false,
+        "inherited_fields": [
+
+        ],
+        "from_alias": false,
+        "is_from_alias": false,
+        "expr": null,
+        "compound_type": false,
+        "is_compound_type": false
+      },
+      "secret": false,
+      "expr": null,
+      "default": null,
+      "readonly": false,
+      "required": true,
+      "cardinality": "One",
+      "inherited_fields": [
+
+      ],
+      "computed_fields": [
+
+      ],
+      "builtin": false,
+      "internal": false,
+      "name": "author",
+      "id": "ff33c254-e827-11ef-bbf6-7b80ab34545f",
+      "abstract": false,
+      "is_abstract": false,
+      "final": false,
+      "is_final": false,
+      "on_target_delete": "Restrict",
+      "on_source_delete": "Allow"
+    },
+    {
+      "source": {
+        "__type__": {
+          "name": "schema::ObjectType"
+        },
+        "computed_fields": [
+
+        ],
+        "builtin": false,
+        "internal": false,
+        "name": "training::Session",
+        "id": "29ff9cb7-f86c-11ee-9653-fdc4b5973fb3",
+        "indexes": [
+
+        ],
+        "pointers": [
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29ffd83a-f86c-11ee-a46e-1993519e8a4f",
+            "name": "__type__",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "protected",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a0080f1-f86c-11ee-af0b-c30ad9d6323d",
+            "name": "updated_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": "std::datetime_of_statement()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a00ec9e-f86c-11ee-8759-5be3c8949f5e",
+            "name": "id",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": "std::uuid_generate_v1mc()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a028bd8-f86c-11ee-a225-4bd1ad070b47",
+            "name": "created_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": "std::datetime_of_statement()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a036ea7-f86c-11ee-b2ab-8fed8fb8ed1a",
+            "name": "user",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a05fa72-f86c-11ee-b18d-25c4bd152bf6",
+            "name": "index",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": "0",
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a030131-f86c-11ee-abb2-b36d91269200",
+            "name": "training",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          }
+        ]
+      },
+      "target": {
+        "id": "29c43a34-f86c-11ee-a6b1-c1a89f83e7fe",
+        "name": "users::User",
+        "internal": false,
+        "builtin": false,
+        "computed_fields": [
+
+        ],
+        "final": false,
+        "is_final": false,
+        "abstract": false,
+        "is_abstract": false,
+        "inherited_fields": [
+
+        ],
+        "from_alias": false,
+        "is_from_alias": false,
+        "expr": null,
+        "compound_type": false,
+        "is_compound_type": false
+      },
+      "secret": false,
+      "expr": null,
+      "default": null,
+      "readonly": false,
+      "required": true,
+      "cardinality": "One",
+      "inherited_fields": [
+
+      ],
+      "computed_fields": [
+
+      ],
+      "builtin": false,
+      "internal": false,
+      "name": "user",
+      "id": "2a036ea7-f86c-11ee-b2ab-8fed8fb8ed1a",
+      "abstract": false,
+      "is_abstract": false,
+      "final": false,
+      "is_final": false,
+      "on_target_delete": "Restrict",
+      "on_source_delete": "Allow"
+    },
+    {
+      "source": {
+        "__type__": {
+          "name": "schema::ObjectType"
+        },
+        "computed_fields": [
+
+        ],
+        "builtin": false,
+        "internal": false,
+        "name": "users::Integration",
+        "id": "2a067f60-f86c-11ee-a027-6391c76425ef",
+        "indexes": [
+          {
+            "inherited_fields": [
+              "deferred"
+            ],
+            "computed_fields": [
+
+            ],
+            "builtin": false,
+            "internal": false,
+            "name": "__::idx",
+            "id": "2a0e2104-f86c-11ee-8fa6-0d431e5f7d5b",
+            "abstract": false,
+            "is_abstract": false,
+            "final": false,
+            "is_final": false,
+            "expr": "(.platform, .external_id)",
+            "except_expr": null,
+            "deferrability": "Prohibited",
+            "deferred": false,
+            "kwargs": [
+
+            ],
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "inherited_fields": [
+              "deferred"
+            ],
+            "computed_fields": [
+
+            ],
+            "builtin": false,
+            "internal": false,
+            "name": "__::idx",
+            "id": "2a0eae80-f86c-11ee-9f01-e36bba353920",
+            "abstract": false,
+            "is_abstract": false,
+            "final": false,
+            "is_final": false,
+            "expr": "(.platform, .user)",
+            "except_expr": null,
+            "deferrability": "Prohibited",
+            "deferred": false,
+            "kwargs": [
+
+            ],
+            "@owned": true,
+            "@is_owned": true
+          }
+        ],
+        "pointers": [
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a06bc7c-f86c-11ee-80e8-0375ce49dc29",
+            "name": "__type__",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "protected",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a07375a-f86c-11ee-b807-41edf7f6d3e6",
+            "name": "updated_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": "std::datetime_of_statement()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a079f2c-f86c-11ee-850e-b511a3f5533f",
+            "name": "id",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": "std::uuid_generate_v1mc()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a08b8c2-f86c-11ee-9261-377e5495d9e5",
+            "name": "created_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": "std::datetime_of_statement()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a093c43-f86c-11ee-8010-51ac243f5d43",
+            "name": "external_id",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a0958e3-f86c-11ee-9d8a-9782fc9355d4",
+            "name": "platform",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a0b4727-f86c-11ee-bdfe-831875dfa64d",
+            "name": "user",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a0ec82a-f86c-11ee-b44a-1b1500ace56d",
+            "name": "external_email",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          }
+        ]
+      },
+      "target": {
+        "id": "29c43a34-f86c-11ee-a6b1-c1a89f83e7fe",
+        "name": "users::User",
+        "internal": false,
+        "builtin": false,
+        "computed_fields": [
+
+        ],
+        "final": false,
+        "is_final": false,
+        "abstract": false,
+        "is_abstract": false,
+        "inherited_fields": [
+
+        ],
+        "from_alias": false,
+        "is_from_alias": false,
+        "expr": null,
+        "compound_type": false,
+        "is_compound_type": false
+      },
+      "secret": false,
+      "expr": null,
+      "default": null,
+      "readonly": false,
+      "required": true,
+      "cardinality": "One",
+      "inherited_fields": [
+
+      ],
+      "computed_fields": [
+
+      ],
+      "builtin": false,
+      "internal": false,
+      "name": "user",
+      "id": "2a0b4727-f86c-11ee-bdfe-831875dfa64d",
+      "abstract": false,
+      "is_abstract": false,
+      "final": false,
+      "is_final": false,
+      "on_target_delete": "Restrict",
+      "on_source_delete": "Allow"
+    },
+    {
+      "source": {
+        "__type__": {
+          "name": "schema::ObjectType"
+        },
+        "computed_fields": [
+
+        ],
+        "builtin": false,
+        "internal": false,
+        "name": "sign_in::SignIn",
+        "id": "623a1c56-3624-11ef-a122-53995ca92969",
+        "indexes": [
+
+        ],
+        "pointers": [
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "623a4a3c-3624-11ef-86a7-e7778ebdd55e",
+            "name": "__type__",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "protected",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "623ac75a-3624-11ef-b20e-5379f6d112ce",
+            "name": "ends_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "cardinality",
+              "readonly",
+              "target"
+            ],
+            "cardinality": "One",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "623ae15e-3624-11ef-b15f-e170b2c9179d",
+            "name": "id",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": "std::uuid_generate_v1mc()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "623bb76e-3624-11ef-bb2a-9bd1089c9fa3",
+            "name": "created_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": "std::datetime_of_statement()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "623c0494-3624-11ef-9a6c-c3171f79f717",
+            "name": "duration",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "computable",
+              "target",
+              "readonly",
+              "required",
+              "cardinality",
+              "expr"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": "std::assert_exists(((.ends_at - .created_at) if EXISTS (.ends_at) else (std::datetime_of_transaction() - .created_at)))",
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "623dcdec-3624-11ef-8136-aff328aeb3b2",
+            "name": "location",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "623e76b6-3624-11ef-8b7e-2b35dcaf6e0a",
+            "name": "signed_out",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+              "target",
+              "cardinality"
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": "select EXISTS (.ends_at)",
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "623e993e-3624-11ef-948c-b39e2141f97f",
+            "name": "reason",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "623ee272-3624-11ef-8629-c1a81d9f92cd",
+            "name": "user",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "624122f8-3624-11ef-8411-fd8ecac6164f",
+            "name": "tools",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          }
+        ]
+      },
+      "target": {
+        "id": "29c43a34-f86c-11ee-a6b1-c1a89f83e7fe",
+        "name": "users::User",
+        "internal": false,
+        "builtin": false,
+        "computed_fields": [
+
+        ],
+        "final": false,
+        "is_final": false,
+        "abstract": false,
+        "is_abstract": false,
+        "inherited_fields": [
+
+        ],
+        "from_alias": false,
+        "is_from_alias": false,
+        "expr": null,
+        "compound_type": false,
+        "is_compound_type": false
+      },
+      "secret": false,
+      "expr": null,
+      "default": null,
+      "readonly": false,
+      "required": true,
+      "cardinality": "One",
+      "inherited_fields": [
+
+      ],
+      "computed_fields": [
+
+      ],
+      "builtin": false,
+      "internal": false,
+      "name": "user",
+      "id": "623ee272-3624-11ef-8629-c1a81d9f92cd",
+      "abstract": false,
+      "is_abstract": false,
+      "final": false,
+      "is_final": false,
+      "on_target_delete": "Restrict",
+      "on_source_delete": "Allow"
+    },
+    {
+      "source": {
+        "__type__": {
+          "name": "schema::ObjectType"
+        },
+        "computed_fields": [
+
+        ],
+        "builtin": false,
+        "internal": false,
+        "name": "sign_in::QueuePlace",
+        "id": "624db45a-3624-11ef-9662-3fbb2f6f5798",
+        "indexes": [
+
+        ],
+        "pointers": [
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "624ddbba-3624-11ef-aae8-b55e56e4ddb0",
+            "name": "__type__",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "protected",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "624e2fca-3624-11ef-9016-9da41af1661a",
+            "name": "created_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": "std::datetime_of_statement()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "624e7a98-3624-11ef-8d3c-b79e3c97d266",
+            "name": "id",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": "std::uuid_generate_v1mc()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "624f4ba8-3624-11ef-903a-632ef4027c65",
+            "name": "location",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "624f99fa-3624-11ef-be93-e7adc075c023",
+            "name": "user",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "62509422-3624-11ef-b719-81ac52c9b3d3",
+            "name": "notified_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "625171da-3624-11ef-abb2-75dff3c0ac70",
+            "name": "ends_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+              "target",
+              "cardinality",
+              "required"
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": "(.notified_at + <std::cal::relative_duration>'20m')",
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          }
+        ]
+      },
+      "target": {
+        "id": "29c43a34-f86c-11ee-a6b1-c1a89f83e7fe",
+        "name": "users::User",
+        "internal": false,
+        "builtin": false,
+        "computed_fields": [
+
+        ],
+        "final": false,
+        "is_final": false,
+        "abstract": false,
+        "is_abstract": false,
+        "inherited_fields": [
+
+        ],
+        "from_alias": false,
+        "is_from_alias": false,
+        "expr": null,
+        "compound_type": false,
+        "is_compound_type": false
+      },
+      "secret": false,
+      "expr": null,
+      "default": null,
+      "readonly": false,
+      "required": true,
+      "cardinality": "One",
+      "inherited_fields": [
+
+      ],
+      "computed_fields": [
+
+      ],
+      "builtin": false,
+      "internal": false,
+      "name": "user",
+      "id": "624f99fa-3624-11ef-be93-e7adc075c023",
+      "abstract": false,
+      "is_abstract": false,
+      "final": false,
+      "is_final": false,
+      "on_target_delete": "Restrict",
+      "on_source_delete": "Allow"
+    },
+    {
+      "source": {
+        "__type__": {
+          "name": "schema::ObjectType"
+        },
+        "computed_fields": [
+
+        ],
+        "builtin": false,
+        "internal": false,
+        "name": "sign_in::UserRegistration",
+        "id": "62c123cc-3624-11ef-ade9-69f82391f43e",
+        "indexes": [
+
+        ],
+        "pointers": [
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "62c150ae-3624-11ef-b674-af1c6029e302",
+            "name": "__type__",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "protected",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "62c1a568-3624-11ef-86ba-8dc0c6279746",
+            "name": "created_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": "std::datetime_of_statement()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "62c1ea0a-3624-11ef-af9c-1b130d6ad6d5",
+            "name": "id",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": "std::uuid_generate_v1mc()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "62c2e3c4-3624-11ef-a6c8-8101abe16020",
+            "name": "location",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "62c3300e-3624-11ef-93ab-37f0b550bd00",
+            "name": "user",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          }
+        ]
+      },
+      "target": {
+        "id": "29c43a34-f86c-11ee-a6b1-c1a89f83e7fe",
+        "name": "users::User",
+        "internal": false,
+        "builtin": false,
+        "computed_fields": [
+
+        ],
+        "final": false,
+        "is_final": false,
+        "abstract": false,
+        "is_abstract": false,
+        "inherited_fields": [
+
+        ],
+        "from_alias": false,
+        "is_from_alias": false,
+        "expr": null,
+        "compound_type": false,
+        "is_compound_type": false
+      },
+      "secret": false,
+      "expr": null,
+      "default": null,
+      "readonly": false,
+      "required": true,
+      "cardinality": "One",
+      "inherited_fields": [
+
+      ],
+      "computed_fields": [
+
+      ],
+      "builtin": false,
+      "internal": false,
+      "name": "user",
+      "id": "62c3300e-3624-11ef-93ab-37f0b550bd00",
+      "abstract": false,
+      "is_abstract": false,
+      "final": false,
+      "is_final": false,
+      "on_target_delete": "Restrict",
+      "on_source_delete": "Allow"
+    },
+    {
+      "source": {
+        "__type__": {
+          "name": "schema::ObjectType"
+        },
+        "computed_fields": [
+
+        ],
+        "builtin": false,
+        "internal": false,
+        "name": "users::Infraction",
+        "id": "2a303486-f86c-11ee-bf41-731b357611bc",
+        "indexes": [
+
+        ],
+        "pointers": [
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a306b57-f86c-11ee-ba55-ad3d52a830a7",
+            "name": "__type__",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "protected",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a30df2a-f86c-11ee-a2cf-3f6b7e8c1b38",
+            "name": "created_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": "std::datetime_of_statement()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a314593-f86c-11ee-ab54-2d1cd6e254cb",
+            "name": "id",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": "std::uuid_generate_v1mc()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a326e25-f86c-11ee-9693-8131175dc9c9",
+            "name": "user",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a32dea5-f86c-11ee-b415-cdadedfc6b2a",
+            "name": "duration",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a33ece9-f86c-11ee-8dc9-0fd88adfca18",
+            "name": "ends_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+              "target",
+              "cardinality",
+              "required"
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": "(.created_at + .duration)",
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a340e90-f86c-11ee-a62d-bbcb096961b2",
+            "name": "reason",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a345efb-f86c-11ee-85e6-c767648c1058",
+            "name": "resolved",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": "false",
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a34c1cc-f86c-11ee-a4a3-27e478e3295e",
+            "name": "type",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          }
+        ]
+      },
+      "target": {
+        "id": "29c43a34-f86c-11ee-a6b1-c1a89f83e7fe",
+        "name": "users::User",
+        "internal": false,
+        "builtin": false,
+        "computed_fields": [
+
+        ],
+        "final": false,
+        "is_final": false,
+        "abstract": false,
+        "is_abstract": false,
+        "inherited_fields": [
+
+        ],
+        "from_alias": false,
+        "is_from_alias": false,
+        "expr": null,
+        "compound_type": false,
+        "is_compound_type": false
+      },
+      "secret": false,
+      "expr": null,
+      "default": null,
+      "readonly": false,
+      "required": true,
+      "cardinality": "One",
+      "inherited_fields": [
+
+      ],
+      "computed_fields": [
+
+      ],
+      "builtin": false,
+      "internal": false,
+      "name": "user",
+      "id": "2a326e25-f86c-11ee-9693-8131175dc9c9",
+      "abstract": false,
+      "is_abstract": false,
+      "final": false,
+      "is_final": false,
+      "on_target_delete": "Restrict",
+      "on_source_delete": "Allow"
+    },
+    {
+      "source": {
+        "__type__": {
+          "name": "schema::ObjectType"
+        },
+        "computed_fields": [
+
+        ],
+        "builtin": false,
+        "internal": false,
+        "name": "notification::MailingList",
+        "id": "29f1828c-f86c-11ee-ad46-afd9776f856d",
+        "indexes": [
+
+        ],
+        "pointers": [
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29f1b903-f86c-11ee-a4c1-b36f3716cc33",
+            "name": "__type__",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "protected",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29f22e70-f86c-11ee-aad6-2969a80bae62",
+            "name": "updated_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": "std::datetime_of_statement()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29f296ea-f86c-11ee-84ed-b1213ea5f471",
+            "name": "id",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": "std::uuid_generate_v1mc()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29f3bb0f-f86c-11ee-841e-3180515baf65",
+            "name": "created_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": "std::datetime_of_statement()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29f41ef5-f86c-11ee-9d11-4ff69c5f6167",
+            "name": "description",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "29f43e60-f86c-11ee-9050-397128663cda",
+            "name": "name",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "2a3db5e9-f86c-11ee-9e2f-2f2e7541d3ec",
+            "name": "subscribers",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+              "target",
+              "required"
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": ".<mailing_list_subscriptions[is users::User]",
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          }
+        ]
+      },
+      "target": {
+        "id": "29c43a34-f86c-11ee-a6b1-c1a89f83e7fe",
+        "name": "users::User",
+        "internal": false,
+        "builtin": false,
+        "computed_fields": [
+
+        ],
+        "final": false,
+        "is_final": false,
+        "abstract": false,
+        "is_abstract": false,
+        "inherited_fields": [
+
+        ],
+        "from_alias": false,
+        "is_from_alias": false,
+        "expr": null,
+        "compound_type": false,
+        "is_compound_type": false
+      },
+      "secret": false,
+      "expr": ".<mailing_list_subscriptions[is users::User]",
+      "default": null,
+      "readonly": false,
+      "required": false,
+      "cardinality": "Many",
+      "inherited_fields": [
+
+      ],
+      "computed_fields": [
+        "target",
+        "required"
+      ],
+      "builtin": false,
+      "internal": false,
+      "name": "subscribers",
+      "id": "2a3db5e9-f86c-11ee-9e2f-2f2e7541d3ec",
+      "abstract": false,
+      "is_abstract": false,
+      "final": false,
+      "is_final": false,
+      "on_target_delete": "Restrict",
+      "on_source_delete": "Allow"
+    },
+    {
+      "source": {
+        "__type__": {
+          "name": "schema::ObjectType"
+        },
+        "computed_fields": [
+
+        ],
+        "builtin": false,
+        "internal": false,
+        "name": "sign_in::Location",
+        "id": "62346fcc-3624-11ef-b15b-875e445cbbff",
+        "indexes": [
+
+        ],
+        "pointers": [
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "62349984-3624-11ef-b914-77732c928660",
+            "name": "__type__",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "protected",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "6234f0b4-3624-11ef-a8ff-a94a5a55e954",
+            "name": "updated_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": "std::datetime_of_statement()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "62353d58-3624-11ef-817e-7bd1ebfebaa8",
+            "name": "id",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": "std::uuid_generate_v1mc()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "62360e86-3624-11ef-a029-9fbe562f1339",
+            "name": "created_at",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+              "required",
+              "default",
+              "readonly",
+              "target",
+              "cardinality"
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": true,
+            "default": "std::datetime_of_statement()",
+            "expr": null,
+            "secret": false,
+            "@owned": false,
+            "@is_owned": false
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "623654a4-3624-11ef-8c15-f5fc1c1742fe",
+            "name": "closing_time",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "62366962-3624-11ef-a1a6-c15aa1ec3369",
+            "name": "opening_days",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "62368956-3624-11ef-8b2c-5749b24488b2",
+            "name": "opening_time",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "623924d6-3624-11ef-b9f0-3144dd949958",
+            "name": "out_of_hours",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+              "target",
+              "cardinality"
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": "with current_time :=  (select std::cal::to_local_time(std::datetime_of_statement(), 'Europe/London') ) select NOT ((((.opening_time <= current_time) AND (current_time <= .closing_time)) AND (<std::int16>std::datetime_get(std::datetime_of_statement(), 'isodow') IN .opening_days)))",
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "6239812e-3624-11ef-95cf-193f206629e9",
+            "name": "name",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "62395924-3624-11ef-b142-3fbd96e676a1",
+            "name": "max_users",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "62396d6a-3624-11ef-b5c9-f756b8d8c7ca",
+            "name": "out_of_hours_rep_multiplier",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "1631e6cc-3638-11ef-8529-2f5280ac7c51",
+            "name": "queue_enabled",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": "true",
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "62429a3e-3624-11ef-be62-030afc34a667",
+            "name": "sign_ins",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+              "target",
+              "required"
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": "select .<location[is sign_in::SignIn] filter NOT (.signed_out)",
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "624819a0-3624-11ef-a36f-65a1a65163ef",
+            "name": "off_shift_reps",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+              "target",
+              "required"
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": "with rep_sign_ins :=  (select .sign_ins filter ((.user IS users::Rep) AND (.reason.name != 'Rep On Shift')) ) select rep_sign_ins.user[is users::Rep]",
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "624d604a-3624-11ef-923b-9d9aacd5c6f4",
+            "name": "on_shift_reps",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+              "target",
+              "required"
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": "with rep_sign_ins :=  (select .sign_ins filter ((.user IS users::Rep) AND (.reason.name = 'Rep On Shift')) ) select rep_sign_ins.user[is users::Rep]",
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "62640d04-3624-11ef-ade5-d7969caedaf1",
+            "name": "supervising_reps",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+              "target",
+              "required"
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": "select ((.on_shift_reps UNION .off_shift_reps) if .out_of_hours else .on_shift_reps)",
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "a9e7d54a-b36f-11ef-a4d4-871deca27741",
+            "name": "supervisable_training",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+              "target",
+              "required"
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": "select DISTINCT (.supervising_reps.supervisable_training) filter (<training::LocationName><std::str>__source__.name IN .locations)",
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "6252533e-3624-11ef-929b-7f0aac0e493f",
+            "name": "queued",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+              "target",
+              "required"
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": ".<location[is sign_in::QueuePlace]",
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "1672692c-3638-11ef-a4ac-65081ed55b01",
+            "name": "queue_in_use",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+              "target",
+              "cardinality"
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": "select ((std::assert(.queue_enabled, message := 'Queue has been manually disabled') AND EXISTS (.queued)) OR NOT (.can_sign_in))",
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "62c104d2-3624-11ef-933b-6fc197709173",
+            "name": "status",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+              "target",
+              "cardinality"
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": "with current_time :=  (select std::cal::to_local_time(std::datetime_of_statement(), 'Europe/London') ) select (sign_in::LocationStatus.OPEN if (std::count(.on_shift_reps) > 0) else (sign_in::LocationStatus.SOON if ((((.opening_time - <std::cal::relative_duration>'30m') <= current_time) AND (current_time <= (.closing_time - <std::cal::relative_duration>'30m'))) AND (std::datetime_get(std::datetime_of_statement(), 'isodow') IN .opening_days)) else sign_in::LocationStatus.CLOSED))",
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "e4e63790-3654-11ef-8c1b-25ab7a7c0fe4",
+            "name": "queued_users_that_can_sign_in",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+              "target",
+              "required"
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "Many",
+            "required": false,
+            "readonly": false,
+            "default": null,
+            "expr": "select ((select .queued filter (.ends_at >= std::datetime_of_statement()) )).user",
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "62393dfe-3624-11ef-8476-3b9fcf6fbfaa",
+            "name": "in_hours_rep_multiplier",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": null,
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "62b64ad8-3624-11ef-a6cc-4b5511ff8ba6",
+            "name": "can_sign_in",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+              "target",
+              "cardinality"
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": "(std::count(.sign_ins) < .max_count)",
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "62784080-3624-11ef-bdda-c59699977165",
+            "name": "max_count",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+              "target",
+              "cardinality"
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": "with multiplier :=  (.out_of_hours_rep_multiplier if .out_of_hours else .in_hours_rep_multiplier) select std::min({((multiplier * std::count(.supervising_reps)) + (std::count(.off_shift_reps) if NOT (.out_of_hours) else 0)), .max_users})",
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          },
+          {
+            "final": false,
+            "is_final": false,
+            "abstract": false,
+            "is_abstract": false,
+            "id": "0669da28-1a13-11f0-9c68-3315e806e1a8",
+            "name": "available_capacity",
+            "internal": false,
+            "builtin": false,
+            "computed_fields": [
+              "target",
+              "cardinality"
+            ],
+            "inherited_fields": [
+
+            ],
+            "cardinality": "One",
+            "required": true,
+            "readonly": false,
+            "default": null,
+            "expr": "select ((.max_count - std::count(.sign_ins)) - std::count(.queued_users_that_can_sign_in))",
+            "secret": false,
+            "@owned": true,
+            "@is_owned": true
+          }
+        ]
+      },
+      "target": {
+        "id": "29c43a34-f86c-11ee-a6b1-c1a89f83e7fe",
+        "name": "users::User",
+        "internal": false,
+        "builtin": false,
+        "computed_fields": [
+
+        ],
+        "final": false,
+        "is_final": false,
+        "abstract": false,
+        "is_abstract": false,
+        "inherited_fields": [
+
+        ],
+        "from_alias": false,
+        "is_from_alias": false,
+        "expr": null,
+        "compound_type": false,
+        "is_compound_type": false
+      },
+      "secret": false,
+      "expr": "select ((select .queued filter (.ends_at >= std::datetime_of_statement()) )).user",
+      "default": null,
+      "readonly": false,
+      "required": false,
+      "cardinality": "Many",
+      "inherited_fields": [
+
+      ],
+      "computed_fields": [
+        "target",
+        "required"
+      ],
+      "builtin": false,
+      "internal": false,
+      "name": "queued_users_that_can_sign_in",
+      "id": "e4e63790-3654-11ef-8c1b-25ab7a7c0fe4",
+      "abstract": false,
+      "is_abstract": false,
+      "final": false,
+      "is_final": false,
+      "on_target_delete": "Restrict",
+      "on_source_delete": "Allow"
+    }
+  ]

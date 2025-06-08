@@ -1,0 +1,121 @@
+module tools {
+    scalar type Status extending enum<
+        NOMINAL,
+        IN_USE,
+        OUT_OF_ORDER,
+    >;
+
+    type Tool {
+        required name: str;
+        # multi responsible_rep: Rep;  # could potentially use new notifications?
+
+        required multi training: training::Training;
+        required location: sign_in::Location;
+        required status: Status;
+
+        required is_bookable: bool;
+        multi bookings := .<tool[is Booking];
+        max_booking_daily: duration;
+        max_booking_weekly: duration;
+        min_booking_time: duration {
+            default := (select <duration>"1h" if .is_bookable else {})
+        };
+
+        # trigger status_check after update for each do (
+        #     dispatch notification somehow that we can't guarantee that it'll work
+        # )
+    }
+
+    type Booking extending default::Auditable {
+        required tool: Tool;
+        required user: users::User;
+        required starts_at: datetime;
+        required ends_at: datetime;
+        required duration := .ends_at - .starts_at;
+        cancelled: bool {
+            annotation description := $$
+                Tribool, empty for honoured (signed in and selected as reason), true if cancelled through Google (if this is possible) or UI, false if not honoured
+            $$  # TODO look into requesting read+write calendar perms?
+        }
+
+        # these are all basically is bookable checks
+        access policy is_bookable
+            allow insert, update
+            using (.tool.is_bookable and .tool.status != Status.OUT_OF_ORDER) {
+                errmessage := "This tool is not currently bookable"
+            };
+
+        access policy isnt_overlapping
+            allow insert, update
+            using (
+                .starts_at < .ends_at
+                and not exists (
+                    select .tool.bookings filter (
+                        .starts_at <= __subject__.starts_at and __subject__.starts_at <= .ends_at
+                        or .starts_at <= __subject__.ends_at and __subject__.ends_at <= .ends_at
+                    )
+                )
+            ) {
+                errmessage := "Booking overlaps with another booking"
+            };
+        # access policy in_hours
+        #     allow insert, update
+        #     using (
+        #         not exists (
+        #             select .tool.bookings filter (  # the logic for this is kinda hard due to short term closures leaving for now
+        #                 .tool.location.opens <= __subject__.starts_at and __subject__.starts_at <= .ends_at
+        #                 or .starts_at <= __subject__.ends_at and __subject__.ends_at <= .ends_at
+        #             )
+        #         )
+        #     ) {
+        #         errmessage := "Booking is outside of hours"
+        #     };
+        access policy too_short
+            allow insert, update
+            using (.tool.is_bookable and .duration >= (.tool.min_booking_time ?? <duration>"PT1h")) {
+                errmessage := "Booking is too short, must be at least nnn minutes"
+                # errmessage := "Booking is too short, must be at least \(to_str(duration_to_seconds(.tool.min_booking_time) / 60)) minutes"
+            };
+
+
+
+        # trigger booking_check after update for each do (
+        #     with
+        #         week_duration := (
+        #             select sum(
+        #                 (
+        #                     select users_bookings filter .created_at < datetime_of_statement() - <cal::relative_duration>"7d"
+        #                 ).duration,
+        #             ) + .duration
+        #         ),
+        #         day_duration := (
+        #             select sum(
+        #                 (
+        #                     select users_bookings filter .created_at < datetime_of_statement() - <cal::relative_duration>"1d"
+        #                 ).duration,
+        #             ) + .duration
+        #         ),
+        #     select (
+        #         # in location booking hours and ends_at isn't before starts_at
+        #         and assert(
+        #             .duration >= __source__.min_booking_time,
+        #             message := (
+        #                 "Booking is too short, must be at least \(to_str(duration_to_seconds(__source__.min_booking_time) / 60)) minutes"
+        #             ),
+        #         )
+        #         and assert(
+        #             week_duration > __source__.max_booking_weekly,
+        #             message := (
+        #                 "You can't book this tool for this long as you'll exceed your maximum time for this week by \(to_str(duration_to_seconds(__source__.max_booking_weekly - week_duration) / 60)) minutes"
+        #             ),
+        #         )
+        #         and assert(
+        #             day_duration > __source__.max_booking_daily,
+        #             message := (
+        #                 "You can't book this tool for this long as you'll exceed your maximum time for today by \(to_str(duration_to_seconds(__source__.max_booking_daily - day_duration) / 60)) minutes"
+        #             ),
+        #         )
+        #     )
+        # )
+    }
+}

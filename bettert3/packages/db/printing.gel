@@ -1,0 +1,60 @@
+# module printing {
+#     type Printer {
+#         name: str
+#         hostname: str
+#         remote_ip: str
+#         status: PrinterStatus
+#         type: PLA | TPU | PETG | RESIN
+#         location
+#         prints
+#     }
+
+#     enum PrinterStatus {
+#         disabled
+#         disconnected
+#         idle
+#         printing { print }
+#         failed { reason, notes }
+#     }
+
+#     type Print {
+#         required name: str
+#         required duration
+#         required mass: float32  # round(mass, 2) if we get it
+#         required author: users::User
+#         required approved_by: users::Rep
+#         multi on: PrintHistory;
+#         required gcode_path := "\(default::CDN_URL)/prints/\(.id)/.gcode"  # prepend with CDN_URL
+#         required stl_path :=  "\(default::CDN_URL)/prints/\(.id)/.stl"
+#     }
+
+#     type PrintHistory extending default::Auditable {
+#         required printer: Printer;
+#         required status: PrintStatus;
+#     }
+
+#     enum PrintStatus {
+#         complete
+#         printing { print }
+#         failed { reason, notes }
+#         queued
+#     }
+
+#     type AuditEntry {
+#         created_at
+#         printer
+#         action
+#         print
+#         reason: str
+#         notes: str
+#     }
+
+#     enum AuditEntryAction {
+#         print_complete
+#         print_fail
+#         print_cancel
+#         offline
+#         online
+#         maintenance
+#     }
+# }
