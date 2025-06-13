@@ -3,7 +3,7 @@ import Title from "@/components/title";
 import { Button } from "@packages/ui/components/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@packages/ui/components/card";
 import { EnvelopeOpenIcon } from "@radix-ui/react-icons";
-import { Link } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import React, { useEffect } from "react";
 
@@ -37,6 +37,6 @@ const Index: React.FC = () => {
   );
 };
 
-export const Route = createFileRoute({
+export const Route = createFileRoute("/auth/login/")({
   component: Index,
 });

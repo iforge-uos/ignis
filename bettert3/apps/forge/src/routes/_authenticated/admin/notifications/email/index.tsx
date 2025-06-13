@@ -1,3 +1,4 @@
+import { createFileRoute } from "@tanstack/react-router"
 import Title from "@/components/title";
 import { Button } from "@packages/ui/components/button";
 import { toast } from "sonner";
@@ -24,6 +25,6 @@ const EmailIndexPage = () => {
   );
 };
 
-export const Route = createFileRoute({
+export const Route = createFileRoute("/_authenticated/admin/notifications/email/")({
   component: EmailIndexPage,
 });

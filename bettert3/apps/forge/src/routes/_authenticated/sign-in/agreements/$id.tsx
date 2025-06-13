@@ -7,7 +7,7 @@ import { Checkbox } from "@packages/ui/components/checkbox";
 import { Label } from "@packages/ui/components/label";
 import { Separator } from "@packages/ui/components/separator";
 import { useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, createFileRoute } from "@tanstack/react-router";
 import { useCallback, useState } from "react";
 import Markdown from "react-markdown";
 import { toast } from "sonner";
@@ -80,7 +80,7 @@ export default function Component() {
   );
 }
 
-export const Route = createFileRoute({
+export const Route = createFileRoute("/_authenticated/sign-in/agreements/$id")({
   loader: ({ params }) => client.agreements.get({ id: params.id }),
   component: Component,
 });

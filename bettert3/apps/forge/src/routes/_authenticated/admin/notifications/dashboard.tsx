@@ -1,3 +1,4 @@
+import { createFileRoute } from "@tanstack/react-router"
 import Title from "@/components/title";
 import { client, orpc } from "@/lib/orpc";
 import { MailingList } from "@ignis/types/notifications";
@@ -162,7 +163,7 @@ const NotificationDashboard = () => {
   );
 };
 
-export const Route = createFileRoute({
+export const Route = createFileRoute("/_authenticated/admin/notifications/dashboard")({
   component: NotificationDashboard,
   loader: async () => client.notifications.mailingLists.all({ include_subscribers: false }),
 });

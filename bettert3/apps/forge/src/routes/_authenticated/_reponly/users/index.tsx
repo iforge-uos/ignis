@@ -12,7 +12,7 @@ import {
   PaginationPrevious,
 } from "@packages/ui/components/pagination";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@packages/ui/components/table";
-import { notFound } from "@tanstack/react-router";
+import { notFound, createFileRoute } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -122,7 +122,7 @@ const UsersIndexPageComponent = () => {
   );
 };
 
-export const Route = createFileRoute({
+export const Route = createFileRoute("/_authenticated/_reponly/users/")({
   component: UsersIndexPageComponent,
   beforeLoad: () => {
     throw notFound();

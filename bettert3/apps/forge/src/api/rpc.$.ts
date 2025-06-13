@@ -13,7 +13,7 @@ async function handle({ request }: { request: Request }) {
   return response ?? new Response("Not Found", { status: 404 });
 }
 
-export const ServerRoute = createServerFileRoute("/api/rpc.$").methods({
+export const ServerRoute = createServerFileRoute().methods({
   HEAD: handle,
   GET: handle,
   POST: handle,

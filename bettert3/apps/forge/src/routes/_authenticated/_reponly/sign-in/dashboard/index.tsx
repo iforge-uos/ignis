@@ -1,3 +1,4 @@
+import { createFileRoute } from "@tanstack/react-router"
 import { activeLocationAtom } from "@/atoms/signInAppAtoms";
 import ActiveLocationSelector from "@/components/sign-in/ActiveLocationSelector";
 import Title from "@/components/title";
@@ -134,6 +135,6 @@ function SignInDashboard() {
   );
 }
 
-export const Route = createFileRoute({
+export const Route = createFileRoute("/_authenticated/_reponly/sign-in/dashboard/")({
   component: SignInDashboard,
 });

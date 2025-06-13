@@ -1,4 +1,4 @@
-import { USER_EMAIL_DOMAIN } from "@/config/constants";
+import { USER_EMAIL_DOMAIN } from "@/lib/utils/constants";
 import { PartialUserWithTeams } from "@packages/types/users";
 import { Badge } from "@packages/ui/components/badge";
 import * as React from "react";

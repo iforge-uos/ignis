@@ -1,3 +1,4 @@
+import { createFileRoute } from "@tanstack/react-router"
 import { UserAvatar } from "@/components/avatar";
 import Title from "@/components/title";
 import { client } from "@/lib/orpc";
@@ -108,11 +109,11 @@ function Component() {
                             </div>
                           </TableCell>
                           {rep && ( // TODO if user training is a pre-req to rep training we can collapse the 2 into one entry.
-                            <TableCell>
+                            (<TableCell>
                               <div className="flex justify-center">
                                 {training.rep ? <Check stroke="green" /> : <X stroke="red" />}
                               </div>
-                            </TableCell>
+                            </TableCell>)
                           )}
                           <TableCell>
                             <div className="text-sm text-center">
@@ -153,10 +154,10 @@ function Component() {
         </main>
       </div>
     </>
-  );
+  )
 }
 
-export const Route = createFileRoute({
+export const Route = createFileRoute("/_authenticated/user/me")({
   loader: async ({ context }) => {
     const userId = context.user?.id;
 

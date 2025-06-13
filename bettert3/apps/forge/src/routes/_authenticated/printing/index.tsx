@@ -1,4 +1,4 @@
-;
+import { createFileRoute } from "@tanstack/react-router"
 import Title from "@/components/title";
 import { RouteUnfinished } from "@/components/routing/RouteUnfinished";
 
@@ -13,4 +13,4 @@ const PrintingAppIndexComponent = () => {
   );
 };
 
-export const Route = createFileRoute({ component: RouteUnfinished });
+export const Route = createFileRoute("/_authenticated/printing/")({ component: RouteUnfinished });

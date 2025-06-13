@@ -1,3 +1,4 @@
+import { createFileRoute } from "@tanstack/react-router"
 import ActiveLocationSelector from "@/components/sign-in/ActiveLocationSelector";
 import Title from "@/components/title";
 import { useUserRoles } from "@/hooks/useUserRoles";
@@ -99,6 +100,6 @@ const SignInIndexAppComponent = () => {
   );
 };
 
-export const Route = createFileRoute({
+export const Route = createFileRoute("/_authenticated/sign-in/")({
   component: SignInIndexAppComponent,
 });

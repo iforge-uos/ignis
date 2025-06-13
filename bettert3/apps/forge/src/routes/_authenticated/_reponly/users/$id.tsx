@@ -6,7 +6,7 @@ import { Training } from "@packages/types/users";
 import { Badge } from "@packages/ui/components/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@packages/ui/components/table";
 import { LocationIcon } from "@packages/ui/icons//Locations";
-import { notFound } from "@tanstack/react-router";
+import { notFound, createFileRoute } from "@tanstack/react-router";
 import { Check, X } from "lucide-react";
 
 export default function Component() {
@@ -94,11 +94,11 @@ export default function Component() {
                             </div>
                           </TableCell>
                           {rep && ( // TODO if user training is a pre-req to rep training we can collapse the 2 into one entry.
-                            <TableCell>
+                            (<TableCell>
                               <div className="flex justify-center">
                                 {training.rep ? <Check stroke="green" /> : <X stroke="red" />}
                               </div>
-                            </TableCell>
+                            </TableCell>)
                           )}
                           <TableCell>
                             <div className="text-sm text-center">
@@ -134,10 +134,10 @@ export default function Component() {
         </main>
       </div>
     </>
-  );
+  )
 }
 
-export const Route = createFileRoute({
+export const Route = createFileRoute("/_authenticated/_reponly/users/$id")({
   loader: async ({ params }) => {
     const userId = params.id;
     if (userId === undefined) {

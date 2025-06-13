@@ -1,4 +1,4 @@
-import { ATOM_KEYS } from "@/config/constants";
+import { ATOM_KEYS } from "@/lib/utils/constants";
 import { atomWithStorage } from "jotai/utils";
 
 export const adminOverwrittenRoles = atomWithStorage<string[]>(ATOM_KEYS.ADMIN_OVERWRITTEN_ROLES, [], undefined, {

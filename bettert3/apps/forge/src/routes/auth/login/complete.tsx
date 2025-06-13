@@ -1,7 +1,7 @@
 import { previousPathnameAtom } from "@/atoms/authSessionAtoms";
 import { useVerifyAuthentication } from "@/hooks/useVerifyAuthentication";
 import Loader from "@packages/ui/components/loader";
-import { Navigate } from "@tanstack/react-router";
+import { Navigate, createFileRoute } from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
 
@@ -33,6 +33,6 @@ export const CompleteComponent = () => {
   return <Navigate to={redirect || "/"} replace={true} />;
 };
 
-export const Route = createFileRoute({
+export const Route = createFileRoute("/auth/login/complete")({
   component: CompleteComponent,
 });

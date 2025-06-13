@@ -1,3 +1,4 @@
+import { createFileRoute } from "@tanstack/react-router"
 import ActiveLocationSelector from "@/components/sign-in/ActiveLocationSelector";
 import SignInActionsManager from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SignInManager";
 import Title from "@/components/title";
@@ -16,6 +17,6 @@ const OutComponent = () => {
   );
 };
 
-export const Route = createFileRoute({
+export const Route = createFileRoute("/_authenticated/_reponly/sign-in/actions/in-faster")({
   component: OutComponent,
 });

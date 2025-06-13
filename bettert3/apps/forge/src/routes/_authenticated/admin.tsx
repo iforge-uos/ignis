@@ -1,9 +1,9 @@
 import { Forbidden } from "@/components/routing/Forbidden";
-import { Outlet } from "@tanstack/react-router";
+import { Outlet, createFileRoute } from "@tanstack/react-router";
 import {useAuth} from "@/hooks/useAuth";
 import {LoginModal} from "@/components/auth/LoginModal";
 
-export const Route = createFileRoute({
+export const Route = createFileRoute("/_authenticated/admin")({
   component: () => {
     const { isAuthenticated, user } = useAuth();
     console.log(user);

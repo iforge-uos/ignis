@@ -1,3 +1,4 @@
+import { createFileRoute } from "@tanstack/react-router"
 import { useORPC } from "@/hooks/useORPC";
 import { exhaustiveGuard } from "@/lib/utils";
 import { EventPublisher } from "@orpc/client";
@@ -23,7 +24,7 @@ const GRAPH = {
   FINALISE: [],
 } as const satisfies Graph;
 
-export const Route = createFileRoute({
+export const Route = createFileRoute("/test")({
   component: async () => {
     const uCardNumber = "";
     const locationName = "MAINSPACE" as const;

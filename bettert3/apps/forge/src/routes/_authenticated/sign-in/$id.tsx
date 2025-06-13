@@ -8,7 +8,7 @@ import { Button } from "@packages/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@packages/ui/components/card";
 import { Separator } from "@packages/ui/components/separator";
 import { LocationIcon } from "@packages/ui/icons//Locations";
-import { Link } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { CalendarIcon, ClockIcon, DrillIcon } from "lucide-react";
 import { SignInReason } from "../_reponly/sign-in/actions/-components/SignInReason";
 import { AddUserAttributes } from "../_reponly/sign-in/dashboard/-components/SignedInUserCard";
@@ -100,7 +100,7 @@ export default function Component() {
   );
 }
 
-export const Route = createFileRoute({
+export const Route = createFileRoute("/_authenticated/sign-in/$id")({
   loader: async ({ params }) => await client.signIns.get({ input: { id: params.id } }),
   component: Component,
 });

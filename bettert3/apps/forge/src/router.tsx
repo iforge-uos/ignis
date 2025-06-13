@@ -7,7 +7,7 @@ import { routeTree } from "@/routeTree.gen";
 import { Toaster } from "@packages/ui/components/sonner";
 import { TooltipProvider } from "@packages/ui/components/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ORPCContext, orpc, queryClient as orpcQueryClient } from "./utils/orpc";
+import { orpc, queryClient as orpcQueryClient } from "@/lib/orpc";
 import "jotai-devtools/styles.css";
 import { SidebarProvider } from "@packages/ui/components/sidebar";
 import { DndProvider } from "react-dnd";
@@ -15,6 +15,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { GenericError } from "./components/routing/GenericError";
 import { Loading } from "./components/routing/Loading";
 import { NotFound } from "./components/routing/NotFound";
+import { ORPCContext } from "./hooks/useORPC";
 
 const queryClient = orpcQueryClient;
 
@@ -34,7 +35,6 @@ export const createRouter = () => {
     Wrap: ({ children }) => (
       <QueryClientProvider client={queryClient}>
         <ORPCContext.Provider value={orpc}>
-          <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
             <DndProvider backend={HTML5Backend}>
               <SidebarProvider>
                 <TooltipProvider>
@@ -42,7 +42,6 @@ export const createRouter = () => {
                 </TooltipProvider>
               </SidebarProvider>
             </DndProvider>
-          </ThemeProvider>
         </ORPCContext.Provider>
       </QueryClientProvider>
     ),

@@ -7,7 +7,7 @@ import { GeorgePorterIcon, HeartspaceIcon, MainspaceIcon } from "@packages/ui/ic
 import { Button } from "@packages/ui/components/button";
 import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from "@packages/ui/components/command";
 import { Separator } from "@packages/ui/components/separator";
-import { Link } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { SearchCheckIcon, TriangleAlertIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { TrainingContent } from "../_authenticated/training/$id";
@@ -201,7 +201,7 @@ export default async function TrainingIndexPage() {
   );
 }
 
-export const Route = createFileRoute({
+export const Route = createFileRoute("/training/")({
   component: TrainingIndexPage,
   loader: client.training.all,
 });

@@ -1,7 +1,7 @@
 import { activeLocationAtom } from "@/atoms/signInAppAtoms";
-import { iForgeEpoch } from "@/config/constants";
 import { orpc } from "@/lib/orpc";
 import { cn } from "@/lib/utils";
+import { iForgeEpoch } from "@/lib/utils/constants";
 import { ManageUserWidgetProps } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/ManageUserWidget";
 import { Badge } from "@packages/ui/components/badge";
 import { Button } from "@packages/ui/components/button";

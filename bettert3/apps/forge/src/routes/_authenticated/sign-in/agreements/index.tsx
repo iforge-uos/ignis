@@ -1,3 +1,4 @@
+import { createFileRoute } from "@tanstack/react-router"
 import Title from "@/components/title";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { orpc } from "@/lib/orpc";
@@ -59,6 +60,6 @@ export default function Component() {
   );
 }
 
-export const Route = createFileRoute({
+export const Route = createFileRoute("/_authenticated/sign-in/agreements/")({
   component: Component,
 });

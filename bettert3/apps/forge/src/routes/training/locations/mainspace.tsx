@@ -1,3 +1,4 @@
+import { createFileRoute } from "@tanstack/react-router"
 import { TrainingLocation, getData } from "@/components/training/TrainingLocation";
 import { } from "@tanstack/react-router";
 
@@ -16,7 +17,7 @@ const Mainspace = () => (
   />
 );
 
-export const Route = createFileRoute({
+export const Route = createFileRoute("/training/locations/mainspace")({
   component: Mainspace,
   loader: async () => getData("MAINSPACE"),
 });

@@ -1,7 +1,7 @@
 import { authEffectAtom } from "@/atoms/authSessionAtoms";
 import Title from "@/components/title";
 import { useLogout } from "@/hooks/useLogout";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, createFileRoute } from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import { useEffect } from "react";
 
@@ -38,6 +38,6 @@ const LogOutComponent = () => {
 
 export default LogOutComponent;
 
-export const Route = createFileRoute({
+export const Route = createFileRoute("/auth/logout/")({
   component: LogOutComponent,
 });

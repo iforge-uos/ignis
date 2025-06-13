@@ -1,5 +1,5 @@
-import { SIGN_IN_REASONS_STORAGE_KEY } from "@/config/constants.ts";
 import { client, orpc } from "@/lib/orpc";
+import { SIGN_IN_REASONS_STORAGE_KEY } from "@/lib/utils/constants.ts";
 import { LocationName, PartialReason, Reason } from "@ignis/types/sign_in";
 import { UseQueryResult, useQuery } from "@tanstack/react-query";
 

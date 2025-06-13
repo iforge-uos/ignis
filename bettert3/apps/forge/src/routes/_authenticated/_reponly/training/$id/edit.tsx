@@ -7,7 +7,7 @@ import { Button } from "@packages/ui/components/button";
 import { Input } from "@packages/ui/components/input";
 import { Separator } from "@packages/ui/components/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@packages/ui/components/tooltip";
-import { deepEqual } from "@tanstack/react-router";
+import { deepEqual, createFileRoute } from "@tanstack/react-router";
 // import { PlateEditor } from "@ui/components/plate-ui/plate-editor";
 import { EyeIcon, EyeOffIcon, HourglassIcon, InfoIcon, PlusIcon, TrashIcon } from "lucide-react";
 import React from "react";
@@ -68,7 +68,7 @@ function Component() {
             />
             {sections.map((section, idx) => (
               // TODO Draggable
-              <div key={section.index}>
+              (<div key={section.index}>
                 <Separator />
                 <div className="flex">
                   <div className="grid-cols-2 flex w-full mt-2">
@@ -196,7 +196,7 @@ function Component() {
                       </div>
                     ))
                   ))} */}
-              </div>
+              </div>)
             ))}
           </div>
           <Separator className="h-0.5" />
@@ -215,10 +215,10 @@ function Component() {
         </div>
       </div>
     </>
-  );
+  )
 }
 
-export const Route = createFileRoute({
+export const Route = createFileRoute("/_authenticated/_reponly/training/$id/edit")({
   component: Component,
   loader: async ({ params }) => await client.training.getForEditing({ id: params.id }),
   // onLeave: () => saveSession  // Should also be doing this every time a change is made? maybe put in cache IDK

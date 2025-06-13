@@ -1,9 +1,9 @@
-import Sentry from "@sentry/tanstackstart-react";
+import * as Sentry from "@sentry/tanstackstart-react";
 import { StartClient } from "@tanstack/react-start";
 import { hydrateRoot } from "react-dom/client";
 
-import { createRouter } from "./router";
 import React from "react";
+import { createRouter } from "./router";
 
 const router = createRouter();
 

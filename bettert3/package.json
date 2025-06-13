@@ -12,14 +12,5 @@
     "turbo": "^2.5.4",
     "@biomejs/biome": "1.9.4"
   },
-  "packageManager": "bun@1.2.15",
-  "dependencies": {
-    "@tanstack/react-router": "^1.121.2",
-    "@tanstack/router-cli": "^1.121.7",
-    "@tanstack/router-devtools": "^1.121.8",
-    "embla-carousel-autoplay": "^8.6.0",
-    "embla-carousel-wheel-gestures": "^8.0.2",
-    "jotai-devtools": "^0.12.0",
-    "react-dnd-html5-backend": "^16.0.1"
-  }
+  "packageManager": "bun@1.2.15"
 }

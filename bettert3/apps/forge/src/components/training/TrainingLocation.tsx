@@ -1,6 +1,7 @@
 import Title from "@/components/title";
-import { locationNameToCSSName } from "@/config/constants";
+import { useUser } from "@/hooks/useUser";
 import { toTitleCase } from "@/lib/utils";
+import { locationNameToCSSName } from "@/lib/utils/constants";
 import { training } from "@packages/types";
 import { LocationName, PartialTrainingWithStatus } from "@packages/types/training";
 import { Button } from "@packages/ui/components/button";
@@ -10,7 +11,6 @@ import { Link } from "@tanstack/react-router";
 import { CirclePlus } from "lucide-react";
 import ImageGradient from "./ImageGradient";
 import TrainingCourseCard from "./TrainingCourseCard";
-import { useUser } from "@/hooks/useUser";
 
 // don't ask why this is in the components folder
 export async function getData(location: LocationName): Promise<PartialTrainingWithStatus[]> {

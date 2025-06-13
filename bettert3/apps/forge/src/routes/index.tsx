@@ -8,7 +8,7 @@ import { Separator } from "@packages/ui/components/separator";
 import { Timeline, TimelineDot, TimelineHeading, TimelineItem, TimelineLine } from "@packages/ui/components/timeline";
 import { HeartspaceIcon, MainspaceIcon } from "@packages/ui/icons//Locations";
 import { IForgeLogo } from "@packages/ui/icons//iforge";
-import { Link } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import Autoplay from "embla-carousel-autoplay";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import { useScroll, useTransform } from "framer-motion";
@@ -502,4 +502,4 @@ const IndexComponent = () => {
   );
 };
 
-export const Route = createFileRoute({ component: IndexComponent });
+export const Route = createFileRoute("/")({ component: IndexComponent });
