@@ -1,5 +1,5 @@
 import Title from "@/components/title";
-import { createFileRoute } from "@tanstack/react-router";
+;
 
 function Component() {
   return (
@@ -16,6 +16,6 @@ function Component() {
   );
 }
 
-export const Route = createFileRoute("/training/finished")({
+export const Route = createFileRoute({
   component: Component,
 });

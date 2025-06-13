@@ -1,17 +1,16 @@
-"use client";
-
-import { NoRepIcon } from "@ui/components/icons/NoRep";
-import { RepIcon } from "@ui/components/icons/Rep";
-import { cn, useShortcutKey } from "@/lib/utils";
+import { useShortcutKey } from "@/hooks/useShortcutKey";
+import { cn } from "@/lib/utils";
 import { Training, TrainingSelectability } from "@ignis/types/sign_in";
-import { Badge } from "@ui/components/ui/badge";
-import { Button } from "@ui/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@ui/components/ui/card";
-import { Checkbox } from "@ui/components/ui/checkbox";
-import { Input } from "@ui/components/ui/input";
-import { Kbd, Shortcut } from "@ui/components/ui/kbd";
-import { Label } from "@ui/components/ui/label";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip";
+import { Badge } from "@packages/ui/components/badge";
+import { Button } from "@packages/ui/components/button";
+import { Card, CardContent, CardFooter, CardHeader } from "@packages/ui/components/card";
+import { Checkbox } from "@packages/ui/components/checkbox";
+import { Input } from "@packages/ui/components/input";
+import { Kbd, Shortcut } from "@packages/ui/components/kbd";
+import { Label } from "@packages/ui/components/label";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@packages/ui/components/tooltip";
+import { NoRepIcon } from "@packages/ui/icons//NoRep";
+import { RepIcon } from "@packages/ui/icons//Rep";
 import { AnimatePresence, motion } from "framer-motion";
 import Fuse from "fuse.js";
 import {
@@ -377,35 +376,27 @@ export default function TrainingSelection({
       >
         <AnimatePresence>
           {selectedTrainings.map((training) => (
-
-              <motion.div
-                key={training.id}
-                variants={badgeVariants}
-
-                animate="animate"
-                exit="exit"
-                layout>
-
-                <Badge
-                  variant="secondary"
-                  className="px-2 py-1 text-xs font-medium rounded-sm flex items-center bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100"
+            <motion.div key={training.id} variants={badgeVariants} animate="animate" exit="exit" layout>
+              <Badge
+                variant="secondary"
+                className="px-2 py-1 text-xs font-medium rounded-sm flex items-center bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100"
+              >
+                {training.name}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-4 w-4 ml-2 p-0 hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleTraining(training);
+                  }}
                 >
-                  {training.name}
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-4 w-4 ml-2 p-0 hover:bg-zinc-200 dark:hover:bg-zinc-700"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleTraining(training);
-                    }}
-                  >
-                    <XCircle className="h-3 w-3" />
-                    <span className="sr-only">Remove</span>
-                  </Button>
-                </Badge>
-              </motion.div>
-            ) )}
+                  <XCircle className="h-3 w-3" />
+                  <span className="sr-only">Remove</span>
+                </Button>
+              </Badge>
+            </motion.div>
+          ))}
         </AnimatePresence>
       </motion.div>
     </div>

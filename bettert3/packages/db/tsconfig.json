@@ -4,7 +4,6 @@
     "emitDeclarationOnly": true,
     "outDir": "./dist",
     "rootDir": "./",
-    "composite": true
   },
   "include": [
     "edgeql-js/**/*.ts",

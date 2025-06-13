@@ -1,15 +1,12 @@
 import { INFRACTION_TYPES } from "@/lib/constants";
+import { orpc } from "@/lib/orpc";
 import { toTitleCase } from "@/lib/utils";
-import addInfraction from "@/services/users/addInfraction";
-import { getUserTraining } from "@/services/users/getUserTraining";
-import revokeTraining from "@/services/users/revokeTraining";
 import type { LocationName } from "@ignis/types/sign_in";
-import type { InfractionType, PartialUserWithTeams } from "@ignis/types/users";
-import { useQuery } from "@tanstack/react-query";
-import DatePickerWithRange from "@ui/components/date-picker-with-range";
-import { Button } from "@ui/components/ui/button";
-import { Checkbox } from "@ui/components/ui/checkbox";
-import { Label } from "@ui/components/ui/label";
+import type { InfractionType, PartialUserWithTeams } from "@packages/types/users";
+import { Button } from "@packages/ui/components/button";
+import { Checkbox } from "@packages/ui/components/checkbox";
+import DatePickerWithRange from "@packages/ui/components/date-picker-with-range";
+import { Label } from "@packages/ui/components/label";
 import {
   Select,
   SelectContent,
@@ -17,8 +14,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@ui/components/ui/select";
-import { Textarea } from "@ui/components/ui/textarea";
+} from "@packages/ui/components/select";
+import { Textarea } from "@packages/ui/components/textarea";
+import { useQuery } from "@tanstack/react-query";
 import { addDays, startOfDay } from "date-fns";
 import * as React from "react";
 import { DateRange } from "react-day-picker";
@@ -36,10 +34,7 @@ export const InfractionSection: React.FC<InfractionSectionProps> = ({ user, loca
   const [resolved, setResolved] = React.useState<boolean>(true);
 
   const [trainingToRevoke, setTrainingToRevoke] = React.useState<string>();
-  const { data: trainings } = useQuery({
-    queryKey: ["userTraining", user.id],
-    queryFn: () => getUserTraining(user.id),
-  });
+  const { data: trainings } = useQuery(orpc.users.training.all.queryOptions({ input: { id: user.id } }));
 
   const now = new Date();
   const [date, setDate] = React.useState<DateRange | undefined>({
@@ -62,7 +57,8 @@ export const InfractionSection: React.FC<InfractionSectionProps> = ({ user, loca
   );
   let buttonDisabled = !type;
   let buttonOnClick = () =>
-    addInfraction(user.id, {
+    orpc.users.addInfraction.call({
+      id: user.id,
       type,
       resolved,
       reason,
@@ -86,7 +82,12 @@ export const InfractionSection: React.FC<InfractionSectionProps> = ({ user, loca
       break;
     case "TRAINING_ISSUE":
       buttonDisabled = !(type && trainingToRevoke);
-      buttonOnClick = () => revokeTraining(user.id, trainingToRevoke!, { reason });
+      buttonOnClick = () =>
+        orpc.users.training.remove.call({
+          id: user.id,
+          training_id: trainingToRevoke!,
+          reason,
+        });
 
       extra_field = (
         <div className="m-2">

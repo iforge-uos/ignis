@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+;
 import { RouteUnfinished } from "@/components/routing/RouteUnfinished";
 
-export const Route = createFileRoute("/training/risk-assessments")({
+export const Route = createFileRoute({
   component: RouteUnfinished,
 });

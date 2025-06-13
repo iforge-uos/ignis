@@ -1,10 +1,10 @@
-import { useUser } from "@/lib/utils";
+import { useUser } from "@/hooks/useUser";
 import { Agreement } from "@ignis/types/root";
+import { Badge, BadgeProps } from "@packages/ui/components/badge";
+import { Card, CardContent } from "@packages/ui/components/card";
+import { Separator } from "@packages/ui/components/separator";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@packages/ui/components/tooltip";
 import { useNavigate } from "@tanstack/react-router";
-import { Badge, BadgeProps } from "@ui/components/ui/badge";
-import { Card, CardContent } from "@ui/components/ui/card";
-import { Separator } from "@ui/components/ui/separator";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip";
 import { motion } from "framer-motion";
 import { AlertCircle, Calendar, CheckCircle, ExternalLink, Tag } from "lucide-react";
 import { useState } from "react";

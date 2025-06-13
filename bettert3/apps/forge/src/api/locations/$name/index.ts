@@ -1,0 +1,51 @@
+import { rep } from "@/orpc";
+import { PartialUserShape } from "@/lib/utils/queries";
+import e from "@packages/db/edgeql-js";
+import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
+import { Location } from "@packages/types/sign_in";
+import z from "zod/v4";
+import { commonReasons } from "./common-reasons";
+import { queueRouter } from "./queue";
+import { signInRouter } from "./sign-in";
+import { status } from "./status";
+import { trainingRouter } from "./training";
+import { supervisingReps } from "./supervising-reps";
+
+export const get = rep
+  .input(z.object({ name: LocationNameSchema }))
+  .route({ path: "/" })
+  .handler(
+    async ({ input: { name }, context: { db } }): Promise<Location> =>
+      await e
+        .assert_exists(
+          e.select(e.sign_in.Location, () => ({
+            ...e.sign_in.Location["*"],
+            sign_ins: {
+              ...e.sign_in.SignIn["*"],
+              reason: e.sign_in.Reason["*"],
+              user: (user) => ({
+                ...PartialUserShape(user),
+                ...e.is(e.users.Rep, {
+                  teams: { name: true, description: true, id: true },
+                }),
+              }),
+            },
+            queued: {
+              ...e.sign_in.QueuePlace["*"],
+              user: PartialUserShape,
+            },
+            filter_single: { name },
+          })),
+        )
+        .run(db),
+  );
+
+export const nameRoutes = rep.prefix("/{name}").router({
+  get,
+  commonReasons,
+  queue: queueRouter,
+  signIn: signInRouter,
+  status,
+  supervisingReps,
+  training: trainingRouter,
+});

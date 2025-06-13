@@ -1,17 +1,12 @@
 import Title from "@/components/title";
-import {
-  // createMailingList,
-  // deleteMailingList,
-  getMailingLists,
-  // updateMailingList,
-} from "@/services/notifications/getMailingLists";
+import { client, orpc } from "@/lib/orpc";
 import { MailingList } from "@ignis/types/notifications";
+import { Button } from "@packages/ui/components/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@packages/ui/components/dialog";
+import { Input } from "@packages/ui/components/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@packages/ui/components/table";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
-import { Button } from "@ui/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@ui/components/ui/dialog";
-import { Input } from "@ui/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@ui/components/ui/table";
+import {} from "@tanstack/react-router";
 import { Mail, Pencil, Plus, Trash2, Users } from "lucide-react";
 import { useState } from "react";
 
@@ -167,7 +162,7 @@ const NotificationDashboard = () => {
   );
 };
 
-export const Route = createFileRoute("/_authenticated/admin/notifications/dashboard")({
+export const Route = createFileRoute({
   component: NotificationDashboard,
-  loader: ({ context: { orpc } }) => orpc.notifications.mailingList.all(),
+  loader: async () => client.notifications.mailingLists.all({ include_subscribers: false }),
 });

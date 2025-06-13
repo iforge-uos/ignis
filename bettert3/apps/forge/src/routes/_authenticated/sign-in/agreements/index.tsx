@@ -1,21 +1,21 @@
 import Title from "@/components/title";
 import { useUserRoles } from "@/hooks/useUserRoles";
-import { getAgreements } from "@/services/root/getAgreements";
+import { orpc } from "@/lib/orpc";
+import Loader from "@packages/ui/components/loader";
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
-import { Loader } from "@ui/components/ui/loader";
-import { AgreementCard } from "./-components/AgreementCard";
+import {} from "@tanstack/react-router";
 import { Suspense } from "react";
+import { AgreementCard } from "./-components/AgreementCard";
 
 function AgreementsList() {
   const roles = useUserRoles();
-  const { data: agreements = [] } = useQuery({ 
-    queryKey: ["agreements"], 
-    queryFn: getAgreements,
-    refetchOnMount: "always",
-    staleTime: 0,
-    networkMode: "always"
-  });
+  const { data: agreements = [] } = useQuery(
+    orpc.agreements.all.queryOptions({
+      refetchOnMount: "always",
+      staleTime: 0,
+      networkMode: "always",
+    }),
+  );
 
   const isRep = roles.includes("rep");
 
@@ -59,6 +59,6 @@ export default function Component() {
   );
 }
 
-export const Route = createFileRoute("/_authenticated/sign-in/agreements/")({
+export const Route = createFileRoute({
   component: Component,
 });

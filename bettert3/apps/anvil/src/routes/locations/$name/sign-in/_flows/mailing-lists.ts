@@ -1,25 +1,25 @@
 import e from "@db/edgeql-js";
 import { ErrorMap } from "@orpc/server";
 import { z } from "zod/v4";
-import { InputStep, createInputStep } from "./_input";
-import { OutputStep, SignInParams } from "./_types";
+import { createFinaliseStep, createInitialiseStep, StepType } from "./_steps";
+import { type SignInParams } from "./_types";
 
-export const Input = createInputStep("MAILING_LISTS").extend({}).and(InputStep);
+export const Initialise = createInitialiseStep(StepType.enum.MAILING_LISTS);
 
-export interface Output extends OutputStep {
-  currentType: "MAILING_LISTS";
-  type: "AGREEMENTS";
-}
+export const Transmit = z.object({ type: z.literal(StepType.enum.MAILING_LISTS) });
+
+export const Receive = z.object({ type: z.literal(StepType.enum.MAILING_LISTS) });
+
+export const Finalise = createFinaliseStep(StepType.enum.MAILING_LISTS, StepType.enum.AGREEMENTS);
 
 export const Errors = {} as const satisfies ErrorMap;
 
-export default async function ({
-  $user,
-  input,
-  context: { tx },
-  errors,
-}: SignInParams<z.infer<typeof Input>>): Promise<Output> {
+// biome-ignore lint/correctness/useYield: <explanation>
+export default async function* (
+  _: SignInParams<z.infer<typeof Initialise>>,
+): AsyncGenerator<z.infer<typeof Transmit>, z.infer<typeof Finalise>, z.infer<typeof Receive>> {
   return {
-    type: "AGREEMENTS",
+    type: StepType.enum.MAILING_LISTS,
+    next: StepType.enum.AGREEMENTS,
   };
 }

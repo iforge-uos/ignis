@@ -6,24 +6,23 @@ import { getSignInTrainings } from "@db/queries/getSignInTrainings.query";
 import { CreateAgreementSchema } from "@db/zod/modules/sign_in";
 import { ErrorMap } from "@orpc/server";
 import { z } from "zod/v4";
-import { InputStep, createInputStep } from "./_input";
-import { OutputStep, SignInParams } from "./_types";
+import { createFinaliseStep, createInitialiseStep, StepType } from "./_steps";
+import { type SignInParams } from "./_types";
 
-export const Input = createInputStep("REASON")
-  .extend({ reason: z.object({ id: z.uuid() }) })
-  .and(InputStep);
+export const Initialise = createInitialiseStep(StepType.enum.REASON);
 
-interface ToolsOutput extends OutputStep {
-  currentType: "REASON";
-  type: "TOOLS";
-  rep_sign_in_dequeuing: boolean;
-  training: Awaited<ReturnType<typeof getSignInTrainings>>["training"];
-}
-interface FinaliseOutput extends OutputStep {
-  currentType: "REASON";
-  type: "FINALISE";
-}
-export type Output = ToolsOutput | FinaliseOutput;
+export const Transmit = z.object({ type: z.literal(StepType.enum.REASON) });
+
+export const Receive = z.object({ type: z.literal(StepType.enum.REASON), reason: z.object({ id: z.uuid() }) });
+
+export const Finalise = createFinaliseStep(
+  StepType.enum.REASON,
+  z.union([z.literal(StepType.enum.TOOLS), z.literal(StepType.enum.FINALISE)])).extend(
+  {
+    rep_sign_in_dequeuing: z.boolean().optional(),
+    training: z.array(z.any()).optional(), // Consider defining a more specific schema for training items
+  },
+);
 
 export const Errors = {
   USER_AGREEMENT_NOT_SIGNED: {
@@ -41,18 +40,24 @@ export const Errors = {
   },
 } as const satisfies ErrorMap;
 
-export default async function ({
+export default async function* ({
   $user,
   $location,
-  input: { reason, name: location },
+  input: { name: location },
   context: { tx },
   errors,
-}: SignInParams<z.infer<typeof Input>>): Promise<Output> {
+}: SignInParams<z.infer<typeof Initialise>>): AsyncGenerator<
+  z.infer<typeof Transmit>,
+  z.infer<typeof Finalise>,
+  z.infer<typeof Receive>
+> {
   const userAgreement = e.assert_exists(
     e.select(e.sign_in.Reason, (reason) => ({
       filter_single: e.op(reason.category, "=", e.sign_in.ReasonCategory.PERSONAL_PROJECT),
     })).agreement,
   );
+
+  const { reason } = yield { type: StepType.enum.REASON };
 
   const {
     id,
@@ -107,7 +112,8 @@ export default async function ({
 
   if (reason_name === "Event") {
     return {
-      type: "FINALISE",
+      type: StepType.enum.REASON,
+      next: StepType.enum.TOOLS,
     };
   }
 
@@ -138,7 +144,8 @@ export default async function ({
   // return [...training, ...all_training];
 
   return {
-    type: "TOOLS",
+    type: StepType.enum.REASON,
+    next: StepType.enum.TOOLS,
     rep_sign_in_dequeuing:
       reason_name === "Rep On Shift" &&
       (await e

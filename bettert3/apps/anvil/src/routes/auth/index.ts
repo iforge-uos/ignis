@@ -6,10 +6,10 @@ import { PartialUserShape } from "@/utils/queries";
 import e from "@db/edgeql-js";
 import { CallbackRequest } from "@gel/auth-express";
 import { ORPCError } from "@orpc/server";
+import * as Sentry from "@sentry/bun";
 import axios from "axios";
 import { Response } from "express";
 import z from "zod/v4";
-import Sentry from "@sentry/bun"
 
 export const verify = pub
   .route({ method: "GET", path: "/auth/verify" })
@@ -54,8 +54,8 @@ export default expressAuth.createOAuthRouter("/api/auth/oauth", {
         const ldapUser = await ldap.lookupByEmail(profile.email);
         if (!ldapUser) {
           Sentry.logger.warn("Failed to find a matching email in LDAP", {
-            ...profile
-          })
+            ...profile,
+          });
           throw new ORPCError("NOT_FOUND", {
             message: "Cannot get user info. Please get in contact with us to resolve this it.iforge@sheffield.ac.uk",
           });

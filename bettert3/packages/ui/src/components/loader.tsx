@@ -1,6 +1,7 @@
 import { cn } from "@packages/ui/lib/utils";
 import React from "react";
-import { PulseLoader } from "react-spinners";
+import pkg from "react-spinners";
+const { PulseLoader } = pkg;
 
 export default ({ className, size }: { className?: string; size?: number }) => {
   return (

@@ -1,18 +1,16 @@
 import Title from "@/components/title";
 import { locationNameToCSSName } from "@/config/constants";
-import { toTitleCase, useUser } from "@/lib/utils";
-import { getLocation } from "@/services/training/getLocation";
-import { getStatus } from "@/services/training/getStatus";
-import { getUserTraining } from "@/services/users/getUserTraining";
+import { toTitleCase } from "@/lib/utils";
 import { training } from "@packages/types";
 import { LocationName, PartialTrainingWithStatus } from "@packages/types/training";
+import { Button } from "@packages/ui/components/button";
+import { Separator } from "@packages/ui/components/separator";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { Button } from "@ui/components/ui/button";
-import { Separator } from "@ui/components/ui/separator";
 import { CirclePlus } from "lucide-react";
 import ImageGradient from "./ImageGradient";
 import TrainingCourseCard from "./TrainingCourseCard";
+import { useUser } from "@/hooks/useUser";
 
 // don't ask why this is in the components folder
 export async function getData(location: LocationName): Promise<PartialTrainingWithStatus[]> {

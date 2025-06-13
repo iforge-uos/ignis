@@ -3,6 +3,7 @@ import { StartClient } from "@tanstack/react-start";
 import { hydrateRoot } from "react-dom/client";
 
 import { createRouter } from "./router";
+import React from "react";
 
 const router = createRouter();
 
@@ -15,4 +16,9 @@ Sentry.init({
   sendDefaultPii: false,
 });
 
-hydrateRoot(document, <StartClient router={router} />);
+hydrateRoot(
+  document,
+  <React.StrictMode>
+    <StartClient router={router} />
+  </React.StrictMode>,
+);

@@ -1,6 +1,6 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import {  redirect } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_redirects/signin/agreements")({
+export const Route = createFileRoute({
   loader: () =>
     redirect({
       to: "/sign-in/agreements",

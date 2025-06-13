@@ -1,18 +1,18 @@
 import { activeLocationAtom } from "@/atoms/signInAppAtoms";
 import ActiveLocationSelector from "@/components/sign-in/ActiveLocationSelector";
 import Title from "@/components/title";
+import { useSignInReasons } from "@/hooks/useSignInReasons";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants";
+import { orpc } from "@/lib/orpc";
 import { extractError } from "@/lib/utils";
 import { SignInDrawer } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignInDrawer";
-import { dataForLocation } from "@/services/sign_in/locationService";
-import { useSignInReasons } from "@/services/sign_in/signInReasonService";
 import type { QueueEntry, SignInEntry } from "@ignis/types/sign_in";
+import { Alert, AlertDescription, AlertTitle } from "@packages/ui/components/alert";
+import Loader from "@packages/ui/components/loader";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
-import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert";
-import { Loader } from "@ui/components/ui/loader";
+import {} from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { QueuedDrawer } from "./-components/QueuedDraw";
@@ -32,13 +32,14 @@ function SignInDashboard() {
     isLoading,
     isError,
     error,
-  } = useQuery({
-    queryKey: ["locationList", activeLocation],
-    queryFn: () => dataForLocation(activeLocation),
-    staleTime: 5_000,
-    refetchInterval: 60_000,
-    refetchOnWindowFocus: true,
-  });
+  } = useQuery(
+    orpc.locations.get.queryOptions({
+      input: { name: activeLocation },
+      staleTime: 5_000,
+      refetchInterval: 60_000,
+      refetchOnWindowFocus: true,
+    }),
+  );
 
   useEffect(() => {
     if (locationList) {
@@ -133,6 +134,6 @@ function SignInDashboard() {
   );
 }
 
-export const Route = createFileRoute("/_authenticated/_reponly/sign-in/dashboard/")({
+export const Route = createFileRoute({
   component: SignInDashboard,
 });

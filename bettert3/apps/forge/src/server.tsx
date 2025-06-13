@@ -1,6 +1,6 @@
 import * as Sentry from "@sentry/tanstackstart-react";
 import { createStartHandler, defaultStreamHandler } from "@tanstack/react-start/server";
-import { createRouter } from "./router";
+import { createRouter } from './router'
 
 Sentry.init({
   dsn: "https://893631a88ccccc18a9b65d8b5c3e1395@o4507082090414080.ingest.de.sentry.io/4508127275122768",
@@ -14,6 +14,7 @@ Sentry.init({
   // https://docs.sentry.io/platforms/javascript/configuration/options/#traces-sample-rate
   tracesSampleRate: import.meta.env.DEV ? 1.0 : 0.1,
 });
+
 
 export default createStartHandler({
   createRouter,

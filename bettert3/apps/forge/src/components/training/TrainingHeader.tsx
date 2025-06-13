@@ -1,10 +1,10 @@
 import { LOCATIONS, TRAINING_LOCATIONS } from "@/lib/constants";
 import { ALL_TAGS, TrainingForTags, serializeTrainingTags, toTitleCase, trainingTags } from "@/lib/utils";
 import { LocationName, Training } from "@packages/types/training";
-import { LocationIcon } from "@packages/ui/components/icons/Locations";
-import MultipleSelector, { Option } from "@ui/components/multi-select";
-import { Badge } from "@ui/components/ui/badge";
-import { Separator } from "@ui/components/ui/separator";
+import { Badge } from "@packages/ui/components/badge";
+// import { MultiSelect } from "@packages/ui/components/multi-select";
+import { Separator } from "@packages/ui/components/separator";
+import { LocationIcon } from "@packages/ui/icons/Locations";
 import { format } from "date-fns";
 import React from "react";
 
@@ -38,7 +38,7 @@ export function TrainingHeader({ data, editing, tags, setTags, locations, setLoc
           <div className="flex mb-2 items-center">
             <h2 className="text-2xl font-semibold mb-2">Locations:</h2>
             {editing ? (
-              <MultipleSelector
+              <MultiSelect
                 className="ml-2"
                 badgeClassName="rounded-md py-2"
                 badgeVariant="outline"
@@ -73,7 +73,7 @@ export function TrainingHeader({ data, editing, tags, setTags, locations, setLoc
           <div className="flex mb-2 items-center">
             <h2 className="text-2xl font-semibold mb-2">Tags:</h2>
             {editing ? (
-              <MultipleSelector
+              <MultiSelect
                 className="ml-2"
                 badgeClassName="rounded-md py-2 gap-2"
                 badgeVariant="outline"

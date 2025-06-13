@@ -1,12 +1,10 @@
 import { activeLocationAtom } from "@/atoms/signInAppAtoms";
 import { uCardNumberToString } from "@/lib/utils";
 import { SignInReason } from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SignInReason";
-import { GetSignIn, PatchSignIn } from "@/services/sign_in/signInService";
 import { PartialReason, Training, User } from "@ignis/types/sign_in";
-import { PartialUserWithTeams } from "@ignis/types/users";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Badge } from "@ui/components/ui/badge";
-import { Button } from "@ui/components/ui/button";
+import { PartialUserWithTeams } from "@packages/types/users";
+import { Badge } from "@packages/ui/components/badge";
+import { Button } from "@packages/ui/components/button";
 import {
   Dialog,
   DialogContent,
@@ -14,8 +12,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@ui/components/ui/dialog";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip";
+} from "@packages/ui/components/dialog";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@packages/ui/components/tooltip";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { Edit } from "lucide-react";
 import React from "react";

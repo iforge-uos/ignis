@@ -1,6 +1,8 @@
 import { ChevronRight } from "lucide-react";
 
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@packages/ui/components/ui/collapsible";
+import { useUserRoles } from "@/hooks/useUserRoles";
+import { Route } from "@/types/nav";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@packages/ui/components/collapsible";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -9,10 +11,9 @@ import {
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubButton,
-  SidebarMenuSubItem, useSidebar,
-} from "@packages/ui/components/ui/sidebar";
-import { Route } from "@/types/nav";
-import { useUserRoles } from "@/hooks/useUserRoles";
+  SidebarMenuSubItem,
+  useSidebar,
+} from "@packages/ui/components/sidebar";
 import { Link } from "@tanstack/react-router";
 
 interface NavMainProps {
@@ -21,13 +22,13 @@ interface NavMainProps {
 
 export function NavMain({ items }: NavMainProps) {
   const userRoles = useUserRoles();
-  const { toggleSidebar, openMobile, isMobile } = useSidebar()
+  const { toggleSidebar, openMobile, isMobile } = useSidebar();
 
   const handleClick = () => {
     if (isMobile && openMobile) {
       toggleSidebar();
     }
-  }
+  };
 
   // Filter the items based on the user's roles
   const filteredItems = items.filter((item) => {

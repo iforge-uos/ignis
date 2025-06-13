@@ -1,5 +1,5 @@
 import Title from "@/components/title";
-import { createFileRoute } from "@tanstack/react-router";
+;
 import { RouteUnfinished } from "@/components/routing/RouteUnfinished";
 
 const UserSettingsPageComponent = () => {
@@ -13,4 +13,4 @@ const UserSettingsPageComponent = () => {
   );
 };
 
-export const Route = createFileRoute("/_authenticated/user/settings/")({ component: RouteUnfinished });
+export const Route = createFileRoute({ component: RouteUnfinished });

@@ -1,17 +1,15 @@
-import axiosInstance from "@/api/axiosInstance";
 import Title from "@/components/title";
 import { TrainingHeader } from "@/components/training/TrainingHeader";
 import { cn } from "@/lib/utils";
-import { get } from "@/services/training/get";
 import type { InteractionResponse, Section, Training } from "@ignis/types/training";
 import { Temporal } from "@js-temporal/polyfill";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Button } from "@ui/components/ui/button";
-import { Checkbox } from "@ui/components/ui/checkbox";
-import { Label } from "@ui/components/ui/label";
-import { Progress } from "@ui/components/ui/progress";
-import { RadioGroup, RadioGroupItem } from "@ui/components/ui/radio-group";
-import { Separator } from "@ui/components/ui/separator";
+import { Button } from "@packages/ui/components/button";
+import { Checkbox } from "@packages/ui/components/checkbox";
+import { Label } from "@packages/ui/components/label";
+import { Progress } from "@packages/ui/components/progress";
+import { RadioGroup, RadioGroupItem } from "@packages/ui/components/radio-group";
+import { Separator } from "@packages/ui/components/separator";
+import { useNavigate } from "@tanstack/react-router";
 import React from "react";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
@@ -209,7 +207,7 @@ const Component: React.FC = () => {
   );
 };
 
-export const Route = createFileRoute("/_authenticated/training/$id")({
+export const Route = createFileRoute({
   loader: async ({ params }) => await get(params.id),
   component: Component,
 });

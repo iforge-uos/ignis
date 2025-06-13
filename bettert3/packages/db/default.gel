@@ -32,7 +32,7 @@ module default {
     }
 
     abstract link timed {
-        created_at: datetime {
+        required created_at: datetime {
             readonly := true;
             default := datetime_of_statement();
         }

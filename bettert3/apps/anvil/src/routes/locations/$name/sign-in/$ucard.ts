@@ -1,12 +1,13 @@
 import { deskOrAdmin, transaction } from "@/router";
-import { exhaustiveGuard } from "@/utils/base";
+import { exhaustiveGuard } from "@/utils";
 import { ensureUser } from "@/utils/sign-in";
 import e from "@db/edgeql-js";
+import { sign_in } from "@db/interfaces";
 import { eventIterator } from "@orpc/server";
 import { EventPublisher } from "@orpc/server";
 import { z } from "zod/v4";
-import { BaseInputStep, SignInErrors, SignInStepInput, type SignInStepOutput } from "./_flows/_types";
-import agreements from "./_flows/agreements";
+import { SignInErrors, SignInStepInitialise, SignInStepFinalise, SignInTransmit, SignInReceive } from "./_flows/_types";
+import agreements, { Initialise } from "./_flows/agreements";
 import cancel from "./_flows/cancel";
 import finalise from "./_flows/finalise";
 import initialise from "./_flows/initialise";
@@ -16,8 +17,21 @@ import queue from "./_flows/queue";
 import reasons from "./_flows/reasons";
 import register from "./_flows/register";
 import tools from "./_flows/tools";
+import { InitialiseStep } from "./_flows/_steps";
 
-const publisher = new EventPublisher<Record<string, z.infer<typeof SignInStepInput>>>();
+type UCardNumber = z.infer<typeof SignInStepInitialise>["ucard_number"];
+type BaseKey = `${sign_in.LocationName}-${UCardNumber}`;
+
+export const PUBLISHER = new EventPublisher<{
+  [KeyT in BaseKey | `${BaseKey}-${z.infer<typeof SignInStepFinalise>["next"]}` | string]: KeyT extends BaseKey
+    ? z.infer<typeof SignInStepInitialise>
+    : z.infer<typeof SignInStepInitialise>;
+}>();
+export const SIGN_INS: {[K in BaseKey]: {
+  AGREEMENT: {
+    RECIEVE: z.infer<typeof Initialise>
+  }
+}} = {}
 
 /**
  * This is analogous to a undirected acyclic graph
@@ -26,9 +40,9 @@ const publisher = new EventPublisher<Record<string, z.infer<typeof SignInStepInp
 export const create = deskOrAdmin
   .route({ method: "GET", path: "/{ucard_number}" })
   .use(transaction)
-  .input(BaseInputStep)
+  .input(InitialiseStep)
   .errors(SignInErrors)
-  .handler(async function* (arg): AsyncGenerator<SignInStepOutput> {
+  .handler(async function* (arg): AsyncGenerator<z.infer<typeof SignInStepFinalise>, {id: string}> {
     const {
       input,
       context: { tx },
@@ -40,54 +54,70 @@ export const create = deskOrAdmin
     const $location = e.assert_exists(e.select(e.sign_in.Location, () => ({ filter_single: { name: input.name } })));
 
     signal?.addEventListener("abort", async () => {
-      await cancel({ ...arg, input: { ...input, type: "CANCEL" }, user, $user, $location });
+      await cancel({ ...arg, user, input: { ...input, type: "CANCEL" }, $user, $location });
     });
 
-    for await (const message of publisher.subscribe(input.ucard_number, { signal })) {
+    const key = `${input.name}-${input.ucard_number}` as const;
+
+    for await (const message of PUBLISHER.subscribe(`${input.name}-${input.ucard_number}`, { signal })) {
+      const rxGen = PUBLISHER.subscribe(`${key}-${message.type}`, { signal });
+      const rx = rxGen.next;
+      let fn: () => AsyncGenerator<z.infer<typeof SignInTransmit>, z.infer<typeof SignInStepFinalise>, z.infer<typeof SignInReceive>> & {wait?: boolean};
       switch (message.type) {
         case "INITIALISE":
-          yield await initialise({ ...arg, user, input: message, $user, $location });
+          fn = initialise.bind(undefined, { ...arg, user, input: message, $user, $location });
           break;
         case "QUEUE":
-          yield await queue({ ...arg, input: message, $user, $location });
+          fn = queue.bind(undefined, { ...arg, input: message, $user, $location });
           break;
         case "REGISTER":
-          yield await register({ ...arg, user, input: message, $user, $location });
+          fn = register.bind(undefined, { ...arg, user, input: message, $user, $location });
           break;
         case "AGREEMENTS":
-          yield await agreements({ ...arg, user, input: message, $user, $location });
+          fn = agreements.bind(undefined, { ...arg, user, input: message, $user, $location });
           break;
         case "REASON":
-          yield await reasons({ ...arg, user, input: message, $user, $location });
+          fn = reasons.bind(undefined, { ...arg, user, input: message, $user, $location });
           break;
         case "TOOLS":
-          yield await tools({ ...arg, user, input: message, $user, $location });
+          fn = tools.bind(undefined, { ...arg, user, input: message, $user, $location });
           break;
         case "PERSONAL_TOOLS_AND_MATERIALS":
-          yield await personalToolsAndMaterials({ ...arg, user, input: message, $user, $location });
+          fn = personalToolsAndMaterials.bind(undefined, { ...arg, user, input: message, $user, $location });
           break;
         case "MAILING_LISTS":
-          yield await mailingLists({ ...arg, user, input: message, $user, $location });
+          fn = mailingLists.bind(undefined, { ...arg, user, input: message, $user, $location });
           break;
         case "FINALISE":
-          yield await finalise({ ...arg, user, input: message, $user, $location });
+          fn = finalise.bind(undefined, { ...arg, user, input: message, $user, $location });
           break;
         case "CANCEL":
-          yield await cancel({ ...arg, user, input: message, $user, $location });
+          fn = cancel.bind(undefined, { ...arg, user, input: message, $user, $location });
           break;
         default:
           exhaustiveGuard(message);
       }
+
+      if (fn.wait) {
+        rx.then(async (value) => await fn.next(value));
+      } else {
+        const result = await fn.next();
+        if (result.done) {
+          yield result.value;
+        }
+      }
+      await fn.return();
     }
+    return {id: ""}
   });
 
 // avoid touching this, needed for bidirectional comms. Think of this as a send channel and above method is a recv channel (from client side)
 export const send = deskOrAdmin
   .route({ method: "GET", path: "/{ucard_number}/send" })
-  .input(eventIterator(SignInStepInput))
+  .input(eventIterator(InitialiseStep))
   .handler(async function* ({ input }) {
     for await (const message of input) {
-      publisher.publish(message.ucard_number, message);
+      PUBLISHER.publish(`${message.name}-${message.ucard_number}`, message);
       yield;
     }
   });

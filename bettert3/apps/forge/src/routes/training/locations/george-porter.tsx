@@ -1,5 +1,5 @@
 import { TrainingLocation, getData } from "@/components/training/TrainingLocation";
-import { createFileRoute } from "@tanstack/react-router";
+import {} from "@tanstack/react-router";
 
 const GeorgePorter = () => (
   <TrainingLocation
@@ -16,7 +16,7 @@ const GeorgePorter = () => (
   />
 );
 
-export const Route = createFileRoute("/training/locations/george-porter")({
+export const Route = createFileRoute({
   component: GeorgePorter,
   loader: async () => getData("GEORGE_PORTER"),
 });

@@ -1,21 +1,24 @@
 import email from "@/email";
-import Logger from "@/utils/logger";
 import { QueuePlaceShape } from "@/utils/queries";
 import e, { $infer } from "@db/edgeql-js";
 import { ErrorMap } from "@orpc/server";
+import { logger } from "@sentry/bun";
 import { AccessError, ConstraintViolationError } from "gel";
 import { z } from "zod/v4";
-import { OutputStep, SignInParams } from "./_types";
-import { createInputStep, InputStep } from "./_input";
-import { sign_in } from "@db/interfaces";
+import { createFinaliseStep, createInitialiseStep, StepType } from "./_steps";
+import { type SignInParams } from "./_types";
 
-export const Input = createInputStep("QUEUE").extend({}).and(InputStep);
+type Place = $infer<typeof QueuePlaceShape>[number];
 
-export interface Output extends OutputStep {
-  currentType: "QUEUE"
-  type: "FINALISE";
-  place: sign_in.QueuePlace;
-}
+export const Initialise = createInitialiseStep(StepType.enum.QUEUE);
+
+export const Transmit = z.undefined();
+
+export const Receive = z.undefined();
+
+export const Finalise = createFinaliseStep(StepType.enum.QUEUE, StepType.enum.FINALISE).extend({
+  place: z.custom<Place>((value) => value as any),
+});
 
 export const Errors = {
   QUEUE_DISABLED: {
@@ -28,10 +31,11 @@ export const Errors = {
   },
 } as const satisfies ErrorMap;
 
-export default async function (
-  { $user, $location, errors, context: { tx } }: Omit<SignInParams<z.infer<typeof Input>>, "user">, // cannot use user as it cannot be passed from the queue.add endpoint
-): Promise<Output> {
-  let place: $infer<typeof QueuePlaceShape>[number];
+// biome-ignore lint/correctness/useYield:
+export default async function* (
+  { $user, $location, errors, context: { tx } }: Omit<SignInParams<z.infer<typeof Initialise>>, "user">, // cannot use user as it cannot be passed from the queue.add endpoint
+): AsyncGenerator<z.infer<typeof Transmit>, z.infer<typeof Finalise>, z.infer<typeof Receive>> {
+  let place: Place;
   try {
     place = await e
       .select(
@@ -60,7 +64,7 @@ export default async function (
 
   await email.sendQueuedEmail(place, place.location.name);
 
-  Logger.debug(`Sent queued email to user ${place.user.display_name} (${place.user.ucard_number})`);
+  logger.debug(logger.fmt`Sent queued email to user ${place.user.ucard_number}`);
 
-  return { type: "FINALISE", place };
+  return { next: StepType.enum.FINALISE, type: StepType.enum.QUEUE, place };
 }

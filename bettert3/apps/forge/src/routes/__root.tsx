@@ -4,10 +4,12 @@ import CommandMenu from "@/components/command-menu";
 import { TailwindIndicator } from "@/components/dev/Tailwind-Indicator";
 import { Footer } from "@/components/footer";
 import UCardReader from "@/components/ucard-reader";
-import { useTheme } from "@/hooks/useTheme";
+import { themeQueryKey, useTheme } from "@/hooks/useTheme";
 import type { useUser } from "@/hooks/useUser";
 import type { orpc } from "@/lib/orpc";
+import { getRequestInfo } from "@/lib/request-info";
 import Loader from "@packages/ui/components/loader";
+import { SidebarInset } from "@packages/ui/components/sidebar";
 import { Toaster } from "@packages/ui/components/sonner";
 import Sentry, { wrapCreateRootRouteWithSentry } from "@sentry/tanstackstart-react";
 import type { QueryClient } from "@tanstack/react-query";
@@ -15,7 +17,6 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { HeadContent, Outlet, Scripts, createRootRouteWithContext, useRouterState } from "@tanstack/react-router";
 import React, { Suspense } from "react";
 import appCss from "../index.css?url";
-import { SidebarInset } from "@packages/ui/components/sidebar";
 
 export interface RouterAppContext {
   orpc: typeof orpc;
@@ -124,63 +125,66 @@ export const Route = wrapCreateRootRouteWithSentry(createRootRouteWithContext<Ro
       },
     ],
   }),
+  loader: async ({ context }) => {
+    const requestInfo = await getRequestInfo();
 
+    context.queryClient.setQueryData(themeQueryKey, requestInfo.userPreferences.theme);
+
+    return { requestInfo };
+  },
   component: RootDocument,
 });
-
 
 function RootDocument() {
   // const isFetching = useRouterState({ select: (s) => s.isLoading });
 
   return (
-    <React.StrictMode>
-      <html lang="en">
-        <head>
-          <HeadContent />
-        </head>
-        <body>
-          <CommandMenu />
-          <AppSidebar />
-          <SidebarInset className="flex flex-col">
-            <div className="sticky top-0 z-50 bg-background">
-              <SidebarHeader />
-            </div>
-            <div className="flex-grow">
-              <Outlet />
-              <TailwindIndicator />
-              <UCardReader />
+    <html lang="en">
+      <head>
+        <HeadContent />
+      </head>
+      <body>
+        <CommandMenu />
+        <AppSidebar />
+        <SidebarInset className="flex flex-col">
+          <div className="sticky top-0 z-50 bg-background">
+            <SidebarHeader />
+          </div>
+          <div className="flex-grow">
+            <Outlet />
+            <TailwindIndicator />
+            <UCardReader />
 
-              <Toaster richColors theme={useTheme().normalisedTheme} />
-              <Suspense>
-                <TanStackRouterDevtools position="bottom-left" />
-              </Suspense>
-              <ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
-              <Footer />
-            </div>
-          </SidebarInset>
-          <Scripts />
-          <script>
-            {document.addEventListener("DOMContentLoaded", () => {
-              function setFavicon() {
-                const link = document.createElement("link");
-                const oldLink = document.getElementById("dynamic-favicon");
-                link.id = "dynamic-favicon";
-                link.rel = "icon";
-                link.href = window.matchMedia("(prefers-color-scheme: dark)").matches
-                  ? "/favicon-dark.svg"
-                  : "/favicon.svg";
-                if (oldLink) {
-                  document.head.removeChild(oldLink);
-                }
-                document.head.appendChild(link);
+            <Toaster richColors theme={useTheme().normalisedTheme} />
+            <Suspense>
+              <TanStackRouterDevtools position="bottom-left" />
+            </Suspense>
+            <ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
+            <Footer />
+          </div>
+        </SidebarInset>
+        <Scripts />
+        <script>
+          {document.addEventListener("DOMContentLoaded", () => {
+            function setFavicon() {
+              const link = document.createElement("link");
+              const oldLink = document.getElementById("dynamic-favicon");
+              link.id = "dynamic-favicon";
+              link.rel = "icon";
+              link.href = window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "/favicon-dark.svg"
+                : "/favicon.svg";
+              if (oldLink) {
+                document.head.removeChild(oldLink);
               }
+              document.head.appendChild(link);
+            }
 
-              setFavicon();
-              window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", setFavicon);
-            }) ?? null}
-          </script>
-        </body>
-      </html>
-    </React.StrictMode>
+            setFavicon();
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", setFavicon);
+          }) ?? null}
+        </script>
+      </body>
+    </html>
   );
 }

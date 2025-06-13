@@ -1,7 +1,7 @@
 import Title from "@/components/title";
-import { Link } from "@tanstack/react-router";
-import { Button } from "@ui/components/ui/button";
+import { Button } from "@packages/ui/components/button";
 import Sentry from "@sentry/tanstackstart-react";
+import { Link } from "@tanstack/react-router";
 import { useEffect } from "react";
 
 export const GenericError = ({ error }: { error: Error }) => {

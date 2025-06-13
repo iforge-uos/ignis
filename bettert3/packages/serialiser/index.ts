@@ -1,5 +1,5 @@
 import { Temporal } from "@js-temporal/polyfill";
-import type { StandardRPCCustomJsonSerializer } from "@orpc/client/standard";
+import type { StandardRPCCustomJsonSerializer } from "@orpc/client";
 import { Duration, LocalDateTime } from "gel";
 
 function* count(start = 0, step = 1) {
@@ -36,7 +36,7 @@ function createSerializer<
 }
 
 export default [
-  createSerializer(Duration, Temporal.Duration),
-  createSerializer(LocalDateTime, Temporal.Instant),
+  createSerializer(Duration as any, Temporal.Duration),
+  createSerializer(LocalDateTime as any, Temporal.Instant),
   createSerializer(Date, Temporal.ZonedDateTime),
 ] satisfies StandardRPCCustomJsonSerializer[];

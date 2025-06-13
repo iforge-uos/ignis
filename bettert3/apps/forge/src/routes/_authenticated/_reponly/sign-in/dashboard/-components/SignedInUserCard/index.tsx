@@ -1,23 +1,23 @@
 import { activeLocationAtom } from "@/atoms/signInAppAtoms";
 import { UserAvatar } from "@/components/avatar";
-import { TeamIcon } from "@ui/components/icons/Team";
 import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants";
+import { orpc } from "@/lib/orpc";
 import { uCardNumberToString } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { AdminDisplay } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/AdminDisplay";
 import { ManageUserWidget } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/ManageUserWidget";
 import { SignInReasonWithToolsDisplay } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/SignInReasonDisplay";
 import { TimeDisplay } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/TimeDisplay";
-import { PatchSignIn, PostSignOut, PostSignOutProps } from "@/services/sign_in/signInService";
 import type { LocationName, PartialReason } from "@ignis/types/sign_in";
-import type { PartialUserWithTeams } from "@ignis/types/users";
+import type { PartialUserWithTeams } from "@packages/types/users";
+import { Badge } from "@packages/ui/components/badge";
+import { Button } from "@packages/ui/components/button";
+import { Card } from "@packages/ui/components/card";
+import { Popover, PopoverContent, PopoverTrigger } from "@packages/ui/components/popover";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@packages/ui/components/tooltip";
+import { TeamIcon } from "@packages/ui/icons//Team";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { Badge } from "@ui/components/ui/badge";
-import { Button } from "@ui/components/ui/button";
-import { Card } from "@ui/components/ui/card";
-import { Popover, PopoverContent, PopoverTrigger } from "@ui/components/ui/popover";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip";
-import { cn } from "@ui/lib/utils";
 import { useAtom } from "jotai";
 import { LogOut, Plus } from "lucide-react";
 import * as React from "react";
@@ -74,61 +74,43 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
   const abortController = new AbortController();
   const queryClient = useQueryClient();
 
-  const signOutProps: PostSignOutProps = {
-    locationName: activeLocation,
-    uCardNumber: uCardNumberToString(user.ucard_number),
-    signal: abortController.signal,
-  };
-
-  const { mutate: signOutMutate } = useMutation({
-    mutationKey: ["postSignOut", signOutProps],
-    mutationFn: () => PostSignOut(signOutProps),
-    retry: 0,
-    onError: (error) => {
-      console.error("Error", error);
-      abortController.abort();
-    },
-    onSuccess: async () => {
-      abortController.abort();
-      toast.success(
-        <>
-          Successfully signed out{" "}
-          <a className="font-bold hover:underline underline-offset-4 hover:cursor-pointer" href={`/users/${user.id}`}>
-            {user.display_name}
-          </a>
-        </>,
-      );
-      onSignOut?.();
-      await queryClient.invalidateQueries({ queryKey: ["locationStatus"] });
-      await queryClient.invalidateQueries({ queryKey: ["locationList", activeLocation] });
-    },
-  });
+  const { mutate: signOutMutate } = useMutation(
+    orpc.locations.signIn.signOut.mutationOptions({
+      retry: 0,
+      onError: (error) => {
+        console.error("Error", error);
+        abortController.abort();
+      },
+      onSuccess: async () => {
+        abortController.abort();
+        toast.success(
+          <>
+            Successfully signed out{" "}
+            <a className="font-bold hover:underline underline-offset-4 hover:cursor-pointer" href={`/users/${user.id}`}>
+              {user.display_name}
+            </a>
+          </>,
+        );
+        onSignOut?.();
+        await queryClient.invalidateQueries({ queryKey: ["locationStatus"] });
+        await queryClient.invalidateQueries({ queryKey: ["locationList", activeLocation] });
+      },
+    }),
+  );
 
   const handleSignOut = () => {
     if (window.confirm("Are you sure you want to sign out?")) {
-      signOutMutate();
+      signOutMutate(
+        {
+          name: activeLocation,
+          ucard_number: uCardNumberToString(user.ucard_number),
+        },
+        {
+          signal: abortController.signal,
+        },
+      );
     }
   };
-
-  const { mutate: updateSignInMutate } = useMutation({
-    mutationKey: ["patchSignIn", user.ucard_number],
-    mutationFn: (postBody: { tools?: string[]; reason?: PartialReason }) =>
-      PatchSignIn({
-        locationName: activeLocation,
-        uCardNumber: uCardNumberToString(user.ucard_number),
-        signal: abortController.signal,
-        postBody,
-      }),
-    onSuccess: async () => {
-      toast.success("Successfully updated user sign-in information");
-      await queryClient.invalidateQueries({ queryKey: ["locationStatus"] });
-      await queryClient.invalidateQueries({ queryKey: ["locationList", activeLocation] });
-    },
-    onError: (error) => {
-      console.error("Error updating sign-in information", error);
-      toast.error("Failed to update user sign-in information");
-    },
-  });
 
   const canDrag = user.roles.some((r) => r.name === "Rep");
   const [{ isDragging }, drag] = useDrag(() => ({

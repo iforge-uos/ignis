@@ -1,6 +1,6 @@
-import { cn, getGravatarUrl } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { PartialUser } from "@packages/types/users";
-import { Avatar, AvatarFallback, AvatarImage } from "@ui/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@packages/ui/components/avatar";
 
 interface UserAvatarProps {
   user?: PartialUser | null;
@@ -22,7 +22,7 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({ user, className, draggab
     .join("");
   return (
     <Avatar className={cn("h-8 w-8 rounded-md", className)}>
-      <AvatarImage src={user.profile_picture || getGravatarUrl(user.email)} alt={user.email} draggable={draggable} />
+      <AvatarImage src={user.profile_picture} alt={user.email} draggable={draggable} />
       <AvatarFallback className="text-black dark:text-white">{user_initials}</AvatarFallback>
     </Avatar>
   );

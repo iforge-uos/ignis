@@ -1,14 +1,14 @@
 import DotIndicator from "@/components/dot-indicator";
-import { HeartspaceIcon, MainspaceIcon } from "@ui/components/icons/Locations";
-import { IForgeLogo } from "@ui/components/icons/iforge";
 import Title from "@/components/title";
-import { Link, createFileRoute } from "@tanstack/react-router";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@ui/components/ui/accordion";
-import { Button } from "@ui/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader } from "@ui/components/ui/card";
-import { Carousel, CarouselApi, CarouselContent, CarouselItem } from "@ui/components/ui/carousel";
-import { Separator } from "@ui/components/ui/separator";
-import { Timeline, TimelineDot, TimelineHeading, TimelineItem, TimelineLine } from "@ui/components/ui/timeline";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@packages/ui/components/accordion";
+import { Button } from "@packages/ui/components/button";
+import { Card, CardContent, CardDescription, CardHeader } from "@packages/ui/components/card";
+import { Carousel, CarouselApi, CarouselContent, CarouselItem } from "@packages/ui/components/carousel";
+import { Separator } from "@packages/ui/components/separator";
+import { Timeline, TimelineDot, TimelineHeading, TimelineItem, TimelineLine } from "@packages/ui/components/timeline";
+import { HeartspaceIcon, MainspaceIcon } from "@packages/ui/icons//Locations";
+import { IForgeLogo } from "@packages/ui/icons//iforge";
+import { Link } from "@tanstack/react-router";
 import Autoplay from "embla-carousel-autoplay";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import { useScroll, useTransform } from "framer-motion";
@@ -502,4 +502,4 @@ const IndexComponent = () => {
   );
 };
 
-export const Route = createFileRoute("/")({ component: IndexComponent });
+export const Route = createFileRoute({ component: IndexComponent });

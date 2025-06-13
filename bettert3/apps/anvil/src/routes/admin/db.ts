@@ -1,20 +1,20 @@
 import { exec } from "node:child_process";
 import { admin } from "@/router";
-import Logger from "@/utils/logger";
+import { logger } from "@sentry/bun";
 
 export const getGelUI = admin.route({ path: "/db/ui" }).handler(async () => {
-  Logger.info("Retrieving Gel UI URL");
+  logger.info("Retrieving Gel UI URL");
 
   const url = await new Promise<string>((resolve, reject) => {
     exec("gel ui --print-url", (error, stdout, stderr) => {
       if (error) {
-        Logger.error(`Error executing gel ui command: ${error.message}`);
+        logger.error(`Error executing gel ui command: ${error.message}`);
         reject(error);
         return;
       }
 
       if (stderr) {
-        Logger.warn(`Command stderr: ${stderr}`);
+        logger.warn(`Command stderr: ${stderr}`);
       }
 
       return resolve(stdout.trim());

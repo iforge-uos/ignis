@@ -25,7 +25,7 @@ export const add = auth
       errors,
       context: { ...context, tx: context.db },
       input: { name, type: "QUEUE", ucard_number: "" },
-    });
+    }).next()
   });
 
 export const queueRouter = auth.prefix("/queue").router({

@@ -1,0 +1,26 @@
+# module shop {
+#     type `Module` {
+#         required name: str;
+#         multi members: User;
+#         multi purchases: Purchase;
+#         required total := sum(.purchases.price);
+#     }
+
+#     type Purchase extending default::CreatedAt {
+#         required user: users::User;
+#         required item: Item;
+#         `module`: `Module`;
+#     }
+
+#     type Item {
+#         required price: int64;
+#         required name: str;
+#         count: int16;
+#         required category: Category;
+#     }
+
+#     type Category {
+#         required name: str;
+#         multi items: Item;
+#     }
+# }

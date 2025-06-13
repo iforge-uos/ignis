@@ -1,4 +1,4 @@
-// import { createRAGClient } from "@gel/ai";
+// import { createRAGClient } from "@gel/ai";f
 // import { createClient } from "gel";
 // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
@@ -20,13 +20,23 @@
 //   }),
 // );
 
-import e from "@db/edgeql-js";
-import { $User } from "@db/edgeql-js/modules/users";
-import { createClient } from "gel";
-import { introspect } from "gel/dist/reflection";
+// import e from "@db/edgeql-js";
+// import { $User } from "@db/edgeql-js/modules/users";
+// import { createClient } from "gel";
+// import { introspect } from "gel/dist/reflection";
 
-const db = createClient().withConfig({ allow_user_specified_id: true });
+// const db = createClient().withConfig({ allow_user_specified_id: true });
 
-const user = e.delete(e.users.User, () => ({ filter_single: { id: "" } }));
+// const user = e.delete(e.users.User, () => ({ filter_single: { id: "" } }));
 
-console.log((await introspect.types(db)).get($User.id));
+// console.log((await introspect.types(db)).get($User.id));
+
+function* foo() {
+  const x = yield 1;
+  if (x === undefined) throw "oh no";
+  console.log(x);
+}
+
+const gen = foo();
+
+console.log(gen.next());

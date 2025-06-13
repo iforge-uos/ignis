@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Skeleton } from "@ui/components/ui/skeleton";
+import { Skeleton } from "@packages/ui/components/skeleton";
 import React, { useState } from "react";
 
 interface ImageWithPlaceholderProps {

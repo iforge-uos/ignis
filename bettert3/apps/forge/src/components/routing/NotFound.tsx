@@ -1,6 +1,6 @@
 import Title from "@/components/title";
+import { Button } from "@packages/ui/components/button";
 import { Link, NotFoundRouteComponent } from "@tanstack/react-router";
-import { Button } from "@ui/components/ui/button";
 import { Forbidden } from "./Forbidden";
 
 export const NotFound: NotFoundRouteComponent = (props) => {

@@ -1,14 +1,14 @@
 import Title from "@/components/title";
 import { TrainingHeader } from "@/components/training/TrainingHeader";
+import { orpc } from "@/lib/orpc";
 import { TrainingForTags, deserializeMd } from "@/lib/utils";
-import { get } from "@/services/training/get";
 import { LocationName, Section, Training } from "@ignis/types/training";
-import { createFileRoute, deepEqual } from "@tanstack/react-router";
-import { PlateEditor } from "@ui/components/plate-ui/plate-editor";
-import { Button } from "@ui/components/ui/button";
-import { Input } from "@ui/components/ui/input";
-import { Separator } from "@ui/components/ui/separator";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip";
+import { Button } from "@packages/ui/components/button";
+import { Input } from "@packages/ui/components/input";
+import { Separator } from "@packages/ui/components/separator";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@packages/ui/components/tooltip";
+import { deepEqual } from "@tanstack/react-router";
+// import { PlateEditor } from "@ui/components/plate-ui/plate-editor";
 import { EyeIcon, EyeOffIcon, HourglassIcon, InfoIcon, PlusIcon, TrashIcon } from "lucide-react";
 import React from "react";
 
@@ -218,8 +218,8 @@ function Component() {
   );
 }
 
-export const Route = createFileRoute("/_authenticated/_reponly/training/$id/edit")({
+export const Route = createFileRoute({
   component: Component,
-  loader: async ({ params }) => await get(params.id, { editing: true }),
+  loader: async ({ params }) => await client.training.getForEditing({ id: params.id }),
   // onLeave: () => saveSession  // Should also be doing this every time a change is made? maybe put in cache IDK
 });

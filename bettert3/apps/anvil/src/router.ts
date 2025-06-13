@@ -31,7 +31,7 @@ const ROLE_GATED_ERRORS = {
     status: 401,
     data: RoleGatedError.extend({ required: z.array(z.object({ name: z.string() })) }),
   },
-} satisfies ErrorMap;
+} as const satisfies ErrorMap;
 
 const roleGated = (name: string) => {
   return os
@@ -80,4 +80,4 @@ export class RollbackTransaction extends Error {
  */
 export const transaction = pub
   .$context<{ user: NonNullable<Context["user"]>; db: Context["db"] }>()
-  .middleware(async ({ context, next }) => context.db.transaction(async (tx) => next({ context: { tx, ...context } })));
+  .middleware(async ({ context, next }) => context.db.transaction(async (tx) => next({ context: { tx, ...context } })))

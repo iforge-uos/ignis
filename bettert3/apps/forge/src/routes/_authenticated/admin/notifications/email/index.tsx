@@ -1,14 +1,13 @@
-import axiosInstance from "@/api/axiosInstance";
 import Title from "@/components/title";
-import { createFileRoute } from "@tanstack/react-router";
-import { Button } from "@ui/components/ui/button";
+import { Button } from "@packages/ui/components/button";
+import { toast } from "sonner";
 
 const EmailIndexPage = () => {
   const handleSendEmail = async () => {
     try {
-      await axiosInstance.post("/email/agreement_update"); // Make the POST request to the endpoint
-      // await axiosInstance.post("/test_email"); // Make the POST request to the endpoint
-      console.log("Email sent successfully");
+      // TODO: Replace with ORPC endpoint when email API is implemented
+      toast.info("Email functionality not yet migrated to ORPC");
+      console.log("Email sending would happen here");
     } catch (error) {
       console.error("Error sending email:", error);
     }
@@ -25,6 +24,6 @@ const EmailIndexPage = () => {
   );
 };
 
-export const Route = createFileRoute("/_authenticated/admin/notifications/email/")({
+export const Route = createFileRoute({
   component: EmailIndexPage,
 });

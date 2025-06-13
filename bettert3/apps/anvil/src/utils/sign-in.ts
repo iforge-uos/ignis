@@ -4,9 +4,8 @@ import e, { type $infer } from "@db/edgeql-js";
 import { LocationName, User } from "@packages/types/sign_in";
 import { ORPCError } from "@orpc/server";
 import { Executor } from "gel";
-import { Context } from "..";
-import Logger from "./logger";
 import { InfractionShape, UserShape } from "./queries";
+import { logger } from "@sentry/bun";
 
 /**
  * Strip the domain from a Sheffield email address
@@ -89,13 +88,13 @@ export const ensureUser = async ({
 }: { db: Executor; ucard_number: string; name: LocationName }): Promise<SignInUser> => {
   const user = await getSignInUser({ db, ucard_number });
   if (user) return user;
-  Logger.info(`Registering user: ${ucard_number} at location: ${name}`);
+  logger.info(logger.fmt`Registering user: ${ucard_number} at location: ${name}`);
 
   // no user registered, fetch from ldap
   const ldap_user = await ldap.lookupByUcardNumber(ucard_number);
   if (!ldap_user) {
     throw new ORPCError("NOT_FOUND", {
-      message: `User with ucard no ${ucard_number} couldn't be found. Perhaps you made a typo? (it should look like 001739897)`,
+      message: `User with UCard Number ${ucard_number} couldn't be found. Perhaps you made a typo? (it should look like 001739897)`,
     });
   }
 

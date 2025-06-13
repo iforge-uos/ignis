@@ -1,7 +1,7 @@
-import { getGravatarUrl } from "@/lib/utils";
-import { PartialUser } from "@ignis/types/users";
-import { Avatar, AvatarFallback, AvatarImage } from "@ignis/ui/components/ui/avatar";
-import { Input } from "@ignis/ui/components/ui/input";
+import { UserAvatar } from "@/components/avatar";
+import { PartialUser } from "@packages/types/users";
+import { Avatar, AvatarFallback, AvatarImage } from "@packages/ui/components/avatar";
+import { Input } from "@packages/ui/components/input";
 import {
   Pagination,
   PaginationContent,
@@ -10,9 +10,9 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@ignis/ui/components/ui/pagination";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@ignis/ui/components/ui/table";
-import { createFileRoute, notFound } from "@tanstack/react-router";
+} from "@packages/ui/components/pagination";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@packages/ui/components/table";
+import { notFound } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -34,10 +34,7 @@ function UserEntry({ display_name, email, ucard_number, created_at }: PartialUse
     <TableRow>
       <TableCell>
         <div className="flex items-center gap-2">
-          <Avatar className="h-6 w-6">
-            <AvatarImage src={getGravatarUrl(email)} />
-            <AvatarFallback>{display_name.split(" ").map((name) => name.at(0))}</AvatarFallback>
-          </Avatar>
+          <UserAvatar />
           {display_name}
         </div>
       </TableCell>
@@ -125,7 +122,7 @@ const UsersIndexPageComponent = () => {
   );
 };
 
-export const Route = createFileRoute("/_authenticated/_reponly/users/")({
+export const Route = createFileRoute({
   component: UsersIndexPageComponent,
   beforeLoad: () => {
     throw notFound();

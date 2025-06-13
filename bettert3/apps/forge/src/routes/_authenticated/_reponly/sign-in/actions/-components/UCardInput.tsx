@@ -1,11 +1,11 @@
+import { initializeSessionAtom, sessionUcardNumberAtom, sessionUserAtom } from "@/atoms/signInAppAtoms";
 import { UCARD_LENGTH } from "@/lib/constants";
 import { FlowStepComponent } from "@/types/signInActions";
-import { Button } from "@ui/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card";
-import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@ui/components/ui/input-otp";
-import { useState } from "react";
+import { Button } from "@packages/ui/components/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@packages/ui/components/card";
+import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@packages/ui/components/input-otp";
 import { useAtom, useSetAtom } from "jotai";
-import { initializeSessionAtom, sessionUcardNumberAtom, sessionUserAtom } from "@/atoms/signInAppAtoms";
+import { useState } from "react";
 
 const UCardInput: FlowStepComponent = ({ onPrimary }) => {
   const [uCardNumber, setUcardNumber] = useAtom(sessionUcardNumberAtom);

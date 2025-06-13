@@ -1,48 +1,35 @@
-import { UserAvatar } from '@/components/avatar'
-import { LocationIcon } from '@ui/components/icons/Locations'
-import Title from '@/components/title'
-import SignInChart from '@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignInChart'
-import { getUser } from '@/services/users/getUser'
-import getUserSignIns from '@/services/users/getUserSignIns'
-import { getUserTraining } from '@/services/users/getUserTraining'
-import { Training } from '@ignis/types/users'
-import { createFileRoute } from '@tanstack/react-router'
-import { Badge } from '@ui/components/ui/badge'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@ui/components/ui/table'
-import { Check, X } from 'lucide-react'
+import { UserAvatar } from "@/components/avatar";
+import Title from "@/components/title";
+import { client } from "@/lib/orpc";
+import SignInChart from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignInChart";
+import { Training } from "@packages/types/users";
+import { Badge } from "@packages/ui/components/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@packages/ui/components/table";
+import { LocationIcon } from "@packages/ui/icons//Locations";
+import {} from "@tanstack/react-router";
+import { Check, X } from "lucide-react";
 
 function Component() {
-  const data = Route.useLoaderData()
-  const { user, trainings, signIns } = data!
+  const data = Route.useLoaderData();
+  const { user, trainings, signIns } = data!;
 
   if (!user || !trainings || !signIns) {
-      return (
+    return (
       <div className="flex flex-col h-full">
         <main className="flex flex-1 flex-col gap-4 p-2 md:gap-8 md:p-6">
           <div className="flex items-center">
-            <h1 className="font-semibold text-lg md:text-2xl">
-              User not found
-            </h1>
+            <h1 className="font-semibold text-lg md:text-2xl">User not found</h1>
           </div>
         </main>
       </div>
-      )
+    );
   }
 
-  const rep = user.roles.some((role) => role.name === 'Rep')
+  const rep = user.roles.some((role) => role.name === "Rep");
 
   const locationIcon = (training: Training) => {
-    return training.locations.map((location) => (
-      <LocationIcon location={location} key={training.id} />
-    ))
-  }
+    return training.locations.map((location) => <LocationIcon location={location} key={training.id} />);
+  };
 
   return (
     <>
@@ -50,9 +37,7 @@ function Component() {
       <div className="flex flex-col h-full">
         <main className="flex flex-1 flex-col gap-4 p-2 md:gap-8 md:p-6">
           <div className="flex items-center">
-            <h1 className="font-semibold text-lg md:text-2xl">
-              {user.display_name}
-            </h1>
+            <h1 className="font-semibold text-lg md:text-2xl">{user.display_name}</h1>
           </div>
           <div className="flex flex-row border border-r-0">
             <div className="flex-col p-6">
@@ -63,11 +48,7 @@ function Component() {
                 <div className="text-sm mt-2">Roles</div>
                 <div className="flex flex-wrap gap-1">
                   {user.roles.map((role) => (
-                    <Badge
-                      key={role.id}
-                      variant="outline"
-                      className="rounded-md"
-                    >
+                    <Badge key={role.id} variant="outline" className="rounded-md">
                       {role.name}
                     </Badge>
                   ))}
@@ -76,31 +57,22 @@ function Component() {
               {user.pronouns && (
                 <div className="mt-2">
                   <div className="font-medium">Pronouns</div>
-                  <div className="text-gray-500 dark:text-gray-400">
-                    {user.pronouns}
-                  </div>
+                  <div className="text-gray-500 dark:text-gray-400">{user.pronouns}</div>
                 </div>
               )}
               <div className="mt-2">
                 <div className="font-medium">Email</div>
-                <a
-                  className="text-primary"
-                  href={`mailto:${user.email}@sheffield.ac.uk`}
-                >
+                <a className="text-primary" href={`mailto:${user.email}@sheffield.ac.uk`}>
                   {user.email}
                 </a>
               </div>
               <div className="mt-2">
                 <div className="font-medium">UCard Number</div>
-                <div className="text-gray-500 dark:text-gray-400">
-                  XXX-{user.ucard_number}
-                </div>
+                <div className="text-gray-500 dark:text-gray-400">XXX-{user.ucard_number}</div>
               </div>
               <div className="mt-2">
                 <div className="font-medium">Department</div>
-                <div className="text-gray-500 dark:text-gray-400">
-                  {user.organisational_unit}
-                </div>
+                <div className="text-gray-500 dark:text-gray-400">{user.organisational_unit}</div>
               </div>
             </div>
 
@@ -112,15 +84,9 @@ function Component() {
                     <TableHead>Name</TableHead>
                     <TableHead className="text-center">Location</TableHead>
                     <TableHead className="text-center">Compulsory</TableHead>
-                    {rep && (
-                      <TableHead className="text-center">
-                        Rep Training
-                      </TableHead>
-                    )}
+                    {rep && <TableHead className="text-center">Rep Training</TableHead>}
                     <TableHead className="text-center">Completed On</TableHead>
-                    <TableHead className="text-center">
-                      Completed In Person On
-                    </TableHead>
+                    <TableHead className="text-center">Completed In Person On</TableHead>
                     <TableHead className="text-center">Renewal Due</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -128,53 +94,38 @@ function Component() {
                   {trainings
                     .sort((a, b) => a.name.localeCompare(b.name))
                     .map((training) =>
-                      training['@created_at'] ? (
+                      training["@created_at"] ? (
                         <TableRow key={training.id}>
                           <TableCell>
                             <div className="text-sm">{training.name}</div>
                           </TableCell>
                           <TableCell>
-                            <div className="flex justify-center">
-                              {locationIcon(training)}
-                            </div>
+                            <div className="flex justify-center">{locationIcon(training)}</div>
                           </TableCell>
                           <TableCell>
                             <div className="flex justify-center">
-                              {training.compulsory ? (
-                                <Check stroke="green" />
-                              ) : (
-                                <X stroke="red" />
-                              )}
+                              {training.compulsory ? <Check stroke="green" /> : <X stroke="red" />}
                             </div>
                           </TableCell>
                           {rep && ( // TODO if user training is a pre-req to rep training we can collapse the 2 into one entry.
                             <TableCell>
                               <div className="flex justify-center">
-                                {training.rep ? (
-                                  <Check stroke="green" />
-                                ) : (
-                                  <X stroke="red" />
-                                )}
+                                {training.rep ? <Check stroke="green" /> : <X stroke="red" />}
                               </div>
                             </TableCell>
                           )}
                           <TableCell>
                             <div className="text-sm text-center">
-                              {new Date(
-                                training['@created_at'],
-                              ).toLocaleDateString()}
+                              {new Date(training["@created_at"]).toLocaleDateString()}
                             </div>
                           </TableCell>
                           <TableCell>
                             <div className="text-sm text-center">
-                              {training['@in_person_created_at']
-                                ? new Date(
-                                    training['@in_person_created_at'],
-                                  ).toLocaleDateString()
-                                : training['@in_person_created_at'] ===
-                                    undefined
-                                  ? '-'
-                                  : 'Never'}
+                              {training["@in_person_created_at"]
+                                ? new Date(training["@in_person_created_at"]).toLocaleDateString()
+                                : training["@in_person_created_at"] === undefined
+                                  ? "-"
+                                  : "Never"}
                             </div>
                           </TableCell>
                           <TableCell>
@@ -202,30 +153,30 @@ function Component() {
         </main>
       </div>
     </>
-  )
+  );
 }
 
-export const Route = createFileRoute('/_authenticated/user/me')({
-    loader: async ({ context }) => {
-      const userId = context.user?.id
+export const Route = createFileRoute({
+  loader: async ({ context }) => {
+    const userId = context.user?.id;
 
     if (userId === undefined) {
       return {
         user: null,
         trainings: [],
         signIns: [],
-      }
+      };
     }
     const [user, trainings, signIns] = await Promise.all([
-      getUser(userId),
-      getUserTraining(userId),
-      getUserSignIns(userId),
-    ])
+      client.users.get({ id: userId }),
+      client.users.training.all({ id: userId }),
+      client.users.signIns({ id: userId }),
+    ]);
     return {
       user,
       trainings,
       signIns,
-    }
+    };
   },
   component: Component,
-})
+});

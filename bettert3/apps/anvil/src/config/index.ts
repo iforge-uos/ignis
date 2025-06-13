@@ -3,7 +3,6 @@ import { getCdnConfig } from "@/config/cdn";
 import { getEmailConfig } from "@/config/email";
 import { getFrontendConfig } from "@/config/frontend";
 import { getLdapConfig } from "@/config/ldap";
-import { getLoggingConfig } from "@/config/logger";
 import { getRedisConfig } from "@/config/redis";
 import dotenv from "dotenv";
 import { getAuthConfig } from "./auth";
@@ -23,7 +22,6 @@ const config: AppConfig = {
   redis: getRedisConfig(),
   cdn: getCdnConfig(),
   frontend: getFrontendConfig(),
-  logging: getLoggingConfig(),
 };
 
 export default config;

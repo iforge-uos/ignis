@@ -1,14 +1,12 @@
 import { UserAvatar } from "@/components/avatar";
-import { LocationIcon } from "@ui/components/icons/Locations";
 import Title from "@/components/title";
+import { client, orpc } from "@/lib/orpc";
 import SignInChart from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignInChart";
-import { getUser } from "@/services/users/getUser";
-import getUserSignIns from "@/services/users/getUserSignIns";
-import { getUserTraining } from "@/services/users/getUserTraining";
-import { Training } from "@ignis/types/users";
-import { createFileRoute, notFound } from "@tanstack/react-router";
-import { Badge } from "@ui/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@ui/components/ui/table";
+import { Training } from "@packages/types/users";
+import { Badge } from "@packages/ui/components/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@packages/ui/components/table";
+import { LocationIcon } from "@packages/ui/icons//Locations";
+import { notFound } from "@tanstack/react-router";
 import { Check, X } from "lucide-react";
 
 export default function Component() {
@@ -139,16 +137,16 @@ export default function Component() {
   );
 }
 
-export const Route = createFileRoute("/_authenticated/_reponly/users/$id")({
+export const Route = createFileRoute({
   loader: async ({ params }) => {
     const userId = params.id;
     if (userId === undefined) {
       throw notFound();
     }
     const [user, trainings, signIns] = await Promise.all([
-      getUser(userId),
-      getUserTraining(userId),
-      getUserSignIns(userId),
+      client.users.get({ id: userId }),
+      client.users.training.all({ id: userId }),
+      client.users.signIns({ id: userId }),
     ]);
     return {
       user,

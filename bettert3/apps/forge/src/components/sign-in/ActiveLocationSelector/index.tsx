@@ -12,12 +12,12 @@ import { UserCount } from "@/components/sign-in/ActiveLocationSelector/UserCount
 import { cn, toTitleCase } from "@/lib/utils";
 import { LocationName } from "@packages/types/sign_in";
 
-import { Button } from "@ui/components/ui/button";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@ui/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@ui/components/ui/popover";
-import { Separator } from "@ui/components/ui/separator";
-import { Skeleton } from "@ui/components/ui/skeleton";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip";
+import { Button } from "@packages/ui/components/button";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@packages/ui/components/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@packages/ui/components/popover";
+import { Separator } from "@packages/ui/components/separator";
+import { Skeleton } from "@packages/ui/components/skeleton";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@packages/ui/components/tooltip";
 
 const ActiveLocationSelector = () => {
   const [open, setOpen] = useState<boolean>(false);

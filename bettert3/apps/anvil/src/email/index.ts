@@ -2,10 +2,10 @@ import config from "@/config";
 import { QueueEntry } from "@packages/types/sign_in";
 import { LocationName } from "@packages/types/sign_in";
 import { PartialUser } from "@packages/types/users";
+import { logger } from "@sentry/bun";
 import Bull from "bull";
 import { render } from "jsx-email";
 import nodemailer from "nodemailer";
-import { Logger } from "winston";
 import { z } from "zod/v4";
 // import { Template as Queued } from "../../../../packages/email/queued";
 // import { Template as Unqueued } from "../../../../packages/email/unqueued";
@@ -21,13 +21,10 @@ export const SendEmailSchema = z.object({
 });
 
 class EmailService {
-  private logger: Logger;
   private queue: Bull.Queue<SendEmailSchema>;
   private transporter: nodemailer.Transporter;
 
   constructor() {
-    this.logger = config.logging.logger;
-
     this.queue = new Bull("email-queue", {
       redis: config.redis.host,
     });
@@ -46,7 +43,7 @@ class EmailService {
   }
 
   async sendEmail(dto: SendEmailSchema) {
-    this.logger.debug("Adding email to queue...", EmailService.name);
+    logger.debug("Adding email to queue...");
 
     const priority = dto.priority || 2; // Default to medium priority if not specified
 
@@ -56,7 +53,7 @@ class EmailService {
       backoff: 3000, // Delay where retries will be processed (in ms)
     });
 
-    this.logger.debug("Email added to queue successfully", EmailService.name);
+    logger.debug("Email added to queue successfully");
   }
 
   async sendHtml(element: React.JSX.Element, dto: Omit<SendEmailSchema, "message" | "plainTextMessage">) {

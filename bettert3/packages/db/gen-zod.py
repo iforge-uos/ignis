@@ -10,7 +10,7 @@ for file in (Path(__file__).parent / "zod" / "modules").glob("*.ts"):
 
     contents = re.sub(
         r"z\.iso\.datetime\({ offset: true }\)",
-        'z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")), (z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))])',
+        'z.union([z.instanceof(Temporal.ZonedDateTime), z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1_000_000), "UTC")), (z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)))])',
         contents,
     )
     contents = re.sub(

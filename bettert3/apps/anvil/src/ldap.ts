@@ -1,10 +1,10 @@
 import e from "@db/edgeql-js";
+import { logger } from "@sentry/bun";
 import { Client, Entry } from "ldapts";
-import { Logger } from "winston";
 import { z } from "zod/v4";
 import config from "./config";
-import { sleep } from "./utils/base";
 import { ldapLibraryToUcardNumber, removeDomain } from "./utils/sign-in";
+import { sleep } from "./utils/base";
 
 function escapeLDAPFilterCharacters(str: string): string {
   return str.replace(/([\\*\(\)\!\&\|\=><~])/g, "\\$1");
@@ -33,7 +33,6 @@ type Lookup = <FieldsT extends (keyof LdapUser)[]>(
 
 class UoSClient extends Client {
   private defaultAttributes = Object.keys(LdapUserSchema.def.shape) as (keyof LdapUser)[];
-  private logger: Logger;
   private retryCount = 0;
   private readonly maxRetries = 3;
   private readonly retryDelay = 2000; // 2 seconds
@@ -44,7 +43,6 @@ class UoSClient extends Client {
       connectTimeout: 5_000,
       timeout: 10_000,
     });
-    this.logger = config.logging.logger;
   }
 
   async connect() {
@@ -54,11 +52,11 @@ class UoSClient extends Client {
   private async reconnect(): Promise<void> {
     if (this.retryCount < this.maxRetries) {
       this.retryCount++;
-      this.logger.debug(`Attempting to reconnect to LDAP server (retry ${this.retryCount})`);
+      logger.trace(`Attempting to reconnect to LDAP server (retry ${this.retryCount})`);
       await sleep(this.retryDelay);
       await this.connect();
     } else {
-      this.logger.error("Maximum retry count reached. Unable to connect to LDAP server.");
+      logger.error("Maximum retry count reached. Unable to connect to LDAP server.");
       throw new Error("Maximum retry count reached. Unable to connect to LDAP server.");
     }
   }
@@ -88,7 +86,7 @@ class UoSClient extends Client {
   }
 
   lookupByUsername: Lookup = async (username: string, attributes: string[] = this.defaultAttributes) => {
-    console.log(`Looking up user by username: ${username}`);
+    logger.debug(logger.fmt`Looking up user by username: ${username}`);
 
     const searchFilter = `(&(objectClass=person)(uid=${escapeLDAPFilterCharacters(username)}))`;
     const result = await this.lookup(searchFilter, attributes as any);
@@ -97,7 +95,7 @@ class UoSClient extends Client {
   };
 
   lookupByEmail: Lookup = async (email: string, attributes: string[] = this.defaultAttributes) => {
-    this.logger.debug(`Looking up user by email: ${email}`);
+    logger.debug(logger.fmt`Looking up user by email: ${email}`);
 
     const searchFilter = `(&(objectClass=person)(mail=${escapeLDAPFilterCharacters(email)}))`;
     const result = await this.lookup(searchFilter, attributes as any);
@@ -106,7 +104,7 @@ class UoSClient extends Client {
   };
 
   lookupByUcardNumber: Lookup = async (ucardNumber: string, attributes: string[] = this.defaultAttributes) => {
-    this.logger.debug(`Looking up user by ucard number: ${ucardNumber}`);
+    logger.debug(logger.fmt`Looking up user by ucard number: ${ucardNumber.slice(0, 3)}${ucardNumber.slice(3)}`);
 
     const searchFilter = `(&(objectClass=person)(shefLibraryNumber=${escapeLDAPFilterCharacters(ucardNumber)}))`;
     const result = await this.lookup(searchFilter, attributes as any);

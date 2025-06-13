@@ -1,6 +1,6 @@
 import Title from "@/components/title";
+import { Button } from "@packages/ui/components/button";
 import { Link } from "@tanstack/react-router";
-import { Button } from "@ui/components/ui/button";
 
 export const RouteUnfinished = () => {
   return (

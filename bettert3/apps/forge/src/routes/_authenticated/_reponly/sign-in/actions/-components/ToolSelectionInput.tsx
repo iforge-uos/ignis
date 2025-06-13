@@ -9,15 +9,14 @@ import {
 } from "@/atoms/signInAppAtoms";
 import { SelectedTrainingPipDisplay } from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SelectedTrainingPipDisplay";
 import ToolSelectionList from "@/routes/_authenticated/_reponly/sign-in/actions/-components/TrainingSelectionList";
-import { GetSignIn, GetSignInProps } from "@/services/sign_in/signInService";
 import { FlowStepComponent } from "@/types/signInActions";
 import { Training, User } from "@ignis/types/sign_in";
+import { Alert, AlertDescription, AlertTitle } from "@packages/ui/components/alert";
+import { Button } from "@packages/ui/components/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@packages/ui/components/card";
+import Loader from "@packages/ui/components/loader";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { useQuery } from "@tanstack/react-query";
-import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert";
-import { Button } from "@ui/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card";
-import { Loader } from "@ui/components/ui/loader";
 import { useAtom } from "jotai";
 import { useCallback, useEffect, useMemo, useState } from "react";
 

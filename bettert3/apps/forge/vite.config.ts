@@ -1,34 +1,31 @@
-import { wrapVinxiConfigWithSentry } from "@sentry/tanstackstart-react";
-// import spotlight from "@spotlightjs/spotlight/vite-plugin";
+import { sentryVitePlugin } from "@sentry/vite-plugin";
+import spotlightSidecar from "@spotlightjs/sidecar/vite-plugin";
+import spotlight from "@spotlightjs/spotlight/vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
-import { defineConfig } from "@tanstack/react-start/config";
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import react from "@vitejs/plugin-react-swc";
+import { defineConfig } from "vite";
+import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
 import viteTsConfigPaths from "vite-tsconfig-paths";
 
-const config = defineConfig({
-  tsr: {
-    appDirectory: "src",
+export default defineConfig({
+  build: {
+    sourcemap: true,
   },
-  vite: {
-    plugins: [
-      viteTsConfigPaths({
-        projects: ["./tsconfig.json"],
-      }),
-      spotlight(),
-      tailwindcss(),
-      ViteImageOptimizer(),
-      visualizer({
-        gzipSize: true,
-        brotliSize: true,
-      }),
-    ],
-  },
-});
-
-export default wrapVinxiConfigWithSentry(config, {
-  org: "iforge-uos",
-  project: "forge",
-  authToken: process.env.SENTRY_AUTH_TOKEN,
-  // Only print logs for uploading source maps in CI
-  // Set to `true` to suppress logs
-  silent: !process.env.CI,
+  plugins: [
+    react(),
+    viteTsConfigPaths({
+      projects: ["./tsconfig.json", "../../packages/ui/tsconfig.json"],
+    }),
+    tanstackStart(),
+    tailwindcss(),
+    ViteImageOptimizer(),
+    spotlight(),
+    spotlightSidecar(),
+    sentryVitePlugin({
+      org: "iforge-uos",
+      project: "anvil",
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+    }),
+  ],
 });

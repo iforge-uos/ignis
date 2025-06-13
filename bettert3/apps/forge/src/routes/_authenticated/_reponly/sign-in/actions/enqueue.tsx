@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+;
 import ActiveLocationSelector from "@/components/sign-in/ActiveLocationSelector";
 import SignInActionsManager from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SignInManager";
 import { FlowType } from "@/types/signInActions";
@@ -16,6 +16,6 @@ const EnqueueComponent = () => {
   );
 };
 
-export const Route = createFileRoute("/_authenticated/_reponly/sign-in/actions/enqueue")({
+export const Route = createFileRoute({
   component: EnqueueComponent,
 });

@@ -1,13 +1,14 @@
 import { UserAvatar } from "@/components/avatar";
-import { LocationIcon } from "@ui/components/icons/Locations";
 import Title from "@/components/title";
-import { toTitleCase, useUser } from "@/lib/utils";
-import { getSignIn } from "@/services/root/getSigIn";
-import { Link, createFileRoute } from "@tanstack/react-router";
-import { Badge } from "@ui/components/ui/badge";
-import { Button } from "@ui/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@ui/components/ui/card";
-import { Separator } from "@ui/components/ui/separator";
+import { useUser } from "@/hooks/useUser";
+import { orpc } from "@/lib/orpc";
+import { toTitleCase } from "@/lib/utils";
+import { Badge } from "@packages/ui/components/badge";
+import { Button } from "@packages/ui/components/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@packages/ui/components/card";
+import { Separator } from "@packages/ui/components/separator";
+import { LocationIcon } from "@packages/ui/icons//Locations";
+import { Link } from "@tanstack/react-router";
 import { CalendarIcon, ClockIcon, DrillIcon } from "lucide-react";
 import { SignInReason } from "../_reponly/sign-in/actions/-components/SignInReason";
 import { AddUserAttributes } from "../_reponly/sign-in/dashboard/-components/SignedInUserCard";
@@ -88,7 +89,7 @@ export default function Component() {
               </div>
               {user?.roles.some((role) => role.name === "Rep") && (
                 <div className="flex justify-end flex-col">
-                  <AddUserAttributes user={data.user} onShiftReps={[]} locationName={data.location.name} />
+                  <AddUserAttributes user={data.user} onShiftReps={[]} activeLocation={data.location.name} />
                 </div>
               )}
             </div>
@@ -99,7 +100,7 @@ export default function Component() {
   );
 }
 
-export const Route = createFileRoute("/_authenticated/sign-in/$id")({
-  loader: async ({ params }) => await getSignIn(params.id),
+export const Route = createFileRoute({
+  loader: async ({ params }) => await client.signIns.get({ input: { id: params.id } }),
   component: Component,
 });

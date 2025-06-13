@@ -4,8 +4,8 @@ import { InfractionSection } from "@/routes/_authenticated/_reponly/sign-in/dash
 import { TeamManagementSection } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/TeamManagementSection";
 import { TrainingSection } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/TrainingSection";
 import type { LocationName } from "@ignis/types/sign_in";
-import { PartialUserWithTeams } from "@ignis/types/users";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui/components/ui/tabs";
+import { PartialUserWithTeams } from "@packages/types/users";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@packages/ui/components/tabs";
 import * as React from "react";
 
 type ManageSections = "Training" | "Infraction" | "Teams";

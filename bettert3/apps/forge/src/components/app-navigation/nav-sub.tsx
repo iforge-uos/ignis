@@ -1,3 +1,5 @@
+import { NavSub as NavSubType } from "@/types/nav";
+import { RoutePath } from "@/types/router";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -5,10 +7,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@packages/ui/components/ui/sidebar";
-import { NavSub as NavSubType } from "@/types/nav";
+} from "@packages/ui/components/sidebar";
 import { Link } from "@tanstack/react-router";
-import { RoutePath } from "@/types/router";
 
 interface NavSubProps {
   elements: NavSubType[];

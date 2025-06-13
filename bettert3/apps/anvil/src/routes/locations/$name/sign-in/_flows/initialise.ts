@@ -1,20 +1,28 @@
-import Logger from "@/utils/logger";
 import { SignInUser } from "@/utils/sign-in";
 import e from "@db/edgeql-js";
 import { LocationNameSchema } from "@db/zod/modules/sign_in";
 import { CreateInfractionSchema } from "@db/zod/modules/users";
 import { ErrorMap } from "@orpc/server";
+import { logger } from "@sentry/bun";
 import { z } from "zod/v4";
-import {  OutputStep, SignInParams, } from "./_types";
-import { createInputStep, InputStep } from "./_input";
+import { createFinaliseStep, createInitialiseStep, StepType } from "./_steps";
+import { type SignInParams } from "./_types";
 
-export const Input = createInputStep("INITIALISE").extend({}).and(InputStep);
+export const Initialise = createInitialiseStep(StepType.enum.INITIALISE);
 
-export interface Output extends OutputStep {
-  currentType: "INITIALISE"
-  type: "QUEUE" | "SIGN_OUT" | "REASON" | "AGREEMENTS";
-  user: SignInUser;
-}
+export const Transmit = z.object({ type: z.literal(StepType.enum.INITIALISE), user: z.any() });
+
+export const Receive = z.object({ type: z.literal(StepType.enum.INITIALISE) });
+
+export const Finalise = createFinaliseStep(
+  StepType.enum.INITIALISE,
+  z.union([
+    z.literal(StepType.enum.QUEUE),
+    z.literal(StepType.enum.SIGN_OUT),
+    z.literal(StepType.enum.REASON),
+    z.literal(StepType.enum.AGREEMENTS),
+  ]),
+);
 
 export const Errors = {
   USER_HAS_ACTIVE_INFRACTIONS: {
@@ -33,14 +41,19 @@ export const Errors = {
   },
 } as const satisfies ErrorMap;
 
-export default async function ({
+export default async function* ({
   user,
   $user,
   $location,
   input: { name },
   context: { tx },
   errors,
-}: SignInParams<z.infer<typeof Input>>): Promise<Output> {
+}: SignInParams<z.infer<typeof Initialise>>): AsyncGenerator<
+  z.infer<typeof Transmit>,
+  z.infer<typeof Finalise>,
+  z.infer<typeof Receive>
+> {
+  yield { type: "INITIALISE", user };
   const unresolvedInfractions = user.infractions.filter((i) => !i.resolved);
   // TODO move to front end
   // for (const infraction of unresolvedInfractions) {
@@ -83,30 +96,27 @@ export default async function ({
       throw errors.ALREADY_SIGNED_IN({ data: alreadyName });
     }
 
-    return { type: "SIGN_OUT", user };
+    return { type: StepType.enum.INITIALISE, next: StepType.enum.SIGN_OUT };
   }
 
   // Queue checking
   if ((await $location.available_capacity.run(tx)) <= 0) {
     if (await $location.queue_in_use.run(tx)) {
       // could raise so cannot fetch all these at once
-      Logger.info(`Queue in use, checking if user ${user.ucard_number} has queued at location: ${name}`);
+      logger.info(logger.fmt`Queue in use, checking if user ${user.ucard_number} has queued at location: ${name}`);
 
       const queued_and_can_sign_in = await e
         .op(user.ucard_number, "in", $location.queued_users_that_can_sign_in.ucard_number)
         .run(tx);
 
       if (!queued_and_can_sign_in) {
-        Logger.warn(`User ${user.ucard_number} has not queued at location: ${name}`);
+        logger.warn(logger.fmt`User ${user.ucard_number} has not queued at location: ${name}`);
         throw errors.NOT_IN_QUEUE();
       }
-      Logger.debug(`User ${user.ucard_number} has queued at location: ${name}`);
+      logger.debug(logger.fmt`User ${user.ucard_number} has queued at location: ${name}`);
     } else {
-      Logger.debug(`At capacity, attempting to add user ${user.ucard_number} queue`);
-      return {
-        type: "QUEUE",
-        user,
-      };
+      logger.debug(logger.fmt`At capacity, attempting to add user ${user.ucard_number} queue`);
+      return { type: StepType.enum.INITIALISE, next: StepType.enum.QUEUE };
     }
   }
 
@@ -114,13 +124,10 @@ export default async function ({
   // if (user.first_time)
   if (user.registered) {
     return {
-      type: "REASON",
-      user,
+      type: StepType.enum.INITIALISE,
+      next: StepType.enum.REASON,
     };
   }
 
-  return {
-    type: "AGREEMENTS",
-    user,
-  };
+  return { type: StepType.enum.INITIALISE, next: StepType.enum.AGREEMENTS };
 }

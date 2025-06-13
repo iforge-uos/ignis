@@ -1,88 +1,161 @@
-import { SignInUser } from "@/utils/sign-in";
+import type { SignInUser } from "@/utils/sign-in";
 import e from "@db/edgeql-js";
 import { LocationNameSchema } from "@db/zod/modules/sign_in";
-import { ErrorMap, ORPCErrorConstructorMap } from "@orpc/server";
+import type { ErrorMap, ORPCErrorConstructorMap } from "@orpc/server";
 import type { Executor } from "gel";
 import { z } from "zod/v4";
 
-export const StepType = z.enum([
-  "REGISTER",
-  "QUEUE",
-  "AGREEMENTS",
-  "REASON",
-  "TOOLS",
-  "PERSONAL_TOOLS_AND_MATERIALS",
-  "FINALISE",
-  "CANCEL",
-  "INITIALISE",
-  "SIGN_OUT",
-  "PROVISIONAL_AGREEMENT",
-  "MAILING_LISTS",
-]);
+async function* _foo(): AsyncGenerator<z.ZodObject, any, any> {}
 
-export type StepType = z.infer<typeof StepType>;
-
-// lil hack for recursive types
-export const BaseInputStep = z.object({ name: LocationNameSchema, ucard_number: z.string().regex(/\d{9,}/) });
-type InputStep = z.infer<typeof BaseInputStep> & {
-  previous?: z.infer<typeof SignInStepInput>;
+type BoundFunctionWithHandle<T extends (...args: any[]) => any> = T & { handle: boolean };
+type FunctionWithHandle<T extends (...args: any[]) => any> = BoundFunctionWithHandle<T> & {
+  bind: (thisArg: any, ...args: any[]) => BoundFunctionWithHandle<T>;
 };
-export const InputStep: z.ZodType<InputStep> = BaseInputStep.extend({
-  previous: z.lazy(() => SignInStepInput.optional()),
-});
 
-export interface OutputStep {
-  readonly currentType: StepType;
-  readonly type: StepType;
+export function hasHandle<
+  T extends (...args: any[]) => AsyncGenerator<TYield, TReturn, TNext>,
+  TYield extends NonNullable<unknown>,
+  TReturn,
+  TNext extends NonNullable<unknown>,
+>(fn: T): FunctionWithHandle<T> {
+  (fn as any).handle = true;
+
+  const original = fn.bind;
+  (fn as any).bind = (thisArg: any, ...args: any[]): BoundFunctionWithHandle<T> => {
+    const boundMethod = original.apply(fn, [thisArg, ...args]) as T;
+    (boundMethod as any).handle = true;
+    return boundMethod as BoundFunctionWithHandle<T>;
+  };
+
+  return fn as FunctionWithHandle<T>;
 }
+
+
 
 import { Tuple } from "@packages/types";
 import type { create } from "../$ucard";
-import { Errors as AgreementsErrors, Input as AgreementsInput, Output as AgreementsOutput } from "./agreements";
-import { Errors as CancelErrors, Input as CancelInput, Output as CancelOutput } from "./cancel";
-import { Errors as FinaliseErrors, Input as FinaliseInput, Output as FinaliseOutput } from "./finalise";
-import { Errors as InitialiseErrors, Input as InitialiseInput, Output as InitialiseOutput } from "./initialise";
-import { Errors as MailingListsErrors, Input as MailingListsInput, Output as MailingListsOutput } from "./mailing-lists"; // biome-ignore format:
-import { Errors as PersonalToolsAndMaterialsErrors, Input as PersonalToolsAndMaterialsInput, Output as PersonalToolsAndMaterialsOutput } from "./personal-tools-and-materials"; // biome-ignore format: <explanation>
-import { Errors as QueueErrors, Input as QueueInput, Output as QueueOutput } from "./queue";
-import { Errors as ReasonErrors, Input as ReasonInput, Output as ReasonOutput } from "./reasons";
-import { Errors as RegisterErrors, Input as RegisterInput, Output as RegisterOutput } from "./register";
-import { Errors as ToolsErrors, Input as ToolsInput, Output as ToolsOutput } from "./tools";
-import { SignIn } from "@packages/types/root";
+import {
+  Receive as AgreementReceive,
+  Transmit as AgreementTransmit,
+  Errors as AgreementsErrors,
+  Finalise as AgreementsFinalise,
+  Initialise as AgreementsInitialise,
+} from "./agreements";
+import {
+  Errors as CancelErrors,
+  Finalise as CancelFinalise,
+  Initialise as CancelInitialise,
+  Receive as CancelReceive,
+  Transmit as CancelTransmit,
+} from "./cancel";
+import {
+  Errors as FinaliseErrors,
+  Finalise as FinaliseFinalise,
+  Initialise as FinaliseInitialise,
+  Receive as FinaliseReceive,
+  Transmit as FinaliseTransmit,
+} from "./finalise";
+import {
+  Errors as InitialiseErrors,
+  Finalise as InitialiseFinalise,
+  Initialise as InitialiseInitialise,
+  Receive as InitialiseReceive,
+  Transmit as InitialiseTransmit,
+} from "./initialise";
+import {
+  Errors as MailingListsErrors,
+  Finalise as MailingListsFinalise,
+  Initialise as MailingListsInitialise,
+  Receive as MailingListsReceive,
+  Transmit as MailingListsTransmit,
+} from "./mailing-lists";
+import {
+  Errors as PersonalToolsAndMaterialsErrors,
+  Finalise as PersonalToolsAndMaterialsFinalise,
+  Initialise as PersonalToolsAndMaterialsInitialise,
+  Receive as PersonalToolsAndMaterialsReceive,
+  Transmit as PersonalToolsAndMaterialsTransmit,
+} from "./personal-tools-and-materials";
+import {
+  Errors as QueueErrors,
+  Finalise as QueueFinalise,
+  Initialise as QueueInitialise,
+  Receive as QueueReceive,
+  Transmit as QueueTransmit,
+} from "./queue";
+import {
+  Errors as ReasonErrors,
+  Finalise as ReasonFinalise,
+  Initialise as ReasonInitialise,
+  Receive as ReasonReceive,
+  Transmit as ReasonTransmit,
+} from "./reasons";
+import {
+  Errors as RegisterErrors,
+  Finalise as RegisterFinalise,
+  Initialise as RegisterInitialise,
+  Receive as RegisterReceive,
+  Transmit as RegisterTransmit,
+} from "./register";
+import {
+  Errors as ToolsErrors,
+  Finalise as ToolsFinalise,
+  Initialise as ToolsInitialise,
+  Receive as ToolsReceive,
+  Transmit as ToolsTransmit,
+} from "./tools";
 
-// sadly lil hack means no discriminatedUnion, easily >:)
-// if (Object.keys(StepType.Values).length !== SignInStepInputTuple.length)
-// throw Error(`Not all sign in types seem to be imported ${new Set(Object.keys(StepType.Values)).difference(new Set(SignInStepInputTuple.map(t => t._type.type)))}`);
-
-// we have no real type difference between the union and the discriminatedUnion here (type is required though they
-// aren't enforced as unique). So we should use the benefits of the union version which works
-export const SignInStepInput = z.union([
-  RegisterInput,
-  QueueInput,
-  AgreementsInput,
-  ReasonInput,
-  ToolsInput,
-  MailingListsInput,
-  PersonalToolsAndMaterialsInput,
-  FinaliseInput,
-  CancelInput,
-  InitialiseInput,
+export const SignInStepInitialise = z.union([
+  RegisterInitialise,
+  QueueInitialise,
+  AgreementsInitialise,
+  ReasonInitialise,
+  ToolsInitialise,
+  MailingListsInitialise,
+  PersonalToolsAndMaterialsInitialise,
+  FinaliseInitialise,
+  CancelInitialise,
+  InitialiseInitialise,
 ]);
 
+export const SignInReceive = z.union([
+  RegisterReceive,
+  QueueReceive,
+  AgreementReceive,
+  ReasonReceive,
+  ToolsReceive,
+  MailingListsReceive,
+  PersonalToolsAndMaterialsReceive,
+  FinaliseReceive,
+  CancelReceive,
+  InitialiseReceive,
+]);
 
-type SignInStepOutputTuple = [
-  RegisterOutput,
-  QueueOutput,
-  AgreementsOutput,
-  ReasonOutput,
-  ToolsOutput,
-  MailingListsOutput,
-  PersonalToolsAndMaterialsOutput,
-  FinaliseOutput,
-  CancelOutput,
-  InitialiseOutput,
-]
-export type SignInStepOutput = SignInStepOutputTuple[number]
+export const SignInTransmit = z.union([
+  RegisterTransmit,
+  QueueTransmit,
+  AgreementTransmit,
+  ReasonTransmit,
+  ToolsTransmit,
+  MailingListsTransmit,
+  PersonalToolsAndMaterialsTransmit,
+  FinaliseTransmit,
+  CancelTransmit,
+  InitialiseTransmit,
+]);
+
+export const SignInStepFinalise = z.union([
+  RegisterFinalise,
+  QueueFinalise,
+  AgreementsFinalise,
+  ReasonFinalise,
+  ToolsFinalise,
+  MailingListsFinalise,
+  PersonalToolsAndMaterialsFinalise,
+  FinaliseFinalise,
+  CancelFinalise,
+  InitialiseFinalise,
+]);
 
 const _LOCATION_QUERY = e.assert_exists(
   e.select(e.sign_in.Location, () => ({ filter_single: { name: "MAINSPACE" as const } })),
@@ -90,9 +163,9 @@ const _LOCATION_QUERY = e.assert_exists(
 const _USER_QUERY = e.assert_exists(e.select(e.users.User, () => ({ filter_single: { id: "" } })));
 
 type _SignInParams = Parameters<(typeof create)["~orpc"]["handler"]>[0];
-export type SignInParams<T extends z.infer<typeof SignInStepInput>> = Omit<
+export type SignInParams<T extends z.infer<typeof SignInStepInitialise>> = Omit<
   _SignInParams,
-  "input" | "errors" | "path" | "procedure" | "lastEventId" | "context"
+  "input" | "errors" | "path" | "procedure" | "lastEventId" | "context" // lastEventId is handled implicitly by the system
 > & {
   input: T;
   user: SignInUser;
@@ -115,5 +188,4 @@ export const SignInErrors = {
   ...ToolsErrors,
 } as const satisfies ErrorMap;
 
-
-export type Graph = {[KeyT in SignInStepOutputTuple[number] as KeyT["currentType"]]: Tuple<KeyT["type"]>};
+export type Graph = { [KeyT in z.infer<typeof SignInStepFinalise> as KeyT["type"]]: Tuple<KeyT["next"]> };

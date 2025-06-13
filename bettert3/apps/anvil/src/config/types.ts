@@ -1,5 +1,4 @@
 import SMTPTransport from "nodemailer/lib/smtp-transport";
-import { Logger } from "winston";
 
 export interface LdapConfig {
   host: string;
@@ -51,11 +50,6 @@ export interface FrontendConfig {
   url: string;
 }
 
-export interface LoggingConfig {
-  level: string;
-  logger: Logger;
-}
-
 export interface AppConfig {
   db: DBConfig;
   ldap: LdapConfig;
@@ -64,5 +58,4 @@ export interface AppConfig {
   redis: RedisConfig;
   cdn: CdnConfig;
   frontend: FrontendConfig;
-  logging: LoggingConfig;
 }

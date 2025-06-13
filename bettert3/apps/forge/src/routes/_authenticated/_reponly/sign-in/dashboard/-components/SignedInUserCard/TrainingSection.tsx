@@ -1,15 +1,13 @@
 import { activeLocationAtom } from "@/atoms/signInAppAtoms";
 import { iForgeEpoch } from "@/config/constants";
+import { orpc } from "@/lib/orpc";
+import { cn } from "@/lib/utils";
 import { ManageUserWidgetProps } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/ManageUserWidget";
-import { getSupervisingReps } from "@/services/sign_in/getSupervisableTraining";
-import addInPersonTraining from "@/services/users/addInPersonTraining";
-import { getUserTrainingRemaining } from "@/services/users/getUserTrainingRemaining";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Badge } from "@ui/components/ui/badge";
-import { Button } from "@ui/components/ui/button";
-import { Calendar } from "@ui/components/ui/calendar";
-import { Label } from "@ui/components/ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@ui/components/ui/popover";
+import { Badge } from "@packages/ui/components/badge";
+import { Button } from "@packages/ui/components/button";
+import { Calendar } from "@packages/ui/components/calendar";
+import { Label } from "@packages/ui/components/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@packages/ui/components/popover";
 import {
   Select,
   SelectContent,
@@ -17,9 +15,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@ui/components/ui/select";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip";
-import { cn } from "@ui/lib/utils";
+} from "@packages/ui/components/select";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@packages/ui/components/tooltip";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { useAtomValue } from "jotai";
 import { CalendarIcon } from "lucide-react";
@@ -32,14 +30,12 @@ export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locatio
   const [repSigningOff, setRepSigningOff] = React.useState<string>();
   const [training, setTraining] = React.useState<string>();
   const activeLocation = useAtomValue(activeLocationAtom);
-  const { data: remainingTrainings } = useQuery({
-    queryKey: ["userTrainingRemaining", user.id],
-    queryFn: () => getUserTrainingRemaining(user.id, activeLocation),
-  });
-  const { data: onShiftReps } = useQuery({
-    queryKey: ["supervisingReps"],
-    queryFn: () => getSupervisingReps(activeLocation),
-  });
+  const { data: remainingTrainings } = useQuery(
+    orpc.users.training.inPersonRemaining.queryOptions({ input: { id: user.id, location: activeLocation } }),
+  );
+  const { data: onShiftReps } = useQuery(
+    orpc.locations.supervisingReps.queryOptions({ input: { name: activeLocation } }),
+  );
   const queryClient = useQueryClient();
 
   return (
@@ -157,11 +153,16 @@ export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locatio
           className="w-1/2 mt-2 flex items-center justify-center"
           onClick={async () => {
             try {
-              await addInPersonTraining(user.id, training!, { rep_id: repSigningOff!, created_at: date! });
+              await orpc.users.training.createInPerson.call({
+                id: user.id,
+                training_id: training!,
+                rep_id: repSigningOff!,
+                created_at: date!,
+              });
             } catch (e) {
               return toast.error(`Failed to submit contact the IT Team ${e}`);
             }
-            await queryClient.invalidateQueries({ queryKey: ["userTrainingRemaining", user.id] });
+            await queryClient.invalidateQueries({ queryKey: ["userTrainingRemaining", user.id, activeLocation] });
             toast.success("Successfully submitted");
           }}
           disabled={!(training && date && repSigningOff)}

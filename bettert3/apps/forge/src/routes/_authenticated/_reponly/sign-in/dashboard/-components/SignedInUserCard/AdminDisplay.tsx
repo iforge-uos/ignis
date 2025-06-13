@@ -1,7 +1,7 @@
-import { Badge } from "@ui/components/ui/badge";
-import { PartialUserWithTeams } from "@ignis/types/users";
-import * as React from "react";
 import { USER_EMAIL_DOMAIN } from "@/config/constants";
+import { PartialUserWithTeams } from "@packages/types/users";
+import { Badge } from "@packages/ui/components/badge";
+import * as React from "react";
 
 interface AdminDisplayProps {
   user: PartialUserWithTeams;

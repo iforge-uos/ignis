@@ -1,13 +1,12 @@
 import { createRouter as createTanstackRouter } from "@tanstack/react-router";
 import Loader from "./components/loader";
 import "./index.css";
-import { useUser } from "@/lib/utils";
+ import { useUser } from "@/hooks/useUser";
 import { AuthProvider } from "@/providers/AuthProvider";
-import { ThemeProvider } from "@/providers/themeProvider";
 import { routeTree } from "@/routeTree.gen";
+import { Toaster } from "@packages/ui/components/sonner";
+import { TooltipProvider } from "@packages/ui/components/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@ui/components/ui/sonner";
-import { TooltipProvider } from "@ui/components/ui/tooltip";
 import { ORPCContext, orpc, queryClient as orpcQueryClient } from "./utils/orpc";
 import "jotai-devtools/styles.css";
 import { SidebarProvider } from "@packages/ui/components/sidebar";
@@ -16,7 +15,6 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { GenericError } from "./components/routing/GenericError";
 import { Loading } from "./components/routing/Loading";
 import { NotFound } from "./components/routing/NotFound";
-
 
 const queryClient = orpcQueryClient;
 

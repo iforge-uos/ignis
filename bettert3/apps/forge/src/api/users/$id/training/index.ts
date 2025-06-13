@@ -1,0 +1,32 @@
+import { auth } from "@/orpc";
+import { TrainingShape } from "@/lib/utils/queries";
+import e from "@packages/db/edgeql-js";
+import { z } from "zod/v4";
+import { createInPerson, remove } from "./$id";
+import { inPersonRemaining } from "./in-person.$location";
+
+export const all = auth
+  .meta({ path: "/" })
+  .input(z.object({ id: z.uuid() }))
+  .handler(async ({ input: { id }, context: { db } }) => {
+    const { training } = await e
+      .assert_exists(
+        e.select(e.users.User, () => ({
+          training: (training) => ({
+            ...TrainingShape(training),
+            rep: { id: true, description: true },
+          }),
+          filter_single: { id },
+        })),
+      )
+      .run(db);
+
+    return training;
+  });
+
+export const trainingRouter = auth.prefix("/training").router({
+  all,
+  createInPerson,
+  remove,
+  inPersonRemaining,
+});

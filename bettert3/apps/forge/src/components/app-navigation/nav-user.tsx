@@ -1,7 +1,8 @@
 import { UserAvatar } from "@/components/avatar";
-import { useShortcutKey, useUser } from "@/lib/utils";
-import { useTheme } from "@/providers/themeProvider/use-theme";
-import { Button } from "@packages/ui/components/ui/button";
+import { useShortcutKey } from "@/hooks/useShortcutKey";
+import { useTheme } from "@/hooks/useTheme";
+import { useUser } from "@/hooks/useUser";
+import { Button } from "@packages/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,10 +11,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@packages/ui/components/ui/dropdown-menu";
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@packages/ui/components/ui/sidebar";
+} from "@packages/ui/components/dropdown-menu";
+import { Shortcut } from "@packages/ui/components/kbd";
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@packages/ui/components/sidebar";
 import { Link } from "@tanstack/react-router";
-import { Shortcut } from "@ui/components/ui/kbd";
 import { BadgeCheck, Bell, ChevronsUpDown, LogIn, LogOut, Moon, Settings, Sun } from "lucide-react";
 
 export function NavUser() {

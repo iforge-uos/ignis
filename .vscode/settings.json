@@ -12,7 +12,9 @@
     "serialiser",
     "supervisable",
     "tribool",
-    "ucard"
+    "ucard",
+    "orpc",
+    "sonner"
   ],
   "python.analysis.typeCheckingMode": "off"
 }

@@ -1,32 +1,24 @@
-// import { createRAGClient } from "@gel/ai";
-// import { createClient } from "gel";
-// process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+type BoundFunctionWithFoo<T extends (...args: any[]) => any> = T & { foo: boolean };
+type FunctionWithFoo<T extends (...args: any[]) => any> = BoundFunctionWithFoo<T> & {
+  bind: (thisArg: any, ...args: any[]) => BoundFunctionWithFoo<T>;
+};
 
-// const client = createClient();
+function addFooProperty<T extends (...args: any[]) => any>(fn: T): FunctionWithFoo<T> {
+  (fn as any).foo = true;
 
-// const gpt4Ai = createRAGClient(client, {
-//   model: "gpt-4o",
-//   // model: "claude-3-5-haiku-latest",
-// });
+  // Override the bind method
+  const ORIG = fn.bind;
+  (fn as any).bind = (thisArg: any, ...args: any[]): BoundFunctionWithFoo<T> => {
+    const boundMethod = ORIG.apply(fn, [thisArg, ...args]) as T;
+    (boundMethod as any).foo = true;
+    return boundMethod as BoundFunctionWithFoo<T>;
+  };
 
-// const astronomyAi = gpt4Ai.withContext({
-//   query: "ai_rep::Question",
-// });
+  return fn as FunctionWithFoo<T>;
+}
 
-// console.log(
-//   await astronomyAi.queryRag({
-//     prompt: "iForge",
-//     // temperature: 1,
-//   }),
-// );
+const publisher = addFooProperty(async function* (_f: any): AsyncGenerator<any, void, unknown> {});
 
-import e from "@db/edgeql-js";
-import { $User } from "@db/edgeql-js/modules/users";
-import { createClient } from "gel";
-import { introspect } from "gel/dist/reflection";
-
-const db = createClient().withConfig({ allow_user_specified_id: true });
-
-const user = e.delete(e.users.User, () => ({ filter_single: { id: "" } }));
-
-console.log((await introspect.types(db)).get($User.id));
+console.log(publisher.foo);
+const fn = publisher.bind(undefined, 1);
+console.log(fn.foo);

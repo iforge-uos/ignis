@@ -1,9 +1,7 @@
-import { LocationIcon } from "@ui/components/icons/Locations";
-import { SignInStat } from "@ignis/types/users";
 import { Datum, ResponsiveCalendar } from "@nivo/calendar";
-import { Link } from "@tanstack/react-router";
-import { Button } from "@ui/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@ui/components/ui/dialog";
+import { SignInStat } from "@packages/types/users";
+import { Button } from "@packages/ui/components/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@packages/ui/components/dialog";
 import {
   Drawer,
   DrawerClose,
@@ -11,8 +9,10 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-} from "@ui/components/ui/drawer";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@ui/components/ui/table";
+} from "@packages/ui/components/drawer";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@packages/ui/components/table";
+import { LocationIcon } from "@packages/ui/icons//Locations";
+import { Link } from "@tanstack/react-router";
 import * as React from "react";
 import MediaQuery from "react-responsive";
 
