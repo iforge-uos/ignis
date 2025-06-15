@@ -1,9 +1,9 @@
 import { signAgreement } from "@/api/users/$id/agreements.$agreement_id";
+import { ErrorMap, call } from "@orpc/server";
 import e from "@packages/db/edgeql-js";
 import { CreateAgreementSchema } from "@packages/db/zod/modules/sign_in";
-import { ErrorMap, call } from "@orpc/server";
 import { z } from "zod/v4";
-import { createFinaliseStep, createInitialiseStep, StepType } from "./_steps";
+import { StepType, createFinaliseStep, createInitialiseStep } from "./_steps";
 import { type SignInParams } from "./_types";
 
 export const Initialise = createInitialiseStep(StepType.enum.AGREEMENTS);

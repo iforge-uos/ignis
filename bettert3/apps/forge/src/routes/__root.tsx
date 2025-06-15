@@ -8,7 +8,6 @@ import { themeQueryKey, useTheme } from "@/hooks/useTheme";
 import type { useUser } from "@/hooks/useUser";
 import type { orpc } from "@/lib/orpc";
 import { getRequestInfo } from "@/lib/request-info";
-import Loader from "@packages/ui/components/loader";
 import { SidebarInset } from "@packages/ui/components/sidebar";
 import { Toaster } from "@packages/ui/components/sonner";
 import Sentry, { wrapCreateRootRouteWithSentry } from "@sentry/tanstackstart-react";
@@ -155,7 +154,7 @@ function RootDocument() {
             <TailwindIndicator />
             <UCardReader />
 
-            <Toaster richColors theme={useTheme().normalisedTheme} />
+            <Toaster richColors theme={useTheme()} />
             <Suspense>
               <TanStackRouterDevtools position="bottom-left" />
             </Suspense>

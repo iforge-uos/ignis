@@ -1,13 +1,13 @@
+import { Router, router } from "@/routes/api.$";
 import { createORPCClient } from "@orpc/client";
 import { RPCLink } from "@orpc/client/fetch";
 import { createORPCReactQueryUtils } from "@orpc/react-query";
-import { createRouterClient, type RouterClient } from "@orpc/server";
+import { type RouterClient, createRouterClient } from "@orpc/server";
 import { type RouterUtils } from "@orpc/tanstack-query";
 import { QueryCache, QueryClient } from "@tanstack/react-query";
 import { createIsomorphicFn } from "@tanstack/react-start";
 import { getHeaders } from "@tanstack/react-start/server";
 import { toast } from "sonner";
-import { Router, router } from "@/api";
 
 export type ORPCReactUtils = RouterUtils<RouterClient<Router>>;
 

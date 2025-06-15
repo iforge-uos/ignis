@@ -1,13 +1,10 @@
 import { createRouter as createTanstackRouter } from "@tanstack/react-router";
-import Loader from "./components/loader";
 import "./index.css";
- import { useUser } from "@/hooks/useUser";
+import { orpc, queryClient as orpcQueryClient } from "@/lib/orpc";
 import { AuthProvider } from "@/providers/AuthProvider";
 import { routeTree } from "@/routeTree.gen";
-import { Toaster } from "@packages/ui/components/sonner";
 import { TooltipProvider } from "@packages/ui/components/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { orpc, queryClient as orpcQueryClient } from "@/lib/orpc";
+import { QueryClientProvider } from "@tanstack/react-query";
 import "jotai-devtools/styles.css";
 import { SidebarProvider } from "@packages/ui/components/sidebar";
 import { DndProvider } from "react-dnd";
@@ -35,13 +32,13 @@ export const createRouter = () => {
     Wrap: ({ children }) => (
       <QueryClientProvider client={queryClient}>
         <ORPCContext.Provider value={orpc}>
-            <DndProvider backend={HTML5Backend}>
-              <SidebarProvider>
-                <TooltipProvider>
-                  <AuthProvider>{children}</AuthProvider>
-                </TooltipProvider>
-              </SidebarProvider>
-            </DndProvider>
+          <DndProvider backend={HTML5Backend}>
+            <SidebarProvider>
+              <TooltipProvider>
+                <AuthProvider>{children}</AuthProvider>
+              </TooltipProvider>
+            </SidebarProvider>
+          </DndProvider>
         </ORPCContext.Provider>
       </QueryClientProvider>
     ),

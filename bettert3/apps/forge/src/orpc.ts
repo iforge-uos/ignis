@@ -1,9 +1,13 @@
-import { os, ErrorMap, MiddlewareOutputFn } from "@orpc/server";
-import { z } from "zod/v4";
-import { Context } from "./index copy";
+import sentryMiddleware from "@/lib/sentry/server";
+import type { Context } from "@/routes/api.$";
+import { os, ErrorMap } from "@orpc/server";
 import { Client } from "gel";
+import { z } from "zod/v4";
 
-export const pub = os.$context<Context>().$route({ method: "GET" });
+export const pub = os
+  .$context<Context>()
+  .$route({ method: "GET" })
+  .use(sentryMiddleware({ captureInputs: true }));
 
 export const auth = pub
   .errors({
@@ -81,4 +85,6 @@ export class RollbackTransaction extends Error {
  */
 export const transaction = pub
   .$context<{ user: NonNullable<Context["user"]>; db: Context["db"] }>()
-  .middleware(async ({ context, next }) => (context.db as Client).transaction(async (tx) => next({ context: { tx, ...context } })))
+  .middleware(async ({ context, next }) =>
+    (context.db as Client).transaction(async (tx) => next({ context: { tx, ...context } })),
+  );

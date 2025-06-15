@@ -1,5 +1,6 @@
 import Title from "@/components/title";
 import { TrainingHeader } from "@/components/training/TrainingHeader";
+import { client } from "@/lib/orpc";
 import { cn } from "@/lib/utils";
 import type { InteractionResponse, Section, Training } from "@ignis/types/training";
 import { Temporal } from "@js-temporal/polyfill";
@@ -9,7 +10,7 @@ import { Label } from "@packages/ui/components/label";
 import { Progress } from "@packages/ui/components/progress";
 import { RadioGroup, RadioGroupItem } from "@packages/ui/components/radio-group";
 import { Separator } from "@packages/ui/components/separator";
-import { useNavigate, createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import React from "react";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
@@ -144,10 +145,10 @@ const Component: React.FC = () => {
                               <TrainingContent content={answer.content} />
                             </Label>
                             {answer.description && ( // TODO think about how to show these
-                              (<>
+                              <>
                                 <br />
                                 <TrainingContent content={answer.description} />
-                              </>)
+                              </>
                             )}
                           </div>
                         ))}
@@ -204,10 +205,10 @@ const Component: React.FC = () => {
         </div>
       </div>
     </>
-  )
+  );
 };
 
 export const Route = createFileRoute("/_authenticated/training/$id")({
-  loader: async ({ params }) => await get(params.id),
+  loader: async ({ params }) => await client.training.get(params),
   component: Component,
 });

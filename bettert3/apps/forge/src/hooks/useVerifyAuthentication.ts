@@ -11,6 +11,7 @@ import { useAtom } from "jotai";
 import { useCallback, useEffect, useRef } from "react";
 
 export const useVerifyAuthentication = () => {
+  return null
   const [, setAuthEffect] = useAtom(authEffectAtom);
   const [user, setUser] = useAtom(userAtom);
   const [, setOriginalUserRoles] = useAtom(originalUserRolesAtom);

@@ -4,6 +4,7 @@ import Loader from "@packages/ui/components/loader";
 import React from "react";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  return <></>
   const { loading } = useVerifyAuthentication();
 
   if (loading) {

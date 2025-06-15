@@ -1,6 +1,6 @@
 import { RPCHandler } from "@orpc/server/fetch";
 import { createServerFileRoute } from "@tanstack/react-start/server";
-import { router } from ".";
+import { router } from "./api.$";
 
 const handler = new RPCHandler(router);
 
@@ -13,7 +13,7 @@ async function handle({ request }: { request: Request }) {
   return response ?? new Response("Not Found", { status: 404 });
 }
 
-export const ServerRoute = createServerFileRoute().methods({
+export const ServerRoute = createServerFileRoute("/rpc/$").methods({
   HEAD: handle,
   GET: handle,
   POST: handle,
