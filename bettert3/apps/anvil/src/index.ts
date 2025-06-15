@@ -11,7 +11,6 @@ import {
   experimental_ZodSmartCoercionPlugin as ZodSmartCoercionPlugin,
   experimental_ZodToJsonSchemaConverter as ZodToJsonSchemaConverter,
 } from "@orpc/zod/zod4";
-import serialisers from "@packages/serialiser";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { type Response } from "express";

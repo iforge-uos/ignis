@@ -6,7 +6,6 @@ import { z } from "zod/v4";
 import { signAgreement } from "./agreements.$agreement_id";
 import { addInfraction } from "./infractions";
 import { trainingRouter } from "./training";
-import { me } from "../me";
 
 export const get = auth
   .route({ path: "/" })

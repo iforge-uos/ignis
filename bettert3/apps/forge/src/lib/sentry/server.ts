@@ -1,6 +1,6 @@
-import { ORPCError, os } from "@orpc/server";
+import { os, ORPCError } from "@orpc/server";
 import * as Sentry from "@sentry/core";
-import { InvalidArgumentError, CardinalityViolationError, AccessError } from "gel";
+import { AccessError, CardinalityViolationError, InvalidArgumentError } from "gel";
 
 type Options = {
   captureInputs?: boolean;
@@ -21,6 +21,7 @@ export default (options: Options = {}) =>
       },
       async (span) => {
         try {
+          console.log("Middlewaring");
           return await next();
         } catch (error) {
           // Some errors can be suppressed so just re-throw

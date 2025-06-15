@@ -22,6 +22,8 @@ import { signInsRouter } from "@/api/sign-ins";
 import { teamsRouter } from "@/api/teams";
 import { trainingRouter } from "@/api/training";
 import { usersRouter } from "@/api/users";
+import { OpenAPIGenerator } from "@orpc/openapi";
+import { onError } from "@orpc/server";
 
 export const router = pub.router({
   auth: authRouter,
@@ -52,36 +54,28 @@ const createContext = async ({ request }: { request: Request }) => {
   };
 };
 
+// const openAPIGenerator = new OpenAPIGenerator({
+//   schemaConverters: [new ZodToJsonSchemaConverter()],
+// });
+
+const specFromRouter = await openAPIGenerator.generate(router, {
+  info: {
+    title: "iForge API",
+    version: "2.0.0",
+  },
+});
+
 const handler = new OpenAPIHandler(router, {
   plugins: [
     // biome-ignore format:
     new ZodSmartCoercionPlugin(),
     // new SimpleCsrfProtectionHandlerPlugin(),
-    new OpenAPIReferencePlugin({
-      schemaConverters: [new ZodToJsonSchemaConverter()],
-      specGenerateOptions: {
-        info: {
-          title: "iForge API",
-          version: "2.0.0",
-        },
-      },
-      // servers: [{ url: "/api" } /** Should use absolute URLs in production */],
-      // security: [{ bearerAuth: [] }],
-      // components: {
-      //   securitySchemes: {
-      //     bearerAuth: {
-      //       type: "http",
-      //       scheme: "bearer",
-      //     },
-      //   },
-      // },
-    }),
   ],
   // customJsonSerializers: serialisers,
+  interceptors: [onError(console.error)],
 });
 
 async function handle({ request }: { request: Request }) {
-  console.log("Hi");
   const { response } = await handler.handle(request, {
     prefix: "/api",
     context: await createContext({ request }),

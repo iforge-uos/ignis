@@ -21,7 +21,6 @@
     "@orpc/openapi": "^1.4.2",
     "@orpc/server": "^1.4.2",
     "@orpc/zod": "^1.4.2",
-    "@packages/serialiser": "workspace:*",
     "@packages/types": "workspace:*",
     "@packages/ui": "workspace:*",
     "@sentry/bun": "^9.27.0",

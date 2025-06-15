@@ -23,7 +23,6 @@ export const UserShape = e.shape(e.users.User, () => ({
     "@version_signed": true,
     version: true,
   },
-  referrals: true,
   roles: { id: true, name: true },
   mailing_list_subscriptions: true,
 }));

@@ -5,7 +5,7 @@ import { z } from "zod/v4";
 
 export const addInfraction = rep
   .route({ method: "POST", path: "/infractions" })
-  .input(z.object({ id: z.uuid() }).and(CreateInfractionSchema.omit({ created_at: true })))
+  .input(CreateInfractionSchema.omit({ created_at: true }))
   .handler(async ({ input: { id, ...data }, context: { db } }) =>
     e
       .insert(e.users.Infraction, {
