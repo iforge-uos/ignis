@@ -71,7 +71,7 @@ export function Footer() {
         </div>
         <div className="flex flex-col gap-2 w-full md:w-auto">
           <h5 className="text-lg font-bold font-futura">Opening Hours</h5>
-          <Balancer ratio="0.5">Open weekdays, subject to exams and holidays</Balancer>
+          <Balancer ratio="0.5">Currently open Tuesday and Thursday</Balancer>
           {locationStatuses && (
             <table className="w-full border-collapse items-center flex">
               <tbody className="w-full">
