@@ -8,15 +8,15 @@ A [React](https://react.dev/) front end for the iForge previewed with [Vite](htt
 ## Installation
 
 ```bash
-$ pnpm install
+$ bun install
 ```
 
 ## Running the app
 
 ```bash
 # watch mode
-$ pnpm run dev
+$ bun run dev
 
 # production mode
-$ pnpm run build
+$ bun run build
 ```

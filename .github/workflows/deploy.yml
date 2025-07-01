@@ -24,14 +24,14 @@ jobs:
       - name: Throw up the maintenance page
         run: touch /home/iforge/ignis-config/file_flags/maintenance_mode/enabled
 
-      - name: Sort out env for pnpm
+      - name: Setup Bun
         run: |
           echo "/home/iforge/.nvm/versions/node/v20.11.0/bin" >> $GITHUB_PATH
-          echo "/home/iforge/.local/share/pnpm" >> $GITHUB_PATH
+          echo "/home/iforge/.bun/bin" >> $GITHUB_PATH
 
       - name: Install Packages
         working-directory: /home/iforge/ignis
-        run: pnpm install --frozen-lockfile
+        run: bun install --frozen-lockfile
 
       - name: Build the project
         working-directory: /home/iforge/ignis/
