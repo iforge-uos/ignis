@@ -1,4 +1,12 @@
 module tools {
+    scalar type Selectability extending enum<
+        UNTRAINED,
+        REVOKED,
+        EXPIRED,
+        REPS_UNTRAINED,
+        IN_PERSON_MISSING,
+    >;
+
     scalar type Status extending enum<
         NOMINAL,
         IN_USE,
@@ -20,6 +28,7 @@ module tools {
         min_booking_time: duration {
             default := (select <duration>"1h" if .is_bookable else {})
         };
+        required quantity: int16;
 
         # trigger status_check after update for each do (
         #     dispatch notification somehow that we can't guarantee that it'll work

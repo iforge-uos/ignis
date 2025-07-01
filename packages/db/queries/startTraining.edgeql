@@ -9,7 +9,7 @@ with
         unless conflict on ((.user, .training)) # must be kept in-line with Session constraint
         else (select training::Session)
     ),
-select session {
+select assert_exists(session {
     id,
     sections := (
         select session.training.sections {
@@ -24,9 +24,10 @@ select session {
             [is training::Question].answers: {
                 id,
                 content,
+                correct,
             },
         }
         filter .enabled and .index <= session.index
         order by .index
     )
-};
+});

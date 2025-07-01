@@ -1,8 +1,0 @@
-{
-  "name": "@ignis/errors",
-  "version": "1.0.0",
-  "author": "iForge IT team",
-  "license": "GPL-3.0-or-later",
-  "private": true,
-  "type": "module"
-}

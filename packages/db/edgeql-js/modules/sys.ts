@@ -115,6 +115,7 @@ const $ExtensionPackageMigration = $.makeType<$ExtensionPackageMigration>(_.spec
 const ExtensionPackageMigration: $.$expr_PathNode<$.TypeSet<$ExtensionPackageMigration, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($ExtensionPackageMigration, $.Cardinality.Many), null);
 
 export type $QueryStatsλShape = $.typeutil.flatten<$ExternalObjectλShape & {
+  "branch": $.LinkDesc<$Branch, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
   "query": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "query_type": $.PropertyDesc<$QueryType, $.Cardinality.AtMostOne, false, false, false, false>;
   "tag": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
@@ -143,7 +144,6 @@ export type $QueryStatsλShape = $.typeutil.flatten<$ExternalObjectλShape & {
   "rows": $.PropertyDesc<_std.$int64, $.Cardinality.AtMostOne, false, false, false, false>;
   "stats_since": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne, false, false, false, false>;
   "minmax_stats_since": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne, false, false, false, false>;
-  "branch": $.LinkDesc<$Branch, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
 }>;
 type $QueryStats = $.ObjectType<"sys::QueryStats", $QueryStatsλShape, null, [
   ...$ExternalObject['__exclusives__'],
@@ -157,7 +157,9 @@ export type $RoleλShape = $.typeutil.flatten<$SystemObjectλShape & _schema.$In
   "superuser": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, false>;
   "is_superuser": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, true, false, false>;
   "password": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
+  "permissions": $.PropertyDesc<_std.$str, $.Cardinality.Many, false, false, false, false>;
   "member_of": $.LinkDesc<$Role, $.Cardinality.Many, {}, false, false,  false, false>;
+  "all_permissions": $.PropertyDesc<_std.$str, $.Cardinality.Many, false, true, false, false>;
   "<member_of[is sys::Role]": $.LinkDesc<$Role, $.Cardinality.Many, {}, false, false,  false, false>;
   "<member_of": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;

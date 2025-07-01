@@ -5,14 +5,6 @@ module training {
         GEORGE_PORTER,
     >;
 
-    scalar type Selectability extending enum<
-        NO_TRAINING,
-        REVOKED,
-        EXPIRED,
-        REPS_UNTRAINED,
-        IN_PERSON_MISSING,
-    >;
-
     type Training extending default::Auditable {
         required name: str;
 
@@ -130,8 +122,6 @@ module training {
         duration: duration;
     }
 
-    alias Page := TrainingPage;
-
     scalar type AnswerType extending enum<
         `SINGLE`,
         MULTI,
@@ -173,7 +163,14 @@ module training {
             annotation description := "The `Interactable.index` for the section user is currently on.";
             default := 0;
         }
-        constraint exclusive on ((.user, .training));  # must be kept inline with TrainingService.startTraining's unlessConflict
+        next_section := (
+             select .training.sections
+             filter .enabled and .index > __source__.index
+             order by .index
+             limit 1
+        );
+
+        constraint exclusive on ((.user, .training));  # must be kept inline with startTraining's unlessConflict
 
         access policy allow_self_or_admin
             allow all

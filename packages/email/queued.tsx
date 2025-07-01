@@ -1,4 +1,4 @@
-import { LocationName, QueueEntry } from "@ignis/types/sign_in";
+import { LocationName, QueueEntry } from "@packages/types/sign_in";
 import { Container, Hr, Text } from "jsx-email";
 import * as React from "react";
 import { Email } from "../components/heading";
@@ -20,7 +20,7 @@ export function Template({ id = "0000-0000-0000-0000", location = "{location}" }
           when a place is available.
         </Text>
 
-        <Text className="text-xs! text-center text-gray-500">
+        <Text className="text-center text-gray-500 text-xs!">
           If you no longer require your place please{" "}
           <Link
             href={`https://iforge.sheffield.ac.uk/${location}/queue/delete/${id}`} // FIXME this doesn't exist yet

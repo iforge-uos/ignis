@@ -1,17 +1,17 @@
-import axiosInstance from "@/api/axiosInstance";
 import {
   authEffectAtom,
   loadingAtom,
   originalUserRolesAtom,
   userAtom,
   userRolesAtom,
-} from "@/atoms/authSessionAtoms";
-import { User } from "@ignis/types/users";
-import { AxiosError } from "axios";
+} from "@/atoms/authSessionAtoms.ts";
+import { orpc } from "@/lib/orpc";
+import type { User } from "@/packages/types/users";
 import { useAtom } from "jotai";
 import { useCallback, useEffect, useRef } from "react";
 
 export const useVerifyAuthentication = () => {
+  return null
   const [, setAuthEffect] = useAtom(authEffectAtom);
   const [user, setUser] = useAtom(userAtom);
   const [, setOriginalUserRoles] = useAtom(originalUserRolesAtom);
@@ -50,15 +50,14 @@ export const useVerifyAuthentication = () => {
     setLoading(true);
 
     try {
-      const response = await axiosInstance.get<User>("/users/me");
+      const userData = await orpc.users.me.call();
 
       if (!mountedRef.current) {
         setLoading(false);
         return;
       }
 
-      if (response.status === 200 && response.data) {
-        const userData = response.data;
+      if (userData) {
         const lowercaseRoles = userData.roles.map((role) => role.name.toLowerCase());
 
         // Return a promise that resolves when all state updates are complete
@@ -126,6 +125,6 @@ export const useVerifyAuthentication = () => {
   return {
     user,
     loading: loading && !isLoggedOutRef.current, // Only show loading if not logged out
-    verifyAuthentication
+    verifyAuthentication,
   };
 };

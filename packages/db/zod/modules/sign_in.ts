@@ -1,5 +1,3 @@
-import { Temporal } from "@js-temporal/polyfill";
-import { Duration } from "gel";
 import { z } from "zod/v4";
 
 // #region sign_in::LocationName
@@ -25,23 +23,11 @@ export const ReasonCategorySchema = z.enum([
 export const CreateAgreementSchema = z
   .object({
     // default::Auditable
-    updated_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    updated_at: z.date().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
-    created_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    created_at: z.date().optional(), // std::datetime
   })
   .extend({
     // sign_in::Agreement
@@ -54,13 +40,7 @@ export const CreateAgreementSchema = z
 export const UpdateAgreementSchema = z
   .object({
     // default::Auditable
-    updated_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    updated_at: z.date().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
@@ -78,23 +58,11 @@ export const UpdateAgreementSchema = z
 export const CreateLocationSchema = z
   .object({
     // default::Auditable
-    updated_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    updated_at: z.date().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
-    created_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    created_at: z.date().optional(), // std::datetime
   })
   .extend({
     // sign_in::Location
@@ -111,13 +79,7 @@ export const CreateLocationSchema = z
 export const UpdateLocationSchema = z
   .object({
     // default::Auditable
-    updated_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    updated_at: z.date().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
@@ -139,23 +101,11 @@ export const UpdateLocationSchema = z
 export const CreateQueuePlaceSchema = z
   .object({
     // default::CreatedAt
-    created_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    created_at: z.date().optional(), // std::datetime
   })
   .extend({
     // sign_in::QueuePlace
-    notified_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .nullable(), // std::datetime
+    notified_at: z.date().nullable(), // std::datetime
   });
 
 export const UpdateQueuePlaceSchema = z
@@ -164,13 +114,7 @@ export const UpdateQueuePlaceSchema = z
   })
   .extend({
     // sign_in::QueuePlace
-    notified_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .nullable(), // std::datetime
+    notified_at: z.date().nullable(), // std::datetime
   });
 // #endregion
 
@@ -178,13 +122,7 @@ export const UpdateQueuePlaceSchema = z
 export const CreateReasonSchema = z
   .object({
     // default::CreatedAt
-    created_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    created_at: z.date().optional(), // std::datetime
   })
   .extend({
     // sign_in::Reason
@@ -221,23 +159,11 @@ export const UpdateReasonSchema = z
 export const CreateSignInSchema = z
   .object({
     // default::Timed
-    ends_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .nullable(), // std::datetime
+    ends_at: z.date().nullable(), // std::datetime
   })
   .extend({
     // default::CreatedAt
-    created_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    created_at: z.date().optional(), // std::datetime
   })
   .extend({
     // sign_in::SignIn
@@ -247,13 +173,7 @@ export const CreateSignInSchema = z
 export const UpdateSignInSchema = z
   .object({
     // default::Timed
-    ends_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .nullable(), // std::datetime
+    ends_at: z.date().nullable(), // std::datetime
   })
   .extend({
     // default::CreatedAt
@@ -268,13 +188,7 @@ export const UpdateSignInSchema = z
 export const CreateUserRegistrationSchema = z
   .object({
     // default::CreatedAt
-    created_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    created_at: z.date().optional(), // std::datetime
   })
   .extend({
     // sign_in::UserRegistration

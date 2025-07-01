@@ -1,7 +1,7 @@
 import { previousPathnameAtom } from "@/atoms/authSessionAtoms";
 import { useVerifyAuthentication } from "@/hooks/useVerifyAuthentication";
+import Loader from "@packages/ui/components/loader";
 import { Navigate, createFileRoute } from "@tanstack/react-router";
-import { Loader } from "@ui/components/ui/loader";
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
 

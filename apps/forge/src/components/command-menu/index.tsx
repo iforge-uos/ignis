@@ -1,11 +1,10 @@
 import { commandMenuIsOpenAtom } from "@/atoms/commandMenuAtoms";
 import { CommandConfig, commandConfig } from "@/config/commands";
 import { useFilteredCommands } from "@/hooks/useFilteredCommands";
-import { useShortcutKey } from "@/lib/utils";
+import { useShortcutKey } from "@/hooks/useShortcutKey";
 import { RoutePath } from "@/types/router";
-import { Card, CardContent, CardFooter } from "@ignis/ui/components/ui/card";
-import { Link, useNavigate } from "@tanstack/react-router";
-import { Button } from "@ui/components/ui/button";
+import { Button } from "@packages/ui/components/button";
+import { Card, CardContent, CardFooter } from "@packages/ui/components/card";
 import {
   Command,
   CommandDialog,
@@ -15,8 +14,9 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from "@ui/components/ui/command";
-import { Shortcut } from "@ui/components/ui/kbd";
+} from "@packages/ui/components/command";
+import { Shortcut } from "@packages/ui/components/kbd";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import { X } from "lucide-react";
 import React from "react";

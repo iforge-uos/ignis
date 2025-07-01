@@ -1,5 +1,5 @@
 import { CommandConfig, commandConfig } from "@/config/commands";
-import { useOriginalUserRoles } from "@/lib/utils";
+import { useOriginalUserRoles } from "@/hooks/useOriginalRoles";
 
 export function useFilteredCommands() {
   const userRoles = useOriginalUserRoles();

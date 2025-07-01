@@ -1,23 +1,23 @@
-import axiosInstance from "@/api/axiosInstance";
+import type { InteractionResponse } from "@/api/training/interact.$interaction_id";
 import Title from "@/components/title";
 import { TrainingHeader } from "@/components/training/TrainingHeader";
+import { client, orpc } from "@/lib/orpc";
 import { cn } from "@/lib/utils";
-import { get } from "@/services/training/get";
-import type { InteractionResponse, Section, Training } from "@ignis/types/training";
 import { Temporal } from "@js-temporal/polyfill";
+import { Button } from "@packages/ui/components/button";
+import { Checkbox } from "@packages/ui/components/checkbox";
+import { Label } from "@packages/ui/components/label";
+import { Progress } from "@packages/ui/components/progress";
+import { RadioGroup, RadioGroupItem } from "@packages/ui/components/radio-group";
+import { Separator } from "@packages/ui/components/separator";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Button } from "@ui/components/ui/button";
-import { Checkbox } from "@ui/components/ui/checkbox";
-import { Label } from "@ui/components/ui/label";
-import { Progress } from "@ui/components/ui/progress";
-import { RadioGroup, RadioGroupItem } from "@ui/components/ui/radio-group";
-import { Separator } from "@ui/components/ui/separator";
 import React from "react";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 
 const PROGRESS_BAR_SAMPLE_MS = 50;
+type Section = Extract<InteractionResponse, { __typename: "training::Page" | "training::Question" }>;  // ones we can display
 
 export function TrainingContent({ content, className }: { content: string; className?: string }) {
   return (
@@ -42,6 +42,10 @@ const Component: React.FC = () => {
   const [duration, setDuration] = React.useState<number | null | undefined>(null);
   const [answers, setAnswers] = React.useState<{ id: string }[]>([]);
 
+  // FIXME this is crap due to re-renders
+  // try using these
+  // https://developer.mozilla.org/en-US/docs/Web/CSS/transition
+  // https://github.com/franciscop/use-animation-frame
   React.useEffect(() => {
     const progressUpdater = setInterval(() => {
       if (!duration) return;
@@ -69,29 +73,23 @@ const Component: React.FC = () => {
   const interactWithTraining = async (training_id: string) => {
     let section: NonNullable<InteractionResponse>;
     if (!sessionId) {
-      const r = await axiosInstance.post<{ id: string; sections: Section[] }>(`training/${training_id}/start`);
-      if (r.status !== 201) {
-        return console.error("Failed to start training");
-      }
-      setSessionId(r.data.id);
-      const sections_ = r.data!.sections;
+      const { id: session_id, sections: sections_ } = await orpc.training.start.call({ id: training_id });
+      setSessionId(session_id);
       setSections(sections_);
       section = sections_.at(-1)!;
     } else {
       const currentSection = sections!.at(-1)!;
-      const r = await axiosInstance.post<InteractionResponse>(`training/interact/${currentSection.id}`, {
+      const section_ = await orpc.training.interact.call({
+        interaction_id: currentSection.id,
         session_id: sessionId,
-        answers: currentSection.type_name === "training::Question" ? answers : undefined,
+        answers: currentSection.__typename === "training::Question" ? answers : undefined,
       });
-      if (r.status !== 201) {
-        return console.error("Failed to start training");
-      }
-      if (!r.data) {
+      if (!section_) {
         return navigate({ to: "/training/finished" });
       }
-      section = r.data;
+      section = section_;
 
-      if (section.type_name === "training::WrongAnswers") {
+      if (section.__typename === "training::WrongAnswers") {
         return alert("Wrong answers"); // FIXME better handling
       }
       setSections((sections) => {
@@ -102,7 +100,7 @@ const Component: React.FC = () => {
     }
 
     setButtonName("Next");
-    if (section.type_name === "training::TrainingPage") {
+    if (section.__typename === "training::Page") {
       if (section.duration) {
         setButtonDisabled(true);
       }
@@ -130,7 +128,7 @@ const Component: React.FC = () => {
                 <h2 className="text-2xl font-semibold py-3">{(section as any)?.name ?? "Question"}</h2>
                 <>
                   <TrainingContent content={section.content} />
-                  {section.type_name === "training::Question" &&
+                  {section.__typename === "training::Question" &&
                     (section.type === "SINGLE" ? (
                       <RadioGroup>
                         {section.answers.map((answer) => (
@@ -187,7 +185,7 @@ const Component: React.FC = () => {
             <Button
               // if we're on a training page it doesn't matter if answers aren't selected
               disabled={
-                ["training::TrainingPage", undefined].includes(sections.at(-1)?.type_name)
+                ["training::Page", undefined].includes(sections.at(-1)?.__typename)
                   ? buttonDisabled
                   : answers.length === 0
               }
@@ -210,6 +208,6 @@ const Component: React.FC = () => {
 };
 
 export const Route = createFileRoute("/_authenticated/training/$id")({
-  loader: async ({ params }) => await get(params.id),
+  loader: async ({ params }) => await client.training.get(params),
   component: Component,
 });

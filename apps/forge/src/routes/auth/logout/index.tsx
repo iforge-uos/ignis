@@ -1,7 +1,7 @@
 import { authEffectAtom } from "@/atoms/authSessionAtoms";
 import Title from "@/components/title";
 import { useLogout } from "@/hooks/useLogout";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useNavigate, createFileRoute } from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import { useEffect } from "react";
 
@@ -27,12 +27,12 @@ const LogOutComponent = () => {
   }, [logout, navigate, setAuthEffect]);
 
   return (
-      <>
-        <Title prompt="Logout" />
-        <div className="p-2">
-          <h3>Logging out...</h3>
-        </div>
-      </>
+    <>
+      <Title prompt="Logout" />
+      <div className="p-2">
+        <h3>Logging out...</h3>
+      </div>
+    </>
   );
 };
 

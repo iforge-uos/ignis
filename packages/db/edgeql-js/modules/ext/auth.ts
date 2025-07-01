@@ -81,6 +81,9 @@ const $Auditable = $.makeType<$Auditable>(_.spec, "4315a540-bc94-58fa-8e95-a5816
 const Auditable: $.$expr_PathNode<$.TypeSet<$Auditable, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Auditable, $.Cardinality.Many), null);
 
 export type $AuthConfigλShape = $.typeutil.flatten<_cfg.$ExtensionConfigλShape & {
+  "providers": $.LinkDesc<$ProviderConfig, $.Cardinality.Many, {}, false, false,  false, false>;
+  "ui": $.LinkDesc<$UIConfig, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
+  "webhooks": $.LinkDesc<$WebhookConfig, $.Cardinality.Many, {}, false, false,  false, false>;
   "app_name": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "logo_url": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "dark_logo_url": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
@@ -88,9 +91,6 @@ export type $AuthConfigλShape = $.typeutil.flatten<_cfg.$ExtensionConfigλShape
   "auth_signing_key": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "token_time_to_live": $.PropertyDesc<_std.$duration, $.Cardinality.AtMostOne, false, false, false, true>;
   "allowed_redirect_urls": $.PropertyDesc<_std.$str, $.Cardinality.Many, false, false, false, false>;
-  "providers": $.LinkDesc<$ProviderConfig, $.Cardinality.Many, {}, false, false,  false, false>;
-  "ui": $.LinkDesc<$UIConfig, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
-  "webhooks": $.LinkDesc<$WebhookConfig, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
 type $AuthConfig = $.ObjectType<"ext::auth::AuthConfig", $AuthConfigλShape, null, [
   ..._cfg.$ExtensionConfig['__exclusives__'],

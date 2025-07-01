@@ -1,5 +1,3 @@
-import { Temporal } from "@js-temporal/polyfill";
-import { Duration } from "gel";
 import { z } from "zod/v4";
 
 // #region event::Type
@@ -10,28 +8,12 @@ export const TypeSchema = z.enum(["WORKSHOP", "LECTURE", "MEETUP", "HACKATHON", 
 export const CreateEventSchema = z
   .object({
     // default::CreatedAt
-    created_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    created_at: z.date().optional(), // std::datetime
   })
   .extend({
     // event::Event
-    ends_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .nullable(), // std::datetime
-    starts_at: z.union([
-      z.instanceof(Temporal.ZonedDateTime),
-      z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-      z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-    ]), // std::datetime
+    ends_at: z.date().nullable(), // std::datetime
+    starts_at: z.date(), // std::datetime
     title: z.string(), // std::str
     type: z.enum(["WORKSHOP", "LECTURE", "MEETUP", "HACKATHON", "EXHIBITION", "WEBINAR"]), // event::Type
     description: z.string(), // std::str
@@ -43,18 +25,8 @@ export const UpdateEventSchema = z
   })
   .extend({
     // event::Event
-    ends_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .nullable(), // std::datetime
-    starts_at: z.union([
-      z.instanceof(Temporal.ZonedDateTime),
-      z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-      z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-    ]), // std::datetime
+    ends_at: z.date().nullable(), // std::datetime
+    starts_at: z.date(), // std::datetime
     title: z.string(), // std::str
     type: z.enum(["WORKSHOP", "LECTURE", "MEETUP", "HACKATHON", "EXHIBITION", "WEBINAR"]), // event::Type
     description: z.string(), // std::str

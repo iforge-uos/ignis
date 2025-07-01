@@ -1,174 +1,137 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@import "tw-animate-css";
 
-@layer base {
-  :root {
-    /* Custom Colors these have to be hsl'd because otherwise ImageGradient breaks */
-    --heartspace: hsl(188, 53%, 49%);
-    --mainspace: hsl(7, 57%, 55%);
-    --george-porter: hsl(222, 53%, 21%);
+@custom-variant dark (&:where(.dark, .dark *));
 
-    --tick: hsl(126, 38%, 48%);
-    --cross: hsl(358, 65%, 46%);
+@font-face {
+  font-family: "Futura";
+  src: url("https://cdn.iforge.sheffield.ac.uk/fonts/FuturaPTDemiOblique.otf")
+    format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
 
-    /* shadcn Colors (Generated from https://ui.jln.dev */
-    --background: 0 0% 99%;
-    --foreground: 60 2% 30%;
-    --muted: 0 12% 90%;
-    --muted-foreground: 0 12% 30%;
-    --popover: 0 0% 96%;
-    --popover-foreground: 60 2% 20%;
-    --card: 0 0% 97%;
-    --card-foreground: 60 2% 25%;
-    --border: 0 0% 94%;
-    --input: 0 0% 91%;
-    --primary: 7 82% 36%;
-    --primary-foreground: 7 82% 96%;
-    --secondary: 7 30% 75%;
-    --secondary-foreground: 7 30% 15%;
-    --accent: 0 0% 84%;
-    --accent-foreground: 0 0% 24%;
-    --ring: 7 82% 36%;
-    --radius: 0.5rem;
+@theme {
+  --font-sans: Roboto, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
 
-    /* shadcn Warnings and Colors (Generated from https://ui.jln.dev/feedback-colors-generator-for-shadcn-ui */
-    --destructive: 1 67% 88%;
-    --destructive-foreground: 1 67% 28%;
-    --success: 156 67% 88%;
-    --success-foreground: 156 67% 8%;
-    --warning: 41 67% 88%;
-    --warning-foreground: 41 67% 8%;
-    --info: 209 67% 88%;
-    --info-foreground: 209 67% 28%;
+html,
+body {
+  @apply bg-white dark:bg-gray-950;
+}
 
-    /* Sidebar theming */
-    --sidebar-background: 0 12% 98%;
-    --sidebar-foreground: 0 12% 30%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+  --futura: "Futura";
+}
 
-    --font-sans: Roboto, ui-sans-serif, system-ui, sans-serif,
-      "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
-      "Noto Color Emoji";
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
 
-    /* SignInChart.tsx specific stuff */
-    /* The chart's background */
-
-    #sign-in-chart > div > div > svg > rect {
-      fill: hsl(var(--background)) !important;
-    }
-
-    /* Any text in the chart*/
-
-    #sign-in-chart > text {
-      fill: hsl(var(--foreground)) !important;
-      font-family: var(--font-sans), sans-serif !important;
-    }
-
-    /* The individual rectangles in the chart */
-
-    #sign-in-chart g rect[x][y][width][height][style] {
-      rx: var(--radius);
-      stroke: hsl(var(--background)) !important;
-    }
-
-    /* The lines that bind months together */
-
-    #sign-in-chart > div > div > svg > g > path {
-      stroke: hsl(var(--background)) !important;
-      stroke-width: 0px !important;
-    }
-
-    /* The legend text */
-
-    #sign-in-chart > div > div > svg > g > text {
-      fill: hsl(var(--foreground)) !important;
-      font-family: var(--font-sans), sans-serif !important;
-    }
-
-    /* The on-hover pop-up */
-
-    #sign-in-chart > div > div > div > div {
-      background: hsl(var(--background)) !important;
-      color: hsl(var(--foreground)) !important;
-    }
-
-    /* The text for the pop-up */
-
-    #sign-in-chart > div > div > div > div > div > span {
-      color: hsl(var(--foreground)) !important;
-      font-family: var(--font-sans), sans-serif !important;
-    }
-
-    /* Otherwise this doesn't show as clickable */
-
-    #training-content a {
-      color: hsl(var(--primary));
-    }
-
-    #training-content li {
-      list-style-type: disc;
-      list-style-position: inside;
-    }
-
-    #training-content ol {
-      list-style-type: decimal;
-      list-style-position: inside;
-    }
-  }
-
-  .dark {
-    /* shadcn Colors dark mode (Generated from https://ui.jln.dev */
-
-    --background: 220 11% 11%;
-    --foreground: 60 30% 96%;
-    --muted: 220 12% 15%;
-    --muted-foreground: 220 12% 65%;
-    --popover: 220 11% 8%;
-    --popover-foreground: 0 0% 100%;
-    --card: 220 11% 9%;
-    --card-foreground: 0 0% 100%;
-    --border: 220 1% 16%;
-    --input: 220 1% 19%;
-    --primary: 353 57% 45%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 353 30% 75%;
-    --secondary-foreground: 353 30% 15%;
-    --accent: 220 11% 26%;
-    --accent-foreground: 220 11% 86%;
-    --ring: 353 57% 45%;
-
-    /* shadcn Warnings and Colors (Generated from https://ui.jln.dev/feedback-colors-generator-for-shadcn-ui */
-
-    --destructive: 12 45% 7%;
-    --destructive-foreground: 12 45% 67%;
-    --success: 142 45% 7%;
-    --success-foreground: 142 45% 47%;
-    --warning: 46 45% 7%;
-    --warning-foreground: 46 45% 47%;
-    --info: 201 45% 7%;
-    --info-foreground: 201 45% 67%;
-
-    /* Sidebar theming */
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
 }
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border outline-ring/50;
   }
 
   body {

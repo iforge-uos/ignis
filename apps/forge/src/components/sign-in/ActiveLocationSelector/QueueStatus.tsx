@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Badge } from "@ui/components/ui/badge";
+import { Badge } from "@packages/ui/components/badge";
 import { Ban } from "lucide-react";
 import React from "react";
 

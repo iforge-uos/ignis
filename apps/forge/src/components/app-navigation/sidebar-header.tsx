@@ -1,4 +1,4 @@
-import { SidebarTrigger } from "@ignis/ui/components/ui/sidebar";
+import { SidebarTrigger } from "@packages/ui/components/sidebar";
 
 export const SidebarHeader = () => {
   return (

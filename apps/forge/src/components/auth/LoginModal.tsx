@@ -1,9 +1,9 @@
 import { previousPathnameAtom } from "@/atoms/authSessionAtoms";
 import Title from "@/components/title";
 import { useVerifyAuthentication } from "@/hooks/useVerifyAuthentication";
-import { Button } from "@ignis/ui/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@ignis/ui/components/ui/card";
-import { Skeleton } from "@ignis/ui/components/ui/skeleton";
+import { Button } from "@packages/ui/components/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@packages/ui/components/card";
+import { Skeleton } from "@packages/ui/components/skeleton";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import { Info } from "lucide-react";

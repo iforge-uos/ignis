@@ -1,14 +1,14 @@
 import { commandMenuIsOpenAtom } from "@/atoms/commandMenuAtoms";
-import { useShortcutKey } from "@/lib/utils";
-import { Label } from "@ignis/ui/components/ui/label";
+import { useShortcutKey } from "@/hooks/useShortcutKey";
+import { Shortcut } from "@packages/ui/components/kbd";
+import { Label } from "@packages/ui/components/label";
 import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarInput,
   SidebarMenuButton,
   useSidebar,
-} from "@ignis/ui/components/ui/sidebar";
-import { Shortcut } from "@ui/components/ui/kbd";
+} from "@packages/ui/components/sidebar";
 import { useSetAtom } from "jotai";
 import { Search } from "lucide-react";
 

@@ -1,13 +1,12 @@
-import { useUser } from "@/lib/utils";
+import { useUser } from "@/hooks/useUser";
 import { TrainingContent } from "@/routes/_authenticated/training/$id";
-import { getUserTraining } from "@/services/users/getUserTraining";
-import { PartialTrainingWithStatus } from "@ignis/types/training";
-import { Training } from "@ignis/types/users";
+import { PartialTrainingWithStatus } from "@packages/types/training";
+import { Training } from "@packages/types/users";
+import { Button } from "@packages/ui/components/button";
+import { Card } from "@packages/ui/components/card";
+import { Separator } from "@packages/ui/components/separator";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@packages/ui/components/tooltip";
 import { Link } from "@tanstack/react-router";
-import { Button } from "@ui/components/ui/button";
-import { Card } from "@ui/components/ui/card";
-import { Separator } from "@ui/components/ui/separator";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip";
 import { EditIcon } from "lucide-react";
 
 interface TrainingCourseCardProps {

@@ -1,9 +1,0 @@
-import { RedisConfig } from "./types";
-import { getEnvVariable, getEnvNumber } from "@/utils/config";
-
-export const getRedisConfig = (): RedisConfig => ({
-  host: getEnvVariable("REDIS_HOST"),
-  port: getEnvNumber("REDIS_PORT"),
-  db: getEnvVariable("REDIS_DB"),
-  password: getEnvVariable("REDIS_PASSWORD"),
-});

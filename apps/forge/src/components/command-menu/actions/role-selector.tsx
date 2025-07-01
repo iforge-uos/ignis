@@ -1,9 +1,9 @@
 import { adminOverwriteRoles, adminOverwrittenRoles } from "@/atoms/adminAtoms";
-import { AVAILABLE_ROLES } from "@/config/constants";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@ignis/ui/components/ui/card";
-import { Label } from "@ignis/ui/components/ui/label";
-import MultiSelectFormField from "@ignis/ui/components/ui/multi-select";
-import { Switch } from "@ignis/ui/components/ui/switch";
+import { AVAILABLE_ROLES } from "@/lib/utils/constants";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@packages/ui/components/card";
+import { Label } from "@packages/ui/components/label";
+import { MultiSelect } from "@packages/ui/components/multi-select";
+import { Switch } from "@packages/ui/components/switch";
 import { useAtom } from "jotai";
 import { UserIcon } from "lucide-react";
 

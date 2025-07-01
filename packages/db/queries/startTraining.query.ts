@@ -19,12 +19,13 @@ export type StartTrainingReturns = {
     "answers": Array<{
       "id": string;
       "content": string;
+      "correct": boolean;
     }>;
   }>;
-} | null;
+};
 
 export function startTraining(client: Executor, args: StartTrainingArgs): Promise<StartTrainingReturns> {
-  return client.querySingle(`\
+  return client.queryRequiredSingle(`\
 with
     training := <training::Training><uuid>$id,
     session := (
@@ -36,7 +37,7 @@ with
         unless conflict on ((.user, .training)) # must be kept in-line with Session constraint
         else (select training::Session)
     ),
-select session {
+select assert_exists(session {
     id,
     sections := (
         select session.training.sections {
@@ -51,11 +52,12 @@ select session {
             [is training::Question].answers: {
                 id,
                 content,
+                correct,
             },
         }
         filter .enabled and .index <= session.index
         order by .index
     )
-};`, args);
+});`, args);
 
 }

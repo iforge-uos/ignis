@@ -461,6 +461,33 @@ const $PixtralModel = $.makeType<$PixtralModel>(_.spec, "56c15b6b-2b92-571a-a8d6
 
 const PixtralModel: $.$expr_PathNode<$.TypeSet<$PixtralModel, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($PixtralModel, $.Cardinality.Many), null);
 
+type to_contextλFuncExpr<
+  P1 extends $.TypeSet<$.AnyObjectType>,
+> = $.$expr_Function<
+  _std.$str, $.cardutil.paramCardinality<P1>
+>;
+/**
+ * Evaluate the expression of an ai::index defined on the passed object type and return it.
+ */
+function to_context<
+  P1 extends $.TypeSet<$.AnyObjectType>,
+>(
+  object: P1,
+): to_contextλFuncExpr<P1>;
+function to_context(...args: any[]) {
+  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('ext::ai::to_context', args, _.spec, [
+    {args: [{typeId: "00000000-0000-0000-0000-000000000003", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000101"},
+  ]);
+  return _.syntax.$expressionify({
+    __kind__: $.ExpressionKind.Function,
+    __element__: returnType,
+    __cardinality__: cardinality,
+    __name__: "ext::ai::to_context",
+    __args__: positionalArgs,
+    __namedargs__: namedArgs,
+  }) as any;
+};
+
 type searchλFuncExpr<
   P1 extends $.TypeSet<$.AnyObjectType>,
   P2 extends $.TypeSet<$.ArrayType<_std.$float32>>,
@@ -512,33 +539,6 @@ function search(...args: any[]) {
     __element__: returnType,
     __cardinality__: cardinality,
     __name__: "ext::ai::search",
-    __args__: positionalArgs,
-    __namedargs__: namedArgs,
-  }) as any;
-};
-
-type to_contextλFuncExpr<
-  P1 extends $.TypeSet<$.AnyObjectType>,
-> = $.$expr_Function<
-  _std.$str, $.cardutil.paramCardinality<P1>
->;
-/**
- * Evaluate the expression of an ai::index defined on the passed object type and return it.
- */
-function to_context<
-  P1 extends $.TypeSet<$.AnyObjectType>,
->(
-  object: P1,
-): to_contextλFuncExpr<P1>;
-function to_context(...args: any[]) {
-  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('ext::ai::to_context', args, _.spec, [
-    {args: [{typeId: "00000000-0000-0000-0000-000000000003", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000101"},
-  ]);
-  return _.syntax.$expressionify({
-    __kind__: $.ExpressionKind.Function,
-    __element__: returnType,
-    __cardinality__: cardinality,
-    __name__: "ext::ai::to_context",
     __args__: positionalArgs,
     __namedargs__: namedArgs,
   }) as any;
@@ -596,8 +596,8 @@ type __defaultExports = {
   "OpenAI_O1_PreviewModel": typeof OpenAI_O1_PreviewModel;
   "PixtralLargeModel": typeof PixtralLargeModel;
   "PixtralModel": typeof PixtralModel;
-  "search": typeof search;
-  "to_context": typeof to_context
+  "to_context": typeof to_context;
+  "search": typeof search
 };
 const __defaultExports: __defaultExports = {
   "ChatParticipantRole": ChatParticipantRole,
@@ -647,7 +647,7 @@ const __defaultExports: __defaultExports = {
   "OpenAI_O1_PreviewModel": OpenAI_O1_PreviewModel,
   "PixtralLargeModel": PixtralLargeModel,
   "PixtralModel": PixtralModel,
-  "search": search,
-  "to_context": to_context
+  "to_context": to_context,
+  "search": search
 };
 export default __defaultExports;

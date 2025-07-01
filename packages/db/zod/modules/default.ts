@@ -1,28 +1,14 @@
-import { Temporal } from "@js-temporal/polyfill";
-import { Duration } from "gel";
 import { z } from "zod/v4";
 
 // #region default::Auditable
 export const CreateAuditableSchema = z
   .object({
     // default::CreatedAt
-    created_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    created_at: z.date().optional(), // std::datetime
   })
   .extend({
     // default::Auditable
-    updated_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    updated_at: z.date().optional(), // std::datetime
   });
 
 export const UpdateAuditableSchema = z
@@ -31,25 +17,13 @@ export const UpdateAuditableSchema = z
   })
   .extend({
     // default::Auditable
-    updated_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    updated_at: z.date().optional(), // std::datetime
   });
 // #endregion
 
 // #region default::CreatedAt
 export const CreateCreatedAtSchema = z.object({
-  created_at: z
-    .union([
-      z.instanceof(Temporal.ZonedDateTime),
-      z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-      z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-    ])
-    .optional(), // std::datetime
+  created_at: z.date().optional(), // std::datetime
 });
 
 export const UpdateCreatedAtSchema = z.object({});
@@ -59,23 +33,11 @@ export const UpdateCreatedAtSchema = z.object({});
 export const CreateTimedSchema = z
   .object({
     // default::CreatedAt
-    created_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    created_at: z.date().optional(), // std::datetime
   })
   .extend({
     // default::Timed
-    ends_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .nullable(), // std::datetime
+    ends_at: z.date().nullable(), // std::datetime
   });
 
 export const UpdateTimedSchema = z
@@ -84,13 +46,7 @@ export const UpdateTimedSchema = z
   })
   .extend({
     // default::Timed
-    ends_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .nullable(), // std::datetime
+    ends_at: z.date().nullable(), // std::datetime
   });
 // #endregion
 
@@ -110,23 +66,11 @@ export const CreateuserSchema = z
   })
   .extend({
     // default::Auditable
-    updated_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    updated_at: z.date().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
-    created_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    created_at: z.date().optional(), // std::datetime
   })
   .extend({
     // default::user
@@ -147,13 +91,7 @@ export const UpdateuserSchema = z
   })
   .extend({
     // default::Auditable
-    updated_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    updated_at: z.date().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt

@@ -1,14 +1,13 @@
 import { activeLocationAtom } from "@/atoms/signInAppAtoms";
 import { UserAvatar } from "@/components/avatar";
 import { useUserRoles } from "@/hooks/useUserRoles";
-import { useUserRoles } from "@/hooks/useUserRoles";
-import { DeleteQueue } from "@/services/sign_in/queueService";
+import { orpc } from "@/lib/orpc";
 import { QueueEntry } from "@ignis/types/sign_in";
+import { Button } from "@packages/ui/components/button";
+import { Card } from "@packages/ui/components/card";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@packages/ui/components/tooltip";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { Button } from "@ui/components/ui/button";
-import { Card } from "@ui/components/ui/card";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip";
 import { useAtom } from "jotai";
 import { Delete } from "lucide-react";
 import { toast } from "sonner";
@@ -26,31 +25,25 @@ export const QueuedUserCard: React.FC<QueuedUserCardProps> = ({ place, onDequeue
   const abortController = new AbortController();
   const queryClient = useQueryClient();
 
-  const dequeueProps = {
-    locationName: activeLocation,
-    id: place.id,
-  };
-
-  const { mutate } = useMutation({
-    mutationKey: ["postDequeue", dequeueProps],
-    mutationFn: () => DeleteQueue(dequeueProps),
-    retry: 0,
-    onError: (error) => {
-      console.error("Error", error);
-      abortController.abort();
-    },
-    onSuccess: async () => {
-      abortController.abort();
-      toast.success(`Successfully signed out ${place.user.display_name}`);
-      onDequeue?.(place.user.id);
-      await queryClient.invalidateQueries({ queryKey: ["locationStatus"] });
-      await queryClient.invalidateQueries({ queryKey: ["locationList", activeLocation] });
-    },
-  });
+  const { mutate } = useMutation(
+    orpc.locations.queue.remove.mutationOptions({
+      onError: (error) => {
+        console.error("Error", error);
+        abortController.abort();
+      },
+      onSuccess: async () => {
+        abortController.abort();
+        toast.success(`Successfully signed out ${place.user.display_name}`);
+        onDequeue?.(place.user.id);
+        await queryClient.invalidateQueries({ queryKey: ["locationStatus"] });
+        await queryClient.invalidateQueries({ queryKey: ["locationList", activeLocation] });
+      },
+    }),
+  );
 
   const handleDequeue = () => {
     if (window.confirm("Are you sure you want to remove this user from the queue?")) {
-      mutate();
+      mutate({ name: activeLocation, id: place.id });
     }
   };
 

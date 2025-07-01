@@ -1,5 +1,3 @@
-import { Temporal } from "@js-temporal/polyfill";
-import { Duration } from "gel";
 import { z } from "zod/v4";
 
 // #region users::InfractionType
@@ -18,23 +16,11 @@ export const RepStatusSchema = z.enum(["ACTIVE", "BREAK", "ALUMNI", "FUTURE", "R
 export const CreateInfractionSchema = z
   .object({
     // default::CreatedAt
-    created_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    created_at: z.date().optional(), // std::datetime
   })
   .extend({
     // users::Infraction
-    duration: z
-      .union([
-        z.instanceof(Temporal.Duration),
-        z.instanceof(Duration).transform(Temporal.Duration.from),
-        z.iso.duration().transform((dur) => Temporal.Duration.from(dur)),
-      ])
-      .nullable(), // std::duration
+    duration: z.iso.duration().nullable(), // std::duration
     reason: z.string(), // std::str
     resolved: z.boolean().optional(), // std::bool
     type: z.enum(["WARNING", "TEMP_BAN", "PERM_BAN", "RESTRICTION", "TRAINING_ISSUE"]), // users::InfractionType
@@ -46,13 +32,7 @@ export const UpdateInfractionSchema = z
   })
   .extend({
     // users::Infraction
-    duration: z
-      .union([
-        z.instanceof(Temporal.Duration),
-        z.instanceof(Duration).transform(Temporal.Duration.from),
-        z.iso.duration().transform((dur) => Temporal.Duration.from(dur)),
-      ])
-      .nullable(), // std::duration
+    duration: z.iso.duration().nullable(), // std::duration
     reason: z.string(), // std::str
     resolved: z.boolean().optional(), // std::bool
     type: z.enum(["WARNING", "TEMP_BAN", "PERM_BAN", "RESTRICTION", "TRAINING_ISSUE"]), // users::InfractionType
@@ -63,23 +43,11 @@ export const UpdateInfractionSchema = z
 export const CreateIntegrationSchema = z
   .object({
     // default::Auditable
-    updated_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    updated_at: z.date().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
-    created_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    created_at: z.date().optional(), // std::datetime
   })
   .extend({
     // users::Integration
@@ -91,13 +59,7 @@ export const CreateIntegrationSchema = z
 export const UpdateIntegrationSchema = z
   .object({
     // default::Auditable
-    updated_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    updated_at: z.date().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
@@ -126,23 +88,11 @@ export const CreateRepSchema = z
   })
   .extend({
     // default::Auditable
-    updated_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    updated_at: z.date().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
-    created_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    created_at: z.date().optional(), // std::datetime
   })
   .extend({
     // users::Rep
@@ -164,13 +114,7 @@ export const UpdateRepSchema = z
   })
   .extend({
     // default::Auditable
-    updated_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    updated_at: z.date().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
@@ -207,23 +151,11 @@ export const UpdateSettingTemplateSchema = z.object({
 export const CreateUserSchema = z
   .object({
     // default::Auditable
-    updated_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    updated_at: z.date().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
-    created_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    created_at: z.date().optional(), // std::datetime
   })
   .extend({
     // users::User
@@ -241,13 +173,7 @@ export const CreateUserSchema = z
 export const UpdateUserSchema = z
   .object({
     // default::Auditable
-    updated_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    updated_at: z.date().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt

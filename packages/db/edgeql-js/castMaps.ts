@@ -28,10 +28,10 @@ export type scalarAssignableBy<T extends $.ScalarType> =
   T extends _users.$RepStatus ? _users.$RepStatus : 
   T extends _users.$Platform ? _users.$Platform : 
   T extends _users.$InfractionType ? _users.$InfractionType : 
-  T extends _training.$Selectability ? _training.$Selectability : 
   T extends _training.$LocationName ? _training.$LocationName : 
   T extends _training.$AnswerType ? _training.$AnswerType : 
   T extends _tools.$Status ? _tools.$Status : 
+  T extends _tools.$Selectability ? _tools.$Selectability : 
   T extends _team.$Name ? _team.$Name : 
   T extends _sys.$VersionStage ? _sys.$VersionStage : 
   T extends _sys.$TransactionIsolation ? _sys.$TransactionIsolation : 
@@ -122,10 +122,10 @@ export type scalarCastableFrom<T extends $.ScalarType> =
   T extends _users.$RepStatus ? _users.$RepStatus : 
   T extends _users.$Platform ? _users.$Platform : 
   T extends _users.$InfractionType ? _users.$InfractionType : 
-  T extends _training.$Selectability ? _training.$Selectability : 
   T extends _training.$LocationName ? _training.$LocationName : 
   T extends _training.$AnswerType ? _training.$AnswerType : 
   T extends _tools.$Status ? _tools.$Status : 
+  T extends _tools.$Selectability ? _tools.$Selectability : 
   T extends _team.$Name ? _team.$Name : 
   T extends _sys.$VersionStage ? _sys.$VersionStage : 
   T extends _sys.$TransactionIsolation ? _sys.$TransactionIsolation : 
@@ -236,12 +236,6 @@ type getSharedParentScalar<A, B> =
     :
     never
   :
-  A extends _training.$Selectability ?
-    B extends _training.$Selectability ?
-    B
-    :
-    never
-  :
   A extends _training.$LocationName ?
     B extends _training.$LocationName ?
     B
@@ -256,6 +250,12 @@ type getSharedParentScalar<A, B> =
   :
   A extends _tools.$Status ?
     B extends _tools.$Status ?
+    B
+    :
+    never
+  :
+  A extends _tools.$Selectability ?
+    B extends _tools.$Selectability ?
     B
     :
     never
@@ -811,12 +811,6 @@ function getSharedParentScalar<A extends $.ScalarType, B extends $.ScalarType>(a
     }
     throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
     }
-  if (a.__name__ === "training::Selectability") {
-    if(b.__name__ === "training::Selectability") {
-      return b;
-    }
-    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
-    }
   if (a.__name__ === "training::LocationName") {
     if(b.__name__ === "training::LocationName") {
       return b;
@@ -831,6 +825,12 @@ function getSharedParentScalar<A extends $.ScalarType, B extends $.ScalarType>(a
     }
   if (a.__name__ === "tools::Status") {
     if(b.__name__ === "tools::Status") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
+  if (a.__name__ === "tools::Selectability") {
+    if(b.__name__ === "tools::Selectability") {
       return b;
     }
     throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);

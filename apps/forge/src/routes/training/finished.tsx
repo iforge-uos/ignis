@@ -1,5 +1,5 @@
+import { createFileRoute } from "@tanstack/react-router"
 import Title from "@/components/title";
-import { createFileRoute } from "@tanstack/react-router";
 
 function Component() {
   return (

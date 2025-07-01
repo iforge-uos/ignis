@@ -1,8 +1,8 @@
 // src/atoms/session/signInAppAtoms.ts
 
-import { locationStatus } from "@/services/sign_in/locationService";
+import { client } from "@/lib/orpc";
 import { SignInSession } from "@/types/sign_in";
-import { LocationName } from "@ignis/types/sign_in";
+import { LocationName } from "@packages/db/zod/sign_in"
 import { atom } from "jotai";
 import { atomWithQuery } from "jotai-tanstack-query";
 
@@ -13,7 +13,7 @@ activeLocationAtom.debugLabel = "signIn:activeLocation";
 
 export const locationStatusesAtom = atomWithQuery(() => ({
   queryKey: ["locationStatus"],
-  queryFn: locationStatus,
+  queryFn: client.locations.statuses,
   staleTime: 4000,
   refetchInterval: 5000,
 }));

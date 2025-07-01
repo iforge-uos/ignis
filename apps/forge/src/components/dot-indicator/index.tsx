@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@packages/ui/lib/utils";
 import React from "react";
 
 interface DotIndicatorProps {

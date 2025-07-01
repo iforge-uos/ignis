@@ -1,37 +1,38 @@
-import path from "node:path";
-import { TanStackRouterVite } from "@tanstack/router-vite-plugin";
+import { sentryVitePlugin } from "@sentry/vite-plugin";
+import spotlightSidecar from "@spotlightjs/sidecar/vite-plugin";
+import spotlight from "@spotlightjs/spotlight/vite-plugin";
+import tailwindcss from "@tailwindcss/vite";
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import react from "@vitejs/plugin-react-swc";
 import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig } from "vite";
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
+import viteTsConfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
+  build: {
+    sourcemap: true,
+    target: "esnext",
+  },
   plugins: [
     react(),
-    TanStackRouterVite(),
+    viteTsConfigPaths({
+      projects: ["./tsconfig.json", "../../packages/ui/tsconfig.json"],
+    }),
+    tanstackStart(),
+    tailwindcss(),
     ViteImageOptimizer(),
+    ...(process.env.NODE_ENV === "development" ? [spotlight(), spotlightSidecar()] : []),
+    sentryVitePlugin({
+      org: "iforge-uos",
+      project: "forge",
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+    }),
     visualizer({
+      open: true,
+      filename: "dist/stats.html",
       gzipSize: true,
       brotliSize: true,
     }),
   ],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-      "@db": path.resolve(__dirname, "../../packages/db/"),
-      "@ui": path.resolve(__dirname, "../../packages/ui"),
-      "@ui/components": path.resolve(__dirname, "../../packages/ui/components/ui"),
-      "@ui/components/ui/": path.resolve(__dirname, "../../packages/ui/components/ui"),
-    },
-  },
-  optimizeDeps: {
-    include: ["react", "react-dom", "@ui/*", "@ui/components/*"],
-  },
-  server: {
-    proxy: {
-      "/api/*": "http://localhost:8000",
-    },
-    host: "0.0.0.0",
-    port: 8000,
-  },
 });

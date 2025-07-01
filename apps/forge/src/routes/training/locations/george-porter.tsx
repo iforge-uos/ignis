@@ -1,5 +1,5 @@
+import { createFileRoute } from "@tanstack/react-router"
 import { TrainingLocation, getData } from "@/components/training/TrainingLocation";
-import { createFileRoute } from "@tanstack/react-router";
 
 const GeorgePorter = () => (
   <TrainingLocation

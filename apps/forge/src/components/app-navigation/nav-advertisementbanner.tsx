@@ -1,8 +1,8 @@
+import { Alert, AlertDescription } from "@packages/ui/components/alert";
+import { Button } from "@packages/ui/components/button";
+import { getCookie, setCookie } from "@tanstack/react-start/server";
 import { X } from "lucide-react";
 import { useState } from "react";
-import { Button } from "@ignis/ui/components/ui/button";
-import { Alert, AlertDescription } from "@ignis/ui/components/ui/alert";
-import { getCookie, setCookie } from "@/services/cookies/cookieService";
 
 export default function NavAdvertisementBanner() {
   const [dismissed, setDismissed] = useState(getCookie("notification_dismissed") === "true");

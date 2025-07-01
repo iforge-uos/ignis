@@ -1,4 +1,20 @@
 module team {
+    scalar type Name extending enum<
+        "IT",
+        "3DP",
+        "Hardware",
+        "Publicity",
+        "Events",
+        "Relations",
+        "Operations",
+        "Recruitment & Development",
+        "Health & Safety",
+        "Inclusions",
+        "Unsorted Reps",
+        "Future Reps",
+        "Staff",
+    >;
+
     type Team {
         required name: str;
         required tag: str {

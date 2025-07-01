@@ -21,7 +21,7 @@ export type GetSignInTrainingsReturns = {
     } | null;
     "enabled": boolean;
     "icon_url": string | null;
-    "selectable": Array<("NO_TRAINING" | "REVOKED" | "EXPIRED" | "REPS_UNTRAINED" | "IN_PERSON_MISSING")>;
+    "selectable": Array<("UNTRAINED" | "REVOKED" | "EXPIRED" | "REPS_UNTRAINED" | "IN_PERSON_MISSING")>;
     "@created_at": Date | null;
     "@in_person_created_at": Date | null;
   }>;
@@ -50,13 +50,13 @@ select assert_exists(
             @in_person_created_at,
 
             selectable := (select {
-                training::Selectability.REVOKED if exists @infraction else <training::Selectability>{},
-                training::Selectability.EXPIRED if (
+                tools::Selectability.REVOKED if exists @infraction else <tools::Selectability>{},
+                tools::Selectability.EXPIRED if (
                     exists .expires_after and @created_at + .expires_after > datetime_of_statement()
-                ) else <training::Selectability>{},
+                ) else <tools::Selectability>{},
                 # if they're a rep they can sign in to use the machines they want even if the reps aren't trained
-                training::Selectability.REPS_UNTRAINED if .id not in location.supervisable_training.id else <training::Selectability>{},
-                training::Selectability.IN_PERSON_MISSING if .in_person and not exists @in_person_created_at else <training::Selectability>{},
+                tools::Selectability.REPS_UNTRAINED if .id not in location.supervisable_training.id else <tools::Selectability>{},
+                tools::Selectability.IN_PERSON_MISSING if .in_person and not exists @in_person_created_at else <tools::Selectability>{},
             })
         }
         filter exists .rep and <training::LocationName>$name_ in .locations

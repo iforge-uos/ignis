@@ -24,7 +24,7 @@ export const Template = () => (
   <Html>
     <Head />
     <Preview>Get your order summary, estimated delivery date and more</Preview>
-    <Tailwind config={require("@ignis/ui/tailwind.config")}>
+    <Tailwind config={require("@packages/ui/tailwind.config")}>
       <Body className="bg-white font-sans">
         <Container className="mx-auto my-2.5 w-[600px] border border-gray-200">
           <Section className="bg-gray-50 py-6 px-10">

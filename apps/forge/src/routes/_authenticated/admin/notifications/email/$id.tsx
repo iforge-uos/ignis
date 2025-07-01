@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute("/_authenticated/admin/notifications/email/$id")({
+export const Route = createFileRoute('/_authenticated/admin/notifications/email/$id')({
   component: () => <div>Hello /_authenticated/admin/notifications/email/$id!</div>,
 });

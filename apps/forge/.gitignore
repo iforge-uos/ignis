@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 src/routeTree.gen.ts
 stats.html
+.nitro
+.output
+.tanstack*

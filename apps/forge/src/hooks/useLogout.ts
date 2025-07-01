@@ -1,7 +1,6 @@
-import axiosInstance from "@/api/axiosInstance";
 import {authEffectAtom, loadingAtom} from "@/atoms/authSessionAtoms";
+import { orpc } from "@/lib/orpc";
 import { useNavigate } from "@tanstack/react-router";
-import axios from "axios";
 import { useAtom } from "jotai";
 import { toast } from "sonner";
 
@@ -12,7 +11,7 @@ export const useLogout = () => {
 
   return async () => {
     try {
-      await axiosInstance.post("/authentication/logout");
+      await orpc.auth.logout()
 
       setAuthEffect(false);
       setLoading(false);

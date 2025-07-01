@@ -1,11 +1,8 @@
-import { TeamIcon } from "@ui/components/icons/Team";
+import { orpc } from "@/lib/orpc";
 import { ManageUserWidgetProps } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/ManageUserWidget";
-import { getTeams } from "@/services/users/getTeams";
-import promoteToRep from "@/services/users/promoteToRep";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ShortTeam } from "@ignis/types/users";
-import { useQuery } from "@tanstack/react-query";
-import { Button } from "@ui/components/ui/button";
+import { ShortTeam } from "@packages/types/users";
+import { Button } from "@packages/ui/components/button";
 import {
   Form,
   FormControl,
@@ -14,9 +11,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@ui/components/ui/form";
-import { Loader } from "@ui/components/ui/loader";
-import MultiSelectFormField from "@ui/components/ui/multi-select";
+} from "@packages/ui/components/form";
+import Loader from "@packages/ui/components/loader";
+import { MultiSelect } from "@packages/ui/components/multi-select";
+import { TeamIcon } from "@packages/ui/icons//Team";
+import { useQuery } from "@tanstack/react-query";
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -31,12 +30,12 @@ export const TeamManagementSection: React.FC<ManageUserWidgetProps> = ({ user })
     data: teams,
     isLoading,
     error,
-  } = useQuery({
-    queryKey: ["teams"],
-    queryFn: () => getTeams(),
-    staleTime: 600_000,
-    refetchInterval: 900_000,
-  });
+  } = useQuery(
+    orpc.teams.allAssignable.queryOptions({
+      staleTime: 600_000,
+      refetchInterval: 900_000,
+    }),
+  );
 
   function getFormDefaults(userTeams: ShortTeam[]) {
     // if data is empty or undefined
@@ -57,7 +56,7 @@ export const TeamManagementSection: React.FC<ManageUserWidgetProps> = ({ user })
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
-      promoteToRep(user.id, { team_ids: data.teams ?? [] });
+      orpc.users.promote.call({ id: user.id, team_ids: data.teams ?? [] });
     } catch (e) {
       return toast.error(`Failed to submit contact the IT Team ${e}`);
     }

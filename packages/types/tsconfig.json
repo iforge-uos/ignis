@@ -8,8 +8,9 @@
     "paths": {
       "@anvil/*": ["../../apps/anvil2/src/*"],
       "@db/*": ["../db/*"],
-      "@ignis/types/*": ["./src/*"]
-    }
+      "@packages/types/*": ["./src/*"]
+    },
+    "composite": true
   },
   "include": ["./src/**/*"],
   "exclude": ["node_modules", "dist"],

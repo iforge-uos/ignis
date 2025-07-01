@@ -1,19 +1,18 @@
-import { GeorgePorterIcon, HeartspaceIcon, MainspaceIcon } from "@ui/components/icons/Locations";
 import Title from "@/components/title";
 import ImageGradient from "@/components/training/ImageGradient";
-import { useUser } from "@/lib/utils";
+import { useUser } from "@/hooks/useUser";
+import { client } from "@/lib/orpc";
 import IndexCard from "@/routes/training/-components/IndexCard";
-import { getAll } from "@/services/training/getAll";
-import { training } from "@ignis/types";
+import { GeorgePorterIcon, HeartspaceIcon, MainspaceIcon } from "@packages/ui/icons/Locations";
+import { Button } from "@packages/ui/components/button";
+import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from "@packages/ui/components/command";
+import { Separator } from "@packages/ui/components/separator";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { Button } from "@ui/components/ui/button";
-import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from "@ui/components/ui/command";
-import { Separator } from "@ui/components/ui/separator";
 import { SearchCheckIcon, TriangleAlertIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { TrainingContent } from "../_authenticated/training/$id";
 
-export default function TrainingIndexPage() {
+export default async function TrainingIndexPage() {
   const trainings = Route.useLoaderData();
   const user = useUser();
   const [hidden, setHidden] = useState(true);
@@ -204,5 +203,5 @@ export default function TrainingIndexPage() {
 
 export const Route = createFileRoute("/training/")({
   component: TrainingIndexPage,
-  loader: getAll,
+  loader: client.training.all,
 });

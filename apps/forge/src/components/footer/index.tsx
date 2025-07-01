@@ -1,9 +1,10 @@
-"use client";
-
-import { Entries, removeSuffix, toTitleCase } from "@/lib/utils";
-import { locationStatus } from "@/services/sign_in/locationService";
-import { PartialLocation } from "@ignis/types/sign_in";
-import { LocationIcon } from "@ignis/ui/components/icons/Locations";
+import { orpc } from "@/lib/orpc";
+import { removeSuffix, toTitleCase } from "@/lib/utils";
+import { Entries } from "@packages/types";
+import { PartialLocation } from "@packages/types/sign_in";
+import { Separator } from "@packages/ui/components/separator";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@packages/ui/components/tooltip";
+import { LocationIcon } from "@packages/ui/icons/Locations";
 import {
   DiscordIcon,
   GitHubIcon,
@@ -11,12 +12,10 @@ import {
   LinkedInIcon,
   TwitterIcon,
   YouTubeIcon,
-} from "@ignis/ui/components/icons/Socials";
-import { IForgeLogo } from "@ignis/ui/components/icons/iforge";
+} from "@packages/ui/icons/Socials";
+import { IForgeLogo } from "@packages/ui/icons/iforge";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { Separator } from "@ui/components/ui/separator";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip";
 import Balancer from "react-wrap-balancer";
 
 function LocationStatusTooltip({ location }: { location: PartialLocation }) {
@@ -54,11 +53,11 @@ function LocationStatusTooltip({ location }: { location: PartialLocation }) {
 }
 
 export function Footer() {
-  const { data: locationStatuses } = useQuery({
-    queryKey: ["locationStatus"],
-    queryFn: locationStatus,
-    staleTime: 20_000,
-  });
+  const { data: locationStatuses } = useQuery(
+    orpc.locations.statuses.queryOptions({
+      staleTime: 20_000,
+    }),
+  );
 
   return (
     <footer className="bg-card border-t-2 p-5 md:p-10">

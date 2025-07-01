@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router"
 import Title from "@/components/title";
 import { RouteUnfinished } from "@/components/routing/RouteUnfinished";
 

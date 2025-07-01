@@ -1,6 +1,6 @@
-import { QueueEntry } from "@ignis/types/sign_in";
 import { toTemporalInstant } from "@js-temporal/polyfill";
-import { format } from "date-fns/format";
+import { QueueEntry } from "@packages/types/sign_in";
+import { format } from "date-fns";
 import { Container, Hr, Section, Text } from "jsx-email";
 import * as React from "react";
 import { Email } from "../components/heading";

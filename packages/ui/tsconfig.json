@@ -1,20 +1,22 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "../../tsconfig.base.json",
+  "display": "Default",
   "compilerOptions": {
-    "emitDeclarationOnly": true,
-    "outDir": "./dist",
-    "rootDir": ".",
+    "lib": ["es2022", "DOM", "DOM.Iterable"],
+    "module": "NodeNext",
+    "moduleDetection": "force",
+    "moduleResolution": "NodeNext",
+    "noUncheckedIndexedAccess": true,
+    "resolveJsonModule": true,
+    "jsx": "react",
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
-      "@ui/*": ["./*"],
-      "@ui/components/ui*": ["./components/ui*"],
-      "@ignis/types": ["../types/src/index"],
-      "@ignis/types/*": ["../types/src/*"]
+      "@packages/ui/*": ["./src/*"],
+      "@/hooks/*": ["../../apps/forge/src/hooks/*"]
     }
   },
   "include": ["./**/*"],
-  "exclude": ["node_modules", "dist"],
-  "references": [
-    { "path": "../types" }
-  ]
+  "exclude": ["node_modules", "dist"]
 }

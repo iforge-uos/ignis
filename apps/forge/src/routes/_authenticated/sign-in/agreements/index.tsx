@@ -1,27 +1,29 @@
+import { createFileRoute } from "@tanstack/react-router"
 import Title from "@/components/title";
 import { useUserRoles } from "@/hooks/useUserRoles";
-import { getAgreements } from "@/services/root/getAgreements";
+import { orpc } from "@/lib/orpc";
+import Loader from "@packages/ui/components/loader";
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
-import { Loader } from "@ui/components/ui/loader";
-import { AgreementCard } from "./-components/AgreementCard";
+import {} from "@tanstack/react-router";
 import { Suspense } from "react";
+import { AgreementCard } from "./-components/AgreementCard";
+import { REP_ON_SHIFT } from "@/lib/constants";
 
 function AgreementsList() {
   const roles = useUserRoles();
-  const { data: agreements = [] } = useQuery({ 
-    queryKey: ["agreements"], 
-    queryFn: getAgreements,
-    refetchOnMount: "always",
-    staleTime: 0,
-    networkMode: "always"
-  });
+  const { data: agreements = [] } = useQuery(
+    orpc.agreements.all.queryOptions({
+      refetchOnMount: "always",
+      staleTime: 0,
+      networkMode: "always",
+    }),
+  );
 
   const isRep = roles.includes("rep");
 
   // Filter agreements based on user roles
   const filteredAgreements = agreements.filter((agreement) => {
-    const isRepAgreement = agreement.reasons.some((reason) => reason.name === "Rep On Shift");
+    const isRepAgreement = agreement.reasons.some((reason) => reason.name === REP_ON_SHIFT);
 
     // Show Rep On Shift agreement only to reps
     // Show all other agreements to everyone

@@ -19,11 +19,11 @@ export type $Name = {
   "Future Reps": $.$expr_Literal<$Name>;
   "Staff": $.$expr_Literal<$Name>;
 } & $.EnumType<"team::Name", ["IT", "3DP", "Hardware", "Publicity", "Events", "Relations", "Operations", "Recruitment & Development", "Health & Safety", "Inclusions", "Unsorted Reps", "Future Reps", "Staff"]>;
-const Name: $Name = $.makeType<$Name>(_.spec, "969058ee-3ab0-11f0-80e8-fb2d85f53333", _.syntax.literal);
+const Name: $Name = $.makeType<$Name>(_.spec, "bda26c6e-4a06-11f0-ab78-59f5554455e9", _.syntax.literal);
 
 export type $TeamλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
-  "name": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "description": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
+  "name": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "tag": $.PropertyDesc<_std.$str, $.Cardinality.One, true, false, false, false>;
   "all_members": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, true,  false, false>;
   "members": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, true,  false, false>;
@@ -34,7 +34,7 @@ type $Team = $.ObjectType<"team::Team", $TeamλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
   {tag: {__element__: _std.$str, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
 ], "team::Team">;
-const $Team = $.makeType<$Team>(_.spec, "97a4f4e6-3aac-11f0-8734-2bee438163d5", _.syntax.literal);
+const $Team = $.makeType<$Team>(_.spec, "29c16766-f86c-11ee-b513-f5418205b180", _.syntax.literal);
 
 const Team: $.$expr_PathNode<$.TypeSet<$Team, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Team, $.Cardinality.Many), null);
 

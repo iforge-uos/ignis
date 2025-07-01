@@ -1,8 +1,13 @@
 import Title from "@/components/title";
+import { Button } from "@packages/ui/components/button";
+import * as Sentry from "@sentry/tanstackstart-react";
 import { Link } from "@tanstack/react-router";
-import { Button } from "@ui/components/ui/button";
+import { useEffect } from "react";
 
-export const GenericError = () => {
+export const GenericError = ({ error }: { error: Error }) => {
+  useEffect(() => {
+    Sentry.captureException(error);
+  }, [error]);
   return (
     <>
       <Title prompt="Error!" />

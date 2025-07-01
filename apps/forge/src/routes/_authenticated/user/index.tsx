@@ -1,4 +1,4 @@
-import { useUser } from "@/lib/utils";
+import { useUser } from "@/hooks/useUser";
 import { Navigate, createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/user/")({

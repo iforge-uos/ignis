@@ -1,6 +1,5 @@
-import { Alert, AlertDescription, AlertTitle } from "@ui/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@packages/ui/components/alert";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
-import { extractError } from "@/lib/utils";
 import { FC } from "react";
 
 export interface ErrorDisplayProps {

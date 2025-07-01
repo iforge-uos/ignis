@@ -1,12 +1,12 @@
 import { AppSwitcher } from "@/components/app-navigation/app-switcher";
 import { NavMain } from "@/components/app-navigation/nav-main";
-import {NavSearch} from "@/components/app-navigation/nav-search";
+import { NavSearch } from "@/components/app-navigation/nav-search";
 import { NavSub } from "@/components/app-navigation/nav-sub";
 import { NavUser } from "@/components/app-navigation/nav-user";
 import { appConfig } from "@/config/nav";
 import useCurrentApp from "@/hooks/useCurrentApp";
 import { useUserRoles } from "@/hooks/useUserRoles";
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@ignis/ui/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@packages/ui/components/sidebar";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const currentApp = useCurrentApp();

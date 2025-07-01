@@ -4,11 +4,11 @@ module sign_in {
         required location: Location;
         required tools: array<str>;
         required reason: Reason;
-        required signed_out := (
-            select exists .ends_at
-        );
+        required signed_out := exists .ends_at;
 
-        constraint exclusive on (.user) except (.signed_out);  # TODO investigate if can change the error message here on invalid insert
+        constraint exclusive on (.user) except (.signed_out) {
+            errmessage := "User is currently signed in elsewhere"
+        }
 
         access policy desk_or_higher
             allow all

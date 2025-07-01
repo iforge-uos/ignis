@@ -1,7 +1,7 @@
 import { helper, std, users } from "@db/interfaces";
 import { LocationName } from "./sign_in";
 import type { CalendarDatum } from "@nivo/calendar";
-import { training } from "./";
+import { training } from ".";
 
 //** A user useful for templating where resolving isn't entirely necessary */
 export type PartialUser = {

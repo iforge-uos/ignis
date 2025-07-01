@@ -5,4 +5,4 @@ server-version = "nightly"
 schema-dir = "packages/db"
 
 [hooks]
-schema.update.after = "pnpm regen"
+schema.update.after = "bun regen"

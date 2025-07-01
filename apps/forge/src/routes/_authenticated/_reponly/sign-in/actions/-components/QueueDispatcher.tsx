@@ -1,12 +1,12 @@
 import { activeLocationAtom, resetSessionAtom, sessionAtom } from "@/atoms/signInAppAtoms";
 import { errorDisplay } from "@/components/errors/ErrorDisplay";
-import { PostQueue, PostQueueProps } from "@/services/sign_in/queueService";
+import { orpc } from "@/lib/orpc";
 import { FlowStepComponent } from "@/types/signInActions";
+import { Button } from "@packages/ui/components/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@packages/ui/components/card";
+import Loader from "@packages/ui/components/loader";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { Button } from "@ui/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@ui/components/ui/card";
-import { Loader } from "@ui/components/ui/loader";
 import { useAtom } from "jotai";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -21,16 +21,7 @@ const QueueDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const navigate = useNavigate();
   const timeout = 3000;
 
-  const queueProps: PostQueueProps = {
-    locationName: activeLocation,
-    uCardNumber: session?.ucard_number ?? "",
-    signal: abortController.signal,
-  };
-
-  const { isPending, error, mutate } = useMutation({
-    mutationKey: ["postQueueInPerson", queueProps],
-    mutationFn: () => PostQueue(queueProps),
-    retry: 0,
+  const { isPending, error, mutate } = useMutation(orpc.locations.queue.add.mutationOptions({
     onError: (error) => {
       console.log("Error", error);
       abortController.abort();
@@ -43,7 +34,7 @@ const QueueDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
       toast.success("User added to queue successfully");
       navigate({ to: "/sign-in" });
     },
-  });
+  }));
 
   const successDisplay = (
     <>
@@ -76,7 +67,7 @@ const QueueDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
         </CardHeader>
         <CardContent>
           {!(canContinue || error || isPending) && (
-            <Button onClick={() => mutate()} autoFocus={true} variant="outline" className="h-[200px] w-full">
+            <Button onClick={() => mutate({name: activeLocation})} autoFocus={true} variant="outline" className="h-[200px] w-full">
               Join Queue
             </Button>
           )}

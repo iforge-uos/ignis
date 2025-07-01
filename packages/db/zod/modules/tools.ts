@@ -1,5 +1,3 @@
-import { Temporal } from "@js-temporal/polyfill";
-import { Duration } from "gel";
 import { z } from "zod/v4";
 
 // #region tools::Status
@@ -10,65 +8,31 @@ export const StatusSchema = z.enum(["NOMINAL", "IN_USE", "OUT_OF_ORDER"]);
 export const CreateBookingSchema = z
   .object({
     // default::Auditable
-    updated_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    updated_at: z.date().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
-    created_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    created_at: z.date().optional(), // std::datetime
   })
   .extend({
     // tools::Booking
-    ends_at: z.union([
-      z.instanceof(Temporal.ZonedDateTime),
-      z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-      z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-    ]), // std::datetime
-    starts_at: z.union([
-      z.instanceof(Temporal.ZonedDateTime),
-      z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-      z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-    ]), // std::datetime
+    ends_at: z.date(), // std::datetime
+    starts_at: z.date(), // std::datetime
     cancelled: z.boolean().nullable(), // std::bool
   });
 
 export const UpdateBookingSchema = z
   .object({
     // default::Auditable
-    updated_at: z
-      .union([
-        z.instanceof(Temporal.ZonedDateTime),
-        z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-        z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-      ])
-      .optional(), // std::datetime
+    updated_at: z.date().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
   })
   .extend({
     // tools::Booking
-    ends_at: z.union([
-      z.instanceof(Temporal.ZonedDateTime),
-      z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-      z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-    ]), // std::datetime
-    starts_at: z.union([
-      z.instanceof(Temporal.ZonedDateTime),
-      z.date().transform((dt) => new Temporal.ZonedDateTime(BigInt(dt.getTime() * 1000), "UTC")),
-      z.iso.datetime({ offset: true }).transform((dt) => Temporal.ZonedDateTime.from(dt)),
-    ]), // std::datetime
+    ends_at: z.date(), // std::datetime
+    starts_at: z.date(), // std::datetime
     cancelled: z.boolean().nullable(), // std::bool
   });
 // #endregion
@@ -77,56 +41,20 @@ export const UpdateBookingSchema = z
 export const CreateToolSchema = z.object({
   is_bookable: z.boolean(), // std::bool
   status: z.enum(["NOMINAL", "IN_USE", "OUT_OF_ORDER"]), // tools::Status
-  min_booking_time: z
-    .union([
-      z.instanceof(Temporal.Duration),
-      z.instanceof(Duration).transform(Temporal.Duration.from),
-      z.iso.duration().transform((dur) => Temporal.Duration.from(dur)),
-    ])
-    .optional()
-    .nullable(), // std::duration
-  max_booking_daily: z
-    .union([
-      z.instanceof(Temporal.Duration),
-      z.instanceof(Duration).transform(Temporal.Duration.from),
-      z.iso.duration().transform((dur) => Temporal.Duration.from(dur)),
-    ])
-    .nullable(), // std::duration
-  max_booking_weekly: z
-    .union([
-      z.instanceof(Temporal.Duration),
-      z.instanceof(Duration).transform(Temporal.Duration.from),
-      z.iso.duration().transform((dur) => Temporal.Duration.from(dur)),
-    ])
-    .nullable(), // std::duration
+  min_booking_time: z.iso.duration().optional().nullable(), // std::duration
+  max_booking_daily: z.iso.duration().nullable(), // std::duration
+  max_booking_weekly: z.iso.duration().nullable(), // std::duration
   name: z.string(), // std::str
+  quantity: z.number().int().min(-32768).max(32767), // std::int16
 });
 
 export const UpdateToolSchema = z.object({
   is_bookable: z.boolean(), // std::bool
   status: z.enum(["NOMINAL", "IN_USE", "OUT_OF_ORDER"]), // tools::Status
-  min_booking_time: z
-    .union([
-      z.instanceof(Temporal.Duration),
-      z.instanceof(Duration).transform(Temporal.Duration.from),
-      z.iso.duration().transform((dur) => Temporal.Duration.from(dur)),
-    ])
-    .optional()
-    .nullable(), // std::duration
-  max_booking_daily: z
-    .union([
-      z.instanceof(Temporal.Duration),
-      z.instanceof(Duration).transform(Temporal.Duration.from),
-      z.iso.duration().transform((dur) => Temporal.Duration.from(dur)),
-    ])
-    .nullable(), // std::duration
-  max_booking_weekly: z
-    .union([
-      z.instanceof(Temporal.Duration),
-      z.instanceof(Duration).transform(Temporal.Duration.from),
-      z.iso.duration().transform((dur) => Temporal.Duration.from(dur)),
-    ])
-    .nullable(), // std::duration
+  min_booking_time: z.iso.duration().optional().nullable(), // std::duration
+  max_booking_daily: z.iso.duration().nullable(), // std::duration
+  max_booking_weekly: z.iso.duration().nullable(), // std::duration
   name: z.string(), // std::str
+  quantity: z.number().int().min(-32768).max(32767), // std::int16
 });
 // #endregion

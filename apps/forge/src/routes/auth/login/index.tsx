@@ -1,11 +1,11 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import React, { useEffect } from "react";
-import Title from "@/components/title";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@ui/components/ui/card";
-import { Button } from "@ui/components/ui/button";
-import { EnvelopeOpenIcon } from "@radix-ui/react-icons";
-import { useAtom } from "jotai";
 import { previousPathnameAtom } from "@/atoms/authSessionAtoms";
+import Title from "@/components/title";
+import { Button } from "@packages/ui/components/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@packages/ui/components/card";
+import { EnvelopeOpenIcon } from "@radix-ui/react-icons";
+import { Link, createFileRoute } from "@tanstack/react-router";
+import { useAtom } from "jotai";
+import React, { useEffect } from "react";
 
 const Index: React.FC = () => {
   const [, setPreviousPathname] = useAtom(previousPathnameAtom);
@@ -23,7 +23,10 @@ const Index: React.FC = () => {
           <CardDescription className="text-center">Please chose a method to login with</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Link to={`${import.meta.env.VITE_API_URL}/auth/oauth/?provider=builtin::oauth_google`} className="flex justify-center">
+          <Link
+            to={`${import.meta.env.VITE_API_URL}/auth/oauth/?provider=builtin::oauth_google`}
+            className="flex justify-center"
+          >
             <Button>
               <EnvelopeOpenIcon className="mr-2 h-4 w-4" /> Login with Google
             </Button>

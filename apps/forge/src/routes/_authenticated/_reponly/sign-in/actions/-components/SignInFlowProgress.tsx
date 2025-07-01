@@ -1,6 +1,6 @@
 import { AnyStep, EnqueueSteps, FlowType, SignInSteps, SignOutSteps } from "@/types/signInActions";
-import { Card, CardContent, CardHeader } from "@ui/components/ui/card";
-import { Timeline, TimelineDot, TimelineHeading, TimelineItem, TimelineLine } from "@ui/components/ui/timeline";
+import { Card, CardContent, CardHeader } from "@packages/ui/components/card";
+import { Timeline, TimelineDot, TimelineHeading, TimelineItem, TimelineLine } from "@packages/ui/components/timeline";
 import React, { useEffect, useState } from "react";
 
 interface SignInProgressProps {
