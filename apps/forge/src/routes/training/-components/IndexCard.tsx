@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import React from "react";
-import Balancer from "react-wrap-balancer";
+import {Balancer} from "react-wrap-balancer";
 
 interface IndexCardProps {
   img: React.ReactElement;

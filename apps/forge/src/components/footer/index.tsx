@@ -16,7 +16,7 @@ import {
 import { IForgeLogo } from "@packages/ui/icons/iforge";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import Balancer from "react-wrap-balancer";
+import {Balancer} from "react-wrap-balancer";
 
 function LocationStatusTooltip({ location }: { location: PartialLocation }) {
   let className: string;

@@ -15,7 +15,7 @@ import { useScroll, useTransform } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import React from "react";
 import { useEffect, useRef, useState } from "react";
-import Balancer from "react-wrap-balancer";
+import {Balancer} from "react-wrap-balancer";
 
 type FAQItem = {
   question: React.ReactNode;
