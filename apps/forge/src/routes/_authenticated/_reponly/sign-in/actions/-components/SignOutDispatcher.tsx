@@ -1,9 +1,9 @@
 import { activeLocationAtom, resetSessionAtom, sessionAtom } from "@/atoms/signInAppAtoms";
 import { errorDisplay } from "@/components/errors/ErrorDisplay";
+import { Hammer } from "@/components/loading";
 import { FlowStepComponent } from "@/types/signInActions";
 import { Button } from "@packages/ui/components/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@packages/ui/components/card";
-import Loader from "@packages/ui/components/loader";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useAtom } from "jotai";
@@ -84,7 +84,7 @@ const SignOutDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
               Sign Out
             </Button>
           )}
-          {isPending && <Loader />}
+          {isPending && <Hammer />}
           {!isPending && error && !canContinue && errorDisplay({ error })}
           {!isPending && canContinue && successDisplay}
         </CardContent>

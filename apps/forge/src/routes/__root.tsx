@@ -8,13 +8,13 @@ import { themeQueryKey, useTheme } from "@/hooks/useTheme";
 import type { useUser } from "@/hooks/useUser";
 import type { orpc } from "@/lib/orpc";
 import { getRequestInfo } from "@/lib/request-info";
-import { SidebarInset } from "@packages/ui/components/sidebar";
+import { SidebarInset, SidebarProvider } from "@packages/ui/components/sidebar";
 import { Toaster } from "@packages/ui/components/sonner";
-import Sentry, { wrapCreateRootRouteWithSentry } from "@sentry/tanstackstart-react";
+import { wrapCreateRootRouteWithSentry } from "@sentry/tanstackstart-react";
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { HeadContent, Outlet, Scripts, createRootRouteWithContext, useRouterState } from "@tanstack/react-router";
-import React, { Suspense } from "react";
+import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
+import { TanStackRouterDevtoolsPanelInProd } from "@tanstack/react-router-devtools";
 import appCss from "../index.css?url";
 
 export interface RouterAppContext {
@@ -23,14 +23,37 @@ export interface RouterAppContext {
   user: ReturnType<typeof useUser>;
 }
 
-const TanStackRouterDevtools = import.meta.env.PROD
-  ? () => null // Render nothing in production
-  : React.lazy(() =>
-      // Lazy load in development
-      import("@tanstack/react-router-devtools").then((res) => ({
-        default: res.TanStackRouterDevtools,
-      })),
-    );
+const RootDocument = () => (
+  <html lang="en">
+    <head>
+      <HeadContent />
+    </head>
+    <body>
+      <CommandMenu />
+      <SidebarProvider>
+        <div className="flex min-h-screen w-full">
+          <AppSidebar />
+          <SidebarInset className="flex flex-col flex-1">
+            <div className="sticky top-0 z-50 bg-background border-b">
+              <SidebarHeader />
+            </div>
+            <div className="flex-grow overflow-auto">
+              <Outlet />
+              <TailwindIndicator />
+              <UCardReader />
+
+              <Toaster richColors theme={useTheme()} />
+              {/* <TanStackRouterDevtoolsPanelInProd position="bottom-left" /> */}
+              <ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
+              <Footer />
+            </div>
+          </SidebarInset>
+        </div>
+      </SidebarProvider>
+      <Scripts />
+    </body>
+  </html>
+);
 
 export const Route = wrapCreateRootRouteWithSentry(createRootRouteWithContext<RouterAppContext>)()({
   head: () => ({
@@ -133,57 +156,3 @@ export const Route = wrapCreateRootRouteWithSentry(createRootRouteWithContext<Ro
   },
   component: RootDocument,
 });
-
-function RootDocument() {
-  // const isFetching = useRouterState({ select: (s) => s.isLoading });
-
-  return (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <CommandMenu />
-        <AppSidebar />
-        <SidebarInset className="flex flex-col">
-          <div className="sticky top-0 z-50 bg-background">
-            <SidebarHeader />
-          </div>
-          <div className="flex-grow">
-            <Outlet />
-            <TailwindIndicator />
-            <UCardReader />
-
-            <Toaster richColors theme={useTheme()} />
-            <Suspense>
-              <TanStackRouterDevtools position="bottom-left" />
-            </Suspense>
-            <ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
-            <Footer />
-          </div>
-        </SidebarInset>
-        <Scripts />
-        {/* <script>
-          {document.addEventListener("DOMContentLoaded", () => {
-            function setFavicon() {
-              const link = document.createElement("link");
-              const oldLink = document.getElementById("dynamic-favicon");
-              link.id = "dynamic-favicon";
-              link.rel = "icon";
-              link.href = window.matchMedia("(prefers-color-scheme: dark)").matches
-                ? "/favicon-dark.svg"
-                : "/favicon.svg";
-              if (oldLink) {
-                document.head.removeChild(oldLink);
-              }
-              document.head.appendChild(link);
-            }
-
-            setFavicon();
-            window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", setFavicon);
-          }) ?? null}
-        </script> */}
-      </body>
-    </html>
-  );
-}

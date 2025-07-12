@@ -3,7 +3,6 @@ import { Link } from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import { MessageCircleWarning } from "lucide-react";
 import { useState } from "react";
-import { PulseLoader } from "react-spinners";
 
 import { activeLocationAtom, locationStatusesAtom } from "@/atoms/signInAppAtoms";
 import { QueueStatus } from "@/components/sign-in/ActiveLocationSelector/QueueStatus";
@@ -18,6 +17,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@packages/ui/components
 import { Separator } from "@packages/ui/components/separator";
 import { Skeleton } from "@packages/ui/components/skeleton";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@packages/ui/components/tooltip";
+import { Hammer } from "@/components/loading";
 
 const ActiveLocationSelector = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -51,7 +51,7 @@ const ActiveLocationSelector = () => {
               <CommandGroup>
                 {isLoading ? (
                   <div className="flex items-center justify-center h-[40px]">
-                    <PulseLoader color="#e11d48" size={15} />
+                    <Hammer />
                   </div>
                 ) : (
                   <>

@@ -1,13 +1,13 @@
 import { UserAvatar } from "@/components/avatar";
 import Title from "@/components/title";
 import { useUser } from "@/hooks/useUser";
+import { LocationIcon } from "@/icons/Locations";
 import { orpc } from "@/lib/orpc";
 import { toTitleCase } from "@/lib/utils";
 import { Badge } from "@packages/ui/components/badge";
 import { Button } from "@packages/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@packages/ui/components/card";
 import { Separator } from "@packages/ui/components/separator";
-import { LocationIcon } from "@packages/ui/icons//Locations";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { CalendarIcon, ClockIcon, DrillIcon } from "lucide-react";
 import { SignInReason } from "../_reponly/sign-in/actions/-components/SignInReason";

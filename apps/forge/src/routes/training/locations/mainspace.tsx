@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router"
+import mainspaceLocationImage from "@/../public/training/mainspace.jpg?lqip";
 import { TrainingLocation, getData } from "@/components/training/TrainingLocation";
-import { } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 
 const Mainspace = () => (
   <TrainingLocation
@@ -8,7 +8,10 @@ const Mainspace = () => (
     optionalTrainingText={"CNC mill, laser cutter, and 3D printer"}
     img={
       <img
-        src={`${import.meta.env.VITE_CDN_URL}/files/training/mainspace.jpg`}
+        src={mainspaceLocationImage.src}
+        width={mainspaceLocationImage.width}
+        height={mainspaceLocationImage.height}
+        style={{ backgroundImage: `url("${mainspaceLocationImage.lqip}")`, backgroundSize: "cover" }}
         alt={"Mainspace"}
         className={"absolute w-full object-fill xl:top-[-350px] lg:top-[-250px] md:top-[-100px] sm:top-[-20px] top-0"}
       />

@@ -1,8 +1,9 @@
-import type { training } from "../../../db/interfaces.js";
+import type { training } from "@packages/db/interfaces";
 import { cn } from "@packages/ui/lib/utils";
 import { Heart, ParkingMeter, Wrench } from "lucide-react";
 import React from "react";
 import { IconWithTooltip } from "./index.js";
+import { exhaustiveGuard } from "@/lib/utils/index";
 
 interface IconProps {
   className?: string;
@@ -33,12 +34,10 @@ export const GeorgePorter: React.FC<IconProps> = ({ tooltip = true, className })
   return icon;
 };
 
-export const Location: React.FC<IconProps & { location: Uppercase<training.LocationName> | Lowercase<training.LocationName> }> = ({
-  location,
-  className,
-  tooltip = true,
-}) => {
-  location = location.toLowerCase() as Lowercase<training.LocationName>
+export const Location: React.FC<
+  IconProps & { location: Uppercase<training.LocationName> | Lowercase<training.LocationName> }
+> = ({ location, className, tooltip = true }) => {
+  location = location.toLowerCase() as Lowercase<training.LocationName>;
   switch (location) {
     case "mainspace":
       return <MainspaceIcon className={className} tooltip={tooltip} />;
@@ -47,7 +46,7 @@ export const Location: React.FC<IconProps & { location: Uppercase<training.Locat
     case "george_porter":
       return <GeorgePorterIcon className={className} tooltip={tooltip} />;
     default:
-      unreachable(location);
+      exhaustiveGuard(location);
   }
 };
 
@@ -55,8 +54,4 @@ export const MainspaceIcon = Mainspace;
 export const HeartspaceIcon = Heartspace;
 export const GeorgePorterIcon = GeorgePorter;
 export const LocationIcon = Location;
-
-function unreachable(value?: never): never {
-  throw new Error(`Reached unreachable code with value: ${JSON.stringify(value)}`);
-}
 

@@ -1,3 +1,4 @@
+import { team } from "@packages/db/interfaces";
 import {
   BarChart4,
   Box,
@@ -15,7 +16,6 @@ import {
   Users,
 } from "lucide-react";
 import * as React from "react";
-import { team } from "@/db/interfaces";
 
 export default function Team({ team, ...props }: { team: team.Name } & React.ComponentProps<LucideIcon>) {
   switch (team) {
@@ -46,8 +46,12 @@ export default function Team({ team, ...props }: { team: team.Name } & React.Com
     case "Staff":
       return <Diamond {...props} />;
     default:
-      unreachable()
+      unreachable();
   }
 }
 
 export const TeamIcon = Team;
+
+function unreachable(): never {
+  throw new Error("unreachable");
+}

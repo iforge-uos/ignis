@@ -5,14 +5,14 @@ import {
   sessionUserAtom,
 } from "@/atoms/signInAppAtoms";
 import { ErrorDisplayProps, errorDisplay } from "@/components/errors/ErrorDisplay";
+import { Hammer } from "@/components/loading";
+import { Category } from "@/icons/SignInReason";
 import { orpc } from "@/lib/orpc";
 import { FlowStepComponent } from "@/types/signInActions";
 import type { PartialReason, Reason } from "@packages/types/sign_in";
 import { Button } from "@packages/ui/components/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@packages/ui/components/card";
 import { Input } from "@packages/ui/components/input";
-import Loader from "@packages/ui/components/loader";
-import { Category } from "@packages/ui/icons//SignInReason";
 import { useQuery } from "@tanstack/react-query";
 import Fuse from "fuse.js";
 import { useAtom } from "jotai";
@@ -148,7 +148,7 @@ export const SignInReasonInput: FlowStepComponent = ({ onSecondary, onPrimary })
         )}
       </CardHeader>
       <CardContent>
-        {isLoading && <Loader />}
+        {isLoading && <Hammer />}
         {isError && errorDisplay({ error } as ErrorDisplayProps)}
         {!(isLoading || isError) && (
           <div className="relative">

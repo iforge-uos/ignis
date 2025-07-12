@@ -1,12 +1,12 @@
 import { cn } from "@packages/ui/lib/utils";
+import animation from "public/loaders/hammer.json";
 import React from "react";
-import pkg from "react-spinners";
-const { PulseLoader } = pkg;
+import Lottie from "react-lottie-player";
 
-export default ({ className, size }: { className?: string; size?: number }) => {
+export default ({ className }: { className?: string }) => {
   return (
     <section className={cn("flex h-full w-full items-center justify-center", className)}>
-      <PulseLoader color="#e11d48" size={size ?? 20} />
+      <Lottie animationData={animation} />;{" "}
     </section>
   );
 };

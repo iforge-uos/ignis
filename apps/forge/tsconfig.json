@@ -18,6 +18,7 @@
 
     "baseUrl": ".",
     "paths": {
+      "/*": ["./*", "./public/*"],
       "@/*": ["./src/*"],
       "@packages/db/*": ["../../packages/db/*"],
       "@packages/types": ["../../packages/types/src/index.ts"],

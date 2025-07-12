@@ -1,3 +1,4 @@
+import { LocationIcon } from "@/icons/Locations";
 import { Datum, ResponsiveCalendar } from "@nivo/calendar";
 import { SignInStat } from "@packages/types/users";
 import { Button } from "@packages/ui/components/button";
@@ -11,7 +12,6 @@ import {
   DrawerTitle,
 } from "@packages/ui/components/drawer";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@packages/ui/components/table";
-import { LocationIcon } from "@packages/ui/icons//Locations";
 import { Link } from "@tanstack/react-router";
 import * as React from "react";
 import MediaQuery from "react-responsive";

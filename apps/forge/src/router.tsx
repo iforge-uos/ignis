@@ -6,13 +6,12 @@ import { routeTree } from "@/routeTree.gen";
 import { TooltipProvider } from "@packages/ui/components/tooltip";
 import { QueryClientProvider } from "@tanstack/react-query";
 import "jotai-devtools/styles.css";
-import { SidebarProvider } from "@packages/ui/components/sidebar";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { GenericError } from "./components/routing/GenericError";
-import { Loading } from "./components/routing/Loading";
 import { NotFound } from "./components/routing/NotFound";
 import { ORPCContext } from "./hooks/useORPC";
+import { Hammer } from "./components/loading";
 
 const queryClient = orpcQueryClient;
 
@@ -27,7 +26,7 @@ export const createRouter = () => {
     defaultPreloadStaleTime: 0,
     defaultNotFoundComponent: NotFound,
     defaultErrorComponent: GenericError,
-    defaultPendingComponent: Loading,
+    defaultPendingComponent: Hammer,
 
     Wrap: ({ children }) => (
       <QueryClientProvider client={queryClient}>

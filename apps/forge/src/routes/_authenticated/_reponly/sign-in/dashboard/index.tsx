@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router"
 import { activeLocationAtom } from "@/atoms/signInAppAtoms";
+import { Hammer } from "@/components/loading";
 import ActiveLocationSelector from "@/components/sign-in/ActiveLocationSelector";
 import Title from "@/components/title";
 import { useSignInReasons } from "@/hooks/useSignInReasons";
@@ -8,9 +8,9 @@ import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants";
 import { orpc } from "@/lib/orpc";
 import { SignInDrawer } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignInDrawer";
 import { Alert, AlertDescription, AlertTitle } from "@packages/ui/components/alert";
-import Loader from "@packages/ui/components/loader";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
 import {} from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
@@ -115,7 +115,7 @@ function SignInDashboard() {
               </div>
             </div>
           )}
-          {isLoading && <Loader />}
+          {isLoading && <Hammer />}
           {isError && (
             <Alert variant="destructive">
               <ExclamationTriangleIcon className="h-4 w-4" />

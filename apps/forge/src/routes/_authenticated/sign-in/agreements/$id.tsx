@@ -11,6 +11,7 @@ import { useNavigate, createFileRoute } from "@tanstack/react-router";
 import { useCallback, useState } from "react";
 import Markdown from "react-markdown";
 import { toast } from "sonner";
+import { IForgeLogo } from "@/icons/IForge";
 
 export default function Component() {
   const { id } = Route.useParams();
@@ -51,7 +52,7 @@ export default function Component() {
       <Title prompt="Sign Agreement" />
       <div className="flex flex-col min-h-screen p-4 md:p-6">
         <div className="flex justify-center">
-          <img src={`${import.meta.env.VITE_CDN_URL}/logos/iforge.png`} alt="iForge logo" width={300} />
+          <IForgeLogo alt="iForge logo" width={300} />
         </div>
         <Separator className="mt-5 mb-5" />
         <div className="flex justify-center">

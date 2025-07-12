@@ -7,6 +7,7 @@ import {
   sessionUcardNumberAtom,
   sessionUserAtom,
 } from "@/atoms/signInAppAtoms";
+import { Hammer } from "@/components/loading";
 import { SelectedTrainingPipDisplay } from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SelectedTrainingPipDisplay";
 import ToolSelectionList from "@/routes/_authenticated/_reponly/sign-in/actions/-components/TrainingSelectionList";
 import { FlowStepComponent } from "@/types/signInActions";
@@ -14,7 +15,6 @@ import { Training, User } from "@ignis/types/sign_in";
 import { Alert, AlertDescription, AlertTitle } from "@packages/ui/components/alert";
 import { Button } from "@packages/ui/components/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@packages/ui/components/card";
-import Loader from "@packages/ui/components/loader";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { useQuery } from "@tanstack/react-query";
 import { useAtom } from "jotai";
@@ -109,7 +109,7 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <Loader />
+            <Hammer />
           ) : error ? (
             errorDisplay({ error })
           ) : userMissingCompulsoryTraining ? (

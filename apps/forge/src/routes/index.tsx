@@ -1,13 +1,13 @@
 import DotIndicator from "@/components/dot-indicator";
 import Title from "@/components/title";
+import { IForgeLogo } from "@/icons/IForge";
+import { HeartspaceIcon, MainspaceIcon } from "@/icons/Locations";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@packages/ui/components/accordion";
 import { Button } from "@packages/ui/components/button";
 import { Card, CardContent, CardDescription, CardHeader } from "@packages/ui/components/card";
 import { Carousel, CarouselApi, CarouselContent, CarouselItem } from "@packages/ui/components/carousel";
 import { Separator } from "@packages/ui/components/separator";
 import { Timeline, TimelineDot, TimelineHeading, TimelineItem, TimelineLine } from "@packages/ui/components/timeline";
-import { HeartspaceIcon, MainspaceIcon } from "@packages/ui/icons//Locations";
-import { IForgeLogo } from "@packages/ui/icons//iforge";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import Autoplay from "embla-carousel-autoplay";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
@@ -15,10 +15,10 @@ import { useScroll, useTransform } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import React from "react";
 import { useEffect, useRef, useState } from "react";
-import {Balancer} from "react-wrap-balancer";
+import { Balancer } from "react-wrap-balancer";
 
 type FAQItem = {
-  question: React.ReactNode;
+  question: string;
   answer: React.ReactNode;
 };
 
@@ -200,6 +200,30 @@ const faqItems: FAQItem[] = [
   },
 ];
 
+import boba from "@/../public/homepage/boba.jpg?lqip";
+import inspectingMaterials from "@/../public/homepage/inspecting-materials.jpg?lqip";
+import reps2024 from "@/../public/homepage/reps-2024.jpg?lqip";
+import repsInspectingBadges from "@/../public/homepage/reps-inspecting-badges.jpg?lqip";
+import usersAtTheSocialSpace from "@/../public/homepage/users-at-the-social-space.jpg?lqip";
+import usingTheDremel from "@/../public/homepage/using-the-dremel.jpg?lqip";
+import usingTheElectronicsBench from "@/../public/homepage/using-the-electronics-bench.jpg?lqip";
+import usingTheLaserCutter from "@/../public/homepage/using-the-laser-cutter.jpg?lqip";
+import usingTheSewingMachine from "@/../public/homepage/using-the-sewing-machine.jpg?lqip";
+import usingTheWaterJet from "@/../public/homepage/using-the-water-jet.jpg?lqip";
+
+const imagesForCarousel = [
+  { ...boba, alt: "3D printed Boba Fett cosplay" },
+  { ...inspectingMaterials, alt: "Users inspecting materials" },
+  { ...repsInspectingBadges, alt: "Reps inspecting badges" },
+  { ...reps2024, alt: "Reps 2024-2025" },
+  { ...usingTheLaserCutter, alt: "Users using a laser cutter" },
+  { ...usingTheDremel, alt: "Users using the dremel" },
+  { ...usersAtTheSocialSpace, alt: "Reps and users at the social space" },
+  { ...usingTheWaterJet, alt: "Users using the water jet cutter" },
+  { ...usingTheSewingMachine, alt: "Users using a sewing machine" },
+  { ...usingTheElectronicsBench, alt: "Users using the electronics bench" },
+] satisfies { src: string; alt: string; width: number; height: number; lqip: string }[];
+
 const ImageCarousel = () => {
   const [api, setApi] = React.useState<CarouselApi>();
   const [current, setCurrent] = React.useState(0);
@@ -217,19 +241,6 @@ const ImageCarousel = () => {
       setCurrent(api.selectedScrollSnap() + 1);
     });
   }, [api]);
-
-  const images = [
-    { src: "/boba.jpg", alt: "3D printed Boba Fett cosplay" },
-    { src: "/inspecting materials.jpg", alt: "Users inspecting materials" },
-    { src: "/reps inspecting badges.jpg", alt: "Reps inspecting badges" },
-    { src: "/reps 2024.jpg", alt: "Reps 2024-2025" },
-    { src: "/using the laser cutter.jpg", alt: "Users using a laser cutter" },
-    { src: "/using the dremel.jpg", alt: "Users using the dremel" },
-    { src: "/users at the social space.jpg", alt: "Reps and users at the social space" },
-    { src: "/using the water jet.jpg", alt: "Users using the water jet cutter" },
-    { src: "/using the sewing machine.jpg", alt: "Users using a sewing machine" },
-    { src: "/using the electronics bench.jpg", alt: "Users using the electronics bench" },
-  ] satisfies { src: string; alt: string }[];
 
   return (
     <>
@@ -250,9 +261,16 @@ const ImageCarousel = () => {
         className="h-96 w-full items-center flex mb-8"
       >
         <CarouselContent>
-          {images.map((image) => (
+          {imagesForCarousel.map((image) => (
             <CarouselItem key={image.src} className="basis-1/2">
-              <img src={image.src} alt={image.alt} className="object-cover h-full w-full aspect-[4/3]" />
+              <img
+                src={image.src}
+                width={image.width}
+                height={image.height}
+                alt={image.alt}
+                style={{ backgroundImage: `url("${image.lqip}")`, backgroundSize: "cover" }}
+                className="object-cover h-full w-full aspect-[4/3]"
+              />
             </CarouselItem>
           ))}
         </CarouselContent>
@@ -263,6 +281,11 @@ const ImageCarousel = () => {
     </>
   );
 };
+
+import heartspaceFront from "@/../public/homepage/hs-front.jpg?lqip";
+import heartspaceInside from "@/../public/homepage/hs-inside.jpg?lqip";
+import mainspaceFront from "@/../public/homepage/ms-front.jpg?lqip";
+import msInside from "@/../public/homepage/ms-inside.jpg?lqip";
 
 const mainspaceCards = [
   {
@@ -275,9 +298,12 @@ const mainspaceCards = [
     ),
     img: (
       <img
-        src="ms inside.jpg"
+        src={msInside.src}
+        width={msInside.width}
+        height={msInside.height}
+        style={{ backgroundImage: `url("${msInside.lqip}")`, backgroundSize: "cover" }}
         alt="Mainspace interior"
-        className="w-full h-full object-cover" // Ensure full width and height, otherwise image will not resize
+        className="w-full h-full object-cover"
       />
     ),
   },
@@ -296,9 +322,12 @@ const mainspaceCards = [
     ),
     img: (
       <img
-        src="ms front.jpg"
+        src={mainspaceFront.src}
+        width={mainspaceFront.width}
+        height={mainspaceFront.height}
+        style={{ backgroundImage: `url("${mainspaceFront.lqip}")`, backgroundSize: "cover" }}
         alt="Mainspace exterior"
-        className="w-full h-full object-cover" // Ensure full width and height, otherwise image will not resize
+        className="w-full h-full object-cover"
       />
     ),
   },
@@ -322,9 +351,12 @@ const heartspaceCards = [
     ),
     img: (
       <img
-        src="hs inside.jpg"
+        src={heartspaceInside.src}
+        width={heartspaceInside.width}
+        height={heartspaceInside.height}
+        style={{ backgroundImage: `url("${heartspaceInside.lqip}")`, backgroundSize: "cover" }}
         alt="Heartspace interior"
-        className="w-full h-full object-cover" // Ensure full width and height, otherwise image will not resize
+        className="w-full h-full object-cover"
       />
     ),
   },
@@ -342,9 +374,12 @@ const heartspaceCards = [
     ),
     img: (
       <img
-        src="hs front.jpg"
+        src={heartspaceFront.src}
+        width={heartspaceFront.width}
+        height={heartspaceFront.height}
+        style={{ backgroundImage: `url("${heartspaceFront.lqip}")`, backgroundSize: "cover" }}
         alt="Heartspace exterior"
-        className="w-full h-full object-cover" // Ensure full width and height, otherwise image will not resize
+        className="w-full h-full object-cover"
       />
     ),
   },
@@ -414,9 +449,7 @@ const FAQEntries = () => {
           <Accordion key={index} type="single" collapsible>
             <AccordionItem value={item.question}>
               <AccordionTrigger className="text-left text-2xl">{item.question}</AccordionTrigger>
-              <AccordionContent className="text-lg md:w-10/12">
-                <Balancer>{item.answer}</Balancer>
-              </AccordionContent>
+              <AccordionContent className="text-lg md:w-10/12">{item.answer}</AccordionContent>
             </AccordionItem>
           </Accordion>
         ))}

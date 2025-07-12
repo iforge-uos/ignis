@@ -1,4 +1,6 @@
 import { useShortcutKey } from "@/hooks/useShortcutKey";
+import { NoRepIcon } from "@/icons/NoRep";
+import { RepIcon } from "@/icons/Rep";
 import { cn } from "@/lib/utils";
 import { Training, TrainingSelectability } from "@ignis/types/sign_in";
 import { Badge } from "@packages/ui/components/badge";
@@ -9,8 +11,6 @@ import { Input } from "@packages/ui/components/input";
 import { Kbd, Shortcut } from "@packages/ui/components/kbd";
 import { Label } from "@packages/ui/components/label";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@packages/ui/components/tooltip";
-import { NoRepIcon } from "@packages/ui/icons//NoRep";
-import { RepIcon } from "@packages/ui/icons//Rep";
 import { AnimatePresence, motion } from "framer-motion";
 import Fuse from "fuse.js";
 import {
@@ -311,7 +311,7 @@ export default function TrainingSelection({
           />
           <Shortcut keys={[shortcut, "F"]} className="absolute right-2 text-xs text-muted-foreground" />
         </div>
-        <div className="flex items-center gap-2">    
+        <div className="flex items-center gap-2">
           <Checkbox id="only-complete" checked={Boolean(onlyComplete)} onCheckedChange={setOnlyComplete} />
           <Label className="hover:cursor-pointer" htmlFor="only-complete">
             Only complete

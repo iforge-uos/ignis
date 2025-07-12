@@ -1,9 +1,10 @@
 import Title from "@/components/title";
 import ImageGradient from "@/components/training/ImageGradient";
 import { useUser } from "@/hooks/useUser";
+import { GeorgePorterIcon, HeartspaceIcon, LocationIcon, MainspaceIcon } from "@/icons/Locations";
 import { client } from "@/lib/orpc";
 import IndexCard from "@/routes/training/-components/IndexCard";
-import { GeorgePorterIcon, HeartspaceIcon, MainspaceIcon } from "@packages/ui/icons/Locations";
+import { training } from "@packages/db/interfaces";
 import { Button } from "@packages/ui/components/button";
 import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from "@packages/ui/components/command";
 import { Separator } from "@packages/ui/components/separator";
@@ -11,6 +12,12 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 import { SearchCheckIcon, TriangleAlertIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { TrainingContent } from "../_authenticated/training/$id";
+
+import approvedMaterials from "@/../public/training/approved_materials.jpg?lqip";
+import georgePorterTraining from "@/../public/training/george_porter.jpg?lqip";
+import heartspaceTraining from "@/../public/training/heartspace.jpg?lqip";
+import mainspaceTraining from "@/../public/training/mainspace.jpg?lqip";
+import riskAssessments from "@/../public/training/risk_assessments.jpg?lqip";
 
 export default async function TrainingIndexPage() {
   const trainings = Route.useLoaderData();
@@ -84,7 +91,10 @@ export default async function TrainingIndexPage() {
                   <ImageGradient gradientColor="mainspace">
                     {/* TODO this doesn't cover the entirety of the box for some reason in lg */}
                     <img
-                      src={`${import.meta.env.VITE_CDN_URL}/files/training/mainspace.jpg`}
+                      src={mainspaceTraining.src}
+                      width={mainspaceTraining.width}
+                      height={mainspaceTraining.height}
+                      style={{ backgroundImage: `url("${mainspaceTraining.lqip}")`, backgroundSize: "cover" }}
                       alt="iForge Mainspace"
                       className="w-full object-fill"
                     />
@@ -107,7 +117,10 @@ export default async function TrainingIndexPage() {
                 img={
                   <ImageGradient gradientColor="heartspace">
                     <img
-                      src={`${import.meta.env.VITE_CDN_URL}/files/training/heartspace.jpg`}
+                      src={heartspaceTraining.src}
+                      width={heartspaceTraining.width}
+                      height={heartspaceTraining.height}
+                      style={{ backgroundImage: `url("${heartspaceTraining.lqip}")`, backgroundSize: "cover" }}
                       alt="iForge Heartspace"
                       className="w-full object-fill"
                     />
@@ -130,7 +143,10 @@ export default async function TrainingIndexPage() {
                 img={
                   <ImageGradient gradientColor="george-porter">
                     <img
-                      src={`${import.meta.env.VITE_CDN_URL}/files/training/george_porter.jpg`}
+                      src={georgePorterTraining.src}
+                      width={georgePorterTraining.width}
+                      height={georgePorterTraining.height}
+                      style={{ backgroundImage: `url("${georgePorterTraining.lqip}")`, backgroundSize: "cover" }}
                       alt="George Porter"
                       className="w-full object-fill"
                     />
@@ -157,7 +173,10 @@ export default async function TrainingIndexPage() {
                 img={
                   <ImageGradient gradientColor="tick">
                     <img
-                      src={`${import.meta.env.VITE_CDN_URL}/files/training/approved_materials.jpg`}
+                      src={approvedMaterials.src}
+                      width={approvedMaterials.width}
+                      height={approvedMaterials.height}
+                      style={{ backgroundImage: `url("${approvedMaterials.lqip}")`, backgroundSize: "cover" }}
                       alt="Approved materials"
                     />
                   </ImageGradient>
@@ -179,7 +198,10 @@ export default async function TrainingIndexPage() {
                 img={
                   <ImageGradient gradientColor="cross">
                     <img
-                      src={`${import.meta.env.VITE_CDN_URL}/files/training/risk_assessments.jpg`}
+                      src={riskAssessments.src}
+                      width={riskAssessments.width}
+                      height={riskAssessments.height}
+                      style={{ backgroundImage: `url("${riskAssessments.lqip}")`, backgroundSize: "cover" }}
                       alt="Risk Assessment"
                     />
                   </ImageGradient>

@@ -1,13 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router"
+import { Hammer } from "@/components/loading";
 import Title from "@/components/title";
 import { useUserRoles } from "@/hooks/useUserRoles";
+import { REP_ON_SHIFT } from "@/lib/constants";
 import { orpc } from "@/lib/orpc";
-import Loader from "@packages/ui/components/loader";
 import { useQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
 import {} from "@tanstack/react-router";
 import { Suspense } from "react";
 import { AgreementCard } from "./-components/AgreementCard";
-import { REP_ON_SHIFT } from "@/lib/constants";
 
 function AgreementsList() {
   const roles = useUserRoles();
@@ -55,7 +55,7 @@ function AgreementsList() {
 
 export default function Component() {
   return (
-    <Suspense fallback={<Loader />}>
+    <Suspense fallback={<Hammer />}>
       <AgreementsList />
     </Suspense>
   );

@@ -1,3 +1,4 @@
+import { LocationIcon } from "@/icons/Locations";
 import { LOCATIONS, TRAINING_LOCATIONS } from "@/lib/constants";
 import { toTitleCase } from "@/lib/utils";
 import { ALL_TAGS, TrainingForTags, serializeTrainingTags, trainingTags } from "@/lib/utils/training";
@@ -5,7 +6,6 @@ import { LocationName, Training } from "@packages/types/training";
 import { Badge } from "@packages/ui/components/badge";
 // import { MultiSelect } from "@packages/ui/components/multi-select";
 import { Separator } from "@packages/ui/components/separator";
-import { LocationIcon } from "@packages/ui/icons/Locations";
 import { format } from "date-fns";
 import React from "react";
 

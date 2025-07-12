@@ -1,3 +1,5 @@
+import { Hammer } from "@/components/loading";
+import { TeamIcon } from "@/icons/Team";
 import { orpc } from "@/lib/orpc";
 import { ManageUserWidgetProps } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/ManageUserWidget";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,14 +14,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@packages/ui/components/form";
-import Loader from "@packages/ui/components/loader";
 import { MultiSelect } from "@packages/ui/components/multi-select";
-import { TeamIcon } from "@packages/ui/icons//Team";
 import { useQuery } from "@tanstack/react-query";
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod/v4";
+import * as z from "zod/v4";
 
 const FormSchema = z.object({
   teams: z.array(z.string()).min(1).nonempty("Please select at least one team."),
@@ -66,7 +66,7 @@ export const TeamManagementSection: React.FC<ManageUserWidgetProps> = ({ user })
   if (!teams || error) return null;
 
   if (isLoading) {
-    return <Loader />;
+    return <Hammer />;
   }
 
   const teamsList = teams.map((team) => ({

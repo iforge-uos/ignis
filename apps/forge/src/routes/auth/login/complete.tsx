@@ -1,6 +1,6 @@
 import { previousPathnameAtom } from "@/atoms/authSessionAtoms";
+import { Hammer } from "@/components/loading";
 import { useVerifyAuthentication } from "@/hooks/useVerifyAuthentication";
-import Loader from "@packages/ui/components/loader";
 import { Navigate, createFileRoute } from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
@@ -22,7 +22,7 @@ export const CompleteComponent = () => {
   }, [loading, user]);
 
   if (loading || !verificationComplete) {
-    return <Loader />;
+    return <Hammer />;
   }
 
   if (!user) {

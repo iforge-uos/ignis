@@ -1,5 +1,6 @@
 import { activeLocationAtom } from "@/atoms/signInAppAtoms";
 import { UserAvatar } from "@/components/avatar";
+import { TeamIcon } from "@/icons/Team";
 import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants";
 import { orpc } from "@/lib/orpc";
 import { uCardNumberToString } from "@/lib/utils";
@@ -15,7 +16,6 @@ import { Button } from "@packages/ui/components/button";
 import { Card } from "@packages/ui/components/card";
 import { Popover, PopoverContent, PopoverTrigger } from "@packages/ui/components/popover";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@packages/ui/components/tooltip";
-import { TeamIcon } from "@packages/ui/icons//Team";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { useAtom } from "jotai";

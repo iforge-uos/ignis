@@ -1,9 +1,9 @@
+import { Category } from "@/icons/SignInReason";
 import { cn } from "@/lib/utils";
 import { PartialReason } from "@ignis/types/sign_in";
 import { Badge } from "@packages/ui/components/badge";
 import { Kbd } from "@packages/ui/components/kbd";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@packages/ui/components/tooltip";
-import { Category } from "@packages/ui/icons//SignInReason";
 
 export const SignInReason = ({
   reason,
