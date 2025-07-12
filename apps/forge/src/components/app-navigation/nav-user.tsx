@@ -2,6 +2,7 @@ import { UserAvatar } from "@/components/avatar";
 import { useShortcutKey } from "@/hooks/useShortcutKey";
 import { useTheme } from "@/hooks/useTheme";
 import { useUser } from "@/hooks/useUser";
+import { setTheme } from "@/lib/theme";
 import { Button } from "@packages/ui/components/button";
 import {
   DropdownMenu,
@@ -20,7 +21,7 @@ import { BadgeCheck, Bell, ChevronsUpDown, LogIn, LogOut, Moon, Settings, Sun } 
 export function NavUser() {
   const user = useUser();
   const { isMobile, state, toggleSidebar, openMobile } = useSidebar();
-  const { setTheme, theme } = useTheme();
+  const theme = useTheme();
 
   const metaKey = useShortcutKey();
 
@@ -32,8 +33,8 @@ export function NavUser() {
     }
   };
 
-  const handleThemeClick = () => {
-    setTheme(theme === "light" ? "dark" : "light");
+  const handleThemeClick = async () => {
+    await setTheme({ data: theme === "light" ? "dark" : "light" });
     handleClick();
   };
 
