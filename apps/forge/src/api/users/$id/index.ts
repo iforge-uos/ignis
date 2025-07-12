@@ -2,7 +2,7 @@ import { auth } from "@/orpc";
 import { UserShape } from "@/lib/utils/queries";
 import e from "@packages/db/edgeql-js";
 import { UpdateUserSchema } from "@packages/db/zod/modules/users";
-import { z } from "zod/v4";
+import * as z from "zod/v4";
 import { signAgreement } from "./agreements.$agreement_id";
 import { addInfraction } from "./infractions";
 import { trainingRouter } from "./training";

@@ -3,7 +3,7 @@ import { auth, transaction } from "@/orpc";
 import e from "@packages/db/edgeql-js";
 import type { training } from "@packages/db/interfaces";
 import { Duration } from "gel";
-import { z } from "zod/v4";
+import * as z from "zod/v4";
 
 export interface PageInteraction extends Omit<training.Page, "duration" | "enabled" | "parent"> {
   __typename: "training::Page";

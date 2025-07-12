@@ -3,7 +3,7 @@ import type { AuthContext, Context } from "@/routes/api.$";
 import { os, ErrorMap } from "@orpc/server";
 import e from "@packages/db/edgeql-js";
 import { Client } from "gel";
-import { z } from "zod/v4";
+import * as z from "zod/v4";
 
 export const pub = os
   .$context<Context>()

@@ -1,7 +1,7 @@
 import { auth } from "@/orpc";
 import e from "@packages/db/edgeql-js";
 import { Temporal } from "@js-temporal/polyfill";
-import { z } from "zod/v4";
+import * as z from "zod/v4";
 
 export const signIns = auth
   .route({ path: "/sign-ins" })

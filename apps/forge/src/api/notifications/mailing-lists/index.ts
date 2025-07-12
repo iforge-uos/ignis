@@ -1,6 +1,6 @@
 import { auth } from "@/orpc";
 import e from "@packages/db/edgeql-js";
-import { z } from "zod/v4";
+import * as z from "zod/v4";
 import { idRouter } from "./$id";
 
 export const all = auth

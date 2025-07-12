@@ -1,7 +1,7 @@
 import { auth } from "@/orpc";
 import { TrainingShape } from "@/lib/utils/queries";
 import e from "@packages/db/edgeql-js";
-import { z } from "zod/v4";
+import * as z from "zod/v4";
 import { createInPerson, remove } from "./$id";
 import { inPersonRemaining } from "./in-person.$location";
 

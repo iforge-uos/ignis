@@ -2,7 +2,7 @@ import { rep } from "@/orpc";
 import { PartialUserShape } from "@/lib/utils/queries";
 import { TeamShape } from "@/lib/utils/queries";
 import e from "@packages/db/edgeql-js";
-import { z } from "zod/v4";
+import * as z from "zod/v4";
 
 export const get = rep
   .route({ path: "/{id}" })

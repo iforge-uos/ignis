@@ -4,7 +4,7 @@ import { ldapLibraryToUcardNumber, removeDomain } from "@/lib/utils/sign-in";
 import e from "@packages/db/edgeql-js";
 import { logger } from "@sentry/node";
 import { Client, Entry } from "ldapts";
-import { z } from "zod/v4";
+import * as z from "zod/v4";
 
 function escapeLDAPFilterCharacters(str: string): string {
   return str.replace(/([\\*\(\)\!\&\|\=><~])/g, "\\$1");
