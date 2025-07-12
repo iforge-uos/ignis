@@ -1,6 +1,8 @@
 module sign_in {
     type SignIn extending default::Timed {
-        required user: users::User;
+        required user: users::User {
+            on target delete delete source;
+        }
         required location: Location;
         required tools: array<str>;
         required reason: Reason;
@@ -22,7 +24,7 @@ module sign_in {
             };
     }
 
-    # N.B. make sure to update in forge/lib/constants
+    # N.B. make sure to update in forge/lib/utils/constants
     scalar type LocationName extending enum<
         MAINSPACE,
         HEARTSPACE,
@@ -148,6 +150,7 @@ module sign_in {
         required location: Location;
         required user: users::User {
             constraint exclusive;
+            on target delete delete source;
         }
 
         access policy desk_or_higher
@@ -160,6 +163,7 @@ module sign_in {
     type QueuePlace extending default::CreatedAt {
         required user: users::User {
             constraint exclusive;
+            on target delete delete source;
         }
         required location: Location;
         notified_at: datetime {

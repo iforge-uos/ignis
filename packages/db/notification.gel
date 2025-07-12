@@ -70,7 +70,8 @@ module notification {
             annotation description := "The content (MARKDOWN) from plate"
         }
         required multi target: AllTarget | users::User | team::Team | MailingList | event::Event {
-            annotation description := "Who will be receiving the notification"
+            annotation description := "Who will be receiving the notification";
+            on target delete allow;
         }
     }
 

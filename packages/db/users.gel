@@ -141,7 +141,7 @@ module users {
     #             (select global default::INFRACTIONS_WEBHOOK_URL),
     #             method := net::http::Method.POST,
     #             headers := [('Content-Type', 'application/json')],
-    #             body := <bytes>$${
+    #             body := <bytes>"{
     #                 "embeds": [{
     #                     "title": "User Infraction Added to \(__new__.user.name)",
     #                     "description": "Type: \(__new__.type)\nReason: \(__new__.reason)\nResolved: \(__new__.resolved)\n\n\(
@@ -154,7 +154,7 @@ module users {
     #                     "thumbnail": {
     #                         "url": "\(__new__.user.profile_picture)"
     #                     }
-    #                 }]}$$,
+    #                 }]}",
     #         )
     #     );
     #     trigger log_update after update for each do (
@@ -162,7 +162,7 @@ module users {
     #             (select global default::INFRACTIONS_WEBHOOK_URL),
     #             method := net::http::Method.POST,
     #             headers := [('Content-Type', 'application/json')],
-    #             body := <bytes>$${
+    #             body := <bytes>"{
     #                 "embeds": [{
     #                     "title": "User Infraction Updated for \(__new__.user.name)",
     #                     "description": "Type: \(__new__.type)\nReason: \(__new__.reason)\nResolved: \(__new__.resolved)\n\n\(
@@ -175,7 +175,7 @@ module users {
     #                     "thumbnail": {
     #                         "url": "\(__new__.user.profile_picture)"
     #                     }
-    #                 }]}$$,
+    #                 }]}"",
     #         )
     #     );
     }

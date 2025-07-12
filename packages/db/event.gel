@@ -20,12 +20,14 @@ module event {
                 readonly := true;
                 default := datetime_of_statement();
             };
+            on target delete allow;
         }
         multi interested: users::User {
             required created_at: datetime {
                 readonly := true;
                 default := datetime_of_statement();
             };
+            on target delete allow;
         }
         # on insert add to short term closures? also add location
     }

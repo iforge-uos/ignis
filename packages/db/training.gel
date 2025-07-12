@@ -157,7 +157,9 @@ module training {
     }
 
     type Session extending default::Auditable {
-        required user: users::User;
+        required user: users::User {
+            on target delete delete source;
+        }
         required training: Training;
         required index: int16 {
             annotation description := "The `Interactable.index` for the section user is currently on.";
