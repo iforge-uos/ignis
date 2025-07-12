@@ -1,7 +1,7 @@
 import Title from "@/components/title";
 import { useUser } from "@/hooks/useUser";
 import { toTitleCase } from "@/lib/utils";
-import { locationNameToCSSName } from "@/lib/utils/constants";
+import { locationNameToCSSName } from "@/lib/utils/training";
 import { training } from "@packages/types";
 import { LocationName, PartialTrainingWithStatus } from "@packages/types/training";
 import { Button } from "@packages/ui/components/button";

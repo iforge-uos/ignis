@@ -1,7 +1,7 @@
 // src/atoms/authSessionAtoms.ts
 
 import { adminOverwriteRoles, adminOverwrittenRoles } from "@/atoms/adminAtoms";
-import { ATOM_KEYS } from "@/lib/utils/constants";
+import { ATOM_KEYS } from "@/lib/constants";
 import { User } from "@packages/types/users";
 import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";

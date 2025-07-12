@@ -32,12 +32,10 @@ export const createRouter = () => {
       <QueryClientProvider client={queryClient}>
         <ORPCContext.Provider value={orpc}>
           <DndProvider backend={HTML5Backend}>
-            <SidebarProvider>
-              <TooltipProvider>
-                {children}
-                {/* </AuthProvider> */}
-              </TooltipProvider>
-            </SidebarProvider>
+            <TooltipProvider>
+              {children}
+              {/* </AuthProvider> */}
+            </TooltipProvider>
           </DndProvider>
         </ORPCContext.Provider>
       </QueryClientProvider>

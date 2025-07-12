@@ -140,10 +140,10 @@ body {
 }
 
 /* TanStack Router Devtools */
-.TanStackRouterDevtools > button {
+/* .TanStackRouterDevtools > button {
   @apply rotate-90 origin-top-right -translate-y-[50px] translate-x-2 bg-white dark:bg-gray-900;
   @apply border-t-0 border-gray-500/10 shadow-xl text-gray-800;
-}
+} */
 
 .internal-jotai-devtools-trigger-button {
   right: 4.5rem !important;

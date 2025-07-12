@@ -2,13 +2,13 @@
 
 import { client } from "@/lib/orpc";
 import { SignInSession } from "@/types/sign_in";
-import { LocationName } from "@packages/db/zod/sign_in"
+import { sign_in } from "@packages/db/interfaces";
 import { atom } from "jotai";
 import { atomWithQuery } from "jotai-tanstack-query";
 
 // ------ Sign in App Data Management (location data, handling selected location, etc.)
 
-export const activeLocationAtom = atom<LocationName>("MAINSPACE");
+export const activeLocationAtom = atom<sign_in.LocationName>("MAINSPACE");
 activeLocationAtom.debugLabel = "signIn:activeLocation";
 
 export const locationStatusesAtom = atomWithQuery(() => ({

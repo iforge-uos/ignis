@@ -1,6 +1,9 @@
 // import { deserializeMd as deserializeMd_ } from "@udecode/plate-serializer-md";
 // import { createPlateEditor } from "@ui/components/plate-ui/plate-editor";
 
+import { sign_in, training } from "@packages/db/interfaces";
+import { exhaustiveGuard } from ".";
+
 export function deserializeMd(content: string) {
   const editor = createPlateEditor();
   return deserializeMd_(editor, content);
@@ -38,3 +41,17 @@ export function serializeTrainingTags(badges_: TrainingTag[]): Required<Training
 
   return training as Required<TrainingForTags>;
 }
+
+export const locationNameToCSSName = (location: training.LocationName | Lowercase<training.LocationName>) => {
+  const name = location.toLowerCase() as Lowercase<training.LocationName>
+  switch (name) {
+    case "mainspace":
+      return "mainspace";
+    case "heartspace":
+      return "heartspace";
+    case "george_porter":
+      return "george-porter";
+    default:
+      exhaustiveGuard(name)
+  }
+};

@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/tanstackstart-react";
+import * as Spotlight from "@spotlightjs/spotlight";
 import { StartClient } from "@tanstack/react-start";
 import { hydrateRoot } from "react-dom/client";
 
@@ -9,6 +10,7 @@ const router = createRouter();
 
 Sentry.init({
   dsn: "https://893631a88ccccc18a9b65d8b5c3e1395@o4507082090414080.ingest.de.sentry.io/4508127275122768",
+  tunnel: "/api/sentry-tunnel",
   integrations: [Sentry.tanstackRouterBrowserTracingIntegration(router), Sentry.replayIntegration()],
   tracesSampleRate: import.meta.env.DEV ? 1.0 : 0.1,
   replaysSessionSampleRate: 0.1,
@@ -17,6 +19,11 @@ Sentry.init({
   tracePropagationTargets: ["localhost", /^https:\/\/api.iforge.sheffield.ac.uk/],
   sendDefaultPii: false,
 });
+
+// only load Spotlight in dev
+if (import.meta.env.DEV) {
+  Spotlight.init();
+}
 
 hydrateRoot(
   document,
