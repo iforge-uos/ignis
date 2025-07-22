@@ -1,9 +1,8 @@
+import { cn, exhaustiveGuard } from "@/lib/utils";
 import type { training } from "@packages/db/interfaces";
-import { cn } from "@packages/ui/lib/utils";
 import { Heart, ParkingMeter, Wrench } from "lucide-react";
 import React from "react";
-import { IconWithTooltip } from "./index.js";
-import { exhaustiveGuard } from "@/lib/utils/index";
+import { IconWithTooltip } from ".";
 
 interface IconProps {
   className?: string;
@@ -54,4 +53,3 @@ export const MainspaceIcon = Mainspace;
 export const HeartspaceIcon = Heartspace;
 export const GeorgePorterIcon = GeorgePorter;
 export const LocationIcon = Location;
-

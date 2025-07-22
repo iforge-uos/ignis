@@ -16,6 +16,7 @@ import {
   Users,
 } from "lucide-react";
 import * as React from "react";
+import { exhaustiveGuard } from "../lib/utils";
 
 export default function Team({ team, ...props }: { team: team.Name } & React.ComponentProps<LucideIcon>) {
   switch (team) {
@@ -46,12 +47,8 @@ export default function Team({ team, ...props }: { team: team.Name } & React.Com
     case "Staff":
       return <Diamond {...props} />;
     default:
-      unreachable();
+      exhaustiveGuard(team)
   }
 }
 
 export const TeamIcon = Team;
-
-function unreachable(): never {
-  throw new Error("unreachable");
-}

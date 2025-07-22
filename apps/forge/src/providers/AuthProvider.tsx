@@ -1,14 +1,14 @@
+import { Hammer } from "@/components/loading";
 import { useVerifyAuthentication } from "@/hooks/useVerifyAuthentication";
-import Loader from "@packages/ui/components/loader";
 // src/components/AuthProvider.tsx
 import React from "react";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  return <></>
+  return <></>;
   const { loading } = useVerifyAuthentication();
 
   if (loading) {
-    return <Loader />;
+    <Hammer />;
   }
 
   return <>{children}</>;

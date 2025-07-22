@@ -1,9 +1,8 @@
 "use client";
 
-import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
-import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react";
 import * as React from "react";
-
+import { DropdownMenu as DropdownMenuPrimitive } from "radix-ui";
+import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react";
 import { cn } from "@packages/ui/lib/utils";
 import { Kbd } from "./kbd.js";
 

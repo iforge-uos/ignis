@@ -11,7 +11,7 @@ import { Timeline, TimelineDot, TimelineHeading, TimelineItem, TimelineLine } fr
 import { Link, createFileRoute } from "@tanstack/react-router";
 import Autoplay from "embla-carousel-autoplay";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
-import { useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import React from "react";
 import { useEffect, useRef, useState } from "react";
@@ -258,25 +258,23 @@ const ImageCarousel = () => {
           }),
           WheelGesturesPlugin(),
         ]}
-        className="h-96 w-full items-center flex mb-8"
+        className="h-fit w-full items-center flex -mb-8"
       >
         <CarouselContent>
           {imagesForCarousel.map((image) => (
-            <CarouselItem key={image.src} className="basis-1/2">
+            <CarouselItem key={image.src} className="basis-1/2 p-2 ">
               <img
                 src={image.src}
                 width={image.width}
                 height={image.height}
                 alt={image.alt}
                 style={{ backgroundImage: `url("${image.lqip}")`, backgroundSize: "cover" }}
-                className="object-cover h-full w-full aspect-[4/3]"
+                className="object-cover aspect-[4/3] rounded-sm"
               />
             </CarouselItem>
           ))}
         </CarouselContent>
       </Carousel>
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-background" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-1/3 bg-gradient-to-l from-background" />
       <DotIndicator count={count} current={current} />
     </>
   );
@@ -393,9 +391,9 @@ const heartspaceCards = [
 
 function renderLocationCard(header: React.ReactNode) {
   return (value, index) => (
-    <div key={index} className="relative h-screen w-full overflow-hidden snap-center">
+    <div key={index} className="relative h-[85vh] w-full overflow-hidden snap-center">
       {value.img}
-      <div className="absolute inset-0 bg-black bg-opacity-60" />
+      <div className="absolute inset-0 bg-black opacity-60" />
       <div className="absolute bottom-28 left-0 flex items-center justify-center">
         <h1 className="text-white font-bold flex-col max-w-[75%] text-left">
           <div className="flex items-center text-3xl pb-2">{header}</div>
@@ -412,7 +410,7 @@ const LocationCards = () => {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ container: ref });
   const count = mainspaceCards.length + heartspaceCards.length;
-  const [current, setCurrent] = useState(0);
+  const [current, setCurrent] = useState(1);
   const activeDotIndex = useTransform(scrollYProgress, [0, 1], [0, count - 1]);
 
   useEffect(() => {
@@ -427,16 +425,13 @@ const LocationCards = () => {
   }, [activeDotIndex]);
 
   return (
-    <>
-      <div className="snap-y snap-mandatory h-screen overflow-y-scroll hide-scrollbar sm:overflow-y-scroll" ref={ref}>
-        <div>
+    <div className="relative h-[85vh]">
+      <div className="snap-y snap-mandatory h-[85vh] overflow-y-scroll hide-scrollbar sm:overflow-y-scroll" ref={ref}>
           {mainspaceCards}
           {heartspaceCards}
         </div>
+      <DotIndicator count={count} current={current} orientation="vertical" />
       </div>
-      {/* <DotIndicator count={count} current={current} orientation="vertical" /> */}
-      {/* TODO re-enable */}
-    </>
   );
 };
 
@@ -445,9 +440,12 @@ const FAQEntries = () => {
     <>
       <h2 className="text-3xl font-bold font-futura">Frequently Asked Questions</h2>
       <div className="not-prose mt-4 flex flex-col gap-4 md:mt-8">
-        {faqItems.map((item, index) => (
+        {faqItems.map((item, index, array) => (
           <Accordion key={index} type="single" collapsible>
-            <AccordionItem value={item.question}>
+            <AccordionItem
+              value={item.question}
+              className={index === array.length - 1 ? "last:border-b-0" : "last:border-b-1"}
+            >
               <AccordionTrigger className="text-left text-2xl">{item.question}</AccordionTrigger>
               <AccordionContent className="text-lg md:w-10/12">{item.answer}</AccordionContent>
             </AccordionItem>
@@ -471,7 +469,7 @@ const IndexComponent = () => {
           making.
         </Balancer>
       </h2>
-      <div className="relative flex h-1/4 w-full flex-col items-center justify-center overflow-hidden rounded-md">
+      <div className="relative flex h-fit w-full flex-col items-center justify-center rounded-md mb-4">
         <ImageCarousel />
       </div>
       <h3>
@@ -510,9 +508,9 @@ const IndexComponent = () => {
           </CardDescription>
           <CardContent className="not-prose mx-auto flex items-center gap-2 justify-center">
             <Link to="/auth/login">
-              <Button className="w-fit">Get Started{/* TODO link to old blog page? */}</Button>
+              <Button className="w-fit">Get Started</Button>
             </Link>
-            <a href="https://iforgesheffield.org/user-projects">
+            <a href="https://docs.iforge.sheffield.ac.uk/blog">
               <Button className="w-fit" variant="link">
                 Get inspired <ArrowUpRight className="ml-1" size="16" />
               </Button>
@@ -525,6 +523,7 @@ const IndexComponent = () => {
       <div className="mx-14">
         <FAQEntries />
       </div>
+      <br />
 
       {/* <Separator className="my-8" />
       <div className="mx-14">

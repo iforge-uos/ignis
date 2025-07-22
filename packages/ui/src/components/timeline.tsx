@@ -1,7 +1,9 @@
-import { cn } from "@packages/ui/lib/utils";
+// https://github.com/shadcn-ui/ui/pull/3374
 import { CheckIcon, Cross1Icon } from "@radix-ui/react-icons";
 import { VariantProps, cva } from "class-variance-authority";
 import React from "react";
+
+import { cn } from "@packages/ui/lib/utils";
 
 const timelineVariants = cva("grid", {
   variants: {
@@ -17,16 +19,16 @@ const timelineVariants = cva("grid", {
 });
 
 interface TimelineProps extends React.HTMLAttributes<HTMLUListElement>, VariantProps<typeof timelineVariants> {
-  children?: React.ReactNode;
+  ref?: React.Ref<HTMLUListElement>;
 }
 
-export const Timeline = ({ children, className, positions, ...props }: TimelineProps) => {
+function Timeline({ children, className, positions, ref, ...props }: TimelineProps) {
   return (
-    <ul className={cn(timelineVariants({ positions }), className)} {...props}>
+    <ul className={cn(timelineVariants({ positions }), className)} ref={ref} {...props}>
       {children}
     </ul>
   );
-};
+}
 
 const timelineItemVariants = cva("grid items-center gap-x-2", {
   variants: {
@@ -41,16 +43,12 @@ const timelineItemVariants = cva("grid items-center gap-x-2", {
 });
 
 interface TimelineItemProps extends React.HTMLAttributes<HTMLLIElement>, VariantProps<typeof timelineItemVariants> {
-  children?: React.ReactNode;
+  ref?: React.Ref<HTMLLIElement>;
 }
 
-export const TimelineItem = (
-  { className, status, children, ...props }: TimelineItemProps,
-) => (
-  <li className={cn(timelineItemVariants({ status }), className)} {...props}>
-    {children}
-  </li>
-);
+function TimelineItem({ className, status, ref, ...props }: TimelineItemProps) {
+  return <li className={cn(timelineItemVariants({ status }), className)} ref={ref} {...props} />;
+}
 
 const timelineDotVariants = cva(
   "col-start-2 col-end-3 row-start-1 row-end-1 flex size-4 items-center justify-center rounded-full border border-current",
@@ -72,18 +70,19 @@ const timelineDotVariants = cva(
 
 interface TimelineDotProps extends React.HTMLAttributes<HTMLOutputElement>, VariantProps<typeof timelineDotVariants> {
   customIcon?: React.ReactNode;
+  ref?: React.Ref<HTMLOutputElement>;
 }
 
-export const TimelineDot = (
-  { className, status, customIcon, ...props }: TimelineDotProps,
-) => (
-  <output className={cn("timeline-dot", timelineDotVariants({ status }), className)} {...props}>
-    <div className="radix-circle size-2.5 rounded-full" />
-    <CheckIcon className="radix-check size-3" />
-    <Cross1Icon className="radix-cross size-2.5" />
-    {customIcon}
-  </output>
-);
+function TimelineDot({ className, status, customIcon, ref, ...props }: TimelineDotProps) {
+  return (
+    <output className={cn("timeline-dot", timelineDotVariants({ status }), className)} ref={ref} {...props}>
+      <div className="radix-circle size-2.5 rounded-full" />
+      <CheckIcon className="radix-check size-3" />
+      <Cross1Icon className="radix-cross size-2.5" />
+      {customIcon}
+    </output>
+  );
+}
 
 const timelineContentVariants = cva("row-start-2 row-end-2 pb-8 text-muted-foreground", {
   variants: {
@@ -97,19 +96,15 @@ const timelineContentVariants = cva("row-start-2 row-end-2 pb-8 text-muted-foreg
   },
 });
 
-interface TimelineContentProps
+interface TimelineConentProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof timelineContentVariants> {
-  children?: React.ReactNode;
+  ref?: React.Ref<HTMLDivElement>;
 }
 
-export const TimelineContent = (
-  { className, side, children, ...props }: TimelineContentProps,
-) => (
-  <div className={cn(timelineContentVariants({ side }), className)}{...props}>
-    {children}
-  </div>
-);
+function TimelineContent({ className, side, ref, ...props }: TimelineConentProps) {
+  return <div className={cn(timelineContentVariants({ side }), className)} ref={ref} {...props} />;
+}
 
 const timelineHeadingVariants = cva("row-start-1 row-end-1 line-clamp-1 max-w-full truncate", {
   variants: {
@@ -118,8 +113,8 @@ const timelineHeadingVariants = cva("row-start-1 row-end-1 line-clamp-1 max-w-fu
       left: "col-start-1 col-end-2 ml-auto text-right",
     },
     variant: {
-      primary: "font-medium text-base text-primary",
-      secondary: "font-light text-muted-foreground text-sm",
+      primary: "text-base font-medium text-primary",
+      secondary: "text-sm font-light text-muted-foreground",
     },
   },
   defaultVariants: {
@@ -129,25 +124,29 @@ const timelineHeadingVariants = cva("row-start-1 row-end-1 line-clamp-1 max-w-fu
 });
 
 interface TimelineHeadingProps
-  extends React.HTMLAttributes<HTMLHeadingElement>,
+  extends React.HTMLAttributes<HTMLParagraphElement>,
     VariantProps<typeof timelineHeadingVariants> {
-  children?: React.ReactNode;
+  ref?: React.Ref<HTMLParagraphElement>;
 }
 
-export const TimelineHeading = ({ className, side, variant, children, ...props }: TimelineHeadingProps) => {
-  const HeadingTag = variant === "primary" ? "h2" : "h3";
+function TimelineHeading({ className, side, variant, ref, ...props }: TimelineHeadingProps) {
   return (
-    <HeadingTag className={cn(timelineHeadingVariants({ side, variant }), className)} {...props}>
-      {children}
-    </HeadingTag>
+    <p
+      role="heading"
+      aria-level={variant === "primary" ? 2 : 3}
+      className={cn(timelineHeadingVariants({ side, variant }), className)}
+      ref={ref}
+      {...props}
+    />
   );
-};
+}
 
 interface TimelineLineProps extends React.HTMLAttributes<HTMLHRElement> {
   done?: boolean;
+  ref?: React.Ref<HTMLHRElement>;
 }
 
-export const TimelineLine = ({ className, done = false, ...props }: TimelineLineProps) => {
+function TimelineLine({ className, done = false, ref, ...props }: TimelineLineProps) {
   return (
     <hr
       aria-orientation="vertical"
@@ -156,8 +155,10 @@ export const TimelineLine = ({ className, done = false, ...props }: TimelineLine
         done ? "bg-primary" : "bg-muted",
         className,
       )}
+      ref={ref}
       {...props}
     />
   );
-};
+}
 
+export { Timeline, TimelineDot, TimelineItem, TimelineContent, TimelineHeading, TimelineLine };

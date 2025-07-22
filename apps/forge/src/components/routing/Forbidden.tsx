@@ -10,7 +10,7 @@ export const Forbidden = () => {
         <div className="grid items-center gap-4 text-center">
           <div className="space-y-2">
             <h1 className="text-4xl font-bold tracking-tighter sm:text-6xl">403 - Forbidden</h1>
-            <p className="max-w-[600px] mx-auto text-accent-foreground md:text-xl/relaxed">
+            <p className="max-w-[600px] mx-auto text-foreground md:text-xl/relaxed">
               Some wires have been crossed, you cannot access the requested page.
             </p>
           </div>

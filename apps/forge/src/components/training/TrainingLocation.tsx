@@ -70,7 +70,7 @@ export function TrainingLocation({ location, optionalTrainingText, img, training
             <div className="grid items-center gap-4 px-4 text-center lg:gap-6">
               <div className="space-y-3">
                 <h1 className="text-4xl font-bold tracking-wide sm:text-5xl md:text-6xl">Compulsory Training</h1>
-                <div className="mx-auto max-w-[600px] text-accent-foreground sm:text-lg md:text-xl">
+                <div className="mx-auto max-w-[600px] text-foreground sm:text-lg md:text-xl">
                   Complete these trainings to gain access to the {name}.
                 </div>
               </div>
@@ -98,7 +98,7 @@ export function TrainingLocation({ location, optionalTrainingText, img, training
                 <h1 className="text-4xl font-bold tracking-wide sm:text-5xl md:text-6xl">
                   Machine & Equipment Training
                 </h1>
-                <div className="mx-auto max-w-[600px] text-accent-foreground sm:text-lg md:text-xl">
+                <div className="mx-auto max-w-[600px] text-foreground sm:text-lg md:text-xl">
                   Extra trainings for machines/tools such as the {optionalTrainingText}.
                 </div>
               </div>

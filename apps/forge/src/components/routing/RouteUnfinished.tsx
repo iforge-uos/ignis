@@ -10,10 +10,10 @@ export const RouteUnfinished = () => {
         <div className="grid items-center gap-4 text-center">
           <div className="space-y-2">
             <h1 className="text-4xl font-bold tracking-tighter sm:text-6xl">Under Construction</h1>
-            <p className="max-w-[600px] mx-auto text-accent-foreground md:text-xl/relaxed">
+            <p className="max-w-[600px] mx-auto text-foreground md:text-xl/relaxed">
               This page is currently being worked on! And will be finished soon!
             </p>
-            <p className="text-sm text-accent-foreground">
+            <p className="text-sm text-foreground">
               Note: This site is still under development. For assistance, join our{" "}
               <a href={import.meta.env.VITE_DISCORD_URL}>
                 <Button variant="hyperlink">Discord server</Button>

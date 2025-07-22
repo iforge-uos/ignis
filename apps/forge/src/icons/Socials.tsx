@@ -22,7 +22,8 @@ const SocialIcon = ({
   return (
     <a href={href} aria-label={altText}>
       <Comp variant="outline" size="icon">
-        <Icon className="dark:invert h-6 w-6" />
+        {/* width and height make things very funny */}
+        <Icon className="dark:invert w-6 h-6" width={undefined} height={undefined} />
       </Comp>
     </a>
   );

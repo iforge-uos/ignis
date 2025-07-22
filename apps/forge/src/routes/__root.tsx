@@ -14,7 +14,7 @@ import { wrapCreateRootRouteWithSentry } from "@sentry/tanstackstart-react";
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
-import { TanStackRouterDevtoolsPanelInProd } from "@tanstack/react-router-devtools";
+import { TanStackRouterDevtoolsInProd } from "@tanstack/react-router-devtools";
 import appCss from "../index.css?url";
 
 export interface RouterAppContext {
@@ -31,7 +31,6 @@ const RootDocument = () => (
     <body>
       <CommandMenu />
       <SidebarProvider>
-        <div className="flex min-h-screen w-full">
           <AppSidebar />
           <SidebarInset className="flex flex-col flex-1">
             <div className="sticky top-0 z-50 bg-background border-b">
@@ -43,12 +42,11 @@ const RootDocument = () => (
               <UCardReader />
 
               <Toaster richColors theme={useTheme()} />
-              {/* <TanStackRouterDevtoolsPanelInProd position="bottom-left" /> */}
+            <TanStackRouterDevtoolsInProd position="bottom-right" />
               <ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
               <Footer />
             </div>
           </SidebarInset>
-        </div>
       </SidebarProvider>
       <Scripts />
     </body>
