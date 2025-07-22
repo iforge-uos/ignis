@@ -1,6 +1,6 @@
 // src/atoms/session/signInAppAtoms.ts
 
-import { client } from "@/lib/orpc";
+import { orpc } from "@/lib/orpc";
 import { SignInSession } from "@/types/sign_in";
 import { sign_in } from "@packages/db/interfaces";
 import { atom } from "jotai";
@@ -11,12 +11,7 @@ import { atomWithQuery } from "jotai-tanstack-query";
 export const activeLocationAtom = atom<sign_in.LocationName>("MAINSPACE");
 activeLocationAtom.debugLabel = "signIn:activeLocation";
 
-export const locationStatusesAtom = atomWithQuery(() => ({
-  queryKey: ["locationStatus"],
-  queryFn: client.locations.statuses,
-  staleTime: 4000,
-  refetchInterval: 5000,
-}));
+export const locationStatusesAtom = atomWithQuery(orpc.locations.statuses.experimental_liveOptions);
 locationStatusesAtom.debugLabel = "signIn:locationStatuses";
 
 // ------ Session Management (for sign in actions && global sign in for users)
