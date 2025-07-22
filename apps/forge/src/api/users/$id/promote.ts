@@ -4,7 +4,7 @@ import e from "@packages/db/edgeql-js";
 import { helper, users } from "@packages/db/interfaces";
 import { CreateInfractionSchema, RepStatusSchema } from "@packages/db/zod/modules/users";
 import { Duration } from "gel";
-import * as z from "zod/v4";
+import * as z from "zod";
 
 // We manually update the __type__ of the underlying users."User" entry in the psql database
 // along with this, we must copy all the links from users."User.x" to users."Rep.x".

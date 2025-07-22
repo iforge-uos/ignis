@@ -3,7 +3,7 @@ import type { ErrorMap, ORPCErrorConstructorMap } from "@orpc/server";
 import e from "@packages/db/edgeql-js";
 import { Tuple } from "@packages/types";
 import type { Executor } from "gel";
-import { z } from "zod/v4";
+import * as z from "zod";
 
 import type { flow } from "../$ucard";
 import {
@@ -128,7 +128,6 @@ export const Receive = z.discriminatedUnion("type", [
   InitialiseReceive,
   SignOutReceive,
 ]);
-
 
 export const Transmit = z.discriminatedUnion("type", [
   RegisterTransmit,

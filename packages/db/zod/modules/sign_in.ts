@@ -1,4 +1,5 @@
-import { z } from "zod/v4";
+import * as z from "zod";
+import * as zt from "zod-temporal";
 
 // #region sign_in::LocationName
 export const LocationNameSchema = z.enum(["MAINSPACE", "HEARTSPACE"]);
@@ -23,24 +24,24 @@ export const ReasonCategorySchema = z.enum([
 export const CreateAgreementSchema = z
   .object({
     // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
-    created_at: z.date().optional(), // std::datetime
+    created_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // sign_in::Agreement
     content: z.string(), // std::str
     _content_hash: z.never().optional(), // std::bytes
-    version: z.number().int().min(-32768).max(32767).optional(), // std::int16
+    version: z.int().min(-32768).max(32767).optional(), // std::int16
     name: z.string(), // std::str
   });
 
 export const UpdateAgreementSchema = z
   .object({
     // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
@@ -49,7 +50,7 @@ export const UpdateAgreementSchema = z
     // sign_in::Agreement
     content: z.string(), // std::str
     _content_hash: z.never().optional(), // std::bytes
-    version: z.number().int().min(-32768).max(32767).optional(), // std::int16
+    version: z.int().min(-32768).max(32767).optional(), // std::int16
     name: z.string(), // std::str
   });
 // #endregion
@@ -58,28 +59,28 @@ export const UpdateAgreementSchema = z
 export const CreateLocationSchema = z
   .object({
     // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
-    created_at: z.date().optional(), // std::datetime
+    created_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // sign_in::Location
     closing_time: z.never(), // std::cal::local_time
-    opening_days: z.number().int().min(-32768).max(32767), // std::int16
+    opening_days: z.int().min(-32768).max(32767), // std::int16
     opening_time: z.never(), // std::cal::local_time
     name: z.enum(["MAINSPACE", "HEARTSPACE"]), // sign_in::LocationName
-    max_users: z.number().int().min(-32768).max(32767), // std::int16
-    out_of_hours_rep_multiplier: z.number().int().min(-32768).max(32767), // std::int16
+    max_users: z.int().min(-32768).max(32767), // std::int16
+    out_of_hours_rep_multiplier: z.int().min(-32768).max(32767), // std::int16
     queue_enabled: z.boolean().optional(), // std::bool
-    in_hours_rep_multiplier: z.number().int().min(-32768).max(32767), // std::int16
+    in_hours_rep_multiplier: z.int().min(-32768).max(32767), // std::int16
   });
 
 export const UpdateLocationSchema = z
   .object({
     // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
@@ -87,13 +88,13 @@ export const UpdateLocationSchema = z
   .extend({
     // sign_in::Location
     closing_time: z.never(), // std::cal::local_time
-    opening_days: z.number().int().min(-32768).max(32767), // std::int16
+    opening_days: z.int().min(-32768).max(32767), // std::int16
     opening_time: z.never(), // std::cal::local_time
     name: z.enum(["MAINSPACE", "HEARTSPACE"]), // sign_in::LocationName
-    max_users: z.number().int().min(-32768).max(32767), // std::int16
-    out_of_hours_rep_multiplier: z.number().int().min(-32768).max(32767), // std::int16
+    max_users: z.int().min(-32768).max(32767), // std::int16
+    out_of_hours_rep_multiplier: z.int().min(-32768).max(32767), // std::int16
     queue_enabled: z.boolean().optional(), // std::bool
-    in_hours_rep_multiplier: z.number().int().min(-32768).max(32767), // std::int16
+    in_hours_rep_multiplier: z.int().min(-32768).max(32767), // std::int16
   });
 // #endregion
 
@@ -101,11 +102,11 @@ export const UpdateLocationSchema = z
 export const CreateQueuePlaceSchema = z
   .object({
     // default::CreatedAt
-    created_at: z.date().optional(), // std::datetime
+    created_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // sign_in::QueuePlace
-    notified_at: z.date().nullable(), // std::datetime
+    notified_at: zt.zonedDateTime().nullable(), // std::datetime
   });
 
 export const UpdateQueuePlaceSchema = z
@@ -114,7 +115,7 @@ export const UpdateQueuePlaceSchema = z
   })
   .extend({
     // sign_in::QueuePlace
-    notified_at: z.date().nullable(), // std::datetime
+    notified_at: zt.zonedDateTime().nullable(), // std::datetime
   });
 // #endregion
 
@@ -122,7 +123,7 @@ export const UpdateQueuePlaceSchema = z
 export const CreateReasonSchema = z
   .object({
     // default::CreatedAt
-    created_at: z.date().optional(), // std::datetime
+    created_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // sign_in::Reason
@@ -159,11 +160,11 @@ export const UpdateReasonSchema = z
 export const CreateSignInSchema = z
   .object({
     // default::Timed
-    ends_at: z.date().nullable(), // std::datetime
+    ends_at: zt.zonedDateTime().nullable(), // std::datetime
   })
   .extend({
     // default::CreatedAt
-    created_at: z.date().optional(), // std::datetime
+    created_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // sign_in::SignIn
@@ -173,7 +174,7 @@ export const CreateSignInSchema = z
 export const UpdateSignInSchema = z
   .object({
     // default::Timed
-    ends_at: z.date().nullable(), // std::datetime
+    ends_at: zt.zonedDateTime().nullable(), // std::datetime
   })
   .extend({
     // default::CreatedAt
@@ -188,7 +189,7 @@ export const UpdateSignInSchema = z
 export const CreateUserRegistrationSchema = z
   .object({
     // default::CreatedAt
-    created_at: z.date().optional(), // std::datetime
+    created_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // sign_in::UserRegistration

@@ -1,6 +1,6 @@
 import { RollbackTransaction } from "@/orpc";
 import { ErrorMap } from "@orpc/server";
-import { z } from "zod/v4";
+import * as z from "zod";
 import { StepType, createFinaliseStep, createInitialiseStep, createTransmitStep } from "./_steps";
 import type { Params, Return } from "./_types";
 

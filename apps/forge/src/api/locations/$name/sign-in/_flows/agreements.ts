@@ -2,7 +2,7 @@ import { signAgreement } from "@/api/users/$id/agreements.$agreement_id";
 import { ErrorMap, call } from "@orpc/server";
 import e from "@packages/db/edgeql-js";
 import { CreateAgreementSchema } from "@packages/db/zod/modules/sign_in";
-import { z } from "zod/v4";
+import * as z from "zod";
 import { StepType, createFinaliseStep, createInitialiseStep, createTransmitStep } from "./_steps";
 import { type Params, Return } from "./_types";
 

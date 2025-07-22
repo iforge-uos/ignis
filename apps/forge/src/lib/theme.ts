@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { deleteCookie, getCookie, setCookie } from "@tanstack/react-start/server";
-import { z } from "zod/v4";
+import * as z from "zod";
 
 const key = "theme";
 

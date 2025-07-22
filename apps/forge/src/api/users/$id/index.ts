@@ -1,12 +1,12 @@
-import { auth } from "@/orpc";
 import { UserShape } from "@/lib/utils/queries";
+import { auth } from "@/orpc";
 import e from "@packages/db/edgeql-js";
 import { UpdateUserSchema } from "@packages/db/zod/modules/users";
-import * as z from "zod/v4";
+import * as z from "zod";
 import { signAgreement } from "./agreements.$agreement_id";
 import { addInfraction } from "./infractions";
-import { trainingRouter } from "./training";
 import { signIns } from "./sign-ins";
+import { trainingRouter } from "./training";
 
 export const get = auth
   .route({ path: "/" })
@@ -38,5 +38,5 @@ export const idRouter = auth.prefix("/{id}").router({
   training: trainingRouter,
   signAgreement,
   addInfraction,
-  signIns
+  signIns,
 });

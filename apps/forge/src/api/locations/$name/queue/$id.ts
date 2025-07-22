@@ -2,7 +2,7 @@ import { pub } from "@/orpc";
 import e from "@packages/db/edgeql-js";
 import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
 import { Duration } from "gel";
-import { z } from "zod/v4";
+import * as z from "zod";
 
 export const remove = pub
   .route({ method: "PATCH", path: "/{id}", description: "Remove a user from the queue by the places ID" })

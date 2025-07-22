@@ -19,7 +19,7 @@ import { useQuery } from "@tanstack/react-query";
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import * as z from "zod/v4";
+import * as z from "zod";
 
 const FormSchema = z.object({
   teams: z.array(z.string()).min(1).nonempty("Please select at least one team."),

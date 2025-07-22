@@ -2,7 +2,7 @@ import { REP_ON_SHIFT } from "@/lib/constants";
 import { auth } from "@/orpc";
 import e from "@packages/db/edgeql-js";
 import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
-import { z } from "zod/v4";
+import * as z from "zod";
 
 export const commonReasons = auth
   .input(

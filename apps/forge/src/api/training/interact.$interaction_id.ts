@@ -3,7 +3,7 @@ import { auth, transaction } from "@/orpc";
 import e from "@packages/db/edgeql-js";
 import type { training } from "@packages/db/interfaces";
 import { Duration } from "gel";
-import * as z from "zod/v4";
+import * as z from "zod";
 
 export interface PageInteraction extends Omit<training.Page, "duration" | "enabled" | "parent"> {
   __typename: "training::Page";
@@ -66,8 +66,6 @@ export const interact = auth
           return {
             __typename: "training::WrongAnswers",
           }; // TODO kick out?
-
-
         }
       } else {
         await e.assert_exists(e.select(e.training.Page, selector)).run(tx);

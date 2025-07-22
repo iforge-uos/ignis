@@ -2,7 +2,7 @@ import { PartialUserShape } from "@/lib/utils/queries";
 import { auth, pub } from "@/orpc";
 import e from "@packages/db/edgeql-js";
 import { UpdateSignInSchema } from "@packages/db/zod/modules/sign_in";
-import * as z from "zod/v4";
+import * as z from "zod";
 
 export const get = auth
   .route({ path: "/" })

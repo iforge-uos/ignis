@@ -1,4 +1,5 @@
-import { z } from "zod/v4";
+import * as z from "zod";
+import * as zt from "zod-temporal";
 
 // #region users::InfractionType
 export const InfractionTypeSchema = z.enum(["WARNING", "TEMP_BAN", "PERM_BAN", "RESTRICTION", "TRAINING_ISSUE"]);
@@ -16,11 +17,11 @@ export const RepStatusSchema = z.enum(["ACTIVE", "BREAK", "ALUMNI", "FUTURE", "R
 export const CreateInfractionSchema = z
   .object({
     // default::CreatedAt
-    created_at: z.date().optional(), // std::datetime
+    created_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // users::Infraction
-    duration: z.iso.duration().nullable(), // std::duration
+    duration: zt.duration().nullable(), // std::duration
     reason: z.string(), // std::str
     resolved: z.boolean().optional(), // std::bool
     type: z.enum(["WARNING", "TEMP_BAN", "PERM_BAN", "RESTRICTION", "TRAINING_ISSUE"]), // users::InfractionType
@@ -32,7 +33,7 @@ export const UpdateInfractionSchema = z
   })
   .extend({
     // users::Infraction
-    duration: z.iso.duration().nullable(), // std::duration
+    duration: zt.duration().nullable(), // std::duration
     reason: z.string(), // std::str
     resolved: z.boolean().optional(), // std::bool
     type: z.enum(["WARNING", "TEMP_BAN", "PERM_BAN", "RESTRICTION", "TRAINING_ISSUE"]), // users::InfractionType
@@ -43,11 +44,11 @@ export const UpdateInfractionSchema = z
 export const CreateIntegrationSchema = z
   .object({
     // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
-    created_at: z.date().optional(), // std::datetime
+    created_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // users::Integration
@@ -59,7 +60,7 @@ export const CreateIntegrationSchema = z
 export const UpdateIntegrationSchema = z
   .object({
     // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
@@ -83,16 +84,16 @@ export const CreateRepSchema = z
     organisational_unit: z.string(), // std::str
     profile_picture: z.string().nullable(), // std::str
     pronouns: z.string().nullable(), // std::str
-    ucard_number: z.number().int().min(-2147483648).max(2147483647), // std::int32
+    ucard_number: z.int().min(-2147483648).max(2147483647), // std::int32
     username: z.string(), // std::str
   })
   .extend({
     // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
-    created_at: z.date().optional(), // std::datetime
+    created_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // users::Rep
@@ -109,12 +110,12 @@ export const UpdateRepSchema = z
     organisational_unit: z.string(), // std::str
     profile_picture: z.string().nullable(), // std::str
     pronouns: z.string().nullable(), // std::str
-    ucard_number: z.number().int().min(-2147483648).max(2147483647), // std::int32
+    ucard_number: z.int().min(-2147483648).max(2147483647), // std::int32
     username: z.string(), // std::str
   })
   .extend({
     // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
@@ -151,11 +152,11 @@ export const UpdateSettingTemplateSchema = z.object({
 export const CreateUserSchema = z
   .object({
     // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
-    created_at: z.date().optional(), // std::datetime
+    created_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // users::User
@@ -166,14 +167,14 @@ export const CreateUserSchema = z
     organisational_unit: z.string(), // std::str
     profile_picture: z.string().nullable(), // std::str
     pronouns: z.string().nullable(), // std::str
-    ucard_number: z.number().int().min(-2147483648).max(2147483647), // std::int32
+    ucard_number: z.int().min(-2147483648).max(2147483647), // std::int32
     username: z.string(), // std::str
   });
 
 export const UpdateUserSchema = z
   .object({
     // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
@@ -187,7 +188,7 @@ export const UpdateUserSchema = z
     organisational_unit: z.string(), // std::str
     profile_picture: z.string().nullable(), // std::str
     pronouns: z.string().nullable(), // std::str
-    ucard_number: z.number().int().min(-2147483648).max(2147483647), // std::int32
+    ucard_number: z.int().min(-2147483648).max(2147483647), // std::int32
     username: z.string(), // std::str
   });
 // #endregion

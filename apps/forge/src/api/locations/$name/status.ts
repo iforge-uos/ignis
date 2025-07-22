@@ -1,9 +1,9 @@
-import { pub } from "@/orpc";
 import { LocationStatusShape } from "@/lib/utils/queries";
+import { pub } from "@/orpc";
 import e from "@packages/db/edgeql-js";
 import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
 import { PartialLocation } from "@packages/types/sign_in";
-import { z } from "zod/v4";
+import * as z from "zod";
 
 export const status = pub
   .input(z.object({ name: LocationNameSchema }))

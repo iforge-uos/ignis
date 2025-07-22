@@ -1,4 +1,5 @@
-import { z } from "zod/v4";
+import * as z from "zod";
+import * as zt from "zod-temporal";
 
 // #region notification::AllTargetTarget
 export const AllTargetTargetSchema = z.enum(["ALL", "REPS"]);
@@ -45,8 +46,8 @@ export const CreateAuthoredNotificationSchema = z
     // notification::Notification
     content: z.string(), // std::str
     delivery_method: z.enum(["BANNER", "EMAIL", "TRAY", "POPUP", "DISCORD"]), // notification::DeliveryMethod
-    dispatched_at: z.date().optional(), // std::datetime
-    priority: z.number().int().min(-32768).max(32767).optional(), // std::int16
+    dispatched_at: zt.zonedDateTime().optional(), // std::datetime
+    priority: z.int().min(-32768).max(32767).optional(), // std::int16
     status: z.enum(["DRAFT", "REVIEW", "QUEUED", "SENDING", "SENT", "ERRORED"]), // notification::Status
     title: z.string(), // std::str
     type: z.enum([
@@ -66,15 +67,15 @@ export const CreateAuthoredNotificationSchema = z
   })
   .extend({
     // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
-    created_at: z.date().optional(), // std::datetime
+    created_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // notification::AuthoredNotification
-    approved_on: z.date().nullable(), // std::datetime
+    approved_on: zt.zonedDateTime().nullable(), // std::datetime
   });
 
 export const UpdateAuthoredNotificationSchema = z
@@ -82,8 +83,8 @@ export const UpdateAuthoredNotificationSchema = z
     // notification::Notification
     content: z.string(), // std::str
     delivery_method: z.enum(["BANNER", "EMAIL", "TRAY", "POPUP", "DISCORD"]), // notification::DeliveryMethod
-    dispatched_at: z.date().optional(), // std::datetime
-    priority: z.number().int().min(-32768).max(32767).optional(), // std::int16
+    dispatched_at: zt.zonedDateTime().optional(), // std::datetime
+    priority: z.int().min(-32768).max(32767).optional(), // std::int16
     status: z.enum(["DRAFT", "REVIEW", "QUEUED", "SENDING", "SENT", "ERRORED"]), // notification::Status
     title: z.string(), // std::str
     type: z.enum([
@@ -103,14 +104,14 @@ export const UpdateAuthoredNotificationSchema = z
   })
   .extend({
     // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
   })
   .extend({
     // notification::AuthoredNotification
-    approved_on: z.date().nullable(), // std::datetime
+    approved_on: zt.zonedDateTime().nullable(), // std::datetime
   });
 // #endregion
 
@@ -118,11 +119,11 @@ export const UpdateAuthoredNotificationSchema = z
 export const CreateMailingListSchema = z
   .object({
     // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
-    created_at: z.date().optional(), // std::datetime
+    created_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // notification::MailingList
@@ -133,7 +134,7 @@ export const CreateMailingListSchema = z
 export const UpdateMailingListSchema = z
   .object({
     // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
@@ -149,18 +150,18 @@ export const UpdateMailingListSchema = z
 export const CreateNotificationSchema = z
   .object({
     // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
-    created_at: z.date().optional(), // std::datetime
+    created_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // notification::Notification
     content: z.string(), // std::str
     delivery_method: z.enum(["BANNER", "EMAIL", "TRAY", "POPUP", "DISCORD"]), // notification::DeliveryMethod
-    dispatched_at: z.date().optional(), // std::datetime
-    priority: z.number().int().min(-32768).max(32767).optional(), // std::int16
+    dispatched_at: zt.zonedDateTime().optional(), // std::datetime
+    priority: z.int().min(-32768).max(32767).optional(), // std::int16
     status: z.enum(["DRAFT", "REVIEW", "QUEUED", "SENDING", "SENT", "ERRORED"]), // notification::Status
     title: z.string(), // std::str
     type: z.enum([
@@ -182,7 +183,7 @@ export const CreateNotificationSchema = z
 export const UpdateNotificationSchema = z
   .object({
     // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
@@ -191,8 +192,8 @@ export const UpdateNotificationSchema = z
     // notification::Notification
     content: z.string(), // std::str
     delivery_method: z.enum(["BANNER", "EMAIL", "TRAY", "POPUP", "DISCORD"]), // notification::DeliveryMethod
-    dispatched_at: z.date().optional(), // std::datetime
-    priority: z.number().int().min(-32768).max(32767).optional(), // std::int16
+    dispatched_at: zt.zonedDateTime().optional(), // std::datetime
+    priority: z.int().min(-32768).max(32767).optional(), // std::int16
     status: z.enum(["DRAFT", "REVIEW", "QUEUED", "SENDING", "SENT", "ERRORED"]), // notification::Status
     title: z.string(), // std::str
     type: z.enum([
@@ -218,8 +219,8 @@ export const CreateSystemNotificationSchema = z
     // notification::Notification
     content: z.string(), // std::str
     delivery_method: z.enum(["BANNER", "EMAIL", "TRAY", "POPUP", "DISCORD"]), // notification::DeliveryMethod
-    dispatched_at: z.date().optional(), // std::datetime
-    priority: z.number().int().min(-32768).max(32767).optional(), // std::int16
+    dispatched_at: zt.zonedDateTime().optional(), // std::datetime
+    priority: z.int().min(-32768).max(32767).optional(), // std::int16
     status: z.enum(["DRAFT", "REVIEW", "QUEUED", "SENDING", "SENT", "ERRORED"]), // notification::Status
     title: z.string(), // std::str
     type: z.enum([
@@ -239,11 +240,11 @@ export const CreateSystemNotificationSchema = z
   })
   .extend({
     // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
-    created_at: z.date().optional(), // std::datetime
+    created_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // notification::SystemNotification
@@ -255,8 +256,8 @@ export const UpdateSystemNotificationSchema = z
     // notification::Notification
     content: z.string(), // std::str
     delivery_method: z.enum(["BANNER", "EMAIL", "TRAY", "POPUP", "DISCORD"]), // notification::DeliveryMethod
-    dispatched_at: z.date().optional(), // std::datetime
-    priority: z.number().int().min(-32768).max(32767).optional(), // std::int16
+    dispatched_at: zt.zonedDateTime().optional(), // std::datetime
+    priority: z.int().min(-32768).max(32767).optional(), // std::int16
     status: z.enum(["DRAFT", "REVIEW", "QUEUED", "SENDING", "SENT", "ERRORED"]), // notification::Status
     title: z.string(), // std::str
     type: z.enum([
@@ -276,7 +277,7 @@ export const UpdateSystemNotificationSchema = z
   })
   .extend({
     // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt

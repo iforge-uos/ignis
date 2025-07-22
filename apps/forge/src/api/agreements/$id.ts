@@ -1,9 +1,9 @@
-import { auth, pub } from "@/orpc";
 import { AgreementShape } from "@/lib/utils/queries";
+import { auth, pub } from "@/orpc";
+import { os } from "@orpc/server";
 import e from "@packages/db/edgeql-js";
 import { UpdateAgreementSchema } from "@packages/db/zod/modules/sign_in";
-import { os } from "@orpc/server";
-import * as z from "zod/v4";
+import * as z from "zod";
 
 export const get = pub
   .route({ path: "/" })

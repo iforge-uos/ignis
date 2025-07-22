@@ -1,4 +1,5 @@
-import { z } from "zod/v4";
+import * as z from "zod";
+import * as zt from "zod-temporal";
 
 // #region training::AnswerType
 export const AnswerTypeSchema = z.enum(["SINGLE", "MULTI"]);
@@ -26,13 +27,13 @@ export const UpdateAnswerSchema = z.object({
 export const CreateInteractableSchema = z.object({
   content: z.string(), // std::str
   enabled: z.boolean().optional(), // std::bool
-  index: z.number().int().min(-32768).max(32767), // std::int16
+  index: z.int().min(-32768).max(32767), // std::int16
 });
 
 export const UpdateInteractableSchema = z.object({
   content: z.string(), // std::str
   enabled: z.boolean().optional(), // std::bool
-  index: z.number().int().min(-32768).max(32767), // std::int16
+  index: z.int().min(-32768).max(32767), // std::int16
 });
 // #endregion
 
@@ -40,14 +41,14 @@ export const UpdateInteractableSchema = z.object({
 export const CreatePageSchema = z
   .object({
     // training::TrainingPage
-    duration: z.iso.duration().nullable(), // std::duration
+    duration: zt.duration().nullable(), // std::duration
     name: z.string(), // std::str
   })
   .extend({
     // training::Interactable
     content: z.string(), // std::str
     enabled: z.boolean().optional(), // std::bool
-    index: z.number().int().min(-32768).max(32767), // std::int16
+    index: z.int().min(-32768).max(32767), // std::int16
   })
   .extend({
     // training::Page
@@ -56,14 +57,14 @@ export const CreatePageSchema = z
 export const UpdatePageSchema = z
   .object({
     // training::TrainingPage
-    duration: z.iso.duration().nullable(), // std::duration
+    duration: zt.duration().nullable(), // std::duration
     name: z.string(), // std::str
   })
   .extend({
     // training::Interactable
     content: z.string(), // std::str
     enabled: z.boolean().optional(), // std::bool
-    index: z.number().int().min(-32768).max(32767), // std::int16
+    index: z.int().min(-32768).max(32767), // std::int16
   })
   .extend({
     // training::Page
@@ -76,7 +77,7 @@ export const CreateQuestionSchema = z
     // training::Interactable
     content: z.string(), // std::str
     enabled: z.boolean().optional(), // std::bool
-    index: z.number().int().min(-32768).max(32767), // std::int16
+    index: z.int().min(-32768).max(32767), // std::int16
   })
   .extend({
     // training::Question
@@ -88,7 +89,7 @@ export const UpdateQuestionSchema = z
     // training::Interactable
     content: z.string(), // std::str
     enabled: z.boolean().optional(), // std::bool
-    index: z.number().int().min(-32768).max(32767), // std::int16
+    index: z.int().min(-32768).max(32767), // std::int16
   })
   .extend({
     // training::Question
@@ -100,28 +101,28 @@ export const UpdateQuestionSchema = z
 export const CreateSessionSchema = z
   .object({
     // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
-    created_at: z.date().optional(), // std::datetime
+    created_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // training::Session
-    index: z.number().int().min(-32768).max(32767).optional(), // std::int16
+    index: z.int().min(-32768).max(32767).optional(), // std::int16
   });
 
 export const UpdateSessionSchema = z
   .object({
     // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
   })
   .extend({
     // training::Session
-    index: z.number().int().min(-32768).max(32767).optional(), // std::int16
+    index: z.int().min(-32768).max(32767).optional(), // std::int16
   });
 // #endregion
 
@@ -129,11 +130,11 @@ export const UpdateSessionSchema = z
 export const CreateTrainingSchema = z
   .object({
     // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
-    created_at: z.date().optional(), // std::datetime
+    created_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // training::Training
@@ -143,15 +144,15 @@ export const CreateTrainingSchema = z
     compulsory: z.boolean().optional(), // std::bool
     description: z.string(), // std::str
     enabled: z.boolean().optional(), // std::bool
-    expires_after: z.iso.duration().nullable(), // std::duration
+    expires_after: zt.duration().nullable(), // std::duration
     icon_url: z.string().nullable(), // std::str
-    training_lockout: z.iso.duration().nullable(), // std::duration
+    training_lockout: zt.duration().nullable(), // std::duration
   });
 
 export const UpdateTrainingSchema = z
   .object({
     // default::Auditable
-    updated_at: z.date().optional(), // std::datetime
+    updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // default::CreatedAt
@@ -164,9 +165,9 @@ export const UpdateTrainingSchema = z
     compulsory: z.boolean().optional(), // std::bool
     description: z.string(), // std::str
     enabled: z.boolean().optional(), // std::bool
-    expires_after: z.iso.duration().nullable(), // std::duration
+    expires_after: zt.duration().nullable(), // std::duration
     icon_url: z.string().nullable(), // std::str
-    training_lockout: z.iso.duration().nullable(), // std::duration
+    training_lockout: zt.duration().nullable(), // std::duration
   });
 // #endregion
 
@@ -176,11 +177,11 @@ export const CreateTrainingPageSchema = z
     // training::Interactable
     content: z.string(), // std::str
     enabled: z.boolean().optional(), // std::bool
-    index: z.number().int().min(-32768).max(32767), // std::int16
+    index: z.int().min(-32768).max(32767), // std::int16
   })
   .extend({
     // training::TrainingPage
-    duration: z.iso.duration().nullable(), // std::duration
+    duration: zt.duration().nullable(), // std::duration
     name: z.string(), // std::str
   });
 
@@ -189,11 +190,11 @@ export const UpdateTrainingPageSchema = z
     // training::Interactable
     content: z.string(), // std::str
     enabled: z.boolean().optional(), // std::bool
-    index: z.number().int().min(-32768).max(32767), // std::int16
+    index: z.int().min(-32768).max(32767), // std::int16
   })
   .extend({
     // training::TrainingPage
-    duration: z.iso.duration().nullable(), // std::duration
+    duration: zt.duration().nullable(), // std::duration
     name: z.string(), // std::str
   });
 // #endregion

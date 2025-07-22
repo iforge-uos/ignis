@@ -1,4 +1,5 @@
-import { z } from "zod/v4";
+import * as z from "zod";
+import * as zt from "zod-temporal";
 
 // #region std::bool
 export const boolSchema = z.boolean();
@@ -13,19 +14,19 @@ export const calSchema = z.never();
 // #endregion
 
 // #region std::datetime
-export const datetimeSchema = z.date();
+export const datetimeSchema = zt.zonedDateTime();
 // #endregion
 
 // #region std::duration
-export const durationSchema = z.iso.duration();
+export const durationSchema = zt.duration();
 // #endregion
 
 // #region std::int16
-export const int16Schema = z.number().int().min(-32768).max(32767);
+export const int16Schema = z.int().min(-32768).max(32767);
 // #endregion
 
 // #region std::int32
-export const int32Schema = z.number().int().min(-2147483648).max(2147483647);
+export const int32Schema = z.int().min(-2147483648).max(2147483647);
 // #endregion
 
 // #region std::int64

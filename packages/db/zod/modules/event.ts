@@ -1,4 +1,5 @@
-import { z } from "zod/v4";
+import * as z from "zod";
+import * as zt from "zod-temporal";
 
 // #region event::Type
 export const TypeSchema = z.enum(["WORKSHOP", "LECTURE", "MEETUP", "HACKATHON", "EXHIBITION", "WEBINAR"]);
@@ -8,12 +9,12 @@ export const TypeSchema = z.enum(["WORKSHOP", "LECTURE", "MEETUP", "HACKATHON", 
 export const CreateEventSchema = z
   .object({
     // default::CreatedAt
-    created_at: z.date().optional(), // std::datetime
+    created_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({
     // event::Event
-    ends_at: z.date().nullable(), // std::datetime
-    starts_at: z.date(), // std::datetime
+    ends_at: zt.zonedDateTime().nullable(), // std::datetime
+    starts_at: zt.zonedDateTime(), // std::datetime
     title: z.string(), // std::str
     type: z.enum(["WORKSHOP", "LECTURE", "MEETUP", "HACKATHON", "EXHIBITION", "WEBINAR"]), // event::Type
     description: z.string(), // std::str
@@ -25,8 +26,8 @@ export const UpdateEventSchema = z
   })
   .extend({
     // event::Event
-    ends_at: z.date().nullable(), // std::datetime
-    starts_at: z.date(), // std::datetime
+    ends_at: zt.zonedDateTime().nullable(), // std::datetime
+    starts_at: zt.zonedDateTime(), // std::datetime
     title: z.string(), // std::str
     type: z.enum(["WORKSHOP", "LECTURE", "MEETUP", "HACKATHON", "EXHIBITION", "WEBINAR"]), // event::Type
     description: z.string(), // std::str

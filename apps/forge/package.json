@@ -75,7 +75,7 @@
     "tailwindcss": "^4.1.3",
     "tw-animate-css": "^1.2.5",
     "vite-tsconfig-paths": "^5.1.4",
-    "zod": "^3.25.16"
+    "zod": "^4.0.5"
   },
   "devDependencies": {
     "@tanstack/react-query-devtools": "^5.69.0",

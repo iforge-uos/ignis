@@ -1,7 +1,7 @@
 import path from "node:path";
 import { createEnv } from "@t3-oss/env-core";
 import dotenv from "dotenv";
-import { z } from "zod/v4";
+import * as z from "zod";
 
 // Load the appropriate .env file based on the NODE_ENV
 dotenv.config({

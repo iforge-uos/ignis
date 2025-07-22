@@ -1,7 +1,7 @@
 import { auth, pub, rep } from "@/orpc";
 import e from "@packages/db/edgeql-js";
 import { getTrainingForEditing } from "@packages/db/queries/getTrainingForEditing.query";
-import * as z from "zod/v4";
+import * as z from "zod";
 import { start } from "./start";
 
 export const get = auth

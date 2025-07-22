@@ -4,7 +4,7 @@ import { ErrorMap } from "@orpc/server";
 import e, { $infer } from "@packages/db/edgeql-js";
 import { logger } from "@sentry/node";
 import { AccessError, ConstraintViolationError } from "gel";
-import { z } from "zod/v4";
+import * as z from "zod";
 import { StepType, createFinaliseStep, createInitialiseStep, createTransmitStep } from "./_steps";
 import type { Params, Return } from "./_types";
 type Place = $infer<typeof QueuePlaceShape>[number];

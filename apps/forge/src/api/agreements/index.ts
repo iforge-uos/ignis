@@ -1,8 +1,8 @@
-import { pub } from "@/orpc";
 import { AgreementShape } from "@/lib/utils/queries";
+import { pub } from "@/orpc";
 import e from "@packages/db/edgeql-js";
 import { CreateAgreementSchema } from "@packages/db/zod/modules/sign_in";
-import * as z from "zod/v4";
+import * as z from "zod";
 import { idRouter } from "./$id";
 
 export const all = pub

@@ -1,7 +1,7 @@
 import { rep, transaction } from "@/orpc";
 import e from "@packages/db/edgeql-js";
 import { addInPersonTraining } from "@packages/db/queries/addInPersonTraining.query";
-import { z } from "zod/v4";
+import * as z from "zod";
 
 export const createInPerson = rep
   .route({ method: "POST", path: "/{training_id}" })

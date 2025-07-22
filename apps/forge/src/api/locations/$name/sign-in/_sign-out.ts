@@ -3,7 +3,7 @@ import { ldapLibraryToUcardNumber } from "@/lib/utils/sign-in";
 import { deskOrAdmin } from "@/orpc";
 import e from "@packages/db/edgeql-js";
 import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
-import { z } from "zod/v4";
+import * as z from "zod";
 import { Errors } from "./_flows/_types";
 import signOut_ from "./_flows/sign-out";
 

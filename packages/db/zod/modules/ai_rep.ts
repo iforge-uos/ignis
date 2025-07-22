@@ -1,4 +1,5 @@
-import { z } from "zod/v4";
+import * as z from "zod";
+import * as zt from "zod-temporal";
 
 // #region ai_rep::Question
 export const CreateQuestionSchema = z.object({

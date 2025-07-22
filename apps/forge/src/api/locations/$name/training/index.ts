@@ -1,8 +1,8 @@
-import { auth, pub } from "@/orpc";
 import { TrainingForLocationShape } from "@/lib/utils/queries";
+import { auth, pub } from "@/orpc";
 import e from "@packages/db/edgeql-js";
 import { LocationNameSchema } from "@packages/db/zod/modules/training";
-import { z } from "zod/v4";
+import * as z from "zod";
 
 export const all = pub
   .route({ path: "/" })

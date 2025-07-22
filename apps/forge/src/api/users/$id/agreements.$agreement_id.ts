@@ -1,6 +1,6 @@
 import { rep } from "@/orpc";
 import e from "@packages/db/edgeql-js";
-import * as z from "zod/v4";
+import * as z from "zod";
 
 export const signAgreement = rep
   .route({ method: "POST", path: "/agreements/{agreement_id}" })

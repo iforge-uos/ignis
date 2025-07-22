@@ -3,8 +3,8 @@ import { AgreementShape } from "@/lib/utils/queries";
 import { ErrorMap } from "@orpc/server";
 import e from "@packages/db/edgeql-js";
 import { Agreement } from "@packages/db/edgeql-js/modules/sign_in";
-import { CreateAgreementSchema } from "@packages/db/zod/modules/sign_in" ;
-import { z } from "zod/v4";
+import { CreateAgreementSchema } from "@packages/db/zod/modules/sign_in";
+import * as z from "zod";
 import { StepType, createFinaliseStep, createInitialiseStep, createTransmitStep } from "./_steps";
 import type { Params, Return } from "./_types";
 
