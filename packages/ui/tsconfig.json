@@ -3,18 +3,18 @@
   "extends": "../../tsconfig.base.json",
   "display": "Default",
   "compilerOptions": {
-    "lib": ["es2022", "DOM", "DOM.Iterable"],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "NodeNext",
     "moduleDetection": "force",
     "moduleResolution": "NodeNext",
     "noUncheckedIndexedAccess": true,
     "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
     "jsx": "react",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
       "@packages/ui/*": ["./src/*"],
-      "@/hooks/*": ["../../apps/forge/src/hooks/*"]
     }
   },
   "include": ["./**/*"],
