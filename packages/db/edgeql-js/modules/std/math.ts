@@ -44,81 +44,6 @@ function lg(...args: any[]) {
   }) as any;
 };
 
-type logλFuncExpr<
-  NamedArgs extends {
-    "base": _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>,
-  },
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>,
-> = $.$expr_Function<
-  _std.$decimal, $.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.paramCardinality<NamedArgs["base"]>>
->;
-/**
- * Return the logarithm of the input value in the specified *base*.
- */
-function log<
-  NamedArgs extends {
-    "base": _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>,
-  },
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>,
->(
-  namedArgs: NamedArgs,
-  x: P1,
-): logλFuncExpr<NamedArgs, P1>;
-function log(...args: any[]) {
-  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('std::math::log', args, _.spec, [
-    {args: [{typeId: "00000000-0000-0000-0000-000000000108", optional: false, setoftype: false, variadic: false}], namedArgs: {"base": {typeId: "00000000-0000-0000-0000-000000000108", optional: false, setoftype: false, variadic: false}}, returnTypeId: "00000000-0000-0000-0000-000000000108"},
-  ]);
-  return _.syntax.$expressionify({
-    __kind__: $.ExpressionKind.Function,
-    __element__: returnType,
-    __cardinality__: cardinality,
-    __name__: "std::math::log",
-    __args__: positionalArgs,
-    __namedargs__: namedArgs,
-  }) as any;
-};
-
-type sqrtλFuncExpr<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
-> = $.$expr_Function<
-  _std.$number, $.cardutil.paramCardinality<P1>
->;
-type sqrtλFuncExpr2<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>,
-> = $.$expr_Function<
-  _std.$decimal, $.cardutil.paramCardinality<P1>
->;
-/**
- * Return the square root of the input value.
- */
-function sqrt<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
->(
-  x: P1,
-): sqrtλFuncExpr<P1>;
-/**
- * Return the square root of the input value.
- */
-function sqrt<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>,
->(
-  x: P1,
-): sqrtλFuncExpr2<P1>;
-function sqrt(...args: any[]) {
-  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('std::math::sqrt', args, _.spec, [
-    {args: [{typeId: "00000000-0000-0000-0000-0000000001ff", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-0000000001ff"},
-    {args: [{typeId: "00000000-0000-0000-0000-000000000108", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000108"},
-  ]);
-  return _.syntax.$expressionify({
-    __kind__: $.ExpressionKind.Function,
-    __element__: returnType,
-    __cardinality__: cardinality,
-    __name__: "std::math::sqrt",
-    __args__: positionalArgs,
-    __namedargs__: namedArgs,
-  }) as any;
-};
-
 type absλFuncExpr<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$anyreal>>,
 > = $.$expr_Function<
@@ -292,6 +217,81 @@ function ln(...args: any[]) {
     __element__: returnType,
     __cardinality__: cardinality,
     __name__: "std::math::ln",
+    __args__: positionalArgs,
+    __namedargs__: namedArgs,
+  }) as any;
+};
+
+type logλFuncExpr<
+  NamedArgs extends {
+    "base": _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>,
+  },
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>,
+> = $.$expr_Function<
+  _std.$decimal, $.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.paramCardinality<NamedArgs["base"]>>
+>;
+/**
+ * Return the logarithm of the input value in the specified *base*.
+ */
+function log<
+  NamedArgs extends {
+    "base": _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>,
+  },
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>,
+>(
+  namedArgs: NamedArgs,
+  x: P1,
+): logλFuncExpr<NamedArgs, P1>;
+function log(...args: any[]) {
+  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('std::math::log', args, _.spec, [
+    {args: [{typeId: "00000000-0000-0000-0000-000000000108", optional: false, setoftype: false, variadic: false}], namedArgs: {"base": {typeId: "00000000-0000-0000-0000-000000000108", optional: false, setoftype: false, variadic: false}}, returnTypeId: "00000000-0000-0000-0000-000000000108"},
+  ]);
+  return _.syntax.$expressionify({
+    __kind__: $.ExpressionKind.Function,
+    __element__: returnType,
+    __cardinality__: cardinality,
+    __name__: "std::math::log",
+    __args__: positionalArgs,
+    __namedargs__: namedArgs,
+  }) as any;
+};
+
+type sqrtλFuncExpr<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
+> = $.$expr_Function<
+  _std.$number, $.cardutil.paramCardinality<P1>
+>;
+type sqrtλFuncExpr2<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>,
+> = $.$expr_Function<
+  _std.$decimal, $.cardutil.paramCardinality<P1>
+>;
+/**
+ * Return the square root of the input value.
+ */
+function sqrt<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
+>(
+  x: P1,
+): sqrtλFuncExpr<P1>;
+/**
+ * Return the square root of the input value.
+ */
+function sqrt<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>,
+>(
+  x: P1,
+): sqrtλFuncExpr2<P1>;
+function sqrt(...args: any[]) {
+  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('std::math::sqrt', args, _.spec, [
+    {args: [{typeId: "00000000-0000-0000-0000-0000000001ff", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-0000000001ff"},
+    {args: [{typeId: "00000000-0000-0000-0000-000000000108", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000108"},
+  ]);
+  return _.syntax.$expressionify({
+    __kind__: $.ExpressionKind.Function,
+    __element__: returnType,
+    __cardinality__: cardinality,
+    __name__: "std::math::sqrt",
     __args__: positionalArgs,
     __namedargs__: namedArgs,
   }) as any;
@@ -746,12 +746,12 @@ function tan(...args: any[]) {
 
 type __defaultExports = {
   "lg": typeof lg;
-  "log": typeof log;
-  "sqrt": typeof sqrt;
   "abs": typeof abs;
   "ceil": typeof ceil;
   "floor": typeof floor;
   "ln": typeof ln;
+  "log": typeof log;
+  "sqrt": typeof sqrt;
   "mean": typeof mean;
   "stddev": typeof stddev;
   "stddev_pop": typeof stddev_pop;
@@ -769,12 +769,12 @@ type __defaultExports = {
 };
 const __defaultExports: __defaultExports = {
   "lg": lg,
-  "log": log,
-  "sqrt": sqrt,
   "abs": abs,
   "ceil": ceil,
   "floor": floor,
   "ln": ln,
+  "log": log,
+  "sqrt": sqrt,
   "mean": mean,
   "stddev": stddev,
   "stddev_pop": stddev_pop,

@@ -6,17 +6,17 @@
   "author": "iForge IT team",
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "gel": "2.0.1",
     "@gel/generate": "0.6.2",
-    "@js-temporal/polyfill": "^0.4.4",
-    "gel-zod": "github:iforge-uos/edgedb-zod#c501a0eeb2e23d37c50e4a45053ca875a4b73e8c",
-    "zod": "^3.25.30"
+    "@js-temporal/polyfill": "^0.5.1",
+    "gel": "2.0.1",
+    "gel-zod": "github:iforge-uos/edgedb-zod#73b2a90af1e62c631b4d1f2af18d7a49e652026b",
+    "zod": "^4.0.5"
   },
   "scripts": {
     "interfaces": "bunx @gel/generate interfaces -I ignis",
     "edgeql": "bunx @gel/generate edgeql-js --future --target=ts -I ignis",
     "queries": "bunx @gel/generate queries --future --target=ts -I ignis",
-    "zod": "python3 gen-zod.py",
+    "zod": "bunx gel-zod --target=ts",
     "regen": "bunx npm-run-all2 --parallel interfaces edgeql queries zod"
   }
 }

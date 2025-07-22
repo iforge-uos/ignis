@@ -323,8 +323,8 @@ export type $WebAuthnAuthenticationChallengeλShape = $.typeutil.flatten<$Audita
 }>;
 type $WebAuthnAuthenticationChallenge = $.ObjectType<"ext::auth::WebAuthnAuthenticationChallenge", $WebAuthnAuthenticationChallengeλShape, null, [
   ...$Auditable['__exclusives__'],
-  {factors: {__element__: $WebAuthnFactor, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
   {challenge: {__element__: _std.$bytes, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
+  {factors: {__element__: $WebAuthnFactor, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
 ], "ext::auth::WebAuthnAuthenticationChallenge">;
 const $WebAuthnAuthenticationChallenge = $.makeType<$WebAuthnAuthenticationChallenge>(_.spec, "ffb4afce-f9e9-5494-83e4-d9ab262ad48e", _.syntax.literal);
 

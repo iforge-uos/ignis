@@ -4585,6 +4585,33 @@ function adjacent(...args: any[]) {
   }) as any;
 };
 
+type _pg_generate_series_9045e2a9ba5f5d288595c71d08e0d9d7λFuncExpr<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$number>>,
+  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<$number>>,
+> = $.$expr_Function<
+  $number, $.Cardinality.Many
+>;
+function _pg_generate_series_9045e2a9ba5f5d288595c71d08e0d9d7<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$number>>,
+  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<$number>>,
+>(
+  start: P1,
+  stop: P2,
+): _pg_generate_series_9045e2a9ba5f5d288595c71d08e0d9d7λFuncExpr<P1, P2>;
+function _pg_generate_series_9045e2a9ba5f5d288595c71d08e0d9d7(...args: any[]) {
+  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('std::__pg_generate_series', args, _.spec, [
+    {args: [{typeId: "00000000-0000-0000-0000-0000000001ff", optional: false, setoftype: false, variadic: false}, {typeId: "00000000-0000-0000-0000-0000000001ff", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-0000000001ff", returnTypemod: "SetOfType"},
+  ]);
+  return _.syntax.$expressionify({
+    __kind__: $.ExpressionKind.Function,
+    __element__: returnType,
+    __cardinality__: cardinality,
+    __name__: "std::__pg_generate_series",
+    __args__: positionalArgs,
+    __namedargs__: namedArgs,
+  }) as any;
+};
+
 type to_strλFuncExpr<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$bytes>>,
 > = $.$expr_Function<
@@ -5502,6 +5529,7 @@ type __defaultExports = {
   "bounded_above": typeof bounded_above;
   "bounded_below": typeof bounded_below;
   "adjacent": typeof adjacent;
+  "__pg_generate_series": typeof _pg_generate_series_9045e2a9ba5f5d288595c71d08e0d9d7;
   "to_str": typeof to_str;
   "to_bytes": typeof to_bytes;
   "to_json": typeof to_json;
@@ -5628,6 +5656,7 @@ const __defaultExports: __defaultExports = {
   "bounded_above": bounded_above,
   "bounded_below": bounded_below,
   "adjacent": adjacent,
+  "__pg_generate_series": _pg_generate_series_9045e2a9ba5f5d288595c71d08e0d9d7,
   "to_str": to_str,
   "to_bytes": to_bytes,
   "to_json": to_json,

@@ -90,9 +90,9 @@ const Location: $.$expr_PathNode<$.TypeSet<$Location, $.Cardinality.Many>, null>
 
 export type $QueuePlaceλShape = $.typeutil.flatten<_default.$CreatedAtλShape & {
   "location": $.LinkDesc<$Location, $.Cardinality.One, {}, false, false,  false, false>;
-  "user": $.LinkDesc<_users.$User, $.Cardinality.One, {}, true, false,  false, false>;
   "notified_at": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne, false, false, false, false>;
   "ends_at": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne, false, true, false, false>;
+  "user": $.LinkDesc<_users.$User, $.Cardinality.One, {}, true, false,  false, false>;
   "<queued[is sign_in::Location]": $.LinkDesc<$Location, $.Cardinality.Many, {}, false, false,  false, false>;
   "<queued": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
@@ -124,9 +124,9 @@ const Reason: $.$expr_PathNode<$.TypeSet<$Reason, $.Cardinality.Many>, null> = _
 export type $SignInλShape = $.typeutil.flatten<_default.$TimedλShape & {
   "location": $.LinkDesc<$Location, $.Cardinality.One, {}, false, false,  false, false>;
   "reason": $.LinkDesc<$Reason, $.Cardinality.One, {}, false, false,  false, false>;
-  "user": $.LinkDesc<_users.$User, $.Cardinality.One, {}, false, false,  false, false>;
   "tools": $.PropertyDesc<$.ArrayType<_std.$str>, $.Cardinality.One, false, false, false, false>;
   "signed_out": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, true, false, false>;
+  "user": $.LinkDesc<_users.$User, $.Cardinality.One, {}, false, false,  false, false>;
   "<sign_ins[is users::User]": $.LinkDesc<_users.$User, $.Cardinality.Many, {}, false, false,  false, false>;
   "<sign_ins[is users::Rep]": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, false,  false, false>;
   "<sign_ins[is user]": $.LinkDesc<_default.$user, $.Cardinality.Many, {}, false, false,  false, false>;

@@ -84,10 +84,10 @@ const $Question = $.makeType<$Question>(_.spec, "2a663a2a-f86c-11ee-a8ce-19967c8
 const Question: $.$expr_PathNode<$.TypeSet<$Question, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Question, $.Cardinality.Many), null);
 
 export type $SessionλShape = $.typeutil.flatten<_default.$AuditableλShape & {
-  "user": $.LinkDesc<_users.$User, $.Cardinality.One, {}, false, false,  false, false>;
   "index": $.PropertyDesc<_std.$int16, $.Cardinality.One, false, false, false, true>;
   "training": $.LinkDesc<$Training, $.Cardinality.One, {}, false, false,  false, false>;
   "next_section": $.LinkDesc<$TrainingPage | $Question, $.Cardinality.AtMostOne, {}, false, true,  false, false>;
+  "user": $.LinkDesc<_users.$User, $.Cardinality.One, {}, false, false,  false, false>;
 }>;
 type $Session = $.ObjectType<"training::Session", $SessionλShape, null, [
   ..._default.$Auditable['__exclusives__'],

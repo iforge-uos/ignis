@@ -196,6 +196,7 @@ export namespace sys {
     "is_superuser": boolean;
     "password"?: string | null;
     "permissions": string[];
+    "branches": string[];
     "member_of": Role[];
     "all_permissions": string[];
   }
@@ -548,9 +549,9 @@ export namespace sign_in {
   export type LocationStatus = "OPEN" | "SOON" | "CLOSED";
   export interface QueuePlace extends $default.CreatedAt {
     "location": Location;
-    "user": users.User;
     "notified_at"?: Date | null;
     "ends_at"?: Date | null;
+    "user": users.User;
   }
   export interface Reason extends $default.CreatedAt {
     "name": string;
@@ -561,9 +562,9 @@ export namespace sign_in {
   export interface SignIn extends $default.Timed {
     "location": Location;
     "reason": Reason;
-    "user": users.User;
     "tools": string[];
     "signed_out": boolean;
+    "user": users.User;
   }
   export interface UserRegistration extends $default.CreatedAt {
     "location": Location;
@@ -626,10 +627,10 @@ export namespace training {
     "type": AnswerType;
   }
   export interface Session extends $default.Auditable {
-    "user": users.User;
     "index": number;
     "training": Training;
     "next_section"?: TrainingPage | Question | null;
+    "user": users.User;
   }
   export interface Training extends $default.Auditable {
     "rep"?: Training | null;
@@ -649,12 +650,12 @@ export namespace training {
 }
 export namespace tools {
   export interface Booking extends $default.Auditable {
-    "user": users.User;
     "ends_at": Date;
     "starts_at": Date;
     "duration": gel.Duration;
     "cancelled"?: boolean | null;
     "tool": Tool;
+    "user": users.User;
   }
   export type Selectability = "UNTRAINED" | "REVOKED" | "EXPIRED" | "REPS_UNTRAINED" | "IN_PERSON_MISSING";
   export type Status = "NOMINAL" | "IN_USE" | "OUT_OF_ORDER";
@@ -784,6 +785,7 @@ export namespace schema {
     "language": string;
     "used_globals": Global[];
     "used_permissions": Permission[];
+    "required_permissions": Permission[];
   }
   export interface FutureBehavior extends $Object {}
   export interface Global extends AnnotationSubject {
@@ -798,6 +800,8 @@ export namespace schema {
     "except_expr"?: string | null;
     "deferrability"?: IndexDeferrability | null;
     "deferred"?: boolean | null;
+    "active"?: boolean | null;
+    "build_concurrently"?: boolean | null;
     "params": Parameter[];
     "kwargs"?: {name: string, expr: string}[] | null;
   }
@@ -809,6 +813,8 @@ export namespace schema {
     "default"?: string | null;
     "expr"?: string | null;
     "secret"?: boolean | null;
+    "splat_strategy"?: SplatStrategy | null;
+    "linkful"?: boolean | null;
     "source"?: Source | null;
     "target"?: Type | null;
     "rewrites": Rewrite[];
@@ -879,6 +885,7 @@ export namespace schema {
     "arg_values"?: string[] | null;
   }
   export type SourceDeleteAction = "DeleteTarget" | "Allow" | "DeleteTargetIfOrphan";
+  export type SplatStrategy = "Default" | "Explicit" | "Implicit";
   export type TargetDeleteAction = "Restrict" | "DeleteSource" | "Allow" | "DeferredRestrict";
   export interface Trigger extends InheritingObject, AnnotationSubject {
     "subject": ObjectType;
@@ -1177,6 +1184,7 @@ export interface types {
     "RewriteKind": schema.RewriteKind;
     "ScalarType": schema.ScalarType;
     "SourceDeleteAction": schema.SourceDeleteAction;
+    "SplatStrategy": schema.SplatStrategy;
     "TargetDeleteAction": schema.TargetDeleteAction;
     "Trigger": schema.Trigger;
     "TriggerKind": schema.TriggerKind;

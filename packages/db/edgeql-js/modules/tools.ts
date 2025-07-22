@@ -3,8 +3,8 @@
 import * as $ from "../reflection";
 import * as _ from "../imports";
 import type * as _default from "./default";
-import type * as _users from "./users";
 import type * as _std from "./std";
+import type * as _users from "./users";
 import type * as _sign_in from "./sign_in";
 import type * as _training from "./training";
 export type $Selectability = {
@@ -14,22 +14,22 @@ export type $Selectability = {
   "REPS_UNTRAINED": $.$expr_Literal<$Selectability>;
   "IN_PERSON_MISSING": $.$expr_Literal<$Selectability>;
 } & $.EnumType<"tools::Selectability", ["UNTRAINED", "REVOKED", "EXPIRED", "REPS_UNTRAINED", "IN_PERSON_MISSING"]>;
-const Selectability: $Selectability = $.makeType<$Selectability>(_.spec, "d4391fea-5456-11f0-ae01-9de417ace7c4", _.syntax.literal);
+const Selectability: $Selectability = $.makeType<$Selectability>(_.spec, "e0870186-59a6-11f0-8bee-5157475150ee", _.syntax.literal);
 
 export type $Status = {
   "NOMINAL": $.$expr_Literal<$Status>;
   "IN_USE": $.$expr_Literal<$Status>;
   "OUT_OF_ORDER": $.$expr_Literal<$Status>;
 } & $.EnumType<"tools::Status", ["NOMINAL", "IN_USE", "OUT_OF_ORDER"]>;
-const Status: $Status = $.makeType<$Status>(_.spec, "bda28bb8-4a06-11f0-9f50-4b94173e46c9", _.syntax.literal);
+const Status: $Status = $.makeType<$Status>(_.spec, "da73ec28-59a6-11f0-bf80-d10509d7de2d", _.syntax.literal);
 
 export type $BookingλShape = $.typeutil.flatten<_default.$AuditableλShape & {
-  "user": $.LinkDesc<_users.$User, $.Cardinality.One, {}, false, false,  false, false>;
   "ends_at": $.PropertyDesc<_std.$datetime, $.Cardinality.One, false, false, false, false>;
   "starts_at": $.PropertyDesc<_std.$datetime, $.Cardinality.One, false, false, false, false>;
   "duration": $.PropertyDesc<_std.$duration, $.Cardinality.One, false, true, false, false>;
   "cancelled": $.PropertyDesc<_std.$bool, $.Cardinality.AtMostOne, false, false, false, false>;
   "tool": $.LinkDesc<$Tool, $.Cardinality.One, {}, false, false,  false, false>;
+  "user": $.LinkDesc<_users.$User, $.Cardinality.One, {}, false, false,  false, false>;
   "<bookings[is users::User]": $.LinkDesc<_users.$User, $.Cardinality.Many, {}, false, false,  false, false>;
   "<bookings[is users::Rep]": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, false,  false, false>;
   "<bookings[is user]": $.LinkDesc<_default.$user, $.Cardinality.Many, {}, false, false,  false, false>;
@@ -39,7 +39,7 @@ export type $BookingλShape = $.typeutil.flatten<_default.$AuditableλShape & {
 type $Booking = $.ObjectType<"tools::Booking", $BookingλShape, null, [
   ..._default.$Auditable['__exclusives__'],
 ], "tools::Booking">;
-const $Booking = $.makeType<$Booking>(_.spec, "bda2a616-4a06-11f0-8659-b1c9bd61d875", _.syntax.literal);
+const $Booking = $.makeType<$Booking>(_.spec, "da740b2c-59a6-11f0-ae77-318bd2f1ca8f", _.syntax.literal);
 
 const Booking: $.$expr_PathNode<$.TypeSet<$Booking, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Booking, $.Cardinality.Many), null);
 
@@ -60,7 +60,7 @@ export type $ToolλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c2
 type $Tool = $.ObjectType<"tools::Tool", $ToolλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
 ], "tools::Tool">;
-const $Tool = $.makeType<$Tool>(_.spec, "c05288ea-4a06-11f0-ba32-0dc4a89a4ee5", _.syntax.literal);
+const $Tool = $.makeType<$Tool>(_.spec, "dd5438b2-59a6-11f0-8b35-7f0be01e00fb", _.syntax.literal);
 
 const Tool: $.$expr_PathNode<$.TypeSet<$Tool, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Tool, $.Cardinality.Many), null);
 

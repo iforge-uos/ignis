@@ -121,30 +121,6 @@ function subvector(...args: any[]) {
   }) as any;
 };
 
-type set_probesλFuncExpr<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
-> = $.$expr_Function<
-  _std.$number, $.cardutil.paramCardinality<P1>
->;
-function set_probes<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
->(
-  num: P1,
-): set_probesλFuncExpr<P1>;
-function set_probes(...args: any[]) {
-  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('ext::pgvector::set_probes', args, _.spec, [
-    {args: [{typeId: "00000000-0000-0000-0000-0000000001ff", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-0000000001ff"},
-  ]);
-  return _.syntax.$expressionify({
-    __kind__: $.ExpressionKind.Function,
-    __element__: returnType,
-    __cardinality__: cardinality,
-    __name__: "ext::pgvector::set_probes",
-    __args__: positionalArgs,
-    __namedargs__: namedArgs,
-  }) as any;
-};
-
 type euclidean_distanceλFuncExpr<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$halfvec>>,
   P2 extends _.castMaps.orScalarLiteral<$.TypeSet<$halfvec>>,
@@ -411,6 +387,30 @@ function euclidean_norm(...args: any[]) {
   }) as any;
 };
 
+type set_probesλFuncExpr<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
+> = $.$expr_Function<
+  _std.$number, $.cardutil.paramCardinality<P1>
+>;
+function set_probes<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
+>(
+  num: P1,
+): set_probesλFuncExpr<P1>;
+function set_probes(...args: any[]) {
+  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('ext::pgvector::set_probes', args, _.spec, [
+    {args: [{typeId: "00000000-0000-0000-0000-0000000001ff", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-0000000001ff"},
+  ]);
+  return _.syntax.$expressionify({
+    __kind__: $.ExpressionKind.Function,
+    __element__: returnType,
+    __cardinality__: cardinality,
+    __name__: "ext::pgvector::set_probes",
+    __args__: positionalArgs,
+    __namedargs__: namedArgs,
+  }) as any;
+};
+
 
 
 export { halfvec, sparsevec, vector, $Config, Config };
@@ -422,12 +422,12 @@ type __defaultExports = {
   "Config": typeof Config;
   "l2_normalize": typeof l2_normalize;
   "subvector": typeof subvector;
-  "set_probes": typeof set_probes;
   "euclidean_distance": typeof euclidean_distance;
   "neg_inner_product": typeof neg_inner_product;
   "cosine_distance": typeof cosine_distance;
   "taxicab_distance": typeof taxicab_distance;
-  "euclidean_norm": typeof euclidean_norm
+  "euclidean_norm": typeof euclidean_norm;
+  "set_probes": typeof set_probes
 };
 const __defaultExports: __defaultExports = {
   "halfvec": halfvec,
@@ -436,11 +436,11 @@ const __defaultExports: __defaultExports = {
   "Config": Config,
   "l2_normalize": l2_normalize,
   "subvector": subvector,
-  "set_probes": set_probes,
   "euclidean_distance": euclidean_distance,
   "neg_inner_product": neg_inner_product,
   "cosine_distance": cosine_distance,
   "taxicab_distance": taxicab_distance,
-  "euclidean_norm": euclidean_norm
+  "euclidean_norm": euclidean_norm,
+  "set_probes": set_probes
 };
 export default __defaultExports;

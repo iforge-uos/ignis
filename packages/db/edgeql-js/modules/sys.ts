@@ -158,6 +158,7 @@ export type $RoleλShape = $.typeutil.flatten<$SystemObjectλShape & _schema.$In
   "is_superuser": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, true, false, false>;
   "password": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "permissions": $.PropertyDesc<_std.$str, $.Cardinality.Many, false, false, false, false>;
+  "branches": $.PropertyDesc<_std.$str, $.Cardinality.Many, false, false, false, false>;
   "member_of": $.LinkDesc<$Role, $.Cardinality.Many, {}, false, false,  false, false>;
   "all_permissions": $.PropertyDesc<_std.$str, $.Cardinality.Many, false, true, false, false>;
   "<member_of[is sys::Role]": $.LinkDesc<$Role, $.Cardinality.Many, {}, false, false,  false, false>;

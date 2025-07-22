@@ -84,6 +84,7 @@ export type scalarAssignableBy<T extends $.ScalarType> =
   T extends _schema.$TriggerScope ? _schema.$TriggerScope : 
   T extends _schema.$TriggerKind ? _schema.$TriggerKind : 
   T extends _schema.$TargetDeleteAction ? _schema.$TargetDeleteAction : 
+  T extends _schema.$SplatStrategy ? _schema.$SplatStrategy : 
   T extends _schema.$SourceDeleteAction ? _schema.$SourceDeleteAction : 
   T extends _schema.$RewriteKind ? _schema.$RewriteKind : 
   T extends _schema.$ParameterKind ? _schema.$ParameterKind : 
@@ -178,6 +179,7 @@ export type scalarCastableFrom<T extends $.ScalarType> =
   T extends _schema.$TriggerScope ? _schema.$TriggerScope : 
   T extends _schema.$TriggerKind ? _schema.$TriggerKind : 
   T extends _schema.$TargetDeleteAction ? _schema.$TargetDeleteAction : 
+  T extends _schema.$SplatStrategy ? _schema.$SplatStrategy : 
   T extends _schema.$SourceDeleteAction ? _schema.$SourceDeleteAction : 
   T extends _schema.$RewriteKind ? _schema.$RewriteKind : 
   T extends _schema.$ParameterKind ? _schema.$ParameterKind : 
@@ -586,6 +588,12 @@ type getSharedParentScalar<A, B> =
   :
   A extends _schema.$TargetDeleteAction ?
     B extends _schema.$TargetDeleteAction ?
+    B
+    :
+    never
+  :
+  A extends _schema.$SplatStrategy ?
+    B extends _schema.$SplatStrategy ?
     B
     :
     never
@@ -1161,6 +1169,12 @@ function getSharedParentScalar<A extends $.ScalarType, B extends $.ScalarType>(a
     }
   if (a.__name__ === "schema::TargetDeleteAction") {
     if(b.__name__ === "schema::TargetDeleteAction") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
+  if (a.__name__ === "schema::SplatStrategy") {
+    if(b.__name__ === "schema::SplatStrategy") {
       return b;
     }
     throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
