@@ -1,7 +1,7 @@
 import { sign_in, std, training } from "@db/interfaces";
 import type { GetSignInTrainingsReturns } from "@db/queries/getSignInTrainings.query";
-import { Temporal } from "@js-temporal/polyfill";
-import { LocalTime } from "gel";
+import type { Temporal } from "@js-temporal/polyfill";
+import type { LocalTime } from "gel";
 import * as users from "./users";
 
 /** All the locations amiable to login to */

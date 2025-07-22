@@ -20,16 +20,16 @@
     }
   },
   "dependencies": {
-    "@nivo/calendar": "^0.85.1",
-    "@trpc/client": "^10.45.2",
-    "@trpc/server": "^10.45.2",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "zod": "^3.22.4"
+    "@nivo/calendar": "^0.99.0",
+    "@trpc/client": "^11.4.3",
+    "@trpc/server": "^11.4.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "zod": "^4.0.5"
   },
   "devDependencies": {
-    "@js-temporal/polyfill": "^0.4.4",
-    "@orpc/server": "^0.38.0",
+    "@js-temporal/polyfill": "^0.5.1",
+    "@orpc/server": "^1.7.4",
     "gel": "2.0.1"
   }
 }
