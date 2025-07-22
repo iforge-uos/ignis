@@ -1,5 +1,5 @@
 import { Alert, AlertDescription, AlertTitle } from "@packages/ui/components/alert";
-import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
+import { MessageSquareWarning } from "lucide-react";
 import { FC } from "react";
 
 export interface ErrorDisplayProps {
@@ -10,7 +10,7 @@ export const errorDisplay: FC<ErrorDisplayProps> = ({ error }) => {
   return (
     <>
       <Alert variant="destructive">
-        <ExclamationTriangleIcon className="h-4 w-4" />
+        <MessageSquareWarning  className="h-4 w-4" />
         <AlertTitle>Error</AlertTitle>
         <AlertDescription className="text-balance">
           <p> There was an error trying to complete your action</p>
