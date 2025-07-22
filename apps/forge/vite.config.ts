@@ -3,23 +3,23 @@ import spotlightSidecar from "@spotlightjs/sidecar/vite-plugin";
 import spotlight from "@spotlightjs/spotlight/vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import react from "@vitejs/plugin-react";
 import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig } from "vite";
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
 import lqip from "vite-plugin-lqip";
 import svgr from "vite-plugin-svgr";
-import viteTsConfigPaths from "vite-tsconfig-paths";
-console.log("In config");
+import tsconfigPaths from "vite-tsconfig-paths";
+
 export default defineConfig({
   build: {
     sourcemap: true,
     target: "esnext",
   },
   plugins: [
-    viteTsConfigPaths({
-      projects: ["./tsconfig.json", "../../packages/ui/tsconfig.json"],
-    }),
-    tanstackStart(),
+    tsconfigPaths(),
+    tanstackStart({ customViteReactPlugin: true }),
+    react(),
     tailwindcss(),
     lqip(),
     svgr({

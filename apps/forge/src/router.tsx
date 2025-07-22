@@ -1,17 +1,16 @@
-import { createRouter as createTanstackRouter } from "@tanstack/react-router";
 import "./index.css";
 import { orpc, queryClient as orpcQueryClient } from "@/lib/orpc";
 // import { AuthProvider } from "@/providers/AuthProvider";
 import { routeTree } from "@/routeTree.gen";
 import { TooltipProvider } from "@packages/ui/components/tooltip";
 import { QueryClientProvider } from "@tanstack/react-query";
-import "jotai-devtools/styles.css";
+import { createRouter as createTanstackRouter } from "@tanstack/react-router";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { GenericError } from "./components/routing/GenericError";
-import { NotFound } from "./components/routing/NotFound";
-import { ORPCContext } from "./hooks/useORPC";
-import { Hammer } from "./components/loading";
+import { Hammer } from "@/components/loading";
+import { GenericError } from "@/components/routing/GenericError";
+import { NotFound } from "@/components/routing/NotFound";
+import { ORPCContext } from "@/hooks/useORPC";
 
 const queryClient = orpcQueryClient;
 

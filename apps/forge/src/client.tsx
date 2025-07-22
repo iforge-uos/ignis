@@ -11,6 +11,7 @@ const router = createRouter();
 Sentry.init({
   dsn: "https://893631a88ccccc18a9b65d8b5c3e1395@o4507082090414080.ingest.de.sentry.io/4508127275122768",
   tunnel: "/api/sentry-tunnel",
+  environment:  import.meta.env.DEV ? "development" : "production",
   integrations: [Sentry.tanstackRouterBrowserTracingIntegration(router), Sentry.replayIntegration()],
   tracesSampleRate: import.meta.env.DEV ? 1.0 : 0.1,
   replaysSessionSampleRate: 0.1,
@@ -22,7 +23,7 @@ Sentry.init({
 
 // only load Spotlight in dev
 if (import.meta.env.DEV) {
-  Spotlight.init();
+  Spotlight.init({ anchor: "bottomLeft" });
 }
 
 hydrateRoot(
