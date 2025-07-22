@@ -15,8 +15,18 @@ export const ServerRoute = createServerFileRoute("/api/sentry-tunnel").methods({
 
       const header = JSON.parse(pieces[0]);
 
-      // Extract project ID from DSN or header
-      const projectId = header.dsn ? new URL(header.dsn).pathname.split("/").pop() : null;
+      // Extract DSN and validate
+      if (!header.dsn) {
+        return new Response("Missing DSN", { status: 400 });
+      }
+
+      const dsn = new URL(header.dsn);
+      const projectId = dsn.pathname.split("/").pop();
+
+      // Validate hostname for security
+      if (dsn.hostname !== SENTRY_HOST) {
+        return new Response("Invalid Sentry hostname", { status: 400 });
+      }
 
       // Validate project ID for security
       if (!projectId) {
@@ -24,7 +34,7 @@ export const ServerRoute = createServerFileRoute("/api/sentry-tunnel").methods({
       }
 
       if (!SENTRY_PROJECT_IDS.includes(projectId)) {
-        return new Response("Invalid project", { status: 400 });
+        return new Response("Invalid project ID", { status: 400 });
       }
 
       // Forward to Sentry
