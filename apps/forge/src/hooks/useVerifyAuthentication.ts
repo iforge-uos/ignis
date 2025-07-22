@@ -6,12 +6,14 @@ import {
   userRolesAtom,
 } from "@/atoms/authSessionAtoms.ts";
 import { orpc } from "@/lib/orpc";
-import type { User } from "@/packages/types/users";
 import { useAtom } from "jotai";
 import { useCallback, useEffect, useRef } from "react";
 
 export const useVerifyAuthentication = () => {
-  return null
+  return {
+    user: {},
+    loading: false,
+  };
   const [, setAuthEffect] = useAtom(authEffectAtom);
   const [user, setUser] = useAtom(userAtom);
   const [, setOriginalUserRoles] = useAtom(originalUserRolesAtom);
