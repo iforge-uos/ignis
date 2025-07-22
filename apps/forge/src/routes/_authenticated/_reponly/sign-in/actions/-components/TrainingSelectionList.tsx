@@ -127,7 +127,7 @@ const TrainingSelectionCard = ({ training, index, toggleTraining, selected }: Tr
       className={cn(
         "transition-all relative overflow-hidden h-full",
         selectable ? "cursor-pointer" : "opacity-70",
-        selected ? "ring-2 ring-primary" : "hover:bg-accent hover:text-accent-foreground",
+        selected ? "ring-2 ring-primary" : "hover:bg-accent hover:text-foreground",
       )}
       onClick={() => selectable && toggleTraining(training)}
     >

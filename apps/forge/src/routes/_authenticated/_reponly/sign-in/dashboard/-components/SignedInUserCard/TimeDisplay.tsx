@@ -30,13 +30,13 @@ export const TimeDisplay: React.FC<TimeDisplayProps> = ({ timeIn, inText, durati
       <div className="flex justify-between w-full gap-2">
         <div className="flex">
           <Badge variant="outline" className="rounded-sm shadow-md flex-col w-[90px]">
-            <span className="text-accent-foreground">{inText ?? "Time In:"}</span>{" "}
+            <span className="text-foreground">{inText ?? "Time In:"}</span>{" "}
             <span className="italic">{format(timeIn, "HH:mm:ss")}</span>
           </Badge>
         </div>
         <div className="flex">
           <Badge variant="outline" className="rounded-sm shadow-md flex-col w-[120px]">
-            <span className="text-accent-foreground text-xs">{durationText ?? "Duration:"}</span>{" "}
+            <span className="text-foreground text-xs">{durationText ?? "Duration:"}</span>{" "}
             <span className="italic">{duration}</span>
           </Badge>
         </div>

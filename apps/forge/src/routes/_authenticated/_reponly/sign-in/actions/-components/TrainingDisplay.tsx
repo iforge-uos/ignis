@@ -26,7 +26,7 @@ const TrainingDisplay: React.FC<TrainingDisplayProps> = ({
     <div
       className={`flex items-center border-2 justify-between w-full px-4 py-2 text-sm font-medium leading-none rounded-md
                         ${selected ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"}
-                        ${wholeClickable ? "hover:bg-accent text-accent-foreground cursor-pointer" : ""}
+                        ${wholeClickable ? "hover:bg-accent text-foreground cursor-pointer" : ""}
                         dark:text-gray-300`}
       onClick={wholeClickable ? handleWholeClick : undefined} // Apply click handler if wholeClickable
       onKeyUp={(event) => {
