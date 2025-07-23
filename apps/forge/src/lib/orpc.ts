@@ -1,12 +1,13 @@
 import { type Router, router } from "@/routes/api.$";
 import { createORPCClient } from "@orpc/client";
 import { RPCLink } from "@orpc/client/fetch";
-import { createTanstackQueryUtils } from '@orpc/tanstack-query'
+import { createTanstackQueryUtils } from "@orpc/tanstack-query";
 import { type RouterClient, createRouterClient } from "@orpc/server";
 import { type RouterUtils } from "@orpc/tanstack-query";
 import { QueryCache, QueryClient } from "@tanstack/react-query";
 import { createIsomorphicFn } from "@tanstack/react-start";
 import { getHeaders } from "@tanstack/react-start/server";
+import { SimpleCsrfProtectionLinkPlugin } from "@orpc/client/plugins";
 import { toast } from "sonner";
 
 export type ORPCReactUtils = RouterUtils<RouterClient<Router>>;
@@ -29,6 +30,7 @@ const getORPCClient = createIsomorphicFn()
   .client((): RouterClient<typeof router> => {
     const link = new RPCLink({
       url: `${window.location.origin}/api/rpc`,
+      plugins: [new SimpleCsrfProtectionLinkPlugin()],
     });
 
     return createORPCClient(link);
