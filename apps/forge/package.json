@@ -18,6 +18,7 @@
     "@gel/auth-express": "^0.3.0",
     "@js-temporal/polyfill": "^0.5.1",
     "@orpc/client": "^1.7.4",
+    "@orpc/json-schema": "^1.7.4",
     "@orpc/openapi": "^1.7.4",
     "@orpc/server": "^1.7.4",
     "@orpc/tanstack-query": "^1.7.4",
