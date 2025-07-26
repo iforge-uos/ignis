@@ -5,14 +5,6 @@
       "path": "../"
     },
     {
-      "name": "Anvil",
-      "path": "../apps/anvil"
-    },
-    {
-      "name": "Anvil-2",
-      "path": "../apps/anvil2"
-    },
-    {
       "name": "Forge",
       "path": "../apps/forge"
     },
@@ -21,20 +13,12 @@
       "path": "../apps/mine"
     },
     {
-      "name": "Errors",
-      "path": "../packages/errors"
-    },
-    {
-      "name": "Types",
-      "path": "../packages/types"
-    },
-    {
       "name": "UI",
       "path": "../packages/ui"
     },
     {
-      "name": "TS Config",
-      "path": "../tooling/ts-config"
+      "name": "DB",
+      "path": "../packages/db"
     }
   ],
   "settings": {

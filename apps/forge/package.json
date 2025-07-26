@@ -7,10 +7,10 @@
   "license": "GPL-3.0-or-later",
   "type": "module",
   "scripts": {
-    "start": "bun .output/server/index.mjs",
-    "build": "OP_ACCOUNT=iforge.1password.com op run --no-masking --env-file=.env.production -- vite build",
-    "serve": "vite preview",
-    "dev": "OP_ACCOUNT=iforge.1password.com op run --no-masking --env-file=.env.development -- vite dev --port=3000"
+    "start": "OP_ACCOUNT=iforge.1password.com op run --no-masking --env-file=.env.development -- bun run .output/server/index.mjs",
+    "build": "OP_ACCOUNT=iforge.1password.com op run --no-masking --env-file=.env.development -- bunx --bun vite build",
+    "serve": "OP_ACCOUNT=iforge.1password.com op run --no-masking --env-file=.env.development -- bunx --bun vite preview",
+    "dev": "OP_ACCOUNT=iforge.1password.com op run --no-masking --env-file=.env.development -- bunx --bun vite dev --port=3000"
   },
   "dependencies": {
     "@epic-web/client-hints": "^1.3.7",

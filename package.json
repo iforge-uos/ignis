@@ -33,7 +33,7 @@
     "format:fix": "biome format . --write",
     "email": "bun --filter email email",
     "email-check": "bun --filter email email-check",
-    "regen": "bun --filter db regen"
+    "regen": "bun --filter @packages/db regen"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",

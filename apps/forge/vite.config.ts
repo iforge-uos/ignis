@@ -14,7 +14,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 export default defineConfig({
   build: {
     sourcemap: true,
-    target: "esnext",
+    target: "bun",
   },
   plugins: [
     tsconfigPaths(),
