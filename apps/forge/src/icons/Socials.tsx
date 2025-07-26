@@ -21,7 +21,8 @@ const SocialIcon = ({
 }) => {
   return (
     <a href={href} aria-label={altText}>
-      <Comp variant="outline" size="icon">
+      {/* I don't understand css anymore */}
+      <Comp variant="outline" className="w-10 h-10 px-0 hover:cursor-pointer">
         {/* width and height make things very funny */}
         <Icon className="dark:invert w-6 h-6" width={undefined} height={undefined} />
       </Comp>
