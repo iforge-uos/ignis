@@ -1,23 +1,18 @@
 [package]
 name = "mine"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 actix-files = "0.6.5"
-actix-http = "3.5.1"
 actix-multipart = {version = "0.6.1", features = ["tempfile"]}
 actix-web = "4.4.1"
-env_logger = "0.10.1"
-jpeg-encoder = "0.6.0"
-log = "0.4.20"
 mime = "0.3.17"
-resvg = "0.37.0"
 uuid = { version = "1.6.1", features = ["v4", "fast-rng"] }
 jsonwebtoken = "9"
 serde = {version = "1.0", features = ["derive"] }
 lazy_static = "1.4.0"
 actix-cors = "0.7.0"
-cargo-lint = "0.1.0"
+sentry = { version = "0.41.0", features = ["actix", "logs", "log"] }

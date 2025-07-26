@@ -1,3 +1,4 @@
 JWT_SECRET="op://IT/Anvil JWT Signing Key/credential"
 ALLOWED_TO_UPLOAD="5ea6d732-f86c-11ee-8cfe-177de0f58b65,5ea86cc8-f86c-11ee-8cfe-bfcf9fe5f446"
 MINE_PORT="4000"
+SENTRY_URL="https://f2444d8141d4d0036e9cc26395c949b3@o4507082090414080.ingest.de.sentry.io/4508127276761168"
