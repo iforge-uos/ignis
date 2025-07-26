@@ -1,5 +1,4 @@
 import * as Sentry from "@sentry/tanstackstart-react";
-import * as Spotlight from "@spotlightjs/spotlight";
 import { StartClient } from "@tanstack/react-start";
 import { hydrateRoot } from "react-dom/client";
 
@@ -23,7 +22,7 @@ Sentry.init({
 
 // only load Spotlight in dev
 if (import.meta.env.DEV) {
-  Spotlight.init({ anchor: "bottomLeft" });
+  await import("@spotlightjs/spotlight").then(({ init }) => init({ anchor: "bottomLeft" }));
 }
 
 hydrateRoot(
