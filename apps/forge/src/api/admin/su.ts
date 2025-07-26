@@ -1,7 +1,7 @@
 import { admin } from "@/orpc";
 import { logger } from "@sentry/node";
 import { UUID } from "gel/dist/reflection/queries";
-import z from "zod/v4";
+import z from "zod";
 
 const ORIGINAL_USERS: {[K: UUID]: UUID} = {}
 

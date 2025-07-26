@@ -8,7 +8,7 @@ import { ORPCError } from "@orpc/server";
 import e from "@packages/db/edgeql-js";
 import * as Sentry from "@sentry/node";
 import { Response } from "express";
-import z from "zod/v4";
+import z from "zod";
 
 export const verify = pub
   .route({ method: "GET", path: "/auth/verify" })

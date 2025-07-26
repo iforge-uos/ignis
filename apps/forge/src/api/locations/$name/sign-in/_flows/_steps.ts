@@ -1,6 +1,6 @@
 import { UCARD_LENGTH } from "@/lib/constants";
 import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
-import z from "zod/v4";
+import z from "zod";
 import type { BaseKey } from "../$ucard";
 import type { Initialise, Receive } from "./_types";
 
