@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
+import { createIsomorphicFn } from '@tanstack/react-start';
+import { getRequestHeader } from '@tanstack/react-start/server';
+import { useState } from 'react';
+
+const getUserAgent = createIsomorphicFn()
+  .client(() => navigator.userAgent)
+  .server(() => getRequestHeader("user-agent"))
 
 export function useShortcutKey() {
-  const [shortcutKey, setShortcutKey] = useState("Ctrl"); // Default to Ctrl for SSR
+  const [userAgent] = useState(getUserAgent);
 
-  useEffect(() => {
-    // Only run on client side after hydration
-    const isMacOs = !!navigator?.userAgent?.match(/Macintosh;/);
-    setShortcutKey(isMacOs ? "⌘" : "Ctrl");
-  }, []);
-
-  return shortcutKey;
+  return userAgent?.match(/Macintosh;/) ? "⌘" : "Ctrl";
 }
