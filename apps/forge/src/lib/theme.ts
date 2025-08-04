@@ -10,7 +10,7 @@ export type Theme = Exclude<z.infer<typeof themeSchema>, "system">;
 
 export const getTheme = createServerFn().handler(() => {
   const theme = getCookie(key) as Theme | undefined;
-
+  // return "dark";
   return theme ?? null;
 });
 

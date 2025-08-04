@@ -1,5 +1,6 @@
 import { AppSidebar } from "@/components/app-navigation";
 import { SidebarHeader } from "@/components/app-navigation/sidebar-header";
+import { ClientHintCheck } from "@/components/client-hint-check";
 import CommandMenu from "@/components/command-menu";
 import { TailwindIndicator } from "@/components/dev/Tailwind-Indicator";
 import { Footer } from "@/components/footer";
@@ -23,14 +24,17 @@ export interface RouterAppContext {
   user: ReturnType<typeof useUser>;
 }
 
-const RootDocument = () => (
-  <html lang="en">
-    <head>
-      <HeadContent />
-    </head>
-    <body>
-      <CommandMenu />
-      <SidebarProvider>
+const RootDocument = () => {
+  const theme = useTheme();
+  return (
+    <html lang="en" className={theme}>
+      <head>
+        <ClientHintCheck />
+        <HeadContent />
+      </head>
+      <body>
+        <CommandMenu />
+        <SidebarProvider>
           <AppSidebar />
           <SidebarInset className="flex flex-col flex-1">
             <div className="sticky top-0 z-50 bg-background border-b">
@@ -41,17 +45,18 @@ const RootDocument = () => (
               <TailwindIndicator />
               <UCardReader />
 
-              <Toaster richColors theme={useTheme()} />
-            <TanStackRouterDevtoolsInProd position="bottom-right" />
+              <Toaster richColors theme={theme} />
+              <TanStackRouterDevtoolsInProd position="bottom-right" />
               <ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
               <Footer />
             </div>
           </SidebarInset>
-      </SidebarProvider>
-      <Scripts />
-    </body>
-  </html>
-);
+        </SidebarProvider>
+        <Scripts />
+      </body>
+    </html>
+  );
+};
 
 export const Route = wrapCreateRootRouteWithSentry(createRootRouteWithContext<RouterAppContext>)()({
   head: () => ({

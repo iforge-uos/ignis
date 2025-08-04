@@ -29,7 +29,7 @@ export function NavSub({ elements }: NavSubProps) {
       <SidebarMenu>
         {elements.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild>
+            <SidebarMenuButton asChild className="transition-colors duration-200">
               {item.isExternal ? (
                 <a href={item.url} target="_blank" rel="noopener noreferrer" onClick={handleClick}>
                   <item.icon />

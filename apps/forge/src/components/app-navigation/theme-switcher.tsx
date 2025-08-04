@@ -1,23 +1,31 @@
 import { themeQueryOptions, useOptimisticThemeMutation } from "@/hooks/useTheme";
 import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@packages/ui/components/dropdown-menu";
+import { SidebarMenuButton, useSidebar } from "@packages/ui/components/sidebar";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@packages/ui/components/tooltip";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { motion } from "framer-motion";
 import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react";
-import { motion } from "motion/react";
 
 const themes = [
   {
     theme: "system",
-    icon: MonitorIcon,
+    Icon: MonitorIcon,
     label: "System theme",
   },
   {
     theme: "light",
-    icon: SunIcon,
+    Icon: SunIcon,
     label: "Light theme",
   },
   {
     theme: "dark",
-    icon: MoonIcon,
+    Icon: MoonIcon,
     label: "Dark theme",
   },
 ] as const;
@@ -27,14 +35,44 @@ interface ThemeSwitcherProps {
 }
 
 export const ThemeSwitcher = ({ className }: ThemeSwitcherProps) => {
+  const { state } = useSidebar();
+  const isMinimized = state === "collapsed";
+
   const { data: theme } = useSuspenseQuery(themeQueryOptions());
   const { mutate: setTheme } = useOptimisticThemeMutation();
 
   const currentTheme = theme ?? "system";
 
+  if (isMinimized) {
+    const { Icon } = themes.find((t) => t.theme === currentTheme)!;
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <SidebarMenuButton
+            size="lg"
+            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground justify-center items-center p-1 mb-4"
+            tooltip="Change theme"
+          >
+            <Icon />
+          </SidebarMenuButton>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent sideOffset={8}>
+          {themes.map(({ theme, Icon, label }) => (
+            <DropdownMenuItem key={theme} onClick={() => setTheme(theme)} className="flex items-center gap-2">
+              <Icon />
+              {label}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  }
+
   return (
-    <div className={cn("relative isolate flex h-8 rounded-full bg-background p-1 ring-1 ring-border", className)}>
-      {themes.map(({ theme, icon: Icon, label }) => {
+    <div
+      className={cn("relative isolate flex h-8 rounded-full bg-background p-1 ring-1 ring-border mx-auto", className)}
+    >
+      {themes.map(({ theme, Icon, label }) => {
         const isActiveTheme = currentTheme === theme;
 
         return (
