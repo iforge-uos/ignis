@@ -21,8 +21,7 @@ export const auth = pub
       throw errors.UNAUTHORIZED();
     }
     return next({
-      // not sure why this needs an assert_single tbh cause its already in the schema that way
-      context: { user, $user: e.assert_single(e.assert_exists(e.user)), ...props } as AuthContext,
+      context: { user, $user: e.assert_exists(e.global.user), ...props } as AuthContext,
     });
   });
 

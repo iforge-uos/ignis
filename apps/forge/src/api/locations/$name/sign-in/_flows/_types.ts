@@ -161,7 +161,7 @@ const _LOCATION_QUERY = e.assert_exists(
   e.select(e.sign_in.Location, () => ({ filter_single: { name: "MAINSPACE" as const } })),
 );
 const _USER_QUERY = e.assert_exists(e.select(e.users.User, () => ({ filter_single: { id: "" } })));
-const _LOGGED_IN_USER_QUERY = e.assert_exists(e.assert_single(e.user));
+const _LOGGED_IN_USER_QUERY = e.assert_exists(e.global.user);
 
 // the types used in a sign in step
 type _SignInParams = Parameters<(typeof flow)["~orpc"]["handler"]>[0];
