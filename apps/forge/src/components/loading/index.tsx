@@ -3,6 +3,6 @@ import hammerUrl from "/loaders/hammer.json?url";
 
 export function Hammer({ className }: { className?: string }) {
   return (
-    <Lottie path={hammerUrl} loop play className="h-40 w-40" />
+    <Lottie path={hammerUrl} loop play className="h-40 w-40 dark:invert justify-center mx-auto" />
   );
 }
