@@ -12,27 +12,49 @@ export const all = pub
       return e
         .select(e.training.Training, (training) => ({
           ...TrainingForLocationShape(training),
-          filter: e.all(e.set(e.op(name, "in", training.locations), e.op("exists", training.rep), training.enabled)),
+          filter: e.all(
+            e.set(
+              e.op(e.cast(e.training.LocationName, name), "in", training.locations),
+              training.enabled,
+              e.op("exists", training.rep),
+            ),
+          ),
         }))
         .run(db);
     }
 
-    return e
-      .select(e.training.Training, (training) => ({
-        ...TrainingForLocationShape(training),
-        status: e.op(
-          "Resume" as const,
+    const $user = e.assert_exists(e.global.user);
+
+    const getStatus = (training: any) =>
+       e.op(
+          "Resume",
           "if",
           e.op(
             "exists",
-            e.select(e.training.Session, (session) => ({
-              filter_single: e.op(e.op(training, "=", session.training), "and", e.op(session.user, "=", e.user)),
+            e.select(e.training.Session, () => ({
+              filter_single: { training, user: $user },
             })),
           ),
           "else",
-          e.op("Retake" as const, "if", e.op(training, "in", e.user.training), "else", "Start" as const),
+          e.op("Retake", "if", e.op(training, "in", $user.training), "else", "Start"),
+        )
+
+    return e
+      .select(e.training.Training, (training) => ({
+        ...TrainingForLocationShape(training),
+        status: getStatus(training),
+        rep: {
+          id: true,
+          description: true,
+          status: getStatus(training.rep),
+        },
+        filter: e.all(
+          e.set(
+            e.op(e.cast(e.training.LocationName, name), "in", training.locations),
+            training.enabled,
+            e.op("exists", training.rep),
+          ),
         ),
-        filter: e.all(e.set(e.op(name, "in", training.locations), training.enabled)),
       }))
       .run(db);
   });
