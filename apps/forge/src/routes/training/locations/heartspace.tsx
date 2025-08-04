@@ -1,6 +1,7 @@
 import heartspaceLocationImage from "@/../public/training/heartspace.jpg?lqip";
-import { TrainingLocation, getData } from "@/components/training/TrainingLocation";
+import { TrainingLocation } from "@/components/training/TrainingLocation";
 import { createFileRoute } from "@tanstack/react-router";
+import { orpc, client } from "@/lib/orpc";
 
 const Heartspace = () => (
   <TrainingLocation
@@ -22,5 +23,5 @@ const Heartspace = () => (
 
 export const Route = createFileRoute("/training/locations/heartspace")({
   component: Heartspace,
-  loader: async () => getData("HEARTSPACE"),
+  loader: async () =>  client.locations.training.all({name: "HEARTSPACE"}),
 });

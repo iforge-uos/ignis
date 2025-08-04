@@ -4,7 +4,6 @@ import { useUser } from "@/hooks/useUser";
 import { GeorgePorterIcon, HeartspaceIcon, LocationIcon, MainspaceIcon } from "@/icons/Locations";
 import { client } from "@/lib/orpc";
 import IndexCard from "@/routes/training/-components/IndexCard";
-import { training } from "@packages/db/interfaces";
 import { Button } from "@packages/ui/components/button";
 import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from "@packages/ui/components/command";
 import { Separator } from "@packages/ui/components/separator";
@@ -19,7 +18,7 @@ import heartspaceTraining from "@/../public/training/heartspace.jpg?lqip";
 import mainspaceTraining from "@/../public/training/mainspace.jpg?lqip";
 import riskAssessments from "@/../public/training/risk_assessments.jpg?lqip";
 
-export default async function TrainingIndexPage() {
+export default function TrainingIndexPage() {
   const trainings = Route.useLoaderData();
   const user = useUser();
   const [hidden, setHidden] = useState(true);
@@ -61,7 +60,7 @@ export default async function TrainingIndexPage() {
                   <Link to="/training/$id" params={training}>
                     <div className="flex gap-3 justify-center items-center">
                       {training.locations.map((location) => (
-                        <LocationIcon key={location} location={location as training.LocationName} />
+                        <LocationIcon key={location} location={location} />
                       ))}
                       <div className="flex-col">
                         <div className="font-semibold">{training.name}</div>

@@ -1,6 +1,7 @@
 import georgePorterLocationImage from "@/../public/training/george_porter.jpg?lqip";
-import { TrainingLocation, getData } from "@/components/training/TrainingLocation";
+import { TrainingLocation } from "@/components/training/TrainingLocation";
 import { createFileRoute } from "@tanstack/react-router";
+import { client, orpc } from "@/lib/orpc";
 
 const GeorgePorter = () => (
   <TrainingLocation
@@ -22,5 +23,5 @@ const GeorgePorter = () => (
 
 export const Route = createFileRoute("/training/locations/george-porter")({
   component: GeorgePorter,
-  loader: async () => getData("GEORGE_PORTER"),
+  loader: async () => client.locations.training.all({name: "GEORGE_PORTER"}),
 });

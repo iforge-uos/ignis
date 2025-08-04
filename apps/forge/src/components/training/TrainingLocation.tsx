@@ -2,27 +2,16 @@ import Title from "@/components/title";
 import { useUser } from "@/hooks/useUser";
 import { toTitleCase } from "@/lib/utils";
 import { locationNameToCSSName } from "@/lib/utils/training";
-import { training } from "@packages/types";
 import { LocationName, PartialTrainingWithStatus } from "@packages/types/training";
 import { Button } from "@packages/ui/components/button";
 import { Separator } from "@packages/ui/components/separator";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { CirclePlus } from "lucide-react";
+import { orpc } from "@/lib/orpc";
 import ImageGradient from "./ImageGradient";
 import TrainingCourseCard from "./TrainingCourseCard";
-
-// don't ask why this is in the components folder
-export async function getData(location: LocationName): Promise<PartialTrainingWithStatus[]> {
-  const [trainings, statuses]: any = await Promise.all([getLocation(location), getStatus(location)]); // FIXME needs to not call status if not authed
-  for (const training of trainings) {
-    training.status = statuses[training.id];
-    if (training.rep) {
-      training.rep.status = statuses[training.rep.id];
-    }
-  }
-  return trainings;
-}
+import { useUserRoles } from "@/hooks/useUserRoles";
 
 interface TrainingLocationProps {
   location: LocationName;
@@ -34,7 +23,8 @@ interface TrainingLocationProps {
 export function TrainingLocation({ location, optionalTrainingText, img, trainings }: TrainingLocationProps) {
   const user = useUser();
   const name = toTitleCase(location.replace("_", " "));
-  const isRep = !!user?.roles.some((role) => role.name === "Rep");
+  const roles = useUserRoles();
+  const isRep = roles.some((role) => role === "rep");
 
   const { compulsory, not_compulsory } = trainings.reduce(
     (acc, training) => {
@@ -43,10 +33,12 @@ export function TrainingLocation({ location, optionalTrainingText, img, training
     },
     { compulsory: [] as PartialTrainingWithStatus[], not_compulsory: [] as PartialTrainingWithStatus[] },
   );
-  const { data: userTraining } = useQuery({
-    queryKey: ["userTraining"],
-    queryFn: async () => (user ? getUserTraining(user.id) : undefined),
-  });
+  const { data: userTraining } = user
+    ? // biome-ignore lint/correctness/useHookAtTopLevel: user shouldn't ever be changing
+      useQuery({
+        ...orpc.users.training.all.queryOptions({ input: user }),
+      })
+    : { data: undefined };
 
   return (
     <>
@@ -78,12 +70,7 @@ export function TrainingLocation({ location, optionalTrainingText, img, training
                 {compulsory
                   .sort((a, b) => a.name.localeCompare(b.name))
                   .map((training) => (
-                    <TrainingCourseCard
-                      key={training.id}
-                      training={training}
-                      isRep={isRep}
-                      userTraining={userTraining}
-                    />
+                    <TrainingCourseCard key={training.id} training={training} userTraining={userTraining} />
                   ))}
                 {isRep && <AddNewTraining location={location} compulsory />}
               </div>
@@ -106,12 +93,7 @@ export function TrainingLocation({ location, optionalTrainingText, img, training
                 {not_compulsory
                   .sort((a, b) => a.name.localeCompare(b.name))
                   .map((training) => (
-                    <TrainingCourseCard
-                      key={training.id}
-                      training={training}
-                      isRep={isRep}
-                      userTraining={userTraining}
-                    />
+                    <TrainingCourseCard key={training.id} training={training} userTraining={userTraining} />
                   ))}
                 {isRep && <AddNewTraining location={location} />}
               </div>

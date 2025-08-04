@@ -1,6 +1,6 @@
 import Title from "@/components/title";
 import { TrainingHeader } from "@/components/training/TrainingHeader";
-import { orpc } from "@/lib/orpc";
+import { client, orpc } from "@/lib/orpc";
 import { TrainingForTags } from "@/lib/utils";
 import { Button } from "@packages/ui/components/button";
 import { Input } from "@packages/ui/components/input";
@@ -219,6 +219,6 @@ function Component() {
 
 export const Route = createFileRoute("/_authenticated/_reponly/training/$id/edit")({
   component: Component,
-  loader: async ({ params }) => await client.training.getForEditing({ id: params.id }),
+  loader: async ({ params, context }) => client.training.getForEditing({ input: params }),
   // onLeave: () => saveSession  // Should also be doing this every time a change is made? maybe put in cache IDK
 });
