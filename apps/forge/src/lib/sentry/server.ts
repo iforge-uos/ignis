@@ -1,6 +1,7 @@
-import { os, ORPCError } from "@orpc/server";
+import { os, ORPCError, ValidationError } from "@orpc/server";
 import * as Sentry from "@sentry/core";
 import { AccessError, CardinalityViolationError, InvalidArgumentError } from "gel";
+import * as z from "zod";
 
 type Options = {
   captureInputs?: boolean;
@@ -24,6 +25,18 @@ export default (options: Options = {}) =>
           return await next();
         } catch (error) {
           // Some errors can be suppressed so just re-throw
+          // zod would be expensive to log lol
+          if (error instanceof ORPCError && error.code === "BAD_REQUEST" && error.cause instanceof ValidationError) {
+            // If you only use Zod you can safely cast to ZodIssue[]
+            const zodError = new z.ZodError(error.cause.issues as z.core.$ZodIssue[]);
+
+            throw new ORPCError("INPUT_VALIDATION_FAILED", {
+              status: 422,
+              message: z.prettifyError(zodError),
+              data: z.flattenError(zodError),
+              cause: error.cause,
+            });
+          }
           if (error instanceof InvalidArgumentError) {
             throw new ORPCError("NOT_FOUND", {
               message: `${path} with id ${path[-1]} not found`,
