@@ -9,7 +9,6 @@ import { Separator } from "@packages/ui/components/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@packages/ui/components/tooltip";
 import { Link } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
-import { Balancer } from "react-wrap-balancer";
 
 function LocationStatusTooltip({ location }: { location: PartialLocation }) {
   let className: string;
@@ -57,16 +56,14 @@ export function Footer() {
             <IForgeLogo className="w-[200px] md:w-[250px] hover:opacity-75 transition-all" />
           </Link>
 
-          <p className="mt-3">
-            <Balancer>
+          <p className="mt-3 text-balance">
               iForge Makerspace at the University of Sheffield is the place to design and create, offering tools and
               resources for students and staff to bring their ideas to life
-            </Balancer>
           </p>
         </div>
         <div className="flex flex-col gap-2 w-full md:w-auto">
           <h5 className="text-2xl font-bold font-futura">Opening Hours</h5>
-          <Balancer ratio="0.5">Open weekdays, subject to exams and holidays</Balancer>
+          <p className="text-balance">Open weekdays, subject to exams and holidays</p>
           {locationStatuses && (
             <table className="w-full border-collapse items-center flex">
               <tbody className="w-full">

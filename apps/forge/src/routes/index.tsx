@@ -15,7 +15,6 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import React from "react";
 import { useEffect, useRef, useState } from "react";
-import { Balancer } from "react-wrap-balancer";
 
 type FAQItem = {
   question: string;
@@ -397,9 +396,9 @@ function renderLocationCard(header: React.ReactNode) {
       <div className="absolute bottom-28 left-0 flex items-center justify-center">
         <h1 className="text-white font-bold flex-col max-w-[75%] text-left">
           <div className="flex items-center text-3xl pb-2">{header}</div>
-          <Balancer className="text-xl font-light" key={1}>
+          <p className="text-xl font-light text-balance">
             {value.text}
-          </Balancer>
+          </p>
         </h1>
       </div>
     </div>
@@ -427,11 +426,11 @@ const LocationCards = () => {
   return (
     <div className="relative h-[85vh]">
       <div className="snap-y snap-mandatory h-[85vh] overflow-y-scroll hide-scrollbar sm:overflow-y-scroll" ref={ref}>
-          {mainspaceCards}
-          {heartspaceCards}
-        </div>
-      <DotIndicator count={count} current={current} orientation="vertical" />
+        {mainspaceCards}
+        {heartspaceCards}
       </div>
+      <DotIndicator count={count} current={current} orientation="vertical" />
+    </div>
   );
 };
 
@@ -464,18 +463,18 @@ const IndexComponent = () => {
         <IForgeLogo className="w-96 h-[138px] pointer-events-none" />
       </div>
       <h2>
-        <Balancer className="mx-14 text-4xl mb-2 font-futura">
+        <p className="mx-14 text-4xl mb-2 font-futura text-balance">
           The University of Sheffield's iForge is the UK's first student-led makerspace. We believe in learning through
           making.
-        </Balancer>
+        </p>
       </h2>
       <div className="relative flex h-fit w-full flex-col items-center justify-center rounded-md mb-4">
         <ImageCarousel />
       </div>
       <h3>
-        <Balancer className="mx-14 text-2xl mt-8 mb-4">
+        <p className="mx-14 text-2xl mt-8 mb-4 text-balance">
           Join us to collaborate, create, and innovate through hands-on making and learning.
-        </Balancer>
+        </p>
       </h3>
       <Separator className="my-8" />
       <h2 className="text-3xl font-bold mx-14 mb-8 font-futura">Our Locations</h2>
@@ -485,8 +484,8 @@ const IndexComponent = () => {
       <div className="px-14">
         <Card className="flex-col w-full">
           <CardHeader className="font-bold text-center text-3xl font-futura">Sign Up Now!</CardHeader>
-          <CardDescription className="pb-4 flex justify-center">
-            <Balancer className="flex text-lg justify-center">
+          <CardDescription className="p-4 pt-0 mx-auto">
+            <p className="flex text-lg text-balance">
               It's easy:
               <Timeline>
                 {[
@@ -504,7 +503,7 @@ const IndexComponent = () => {
                   </TimelineItem>
                 ))}
               </Timeline>
-            </Balancer>
+            </p>
           </CardDescription>
           <CardContent className="not-prose mx-auto flex items-center gap-2 justify-center">
             <Link to="/auth/login">
