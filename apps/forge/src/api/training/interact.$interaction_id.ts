@@ -31,21 +31,18 @@ export const interact = auth
     }),
   )
   .handler(
-    async ({ input: { session_id, interaction_id, answers }, context: { tx } }): Promise<InteractionResponse> => {
+    async ({
+      input: { session_id, interaction_id, answers },
+      context: { tx, $user },
+    }): Promise<InteractionResponse> => {
       // TODO per-session locks to prevent funny things happening
       const session = e.assert_exists(
-        e.select(e.training.Session, (session) => ({
-          training: true,
-          index: true,
-          filter_single: e.op(e.op(session.id, "=", e.uuid(session_id)), "and", e.op(session.user, "=", e.user)),
-        })),
+        e.select(e.training.Session, () => ({ filter_single: { id: session_id } })),
       );
 
       // validate the response
-      const selector = e.shape(e.training.Interactable, (interactable) => ({
-        filter_single: e.all(
-          e.set(e.op(interactable.id, "=", e.uuid(interaction_id)), e.op(interactable.index, "=", session.index)),
-        ),
+      const selector = e.shape(e.training.Interactable, () => ({
+        filter_single: { id: interaction_id },
       }));
       if (answers) {
         // sets are ordered so we need to ensure they are sorted
@@ -75,7 +72,7 @@ export const interact = auth
 
       if (next_section === null) {
         await e
-          .update(e.user, (user) => ({
+          .update($user, (user) => ({
             set: {
               training: e.op(
                 e.op(
