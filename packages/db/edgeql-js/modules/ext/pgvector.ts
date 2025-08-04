@@ -74,48 +74,102 @@ function l2_normalize(...args: any[]) {
   }) as any;
 };
 
-type subvectorλFuncExpr<
+type taxicab_distanceλFuncExpr<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$halfvec>>,
-  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
-  P3 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
+  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<$halfvec>>,
 > = $.$expr_Function<
-  $halfvec, $.cardutil.multiplyCardinalities<$.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.paramCardinality<P2>>, $.cardutil.paramCardinality<P3>>
+  _std.$number, $.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.paramCardinality<P2>>
 >;
-type subvectorλFuncExpr2<
+type taxicab_distanceλFuncExpr2<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$sparsevec>>,
+  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<$sparsevec>>,
+> = $.$expr_Function<
+  _std.$number, $.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.paramCardinality<P2>>
+>;
+type taxicab_distanceλFuncExpr3<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$vectorλICastableTo>>,
-  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
-  P3 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
+  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<$vectorλICastableTo>>,
 > = $.$expr_Function<
-  $vector, $.cardutil.multiplyCardinalities<$.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.paramCardinality<P2>>, $.cardutil.paramCardinality<P3>>
+  _std.$number, $.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.paramCardinality<P2>>
 >;
-function subvector<
+function taxicab_distance<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$halfvec>>,
-  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
-  P3 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
+  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<$halfvec>>,
 >(
   a: P1,
-  i: P2,
-  len: P3,
-): subvectorλFuncExpr<P1, P2, P3>;
-function subvector<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$vectorλICastableTo>>,
-  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
-  P3 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
+  b: P2,
+): taxicab_distanceλFuncExpr<P1, P2>;
+function taxicab_distance<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$sparsevec>>,
+  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<$sparsevec>>,
 >(
   a: P1,
-  i: P2,
-  len: P3,
-): subvectorλFuncExpr2<P1, P2, P3>;
-function subvector(...args: any[]) {
-  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('ext::pgvector::subvector', args, _.spec, [
-    {args: [{typeId: "4ba84534-188e-43b4-a7ce-cea2af0f405b", optional: false, setoftype: false, variadic: false}, {typeId: "00000000-0000-0000-0000-0000000001ff", optional: false, setoftype: false, variadic: false}, {typeId: "00000000-0000-0000-0000-0000000001ff", optional: false, setoftype: false, variadic: false}], returnTypeId: "4ba84534-188e-43b4-a7ce-cea2af0f405b"},
-    {args: [{typeId: "9565dd88-04f5-11ee-a691-0b6ebe179825", optional: false, setoftype: false, variadic: false}, {typeId: "00000000-0000-0000-0000-0000000001ff", optional: false, setoftype: false, variadic: false}, {typeId: "00000000-0000-0000-0000-0000000001ff", optional: false, setoftype: false, variadic: false}], returnTypeId: "9565dd88-04f5-11ee-a691-0b6ebe179825"},
+  b: P2,
+): taxicab_distanceλFuncExpr2<P1, P2>;
+function taxicab_distance<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$vectorλICastableTo>>,
+  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<$vectorλICastableTo>>,
+>(
+  a: P1,
+  b: P2,
+): taxicab_distanceλFuncExpr3<P1, P2>;
+function taxicab_distance(...args: any[]) {
+  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('ext::pgvector::taxicab_distance', args, _.spec, [
+    {args: [{typeId: "4ba84534-188e-43b4-a7ce-cea2af0f405b", optional: false, setoftype: false, variadic: false}, {typeId: "4ba84534-188e-43b4-a7ce-cea2af0f405b", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-0000000001ff"},
+    {args: [{typeId: "003e434d-cac2-430a-b238-fb39d73447d2", optional: false, setoftype: false, variadic: false}, {typeId: "003e434d-cac2-430a-b238-fb39d73447d2", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-0000000001ff"},
+    {args: [{typeId: "9565dd88-04f5-11ee-a691-0b6ebe179825", optional: false, setoftype: false, variadic: false}, {typeId: "9565dd88-04f5-11ee-a691-0b6ebe179825", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-0000000001ff"},
   ]);
   return _.syntax.$expressionify({
     __kind__: $.ExpressionKind.Function,
     __element__: returnType,
     __cardinality__: cardinality,
-    __name__: "ext::pgvector::subvector",
+    __name__: "ext::pgvector::taxicab_distance",
+    __args__: positionalArgs,
+    __namedargs__: namedArgs,
+  }) as any;
+};
+
+type euclidean_normλFuncExpr<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$halfvec>>,
+> = $.$expr_Function<
+  _std.$number, $.cardutil.paramCardinality<P1>
+>;
+type euclidean_normλFuncExpr2<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$sparsevec>>,
+> = $.$expr_Function<
+  _std.$number, $.cardutil.paramCardinality<P1>
+>;
+type euclidean_normλFuncExpr3<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$vectorλICastableTo>>,
+> = $.$expr_Function<
+  _std.$number, $.cardutil.paramCardinality<P1>
+>;
+function euclidean_norm<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$halfvec>>,
+>(
+  a: P1,
+): euclidean_normλFuncExpr<P1>;
+function euclidean_norm<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$sparsevec>>,
+>(
+  a: P1,
+): euclidean_normλFuncExpr2<P1>;
+function euclidean_norm<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$vectorλICastableTo>>,
+>(
+  a: P1,
+): euclidean_normλFuncExpr3<P1>;
+function euclidean_norm(...args: any[]) {
+  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('ext::pgvector::euclidean_norm', args, _.spec, [
+    {args: [{typeId: "4ba84534-188e-43b4-a7ce-cea2af0f405b", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-0000000001ff"},
+    {args: [{typeId: "003e434d-cac2-430a-b238-fb39d73447d2", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-0000000001ff"},
+    {args: [{typeId: "9565dd88-04f5-11ee-a691-0b6ebe179825", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-0000000001ff"},
+  ]);
+  return _.syntax.$expressionify({
+    __kind__: $.ExpressionKind.Function,
+    __element__: returnType,
+    __cardinality__: cardinality,
+    __name__: "ext::pgvector::euclidean_norm",
     __args__: positionalArgs,
     __namedargs__: namedArgs,
   }) as any;
@@ -286,102 +340,48 @@ function cosine_distance(...args: any[]) {
   }) as any;
 };
 
-type taxicab_distanceλFuncExpr<
+type subvectorλFuncExpr<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$halfvec>>,
-  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<$halfvec>>,
+  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
+  P3 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
 > = $.$expr_Function<
-  _std.$number, $.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.paramCardinality<P2>>
+  $halfvec, $.cardutil.multiplyCardinalities<$.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.paramCardinality<P2>>, $.cardutil.paramCardinality<P3>>
 >;
-type taxicab_distanceλFuncExpr2<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$sparsevec>>,
-  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<$sparsevec>>,
-> = $.$expr_Function<
-  _std.$number, $.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.paramCardinality<P2>>
->;
-type taxicab_distanceλFuncExpr3<
+type subvectorλFuncExpr2<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$vectorλICastableTo>>,
-  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<$vectorλICastableTo>>,
+  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
+  P3 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
 > = $.$expr_Function<
-  _std.$number, $.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.paramCardinality<P2>>
+  $vector, $.cardutil.multiplyCardinalities<$.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.paramCardinality<P2>>, $.cardutil.paramCardinality<P3>>
 >;
-function taxicab_distance<
+function subvector<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$halfvec>>,
-  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<$halfvec>>,
+  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
+  P3 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
 >(
   a: P1,
-  b: P2,
-): taxicab_distanceλFuncExpr<P1, P2>;
-function taxicab_distance<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$sparsevec>>,
-  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<$sparsevec>>,
->(
-  a: P1,
-  b: P2,
-): taxicab_distanceλFuncExpr2<P1, P2>;
-function taxicab_distance<
+  i: P2,
+  len: P3,
+): subvectorλFuncExpr<P1, P2, P3>;
+function subvector<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$vectorλICastableTo>>,
-  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<$vectorλICastableTo>>,
+  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
+  P3 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
 >(
   a: P1,
-  b: P2,
-): taxicab_distanceλFuncExpr3<P1, P2>;
-function taxicab_distance(...args: any[]) {
-  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('ext::pgvector::taxicab_distance', args, _.spec, [
-    {args: [{typeId: "4ba84534-188e-43b4-a7ce-cea2af0f405b", optional: false, setoftype: false, variadic: false}, {typeId: "4ba84534-188e-43b4-a7ce-cea2af0f405b", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-0000000001ff"},
-    {args: [{typeId: "003e434d-cac2-430a-b238-fb39d73447d2", optional: false, setoftype: false, variadic: false}, {typeId: "003e434d-cac2-430a-b238-fb39d73447d2", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-0000000001ff"},
-    {args: [{typeId: "9565dd88-04f5-11ee-a691-0b6ebe179825", optional: false, setoftype: false, variadic: false}, {typeId: "9565dd88-04f5-11ee-a691-0b6ebe179825", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-0000000001ff"},
+  i: P2,
+  len: P3,
+): subvectorλFuncExpr2<P1, P2, P3>;
+function subvector(...args: any[]) {
+  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('ext::pgvector::subvector', args, _.spec, [
+    {args: [{typeId: "4ba84534-188e-43b4-a7ce-cea2af0f405b", optional: false, setoftype: false, variadic: false}, {typeId: "00000000-0000-0000-0000-0000000001ff", optional: false, setoftype: false, variadic: false}, {typeId: "00000000-0000-0000-0000-0000000001ff", optional: false, setoftype: false, variadic: false}], returnTypeId: "4ba84534-188e-43b4-a7ce-cea2af0f405b"},
+    {args: [{typeId: "9565dd88-04f5-11ee-a691-0b6ebe179825", optional: false, setoftype: false, variadic: false}, {typeId: "00000000-0000-0000-0000-0000000001ff", optional: false, setoftype: false, variadic: false}, {typeId: "00000000-0000-0000-0000-0000000001ff", optional: false, setoftype: false, variadic: false}], returnTypeId: "9565dd88-04f5-11ee-a691-0b6ebe179825"},
   ]);
   return _.syntax.$expressionify({
     __kind__: $.ExpressionKind.Function,
     __element__: returnType,
     __cardinality__: cardinality,
-    __name__: "ext::pgvector::taxicab_distance",
-    __args__: positionalArgs,
-    __namedargs__: namedArgs,
-  }) as any;
-};
-
-type euclidean_normλFuncExpr<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$halfvec>>,
-> = $.$expr_Function<
-  _std.$number, $.cardutil.paramCardinality<P1>
->;
-type euclidean_normλFuncExpr2<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$sparsevec>>,
-> = $.$expr_Function<
-  _std.$number, $.cardutil.paramCardinality<P1>
->;
-type euclidean_normλFuncExpr3<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$vectorλICastableTo>>,
-> = $.$expr_Function<
-  _std.$number, $.cardutil.paramCardinality<P1>
->;
-function euclidean_norm<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$halfvec>>,
->(
-  a: P1,
-): euclidean_normλFuncExpr<P1>;
-function euclidean_norm<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$sparsevec>>,
->(
-  a: P1,
-): euclidean_normλFuncExpr2<P1>;
-function euclidean_norm<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$vectorλICastableTo>>,
->(
-  a: P1,
-): euclidean_normλFuncExpr3<P1>;
-function euclidean_norm(...args: any[]) {
-  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('ext::pgvector::euclidean_norm', args, _.spec, [
-    {args: [{typeId: "4ba84534-188e-43b4-a7ce-cea2af0f405b", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-0000000001ff"},
-    {args: [{typeId: "003e434d-cac2-430a-b238-fb39d73447d2", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-0000000001ff"},
-    {args: [{typeId: "9565dd88-04f5-11ee-a691-0b6ebe179825", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-0000000001ff"},
-  ]);
-  return _.syntax.$expressionify({
-    __kind__: $.ExpressionKind.Function,
-    __element__: returnType,
-    __cardinality__: cardinality,
-    __name__: "ext::pgvector::euclidean_norm",
+    __name__: "ext::pgvector::subvector",
     __args__: positionalArgs,
     __namedargs__: namedArgs,
   }) as any;
@@ -421,12 +421,12 @@ type __defaultExports = {
   "vector": typeof vector;
   "Config": typeof Config;
   "l2_normalize": typeof l2_normalize;
-  "subvector": typeof subvector;
+  "taxicab_distance": typeof taxicab_distance;
+  "euclidean_norm": typeof euclidean_norm;
   "euclidean_distance": typeof euclidean_distance;
   "neg_inner_product": typeof neg_inner_product;
   "cosine_distance": typeof cosine_distance;
-  "taxicab_distance": typeof taxicab_distance;
-  "euclidean_norm": typeof euclidean_norm;
+  "subvector": typeof subvector;
   "set_probes": typeof set_probes
 };
 const __defaultExports: __defaultExports = {
@@ -435,12 +435,12 @@ const __defaultExports: __defaultExports = {
   "vector": vector,
   "Config": Config,
   "l2_normalize": l2_normalize,
-  "subvector": subvector,
+  "taxicab_distance": taxicab_distance,
+  "euclidean_norm": euclidean_norm,
   "euclidean_distance": euclidean_distance,
   "neg_inner_product": neg_inner_product,
   "cosine_distance": cosine_distance,
-  "taxicab_distance": taxicab_distance,
-  "euclidean_norm": euclidean_norm,
+  "subvector": subvector,
   "set_probes": set_probes
 };
 export default __defaultExports;

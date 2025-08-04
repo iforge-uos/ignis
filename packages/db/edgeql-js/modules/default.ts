@@ -4,78 +4,148 @@ import * as $ from "../reflection";
 import * as _ from "../imports";
 import type * as _std from "./std";
 import type * as _users from "./users";
-export type $CreatedAtλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
-  "created_at": $.PropertyDesc<_std.$datetime, $.Cardinality.One, false, false, true, true>;
-}>;
-type $CreatedAt = $.ObjectType<"default::CreatedAt", $CreatedAtλShape, null, [
-  ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
-], "users::User" | "default::user" | "event::Event" | "notification::Notification" | "notification::AuthoredNotification" | "notification::MailingList" | "notification::SystemNotification" | "sign_in::Agreement" | "sign_in::Location" | "sign_in::QueuePlace" | "sign_in::Reason" | "sign_in::SignIn" | "sign_in::UserRegistration" | "tools::Booking" | "training::Session" | "training::Training" | "users::Infraction" | "users::Integration" | "users::Rep">;
+export type $CreatedAtλShape = $.typeutil.flatten<
+  _std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
+    created_at: $.PropertyDesc<_std.$datetime, $.Cardinality.One, false, false, true, true>;
+  }
+>;
+type $CreatedAt = $.ObjectType<
+  "default::CreatedAt",
+  $CreatedAtλShape,
+  null,
+  [..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588["__exclusives__"]],
+  | "users::User"
+  | "default::user"
+  | "event::Event"
+  | "notification::Notification"
+  | "notification::AuthoredNotification"
+  | "notification::MailingList"
+  | "notification::SystemNotification"
+  | "printing::PrintAuditEntry"
+  | "printing::PrintHistory"
+  | "printing::PrinterAuditEntry"
+  | "sign_in::Agreement"
+  | "sign_in::Location"
+  | "sign_in::QueuePlace"
+  | "sign_in::Reason"
+  | "sign_in::SignIn"
+  | "sign_in::UserRegistration"
+  | "tools::Booking"
+  | "training::Session"
+  | "training::Training"
+  | "users::Infraction"
+  | "users::Integration"
+  | "users::Rep"
+>;
 const $CreatedAt = $.makeType<$CreatedAt>(_.spec, "29bb1669-f86c-11ee-822f-63593ae3e634", _.syntax.literal);
 
-const CreatedAt: $.$expr_PathNode<$.TypeSet<$CreatedAt, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($CreatedAt, $.Cardinality.Many), null);
+const CreatedAt: $.$expr_PathNode<$.TypeSet<$CreatedAt, $.Cardinality.Many>, null> = _.syntax.$PathNode(
+  $.$toSet($CreatedAt, $.Cardinality.Many),
+  null,
+);
 
-export type $AuditableλShape = $.typeutil.flatten<$CreatedAtλShape & {
-  "updated_at": $.PropertyDesc<_std.$datetime, $.Cardinality.One, false, false, false, true>;
-}>;
-type $Auditable = $.ObjectType<"default::Auditable", $AuditableλShape, null, [
-  ...$CreatedAt['__exclusives__'],
-], "users::User" | "default::user" | "notification::Notification" | "notification::AuthoredNotification" | "notification::MailingList" | "notification::SystemNotification" | "sign_in::Agreement" | "sign_in::Location" | "tools::Booking" | "training::Session" | "training::Training" | "users::Integration" | "users::Rep">;
+export type $AuditableλShape = $.typeutil.flatten<
+  $CreatedAtλShape & {
+    updated_at: $.PropertyDesc<_std.$datetime, $.Cardinality.One, false, false, false, true>;
+  }
+>;
+type $Auditable = $.ObjectType<
+  "default::Auditable",
+  $AuditableλShape,
+  null,
+  [...$CreatedAt["__exclusives__"]],
+  | "users::User"
+  | "default::user"
+  | "notification::Notification"
+  | "notification::AuthoredNotification"
+  | "notification::MailingList"
+  | "notification::SystemNotification"
+  | "sign_in::Agreement"
+  | "sign_in::Location"
+  | "tools::Booking"
+  | "training::Session"
+  | "training::Training"
+  | "users::Integration"
+  | "users::Rep"
+>;
 const $Auditable = $.makeType<$Auditable>(_.spec, "29bd512f-f86c-11ee-bb9f-9fa1f6cbb17a", _.syntax.literal);
 
-const Auditable: $.$expr_PathNode<$.TypeSet<$Auditable, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Auditable, $.Cardinality.Many), null);
+const Auditable: $.$expr_PathNode<$.TypeSet<$Auditable, $.Cardinality.Many>, null> = _.syntax.$PathNode(
+  $.$toSet($Auditable, $.Cardinality.Many),
+  null,
+);
 
-export type $TimedλShape = $.typeutil.flatten<$CreatedAtλShape & {
-  "ends_at": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne, false, false, false, false>;
-  "duration": $.PropertyDesc<_std.$duration, $.Cardinality.One, false, true, false, false>;
-}>;
-type $Timed = $.ObjectType<"default::Timed", $TimedλShape, null, [
-  ...$CreatedAt['__exclusives__'],
-], "sign_in::SignIn">;
+export type $TimedλShape = $.typeutil.flatten<
+  $CreatedAtλShape & {
+    ends_at: $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne, false, false, false, false>;
+    duration: $.PropertyDesc<_std.$duration, $.Cardinality.One, false, true, false, false>;
+  }
+>;
+type $Timed = $.ObjectType<"default::Timed", $TimedλShape, null, [...$CreatedAt["__exclusives__"]], "sign_in::SignIn">;
 const $Timed = $.makeType<$Timed>(_.spec, "2a0ef0e5-f86c-11ee-b392-bb6d91c9ab55", _.syntax.literal);
 
-const Timed: $.$expr_PathNode<$.TypeSet<$Timed, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Timed, $.Cardinality.Many), null);
+const Timed: $.$expr_PathNode<$.TypeSet<$Timed, $.Cardinality.Many>, null> = _.syntax.$PathNode(
+  $.$toSet($Timed, $.Cardinality.Many),
+  null,
+);
 
-export type $userλShape = $.typeutil.flatten<_users.$UserλShape & {
-}>;
-type $user = $.ObjectType<"default::user", $userλShape, null, [
-  ..._users.$User['__exclusives__'],
-], "default::user">;
+export type $userλShape = $.typeutil.flatten<_users.$UserλShape & {}>;
+type $user = $.ObjectType<"default::user", $userλShape, null, [..._users.$User["__exclusives__"]], "default::user">;
 const $user = $.makeType<$user>(_.spec, "f872e3be-e827-11ef-8e98-513f26e778c2", _.syntax.literal);
 
-const user: $.$expr_PathNode<$.TypeSet<$user, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($user, $.Cardinality.Many), null);
+const user: $.$expr_PathNode<$.TypeSet<$user, $.Cardinality.Many>, null> = _.syntax.$PathNode(
+  $.$toSet($user, $.Cardinality.Many),
+  null,
+);
 
-const $default__globals: {  INFRACTIONS_WEBHOOK_URL: _.syntax.$expr_Global<
-              // "default::INFRACTIONS_WEBHOOK_URL",
-              _std.$str,
-              $.Cardinality.AtMostOne
-              >,  user: _.syntax.$expr_Global<
-              // "default::user",
-              $user,
-              $.Cardinality.AtMostOne
-              >} = {  INFRACTIONS_WEBHOOK_URL: _.syntax.makeGlobal(
-              "default::INFRACTIONS_WEBHOOK_URL",
-              $.makeType(_.spec, "00000000-0000-0000-0000-000000000101", _.syntax.literal),
-              $.Cardinality.AtMostOne) as any,  user: _.syntax.makeGlobal(
-              "default::user",
-              $.makeType(_.spec, "f872e3be-e827-11ef-8e98-513f26e778c2", _.syntax.literal),
-              $.Cardinality.AtMostOne) as any};
-
-
+const $default__globals: {
+  CDN_URL: _.syntax.$expr_Global<
+    // "default::CDN_URL",
+    _std.$str,
+    $.Cardinality.AtMostOne
+  >;
+  INFRACTIONS_WEBHOOK_URL: _.syntax.$expr_Global<
+    // "default::INFRACTIONS_WEBHOOK_URL",
+    _std.$str,
+    $.Cardinality.AtMostOne
+  >;
+  user: _.syntax.$expr_Global<
+    // "default::user",
+    $user,
+    $.Cardinality.AtMostOne
+  >;
+} = {
+  CDN_URL: _.syntax.makeGlobal(
+    "default::CDN_URL",
+    $.makeType(_.spec, "00000000-0000-0000-0000-000000000101", _.syntax.literal),
+    $.Cardinality.AtMostOne,
+  ) as any,
+  INFRACTIONS_WEBHOOK_URL: _.syntax.makeGlobal(
+    "default::INFRACTIONS_WEBHOOK_URL",
+    $.makeType(_.spec, "00000000-0000-0000-0000-000000000101", _.syntax.literal),
+    $.Cardinality.AtMostOne,
+  ) as any,
+  user: _.syntax.makeGlobal(
+    "default::user",
+    $.makeType(_.spec, "f872e3be-e827-11ef-8e98-513f26e778c2", _.syntax.literal),
+    $.Cardinality.AtMostOne,
+  ) as any,
+};
 
 export { $CreatedAt, CreatedAt, $Auditable, Auditable, $Timed, Timed, $user, user };
 
 type __defaultExports = {
-  "CreatedAt": typeof CreatedAt;
-  "Auditable": typeof Auditable;
-  "Timed": typeof Timed;
-  "user": typeof user;
-  "global": typeof $default__globals
+  CreatedAt: typeof CreatedAt;
+  Auditable: typeof Auditable;
+  Timed: typeof Timed;
+  user: typeof user;
+  global: typeof $default__globals;
 };
 const __defaultExports: __defaultExports = {
-  "CreatedAt": CreatedAt,
-  "Auditable": Auditable,
-  "Timed": Timed,
-  "user": user,
-  "global": $default__globals
+  CreatedAt: CreatedAt,
+  Auditable: Auditable,
+  Timed: Timed,
+  user: user,
+  global: $default__globals,
 };
 export default __defaultExports;

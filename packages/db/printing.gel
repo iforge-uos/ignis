@@ -1,60 +1,205 @@
-# module printing {
-#     type Printer {
-#         name: str
-#         hostname: str
-#         remote_ip: str
-#         status: PrinterStatus
-#         type: PLA | TPU | PETG | RESIN
-#         location
-#         prints
-#     }
+module printing {
+    scalar type Type extending enum<
+        PLA,
+        TPU,
+        PETG,
+        RESIN,
+    >;
 
-#     enum PrinterStatus {
-#         disabled
-#         disconnected
-#         idle
-#         printing { print }
-#         failed { reason, notes }
-#     }
+    abstract type PrinterStatus;  # discriminated union
+    module printer_status {
+        type Disabled extending printing::PrinterStatus;
 
-#     type Print {
-#         required name: str
-#         required duration
-#         required mass: float32  # round(mass, 2) if we get it
-#         required author: users::User
-#         required approved_by: users::Rep
-#         multi on: PrintHistory;
-#         required gcode_path := "\(default::CDN_URL)/prints/\(.id)/.gcode"  # prepend with CDN_URL
-#         required stl_path :=  "\(default::CDN_URL)/prints/\(.id)/.stl"
-#     }
+        type Disconnected extending printing::PrinterStatus;
 
-#     type PrintHistory extending default::Auditable {
-#         required printer: Printer;
-#         required status: PrintStatus;
-#     }
+        type Idle extending printing::PrinterStatus;
 
-#     enum PrintStatus {
-#         complete
-#         printing { print }
-#         failed { reason, notes }
-#         queued
-#     }
+        type Printing extending printing::PrinterStatus {
+            required print: printing::Print;
+        }
 
-#     type AuditEntry {
-#         created_at
-#         printer
-#         action
-#         print
-#         reason: str
-#         notes: str
-#     }
+        scalar type FailureReason extending enum<
+            # Main Controller & Electronics
+            MAIN_CONTROLLER_BOARD,
+            POWER_SUPPLY,
+            DISPLAY_BOARD,
+            WIFI_MODULE,
 
-#     enum AuditEntryAction {
-#         print_complete
-#         print_fail
-#         print_cancel
-#         offline
-#         online
-#         maintenance
-#     }
-# }
+            # Temperature Sensors & Heating
+            HOTEND_THERMISTOR,
+            HEATBED_THERMISTOR,
+            HOTEND_HEATER_CARTRIDGE,
+            HEATBED_HEATING_ELEMENT,
+            HEATER_BLOCK,
+
+            # Motors & Motion System,
+            EXTRUDER_MOTOR,
+            X_AXIS_MOTOR,
+            Y_AXIS_MOTOR,
+            Z_AXIS_MOTOR,
+            LINEAR_RAILS,
+            LINEAR_BEARINGS,
+            BELT_SYSTEM,
+            PULLEYS,
+            LEAD_SCREW_NUT,
+
+            # Cooling System
+            HOTEND_FAN,
+            PART_COOLING_FAN,
+            CHAMBER_FAN,
+            POWER_SUPPLY_FAN,
+
+            # Extruder & Hotend
+            NOZZLE,
+            HEAT_BREAK,
+            HEAT_SINK,
+            EXTRUDER_GEARS,
+            BOWDEN_TUBE,
+
+            # Sensors & Detection
+            FILAMENT_SENSOR,
+            BED_LEVELING_SENSOR,
+            DOOR_SENSOR,
+            CRASH_DETECTION_SENSOR,
+            POWER_PANIC_SENSOR,
+
+            # Print Bed & Levelling
+            PRINT_BED_SURFACE,
+            BED_LEVELLING_SPRINGS,
+            BED_MOUNTING_HARDWARE,
+
+            # Wiring & Connections
+            HOTEND_WIRING,
+            HEATBED_WIRING,
+            MOTOR_WIRING,
+            MAIN_POWER_CABLE,
+            USB_CONNECTION,
+
+            # Structural Components
+            FRAME_COMPONENTS,
+            SMOOTH_RODS,
+            ENCLOSURE_PANELS,
+            FILAMENT_FEEDING,
+        >;
+
+        type Failed extending printing::PrinterStatus {
+            required reason: FailureReason;
+            required note: str;
+        }
+    }
+
+
+    type Printer {
+        required name: str;
+        required remote_ip: str;
+        required status: PrinterStatus;
+        required multi type: Type;  # multi as printers print exotics (TPU and PETG and this is the easiest way to represent this)
+        required location: sign_in::Location;
+        multi prints := (
+            select Print filter .`on`.printer = __source__
+        )
+    }
+
+    type Print {
+        required name: str;
+        required type: Type;
+        required duration: duration;
+        required mass: float32;  # only 2dps
+        required author: users::User;
+        required approved_by: users::Rep;
+        multi `on`: PrintHistory;
+        required gcode_path := "\(assert_exists(global default::CDN_URL))/prints/\(.id)/.gcode";
+        required stl_path :=  "\(assert_exists(global default::CDN_URL))/prints/\(.id)/.stl";
+    }
+
+    type PrintHistory extending default::CreatedAt {
+        required printer: Printer;
+        required status: PrintStatus;
+
+        index on (.printer);
+
+        trigger log_insert after insert for each do (
+            with print := __new__.<`on`[is Print],
+            insert PrintAuditEntry {
+                printer := __new__.printer,
+                status := __new__.status,
+                print := assert_single(assert_exists(print, message := "PrintHistory was not created as a sub-insert")),
+            }
+        );
+
+        trigger log_update after update for each do (
+            with print := __new__.<`on`[is Print],
+            insert PrintAuditEntry {
+                printer := __new__.printer,
+                status := __new__.status,
+                print := assert_single(assert_exists(print)),
+            }
+        );
+    }
+
+    abstract type PrintStatus;  # another discriminated union
+    module print_status {
+        type Queued extending printing::PrintStatus;
+
+        type Printing extending printing::PrintStatus {
+            required print: printing::Print;
+        }
+
+        type Complete extending printing::PrintStatus;
+
+        type Cancelled extending printing::PrintStatus;
+
+        scalar type FailureReason extending enum<
+            NO_EXTRUSION_AT_PRINT_START,
+            POOR_BED_ADHESION,
+            UNDER_EXTRUSION,
+            OVER_EXTRUSION,
+            GAPS_IN_TOP_LAYERS,
+            STRINGING_AND_OOZING,
+            OVERHEATING,
+            LAYER_SHIFTING,
+            LAYER_SEPARATION_AND_SPLITTING,
+            FILAMENT_GRINDING,
+            EXTRUDER_CLOG,
+            EXTRUSION_STOPS_MID_PRINT,
+            WEAK_INFILL,
+            BLOBS_AND_ZITS,
+            GAPS_BETWEEN_INFILL_AND_PERIMETER,
+            CORNER_CURLING_AND_ROUGHNESS,
+            TOP_SURFACE_SCARRING,
+            CORNER_GAPS_IN_BOTTOM_LAYER,
+            LAYER_LINES_ON_SIDES,
+            VIBRATION_AND_RINGING,
+            THIN_WALL_GAPS,
+            SMALL_FEATURE_LOSS,
+            INCONSISTENT_EXTRUSION,
+            WARPING,
+            POOR_OVERHANG_QUALITY,
+            DIMENSIONAL_INACCURACY,
+            POOR_BRIDGING,
+            FILAMENT_FEEDING,
+            FILAMENT_RAN_OUT,
+            NOT_A_CLUE,
+        >;
+
+        type Failed extending printing::PrintStatus {
+            required reason: FailureReason;
+            note: str;
+        }
+    }
+
+    abstract type AuditEntry extending default::CreatedAt {
+        required printer: Printer;
+        required status: PrinterStatus | PrintStatus;
+
+        index on ((.printer, .status))
+    }
+
+    type PrinterAuditEntry extending AuditEntry {
+        overloaded required status: PrinterStatus;
+    }
+    type PrintAuditEntry extending AuditEntry {
+        overloaded required status: PrintStatus;
+        required print: Print;
+    }
+}

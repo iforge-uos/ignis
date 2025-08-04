@@ -80,9 +80,9 @@ const $Notification = $.makeType<$Notification>(_.spec, "2a3e3d92-f86c-11ee-8262
 const Notification: $.$expr_PathNode<$.TypeSet<$Notification, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Notification, $.Cardinality.Many), null);
 
 export type $AuthoredNotificationλShape = $.typeutil.flatten<$NotificationλShape & {
+  "approved_on": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne, false, false, false, false>;
   "approved_by": $.LinkDesc<_users.$Rep, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
   "author": $.LinkDesc<_users.$User, $.Cardinality.One, {}, false, false,  false, false>;
-  "approved_on": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne, false, false, false, false>;
 }>;
 type $AuthoredNotification = $.ObjectType<"notification::AuthoredNotification", $AuthoredNotificationλShape, null, [
   ...$Notification['__exclusives__'],

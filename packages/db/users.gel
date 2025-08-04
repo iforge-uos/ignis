@@ -1,6 +1,7 @@
 module users {
     type User extending default::Auditable {
         required ucard_number: int32 {
+            annotation description := "The user's UCard number without the issue number (first 3 digits)";
             constraint exclusive;
         };
         required username: str {

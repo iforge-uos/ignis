@@ -55,7 +55,6 @@ export namespace ai_rep {
 export namespace cfg {
   export interface ConfigObject extends std.BaseObject {}
   export interface AbstractConfig extends ConfigObject {
-    "extensions": ExtensionConfig[];
     "session_idle_timeout": gel.Duration;
     "default_transaction_isolation": sys.TransactionIsolation;
     "default_transaction_access_mode": sys.TransactionAccessMode;
@@ -64,8 +63,6 @@ export namespace cfg {
     "query_execution_timeout": gel.Duration;
     "listen_port": number;
     "listen_addresses": string[];
-    "auth": Auth[];
-    "email_providers": EmailProviderConfig[];
     "current_email_provider_name"?: string | null;
     "allow_dml_in_functions"?: boolean | null;
     "allow_bare_ddl"?: AllowBareDDL | null;
@@ -89,13 +86,16 @@ export namespace cfg {
     "force_database_error"?: string | null;
     "_pg_prepared_statement_cache_size": number;
     "track_query_stats"?: QueryStatsOption | null;
+    "extensions": ExtensionConfig[];
+    "auth": Auth[];
+    "email_providers": EmailProviderConfig[];
   }
   export type AllowBareDDL = "AlwaysAllow" | "NeverAllow";
   export interface Auth extends ConfigObject {
     "priority": number;
     "user": string[];
-    "method"?: AuthMethod | null;
     "comment"?: string | null;
+    "method"?: AuthMethod | null;
   }
   export interface AuthMethod extends ConfigObject {
     "transports": ConnectionTransport[];
@@ -159,7 +159,8 @@ export namespace sys {
   }
   export type OutputFormat = "BINARY" | "JSON" | "JSON_ELEMENTS" | "NONE";
   export interface QueryStats extends ExternalObject {
-    "branch"?: Branch | null;
+    "stats_since"?: Date | null;
+    "minmax_stats_since"?: Date | null;
     "query"?: string | null;
     "query_type"?: QueryType | null;
     "tag"?: string | null;
@@ -186,8 +187,7 @@ export namespace sys {
     "mean_exec_time"?: gel.Duration | null;
     "stddev_exec_time"?: gel.Duration | null;
     "rows"?: number | null;
-    "stats_since"?: Date | null;
-    "minmax_stats_since"?: Date | null;
+    "branch"?: Branch | null;
   }
   export type QueryType = "EdgeQL" | "SQL";
   export interface Role extends SystemObject, schema.InheritingObject, schema.AnnotationSubject {
@@ -197,8 +197,8 @@ export namespace sys {
     "password"?: string | null;
     "permissions": string[];
     "branches": string[];
-    "member_of": Role[];
     "all_permissions": string[];
+    "member_of": Role[];
   }
   export type TransactionAccessMode = "ReadOnly" | "ReadWrite";
   export type TransactionDeferrability = "Deferrable" | "NotDeferrable";
@@ -224,8 +224,6 @@ export type Timed = $default.Timed;
 export type user = $default.user;
 export namespace users {
   export interface User extends $default.Auditable {
-    "identity": ext.auth.Identity;
-    "roles": Role[];
     "first_name": string;
     "last_name"?: string | null;
     "display_name": string;
@@ -235,6 +233,8 @@ export namespace users {
     "pronouns"?: string | null;
     "ucard_number": number;
     "username": string;
+    "roles": Role[];
+    "identity": ext.auth.Identity;
     "agreements_signed": sign_in.Agreement[];
     "infractions": Infraction[];
     "mailing_list_subscriptions": notification.MailingList[];
@@ -244,24 +244,24 @@ export namespace users {
     "bookings": tools.Booking[];
   }
   export interface Infraction extends $default.CreatedAt {
-    "user": User;
     "duration"?: gel.Duration | null;
     "ends_at"?: Date | null;
     "reason": string;
     "resolved": boolean;
     "type": InfractionType;
+    "user": User;
   }
   export type InfractionType = "WARNING" | "TEMP_BAN" | "PERM_BAN" | "RESTRICTION" | "TRAINING_ISSUE";
   export interface Integration extends $default.Auditable {
     "external_id": string;
     "platform": Platform;
-    "user": User;
     "external_email": string;
+    "user": User;
   }
   export type Platform = "DISCORD" | "GITHUB";
   export interface Rep extends User {
-    "teams": team.Team[];
     "status": RepStatus;
+    "teams": team.Team[];
     "supervisable_training": training.Training[];
   }
   export type RepStatus = "ACTIVE" | "BREAK" | "ALUMNI" | "FUTURE" | "REMOVED";
@@ -273,9 +273,9 @@ export namespace users {
     "default_value": string;
   }
   export interface UserSettingValue extends std.$Object {
+    "value": string;
     "template": SettingTemplate;
     "user": User;
-    "value": string;
   }
 }
 export namespace ext {
@@ -299,9 +299,6 @@ export namespace ext {
       "modified_at": Date;
     }
     export interface AuthConfig extends cfg.ExtensionConfig {
-      "providers": ProviderConfig[];
-      "ui"?: UIConfig | null;
-      "webhooks": WebhookConfig[];
       "app_name"?: string | null;
       "logo_url"?: string | null;
       "dark_logo_url"?: string | null;
@@ -309,6 +306,9 @@ export namespace ext {
       "auth_signing_key"?: string | null;
       "token_time_to_live"?: gel.Duration | null;
       "allowed_redirect_urls": string[];
+      "providers": ProviderConfig[];
+      "ui"?: UIConfig | null;
+      "webhooks": WebhookConfig[];
     }
     export interface AzureOAuthProvider extends OAuthProviderConfig {
       "name": string;
@@ -531,39 +531,39 @@ export namespace sign_in {
     "max_users": number;
     "out_of_hours_rep_multiplier": number;
     "queue_enabled": boolean;
-    "sign_ins": SignIn[];
-    "off_shift_reps": users.Rep[];
-    "on_shift_reps": users.Rep[];
-    "supervising_reps": users.Rep[];
-    "supervisable_training": training.Training[];
+    "in_hours_rep_multiplier": number;
     "queue_in_use": boolean;
     "status": LocationStatus;
-    "queued_users_that_can_sign_in": users.User[];
-    "in_hours_rep_multiplier": number;
     "can_sign_in": boolean;
     "max_count": number;
     "available_capacity": number;
     "queued": QueuePlace[];
+    "queued_users_that_can_sign_in": users.User[];
+    "sign_ins": SignIn[];
+    "on_shift_reps": users.Rep[];
+    "off_shift_reps": users.Rep[];
+    "supervising_reps": users.Rep[];
+    "supervisable_training": training.Training[];
   }
   export type LocationName = "MAINSPACE" | "HEARTSPACE";
   export type LocationStatus = "OPEN" | "SOON" | "CLOSED";
   export interface QueuePlace extends $default.CreatedAt {
-    "location": Location;
     "notified_at"?: Date | null;
     "ends_at"?: Date | null;
+    "location": Location;
     "user": users.User;
   }
   export interface Reason extends $default.CreatedAt {
+    "category": ReasonCategory;
     "name": string;
     "agreement"?: Agreement | null;
-    "category": ReasonCategory;
   }
   export type ReasonCategory = "UNIVERSITY_MODULE" | "CO_CURRICULAR_GROUP" | "PERSONAL_PROJECT" | "SOCIETY" | "REP_SIGN_IN" | "EVENT";
   export interface SignIn extends $default.Timed {
-    "location": Location;
-    "reason": Reason;
     "tools": string[];
     "signed_out": boolean;
+    "location": Location;
+    "reason": Reason;
     "user": users.User;
   }
   export interface UserRegistration extends $default.CreatedAt {
@@ -587,9 +587,9 @@ export namespace notification {
     "target": users.User | team.Team | event.Event | AllTarget | MailingList[];
   }
   export interface AuthoredNotification extends Notification {
+    "approved_on"?: Date | null;
     "approved_by"?: users.Rep | null;
     "author": users.User;
-    "approved_on"?: Date | null;
   }
   export type DeliveryMethod = "BANNER" | "EMAIL" | "TRAY" | "POPUP" | "DISCORD";
   export interface MailingList extends $default.Auditable {
@@ -623,8 +623,8 @@ export namespace training {
   }
   export interface Page extends TrainingPage {}
   export interface Question extends Interactable {
-    "answers": Answer[];
     "type": AnswerType;
+    "answers": Answer[];
   }
   export interface Session extends $default.Auditable {
     "index": number;
@@ -633,10 +633,8 @@ export namespace training {
     "user": users.User;
   }
   export interface Training extends $default.Auditable {
-    "rep"?: Training | null;
     "in_person": boolean;
     "locations": LocationName[];
-    "pages": TrainingPage[];
     "name": string;
     "compulsory": boolean;
     "description": string;
@@ -644,6 +642,8 @@ export namespace training {
     "expires_after"?: gel.Duration | null;
     "icon_url"?: string | null;
     "training_lockout"?: gel.Duration | null;
+    "rep"?: Training | null;
+    "pages": TrainingPage[];
     "questions": Question[];
     "sections": TrainingPage | Question[];
   }
@@ -654,32 +654,33 @@ export namespace tools {
     "starts_at": Date;
     "duration": gel.Duration;
     "cancelled"?: boolean | null;
-    "tool": Tool;
     "user": users.User;
+    "tool": Tool;
   }
   export type Selectability = "UNTRAINED" | "REVOKED" | "EXPIRED" | "REPS_UNTRAINED" | "IN_PERSON_MISSING";
   export type Status = "NOMINAL" | "IN_USE" | "OUT_OF_ORDER";
   export interface Tool extends std.$Object {
-    "is_bookable": boolean;
-    "status": Status;
     "min_booking_time"?: gel.Duration | null;
-    "location": sign_in.Location;
-    "training": training.Training[];
     "max_booking_daily"?: gel.Duration | null;
     "max_booking_weekly"?: gel.Duration | null;
     "name": string;
-    "bookings": Booking[];
     "quantity": number;
+    "is_bookable": boolean;
+    "status": Status;
+    "rep": training.Training;
+    "location": sign_in.Location;
+    "training": training.Training[];
+    "bookings": Booking[];
   }
 }
 export namespace event {
   export interface Event extends $default.CreatedAt {
+    "type": Type;
     "ends_at"?: Date | null;
     "starts_at": Date;
     "title": string;
-    "type": Type;
-    "organiser": users.User[];
     "description": string;
+    "organiser": users.User[];
     "attendees": users.User[];
     "interested": users.User[];
   }
@@ -690,9 +691,73 @@ export namespace team {
   export interface Team extends std.$Object {
     "description": string;
     "name": string;
-    "tag": string;
     "all_members": users.Rep[];
     "members": users.Rep[];
+  }
+}
+export namespace printing {
+  export interface AuditEntry extends $default.CreatedAt {
+    "status": PrintStatus | PrinterStatus;
+    "printer": Printer;
+  }
+  export interface Print extends std.$Object {
+    "stl_path": string;
+    "gcode_path": string;
+    "duration": gel.Duration;
+    "mass": number;
+    "name": string;
+    "type": Type;
+    "approved_by": users.Rep;
+    "author": users.User;
+    "on": PrintHistory[];
+  }
+  export interface PrintAuditEntry extends AuditEntry {
+    "status": PrintStatus;
+    "print": Print;
+  }
+  export interface PrintHistory extends $default.CreatedAt {
+    "printer": Printer;
+    "status": PrintStatus;
+  }
+  export interface PrintStatus extends std.$Object {}
+  export interface Printer extends std.$Object {
+    "name": string;
+    "remote_ip": string;
+    "type": Type[];
+    "location": sign_in.Location;
+    "status": PrinterStatus;
+    "prints": Print[];
+  }
+  export interface PrinterAuditEntry extends AuditEntry {
+    "status": PrinterStatus;
+  }
+  export interface PrinterStatus extends std.$Object {}
+  export type Type = "PLA" | "TPU" | "PETG" | "RESIN";
+  export namespace print_status {
+    export interface Cancelled extends printing.PrintStatus {}
+    export interface Complete extends printing.PrintStatus {}
+    export interface Failed extends printing.PrintStatus {
+      "note"?: string | null;
+      "reason": FailureReason;
+    }
+    export type FailureReason = "NO_EXTRUSION_AT_PRINT_START" | "POOR_BED_ADHESION" | "UNDER_EXTRUSION" | "OVER_EXTRUSION" | "GAPS_IN_TOP_LAYERS" | "STRINGING_AND_OOZING" | "OVERHEATING" | "LAYER_SHIFTING" | "LAYER_SEPARATION_AND_SPLITTING" | "FILAMENT_GRINDING" | "EXTRUDER_CLOG" | "EXTRUSION_STOPS_MID_PRINT" | "WEAK_INFILL" | "BLOBS_AND_ZITS" | "GAPS_BETWEEN_INFILL_AND_PERIMETER" | "CORNER_CURLING_AND_ROUGHNESS" | "TOP_SURFACE_SCARRING" | "CORNER_GAPS_IN_BOTTOM_LAYER" | "LAYER_LINES_ON_SIDES" | "VIBRATION_AND_RINGING" | "THIN_WALL_GAPS" | "SMALL_FEATURE_LOSS" | "INCONSISTENT_EXTRUSION" | "WARPING" | "POOR_OVERHANG_QUALITY" | "DIMENSIONAL_INACCURACY" | "POOR_BRIDGING" | "FILAMENT_FEEDING" | "FILAMENT_RAN_OUT" | "NOT_A_CLUE";
+    export interface Printing extends printing.PrintStatus {
+      "print": printing.Print;
+    }
+    export interface Queued extends printing.PrintStatus {}
+  }
+  export namespace printer_status {
+    export interface Disabled extends printing.PrinterStatus {}
+    export interface Disconnected extends printing.PrinterStatus {}
+    export interface Failed extends printing.PrinterStatus {
+      "note": string;
+      "reason": FailureReason;
+    }
+    export type FailureReason = "MAIN_CONTROLLER_BOARD" | "POWER_SUPPLY" | "DISPLAY_BOARD" | "WIFI_MODULE" | "HOTEND_THERMISTOR" | "HEATBED_THERMISTOR" | "HOTEND_HEATER_CARTRIDGE" | "HEATBED_HEATING_ELEMENT" | "HEATER_BLOCK" | "EXTRUDER_MOTOR" | "X_AXIS_MOTOR" | "Y_AXIS_MOTOR" | "Z_AXIS_MOTOR" | "LINEAR_RAILS" | "LINEAR_BEARINGS" | "BELT_SYSTEM" | "PULLEYS" | "LEAD_SCREW_NUT" | "HOTEND_FAN" | "PART_COOLING_FAN" | "CHAMBER_FAN" | "POWER_SUPPLY_FAN" | "NOZZLE" | "HEAT_BREAK" | "HEAT_SINK" | "EXTRUDER_GEARS" | "BOWDEN_TUBE" | "FILAMENT_SENSOR" | "BED_LEVELING_SENSOR" | "DOOR_SENSOR" | "CRASH_DETECTION_SENSOR" | "POWER_PANIC_SENSOR" | "PRINT_BED_SURFACE" | "BED_LEVELLING_SPRINGS" | "BED_MOUNTING_HARDWARE" | "HOTEND_WIRING" | "HEATBED_WIRING" | "MOTOR_WIRING" | "MAIN_POWER_CABLE" | "USB_CONNECTION" | "FRAME_COMPONENTS" | "SMOOTH_RODS" | "ENCLOSURE_PANELS" | "FILAMENT_FEEDING";
+    export interface Idle extends printing.PrinterStatus {}
+    export interface Printing extends printing.PrinterStatus {
+      "print": printing.Print;
+    }
   }
 }
 export namespace schema {
@@ -710,20 +775,20 @@ export namespace schema {
     "is_final": boolean;
   }
   export interface InheritingObject extends SubclassableObject {
+    "inherited_fields"?: string[] | null;
     "bases": InheritingObject[];
     "ancestors": InheritingObject[];
-    "inherited_fields"?: string[] | null;
   }
   export interface AnnotationSubject extends $Object {
     "annotations": Annotation[];
   }
   export interface AccessPolicy extends InheritingObject, AnnotationSubject {
-    "subject": ObjectType;
     "access_kinds": AccessKind[];
     "condition"?: string | null;
     "action": AccessPolicyAction;
     "expr"?: string | null;
     "errmessage"?: string | null;
+    "subject": ObjectType;
   }
   export type AccessPolicyAction = "Allow" | "Deny";
   export interface Alias extends AnnotationSubject {
@@ -741,30 +806,29 @@ export namespace schema {
   export interface PrimitiveType extends Type {}
   export interface CollectionType extends PrimitiveType {}
   export interface Array extends CollectionType {
-    "element_type": Type;
     "dimensions"?: number[] | null;
+    "element_type": Type;
   }
   export interface ArrayExprAlias extends Array {}
   export interface CallableObject extends AnnotationSubject {
+    "return_typemod"?: TypeModifier | null;
     "params": Parameter[];
     "return_type"?: Type | null;
-    "return_typemod"?: TypeModifier | null;
   }
   export type Cardinality = "One" | "Many";
   export interface VolatilitySubject extends $Object {
     "volatility"?: Volatility | null;
   }
   export interface Cast extends AnnotationSubject, VolatilitySubject {
-    "from_type"?: Type | null;
-    "to_type"?: Type | null;
     "allow_implicit"?: boolean | null;
     "allow_assignment"?: boolean | null;
+    "from_type"?: Type | null;
+    "to_type"?: Type | null;
   }
   export interface ConsistencySubject extends InheritingObject, AnnotationSubject {
     "constraints": Constraint[];
   }
   export interface Constraint extends CallableObject, InheritingObject {
-    "params": Parameter[];
     "expr"?: string | null;
     "subjectexpr"?: string | null;
     "finalexpr"?: string | null;
@@ -772,6 +836,7 @@ export namespace schema {
     "delegated"?: boolean | null;
     "except_expr"?: string | null;
     "subject"?: ConsistencySubject | null;
+    "params": Parameter[];
   }
   export interface Delta extends $Object {
     "parents": Delta[];
@@ -789,11 +854,11 @@ export namespace schema {
   }
   export interface FutureBehavior extends $Object {}
   export interface Global extends AnnotationSubject {
-    "target"?: Type | null;
     "required"?: boolean | null;
     "cardinality"?: Cardinality | null;
     "expr"?: string | null;
     "default"?: string | null;
+    "target"?: Type | null;
   }
   export interface Index extends InheritingObject, AnnotationSubject {
     "expr"?: string | null;
@@ -802,8 +867,8 @@ export namespace schema {
     "deferred"?: boolean | null;
     "active"?: boolean | null;
     "build_concurrently"?: boolean | null;
-    "params": Parameter[];
     "kwargs"?: {name: string, expr: string}[] | null;
+    "params": Parameter[];
   }
   export type IndexDeferrability = "Prohibited" | "Permitted" | "Required";
   export interface Pointer extends ConsistencySubject, AnnotationSubject {
@@ -820,21 +885,21 @@ export namespace schema {
     "rewrites": Rewrite[];
   }
   export interface Source extends $Object {
-    "indexes": Index[];
     "pointers": Pointer[];
+    "indexes": Index[];
   }
   export interface Link extends Pointer, Source {
-    "target"?: ObjectType | null;
-    "properties": Property[];
     "on_target_delete"?: TargetDeleteAction | null;
     "on_source_delete"?: SourceDeleteAction | null;
+    "target"?: ObjectType | null;
+    "properties": Property[];
   }
   export interface Migration extends AnnotationSubject, $Object {
-    "parents": Migration[];
+    "message"?: string | null;
     "script": string;
     "sdl"?: string | null;
-    "message"?: string | null;
     "generated_by"?: MigrationGeneratedBy | null;
+    "parents": Migration[];
   }
   export type MigrationGeneratedBy = "DevMode" | "DDLStatement";
   export interface Module extends AnnotationSubject, $Object {}
@@ -843,27 +908,27 @@ export namespace schema {
   }
   export interface MultiRangeExprAlias extends MultiRange {}
   export interface ObjectType extends Source, ConsistencySubject, InheritingObject, Type, AnnotationSubject {
-    "union_of": ObjectType[];
-    "intersection_of": ObjectType[];
-    "access_policies": AccessPolicy[];
-    "triggers": Trigger[];
     "compound_type": boolean;
     "is_compound_type": boolean;
+    "union_of": ObjectType[];
+    "intersection_of": ObjectType[];
     "links": Link[];
     "properties": Property[];
+    "access_policies": AccessPolicy[];
+    "triggers": Trigger[];
   }
   export interface Operator extends CallableObject, VolatilitySubject {
     "operator_kind"?: OperatorKind | null;
-    "abstract"?: boolean | null;
     "is_abstract"?: boolean | null;
+    "abstract"?: boolean | null;
   }
   export type OperatorKind = "Infix" | "Postfix" | "Prefix" | "Ternary";
   export interface Parameter extends $Object {
-    "type": Type;
     "typemod": TypeModifier;
     "kind": ParameterKind;
     "num": number;
     "default"?: string | null;
+    "type": Type;
   }
   export type ParameterKind = "VariadicParam" | "NamedOnlyParam" | "PositionalParam";
   export interface Permission extends AnnotationSubject {}
@@ -874,9 +939,9 @@ export namespace schema {
   }
   export interface RangeExprAlias extends Range {}
   export interface Rewrite extends InheritingObject, AnnotationSubject {
-    "subject": Pointer;
     "kind": TriggerKind;
     "expr": string;
+    "subject": Pointer;
   }
   export type RewriteKind = "Update" | "Insert";
   export interface ScalarType extends PrimitiveType, ConsistencySubject, AnnotationSubject {
@@ -888,12 +953,12 @@ export namespace schema {
   export type SplatStrategy = "Default" | "Explicit" | "Implicit";
   export type TargetDeleteAction = "Restrict" | "DeleteSource" | "Allow" | "DeferredRestrict";
   export interface Trigger extends InheritingObject, AnnotationSubject {
-    "subject": ObjectType;
+    "condition"?: string | null;
     "timing": TriggerTiming;
     "kinds": TriggerKind[];
     "scope": TriggerScope;
     "expr"?: string | null;
-    "condition"?: string | null;
+    "subject": ObjectType;
   }
   export type TriggerKind = "Update" | "Delete" | "Insert";
   export type TriggerScope = "All" | "Each";
@@ -903,8 +968,8 @@ export namespace schema {
     "element_types": TupleElement[];
   }
   export interface TupleElement extends std.BaseObject {
-    "type": Type;
     "name"?: string | null;
+    "type": Type;
   }
   export interface TupleExprAlias extends Tuple {}
   export type TypeModifier = "SetOfType" | "OptionalType" | "SingletonType";
@@ -1133,6 +1198,33 @@ export interface types {
   "team": {
     "Name": team.Name;
     "Team": team.Team;
+  };
+  "printing": {
+    "AuditEntry": printing.AuditEntry;
+    "Print": printing.Print;
+    "PrintAuditEntry": printing.PrintAuditEntry;
+    "PrintHistory": printing.PrintHistory;
+    "PrintStatus": printing.PrintStatus;
+    "Printer": printing.Printer;
+    "PrinterAuditEntry": printing.PrinterAuditEntry;
+    "PrinterStatus": printing.PrinterStatus;
+    "Type": printing.Type;
+    "print_status": {
+      "Cancelled": printing.print_status.Cancelled;
+      "Complete": printing.print_status.Complete;
+      "Failed": printing.print_status.Failed;
+      "FailureReason": printing.print_status.FailureReason;
+      "Printing": printing.print_status.Printing;
+      "Queued": printing.print_status.Queued;
+    };
+    "printer_status": {
+      "Disabled": printing.printer_status.Disabled;
+      "Disconnected": printing.printer_status.Disconnected;
+      "Failed": printing.printer_status.Failed;
+      "FailureReason": printing.printer_status.FailureReason;
+      "Idle": printing.printer_status.Idle;
+      "Printing": printing.printer_status.Printing;
+    };
   };
   "schema": {
     "AccessKind": schema.AccessKind;

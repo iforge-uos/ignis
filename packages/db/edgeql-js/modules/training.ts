@@ -71,8 +71,8 @@ const $Page = $.makeType<$Page>(_.spec, "77779cc3-c275-11ef-a0bd-67996ce251ba", 
 const Page: $.$expr_PathNode<$.TypeSet<$Page, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Page, $.Cardinality.Many), null);
 
 export type $QuestionλShape = $.typeutil.flatten<$InteractableλShape & {
-  "answers": $.LinkDesc<$Answer, $.Cardinality.AtLeastOne, {}, false, false,  false, false>;
   "type": $.PropertyDesc<$AnswerType, $.Cardinality.One, false, false, false, false>;
+  "answers": $.LinkDesc<$Answer, $.Cardinality.AtLeastOne, {}, false, false,  false, false>;
   "<questions[is training::Training]": $.LinkDesc<$Training, $.Cardinality.Many, {}, false, false,  false, false>;
   "<questions": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
@@ -98,10 +98,8 @@ const $Session = $.makeType<$Session>(_.spec, "29ff9cb7-f86c-11ee-9653-fdc4b5973
 const Session: $.$expr_PathNode<$.TypeSet<$Session, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Session, $.Cardinality.Many), null);
 
 export type $TrainingλShape = $.typeutil.flatten<_default.$AuditableλShape & {
-  "rep": $.LinkDesc<$Training, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
   "in_person": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, false>;
   "locations": $.PropertyDesc<$LocationName, $.Cardinality.Many, false, false, false, false>;
-  "pages": $.LinkDesc<$TrainingPage, $.Cardinality.Many, {}, false, false,  false, false>;
   "name": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "compulsory": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, true>;
   "description": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
@@ -109,6 +107,8 @@ export type $TrainingλShape = $.typeutil.flatten<_default.$AuditableλShape & {
   "expires_after": $.PropertyDesc<_std.$duration, $.Cardinality.AtMostOne, false, false, false, false>;
   "icon_url": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "training_lockout": $.PropertyDesc<_std.$duration, $.Cardinality.AtMostOne, false, false, false, false>;
+  "rep": $.LinkDesc<$Training, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
+  "pages": $.LinkDesc<$TrainingPage, $.Cardinality.Many, {}, false, false,  false, false>;
   "questions": $.LinkDesc<$Question, $.Cardinality.Many, {}, false, false,  false, false>;
   "sections": $.LinkDesc<$TrainingPage | $Question, $.Cardinality.Many, {}, false, true,  false, false>;
   "<rep[is training::Training]": $.LinkDesc<$Training, $.Cardinality.Many, {}, false, false,  false, false>;
@@ -121,6 +121,7 @@ export type $TrainingλShape = $.typeutil.flatten<_default.$AuditableλShape & {
   "<parent[is training::Page]": $.LinkDesc<$Page, $.Cardinality.Many, {}, false, false,  false, false>;
   "<parent[is training::Question]": $.LinkDesc<$Question, $.Cardinality.Many, {}, false, false,  false, false>;
   "<training[is training::Session]": $.LinkDesc<$Session, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<rep[is tools::Tool]": $.LinkDesc<_tools.$Tool, $.Cardinality.Many, {}, false, false,  false, false>;
   "<training[is tools::Tool]": $.LinkDesc<_tools.$Tool, $.Cardinality.Many, {}, false, false,  false, false>;
   "<supervisable_training[is sign_in::Location]": $.LinkDesc<_sign_in.$Location, $.Cardinality.Many, {}, false, false,  false, false>;
   "<parent": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
@@ -130,7 +131,6 @@ export type $TrainingλShape = $.typeutil.flatten<_default.$AuditableλShape & {
 }>;
 type $Training = $.ObjectType<"training::Training", $TrainingλShape, null, [
   ..._default.$Auditable['__exclusives__'],
-  {name: {__element__: _std.$str, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },rep: {__element__: $Training, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
 ], "training::Training">;
 const $Training = $.makeType<$Training>(_.spec, "29f7181e-f86c-11ee-b1f9-2f77f7e7a3fd", _.syntax.literal);
 

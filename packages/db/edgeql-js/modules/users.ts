@@ -3,13 +3,14 @@
 import * as $ from "../reflection";
 import * as _ from "../imports";
 import type * as _default from "./default";
-import type * as _extauth from "./ext/auth";
 import type * as _std from "./std";
+import type * as _extauth from "./ext/auth";
 import type * as _sign_in from "./sign_in";
 import type * as _notification from "./notification";
 import type * as _training from "./training";
 import type * as _tools from "./tools";
 import type * as _event from "./event";
+import type * as _printing from "./printing";
 import type * as _team from "./team";
 export type $InfractionType = {
   "WARNING": $.$expr_Literal<$InfractionType>;
@@ -36,8 +37,6 @@ export type $RepStatus = {
 const RepStatus: $RepStatus = $.makeType<$RepStatus>(_.spec, "29c150a2-f86c-11ee-a02a-87f37d7ee1fb", _.syntax.literal);
 
 export type $UserλShape = $.typeutil.flatten<_default.$AuditableλShape & {
-  "identity": $.LinkDesc<_extauth.$Identity, $.Cardinality.One, {}, false, false,  false, false>;
-  "roles": $.LinkDesc<$Role, $.Cardinality.Many, {}, false, false,  false, false>;
   "first_name": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "last_name": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "display_name": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, true>;
@@ -47,6 +46,8 @@ export type $UserλShape = $.typeutil.flatten<_default.$AuditableλShape & {
   "pronouns": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "ucard_number": $.PropertyDesc<_std.$int32, $.Cardinality.One, true, false, false, false>;
   "username": $.PropertyDesc<_std.$str, $.Cardinality.One, true, false, false, false>;
+  "roles": $.LinkDesc<$Role, $.Cardinality.Many, {}, false, false,  false, false>;
+  "identity": $.LinkDesc<_extauth.$Identity, $.Cardinality.One, {}, false, false,  false, false>;
   "agreements_signed": $.LinkDesc<_sign_in.$Agreement, $.Cardinality.Many, {
     "@created_at": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne>;
     "@version_signed": $.PropertyDesc<_std.$int16, $.Cardinality.AtMostOne>;
@@ -78,6 +79,7 @@ export type $UserλShape = $.typeutil.flatten<_default.$AuditableλShape & {
   "<queued_users_that_can_sign_in[is sign_in::Location]": $.LinkDesc<_sign_in.$Location, $.Cardinality.Many, {}, false, false,  false, false>;
   "<user[is sign_in::SignIn]": $.LinkDesc<_sign_in.$SignIn, $.Cardinality.Many, {}, false, false,  false, false>;
   "<user[is training::Session]": $.LinkDesc<_training.$Session, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<author[is printing::Print]": $.LinkDesc<_printing.$Print, $.Cardinality.Many, {}, false, false,  false, false>;
   "<attendees": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<author": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<interested": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
@@ -88,21 +90,21 @@ export type $UserλShape = $.typeutil.flatten<_default.$AuditableλShape & {
 }>;
 type $User = $.ObjectType<"users::User", $UserλShape, null, [
   ..._default.$Auditable['__exclusives__'],
-  {username: {__element__: _std.$str, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
-  {ucard_number: {__element__: _std.$int32, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
   {email: {__element__: _std.$str, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
+  {ucard_number: {__element__: _std.$int32, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
+  {username: {__element__: _std.$str, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
 ], "users::User" | "default::user" | "users::Rep">;
 const $User = $.makeType<$User>(_.spec, "29c43a34-f86c-11ee-a6b1-c1a89f83e7fe", _.syntax.literal);
 
 const User: $.$expr_PathNode<$.TypeSet<$User, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($User, $.Cardinality.Many), null);
 
 export type $InfractionλShape = $.typeutil.flatten<_default.$CreatedAtλShape & {
-  "user": $.LinkDesc<$User, $.Cardinality.One, {}, false, false,  false, false>;
   "duration": $.PropertyDesc<_std.$duration, $.Cardinality.AtMostOne, false, false, false, false>;
   "ends_at": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne, false, true, false, false>;
   "reason": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "resolved": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, true>;
   "type": $.PropertyDesc<$InfractionType, $.Cardinality.One, false, false, false, false>;
+  "user": $.LinkDesc<$User, $.Cardinality.One, {}, false, false,  false, false>;
   "<infractions[is users::User]": $.LinkDesc<$User, $.Cardinality.Many, {}, false, false,  false, false>;
   "<infractions[is users::Rep]": $.LinkDesc<$Rep, $.Cardinality.Many, {}, false, false,  false, false>;
   "<infractions[is user]": $.LinkDesc<_default.$user, $.Cardinality.Many, {}, false, false,  false, false>;
@@ -118,8 +120,8 @@ const Infraction: $.$expr_PathNode<$.TypeSet<$Infraction, $.Cardinality.Many>, n
 export type $IntegrationλShape = $.typeutil.flatten<_default.$AuditableλShape & {
   "external_id": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "platform": $.PropertyDesc<$Platform, $.Cardinality.One, false, false, false, false>;
-  "user": $.LinkDesc<$User, $.Cardinality.One, {}, false, false,  false, false>;
   "external_email": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
+  "user": $.LinkDesc<$User, $.Cardinality.One, {}, false, false,  false, false>;
 }>;
 type $Integration = $.ObjectType<"users::Integration", $IntegrationλShape, null, [
   ..._default.$Auditable['__exclusives__'],
@@ -131,11 +133,11 @@ const $Integration = $.makeType<$Integration>(_.spec, "2a067f60-f86c-11ee-a027-6
 const Integration: $.$expr_PathNode<$.TypeSet<$Integration, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Integration, $.Cardinality.Many), null);
 
 export type $RepλShape = $.typeutil.flatten<$UserλShape & {
+  "status": $.PropertyDesc<$RepStatus, $.Cardinality.One, false, false, false, true>;
   "teams": $.LinkDesc<_team.$Team, $.Cardinality.AtLeastOne, {
     "@ends_at": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne>;
     "@created_at": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne>;
   }, false, false, false, false>;
-  "status": $.PropertyDesc<$RepStatus, $.Cardinality.One, false, false, false, true>;
   "supervisable_training": $.LinkDesc<_training.$Training, $.Cardinality.Many, {}, false, true,  false, false>;
   "<approved_by[is notification::AuthoredNotification]": $.LinkDesc<_notification.$AuthoredNotification, $.Cardinality.Many, {}, false, false,  false, false>;
   "<all_members[is team::Team]": $.LinkDesc<_team.$Team, $.Cardinality.Many, {}, false, false,  false, false>;
@@ -143,6 +145,7 @@ export type $RepλShape = $.typeutil.flatten<$UserλShape & {
   "<on_shift_reps[is sign_in::Location]": $.LinkDesc<_sign_in.$Location, $.Cardinality.Many, {}, false, false,  false, false>;
   "<off_shift_reps[is sign_in::Location]": $.LinkDesc<_sign_in.$Location, $.Cardinality.Many, {}, false, false,  false, false>;
   "<supervising_reps[is sign_in::Location]": $.LinkDesc<_sign_in.$Location, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<approved_by[is printing::Print]": $.LinkDesc<_printing.$Print, $.Cardinality.Many, {}, false, false,  false, false>;
   "<all_members": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<approved_by": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<members": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
@@ -187,9 +190,9 @@ const $SettingTemplate = $.makeType<$SettingTemplate>(_.spec, "2a739c5f-f86c-11e
 const SettingTemplate: $.$expr_PathNode<$.TypeSet<$SettingTemplate, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($SettingTemplate, $.Cardinality.Many), null);
 
 export type $UserSettingValueλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
+  "value": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "template": $.LinkDesc<$SettingTemplate, $.Cardinality.One, {}, false, false,  false, false>;
   "user": $.LinkDesc<$User, $.Cardinality.One, {}, false, false,  false, false>;
-  "value": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
 }>;
 type $UserSettingValue = $.ObjectType<"users::UserSettingValue", $UserSettingValueλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],

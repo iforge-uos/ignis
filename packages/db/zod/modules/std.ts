@@ -1,6 +1,7 @@
 import * as z from "zod";
 import * as zt from "zod-temporal";
 
+
 // #region std::bool
 export const boolSchema = z.boolean();
 // #endregion
@@ -19,6 +20,10 @@ export const datetimeSchema = zt.zonedDateTime();
 
 // #region std::duration
 export const durationSchema = zt.duration();
+// #endregion
+
+// #region std::float32
+export const float32Schema = z.number().min(-3.40282347e+38).max(3.40282347e+38);
 // #endregion
 
 // #region std::int16

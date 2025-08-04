@@ -11,7 +11,7 @@ export type $QuestionλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f738
 type $Question = $.ObjectType<"ai_rep::Question", $QuestionλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
 ], "ai_rep::Question">;
-const $Question = $.makeType<$Question>(_.spec, "d79786b8-59a6-11f0-bce8-4991de0b4e72", _.syntax.literal);
+const $Question = $.makeType<$Question>(_.spec, "f4973154-68ca-11f0-8328-1d0246a8f356", _.syntax.literal);
 
 const Question: $.$expr_PathNode<$.TypeSet<$Question, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Question, $.Cardinality.Many), null);
 

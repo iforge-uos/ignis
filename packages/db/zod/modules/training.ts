@@ -1,6 +1,7 @@
 import * as z from "zod";
 import * as zt from "zod-temporal";
 
+
 // #region training::AnswerType
 export const AnswerTypeSchema = z.enum(["SINGLE", "MULTI"]);
 // #endregion
@@ -10,134 +11,119 @@ export const LocationNameSchema = z.enum(["MAINSPACE", "HEARTSPACE", "GEORGE_POR
 // #endregion
 
 // #region training::Answer
-export const CreateAnswerSchema = z.object({
-  content: z.string(), // std::str
-  correct: z.boolean().optional(), // std::bool
-  description: z.string().nullable(), // std::str
-});
+export const CreateAnswerSchema = z.
+  object({
+    content: z.string(), // std::str
+    correct: z.boolean().optional(), // std::bool
+    description: z.string().nullable(), // std::str
+  });
 
-export const UpdateAnswerSchema = z.object({
-  content: z.string(), // std::str
-  correct: z.boolean().optional(), // std::bool
-  description: z.string().nullable(), // std::str
-});
+export const UpdateAnswerSchema = z.
+  object({
+    content: z.string(), // std::str
+    correct: z.boolean().optional(), // std::bool
+    description: z.string().nullable(), // std::str
+  });
 // #endregion
 
 // #region training::Interactable
-export const CreateInteractableSchema = z.object({
-  content: z.string(), // std::str
-  enabled: z.boolean().optional(), // std::bool
-  index: z.int().min(-32768).max(32767), // std::int16
-});
+export const CreateInteractableSchema = z.
+  object({
+    content: z.string(), // std::str
+    enabled: z.boolean().optional(), // std::bool
+    index: z.int().min(-32768).max(32767), // std::int16
+  });
 
-export const UpdateInteractableSchema = z.object({
-  content: z.string(), // std::str
-  enabled: z.boolean().optional(), // std::bool
-  index: z.int().min(-32768).max(32767), // std::int16
-});
+export const UpdateInteractableSchema = z.
+  object({
+    content: z.string(), // std::str
+    enabled: z.boolean().optional(), // std::bool
+    index: z.int().min(-32768).max(32767), // std::int16
+  });
 // #endregion
 
 // #region training::Page
-export const CreatePageSchema = z
-  .object({
-    // training::TrainingPage
+export const CreatePageSchema = z.
+  object({ // training::TrainingPage
     duration: zt.duration().nullable(), // std::duration
     name: z.string(), // std::str
   })
-  .extend({
-    // training::Interactable
+  .extend({ // training::Interactable
     content: z.string(), // std::str
     enabled: z.boolean().optional(), // std::bool
     index: z.int().min(-32768).max(32767), // std::int16
   })
-  .extend({
-    // training::Page
+  .extend({ // training::Page
   });
 
-export const UpdatePageSchema = z
-  .object({
-    // training::TrainingPage
+export const UpdatePageSchema = z.
+  object({ // training::TrainingPage
     duration: zt.duration().nullable(), // std::duration
     name: z.string(), // std::str
   })
-  .extend({
-    // training::Interactable
+  .extend({ // training::Interactable
     content: z.string(), // std::str
     enabled: z.boolean().optional(), // std::bool
     index: z.int().min(-32768).max(32767), // std::int16
   })
-  .extend({
-    // training::Page
+  .extend({ // training::Page
   });
 // #endregion
 
 // #region training::Question
-export const CreateQuestionSchema = z
-  .object({
-    // training::Interactable
+export const CreateQuestionSchema = z.
+  object({ // training::Interactable
     content: z.string(), // std::str
     enabled: z.boolean().optional(), // std::bool
     index: z.int().min(-32768).max(32767), // std::int16
   })
-  .extend({
-    // training::Question
+  .extend({ // training::Question
     type: z.enum(["SINGLE", "MULTI"]), // training::AnswerType
   });
 
-export const UpdateQuestionSchema = z
-  .object({
-    // training::Interactable
+export const UpdateQuestionSchema = z.
+  object({ // training::Interactable
     content: z.string(), // std::str
     enabled: z.boolean().optional(), // std::bool
     index: z.int().min(-32768).max(32767), // std::int16
   })
-  .extend({
-    // training::Question
+  .extend({ // training::Question
     type: z.enum(["SINGLE", "MULTI"]), // training::AnswerType
   });
 // #endregion
 
 // #region training::Session
-export const CreateSessionSchema = z
-  .object({
-    // default::Auditable
+export const CreateSessionSchema = z.
+  object({ // default::Auditable
     updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
-  .extend({
-    // default::CreatedAt
+  .extend({ // default::CreatedAt
     created_at: zt.zonedDateTime().optional(), // std::datetime
   })
-  .extend({
-    // training::Session
+  .extend({ // training::Session
     index: z.int().min(-32768).max(32767).optional(), // std::int16
   });
 
-export const UpdateSessionSchema = z
-  .object({
-    // default::Auditable
+export const UpdateSessionSchema = z.
+  object({ // default::Auditable
     updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
-  .extend({
-    // default::CreatedAt
+  .extend({ // default::CreatedAt
   })
-  .extend({
-    // training::Session
+  .extend({ // training::Session
     index: z.int().min(-32768).max(32767).optional(), // std::int16
   });
 // #endregion
 
 // #region training::Training
-export const CreateTrainingSchema = z
-  .object({
-    // default::Auditable
+export const CreateTrainingSchema = z.
+  object({ // default::Auditable
     updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
-  .extend({
-    // default::CreatedAt
+  .extend({ // default::CreatedAt
     created_at: zt.zonedDateTime().optional(), // std::datetime
   })
-  .extend({
-    // training::Training
+  .extend({ // training::Training
     in_person: z.boolean(), // std::bool
     locations: z.enum(["MAINSPACE", "HEARTSPACE", "GEORGE_PORTER"]), // training::LocationName
     name: z.string(), // std::str
@@ -149,16 +135,13 @@ export const CreateTrainingSchema = z
     training_lockout: zt.duration().nullable(), // std::duration
   });
 
-export const UpdateTrainingSchema = z
-  .object({
-    // default::Auditable
+export const UpdateTrainingSchema = z.
+  object({ // default::Auditable
     updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
-  .extend({
-    // default::CreatedAt
+  .extend({ // default::CreatedAt
   })
-  .extend({
-    // training::Training
+  .extend({ // training::Training
     in_person: z.boolean(), // std::bool
     locations: z.enum(["MAINSPACE", "HEARTSPACE", "GEORGE_PORTER"]), // training::LocationName
     name: z.string(), // std::str
@@ -172,28 +155,24 @@ export const UpdateTrainingSchema = z
 // #endregion
 
 // #region training::TrainingPage
-export const CreateTrainingPageSchema = z
-  .object({
-    // training::Interactable
+export const CreateTrainingPageSchema = z.
+  object({ // training::Interactable
     content: z.string(), // std::str
     enabled: z.boolean().optional(), // std::bool
     index: z.int().min(-32768).max(32767), // std::int16
   })
-  .extend({
-    // training::TrainingPage
+  .extend({ // training::TrainingPage
     duration: zt.duration().nullable(), // std::duration
     name: z.string(), // std::str
   });
 
-export const UpdateTrainingPageSchema = z
-  .object({
-    // training::Interactable
+export const UpdateTrainingPageSchema = z.
+  object({ // training::Interactable
     content: z.string(), // std::str
     enabled: z.boolean().optional(), // std::bool
     index: z.int().min(-32768).max(32767), // std::int16
   })
-  .extend({
-    // training::TrainingPage
+  .extend({ // training::TrainingPage
     duration: zt.duration().nullable(), // std::duration
     name: z.string(), // std::str
   });

@@ -1,6 +1,7 @@
 import * as z from "zod";
 import * as zt from "zod-temporal";
 
+
 // #region sign_in::LocationName
 export const LocationNameSchema = z.enum(["MAINSPACE", "HEARTSPACE"]);
 // #endregion
@@ -10,44 +11,31 @@ export const LocationStatusSchema = z.enum(["OPEN", "SOON", "CLOSED"]);
 // #endregion
 
 // #region sign_in::ReasonCategory
-export const ReasonCategorySchema = z.enum([
-  "UNIVERSITY_MODULE",
-  "CO_CURRICULAR_GROUP",
-  "PERSONAL_PROJECT",
-  "SOCIETY",
-  "REP_SIGN_IN",
-  "EVENT",
-]);
+export const ReasonCategorySchema = z.enum(["UNIVERSITY_MODULE", "CO_CURRICULAR_GROUP", "PERSONAL_PROJECT", "SOCIETY", "REP_SIGN_IN", "EVENT"]);
 // #endregion
 
 // #region sign_in::Agreement
-export const CreateAgreementSchema = z
-  .object({
-    // default::Auditable
+export const CreateAgreementSchema = z.
+  object({ // default::Auditable
     updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
-  .extend({
-    // default::CreatedAt
+  .extend({ // default::CreatedAt
     created_at: zt.zonedDateTime().optional(), // std::datetime
   })
-  .extend({
-    // sign_in::Agreement
+  .extend({ // sign_in::Agreement
     content: z.string(), // std::str
     _content_hash: z.never().optional(), // std::bytes
     version: z.int().min(-32768).max(32767).optional(), // std::int16
     name: z.string(), // std::str
   });
 
-export const UpdateAgreementSchema = z
-  .object({
-    // default::Auditable
+export const UpdateAgreementSchema = z.
+  object({ // default::Auditable
     updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
-  .extend({
-    // default::CreatedAt
+  .extend({ // default::CreatedAt
   })
-  .extend({
-    // sign_in::Agreement
+  .extend({ // sign_in::Agreement
     content: z.string(), // std::str
     _content_hash: z.never().optional(), // std::bytes
     version: z.int().min(-32768).max(32767).optional(), // std::int16
@@ -56,17 +44,14 @@ export const UpdateAgreementSchema = z
 // #endregion
 
 // #region sign_in::Location
-export const CreateLocationSchema = z
-  .object({
-    // default::Auditable
+export const CreateLocationSchema = z.
+  object({ // default::Auditable
     updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
-  .extend({
-    // default::CreatedAt
+  .extend({ // default::CreatedAt
     created_at: zt.zonedDateTime().optional(), // std::datetime
   })
-  .extend({
-    // sign_in::Location
+  .extend({ // sign_in::Location
     closing_time: z.never(), // std::cal::local_time
     opening_days: z.int().min(-32768).max(32767), // std::int16
     opening_time: z.never(), // std::cal::local_time
@@ -77,16 +62,13 @@ export const CreateLocationSchema = z
     in_hours_rep_multiplier: z.int().min(-32768).max(32767), // std::int16
   });
 
-export const UpdateLocationSchema = z
-  .object({
-    // default::Auditable
+export const UpdateLocationSchema = z.
+  object({ // default::Auditable
     updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
-  .extend({
-    // default::CreatedAt
+  .extend({ // default::CreatedAt
   })
-  .extend({
-    // sign_in::Location
+  .extend({ // sign_in::Location
     closing_time: z.never(), // std::cal::local_time
     opening_days: z.int().min(-32768).max(32767), // std::int16
     opening_time: z.never(), // std::cal::local_time
@@ -99,107 +81,75 @@ export const UpdateLocationSchema = z
 // #endregion
 
 // #region sign_in::QueuePlace
-export const CreateQueuePlaceSchema = z
-  .object({
-    // default::CreatedAt
+export const CreateQueuePlaceSchema = z.
+  object({ // default::CreatedAt
     created_at: zt.zonedDateTime().optional(), // std::datetime
   })
-  .extend({
-    // sign_in::QueuePlace
+  .extend({ // sign_in::QueuePlace
     notified_at: zt.zonedDateTime().nullable(), // std::datetime
   });
 
-export const UpdateQueuePlaceSchema = z
-  .object({
-    // default::CreatedAt
+export const UpdateQueuePlaceSchema = z.
+  object({ // default::CreatedAt
   })
-  .extend({
-    // sign_in::QueuePlace
+  .extend({ // sign_in::QueuePlace
     notified_at: zt.zonedDateTime().nullable(), // std::datetime
   });
 // #endregion
 
 // #region sign_in::Reason
-export const CreateReasonSchema = z
-  .object({
-    // default::CreatedAt
+export const CreateReasonSchema = z.
+  object({ // default::CreatedAt
     created_at: zt.zonedDateTime().optional(), // std::datetime
   })
-  .extend({
-    // sign_in::Reason
+  .extend({ // sign_in::Reason
+    category: z.enum(["UNIVERSITY_MODULE", "CO_CURRICULAR_GROUP", "PERSONAL_PROJECT", "SOCIETY", "REP_SIGN_IN", "EVENT"]), // sign_in::ReasonCategory
     name: z.string(), // std::str
-    category: z.enum([
-      "UNIVERSITY_MODULE",
-      "CO_CURRICULAR_GROUP",
-      "PERSONAL_PROJECT",
-      "SOCIETY",
-      "REP_SIGN_IN",
-      "EVENT",
-    ]), // sign_in::ReasonCategory
   });
 
-export const UpdateReasonSchema = z
-  .object({
-    // default::CreatedAt
+export const UpdateReasonSchema = z.
+  object({ // default::CreatedAt
   })
-  .extend({
-    // sign_in::Reason
+  .extend({ // sign_in::Reason
+    category: z.enum(["UNIVERSITY_MODULE", "CO_CURRICULAR_GROUP", "PERSONAL_PROJECT", "SOCIETY", "REP_SIGN_IN", "EVENT"]), // sign_in::ReasonCategory
     name: z.string(), // std::str
-    category: z.enum([
-      "UNIVERSITY_MODULE",
-      "CO_CURRICULAR_GROUP",
-      "PERSONAL_PROJECT",
-      "SOCIETY",
-      "REP_SIGN_IN",
-      "EVENT",
-    ]), // sign_in::ReasonCategory
   });
 // #endregion
 
 // #region sign_in::SignIn
-export const CreateSignInSchema = z
-  .object({
-    // default::Timed
+export const CreateSignInSchema = z.
+  object({ // default::Timed
     ends_at: zt.zonedDateTime().nullable(), // std::datetime
   })
-  .extend({
-    // default::CreatedAt
+  .extend({ // default::CreatedAt
     created_at: zt.zonedDateTime().optional(), // std::datetime
   })
-  .extend({
-    // sign_in::SignIn
+  .extend({ // sign_in::SignIn
     tools: z.string().array(), // array<std::str>
   });
 
-export const UpdateSignInSchema = z
-  .object({
-    // default::Timed
+export const UpdateSignInSchema = z.
+  object({ // default::Timed
     ends_at: zt.zonedDateTime().nullable(), // std::datetime
   })
-  .extend({
-    // default::CreatedAt
+  .extend({ // default::CreatedAt
   })
-  .extend({
-    // sign_in::SignIn
+  .extend({ // sign_in::SignIn
     tools: z.string().array(), // array<std::str>
   });
 // #endregion
 
 // #region sign_in::UserRegistration
-export const CreateUserRegistrationSchema = z
-  .object({
-    // default::CreatedAt
+export const CreateUserRegistrationSchema = z.
+  object({ // default::CreatedAt
     created_at: zt.zonedDateTime().optional(), // std::datetime
   })
-  .extend({
-    // sign_in::UserRegistration
+  .extend({ // sign_in::UserRegistration
   });
 
-export const UpdateUserRegistrationSchema = z
-  .object({
-    // default::CreatedAt
+export const UpdateUserRegistrationSchema = z.
+  object({ // default::CreatedAt
   })
-  .extend({
-    // sign_in::UserRegistration
+  .extend({ // sign_in::UserRegistration
   });
 // #endregion

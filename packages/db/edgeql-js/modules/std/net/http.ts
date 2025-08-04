@@ -67,6 +67,16 @@ type schedule_requestλFuncExpr2<
 > = $.$expr_Function<
   $ScheduledRequest, $.cardutil.paramCardinality<P1>
 >;
+type schedule_requestλFuncExpr3<
+  NamedArgs extends {
+    "body": _.castMaps.orScalarLiteral<$.TypeSet<_std.$json>>,
+    "headers"?: $.TypeSet<$.ArrayType<$.NamedTupleType<{name: _std.$str, value: _std.$str}>>>,
+    "method"?: _.castMaps.orScalarLiteral<$.TypeSet<$Method>>,
+  },
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$str>>,
+> = $.$expr_Function<
+  $ScheduledRequest, $.cardutil.multiplyCardinalities<$.cardutil.multiplyCardinalities<$.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.paramCardinality<NamedArgs["body"]>>, $.cardutil.optionalParamCardinality<NamedArgs["headers"]>>, $.cardutil.optionalParamCardinality<NamedArgs["method"]>>
+>;
 function schedule_request<
   NamedArgs extends {
     "body"?: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bytes>>,
@@ -83,9 +93,21 @@ function schedule_request<
 >(
   url: P1,
 ): schedule_requestλFuncExpr2<P1>;
+function schedule_request<
+  NamedArgs extends {
+    "body": _.castMaps.orScalarLiteral<$.TypeSet<_std.$json>>,
+    "headers"?: $.TypeSet<$.ArrayType<$.NamedTupleType<{name: _std.$str, value: _std.$str}>>>,
+    "method"?: _.castMaps.orScalarLiteral<$.TypeSet<$Method>>,
+  },
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$str>>,
+>(
+  namedArgs: NamedArgs,
+  url: P1,
+): schedule_requestλFuncExpr3<NamedArgs, P1>;
 function schedule_request(...args: any[]) {
   const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('std::net::http::schedule_request', args, _.spec, [
     {args: [{typeId: "00000000-0000-0000-0000-000000000101", optional: false, setoftype: false, variadic: false}], namedArgs: {"body": {typeId: "00000000-0000-0000-0000-000000000102", optional: true, setoftype: false, variadic: false}, "headers": {typeId: "29b1b6f1-a0e0-577d-adcf-e493f6b2303a", optional: true, setoftype: false, variadic: false}, "method": {typeId: "8896d50c-81c2-5d7d-bb2f-cb2bfba3c628", optional: true, setoftype: false, variadic: false}}, returnTypeId: "e6bf05a7-60c7-51dd-b30d-c8fce5bcadfd"},
+    {args: [{typeId: "00000000-0000-0000-0000-000000000101", optional: false, setoftype: false, variadic: false}], namedArgs: {"body": {typeId: "00000000-0000-0000-0000-00000000010f", optional: false, setoftype: false, variadic: false}, "headers": {typeId: "29b1b6f1-a0e0-577d-adcf-e493f6b2303a", optional: true, setoftype: false, variadic: false}, "method": {typeId: "8896d50c-81c2-5d7d-bb2f-cb2bfba3c628", optional: true, setoftype: false, variadic: false}}, returnTypeId: "e6bf05a7-60c7-51dd-b30d-c8fce5bcadfd"},
   ]);
   return _.syntax.$expressionify({
     __kind__: $.ExpressionKind.Function,

@@ -81,9 +81,6 @@ const $Auditable = $.makeType<$Auditable>(_.spec, "4315a540-bc94-58fa-8e95-a5816
 const Auditable: $.$expr_PathNode<$.TypeSet<$Auditable, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Auditable, $.Cardinality.Many), null);
 
 export type $AuthConfigλShape = $.typeutil.flatten<_cfg.$ExtensionConfigλShape & {
-  "providers": $.LinkDesc<$ProviderConfig, $.Cardinality.Many, {}, false, false,  false, false>;
-  "ui": $.LinkDesc<$UIConfig, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
-  "webhooks": $.LinkDesc<$WebhookConfig, $.Cardinality.Many, {}, false, false,  false, false>;
   "app_name": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "logo_url": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "dark_logo_url": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
@@ -91,6 +88,9 @@ export type $AuthConfigλShape = $.typeutil.flatten<_cfg.$ExtensionConfigλShape
   "auth_signing_key": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "token_time_to_live": $.PropertyDesc<_std.$duration, $.Cardinality.AtMostOne, false, false, false, true>;
   "allowed_redirect_urls": $.PropertyDesc<_std.$str, $.Cardinality.Many, false, false, false, false>;
+  "providers": $.LinkDesc<$ProviderConfig, $.Cardinality.Many, {}, false, false,  false, false>;
+  "ui": $.LinkDesc<$UIConfig, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
+  "webhooks": $.LinkDesc<$WebhookConfig, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
 type $AuthConfig = $.ObjectType<"ext::auth::AuthConfig", $AuthConfigλShape, null, [
   ..._cfg.$ExtensionConfig['__exclusives__'],
@@ -323,8 +323,8 @@ export type $WebAuthnAuthenticationChallengeλShape = $.typeutil.flatten<$Audita
 }>;
 type $WebAuthnAuthenticationChallenge = $.ObjectType<"ext::auth::WebAuthnAuthenticationChallenge", $WebAuthnAuthenticationChallengeλShape, null, [
   ...$Auditable['__exclusives__'],
-  {challenge: {__element__: _std.$bytes, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
   {factors: {__element__: $WebAuthnFactor, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
+  {challenge: {__element__: _std.$bytes, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
 ], "ext::auth::WebAuthnAuthenticationChallenge">;
 const $WebAuthnAuthenticationChallenge = $.makeType<$WebAuthnAuthenticationChallenge>(_.spec, "ffb4afce-f9e9-5494-83e4-d9ab262ad48e", _.syntax.literal);
 

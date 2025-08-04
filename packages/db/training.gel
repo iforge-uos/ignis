@@ -36,7 +36,7 @@ module training {
         }
         expires_after: duration;
 
-        # multi history: Training {
+        # multi history: json {
         #     # @reset_training: bool {
         #     #     annotation description := "Whether this was a large enough change to "
         #     # }
@@ -45,14 +45,6 @@ module training {
 
         #     )
         # }
-
-        index fts::index on (
-            fts::with_options(
-                .name,
-                language := fts::Language.eng
-            )
-        );
-        constraint exclusive on ((.name, .rep));
 
         access policy desk_or_higher_edit
             allow all
@@ -168,10 +160,10 @@ module training {
             default := 0;
         }
         next_section := (
-             select .training.sections
-             filter .enabled and .index > __source__.index
-             order by .index
-             limit 1
+            select .training.sections
+            filter .enabled and .index > __source__.index
+            order by .index
+            limit 1
         );
 
         constraint exclusive on ((.user, .training));  # must be kept inline with startTraining's unlessConflict

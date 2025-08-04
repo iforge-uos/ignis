@@ -17,6 +17,9 @@ import type * as _stdenc from "./modules/std/enc";
 import type * as _stdcal from "./modules/std/cal";
 import type * as _sign_in from "./modules/sign_in";
 import type * as _schema from "./modules/schema";
+import type * as _printingprinter_status from "./modules/printing/printer_status";
+import type * as _printingprint_status from "./modules/printing/print_status";
+import type * as _printing from "./modules/printing";
 import type * as _notification from "./modules/notification";
 import type * as _extpgvector from "./modules/ext/pgvector";
 import type * as _extauth from "./modules/ext/auth";
@@ -94,6 +97,9 @@ export type scalarAssignableBy<T extends $.ScalarType> =
   T extends _schema.$Cardinality ? _schema.$Cardinality : 
   T extends _schema.$AccessPolicyAction ? _schema.$AccessPolicyAction : 
   T extends _schema.$AccessKind ? _schema.$AccessKind : 
+  T extends _printingprinter_status.$FailureReason ? _printingprinter_status.$FailureReason : 
+  T extends _printingprint_status.$FailureReason ? _printingprint_status.$FailureReason : 
+  T extends _printing.$Type ? _printing.$Type : 
   T extends _notification.$Type ? _notification.$Type : 
   T extends _notification.$Status ? _notification.$Status : 
   T extends _notification.$DeliveryMethod ? _notification.$DeliveryMethod : 
@@ -189,6 +195,9 @@ export type scalarCastableFrom<T extends $.ScalarType> =
   T extends _schema.$Cardinality ? _schema.$Cardinality : 
   T extends _schema.$AccessPolicyAction ? _schema.$AccessPolicyAction : 
   T extends _schema.$AccessKind ? _schema.$AccessKind : 
+  T extends _printingprinter_status.$FailureReason ? _printingprinter_status.$FailureReason : 
+  T extends _printingprint_status.$FailureReason ? _printingprint_status.$FailureReason : 
+  T extends _printing.$Type ? _printing.$Type : 
   T extends _notification.$Type ? _notification.$Type : 
   T extends _notification.$Status ? _notification.$Status : 
   T extends _notification.$DeliveryMethod ? _notification.$DeliveryMethod : 
@@ -648,6 +657,24 @@ type getSharedParentScalar<A, B> =
   :
   A extends _schema.$AccessKind ?
     B extends _schema.$AccessKind ?
+    B
+    :
+    never
+  :
+  A extends _printingprinter_status.$FailureReason ?
+    B extends _printingprinter_status.$FailureReason ?
+    B
+    :
+    never
+  :
+  A extends _printingprint_status.$FailureReason ?
+    B extends _printingprint_status.$FailureReason ?
+    B
+    :
+    never
+  :
+  A extends _printing.$Type ?
+    B extends _printing.$Type ?
     B
     :
     never
@@ -1229,6 +1256,24 @@ function getSharedParentScalar<A extends $.ScalarType, B extends $.ScalarType>(a
     }
   if (a.__name__ === "schema::AccessKind") {
     if(b.__name__ === "schema::AccessKind") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
+  if (a.__name__ === "printing::printer_status::FailureReason") {
+    if(b.__name__ === "printing::printer_status::FailureReason") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
+  if (a.__name__ === "printing::print_status::FailureReason") {
+    if(b.__name__ === "printing::print_status::FailureReason") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
+  if (a.__name__ === "printing::Type") {
+    if(b.__name__ === "printing::Type") {
       return b;
     }
     throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);

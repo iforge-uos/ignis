@@ -2,7 +2,7 @@
 #     type `Module` {
 #         required name: str;
 #         multi members: User;
-#         multi purchases: Purchase;
+#         multi purchases := .<`module`[is Purchase];
 #         required total := sum(.purchases.price);
 #     }
 
@@ -21,6 +21,6 @@
 
 #     type Category {
 #         required name: str;
-#         multi items: Item;
+#         multi items := .<category[is Item];
 #     }
 # }

@@ -10,6 +10,7 @@ import _cfg from "./modules/cfg";
 import _event from "./modules/event";
 import _ext from "./modules/ext";
 import _notification from "./modules/notification";
+import _printing from "./modules/printing";
 import _schema from "./modules/schema";
 import _sign_in from "./modules/sign_in";
 import _sys from "./modules/sys";
@@ -29,6 +30,7 @@ const ExportDefault: typeof _std &
   "event": typeof _event;
   "ext": typeof _ext;
   "notification": typeof _notification;
+  "printing": typeof _printing;
   "schema": typeof _schema;
   "sign_in": typeof _sign_in;
   "sys": typeof _sys;
@@ -48,6 +50,7 @@ const ExportDefault: typeof _std &
   "event": _event,
   "ext": _ext,
   "notification": _notification,
+  "printing": _printing,
   "schema": _schema,
   "sign_in": _sign_in,
   "sys": _sys,

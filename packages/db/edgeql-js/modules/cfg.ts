@@ -65,7 +65,6 @@ const $ConfigObject = $.makeType<$ConfigObject>(_.spec, "d408002f-3891-5b9a-b19c
 const ConfigObject: $.$expr_PathNode<$.TypeSet<$ConfigObject, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($ConfigObject, $.Cardinality.Many), null);
 
 export type $AbstractConfigλShape = $.typeutil.flatten<$ConfigObjectλShape & {
-  "extensions": $.LinkDesc<$ExtensionConfig, $.Cardinality.Many, {}, false, true,  false, false>;
   "session_idle_timeout": $.PropertyDesc<_std.$duration, $.Cardinality.One, false, false, false, true>;
   "default_transaction_isolation": $.PropertyDesc<_sys.$TransactionIsolation, $.Cardinality.One, false, false, false, true>;
   "default_transaction_access_mode": $.PropertyDesc<_sys.$TransactionAccessMode, $.Cardinality.One, false, false, false, true>;
@@ -74,8 +73,6 @@ export type $AbstractConfigλShape = $.typeutil.flatten<$ConfigObjectλShape & {
   "query_execution_timeout": $.PropertyDesc<_std.$duration, $.Cardinality.One, false, false, false, false>;
   "listen_port": $.PropertyDesc<_std.$int32, $.Cardinality.One, false, false, false, true>;
   "listen_addresses": $.PropertyDesc<_std.$str, $.Cardinality.Many, false, false, false, false>;
-  "auth": $.LinkDesc<$Auth, $.Cardinality.Many, {}, false, false,  false, false>;
-  "email_providers": $.LinkDesc<$EmailProviderConfig, $.Cardinality.Many, {}, false, false,  false, false>;
   "current_email_provider_name": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "allow_dml_in_functions": $.PropertyDesc<_std.$bool, $.Cardinality.AtMostOne, false, false, false, true>;
   "allow_bare_ddl": $.PropertyDesc<$AllowBareDDL, $.Cardinality.AtMostOne, false, false, false, true>;
@@ -99,6 +96,9 @@ export type $AbstractConfigλShape = $.typeutil.flatten<$ConfigObjectλShape & {
   "force_database_error": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, true>;
   "_pg_prepared_statement_cache_size": $.PropertyDesc<_std.$int16, $.Cardinality.One, false, false, false, true>;
   "track_query_stats": $.PropertyDesc<$QueryStatsOption, $.Cardinality.AtMostOne, false, false, false, false>;
+  "extensions": $.LinkDesc<$ExtensionConfig, $.Cardinality.Many, {}, false, true,  false, false>;
+  "auth": $.LinkDesc<$Auth, $.Cardinality.Many, {}, false, false,  false, false>;
+  "email_providers": $.LinkDesc<$EmailProviderConfig, $.Cardinality.Many, {}, false, false,  false, false>;
   "<cfg[is cfg::ExtensionConfig]": $.LinkDesc<$ExtensionConfig, $.Cardinality.AtMostOne, {}, true, false,  false, false>;
   "<cfg[is ext::auth::AuthConfig]": $.LinkDesc<_extauth.$AuthConfig, $.Cardinality.AtMostOne, {}, true, false,  false, false>;
   "<cfg[is ext::pg_trgm::Config]": $.LinkDesc<_extpg_trgm.$Config, $.Cardinality.AtMostOne, {}, true, false,  false, false>;
@@ -116,8 +116,8 @@ const AbstractConfig: $.$expr_PathNode<$.TypeSet<$AbstractConfig, $.Cardinality.
 export type $AuthλShape = $.typeutil.flatten<$ConfigObjectλShape & {
   "priority": $.PropertyDesc<_std.$int64, $.Cardinality.One, true, false, true, false>;
   "user": $.PropertyDesc<_std.$str, $.Cardinality.Many, false, false, true, true>;
-  "method": $.LinkDesc<$AuthMethod, $.Cardinality.AtMostOne, {}, true, false,  true, false>;
   "comment": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, true, false>;
+  "method": $.LinkDesc<$AuthMethod, $.Cardinality.AtMostOne, {}, true, false,  true, false>;
   "<auth[is cfg::AbstractConfig]": $.LinkDesc<$AbstractConfig, $.Cardinality.Many, {}, false, false,  false, false>;
   "<auth[is cfg::Config]": $.LinkDesc<$Config, $.Cardinality.Many, {}, false, false,  false, false>;
   "<auth[is cfg::InstanceConfig]": $.LinkDesc<$InstanceConfig, $.Cardinality.Many, {}, false, false,  false, false>;
@@ -127,8 +127,8 @@ export type $AuthλShape = $.typeutil.flatten<$ConfigObjectλShape & {
 }>;
 type $Auth = $.ObjectType<"cfg::Auth", $AuthλShape, null, [
   ...$ConfigObject['__exclusives__'],
-  {method: {__element__: $AuthMethod, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
   {priority: {__element__: _std.$int64, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
+  {method: {__element__: $AuthMethod, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
 ], "cfg::Auth">;
 const $Auth = $.makeType<$Auth>(_.spec, "a2ba7516-d398-5ec2-b25e-221b2f7b9e87", _.syntax.literal);
 

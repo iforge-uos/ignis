@@ -1,3 +1,4 @@
+
 export * from "./modules/default";
 export * as std from "./modules/std";
 export * as ai_rep from "./modules/ai_rep";
@@ -5,6 +6,7 @@ export * as default from "./modules/default";
 export * as users from "./modules/users";
 export * as event from "./modules/event";
 export * as notification from "./modules/notification";
+export * as printing from "./modules/printing";
 export * as sign_in from "./modules/sign_in";
 export * as team from "./modules/team";
 export * as tools from "./modules/tools";
