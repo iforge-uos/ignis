@@ -1,5 +1,5 @@
 import { TrainingForLocationShape } from "@/lib/utils/queries";
-import { auth, pub } from "@/orpc";
+import { pub } from "@/orpc";
 import e from "@packages/db/edgeql-js";
 import { LocationNameSchema } from "@packages/db/zod/modules/training";
 import * as z from "zod";
@@ -37,6 +37,6 @@ export const all = pub
       .run(db);
   });
 
-export const trainingRouter = auth.prefix("/training").router({
+export const trainingRouter = pub.prefix("/training").router({
   all,
 });

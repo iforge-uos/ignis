@@ -45,7 +45,7 @@ export const update = auth
         .run(db),
   );
 
-export const idRouter = os.prefix("/{id}").router({
+export const idRouter = pub.prefix("/{id}").router({
   get,
   update,
 });

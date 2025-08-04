@@ -1,5 +1,5 @@
 import { PartialUserShape } from "@/lib/utils/queries";
-import { rep } from "@/orpc";
+import { pub, rep } from "@/orpc";
 import e from "@packages/db/edgeql-js";
 import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
 import { Location } from "@packages/types/sign_in";
@@ -40,7 +40,7 @@ export const get = rep
         .run(db),
   );
 
-export const nameRoutes = rep.prefix("/{name}").router({
+export const nameRoutes = pub.prefix("/{name}").router({
   get,
   commonReasons,
   queue: queueRouter,
