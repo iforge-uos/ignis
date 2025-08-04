@@ -19,7 +19,6 @@ import { TanStackRouterDevtoolsInProd } from "@tanstack/react-router-devtools";
 import appCss from "../index.css?url";
 
 export interface RouterAppContext {
-  orpc: typeof orpc;
   queryClient: QueryClient;
   user: ReturnType<typeof useUser>;
 }

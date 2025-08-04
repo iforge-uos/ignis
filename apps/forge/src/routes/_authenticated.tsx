@@ -5,11 +5,11 @@ import { Outlet, createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated")({
   component: () => {
-    const { isAuthenticated } = useAuth();
+    // const { isAuthenticated } = useAuth();
 
-    if (!isAuthenticated) {
-      return <LoginModal />;
-    }
+    // if (!isAuthenticated) {
+    //   return <LoginModal />;
+    // }
 
     return <Outlet />;
   },

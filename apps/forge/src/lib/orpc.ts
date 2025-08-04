@@ -1,13 +1,15 @@
+import serialisers from "@/lib/serialisers";
 import { type Router, router } from "@/routes/api.$";
 import { createORPCClient } from "@orpc/client";
 import { RPCLink } from "@orpc/client/fetch";
-import { createTanstackQueryUtils } from "@orpc/tanstack-query";
+import { SimpleCsrfProtectionLinkPlugin } from "@orpc/client/plugins";
+import { StandardRPCJsonSerializer } from "@orpc/client/standard";
 import { type RouterClient, createRouterClient } from "@orpc/server";
+import { createTanstackQueryUtils } from "@orpc/tanstack-query";
 import { type RouterUtils } from "@orpc/tanstack-query";
 import { QueryCache, QueryClient } from "@tanstack/react-query";
 import { createIsomorphicFn } from "@tanstack/react-start";
-import { getHeaders } from "@tanstack/react-start/server";
-import { SimpleCsrfProtectionLinkPlugin } from "@orpc/client/plugins";
+import { getWebRequest } from "@tanstack/react-start/server";
 import { toast } from "sonner";
 
 export type ORPCReactUtils = RouterUtils<RouterClient<Router>>;
@@ -23,7 +25,7 @@ const getORPCClient = createIsomorphicFn()
        * For per-request context, use middleware context or pass a function as the initial context.
        */
       context: async () => ({
-        headers: getHeaders(), // provide headers if initial context required
+        request: getWebRequest(),
       }),
     }),
   )
@@ -36,9 +38,13 @@ const getORPCClient = createIsomorphicFn()
     return createORPCClient(link);
   });
 
-export const client: RouterClient<typeof router> = getORPCClient();
+export const client = getORPCClient();
 
 export const orpc = createTanstackQueryUtils(client);
+
+const serializer = new StandardRPCJsonSerializer({
+  customJsonSerializers: serialisers,
+});
 
 export const queryClient = new QueryClient({
   queryCache: new QueryCache({
@@ -53,4 +59,20 @@ export const queryClient = new QueryClient({
       });
     },
   }),
+  defaultOptions: {
+    queries: {
+      staleTime: 60_000, // > 0 to prevent immediate refetching on mount
+    },
+    dehydrate: {
+      serializeData(data) {
+        const [json, meta] = serializer.serialize(data);
+        return { json, meta };
+      },
+    },
+    hydrate: {
+      deserializeData(data) {
+        return serializer.deserialize(data.json, data.meta);
+      },
+    },
+  },
 });

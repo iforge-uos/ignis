@@ -1,14 +1,45 @@
 import sentryMiddleware from "@/lib/sentry/server";
-import type { AuthContext, Context } from "@/routes/api.$";
 import { os, ErrorMap } from "@orpc/server";
-import e from "@packages/db/edgeql-js";
+import e, { $infer } from "@packages/db/edgeql-js";
 import { Client } from "gel";
 import * as z from "zod";
+import client from "@/db";
+import env from "@/lib/env";
+import { UserShape } from "@/lib/utils/queries";
+import { Executor } from "gel";
+import type {InitialContext} from "@/routes/api.$"
+
+
+export type Context = Awaited<ReturnType<typeof createContext>>;
+
+export const createContext = async ({ request }: InitialContext) => {
+  const db = client;
+  // const db = req.session?.client ?? client;
+  return {
+    user: await e.select(e.users.User, (u) => ({ ...UserShape(u), filter_single: { username: "eik21jh" } })).run(db),
+    // session: req.session,
+    db: db.withGlobals({ ...env.db.globals }) as Executor,
+    // req,
+    // res,
+  };
+};
+
+const _user = e.assert_exists(e.global.user);
+
+export interface AuthContext extends Context {
+  user: $infer<typeof UserShape>[number];
+  $user: typeof _user;
+}
 
 export const pub = os
-  .$context<Context>()
+  .$context<InitialContext>()
   .$route({ method: "GET" })
-  .use(sentryMiddleware({ captureInputs: true }));
+  .use(sentryMiddleware({ captureInputs: true }))
+  .use(async ({ next, context: { request, ...props } }) => {
+    return next({
+      context: {request, ...(await createContext({ request }))},
+    });
+  });
 
 export const auth = pub
   .errors({
@@ -17,9 +48,9 @@ export const auth = pub
     },
   })
   .use(async ({ next, context: { user, ...props }, errors }) => {
-    if (!user) {
-      throw errors.UNAUTHORIZED();
-    }
+    // if (!user) {
+    //   throw errors.UNAUTHORIZED();
+    // }
     return next({
       context: { user, $user: e.assert_exists(e.global.user), ...props } as AuthContext,
     });

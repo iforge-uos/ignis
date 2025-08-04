@@ -1,14 +1,15 @@
 import { onError } from "@orpc/server";
 import { RPCHandler } from "@orpc/server/fetch";
 import { createServerFileRoute } from "@tanstack/react-start/server";
-import { createContext, router } from "./api.$";
+import { InitialContext, router } from "./api.$";
+import serialisers from "@/lib/serialisers";
 
-const handler = new RPCHandler(router, { interceptors: [onError(console.error)] });
+const handler = new RPCHandler(router, { interceptors: [onError(console.error)], customJsonSerializers: serialisers });
 
-async function handle({ request }: { request: Request }) {
+async function handle({ request }: InitialContext) {
   const { response } = await handler.handle(request, {
     prefix: "/api/rpc",
-    context: await createContext({ request }), // Provide initial context if needed
+    context: { request }, // Provide initial context if needed
   });
 
   return response ?? new Response("Not Found", { status: 404 });

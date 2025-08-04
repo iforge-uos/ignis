@@ -1,19 +1,12 @@
-import client from "@/db";
-import config from "@/lib/env/server";
 import serialisers from "@/lib/serialisers";
-import { RepShape, UserShape } from "@/lib/utils/queries";
 import { pub } from "@/orpc";
 import { experimental_SmartCoercionPlugin as SmartCoercionPlugin } from "@orpc/json-schema";
 import { OpenAPIGenerator } from "@orpc/openapi";
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { onError } from "@orpc/server";
-import { SimpleCsrfProtectionHandlerPlugin } from "@orpc/server/plugins";
-import { ZodSmartCoercionPlugin, ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
-import e, { $infer } from "@packages/db/edgeql-js";
-import * as Sentry from "@sentry/node";
-import { createMiddleware, json } from "@tanstack/react-start";
+import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
+import { json } from "@tanstack/react-start";
 import { createServerFileRoute } from "@tanstack/react-start/server";
-import { Executor } from "gel";
 
 import { agreementsRouter } from "@/api/agreements";
 import { authRouter } from "@/api/auth";
@@ -38,25 +31,8 @@ export const router = pub.router({
 });
 
 export type Router = typeof router;
-export type Context = Awaited<ReturnType<typeof createContext>>;
-
-export const createContext = async ({ request }: { request: Request }) => {
-  const db = client;
-  // const db = req.session?.client ?? client;
-  return {
-    user: await e.select(e.users.User, (u) => ({ ...UserShape(u), filter_single: { username: "eik21jh" } })).run(db),
-    // session: req.session,
-    db: db.withGlobals({ ...config.db.globals }) as Executor,
-    // req,
-    // res,
-  };
-};
-
-const _user = e.assert_single(e.assert_exists(e.user));
-
-export interface AuthContext extends Context {
-  user: $infer<typeof UserShape>[number];
-  $user: typeof _user;
+export type InitialContext = {
+  request: Request
 }
 
 const openAPIGenerator = new OpenAPIGenerator({
@@ -89,7 +65,7 @@ async function handle({ request }: { request: Request }) {
   }
   const { response } = await handler.handle(request, {
     prefix: "/api",
-    context: await createContext({ request }),
+    context: {request},
   });
 
   return response ?? new Response("Not Found", { status: 404 });
