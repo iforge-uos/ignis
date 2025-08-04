@@ -182,7 +182,7 @@ export const appConfig: AppConfig[] = [
   },
   {
     name: "User",
-    url: "/user/me",
+    url: "/user",
     logo: UserCogIcon,
     color: "#701a75",
     description: "Manage your user details",
@@ -190,7 +190,7 @@ export const appConfig: AppConfig[] = [
     routes: [
       {
         title: "Profile",
-        url: "/user/me",
+        url: "/user",
         icon: UserIcon,
         isActive: true,
       },

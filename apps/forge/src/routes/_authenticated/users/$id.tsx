@@ -1,36 +1,17 @@
 import { UserAvatar } from "@/components/avatar";
 import Title from "@/components/title";
-import { LocationIcon } from "@/icons/Locations";
 import { client } from "@/lib/orpc";
 import SignInChart from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignInChart";
-import { Training } from "@packages/types/users";
 import { Badge } from "@packages/ui/components/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@packages/ui/components/table";
 import { createFileRoute } from "@tanstack/react-router";
-import {} from "@tanstack/react-router";
 import { Check, X } from "lucide-react";
+import { LocationIcon } from "@/icons/Locations";
+import { format } from "date-fns"
 
-function Component() {
-  const data = Route.useLoaderData();
-  const { user, trainings, signIns } = data!;
-
-  if (!user || !trainings || !signIns) {
-    return (
-      <div className="flex flex-col h-full">
-        <main className="flex flex-1 flex-col gap-4 p-2 md:gap-8 md:p-6">
-          <div className="flex items-center">
-            <h1 className="font-semibold text-lg md:text-2xl">User not found</h1>
-          </div>
-        </main>
-      </div>
-    );
-  }
-
+export default function Component() {
+  const { user, trainings, signIns } = Route.useLoaderData();
   const rep = user.roles.some((role) => role.name === "Rep");
-
-  const locationIcon = (training: Training) => {
-    return training.locations.map((location) => <LocationIcon location={location} key={training.id} />);
-  };
 
   return (
     <>
@@ -101,29 +82,33 @@ function Component() {
                             <div className="text-sm">{training.name}</div>
                           </TableCell>
                           <TableCell>
-                            <div className="flex justify-center">{locationIcon(training)}</div>
+                            <div className="flex justify-center">
+                              {training.locations.map((location) => (
+                                <LocationIcon location={location} key={location} />
+                              ))}
+                            </div>
                           </TableCell>
                           <TableCell>
                             <div className="flex justify-center">
-                              {training.compulsory ? <Check stroke="green" /> : <X stroke="red" />}
+                              {training.compulsory ? <Check stroke="tick" /> : <X stroke="cross" />}
                             </div>
                           </TableCell>
                           {rep && ( // TODO if user training is a pre-req to rep training we can collapse the 2 into one entry.
-                            <TableCell>
+                            (<TableCell>
                               <div className="flex justify-center">
-                                {training.rep ? <Check stroke="green" /> : <X stroke="red" />}
+                                {training.rep ? <Check stroke="tick" /> : <X stroke="cross" />}
                               </div>
-                            </TableCell>
+                            </TableCell>)
                           )}
                           <TableCell>
                             <div className="text-sm text-center">
-                              {new Date(training["@created_at"]).toLocaleDateString()}
+                              {format(training["@created_at"], "dd/MM/yyyy")}
                             </div>
                           </TableCell>
                           <TableCell>
                             <div className="text-sm text-center">
                               {training["@in_person_created_at"]
-                                ? new Date(training["@in_person_created_at"]).toLocaleDateString()
+                                ? format(training["@in_person_created_at"], "dd/MM/yyyy")
                                 : training["@in_person_created_at"] === undefined
                                   ? "-"
                                   : "Never"}
@@ -131,15 +116,10 @@ function Component() {
                           </TableCell>
                           <TableCell>
                             <div className="text-sm text-center">
-                              {/*{*/}
-                              {/*  training.renewal_due*/}
-                              {/*    ? new Date(*/}
-                              {/*        training.renewal_due,*/}
-                              {/*      ).toLocaleDateString()*/}
-                              {/*    : 'Never'*/}
-                              {/*  // FIXME this is also broken*/}
-                              {/*}*/}
-                              Never
+                              {
+                                training.renewal_due ? new Date(training.renewal_due).toLocaleDateString() : "Never"
+                                // FIXME this is also broken
+                              }
                             </div>
                           </TableCell>
                         </TableRow>
@@ -154,30 +134,10 @@ function Component() {
         </main>
       </div>
     </>
-  );
+  )
 }
 
-export const Route = createFileRoute("/_authenticated/user/me")({
-  loader: async ({ context }) => {
-    const userId = context.user?.id;
-
-    if (userId === undefined) {
-      return {
-        user: null,
-        trainings: [],
-        signIns: [],
-      };
-    }
-    const [user, trainings, signIns] = await Promise.all([
-      client.users.get({ id: userId }),
-      client.users.training.all({ id: userId }),
-      client.users.signIns({ id: userId }),
-    ]);
-    return {
-      user,
-      trainings,
-      signIns,
-    };
-  },
+export const Route = createFileRoute("/_authenticated/users/$id")({
+  loader: async ({ params }) => client.users.profile(params),
   component: Component,
 });

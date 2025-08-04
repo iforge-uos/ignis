@@ -30,7 +30,7 @@ export const commandConfig: CommandConfig[] = [
     requiredRoles: [],
     action: {
       type: "navigate",
-      to: "/user/me",
+      to: "/user",
     },
   },
   {

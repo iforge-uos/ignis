@@ -5,8 +5,10 @@ import { UpdateUserSchema } from "@packages/db/zod/modules/users";
 import * as z from "zod";
 import { signAgreement } from "./agreements.$agreement_id";
 import { addInfraction } from "./infractions";
+import { promote } from "./promote";
 import { signIns } from "./sign-ins";
 import { trainingRouter } from "./training";
+import { profile } from "./profile";
 
 export const get = auth
   .route({ path: "/" })
@@ -39,4 +41,6 @@ export const idRouter = auth.prefix("/{id}").router({
   signAgreement,
   addInfraction,
   signIns,
+  promote,
+  profile,
 });

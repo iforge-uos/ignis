@@ -17,7 +17,7 @@ export const signIns = auth
           location: { name: true },
           ends_at: true,
           created_at: true,
-          duration: true,
+          duration_: e.duration_get(sign_in.duration, "totalseconds"),
           by: { created_at: e.datetime_truncate(sign_in.created_at, "days") },
         }),
       )
@@ -29,7 +29,7 @@ export const signIns = auth
           return {
             day: `${year}-${month}-${day}`,
             value: group.elements.reduce(
-              (previous_duration, visit) => previous_duration + Temporal.Duration.from(visit.duration).total("seconds"),
+              (previous_duration, visit) => previous_duration + Temporal.Duration.from({seconds: Math.round(visit.duration_)}).total("seconds"),
               0,
             ),
             sign_ins: group.elements,
