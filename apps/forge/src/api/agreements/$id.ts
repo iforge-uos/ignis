@@ -1,6 +1,5 @@
 import { AgreementShape } from "@/lib/utils/queries";
 import { auth, pub } from "@/orpc";
-import { os } from "@orpc/server";
 import e from "@packages/db/edgeql-js";
 import { UpdateAgreementSchema } from "@packages/db/zod/modules/sign_in";
 import * as z from "zod";

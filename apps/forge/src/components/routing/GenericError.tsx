@@ -20,7 +20,7 @@ export const GenericError = ({ error }: { error: Error }) => {
             </p>
             <p className="text-sm text-foreground">
               Note: This site is still under development. For assistance, join our{" "}
-              <a href={import.meta.env.VITE_DISCORD_URL}>
+              <a href="/discord">
                 <Button variant="hyperlink">Discord server</Button>
               </a>
               .

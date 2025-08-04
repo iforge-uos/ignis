@@ -3,7 +3,7 @@ import { ErrorMap } from "@orpc/server";
 import e from "@packages/db/edgeql-js";
 import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
 import { CreateInfractionSchema } from "@packages/db/zod/modules/users";
-import { logger } from "@sentry/node";
+import { logger } from "@sentry/tanstackstart-react";
 import * as z from "zod";
 import { StepType, createFinaliseStep, createInitialiseStep, createTransmitStep } from "./_steps";
 import type { Params, Return } from "./_types";

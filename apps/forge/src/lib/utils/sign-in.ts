@@ -4,7 +4,7 @@ import { ORPCError } from "@orpc/server";
 import e, { type $infer } from "@packages/db/edgeql-js";
 import { LocationName } from "@packages/types/sign_in";
 import { Infraction } from "@packages/types/users";
-import { logger } from "@sentry/node";
+import { logger } from "@sentry/tanstackstart-react";
 import { Executor } from "gel";
 import { exhaustiveGuard } from ".";
 import type { SignInUserShape } from "./queries";

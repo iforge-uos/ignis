@@ -1,6 +1,6 @@
 import { exec } from "node:child_process";
 import { admin } from "@/orpc";
-import { logger } from "@sentry/node";
+import { logger } from "@sentry/tanstackstart-react";
 
 export const getGelUI = admin.route({ path: "/db/ui" }).handler(async () => {
   logger.info("Retrieving Gel UI URL");

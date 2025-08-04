@@ -1,8 +1,8 @@
-import config from "@/lib/env/server";
+import env from "@/lib/env";
 import { sleep } from "@/lib/utils";
 import { ldapLibraryToUcardNumber, removeDomain } from "@/lib/utils/sign-in";
 import e from "@packages/db/edgeql-js";
-import { logger } from "@sentry/node";
+import { logger } from "@sentry/tanstackstart-react";
 import { Client, Entry } from "ldapts";
 import * as z from "zod";
 
@@ -39,14 +39,14 @@ class UoSClient extends Client {
 
   constructor() {
     super({
-      url: `ldap${config.ldap.ssl ? "s" : ""}://${config.ldap.host}:${config.ldap.port}`,
+      url: `ldap${env.ldap.ssl ? "s" : ""}://${env.ldap.host}:${env.ldap.port}`,
       connectTimeout: 5_000,
       timeout: 10_000,
     });
   }
 
   async connect() {
-    await this.bind(config.ldap.user, config.ldap.pass);
+    await this.bind(env.ldap.user, env.ldap.pass);
   }
 
   private async reconnect(): Promise<void> {
@@ -72,7 +72,7 @@ class UoSClient extends Client {
     // let searchReferences: any;
 
     try {
-      const searchResult = await this.search(config.ldap.base, {
+      const searchResult = await this.search(env.ldap.base, {
         scope: "sub",
         filter: searchFilter,
         attributes,

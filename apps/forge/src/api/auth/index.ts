@@ -6,8 +6,7 @@ import { auth, pub } from "@/orpc";
 import { CallbackRequest } from "@gel/auth-express";
 import { ORPCError } from "@orpc/server";
 import e from "@packages/db/edgeql-js";
-import * as Sentry from "@sentry/node";
-import { Response } from "express";
+import * as Sentry from "@sentry/tanstackstart-react";
 import z from "zod";
 
 export const verify = pub

@@ -1,9 +1,9 @@
 import { admin } from "@/orpc";
-import { logger } from "@sentry/node";
+import { logger } from "@sentry/tanstackstart-react";
 import { UUID } from "gel/dist/reflection/queries";
 import z from "zod";
 
-const ORIGINAL_USERS: {[K: UUID]: UUID} = {}
+const ORIGINAL_USERS: { [K: UUID]: UUID } = {};
 
 export const su = admin
   .route({ path: "/su" })

@@ -1,5 +1,5 @@
 import email from "@/api/email";
-import config from "@/lib/env/server";
+import env from "@/lib/env";
 import createExpressAuth from "@gel/auth-express";
 import { EventPublisher } from "@orpc/client";
 import { PartialUser } from "@packages/types/users";

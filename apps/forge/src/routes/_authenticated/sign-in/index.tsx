@@ -17,7 +17,7 @@ const SignInIndexAppComponent = () => {
       description: "Join the iForge Discord if you haven't already.",
       icon: <MessageCircleMore className="h-8 w-8 text-neutral-500" />,
       linkText: "Join",
-      externalLink: import.meta.env.VITE_DISCORD_URL,
+      externalLink: "https://iforge.sheffield.ac.uk/discord",
     },
     {
       title: "Top up till credit",

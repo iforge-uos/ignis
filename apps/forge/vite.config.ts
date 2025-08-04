@@ -1,3 +1,5 @@
+import env from "@/lib/env"
+import { wrapVinxiConfigWithSentry } from '@sentry/tanstackstart-react'
 import { sentryVitePlugin } from "@sentry/vite-plugin";
 import spotlightSidecar from "@spotlightjs/sidecar/vite-plugin";
 import spotlight from "@spotlightjs/spotlight/vite-plugin";
@@ -11,10 +13,10 @@ import lqip from "vite-plugin-lqip";
 import svgr from "vite-plugin-svgr";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-export default defineConfig({
+const config = defineConfig({
   build: {
     sourcemap: true,
-    target: "bun",
+    target: "esnext",
   },
   plugins: [
     tsconfigPaths(),
@@ -45,3 +47,13 @@ export default defineConfig({
     }),
   ],
 });
+
+export default wrapVinxiConfigWithSentry(config, {
+  org: "iforge-uos",
+  project: "forge",
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  // Only print logs for uploading source maps in CI
+  // Set to `true` to suppress logs
+  silent: !process.env.CI,
+})
+

@@ -2,7 +2,7 @@
 import { QueuePlaceShape } from "@/lib/utils/queries";
 import { ErrorMap } from "@orpc/server";
 import e, { $infer } from "@packages/db/edgeql-js";
-import { logger } from "@sentry/node";
+import { logger } from "@sentry/tanstackstart-react";
 import { AccessError, ConstraintViolationError } from "gel";
 import * as z from "zod";
 import { StepType, createFinaliseStep, createInitialiseStep, createTransmitStep } from "./_steps";

@@ -154,7 +154,7 @@ const faqItems: FAQItem[] = [
         </ul>
         You should also complete training for any machines you're planning to use. For machines the require in-person
         training, please book with a rep in the{" "}
-        <a href="https://discord.gg/UK6e8GeArH">
+        <a href="/discord">
           <Button variant="hyperlink" className="text-lg">
             Discord
           </Button>

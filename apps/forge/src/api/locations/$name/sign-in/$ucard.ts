@@ -5,7 +5,7 @@ import { eventIterator } from "@orpc/server";
 import { EventPublisher } from "@orpc/server";
 import e from "@packages/db/edgeql-js";
 import { sign_in } from "@packages/db/interfaces";
-import { logger } from "@sentry/node";
+import { logger } from "@sentry/tanstackstart-react";
 import * as z from "zod";
 import { InitialiseStep, SIGN_INS, StepType } from "./_flows/_steps";
 import { Errors, Finalise, Initialise, Receive, Return, Transmit } from "./_flows/_types";
