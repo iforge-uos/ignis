@@ -7,7 +7,7 @@ import { CallbackRequest } from "@gel/auth-express";
 import { ORPCError } from "@orpc/server";
 import e from "@packages/db/edgeql-js";
 import * as Sentry from "@sentry/tanstackstart-react";
-import z from "zod";
+import * as z from "zod";
 
 export const verify = pub
   .route({ method: "GET", path: "/auth/verify" })

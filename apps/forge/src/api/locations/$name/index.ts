@@ -3,7 +3,7 @@ import { pub, rep } from "@/orpc";
 import e from "@packages/db/edgeql-js";
 import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
 import { Location } from "@packages/types/sign_in";
-import z from "zod";
+import * as z from "zod";
 import { commonReasons } from "./common-reasons";
 import { queueRouter } from "./queue";
 import { signInRouter } from "./sign-in";
