@@ -2,7 +2,7 @@ import { UserAvatar } from "@/components/avatar";
 import Title from "@/components/title";
 import { useUser } from "@/hooks/useUser";
 import { LocationIcon } from "@/icons/Locations";
-import { orpc } from "@/lib/orpc";
+import { client } from "@/lib/orpc";
 import { toTitleCase } from "@/lib/utils";
 import { Badge } from "@packages/ui/components/badge";
 import { Button } from "@packages/ui/components/button";
@@ -101,6 +101,6 @@ export default function Component() {
 }
 
 export const Route = createFileRoute("/_authenticated/sign-in/$id")({
-  loader: async ({ params }) => await client.signIns.get({ input: { id: params.id } }),
+  loader: async ({ params }) => await client.signIns.get({ id: params.id }),
   component: Component,
 });

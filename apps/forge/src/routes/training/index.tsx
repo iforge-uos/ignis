@@ -224,5 +224,5 @@ export default function TrainingIndexPage() {
 
 export const Route = createFileRoute("/training/")({
   component: TrainingIndexPage,
-  loader: client.training.all,
+  loader: async () => client.training.all(),
 });
