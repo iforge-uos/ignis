@@ -16,7 +16,7 @@ import {
   Users,
 } from "lucide-react";
 import * as React from "react";
-import { exhaustiveGuard } from "../lib/utils";
+import { exhaustiveGuard } from "@/lib/utils";
 
 export default function Team({ team, ...props }: { team: team.Name } & React.ComponentProps<LucideIcon>) {
   switch (team) {
@@ -47,7 +47,7 @@ export default function Team({ team, ...props }: { team: team.Name } & React.Com
     case "Staff":
       return <Diamond {...props} />;
     default:
-      exhaustiveGuard(team)
+      exhaustiveGuard(team);
   }
 }
 

@@ -39,7 +39,7 @@ const RootDocument = () => {
             <div className="sticky top-0 z-50 bg-background border-b">
               <SidebarHeader />
             </div>
-            <div className="flex-grow overflow-auto">
+            <div className="flex-grow overflow-auto antialiased">
               <Outlet />
               <TailwindIndicator />
               <UCardReader />
@@ -94,7 +94,7 @@ export const Route = wrapCreateRootRouteWithSentry(createRootRouteWithContext<Ro
       },
       {
         property: "og:image",
-        content: "https://iforge.sheffield.ac.uk/cdn/logos/iforge.png",
+        content: "https://iforge.sheffield.ac.uk/logos/iforge.png",
       },
       {
         property: "og:type",
@@ -123,7 +123,7 @@ export const Route = wrapCreateRootRouteWithSentry(createRootRouteWithContext<Ro
       },
       {
         name: "twitter:image",
-        content: "https://iforge.sheffield.ac.uk/cdn/logos/iforge.png",
+        content: "https://iforge.sheffield.ac.uk/logos/iforge.png",
       },
       {
         name: "twitter:site",

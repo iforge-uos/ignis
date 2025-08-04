@@ -30,7 +30,6 @@ export const remove = rep
       reason: z.string().min(1),
     }),
   )
-  .output(z.void())
   .use(transaction)
   .handler(async ({ input: { id, training_id, reason }, context: { tx } }) => {
     const user = e.assert_exists(

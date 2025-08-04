@@ -25,12 +25,30 @@
     "files.exclude": {
       "node_modules/": true,
       "apps/": true,
-      "tooling/": true,
       "packages/": true
     },
     "[typescriptreact]": {
       "editor.defaultFormatter": "biomejs.biome"
     },
-    "liveServer.settings.multiRootWorkspaceName": "Ignis"
+    "liveServer.settings.multiRootWorkspaceName": "Ignis",
+    "typescript.experimental.useTsgo": false,
+    "cSpell.words": [
+      "errmessage",
+      "heartspace",
+      "ignis",
+      "interactable",
+      "mainspace",
+      "makerspace",
+      "ORPC",
+      "Selectability",
+      "serialisers",
+      "serialiser",
+      "supervisable",
+      "tribool",
+      "ucard",
+      "orpc",
+      "sonner"
+    ],
+    "python.analysis.typeCheckingMode": "off"
   }
 }

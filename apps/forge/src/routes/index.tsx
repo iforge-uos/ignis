@@ -11,7 +11,7 @@ import { Timeline, TimelineDot, TimelineHeading, TimelineItem, TimelineLine } fr
 import { Link, createFileRoute } from "@tanstack/react-router";
 import Autoplay from "embla-carousel-autoplay";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { useScroll, useTransform } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import React from "react";
 import { useEffect, useRef, useState } from "react";
@@ -460,7 +460,7 @@ const IndexComponent = () => {
     <>
       <Title prompt="Home" />
       <div className="flex justify-center my-10">
-        <IForgeLogo className="w-96 h-[138px] pointer-events-none" />
+        <IForgeLogo className="w-96 pointer-events-none" />
       </div>
       <h2>
         <p className="mx-14 text-4xl mb-2 font-futura text-balance">

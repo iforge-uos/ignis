@@ -27,8 +27,7 @@ export const UserShape = e.shape(e.users.User, () => ({
   mailing_list_subscriptions: true,
 }));
 
-export const RepShape = e.shape(e.users.Rep, (rep) => ({
-  ...UserShape(rep),
+export const RepShape = e.shape(e.users.Rep, () => ({
   status: true,
   teams: { id: true, name: true },
 }));
@@ -92,7 +91,7 @@ export const TrainingForLocationShape = e.shape(e.training.Training, () => ({
   },
   icon_url: true,
   enabled: true,
-  status: "Start" as const,
+  status: e.str("Start"),
 }));
 
 export const TrainingSectionShape = e.shape(e.training.Training.sections, () => ({
