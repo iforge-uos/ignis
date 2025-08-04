@@ -1,51 +1,21 @@
-import { Hammer } from "@/components/loading";
 import Title from "@/components/title";
-import { useUserRoles } from "@/hooks/useUserRoles";
-import { REP_ON_SHIFT } from "@/lib/constants";
-import { orpc } from "@/lib/orpc";
-import { useQuery } from "@tanstack/react-query";
+import { client } from "@/lib/orpc";
 import { createFileRoute } from "@tanstack/react-router";
 import {} from "@tanstack/react-router";
-import { Suspense } from "react";
 import { AgreementCard } from "./-components/AgreementCard";
 
-function AgreementsList() {
-  const roles = useUserRoles();
-  const { data: agreements = [] } = useQuery(
-    orpc.agreements.all.queryOptions({
-      refetchOnMount: "always",
-      staleTime: 0,
-      networkMode: "always",
-    }),
-  );
 
-  const isRep = roles.includes("rep");
-
-  // Filter agreements based on user roles
-  const filteredAgreements = agreements.filter((agreement) => {
-    const isRepAgreement = agreement.reasons.some((reason) => reason.name === REP_ON_SHIFT);
-
-    // Show Rep On Shift agreement only to reps
-    // Show all other agreements to everyone
-    if (isRepAgreement) {
-      return isRep;
-    }
-    return true;
-  });
-
+export default function Component() {
+ const agreements = Route.useLoaderData();
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
       <Title prompt="User Agreements" />
       <h1 className="text-2xl sm:text-3xl font-bold text-center my-5">Agreements</h1>
       <p className="text-center mb-6">The signable agreements in the iForge.</p>
       <div
-        className={`
-        grid
-        ${filteredAgreements.length === 1 ? "grid-cols-1 max-w-md mx-auto" : "grid-cols-1 md:grid-cols-2"}
-        gap-6
-      `}
+        className={`grid gap-6 mb-10 ${agreements.length === 1 ? "grid-cols-1 max-w-md mx-auto" : "grid-cols-1 md:grid-cols-2"}`}
       >
-        {filteredAgreements.map((agreement) => (
+        {agreements.map((agreement) => (
           <AgreementCard key={agreement.id} agreement={agreement} />
         ))}
       </div>
@@ -53,14 +23,7 @@ function AgreementsList() {
   );
 }
 
-export default function Component() {
-  return (
-    <Suspense fallback={<Hammer />}>
-      <AgreementsList />
-    </Suspense>
-  );
-}
-
 export const Route = createFileRoute("/_authenticated/sign-in/agreements/")({
   component: Component,
+  loader: async ({context}) => client.agreements.all(),
 });

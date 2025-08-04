@@ -1,5 +1,6 @@
 import { useUser } from "@/hooks/useUser";
-import { Agreement } from "@ignis/types/root";
+import { Category } from "@/icons/SignInReason";
+import { cn } from "@/lib/utils";
 import { Badge, BadgeProps } from "@packages/ui/components/badge";
 import { Card, CardContent } from "@packages/ui/components/card";
 import { Separator } from "@packages/ui/components/separator";
@@ -59,42 +60,17 @@ export function AgreementCard({ agreement }: AgreementCardProps) {
       onHoverEnd={() => setIsHovered(false)}
       onClick={handleViewAgreement}
     >
-      <Card className="bg-card dark:bg-card-dark border-border dark:border-border-dark overflow-hidden group w-full h-full">
+      <Card className="bg-card dark:bg-card-dark border-border dark:border-border-dark overflow-hidden group py-2 w-full h-full">
         <CardContent className="p-0 relative w-full h-full">
           <div className="absolute top-4 right-4 transition-all duration-200">
             <ExternalLink className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors duration-200" />
           </div>
           <div className="flex flex-col w-full h-full">
-            <div className="w-full p-4 sm:p-6">
+            <div className="w-full p-2 sm:p-4">
               <div className="flex flex-col sm:flex-row sm:items-center mb-4">
                 <h3 className="text-xl sm:text-2xl font-bold text-foreground dark:text-foreground-dark mb-2 sm:mb-0 sm:mr-4">
                   {agreement.name}
                 </h3>
-                <Badge
-                  variant={badgeVariant as BadgeProps["variant"]}
-                  className={`text-sm px-2 py-1 ${badgeStyle} mt-2 sm:mt-0`}
-                >
-                  {status}
-                </Badge>
-              </div>
-              <div className="flex flex-wrap gap-2 mb-4">
-                {agreement.reasons.map((reason) => (
-                  <Badge
-                    key={reason.name}
-                    variant="outline"
-                    className="text-primary dark:text-primary-dark border-primary dark:border-primary-dark"
-                  >
-                    <Tag className="mr-2 h-4 w-4" />
-                    {reason.name}
-                  </Badge>
-                ))}
-                <Badge
-                  variant="outline"
-                  className="text-muted-foreground dark:text-muted-foreground-dark border-muted-foreground dark:border-muted-foreground-dark"
-                >
-                  <Calendar className="mr-2 h-4 w-4" />
-                  {new Date(agreement.updated_at).toLocaleDateString()}
-                </Badge>
                 <Badge
                   variant="outline"
                   className="text-muted-foreground dark:text-muted-foreground-dark border-muted-foreground dark:border-muted-foreground-dark"
@@ -102,9 +78,48 @@ export function AgreementCard({ agreement }: AgreementCardProps) {
                   v{agreement.version}
                 </Badge>
               </div>
+              <div className="flex flex-wrap gap-2 mb-2">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Badge
+                      variant="outline"
+                      className="text-muted-foreground dark:text-muted-foreground-dark border-muted-foreground dark:border-muted-foreground-dark cursor-pointer"
+                    >
+                      <Calendar className="mr-1 h-3 w-3" />
+                      {new Date(agreement.updated_at).toLocaleDateString()}
+                    </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="text-sm">Last updated</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Badge
+                      variant="outline"
+                      className="text-muted-foreground dark:text-muted-foreground-dark border-muted-foreground dark:border-muted-foreground-dark cursor-pointer"
+                    >
+                      <Tag className="mr-1 h-3 w-3" />
+                      {agreement.reasons.length} reason{agreement.reasons.length !== 1 ? "s" : ""}
+                    </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium">Sign-in reasons:</p>
+                      <div className="flex flex-wrap gap-1 max-w-xs">
+                        {agreement.reasons.map((reason) => (
+                          <Badge key={reason.id} variant="default" className="rounded-sm shadow-sm text-xs">
+                            <Category category={reason.category} className="mr-1 h-3 w-3" />
+                            {reason.name}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
             </div>
-            <Separator orientation="horizontal" className="mt-auto" />
-            <div className="w-full bg-popover dark:bg-popover-dark p-4 sm:p-6 flex flex-col justify-center items-center">
+            <div className="w-full p-2 sm:p-4 flex flex-col justify-center items-center">
               {status === "Not Signed" ? (
                 <Tooltip>
                   <TooltipTrigger>
