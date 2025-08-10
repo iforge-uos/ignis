@@ -1,14 +1,16 @@
+import { Entries } from "@packages/types";
+import { PartialLocation } from "@packages/types/sign_in";
+import { Separator } from "@packages/ui/components/separator";
+import { Skeleton } from "@packages/ui/components/skeleton";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@packages/ui/components/tooltip";
+import { Link } from "@tanstack/react-router";
+import { useAtomValue } from "jotai";
 import { locationStatusesAtom } from "@/atoms/signInAppAtoms";
 import { IForgeLogo } from "@/icons/IForge";
 import { LocationIcon } from "@/icons/Locations";
 import { DiscordIcon, GitHubIcon, InstagramIcon, LinkedInIcon, TwitterIcon, YouTubeIcon } from "@/icons/Socials";
-import { exhaustiveGuard, removeSuffix, toTitleCase } from "@/lib/utils";
-import { Entries } from "@packages/types";
-import { PartialLocation } from "@packages/types/sign_in";
-import { Separator } from "@packages/ui/components/separator";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@packages/ui/components/tooltip";
-import { Link } from "@tanstack/react-router";
-import { useAtomValue } from "jotai";
+import { LOCATIONS } from "@/lib/constants";
+import { cn, exhaustiveGuard, removeSuffix, toTitleCase } from "@/lib/utils";
 
 function LocationStatusTooltip({ location }: { location: PartialLocation }) {
   let className: string;
@@ -45,7 +47,7 @@ function LocationStatusTooltip({ location }: { location: PartialLocation }) {
 }
 
 export function Footer() {
-  const { data: locationStatuses } = useAtomValue(locationStatusesAtom);
+  const { data: locationStatuses, isLoading } = useAtomValue(locationStatusesAtom);
 
   return (
     <footer className="bg-background border-t-2 p-5 md:p-10">
@@ -57,13 +59,22 @@ export function Footer() {
           </Link>
 
           <p className="mt-3 text-balance">
-              iForge Makerspace at the University of Sheffield is the place to design and create, offering tools and
-              resources for students and staff to bring their ideas to life
+            iForge Makerspace at the University of Sheffield is the place to design and create, offering tools and
+            resources for students and staff to bring their ideas to life
           </p>
         </div>
         <div className="flex flex-col gap-2 w-full md:w-auto">
           <h5 className="text-2xl font-bold font-futura">Opening Hours</h5>
           <p className="text-balance">Open weekdays, subject to exams and holidays</p>
+          {isLoading && (
+            <div>
+              {LOCATIONS.map((_, idx, array) => (
+                // biome-ignore lint/suspicious/noArrayIndexKey: this never re-renders
+                <Skeleton key={idx} className={cn("h-8", idx === array.length - 1 ? "mt-2" : "my-2")} /> // They should be h-10 to match the table)
+                ),
+              )}
+            </div>
+          )}
           {locationStatuses && (
             <table className="w-full border-collapse items-center flex">
               <tbody className="w-full">
