@@ -1,13 +1,12 @@
-import { createIsomorphicFn } from '@tanstack/react-start';
-import { getRequestHeader } from '@tanstack/react-start/server';
-import { useState } from 'react';
+import { createIsomorphicFn } from "@tanstack/react-start";
+import { getRequestHeader } from "@tanstack/react-start/server";
 
 const getUserAgent = createIsomorphicFn()
   .client(() => navigator.userAgent)
-  .server(() => getRequestHeader("user-agent"))
+  .server(() => getRequestHeader("user-agent"));
 
 export function useShortcutKey() {
-  const [userAgent] = useState(getUserAgent);
+  const userAgent = getUserAgent();
 
   return userAgent?.match(/Macintosh;/) ? "⌘" : "Ctrl";
 }
