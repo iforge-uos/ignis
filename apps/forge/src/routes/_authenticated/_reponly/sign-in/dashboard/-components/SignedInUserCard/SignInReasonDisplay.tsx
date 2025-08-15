@@ -1,6 +1,3 @@
-import { activeLocationAtom } from "@/atoms/signInAppAtoms";
-import { uCardNumberToString } from "@/lib/utils";
-import { SignInReason } from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SignInReason";
 import { PartialReason, Training, User } from "@ignis/types/sign_in";
 import { PartialUserWithTeams } from "@packages/types/users";
 import { Badge } from "@packages/ui/components/badge";
@@ -19,6 +16,9 @@ import { useAtomValue } from "jotai";
 import { Edit } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";
+import { activeLocationAtom } from "@/atoms/signInAppAtoms";
+import { uCardNumberToString } from "@/lib/utils";
+import { SignInReason } from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SignInReason";
 import TrainingSelection from "../../../actions/-components/TrainingSelectionList";
 
 interface SignInReasonWithToolsDisplayProps {
@@ -76,75 +76,73 @@ export const SignInReasonWithToolsDisplay: React.FC<SignInReasonWithToolsDisplay
   };
 
   return (
-    <>
-      <Dialog open={isUpdateDialogOpen} onOpenChange={setIsUpdateDialogOpen}>
-        <div className="my-4 p-4 bg-muted text-muted-foreground rounded-sm h-[90%]">
-          <div className="border-gray-500 p-2 rounded-sm mb-4 justify-items-center">
-            <div className="flex justify-center bg-card w-2/3 rounded-sm p-1 font-medium font-mono">Sign In Reason</div>
-            <SignInReason reason={reason} />
-          </div>
-          <div className="border-gray-500 p-2 rounded-sm mb-4 justify-items-center">
-            <div className="flex justify-center bg-card w-2/3 rounded-sm p-1 font-medium font-mono">Tools Used</div>
-            <div className="flex flex-wrap gap-1 mt-2 justify-center">
-              {/* {toolsForSelection
+    <Dialog open={isUpdateDialogOpen} onOpenChange={setIsUpdateDialogOpen}>
+      <div className="my-4 p-4 bg-muted text-muted-foreground rounded-sm h-[90%]">
+        <div className="border-gray-500 p-2 rounded-sm mb-4 justify-items-center">
+          <div className="flex justify-center bg-card w-2/3 rounded-sm p-1 font-medium font-mono">Sign In Reason</div>
+          <SignInReason reason={reason} />
+        </div>
+        <div className="border-gray-500 p-2 rounded-sm mb-4 justify-items-center">
+          <div className="flex justify-center bg-card w-2/3 rounded-sm p-1 font-medium font-mono">Tools Used</div>
+          <div className="flex flex-wrap gap-1 mt-2 justify-center">
+            {/* {toolsForSelection
               ?.sort((a, b) => a.name.localeCompare(b.name))
               .map((tool) => (
                 <Badge variant="default" className="max-w-48 rounded-sm shadow-lg text-center" key={tool.id}>
                 {tool.name}
                 </Badge>
                 ))} */}
-              {tools.sort().map((tool) => (
-                <Badge variant="default" className="max-w-48 rounded-sm shadow-lg text-center" key={tool}>
-                  {tool}
-                </Badge>
-              ))}
+            {tools.sort().map((tool) => (
+              <Badge variant="default" className="max-w-48 rounded-sm shadow-lg text-center" key={tool}>
+                {tool}
+              </Badge>
+            ))}
+            <DialogTrigger asChild>
               <Tooltip>
-                <DialogTrigger>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="mr-2 h-6 text-xs"
-                      onClick={() => setIsUpdateDialogOpen(true)}
-                    >
-                      <Edit className="mr-2 h-3 w-3" />
-                      Update
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Update user's tools</p>
-                  </TooltipContent>
-                </DialogTrigger>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mr-2 h-6 text-xs"
+                    onClick={() => setIsUpdateDialogOpen(true)}
+                  >
+                    <Edit className="mr-2 h-3 w-3" />
+                    Update
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Update user's tools</p>
+                </TooltipContent>
               </Tooltip>
-            </div>
+            </DialogTrigger>
           </div>
         </div>
-        <DialogContent className="sm:max-w-[800px]">
-          <DialogHeader>
-            <DialogTitle>Update Sign-In Information</DialogTitle>
-            <DialogDescription>Update a users tools after they've signed in</DialogDescription>
-          </DialogHeader>
-          {isUserDataPending ? (
-            <div>Loading...</div>
-          ) : (
-            userData && (
-              <>
-                <TrainingSelection
-                  training={userData?.training || []}
-                  onSelectionChange={(newTools) => setNewTools(newTools.map((t) => t.name))}
-                  onSubmit={() => {
-                    newTools?.length !== 0 ? handleUpdateSignIn(newTools) : null;
-                  }}
-                  initialSelection={toolsForSelection}
-                />
-                <Button onClick={() => handleUpdateSignIn(newTools)} disabled={newTools?.length === 0}>
-                  Finish update
-                </Button>
-              </>
-            )
-          )}
-        </DialogContent>
-      </Dialog>
-    </>
+      </div>
+      <DialogContent className="sm:max-w-[800px]">
+        <DialogHeader>
+          <DialogTitle>Update Sign-In Information</DialogTitle>
+          <DialogDescription>Update a users tools after they've signed in</DialogDescription>
+        </DialogHeader>
+        {isUserDataPending ? (
+          <div>Loading...</div>
+        ) : (
+          userData && (
+            <>
+              <TrainingSelection
+                training={userData?.training || []}
+                onSelectionChange={(newTools) => setNewTools(newTools.map((t) => t.name))}
+                onSubmit={() => {
+                  newTools?.length !== 0 ? handleUpdateSignIn(newTools) : null;
+                }}
+                initialSelection={toolsForSelection}
+              />
+              <Button onClick={() => handleUpdateSignIn(newTools)} disabled={newTools?.length === 0}>
+                Finish update
+              </Button>
+            </>
+          )
+        )}
+      </DialogContent>
+    </Dialog>
   );
 };
