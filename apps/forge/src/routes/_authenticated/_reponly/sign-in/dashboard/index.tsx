@@ -108,6 +108,7 @@ function SignInDashboard() {
                   onShiftReps={onShiftReps}
                   startExpanded={true}
                   isAdmin={isUserAdmin}
+                  supportsSorting
                 />
               </div>
               <div id="queue-shelf" className="mt-4 flex-1">
