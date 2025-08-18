@@ -1,7 +1,6 @@
 import { team } from "@packages/db/interfaces";
 import {
   BarChart4,
-  Box,
   CalendarIcon,
   Cog,
   Computer,
@@ -11,6 +10,7 @@ import {
   HardHat,
   LucideIcon,
   Megaphone,
+  Printer,
   Puzzle,
   Send,
   Users,
@@ -23,7 +23,7 @@ export default function Team({ team, ...props }: { team: team.Name } & React.Com
     case "IT":
       return <Computer {...props} />;
     case "3DP":
-      return <Box {...props} />;
+      return <Printer {...props} />;
     case "Hardware":
       return <Hammer {...props} />;
     case "Publicity":

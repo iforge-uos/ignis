@@ -3,6 +3,19 @@ module notification {
         required name: str;
         required description: str;
         multi subscribers := .<mailing_list_subscriptions[is users::User];
+
+        index fts::index on ((
+            fts::with_options(
+                .name,
+                language := fts::Language.eng,
+                weight_category := fts::Weight.A,
+            ),
+            fts::with_options(
+                .description,
+                language := fts::Language.eng,
+                weight_category := fts::Weight.B,
+            )
+        ));
     }
 
     scalar type Type extending enum<
@@ -37,18 +50,24 @@ module notification {
         ERRORED,
     >;
 
-    # to avoid linking to every user we have a silly lil sorta enum (regular enums don't work)
-    scalar type AllTargetTarget extending enum<
-        ALL,
-        REPS,
-    >;
-
-    type AllTarget {
-        required target: AllTargetTarget;
+    # magic to make it act like a singleton
+    type AllUsers {
+        required MAGIC: int16 {
+            readonly := true;
+            default := 0;
+            constraint exclusive;
+        }
+    }
+    type AllReps {
+        required MAGIC: int16 {
+            readonly := true;
+            default := 0;
+            constraint exclusive;
+        }
     }
 
     type Notification extending default::Auditable {
-        required multi delivery_method: DeliveryMethod;
+        required multi delivery_methods: DeliveryMethod;
         required type: Type;
         required status: Status;
         required priority: int16 {
@@ -57,11 +76,12 @@ module notification {
                 there are two notifications trying to be used at the same time the higher priority one will take over.
                 Otherwise the newer one prevails
             $$;
-            default := 0;
+            default := 2;
+            constraint min_value(1);
+            constraint max_value(3);
         }
-        required dispatched_at: datetime {
+        dispatched_at: datetime {
             annotation description := "When the notification started rolling out or if it's scheduled when it will be dispatched";
-            default := datetime_of_statement();
         }
         required title: str {
             annotation description := "The heading of the rendered notification (web) or the subject of the rendered email"
@@ -69,7 +89,7 @@ module notification {
         required content: str {
             annotation description := "The content (MARKDOWN) from plate"
         }
-        required multi target: AllTarget | users::User | team::Team | MailingList | event::Event {
+        required multi targets: AllUsers | AllReps | users::User | team::Team | MailingList | event::Event {
             annotation description := "Who will be receiving the notification";
             on target delete allow;
         }

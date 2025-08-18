@@ -1,6 +1,7 @@
-import { auth } from "@/orpc";
 import e from "@packages/db/edgeql-js";
-import * as z from "zod";
+import { UpdateMailingListSchema } from "@packages/db/zod/modules/notification";
+import z from "zod";
+import { auth, deskOrAdmin } from "@/orpc";
 
 export const get = auth
   .route({ path: "/" })
@@ -16,4 +17,27 @@ export const get = auth
       .run(db),
   );
 
-export const idRouter = auth.prefix("/{id}").router({ get });
+const update = deskOrAdmin
+  .route({ method: "PATCH", path: "/" })
+  .input(UpdateMailingListSchema.extend({ id: z.uuid() }))
+  .handler(async ({ context: { db }, input }) =>
+    e
+      .update(e.notification.MailingList, () => ({
+        filter_single: { id: input.id },
+        set: input,
+      }))
+      .run(db),
+  );
+
+const remove = deskOrAdmin
+  .route({ method: "DELETE", path: "/" })
+  .input(z.object({ id: z.string() }))
+  .handler(async ({ context: { db }, input }) =>
+    e
+      .delete(e.notification.MailingList, () => ({
+        filter_single: { id: input.id },
+      }))
+      .run(db),
+  );
+
+export const idRouter = auth.prefix("/{id}").router({ update, remove, get });

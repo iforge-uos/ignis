@@ -9,7 +9,7 @@ module event {
     >;
 
     type Event extending default::CreatedAt {
-        required title: str;
+        required name: str;
         required description: str;
         required type: Type;
         required starts_at: datetime;
@@ -32,5 +32,18 @@ module event {
             on target delete allow;
         }
         # on insert add to short term closures? also add location
+
+        index fts::index on ((
+            fts::with_options(
+                .name,
+                language := fts::Language.eng,
+                weight_category := fts::Weight.A,
+            ),
+            fts::with_options(
+                .description,
+                language := fts::Language.eng,
+                weight_category := fts::Weight.B,
+            )
+        ));
     }
 }

@@ -165,5 +165,5 @@ const NotificationDashboard = () => {
 
 export const Route = createFileRoute("/_authenticated/admin/notifications/dashboard")({
   component: NotificationDashboard,
-  loader: async () => client.notifications.mailingLists.all({ include_subscribers: false }),
+  loader: async ({ context }) => context.queryClient.prefetchQuery(orpc.notifications.mailingLists.all.queryOptions({ input: { include_subscribers: false } })),
 });

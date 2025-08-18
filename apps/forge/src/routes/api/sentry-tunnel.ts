@@ -5,6 +5,7 @@ const SENTRY_PROJECT_IDS = ["4508127275122768"];
 
 export const ServerRoute = createServerFileRoute("/api/sentry-tunnel").methods({
   POST: async ({ request }) => {
+    return
     try {
       const envelope = await request.text();
 

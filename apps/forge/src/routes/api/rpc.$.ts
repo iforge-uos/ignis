@@ -1,7 +1,7 @@
 import { onError } from "@orpc/server";
 import { RPCHandler } from "@orpc/server/fetch";
 import { createServerFileRoute } from "@tanstack/react-start/server";
-import { InitialContext, router } from "./api.$";
+import { InitialContext, router } from "./$";
 import serialisers from "@/lib/serialisers";
 
 const handler = new RPCHandler(router, { interceptors: [onError(console.error)], customJsonSerializers: serialisers });

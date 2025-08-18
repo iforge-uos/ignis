@@ -1,4 +1,3 @@
-import { AppConfig } from "@/types/nav";
 import {
   ArrowLeftToLineIcon,
   ArrowRightToLineIcon,
@@ -34,6 +33,7 @@ import {
   UsersIcon,
   ZapIcon,
 } from "lucide-react";
+import { AppConfig } from "@/types/nav";
 
 export const appConfig: AppConfig[] = [
   {
@@ -226,26 +226,9 @@ export const appConfig: AppConfig[] = [
       },
       {
         title: "Notifications",
+        url: "/admin/notifications",
         icon: BellIcon,
-        url: "/admin/notifications/dashboard",
         isActive: true,
-        items: [
-          {
-            title: "Emails",
-            icon: MailIcon,
-            url: "/admin/notifications/email",
-          },
-          {
-            title: "App Notifications",
-            icon: MegaphoneIcon,
-            url: "/admin/notifications/app",
-          },
-          {
-            title: "Discord",
-            icon: MessageCircleIcon,
-            url: "/admin/notifications/discord",
-          },
-        ],
       },
       {
         title: "Reps",

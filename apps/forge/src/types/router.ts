@@ -1,8 +1,7 @@
-import type { router } from "@/routes/api.$";
+import type { router } from "@/routes/api/$";
 import type { InferRouterOutputs } from "@orpc/server";
-import { type RegisteredRouter, type RouteIds, type RoutePaths, useNavigate } from "@tanstack/react-router";
-
-export type _RoutePaths = Parameters<ReturnType<typeof useNavigate>>[0]["to"]
+import { type RegisteredRouter, type RouteIds } from "@tanstack/react-router";
+import {type RoutePaths } from "@tanstack/router-core"
 
 export type RoutePath = RoutePaths<RegisteredRouter["routeTree"]>;
 export type RouteId = RouteIds<RegisteredRouter["routeTree"]>;

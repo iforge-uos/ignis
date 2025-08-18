@@ -1,7 +1,9 @@
-import { auth } from "@/orpc";
 import e from "@packages/db/edgeql-js";
 import * as z from "zod";
+import { auth, deskOrAdmin } from "@/orpc";
 import { idRouter } from "./$id";
+import { CreateMailingListSchema } from "@packages/db/zod/modules/notification";
+import { search } from "./search";
 
 export const all = auth
   .route({ path: "/" })
@@ -21,7 +23,14 @@ export const all = auth
       .run(db),
   );
 
+const create = deskOrAdmin
+  .route({ method: "POST", path: "/" })
+  .input(CreateMailingListSchema)
+  .handler(async ({ context: { db }, input }) => e.insert(e.notification.MailingList, input).run(db));
+
 export const mailingListRouters = auth.prefix("/mailing-lists").router({
   all,
+  create,
+  search,
   ...idRouter,
 });
