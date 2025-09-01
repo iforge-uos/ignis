@@ -86,13 +86,13 @@ module sign_in {
 
         multi on_shift_reps := (
             with rep_sign_ins := (
-                select .sign_ins filter .user is users::Rep and .reason.name = "Rep On Shift"
+                select .sign_ins filter .reason.name = "Rep On Shift"
             ),
             select rep_sign_ins.user[is users::Rep]
         );
         multi off_shift_reps := (
             with rep_sign_ins := (
-                select .sign_ins filter .user is users::Rep and .reason.name != "Rep On Shift"
+                select .sign_ins filter .reason.name != "Rep On Shift"
             ),
             select rep_sign_ins.user[is users::Rep]
         );
