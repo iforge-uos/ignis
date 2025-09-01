@@ -111,6 +111,9 @@ export function Footer() {
           <Link to="/contact" className="hover:underline underline-offset-4">
             Contact
           </Link>
+          <Link to="/privacy-policy" className="hover:underline underline-offset-4">
+            Privacy
+          </Link>
         </div>
       </div>
       <br />
