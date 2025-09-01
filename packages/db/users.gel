@@ -93,6 +93,7 @@ module users {
     type Rep extending User {
         required multi teams: team::Team {
             extending default::timed;
+            team_lead: array<tuple<created_at: datetime, ends_at: datetime>>;
         }
         required status: RepStatus {
             default := RepStatus.ACTIVE;
