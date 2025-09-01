@@ -1,9 +1,10 @@
 import { Temporal, toTemporalInstant } from "@js-temporal/polyfill";
-import {implementation} from "regexp.escape";
+import { implementation } from "regexp.escape";
+
 const OriginalRequest = globalThis.Request;
 
 globalThis.Request = class Request extends OriginalRequest {
-  constructor(input: RequestInfo, init?: RequestInit) {
+  constructor(input: RequestInfo | URL, init?: RequestInit) {
     super(input, {
       ...init,
       duplex: "half",
@@ -16,7 +17,7 @@ declare global {
     toTemporalInstant(): Temporal.Instant;
   }
 
-  interface RegExpConstructor {
+  interface RegExp {
     escape: typeof implementation;
   }
 }

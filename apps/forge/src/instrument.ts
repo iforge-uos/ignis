@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/bun";
+import * as Sentry from "@sentry/tanstackstart-react";
 
 Sentry.init({
   dsn: "https://893631a88ccccc18a9b65d8b5c3e1395@o4507082090414080.ingest.de.sentry.io/4508127275122768",

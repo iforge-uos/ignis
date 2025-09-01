@@ -4,6 +4,7 @@ import { StartClient } from "@tanstack/react-start";
 import React from "react";
 import { hydrateRoot } from "react-dom/client";
 import { createRouter } from "./router";
+import "./polyfill";
 
 const router = createRouter();
 

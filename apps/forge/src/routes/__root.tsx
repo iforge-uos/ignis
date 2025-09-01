@@ -1,3 +1,12 @@
+import { User } from "@packages/types/users";
+import { SidebarInset, SidebarProvider } from "@packages/ui/components/sidebar";
+import { Toaster } from "@packages/ui/components/sonner";
+import { wrapCreateRootRouteWithSentry } from "@sentry/tanstackstart-react";
+import type { QueryClient } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
+import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { userAtom } from "@/atoms/authSessionAtoms";
 import { AppSidebar } from "@/components/app-navigation";
 import { SidebarHeader } from "@/components/app-navigation/sidebar-header";
 import { ClientHintCheck } from "@/components/client-hint-check";
@@ -6,21 +15,13 @@ import { TailwindIndicator } from "@/components/dev/Tailwind-Indicator";
 import { Footer } from "@/components/footer";
 import UCardReader from "@/components/ucard-reader";
 import { themeQueryKey, useTheme } from "@/hooks/useTheme";
-import type { useUser } from "@/hooks/useUser";
-import type { orpc } from "@/lib/orpc";
+import appCss from "@/index.css?url";
+import { client } from "@/lib/orpc";
 import { getRequestInfo } from "@/lib/request-info";
-import { SidebarInset, SidebarProvider } from "@packages/ui/components/sidebar";
-import { Toaster } from "@packages/ui/components/sonner";
-import { wrapCreateRootRouteWithSentry } from "@sentry/tanstackstart-react";
-import type { QueryClient } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
-import { TanStackRouterDevtoolsInProd } from "@tanstack/react-router-devtools";
-import appCss from "../index.css?url";
 
 export interface RouterAppContext {
   queryClient: QueryClient;
-  user: ReturnType<typeof useUser>;
+  user: User;
 }
 
 const RootDocument = () => {
@@ -45,7 +46,7 @@ const RootDocument = () => {
               <UCardReader />
 
               <Toaster richColors theme={theme} />
-              <TanStackRouterDevtoolsInProd position="bottom-right" />
+              <TanStackRouterDevtools position="bottom-right" />
               <ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
               <Footer />
             </div>
@@ -149,12 +150,13 @@ export const Route = wrapCreateRootRouteWithSentry(createRootRouteWithContext<Ro
       },
     ],
   }),
+  // beforeLoad: async () => ({ user: await client.users.me() }),
   loader: async ({ context }) => {
     const requestInfo = await getRequestInfo();
 
     context.queryClient.setQueryData(themeQueryKey, requestInfo.userPreferences.theme);
 
-    return { requestInfo };
+    return { requestInfo}
   },
   component: RootDocument,
 });
