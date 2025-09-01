@@ -1,14 +1,12 @@
-import sentryMiddleware from "@/lib/sentry/server";
-import { os, ErrorMap } from "@orpc/server";
+import { ErrorMap, os } from "@orpc/server";
 import e, { $infer } from "@packages/db/edgeql-js";
-import { Client } from "gel";
-import * as z from "zod";
+import { team } from "@packages/db/interfaces";
+import { Client, Executor } from "gel";
+import z from "zod";
 import client from "@/db";
 import env from "@/lib/env";
-import { UserShape } from "@/lib/utils/queries";
-import { Executor } from "gel";
-import type {InitialContext} from "@/routes/api.$"
-
+import { RepShape, UserShape } from "@/lib/utils/queries";
+import { InitialContext } from "@/routes/api/$";
 
 export type Context = Awaited<ReturnType<typeof createContext>>;
 
@@ -16,7 +14,13 @@ export const createContext = async ({ request }: InitialContext) => {
   const db = client;
   // const db = req.session?.client ?? client;
   return {
-    user: await e.select(e.users.User, (u) => ({ ...UserShape(u), filter_single: { username: "eik21jh" } })).run(db),
+    user: await e
+      .select(e.users.User, (u) => ({
+        ...UserShape(u),
+        ...e.is(e.users.Rep, RepShape(u)),
+        filter_single: { username: "eik21jh" },
+      }))
+      .run(db),
     // session: req.session,
     db: db.withGlobals({ ...env.db.globals }) as Executor,
     // req,
@@ -27,17 +31,22 @@ export const createContext = async ({ request }: InitialContext) => {
 const _user = e.assert_exists(e.global.user);
 
 export interface AuthContext extends Context {
-  user: $infer<typeof UserShape>[number];
+  user: NonNullable<Context["user"]>;
   $user: typeof _user;
 }
 
 export const pub = os
   .$context<InitialContext>()
   .$route({ method: "GET" })
-  .use(sentryMiddleware({ captureInputs: true }))
+  .errors({
+    INPUT_VALIDATION_FAILED: {},
+    NOT_FOUND: {},
+    FORBIDDEN: {},
+  })
+  // .use(sentryMiddleware({ captureInputs: true }))
   .use(async ({ next, context: { request, ...props } }) => {
     return next({
-      context: {request, ...(await createContext({ request }))},
+      context: { request, ...(await createContext({ request })) },
     });
   });
 
@@ -56,17 +65,26 @@ export const auth = pub
     });
   });
 
-const RoleGatedError = z.object({ current: z.array(z.object({ id: z.uuid(), name: z.string() })) });
+const GatedError = z.object({ current: z.array(z.object({ id: z.uuid(), name: z.string() })) });
 const ROLE_GATED_ERRORS = {
   ROLE_GATED: {
     message: "You are not able to use this method based on your roles",
-    status: 401,
-    data: RoleGatedError.extend({ required: z.object({ name: z.string() }) }),
+    status: 403,
+    data: GatedError.extend({ required: z.object({ name: z.string() }) }),
   },
   OR_ROLE_GATED: {
     message: "You are not able to use this method based on your roles",
-    status: 401,
-    data: RoleGatedError.extend({ required: z.array(z.object({ name: z.string() })) }),
+    status: 403,
+    data: GatedError.extend({ required: z.array(z.object({ name: z.string() })) }),
+  },
+  NOT_A_REP: {
+    message: "You are not able to use this method as you aren't a rep. Maybe you should apply :)",
+    status: 403,
+  },
+  TEAM_GATED: {
+    message: "You are not able to use this method based on your team",
+    status: 403,
+    data: GatedError.extend({ required: z.array(z.object({ name: z.string() })) }),
   },
 } as const satisfies ErrorMap;
 
@@ -103,6 +121,26 @@ const orRoleGated = (...names: string[]) => {
 };
 
 export const deskOrAdmin = auth.use(orRoleGated("Desk", "Admin"));
+
+const teamGated = (...names: team.Name[]) => {
+  return os
+    .$context<{ user: NonNullable<Context["user"]> }>()
+    .errors(ROLE_GATED_ERRORS)
+    .middleware(async ({ context, next, errors }) => {
+      const { user } = context;
+      if (user.__typename !== "users::Rep") {
+        throw errors.NOT_A_REP();
+      }
+      if (!user.teams.some((t) => names.includes(t.name as team.Name))) {
+        throw errors.OR_ROLE_GATED({ data: { current: user.teams, required: names.map((name) => ({ name })) } });
+      }
+
+      return next({ context });
+    });
+};
+
+export const events = auth.use(teamGated("Events"));
+export const eventsOrDeskOrAdmin = auth.use(teamGated("Events"));
 
 export class RollbackTransaction extends Error {
   readonly data: any;
