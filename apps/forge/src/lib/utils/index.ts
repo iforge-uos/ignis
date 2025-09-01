@@ -33,7 +33,42 @@ export function uCardNumberToString(ucard_number: number): string {
   return ucard_number.toString().padStart(UCARD_LENGTH, "0");
 }
 
-
 export function exhaustiveGuard(_value: never): never {
   throw new Error(`ERROR! Reached forbidden guard function with unexpected value: ${JSON.stringify(_value)}`);
 }
+
+interface Reduceable<T> {
+  reduce<U>(callbackfn: (previousValue: U, currentValue: T, currentIndex: number) => U, initialValue: U): U;
+}
+
+export function counter<T extends string | number | symbol>(iter: Reduceable<T>) {
+  return iter.reduce(
+    (acc, current) => {
+      acc[current] = (acc[current] || 0) + 1;
+      return acc;
+    },
+    {} as Record<T, number>,
+  );
+}
+
+export function debounce<T extends (...args: any[]) => any>(func: T, wait: number): T {
+  let timeout: NodeJS.Timeout;
+  return ((...args: any[]) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  }) as T;
+}
+
+const pr = new Intl.PluralRules("en-GB", { type: "ordinal" });
+
+const suffixes = new Map([
+  ["one", "st"],
+  ["two", "nd"],
+  ["few", "rd"],
+  ["other", "th"],
+]);
+export const formatOrdinals = (n: number) => {
+  const rule = pr.select(n);
+  const suffix = suffixes.get(rule);
+  return `${n}${suffix}`;
+};

@@ -14,7 +14,7 @@ export default createEnv({
           .map((route) => route.trim())
           .filter(Boolean),
       ),
-    ADMIN_ROLE: z.string().min(1),
+    ADMIN_ROLE: z.uuid(),
     JWT_SECRET: z.string().min(1),
 
     // Google OAuth Configuration
@@ -25,9 +25,13 @@ export default createEnv({
     GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY: z.string().min(1),
 
     // Discord OAuth Configuration
+    DISCORD_TOKEN: z.string().min(1),
     DISCORD_CLIENT_ID: z.string().min(1),
     DISCORD_CLIENT_SECRET: z.string().min(1),
     DISCORD_CLIENT_CALLBACK_URL: z.url(),
+
+    // GitHub
+    GITHUB_TOKEN: z.string().min(1),
 
     // Redis Configuration
     REDIS_HOST: z.string().min(1),
@@ -75,6 +79,10 @@ export default createEnv({
 
     // Database Configuration
     INFRACTIONS_WEBHOOK_URL: z.url(),
+
+    // Pharos
+    PHAROS_URL: z.url(),
+    PHAROS_AUTH: z.string(),
   },
   clientPrefix: "VITE_",
   client: {
@@ -105,9 +113,13 @@ export default createEnv({
           },
         },
         discord: {
+          token: env.DISCORD_TOKEN,
           clientId: env.DISCORD_CLIENT_ID,
           clientSecret: env.DISCORD_CLIENT_SECRET,
           callbackUrl: env.DISCORD_CLIENT_CALLBACK_URL,
+        },
+        github: {
+          token: env.GITHUB_TOKEN,
         },
       },
       redis: {
@@ -155,6 +167,10 @@ export default createEnv({
           INFRACTIONS_WEBHOOK_URL: env.INFRACTIONS_WEBHOOK_URL,
         },
       },
+      pharos: {
+        url: env.PHAROS_URL,
+        auth: env.PHAROS_AUTH,
+      }
     //   client: {
     //     apiUrl: env.VITE_API_URL,
     //     cdnUrl: env.VITE_CDN_URL,

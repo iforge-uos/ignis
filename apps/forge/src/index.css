@@ -42,6 +42,11 @@
   --chart-3: oklch(0.6918 0.1027 210.0320);
   --chart-4: oklch(0.6127 0.1489 29.1029);
   --chart-5: oklch(0.4241 0.0952 264.0306);
+  --chart-6: oklch(0.7821 0.1344 342.5521);
+  --chart-7: oklch(0.6789 0.1245 158.4673);
+  --chart-8: oklch(0.8234 0.0987 89.2314);
+  --chart-9: oklch(0.5567 0.1678 310.8249);
+  --chart-10: oklch(0.7432 0.0823 125.7890);
   --sidebar: oklch(0.9513 0.0074 260.7315);
   --sidebar-foreground: oklch(0.3211 0 0);
   --sidebar-primary: oklch(0.6127 0.1489 29.1029);
@@ -65,63 +70,14 @@
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 
-  --destructive: hsl(12 45% 7%);
-  --destructive-foreground: hsl(12 45% 67%);
-  --success: hsl(142 45% 7%);
-  --success-foreground: hsl(142 45% 47%);
-  --warning: hsl(46 45% 7%);
-  --warning-foreground: hsl(46 45% 47%);
-  --info: hsl(201 45% 7%);
-  --info-foreground: hsl(201 45% 67%);
-
-  /* SignInChart.tsx specific stuff */
-  /* The chart's background */
-
-  #sign-in-chart>div>div>svg>rect {
-    fill: hsl(var(--background)) !important;
-  }
-
-  /* Any text in the chart*/
-
-  #sign-in-chart>text {
-    fill: hsl(var(--foreground)) !important;
-    font-family: var(--font-sans), sans-serif !important;
-  }
-
-  /* The individual rectangles in the chart */
-
-  #sign-in-chart g rect[x][y][width][height][style] {
-    rx: var(--radius);
-    stroke: hsl(var(--background)) !important;
-  }
-
-  /* The lines that bind months together */
-
-  #sign-in-chart>div>div>svg>g>path {
-    stroke: hsl(var(--background)) !important;
-    stroke-width: 0px !important;
-  }
-
-  /* The legend text */
-
-  #sign-in-chart>div>div>svg>g>text {
-    fill: hsl(var(--foreground)) !important;
-    font-family: var(--font-sans), sans-serif !important;
-  }
-
-  /* The on-hover pop-up */
-
-  #sign-in-chart>div>div>div>div {
-    background: hsl(var(--background)) !important;
-    color: hsl(var(--foreground)) !important;
-  }
-
-  /* The text for the pop-up */
-
-  #sign-in-chart>div>div>div>div>div>span {
-    color: hsl(var(--foreground)) !important;
-    font-family: var(--font-sans), sans-serif !important;
-  }
+  --destructive: hsl(5 98% 20%);
+  --destructive-foreground: hsl(14 53% 64%);
+  --success: hsl(111 53% 24%);
+  --success-foreground: hsl(106 53% 64%);
+  --warning: hsl(25 91% 25%);
+  --warning-foreground: hsl(22 53% 64%);
+  --info: hsl(0 0% 100%);
+  --info-foreground: hsl(240 53% 64%);
 
   /* Otherwise this doesn't show as clickable */
 
@@ -155,8 +111,7 @@
   --muted-foreground: oklch(0.7155 0 0);
   --accent: oklch(0.3380 0.0589 267.5867);
   --accent-foreground: oklch(0.8823 0.0571 254.1284);
-  --destructive: oklch(0.6368 0.2078 25.3313);
-  --destructive-foreground: oklch(1.0000 0 0);
+
   --border: oklch(0.3843 0.0301 269.7337);
   --input: oklch(0.3843 0.0301 269.7337);
   --ring: oklch(0.6127 0.1489 29.1029);
@@ -165,6 +120,11 @@
   --chart-3: oklch(0.6340 0.1053 200.5671);
   --chart-4: oklch(0.6127 0.1489 29.1029);
   --chart-5: oklch(0.4241 0.0952 264.0306);
+  --chart-6: oklch(0.7821 0.1344 342.5521);
+  --chart-7: oklch(0.6789 0.1245 158.4673);
+  --chart-8: oklch(0.8234 0.0987 89.2314);
+  --chart-9: oklch(0.5567 0.1678 310.8249);
+  --chart-10: oklch(0.7432 0.0823 125.7890);
   --sidebar: oklch(0.2442 0.0242 267.0233);
   --sidebar-foreground: oklch(0.9219 0 0);
   --sidebar-primary: oklch(0.6127 0.1489 29.1029);
@@ -185,6 +145,15 @@
   --shadow-lg: 0px 1px 3px 0px hsl(0 0% 0% / 0.10), 0px 4px 6px -1px hsl(0 0% 0% / 0.10);
   --shadow-xl: 0px 1px 3px 0px hsl(0 0% 0% / 0.10), 0px 8px 10px -1px hsl(0 0% 0% / 0.10);
   --shadow-2xl: 0px 1px 3px 0px hsl(0 0% 0% / 0.25);
+
+  --destructive: hsl(5 98% 20%);
+  --destructive-foreground: hsl(5 98% 80%);
+  --success: hsl(111 53% 24%);
+  --success-foreground: hsl(111 53% 84%);
+  --warning: hsl(25 91% 25%);
+  --warning-foreground: hsl(25 91% 85%);
+  --info: hsl(234 53% 24%);
+  --info-foreground: hsl(234 53% 84%);
 }
 
 @theme inline {
@@ -219,6 +188,11 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  --color-chart-6: var(--chart-6);
+  --color-chart-7: var(--chart-7);
+  --color-chart-8: var(--chart-8);
+  --color-chart-9: var(--chart-9);
+  --color-chart-10: var(--chart-10);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -265,17 +239,27 @@
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+  .link-underline {
+    text-underline-offset: 4px;
+  }
+  .link-underline:hover {
+    text-decoration-line: underline;
+    text-underline-offset: 4px;
+  }
 }
 
 @layer utilities {
   .hide-scrollbar {
+
     /* Hide scrollbar for Chrome, Safari and Opera */
     &::-webkit-scrollbar {
       display: none;
     }
 
     /* Hide scrollbar for IE, Edge and Firefox */
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
   }
 }

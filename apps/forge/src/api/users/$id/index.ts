@@ -1,20 +1,22 @@
-import { UserShape } from "@/lib/utils/queries";
-import { auth } from "@/orpc";
 import e from "@packages/db/edgeql-js";
 import { UpdateUserSchema } from "@packages/db/zod/modules/users";
 import * as z from "zod";
+import { RepShape, UserShape } from "@/lib/utils/queries";
+import { auth } from "@/orpc";
 import { signAgreement } from "./agreements.$agreement_id";
 import { addInfraction } from "./infractions";
+import { integrations } from "./integrations";
+import { mailingListRouter } from "./mailing-lists";
+import { profileRouter } from "./profile";
 import { promote } from "./promote";
 import { signIns } from "./sign-ins";
 import { trainingRouter } from "./training";
-import { profile } from "./profile";
 
 export const get = auth
   .route({ path: "/" })
   .input(z.object({ id: z.uuid() }))
   .handler(async ({ input: { id }, context: { db } }) =>
-    e.assert_exists(e.select(e.users.User, (user) => ({ ...UserShape(user), filter_single: { id } }))).run(db),
+    e.assert_exists(e.select(e.users.User, (user) => ({ ...UserShape(user), ...e.is(e.users.Rep, RepShape(user)), filter_single: { id } }))).run(db),
   );
 
 export const update = auth
@@ -42,5 +44,7 @@ export const idRouter = auth.prefix("/{id}").router({
   addInfraction,
   signIns,
   promote,
-  profile,
+  profile: profileRouter,
+  integrations,
+  mailingLists: mailingListRouter,
 });

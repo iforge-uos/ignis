@@ -51,6 +51,7 @@ module users {
 
         required identity: ext::auth::Identity;
         multi roles: Role;
+        multi integrations := .<user[is Integration];
 
         multi infractions := .<user[is Infraction];
 
@@ -214,8 +215,6 @@ module users {
         required external_id: str;
         required external_email: str;
 
-        index on ((.platform, .user));
-        index on ((.platform, .external_id));
         constraint exclusive on ((.platform, .user));
         constraint exclusive on ((.platform, .external_id));
     }

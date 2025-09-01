@@ -1,4 +1,6 @@
-import { rep } from "@/orpc";
+import { auth } from "@/orpc";
+import { usersRouter } from "./users";
 
-export const shopRouter = rep.prefix("/shop").router({
+export const shopRouter = auth.prefix("/shop").router({
+  usersRouter,
 });

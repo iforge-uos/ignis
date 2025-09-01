@@ -15,7 +15,7 @@ export const signAgreement = rep
               "+=": e.assert_exists(
                 e.select(e.sign_in.Agreement, (agreement) => ({
                   filter_single: { id: agreement_id },
-                  version_signed: agreement.version,
+                  "@version_signed": agreement.version,
                 })),
               ),
             },

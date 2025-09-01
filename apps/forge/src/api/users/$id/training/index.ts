@@ -8,21 +8,12 @@ import { inPersonRemaining } from "./in-person.$location";
 export const all = auth
   .meta({ path: "/" })
   .input(z.object({ id: z.uuid() }))
-  .handler(async ({ input: { id }, context: { db } }) => {
-    const { training } = await e
-      .assert_exists(
-        e.select(e.users.User, () => ({
-          training: (training) => ({
-            ...TrainingShape(training),
-            rep: { id: true, description: true },
-          }),
-          filter_single: { id },
-        })),
-      )
-      .run(db);
-
-    return training;
-  });
+  .handler(async ({ input, context: { db } }) =>
+    e
+      .assert_exists(e.select(e.users.User, () => ({ training: TrainingShape, filter_single: input })))
+      .run(db)
+      .then(({ training }) => training),
+  );
 
 export const trainingRouter = auth.prefix("/training").router({
   all,

@@ -199,6 +199,11 @@ export const appConfig: AppConfig[] = [
         url: "/user/settings",
         icon: SettingsIcon,
         isActive: false,
+      },      {
+        title: "Mailing lists",
+        url: "/user/mailing-lists",
+        icon: MailboxIcon,
+        isActive: false,
       },
     ],
     navSub: [{ name: "iDocs", url: "https://docs.iforge.sheffield.ac.uk", icon: BookOpenIcon }],

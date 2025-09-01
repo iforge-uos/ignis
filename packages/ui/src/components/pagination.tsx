@@ -1,12 +1,11 @@
-import * as React from "react"
+import { Button } from "@packages/ui/components/button"
+import { cn } from "@packages/ui/lib/utils"
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   MoreHorizontalIcon,
 } from "lucide-react"
-
-import { cn } from "@packages/ui/lib/utils"
-import { Button, buttonVariants } from "@packages/ui/components/button"
+import * as React from "react"
 
 function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
   return (
@@ -39,27 +38,23 @@ function PaginationItem({ ...props }: React.ComponentProps<"li">) {
 
 type PaginationLinkProps = {
   isActive?: boolean
+  disabled?: boolean
 } & Pick<React.ComponentProps<typeof Button>, "size"> &
-  React.ComponentProps<"a">
+  React.ComponentProps<"button">
 
 function PaginationLink({
   className,
   isActive,
-  size = "icon",
+  disabled,
   ...props
 }: PaginationLinkProps) {
   return (
-    <a
+    <Button
       aria-current={isActive ? "page" : undefined}
       data-slot="pagination-link"
       data-active={isActive}
-      className={cn(
-        buttonVariants({
-          variant: isActive ? "outline" : "ghost",
-          size,
-        }),
-        className
-      )}
+      disabled={disabled}
+      variant={isActive ? "outline" : "ghost"}
       {...props}
     />
   )
