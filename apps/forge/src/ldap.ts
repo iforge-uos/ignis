@@ -1,10 +1,10 @@
-import env from "@/lib/env";
-import { sleep } from "@/lib/utils";
-import { ldapLibraryToUcardNumber, removeDomain } from "@/lib/utils/sign-in";
 import e from "@packages/db/edgeql-js";
 import { logger } from "@sentry/tanstackstart-react";
 import { Client, Entry } from "ldapts";
 import * as z from "zod";
+import env from "@/lib/env";
+import { sleep } from "@/lib/utils";
+import { ldapLibraryToUcardNumber, removeDomain } from "@/lib/utils/sign-in";
 
 function escapeLDAPFilterCharacters(str: string): string {
   return str.replace(/([\\*\(\)\!\&\|\=><~])/g, "\\$1");
@@ -125,5 +125,12 @@ class UoSClient extends Client {
   }
 }
 
-const client = new UoSClient();
+let client: UoSClient;
+try {
+  client = new UoSClient();
+} catch (error) {
+  console.error("Failed to setup the LDAP client", error);
+  // @ts-ignore
+  client = {};
+}
 export default client;
