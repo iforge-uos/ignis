@@ -485,7 +485,7 @@ const IndexComponent = () => {
         <Card className="flex-col w-full">
           <CardHeader className="font-bold text-center text-3xl font-futura">Sign Up Now!</CardHeader>
           <CardDescription className="p-4 pt-0 mx-auto">
-            <p className="flex text-lg text-balance">
+            <span className="flex text-lg text-balance">
               It's easy:
               <Timeline>
                 {[
@@ -503,7 +503,7 @@ const IndexComponent = () => {
                   </TimelineItem>
                 ))}
               </Timeline>
-            </p>
+            </span>
           </CardDescription>
           <CardContent className="not-prose mx-auto flex items-center gap-2 justify-center">
             <Link to="/auth/login">
