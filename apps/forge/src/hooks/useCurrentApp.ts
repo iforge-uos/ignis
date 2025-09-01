@@ -13,9 +13,6 @@ const useCurrentApp = (): Apps => {
     const firstSegment = segments[0]?.toLowerCase();
 
     switch (firstSegment) {
-      case "":
-      case undefined:
-        return "Home";
       case "sign-in":
         return "Sign In";
       case "printing":
@@ -27,12 +24,8 @@ const useCurrentApp = (): Apps => {
         return "Admin";
       case "training":
         return "Training";
-      case "auth":
-        return "Auth";
-      case "socials":
-        return "Socials";
       default:
-        return "Error";
+        return "Home";
     }
   }, [pathname]); // Only recalculate when pathname changes
 };
