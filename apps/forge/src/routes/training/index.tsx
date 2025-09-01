@@ -105,7 +105,7 @@ export default function TrainingIndexPage() {
                     Mainspace
                   </span>
                 }
-                description="Training for the iForge Mainspace located in the Diamond."
+                description="Training for the space located in the Diamond."
                 className="h-full"
               />
             </Link>
@@ -131,7 +131,7 @@ export default function TrainingIndexPage() {
                     Heartspace
                   </span>
                 }
-                description="Training for the iForge Mainspace located in the Heartspace."
+                description="Training for the space located in the Heartspace."
                 className="h-full"
               />
             </Link>
