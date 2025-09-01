@@ -100,7 +100,7 @@ export default function Component() {
   );
 }
 
-export const Route = createFileRoute("/_authenticated/sign-in/$id")({
+export const Route = createFileRoute("/_authenticated/sign-ins/$id")({
   loader: async ({ params }) => await client.signIns.get({ id: params.id }),
   component: Component,
 });
