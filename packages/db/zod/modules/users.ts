@@ -1,4 +1,4 @@
-import * as z from "zod";
+import * as z from "zod/v4";
 import * as zt from "zod-temporal";
 
 
@@ -74,8 +74,8 @@ export const CreateRepSchema = z.
     organisational_unit: z.string(), // std::str
     profile_picture: z.string().nullable(), // std::str
     pronouns: z.string().nullable(), // std::str
-    ucard_number: z.int().min(-2147483648).max(2147483647), // std::int32
     username: z.string(), // std::str
+    ucard_number: z.int().min(-2147483648).max(2147483647), // std::int32
   })
   .extend({ // default::Auditable
     updated_at: zt.zonedDateTime().optional(), // std::datetime
@@ -96,8 +96,8 @@ export const UpdateRepSchema = z.
     organisational_unit: z.string(), // std::str
     profile_picture: z.string().nullable(), // std::str
     pronouns: z.string().nullable(), // std::str
-    ucard_number: z.int().min(-2147483648).max(2147483647), // std::int32
     username: z.string(), // std::str
+    ucard_number: z.int().min(-2147483648).max(2147483647), // std::int32
   })
   .extend({ // default::Auditable
     updated_at: zt.zonedDateTime().optional(), // std::datetime
@@ -151,8 +151,8 @@ export const CreateUserSchema = z.
     organisational_unit: z.string(), // std::str
     profile_picture: z.string().nullable(), // std::str
     pronouns: z.string().nullable(), // std::str
-    ucard_number: z.int().min(-2147483648).max(2147483647), // std::int32
     username: z.string(), // std::str
+    ucard_number: z.int().min(-2147483648).max(2147483647), // std::int32
   });
 
 export const UpdateUserSchema = z.
@@ -169,8 +169,8 @@ export const UpdateUserSchema = z.
     organisational_unit: z.string(), // std::str
     profile_picture: z.string().nullable(), // std::str
     pronouns: z.string().nullable(), // std::str
-    ucard_number: z.int().min(-2147483648).max(2147483647), // std::int32
     username: z.string(), // std::str
+    ucard_number: z.int().min(-2147483648).max(2147483647), // std::int32
   });
 // #endregion
 

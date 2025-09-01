@@ -55,6 +55,7 @@ export namespace ai_rep {
 export namespace cfg {
   export interface ConfigObject extends std.BaseObject {}
   export interface AbstractConfig extends ConfigObject {
+    "extensions": ExtensionConfig[];
     "session_idle_timeout": gel.Duration;
     "default_transaction_isolation": sys.TransactionIsolation;
     "default_transaction_access_mode": sys.TransactionAccessMode;
@@ -63,6 +64,8 @@ export namespace cfg {
     "query_execution_timeout": gel.Duration;
     "listen_port": number;
     "listen_addresses": string[];
+    "auth": Auth[];
+    "email_providers": EmailProviderConfig[];
     "current_email_provider_name"?: string | null;
     "allow_dml_in_functions"?: boolean | null;
     "allow_bare_ddl"?: AllowBareDDL | null;
@@ -86,16 +89,13 @@ export namespace cfg {
     "force_database_error"?: string | null;
     "_pg_prepared_statement_cache_size": number;
     "track_query_stats"?: QueryStatsOption | null;
-    "extensions": ExtensionConfig[];
-    "auth": Auth[];
-    "email_providers": EmailProviderConfig[];
   }
   export type AllowBareDDL = "AlwaysAllow" | "NeverAllow";
   export interface Auth extends ConfigObject {
     "priority": number;
     "user": string[];
-    "comment"?: string | null;
     "method"?: AuthMethod | null;
+    "comment"?: string | null;
   }
   export interface AuthMethod extends ConfigObject {
     "transports": ConnectionTransport[];
@@ -159,8 +159,7 @@ export namespace sys {
   }
   export type OutputFormat = "BINARY" | "JSON" | "JSON_ELEMENTS" | "NONE";
   export interface QueryStats extends ExternalObject {
-    "stats_since"?: Date | null;
-    "minmax_stats_since"?: Date | null;
+    "branch"?: Branch | null;
     "query"?: string | null;
     "query_type"?: QueryType | null;
     "tag"?: string | null;
@@ -187,7 +186,8 @@ export namespace sys {
     "mean_exec_time"?: gel.Duration | null;
     "stddev_exec_time"?: gel.Duration | null;
     "rows"?: number | null;
-    "branch"?: Branch | null;
+    "stats_since"?: Date | null;
+    "minmax_stats_since"?: Date | null;
   }
   export type QueryType = "EdgeQL" | "SQL";
   export interface Role extends SystemObject, schema.InheritingObject, schema.AnnotationSubject {
@@ -197,8 +197,9 @@ export namespace sys {
     "password"?: string | null;
     "permissions": string[];
     "branches": string[];
-    "all_permissions": string[];
+    "apply_access_policies_pg_default"?: boolean | null;
     "member_of": Role[];
+    "all_permissions": string[];
   }
   export type TransactionAccessMode = "ReadOnly" | "ReadWrite";
   export type TransactionDeferrability = "Deferrable" | "NotDeferrable";
@@ -224,6 +225,8 @@ export type Timed = $default.Timed;
 export type user = $default.user;
 export namespace users {
   export interface User extends $default.Auditable {
+    "identity": ext.auth.Identity;
+    "roles": Role[];
     "first_name": string;
     "last_name"?: string | null;
     "display_name": string;
@@ -231,38 +234,37 @@ export namespace users {
     "organisational_unit": string;
     "profile_picture"?: string | null;
     "pronouns"?: string | null;
-    "ucard_number": number;
     "username": string;
-    "roles": Role[];
-    "identity": ext.auth.Identity;
     "agreements_signed": sign_in.Agreement[];
     "infractions": Infraction[];
-    "mailing_list_subscriptions": notification.MailingList[];
-    "notifications": notification.Notification[];
     "training": training.Training[];
     "sign_ins": sign_in.SignIn[];
     "bookings": tools.Booking[];
+    "ucard_number": number;
+    "mailing_list_subscriptions": notification.MailingList[];
+    "notifications": notification.Notification[];
+    "integrations": Integration[];
   }
   export interface Infraction extends $default.CreatedAt {
+    "user": User;
     "duration"?: gel.Duration | null;
     "ends_at"?: Date | null;
     "reason": string;
     "resolved": boolean;
     "type": InfractionType;
-    "user": User;
   }
   export type InfractionType = "WARNING" | "TEMP_BAN" | "PERM_BAN" | "RESTRICTION" | "TRAINING_ISSUE";
   export interface Integration extends $default.Auditable {
     "external_id": string;
     "platform": Platform;
-    "external_email": string;
     "user": User;
+    "external_email": string;
   }
   export type Platform = "DISCORD" | "GITHUB";
   export interface Rep extends User {
     "status": RepStatus;
-    "teams": team.Team[];
     "supervisable_training": training.Training[];
+    "teams": team.Team[];
   }
   export type RepStatus = "ACTIVE" | "BREAK" | "ALUMNI" | "FUTURE" | "REMOVED";
   export interface Role extends std.$Object {
@@ -273,9 +275,9 @@ export namespace users {
     "default_value": string;
   }
   export interface UserSettingValue extends std.$Object {
-    "value": string;
     "template": SettingTemplate;
     "user": User;
+    "value": string;
   }
 }
 export namespace ext {
@@ -299,6 +301,9 @@ export namespace ext {
       "modified_at": Date;
     }
     export interface AuthConfig extends cfg.ExtensionConfig {
+      "providers": ProviderConfig[];
+      "ui"?: UIConfig | null;
+      "webhooks": WebhookConfig[];
       "app_name"?: string | null;
       "logo_url"?: string | null;
       "dark_logo_url"?: string | null;
@@ -306,10 +311,13 @@ export namespace ext {
       "auth_signing_key"?: string | null;
       "token_time_to_live"?: gel.Duration | null;
       "allowed_redirect_urls": string[];
-      "providers": ProviderConfig[];
-      "ui"?: UIConfig | null;
-      "webhooks": WebhookConfig[];
     }
+    export interface AuthenticationAttempt extends Auditable {
+      "factor": Factor;
+      "attempt_type": AuthenticationAttemptType;
+      "successful": boolean;
+    }
+    export type AuthenticationAttemptType = "SignIn" | "EmailVerification" | "PasswordReset" | "MagicLink" | "OneTimeCode";
     export interface AzureOAuthProvider extends OAuthProviderConfig {
       "name": string;
       "display_name": string;
@@ -337,6 +345,7 @@ export namespace ext {
     export interface EmailPasswordProviderConfig extends ProviderConfig {
       "name": string;
       "require_verification": boolean;
+      "verification_method": VerificationMethod;
     }
     export type FlowType = "PKCE" | "Implicit";
     export interface GitHubOAuthProvider extends OAuthProviderConfig {
@@ -357,6 +366,12 @@ export namespace ext {
     export interface MagicLinkProviderConfig extends ProviderConfig {
       "name": string;
       "token_time_to_live": gel.Duration;
+      "verification_method": VerificationMethod;
+    }
+    export interface OneTimeCode extends Auditable {
+      "code_hash": Uint8Array;
+      "expires_at": Date;
+      "factor": Factor;
     }
     export interface OpenIDConnectProvider extends OAuthProviderConfig {
       "name": string;
@@ -384,6 +399,7 @@ export namespace ext {
       "dark_logo_url"?: string | null;
       "brand_color"?: string | null;
     }
+    export type VerificationMethod = "Link" | "Code";
     export interface WebAuthnAuthenticationChallenge extends Auditable {
       "challenge": Uint8Array;
       "factors": WebAuthnFactor[];
@@ -397,6 +413,7 @@ export namespace ext {
       "name": string;
       "relying_party_origin": string;
       "require_verification": boolean;
+      "verification_method": VerificationMethod;
     }
     export interface WebAuthnRegistrationChallenge extends Auditable {
       "challenge": Uint8Array;
@@ -408,7 +425,7 @@ export namespace ext {
       "events": WebhookEvent[];
       "signing_secret_key"?: string | null;
     }
-    export type WebhookEvent = "IdentityCreated" | "IdentityAuthenticated" | "EmailFactorCreated" | "EmailVerified" | "EmailVerificationRequested" | "PasswordResetRequested" | "MagicLinkRequested";
+    export type WebhookEvent = "IdentityCreated" | "IdentityAuthenticated" | "EmailFactorCreated" | "EmailVerified" | "EmailVerificationRequested" | "PasswordResetRequested" | "MagicLinkRequested" | "OneTimeCodeRequested" | "OneTimeCodeVerified";
   }
   export namespace ai {
     export interface Model extends std.BaseObject {}
@@ -531,77 +548,45 @@ export namespace sign_in {
     "max_users": number;
     "out_of_hours_rep_multiplier": number;
     "queue_enabled": boolean;
-    "in_hours_rep_multiplier": number;
+    "sign_ins": SignIn[];
+    "off_shift_reps": users.Rep[];
+    "on_shift_reps": users.Rep[];
+    "supervising_reps": users.Rep[];
+    "supervisable_training": training.Training[];
     "queue_in_use": boolean;
     "status": LocationStatus;
+    "queued_users_that_can_sign_in": users.User[];
+    "in_hours_rep_multiplier": number;
     "can_sign_in": boolean;
     "max_count": number;
     "available_capacity": number;
     "queued": QueuePlace[];
-    "queued_users_that_can_sign_in": users.User[];
-    "sign_ins": SignIn[];
-    "on_shift_reps": users.Rep[];
-    "off_shift_reps": users.Rep[];
-    "supervising_reps": users.Rep[];
-    "supervisable_training": training.Training[];
   }
   export type LocationName = "MAINSPACE" | "HEARTSPACE";
   export type LocationStatus = "OPEN" | "SOON" | "CLOSED";
   export interface QueuePlace extends $default.CreatedAt {
+    "location": Location;
     "notified_at"?: Date | null;
     "ends_at"?: Date | null;
-    "location": Location;
     "user": users.User;
   }
   export interface Reason extends $default.CreatedAt {
-    "category": ReasonCategory;
     "name": string;
     "agreement"?: Agreement | null;
+    "category": ReasonCategory;
   }
   export type ReasonCategory = "UNIVERSITY_MODULE" | "CO_CURRICULAR_GROUP" | "PERSONAL_PROJECT" | "SOCIETY" | "REP_SIGN_IN" | "EVENT";
   export interface SignIn extends $default.Timed {
-    "tools": string[];
-    "signed_out": boolean;
     "location": Location;
     "reason": Reason;
+    "tools": string[];
+    "signed_out": boolean;
     "user": users.User;
   }
   export interface UserRegistration extends $default.CreatedAt {
     "location": Location;
     "user": users.User;
   }
-}
-export namespace notification {
-  export interface AllTarget extends std.$Object {
-    "target": AllTargetTarget;
-  }
-  export type AllTargetTarget = "ALL" | "REPS";
-  export interface Notification extends $default.Auditable {
-    "content": string;
-    "delivery_method": DeliveryMethod[];
-    "dispatched_at": Date;
-    "priority": number;
-    "status": Status;
-    "title": string;
-    "type": Type;
-    "target": users.User | team.Team | event.Event | AllTarget | MailingList[];
-  }
-  export interface AuthoredNotification extends Notification {
-    "approved_on"?: Date | null;
-    "approved_by"?: users.Rep | null;
-    "author": users.User;
-  }
-  export type DeliveryMethod = "BANNER" | "EMAIL" | "TRAY" | "POPUP" | "DISCORD";
-  export interface MailingList extends $default.Auditable {
-    "description": string;
-    "name": string;
-    "subscribers": users.User[];
-  }
-  export type Status = "DRAFT" | "REVIEW" | "QUEUED" | "SENDING" | "SENT" | "ERRORED";
-  export interface SystemNotification extends Notification {
-    "source": string;
-  }
-  export type Type = "ADMIN" | "ADVERT" | "ANNOUNCEMENT" | "EVENT" | "HEALTH_AND_SAFETY" | "INFRACTION" | "PRINTING" | "QUEUE_SLOT_ACTIVE" | "RECRUITMENT" | "REFERRAL" | "REMINDER" | "TRAINING";
 }
 export namespace training {
   export interface Answer extends std.$Object {
@@ -623,8 +608,8 @@ export namespace training {
   }
   export interface Page extends TrainingPage {}
   export interface Question extends Interactable {
-    "type": AnswerType;
     "answers": Answer[];
+    "type": AnswerType;
   }
   export interface Session extends $default.Auditable {
     "index": number;
@@ -633,8 +618,10 @@ export namespace training {
     "user": users.User;
   }
   export interface Training extends $default.Auditable {
+    "rep"?: Training | null;
     "in_person": boolean;
     "locations": LocationName[];
+    "pages": TrainingPage[];
     "name": string;
     "compulsory": boolean;
     "description": string;
@@ -642,8 +629,6 @@ export namespace training {
     "expires_after"?: gel.Duration | null;
     "icon_url"?: string | null;
     "training_lockout"?: gel.Duration | null;
-    "rep"?: Training | null;
-    "pages": TrainingPage[];
     "questions": Question[];
     "sections": TrainingPage | Question[];
   }
@@ -654,35 +639,70 @@ export namespace tools {
     "starts_at": Date;
     "duration": gel.Duration;
     "cancelled"?: boolean | null;
-    "user": users.User;
     "tool": Tool;
+    "user": users.User;
   }
   export type Selectability = "UNTRAINED" | "REVOKED" | "EXPIRED" | "REPS_UNTRAINED" | "IN_PERSON_MISSING";
   export type Status = "NOMINAL" | "IN_USE" | "OUT_OF_ORDER";
   export interface Tool extends std.$Object {
+    "is_bookable": boolean;
+    "status": Status;
     "min_booking_time"?: gel.Duration | null;
+    "location": sign_in.Location;
     "max_booking_daily"?: gel.Duration | null;
     "max_booking_weekly"?: gel.Duration | null;
     "name": string;
-    "quantity": number;
-    "is_bookable": boolean;
-    "status": Status;
-    "rep": training.Training;
-    "location": sign_in.Location;
-    "training": training.Training[];
     "bookings": Booking[];
+    "quantity": number;
+    "rep": training.Training;
+    "training": training.Training[];
+    "borrowable": boolean;
   }
+}
+export namespace notification {
+  export interface AllReps extends std.$Object {
+    "MAGIC": number;
+  }
+  export interface AllUsers extends std.$Object {
+    "MAGIC": number;
+  }
+  export interface Notification extends $default.Auditable {
+    "content": string;
+    "status": Status;
+    "title": string;
+    "type": Type;
+    "delivery_methods": DeliveryMethod[];
+    "dispatched_at"?: Date | null;
+    "priority": number;
+    "targets": users.User | team.Team | event.Event | MailingList | AllReps | AllUsers[];
+  }
+  export interface AuthoredNotification extends Notification {
+    "approved_by"?: users.Rep | null;
+    "author": users.User;
+    "approved_on"?: Date | null;
+  }
+  export type DeliveryMethod = "BANNER" | "EMAIL" | "TRAY" | "POPUP" | "DISCORD";
+  export interface MailingList extends $default.Auditable {
+    "description": string;
+    "name": string;
+    "subscribers": users.User[];
+  }
+  export type Status = "DRAFT" | "REVIEW" | "QUEUED" | "SENDING" | "SENT" | "ERRORED";
+  export interface SystemNotification extends Notification {
+    "source": string;
+  }
+  export type Type = "ADMIN" | "ADVERT" | "ANNOUNCEMENT" | "EVENT" | "HEALTH_AND_SAFETY" | "INFRACTION" | "PRINTING" | "QUEUE_SLOT_ACTIVE" | "RECRUITMENT" | "REFERRAL" | "REMINDER" | "TRAINING";
 }
 export namespace event {
   export interface Event extends $default.CreatedAt {
-    "type": Type;
     "ends_at"?: Date | null;
     "starts_at": Date;
-    "title": string;
-    "description": string;
+    "type": Type;
     "organiser": users.User[];
+    "description": string;
     "attendees": users.User[];
     "interested": users.User[];
+    "name": string;
   }
   export type Type = "WORKSHOP" | "LECTURE" | "MEETUP" | "HACKATHON" | "EXHIBITION" | "WEBINAR";
 }
@@ -701,14 +721,14 @@ export namespace printing {
     "printer": Printer;
   }
   export interface Print extends std.$Object {
-    "stl_path": string;
     "gcode_path": string;
+    "stl_path": string;
+    "approved_by": users.Rep;
+    "author": users.User;
     "duration": gel.Duration;
     "mass": number;
     "name": string;
     "type": Type;
-    "approved_by": users.Rep;
-    "author": users.User;
     "on": PrintHistory[];
   }
   export interface PrintAuditEntry extends AuditEntry {
@@ -721,11 +741,11 @@ export namespace printing {
   }
   export interface PrintStatus extends std.$Object {}
   export interface Printer extends std.$Object {
+    "location": sign_in.Location;
+    "status": PrinterStatus;
     "name": string;
     "remote_ip": string;
     "type": Type[];
-    "location": sign_in.Location;
-    "status": PrinterStatus;
     "prints": Print[];
   }
   export interface PrinterAuditEntry extends AuditEntry {
@@ -775,20 +795,20 @@ export namespace schema {
     "is_final": boolean;
   }
   export interface InheritingObject extends SubclassableObject {
-    "inherited_fields"?: string[] | null;
     "bases": InheritingObject[];
     "ancestors": InheritingObject[];
+    "inherited_fields"?: string[] | null;
   }
   export interface AnnotationSubject extends $Object {
     "annotations": Annotation[];
   }
   export interface AccessPolicy extends InheritingObject, AnnotationSubject {
+    "subject": ObjectType;
     "access_kinds": AccessKind[];
     "condition"?: string | null;
     "action": AccessPolicyAction;
     "expr"?: string | null;
     "errmessage"?: string | null;
-    "subject": ObjectType;
   }
   export type AccessPolicyAction = "Allow" | "Deny";
   export interface Alias extends AnnotationSubject {
@@ -806,29 +826,30 @@ export namespace schema {
   export interface PrimitiveType extends Type {}
   export interface CollectionType extends PrimitiveType {}
   export interface Array extends CollectionType {
-    "dimensions"?: number[] | null;
     "element_type": Type;
+    "dimensions"?: number[] | null;
   }
   export interface ArrayExprAlias extends Array {}
   export interface CallableObject extends AnnotationSubject {
-    "return_typemod"?: TypeModifier | null;
     "params": Parameter[];
     "return_type"?: Type | null;
+    "return_typemod"?: TypeModifier | null;
   }
   export type Cardinality = "One" | "Many";
   export interface VolatilitySubject extends $Object {
     "volatility"?: Volatility | null;
   }
   export interface Cast extends AnnotationSubject, VolatilitySubject {
-    "allow_implicit"?: boolean | null;
-    "allow_assignment"?: boolean | null;
     "from_type"?: Type | null;
     "to_type"?: Type | null;
+    "allow_implicit"?: boolean | null;
+    "allow_assignment"?: boolean | null;
   }
   export interface ConsistencySubject extends InheritingObject, AnnotationSubject {
     "constraints": Constraint[];
   }
   export interface Constraint extends CallableObject, InheritingObject {
+    "params": Parameter[];
     "expr"?: string | null;
     "subjectexpr"?: string | null;
     "finalexpr"?: string | null;
@@ -836,7 +857,6 @@ export namespace schema {
     "delegated"?: boolean | null;
     "except_expr"?: string | null;
     "subject"?: ConsistencySubject | null;
-    "params": Parameter[];
   }
   export interface Delta extends $Object {
     "parents": Delta[];
@@ -854,11 +874,11 @@ export namespace schema {
   }
   export interface FutureBehavior extends $Object {}
   export interface Global extends AnnotationSubject {
+    "target"?: Type | null;
     "required"?: boolean | null;
     "cardinality"?: Cardinality | null;
     "expr"?: string | null;
     "default"?: string | null;
-    "target"?: Type | null;
   }
   export interface Index extends InheritingObject, AnnotationSubject {
     "expr"?: string | null;
@@ -867,8 +887,8 @@ export namespace schema {
     "deferred"?: boolean | null;
     "active"?: boolean | null;
     "build_concurrently"?: boolean | null;
-    "kwargs"?: {name: string, expr: string}[] | null;
     "params": Parameter[];
+    "kwargs"?: {name: string, expr: string}[] | null;
   }
   export type IndexDeferrability = "Prohibited" | "Permitted" | "Required";
   export interface Pointer extends ConsistencySubject, AnnotationSubject {
@@ -880,26 +900,27 @@ export namespace schema {
     "secret"?: boolean | null;
     "splat_strategy"?: SplatStrategy | null;
     "linkful"?: boolean | null;
+    "protected"?: boolean | null;
     "source"?: Source | null;
     "target"?: Type | null;
     "rewrites": Rewrite[];
   }
   export interface Source extends $Object {
-    "pointers": Pointer[];
     "indexes": Index[];
+    "pointers": Pointer[];
   }
   export interface Link extends Pointer, Source {
-    "on_target_delete"?: TargetDeleteAction | null;
-    "on_source_delete"?: SourceDeleteAction | null;
     "target"?: ObjectType | null;
     "properties": Property[];
+    "on_target_delete"?: TargetDeleteAction | null;
+    "on_source_delete"?: SourceDeleteAction | null;
   }
   export interface Migration extends AnnotationSubject, $Object {
-    "message"?: string | null;
+    "parents": Migration[];
     "script": string;
     "sdl"?: string | null;
+    "message"?: string | null;
     "generated_by"?: MigrationGeneratedBy | null;
-    "parents": Migration[];
   }
   export type MigrationGeneratedBy = "DevMode" | "DDLStatement";
   export interface Module extends AnnotationSubject, $Object {}
@@ -908,27 +929,27 @@ export namespace schema {
   }
   export interface MultiRangeExprAlias extends MultiRange {}
   export interface ObjectType extends Source, ConsistencySubject, InheritingObject, Type, AnnotationSubject {
-    "compound_type": boolean;
-    "is_compound_type": boolean;
     "union_of": ObjectType[];
     "intersection_of": ObjectType[];
-    "links": Link[];
-    "properties": Property[];
     "access_policies": AccessPolicy[];
     "triggers": Trigger[];
+    "compound_type": boolean;
+    "is_compound_type": boolean;
+    "links": Link[];
+    "properties": Property[];
   }
   export interface Operator extends CallableObject, VolatilitySubject {
     "operator_kind"?: OperatorKind | null;
-    "is_abstract"?: boolean | null;
     "abstract"?: boolean | null;
+    "is_abstract"?: boolean | null;
   }
   export type OperatorKind = "Infix" | "Postfix" | "Prefix" | "Ternary";
   export interface Parameter extends $Object {
+    "type": Type;
     "typemod": TypeModifier;
     "kind": ParameterKind;
     "num": number;
     "default"?: string | null;
-    "type": Type;
   }
   export type ParameterKind = "VariadicParam" | "NamedOnlyParam" | "PositionalParam";
   export interface Permission extends AnnotationSubject {}
@@ -939,9 +960,9 @@ export namespace schema {
   }
   export interface RangeExprAlias extends Range {}
   export interface Rewrite extends InheritingObject, AnnotationSubject {
+    "subject": Pointer;
     "kind": TriggerKind;
     "expr": string;
-    "subject": Pointer;
   }
   export type RewriteKind = "Update" | "Insert";
   export interface ScalarType extends PrimitiveType, ConsistencySubject, AnnotationSubject {
@@ -953,12 +974,12 @@ export namespace schema {
   export type SplatStrategy = "Default" | "Explicit" | "Implicit";
   export type TargetDeleteAction = "Restrict" | "DeleteSource" | "Allow" | "DeferredRestrict";
   export interface Trigger extends InheritingObject, AnnotationSubject {
-    "condition"?: string | null;
+    "subject": ObjectType;
     "timing": TriggerTiming;
     "kinds": TriggerKind[];
     "scope": TriggerScope;
     "expr"?: string | null;
-    "subject": ObjectType;
+    "condition"?: string | null;
   }
   export type TriggerKind = "Update" | "Delete" | "Insert";
   export type TriggerScope = "All" | "Each";
@@ -968,8 +989,8 @@ export namespace schema {
     "element_types": TupleElement[];
   }
   export interface TupleElement extends std.BaseObject {
-    "name"?: string | null;
     "type": Type;
+    "name"?: string | null;
   }
   export interface TupleExprAlias extends Tuple {}
   export type TypeModifier = "SetOfType" | "OptionalType" | "SingletonType";
@@ -1070,6 +1091,8 @@ export interface types {
       "AppleOAuthProvider": ext.auth.AppleOAuthProvider;
       "Auditable": ext.auth.Auditable;
       "AuthConfig": ext.auth.AuthConfig;
+      "AuthenticationAttempt": ext.auth.AuthenticationAttempt;
+      "AuthenticationAttemptType": ext.auth.AuthenticationAttemptType;
       "AzureOAuthProvider": ext.auth.AzureOAuthProvider;
       "Identity": ext.auth.Identity;
       "ClientTokenIdentity": ext.auth.ClientTokenIdentity;
@@ -1085,10 +1108,12 @@ export interface types {
       "LocalIdentity": ext.auth.LocalIdentity;
       "MagicLinkFactor": ext.auth.MagicLinkFactor;
       "MagicLinkProviderConfig": ext.auth.MagicLinkProviderConfig;
+      "OneTimeCode": ext.auth.OneTimeCode;
       "OpenIDConnectProvider": ext.auth.OpenIDConnectProvider;
       "PKCEChallenge": ext.auth.PKCEChallenge;
       "SlackOAuthProvider": ext.auth.SlackOAuthProvider;
       "UIConfig": ext.auth.UIConfig;
+      "VerificationMethod": ext.auth.VerificationMethod;
       "WebAuthnAuthenticationChallenge": ext.auth.WebAuthnAuthenticationChallenge;
       "WebAuthnFactor": ext.auth.WebAuthnFactor;
       "WebAuthnProviderConfig": ext.auth.WebAuthnProviderConfig;
@@ -1163,17 +1188,6 @@ export interface types {
     "SignIn": sign_in.SignIn;
     "UserRegistration": sign_in.UserRegistration;
   };
-  "notification": {
-    "AllTarget": notification.AllTarget;
-    "AllTargetTarget": notification.AllTargetTarget;
-    "Notification": notification.Notification;
-    "AuthoredNotification": notification.AuthoredNotification;
-    "DeliveryMethod": notification.DeliveryMethod;
-    "MailingList": notification.MailingList;
-    "Status": notification.Status;
-    "SystemNotification": notification.SystemNotification;
-    "Type": notification.Type;
-  };
   "training": {
     "Answer": training.Answer;
     "AnswerType": training.AnswerType;
@@ -1190,6 +1204,17 @@ export interface types {
     "Selectability": tools.Selectability;
     "Status": tools.Status;
     "Tool": tools.Tool;
+  };
+  "notification": {
+    "AllReps": notification.AllReps;
+    "AllUsers": notification.AllUsers;
+    "Notification": notification.Notification;
+    "AuthoredNotification": notification.AuthoredNotification;
+    "DeliveryMethod": notification.DeliveryMethod;
+    "MailingList": notification.MailingList;
+    "Status": notification.Status;
+    "SystemNotification": notification.SystemNotification;
+    "Type": notification.Type;
   };
   "event": {
     "Event": event.Event;

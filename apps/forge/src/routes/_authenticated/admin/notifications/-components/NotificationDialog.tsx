@@ -348,7 +348,7 @@ export function NotificationDialog({ isOpen, onClose, onSubmit, notification }: 
                         "p-1 w-6",
                         targets.size <= 1
                           ? "stroke-muted"
-                          : "hover:cursor-pointer stroke-destructive dark:stroke-destructive-foreground ",
+                          : "hover:cursor-pointer stroke-destructive-foreground ",
                       )}
                       onClick={() => {
                         if (targets.size <= 1) return;

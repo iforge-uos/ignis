@@ -6,7 +6,6 @@ import { useMemo, useState } from "react";
 import { orpc } from "@/lib/orpc";
 import { NotificationDialog } from "./-components/NotificationDialog";
 import { NotificationList } from "./-components/NotificationList";
-import { NotificationToolbar } from "./-components/NotificationToolbar";
 
 function NotificationsPage() {
   const queryClient = useQueryClient();
@@ -96,22 +95,17 @@ function NotificationsPage() {
         </div>
       </div>
 
-      <NotificationToolbar
-        searchTerm={searchTerm}
-        onSearchTermChange={setSearchTerm}
-        statusFilter={statusFilter}
-        onStatusFilterChange={setStatusFilter}
-        onAddNew={handleAddNew}
-      />
-
       <NotificationList
         notifications={filteredNotifications}
         onSend={handleSendNotification}
         onEdit={handleEditNotification}
         onDelete={handleDeleteNotification}
         searchTerm={searchTerm}
+        onSearchTermChange={setSearchTerm}
         statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
         setIsCreateDialogOpen={setIsCreateDialogOpen}
+        onAddNew={handleAddNew}
       />
 
       <NotificationDialog

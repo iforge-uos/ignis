@@ -1,4 +1,4 @@
-import * as z from "zod";
+import * as z from "zod/v4";
 import * as zt from "zod-temporal";
 
 
@@ -36,23 +36,25 @@ export const UpdateBookingSchema = z.
 // #region tools::Tool
 export const CreateToolSchema = z.
   object({
+    is_bookable: z.boolean(), // std::bool
+    status: z.enum(["NOMINAL", "IN_USE", "OUT_OF_ORDER"]), // tools::Status
     min_booking_time: zt.duration().optional().nullable(), // std::duration
     max_booking_daily: zt.duration().nullable(), // std::duration
     max_booking_weekly: zt.duration().nullable(), // std::duration
     name: z.string(), // std::str
     quantity: z.int().min(-32768).max(32767), // std::int16
-    is_bookable: z.boolean(), // std::bool
-    status: z.enum(["NOMINAL", "IN_USE", "OUT_OF_ORDER"]), // tools::Status
+    borrowable: z.boolean(), // std::bool
   });
 
 export const UpdateToolSchema = z.
   object({
+    is_bookable: z.boolean(), // std::bool
+    status: z.enum(["NOMINAL", "IN_USE", "OUT_OF_ORDER"]), // tools::Status
     min_booking_time: zt.duration().optional().nullable(), // std::duration
     max_booking_daily: zt.duration().nullable(), // std::duration
     max_booking_weekly: zt.duration().nullable(), // std::duration
     name: z.string(), // std::str
     quantity: z.int().min(-32768).max(32767), // std::int16
-    is_bookable: z.boolean(), // std::bool
-    status: z.enum(["NOMINAL", "IN_USE", "OUT_OF_ORDER"]), // tools::Status
+    borrowable: z.boolean(), // std::bool
   });
 // #endregion

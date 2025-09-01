@@ -1,4 +1,4 @@
-import * as z from "zod";
+import * as z from "zod/v4";
 import * as zt from "zod-temporal";
 
 
@@ -103,16 +103,16 @@ export const CreateReasonSchema = z.
     created_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({ // sign_in::Reason
-    category: z.enum(["UNIVERSITY_MODULE", "CO_CURRICULAR_GROUP", "PERSONAL_PROJECT", "SOCIETY", "REP_SIGN_IN", "EVENT"]), // sign_in::ReasonCategory
     name: z.string(), // std::str
+    category: z.enum(["UNIVERSITY_MODULE", "CO_CURRICULAR_GROUP", "PERSONAL_PROJECT", "SOCIETY", "REP_SIGN_IN", "EVENT"]), // sign_in::ReasonCategory
   });
 
 export const UpdateReasonSchema = z.
   object({ // default::CreatedAt
   })
   .extend({ // sign_in::Reason
-    category: z.enum(["UNIVERSITY_MODULE", "CO_CURRICULAR_GROUP", "PERSONAL_PROJECT", "SOCIETY", "REP_SIGN_IN", "EVENT"]), // sign_in::ReasonCategory
     name: z.string(), // std::str
+    category: z.enum(["UNIVERSITY_MODULE", "CO_CURRICULAR_GROUP", "PERSONAL_PROJECT", "SOCIETY", "REP_SIGN_IN", "EVENT"]), // sign_in::ReasonCategory
   });
 // #endregion
 

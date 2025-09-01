@@ -11,6 +11,7 @@ export const get = auth
       .assert_exists(
         e.select(e.notification.MailingList, () => ({
           ...e.notification.MailingList["*"],
+          subscribers: true,
           filter_single: { id },
         })),
       )

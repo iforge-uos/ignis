@@ -1,10 +1,14 @@
 import { notification } from "@packages/db/interfaces";
+import { StatusSchema } from "@packages/db/zod/modules/notification";
 import { Button } from "@packages/ui/components/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@packages/ui/components/card";
+import { Input } from "@packages/ui/components/input";
+import MultipleSelector from "@packages/ui/components/multi-select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@packages/ui/components/table";
 import { flexRender, getCoreRowModel, getExpandedRowModel, useReactTable } from "@tanstack/react-table";
-import { Plus, Send } from "lucide-react";
+import { Filter, Plus, Search, Send } from "lucide-react";
 import { Fragment, useMemo } from "react";
+import { toTitleCase } from "@/lib/utils";
 import { getColumns } from "./columns";
 
 interface NotificationListProps {
@@ -13,8 +17,11 @@ interface NotificationListProps {
   onEdit: (notification: notification.AuthoredNotification) => void;
   onDelete: (id: string) => void;
   searchTerm: string;
+  onSearchTermChange: (term: string) => void;
   statusFilter: notification.Status[];
+  onStatusFilterChange: (status: notification.Status[]) => void;
   setIsCreateDialogOpen: (isOpen: boolean) => void;
+  onAddNew: () => void;
 }
 
 export function NotificationList({
@@ -23,8 +30,11 @@ export function NotificationList({
   onEdit,
   onDelete,
   searchTerm,
+  onSearchTermChange,
   statusFilter,
+  onStatusFilterChange,
   setIsCreateDialogOpen,
+  onAddNew,
 }: NotificationListProps) {
   const columns = useMemo(
     () => getColumns(onEdit, onDelete, onSend),
@@ -46,6 +56,33 @@ export function NotificationList({
         <CardDescription>Manage your email notifications and announcements</CardDescription>
       </CardHeader>
       <CardContent>
+        <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center mb-4 -mt-1">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search notifications..."
+              value={searchTerm}
+              onChange={(e) => onSearchTermChange(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+          <div className="relative flex-1">
+            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10" />
+            <MultipleSelector
+              onChange={(options) => onStatusFilterChange(options.map((option) => option.value) as notification.Status[])}
+              options={Object.keys(StatusSchema.enum).map((status) => ({
+                label: toTitleCase(status),
+                value: status,
+              }))}
+              className="pl-9"
+              placeholder="Filter by status..."
+            />
+          </div>
+          <Button onClick={onAddNew} className="shrink-0">
+            <Plus className="mr-2 h-4 w-4" />
+            Create notification
+          </Button>
+        </div>
         <div className="border rounded-md">
           <Table>
             <TableHeader>

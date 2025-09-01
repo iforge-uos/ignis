@@ -1,25 +1,12 @@
 import e from "@packages/db/edgeql-js";
+import {allNotifications} from "@packages/db/queries/allNotifications.query"
 import { CreateAuthoredNotificationSchema } from "@packages/db/zod/modules/notification";
-import { PartialUserShape } from "@/lib/utils/queries";
 import { auth } from "@/orpc";
 import { getTargets, idRouter, Targets } from "./$id";
 import { mailingListRouters } from "./mailing-lists";
 
-export const all = auth.route({ path: "/" }).handler(async ({ context: { db } }) =>
-  e
-    .select(e.notification.AuthoredNotification, () => ({
-      ...e.notification.AuthoredNotification["*"],
-      author: PartialUserShape,
-      targets: {
-        id: true,
-        ...e.is(e.users.User, { display_name: true }),
-        ...e.is(e.team.Team, { name: true }),
-        ...e.is(e.event.Event, { name: true }),
-        ...e.is(e.notification.MailingList, { name: true }),
-      },
-    }))
-    .run(db),
-);
+
+export const all = auth.route({ path: "/" }).handler(async ({ context: { db } }) => allNotifications(db));
 
 export const create = auth
   .route({

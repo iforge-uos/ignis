@@ -9,8 +9,6 @@ export const all = auth
   .route({ path: "/" })
   .input(z.object({ include_subscribers: z.boolean().optional() }))
   .handler(async ({ context: { db }, input: { include_subscribers } }) =>
-    e
-      .assert_exists(
         e.select(e.notification.MailingList, () => ({
           subscribers: include_subscribers,
           id: true,
@@ -18,8 +16,7 @@ export const all = auth
           description: true,
           updated_at: true,
           created_at: true,
-        })),
-      )
+        }))
       .run(db),
   );
 
