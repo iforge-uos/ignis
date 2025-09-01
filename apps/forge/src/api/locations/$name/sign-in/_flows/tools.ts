@@ -3,7 +3,7 @@ import e from "@packages/db/edgeql-js";
 import { tools } from "@packages/db/interfaces";
 import { getSignInTrainings } from "@packages/db/queries/getSignInTrainings.query";
 import * as z from "zod";
-import { StepType, createFinaliseStep, createInitialiseStep, createTransmitStep } from "./_steps";
+import { StepType, createFinaliseStep, createInitialiseStep, createReceiveStep, createTransmitStep } from "./_steps";
 import type { Params, Return } from "./_types";
 
 export const Initialise = createInitialiseStep(StepType.enum.TOOLS);
@@ -12,8 +12,7 @@ export const Transmit = createTransmitStep(StepType.enum.TOOLS).extend({
   tools: z.custom<Awaited<ReturnType<typeof getSignInTrainings>>["training"]>(),
 });
 
-export const Receive = z.object({
-  type: z.literal(StepType.enum.TOOLS),
+export const Receive = createReceiveStep(StepType.enum.TOOLS).extend({
   tools: z.array(z.object({ id: z.uuid() })),
 });
 

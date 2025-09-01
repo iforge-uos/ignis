@@ -5,7 +5,7 @@ import e, { $infer } from "@packages/db/edgeql-js";
 import { logger } from "@sentry/tanstackstart-react";
 import { AccessError, ConstraintViolationError } from "gel";
 import * as z from "zod";
-import { StepType, createFinaliseStep, createInitialiseStep, createTransmitStep } from "./_steps";
+import { StepType, createFinaliseStep, createInitialiseStep, createReceiveStep, createTransmitStep } from "./_steps";
 import type { Params, Return } from "./_types";
 type Place = $infer<typeof QueuePlaceShape>[number];
 
@@ -13,9 +13,9 @@ export const Initialise = createInitialiseStep(StepType.enum.QUEUE);
 
 export const Transmit = createTransmitStep(StepType.enum.QUEUE);
 
-export const Receive = z.object({ type: z.literal(StepType.enum.QUEUE) });
+export const Receive = createReceiveStep(StepType.enum.QUEUE);
 
-export const Finalise = createFinaliseStep(StepType.enum.QUEUE, StepType.enum.FINALISE).extend({
+export const Finalise = createFinaliseStep(StepType.enum.QUEUE, z.undefined()).extend({
   place: z.custom<Place>((value) => value as any),
 });
 
@@ -65,5 +65,5 @@ export default async function* (
 
   logger.debug(logger.fmt`Sent queued email to user ${place.user.ucard_number}`);
 
-  return { next: StepType.enum.FINALISE, place };
+  return { next: undefined, place };
 }

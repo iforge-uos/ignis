@@ -5,18 +5,18 @@ import e from "@packages/db/edgeql-js";
 import { Agreement } from "@packages/db/edgeql-js/modules/sign_in";
 import { CreateAgreementSchema } from "@packages/db/zod/modules/sign_in";
 import * as z from "zod";
-import { StepType, createFinaliseStep, createInitialiseStep, createTransmitStep } from "./_steps";
+import { StepType, createFinaliseStep, createInitialiseStep, createReceiveStep, createTransmitStep } from "./_steps";
 import type { Params, Return } from "./_types";
 
 export const Initialise = createInitialiseStep(StepType.enum.REASON);
 
 export const Transmit = createTransmitStep(StepType.enum.REASON);
 
-export const Receive = z.object({ type: z.literal(StepType.enum.REASON), reason: z.object({ id: z.uuid() }) });
+export const Receive = createReceiveStep(StepType.enum.REASON).extend({reason: z.object({ id: z.uuid() }) });
 
 export const Finalise = createFinaliseStep(
   StepType.enum.REASON,
-  z.literal([StepType.enum.TOOLS, StepType.enum.FINALISE]),
+  z.literal([StepType.enum.PERSONAL_TOOLS_AND_MATERIALS, StepType.enum.FINALISE]),
 );
 
 export const Errors = {
@@ -76,7 +76,7 @@ export default async function* ({
     )
     .run(tx);
 
-  if (category === "REP_SIGN_IN" && !user.is_rep) {
+  if (category === "REP_SIGN_IN" && user.__typename !== "users::Rep") {
     throw errors.INVALID_REASON({
       message: "User signing in is not a rep.",
       data: { reason: { id, name: reasonName } },
@@ -135,6 +135,6 @@ export default async function* ({
   }
 
   return {
-    next: StepType.enum.TOOLS,
+    next: StepType.enum.PERSONAL_TOOLS_AND_MATERIALS,
   };
 }

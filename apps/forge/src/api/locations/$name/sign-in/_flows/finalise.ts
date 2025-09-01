@@ -2,14 +2,14 @@ import { ErrorMap } from "@orpc/server";
 import e from "@packages/db/edgeql-js";
 import { logger } from "@sentry/tanstackstart-react";
 import * as z from "zod";
-import { SIGN_INS, StepType, createFinaliseStep, createInitialiseStep, createTransmitStep } from "./_steps";
+import { SIGN_INS, StepType, createFinaliseStep, createInitialiseStep, createReceiveStep, createTransmitStep } from "./_steps";
 import type { Params, Return } from "./_types";
 
 export const Initialise = createInitialiseStep(StepType.enum.FINALISE);
 
 export const Transmit = createTransmitStep(StepType.enum.FINALISE);
 
-export const Receive = z.object({ type: z.literal(StepType.enum.FINALISE) });
+export const Receive = createReceiveStep(StepType.enum.FINALISE);
 
 export const Finalise = createFinaliseStep(StepType.enum.FINALISE, z.undefined()).extend({
   sign_in: z.object({ id: z.uuid() }),

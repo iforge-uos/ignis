@@ -1,4 +1,4 @@
-import type { SignInUser } from "@/lib/utils/sign-in";
+import type { SignInUser } from "@/lib/utils/queries";
 import type { ErrorMap, ORPCErrorConstructorMap } from "@orpc/server";
 import e from "@packages/db/edgeql-js";
 import { Tuple } from "@packages/types";
@@ -63,13 +63,6 @@ import {
   Transmit as ReasonTransmit,
 } from "./reasons";
 import {
-  Errors as RegisterErrors,
-  Finalise as RegisterFinalise,
-  Initialise as RegisterInitialise,
-  Receive as RegisterReceive,
-  Transmit as RegisterTransmit,
-} from "./register";
-import {
   Errors as SignOutErrors,
   Finalise as SignOutFinalise,
   Initialise as SignOutInitialise,
@@ -96,13 +89,11 @@ export const Errors = {
   ...PersonalToolsAndMaterialsErrors,
   ...QueueErrors,
   ...ReasonErrors,
-  ...RegisterErrors,
   ...ToolsErrors,
   ...SignOutErrors,
 } as const satisfies ErrorMap;
 
 export const Initialise = z.discriminatedUnion("type", [
-  RegisterInitialise,
   QueueInitialise,
   AgreementsInitialise,
   ReasonInitialise,
@@ -116,7 +107,6 @@ export const Initialise = z.discriminatedUnion("type", [
 ]);
 
 export const Receive = z.discriminatedUnion("type", [
-  RegisterReceive,
   QueueReceive,
   AgreementReceive,
   ReasonReceive,
@@ -130,7 +120,6 @@ export const Receive = z.discriminatedUnion("type", [
 ]);
 
 export const Transmit = z.discriminatedUnion("type", [
-  RegisterTransmit,
   QueueTransmit,
   AgreementTransmit,
   ReasonTransmit,
@@ -144,7 +133,6 @@ export const Transmit = z.discriminatedUnion("type", [
 ]);
 
 export const Finalise = z.union([
-  RegisterFinalise,
   QueueFinalise,
   AgreementsFinalise,
   ReasonFinalise,

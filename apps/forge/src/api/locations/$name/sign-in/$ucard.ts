@@ -1,12 +1,14 @@
-import { exhaustiveGuard } from "@/lib/utils";
-import { ensureUser } from "@/lib/utils/sign-in";
-import { deskOrAdmin, transaction } from "@/orpc";
-import { eventIterator } from "@orpc/server";
-import { EventPublisher } from "@orpc/server";
+import { EventPublisher, eventIterator } from "@orpc/server";
 import e from "@packages/db/edgeql-js";
 import { sign_in } from "@packages/db/interfaces";
+import * as Sentry from "@sentry/tanstackstart-react";
 import { logger } from "@sentry/tanstackstart-react";
+import { Client, Duration, Executor } from "gel";
+import { Transaction } from "gel/dist/transaction";
 import * as z from "zod";
+import { exhaustiveGuard } from "@/lib/utils";
+import { ensureUser } from "@/lib/utils/queries";
+import { deskOrAdmin, transaction } from "@/orpc";
 import { InitialiseStep, SIGN_INS, StepType } from "./_flows/_steps";
 import { Errors, Finalise, Initialise, Receive, Return, Transmit } from "./_flows/_types";
 
@@ -15,9 +17,8 @@ export type BaseKey = `${sign_in.LocationName}-${UCardNumber}`;
 
 // we have to use just one channel here (I don't think this is correct)
 export const PUBLISHER = new EventPublisher<{
-  [KeyT in BaseKey | `${BaseKey}-${z.infer<typeof Initialise>["type"]}`]: KeyT extends BaseKey
-    ? z.infer<typeof Initialise>
-    : z.infer<typeof Receive>;
+  [x: `${BaseKey}-INITIALISE`]: z.infer<typeof Initialise>;
+  [x: `${BaseKey}-RECEIVE`]: z.infer<typeof Receive>;
 }>();
 
 type FnReturn = Return<z.infer<typeof Transmit>, z.infer<typeof Finalise>, z.infer<typeof Receive>>;
@@ -25,19 +26,18 @@ type FnReturn = Return<z.infer<typeof Transmit>, z.infer<typeof Finalise>, z.inf
 import agreements from "./_flows/agreements";
 import cancel from "./_flows/cancel";
 import finalise from "./_flows/finalise";
-import initialise from "./_flows/initialise";
+import initialiseFlow from "./_flows/initialise";
 import mailingLists from "./_flows/mailing-lists";
 import personalToolsAndMaterials from "./_flows/personal-tools-and-materials";
 import queue from "./_flows/queue";
 import reasons from "./_flows/reasons";
-import register from "./_flows/register";
 import signOut from "./_flows/sign-out";
 import tools from "./_flows/tools";
 
 const HANDLERS: { [K in z.infer<typeof StepType>]: (...args: any) => FnReturn } = {
-  INITIALISE: initialise,
+  INITIALISE: initialiseFlow,
   QUEUE: queue,
-  REGISTER: register,
+  // REGISTER: register,  // TODO you might need this IDK, it'd be another noop
   AGREEMENTS: agreements,
   REASON: reasons,
   TOOLS: tools,
@@ -54,70 +54,133 @@ const HANDLERS: { [K in z.infer<typeof StepType>]: (...args: any) => FnReturn } 
  */
 export const flow = deskOrAdmin
   .route({ method: "GET", path: "/{ucard_number}", tags: ["hidden"] })
+  // @ts-ignore  // the middleware doesn't work for async generators but the types are useful
   .use(transaction)
   .input(InitialiseStep)
   .errors(Errors)
-  .handler(async function* (arg): AsyncGenerator<z.infer<typeof Finalise>, { id: string } | undefined> {
-    logger.info(logger.fmt`Starting sign in flow for ${arg.input.ucard_number.slice(3)}`);
+  .handler(async function* (arg): AsyncGenerator<
+    z.infer<typeof Transmit> | z.infer<typeof Finalise>,
+    { id: string } | undefined
+  > {
     const {
       input,
-      context: { tx },
+      context: { db },
       signal,
     } = arg;
-
-    const user = await ensureUser({ ...input, tx });
-    const $user = e.assert_exists(e.select(e.users.User, () => ({ filter_single: { id: user.id } })));
-    const $location = e.assert_exists(e.select(e.sign_in.Location, () => ({ filter_single: { name: input.name } })));
-
-    signal?.addEventListener("abort", async () => {
-      await cancel({ ...arg, user, input: { ...input, type: "CANCEL" }, $user, $location }).next();
-    });
+    logger.info(logger.fmt`Starting sign in flow for ${input.ucard_number.slice(3)}`);
 
     const key = `${input.name}-${input.ucard_number}` as const;
+    const initialise = PUBLISHER.subscribe(`${key}-INITIALISE`, { signal }); // Do these as soon as possible to avoid any potential race conditions
+    const rx = PUBLISHER.subscribe(`${key}-RECEIVE`, { signal });
 
-    for await (const message of PUBLISHER.subscribe(key, { signal })) {
-      // lifecycle is:
-      // 1. INITIALISE (client) - tells us which function to call and any relevant data (there isn't normally any but future proofing lol)
-      // 2. TRANSMIT (server) - send the client the info to display on the frontend
-      // 3. RECEIVE (client) - client sends back any data for validation
-      // 4. FINALISE (server) - tells the client what the next step is and any relevant data (same statement applies as INITIALISE)
-      const handler = HANDLERS[message.type];
-      const store = SIGN_INS[key][message.type];
-      const rx = PUBLISHER.subscribe(`${key}-${message.type}`, { signal }).next;
-      const tx: FnReturn["next"] = handler({ ...arg, user, $user, $location, input: message }).next;
+    // manually setup the transaction
+    const { txn, cleanupTx } = await getTx(db);
+    arg.context.tx = txn;
 
-      // store the values for use in `finalise`. Has added benefit of the client being able to replay previous values and updates appropriately (refetches things)
-      store.INITIALISE = message;
+    try {
+      const user = await ensureUser({ ...input, tx: arg.context.tx });
+      const $user = e.assert_exists(e.select(e.users.User, () => ({ filter_single: { id: user.id } })));
+      const $location = e.assert_exists(e.select(e.sign_in.Location, () => ({ filter_single: { name: input.name } })));
 
-      const { value: transmit } = (await tx()) as { value: z.infer<typeof Transmit> };
-      transmit.type = message.type; // this isn't set in the yield directly for convenience
+      signal?.addEventListener("abort", async () => {
+        console.log("Got a cancel");
+        await cancel({ ...arg, user, input: { ...input, type: "CANCEL" }, $user, $location }).next();
+      });
 
-      const { value: receive } = await rx();
-      store.RECEIVE = receive; // cache for the same reason
+      for await (const message of initialise) {
+        console.log("Getting an init message", message);
+        // lifecycle is:
+        // 1. INITIALISE (client) - tells us which function to call and any relevant data (there isn't normally any but future proofing lol)
+        // 2. TRANSMIT (server) - send the client the info to display on the frontend
+        // 3. RECEIVE (client) - client sends back any data for validation
+        // 4. FINALISE (server) - tells the client what the next step is and any relevant data (same statement applies as INITIALISE)
+        const handler = HANDLERS[message.type];
+        const store = SIGN_INS[key][message.type];
+        const tx: FnReturn = handler({ ...arg, user, $user, $location, input: message });
 
-      const { value: fin, done } = (await tx(receive)) as { value: z.infer<typeof Finalise>; done: boolean };
-      if (!done) exhaustiveGuard(message.type as never);
-      if (fin.next === undefined) {
-        delete SIGN_INS[key]; // avoid leaking memory :)
-        if (fin.type === "FINALISE") {
-          return fin.sign_in; // close the stream
+        // store the values for use in `finalise`. Has added benefit of the client being able to replay previous values and updates appropriately (refetches things)
+        store.INITIALISE = message;
+
+        const { value: transmit } = (await tx.next()) as { value: z.infer<typeof Transmit> };
+        transmit.type = message.type; // this isn't set in the yield directly for convenience
+        yield transmit;
+
+        const { value: receive } = await rx.next();
+        store.RECEIVE = receive; // cache for the same reason
+
+        const { value: fin, done } = (await tx.next(receive)) as { value: z.infer<typeof Finalise>; done: true };
+        if (!done) exhaustiveGuard(message.type as never);
+        if (fin.next === undefined) {
+          delete SIGN_INS[key]; // avoid leaking memory :)
+          if (fin.type === "FINALISE") {
+            return fin.sign_in; // close the stream
+          }
+          return;
         }
-        return;
+
+        yield fin;
       }
 
-      yield fin;
+      throw new Error("unreachable, PUBLISHER should always yield");
+    } catch (e) {
+      console.error(e);
+      Sentry.captureException(e);
+      throw e;
+    } finally {
+      cleanupTx(undefined);
     }
-
-    throw new Error("unreachable, PUBLISHER should always yield");
   });
 
-// avoid touching this, needed for bidirectional comms. Think of this as a send channel and above method is a recv channel (from client side)
-export const send = deskOrAdmin
-  .route({ method: "GET", path: "/{ucard_number}/send", tags: ["hidden"] })
-  .input(eventIterator(Receive.and(InitialiseStep)))
+export const initialise = deskOrAdmin
+  .route({ method: "GET", path: "/{ucard_number}/initialise", tags: ["hidden"] })
+  .input(eventIterator(Initialise))
   .handler(async function* ({ input }) {
     for await (const message of input) {
-      PUBLISHER.publish(`${message.name}-${message.ucard_number}-${message.type}`, message);
+      PUBLISHER.publish(`${message.name}-${message.ucard_number}-INITIALISE`, message);
       yield;
     }
   });
+
+export const receive = deskOrAdmin
+  .route({ method: "GET", path: "/{ucard_number}/receive", tags: ["hidden"] })
+  .input(eventIterator(Receive))
+  .handler(async function* ({ input }) {
+    for await (const message of input) {
+      PUBLISHER.publish(`${message.name}-${message.ucard_number}-RECEIVE`, message);
+      yield;
+    }
+  });
+
+async function getTx(db: Executor) {
+  let resolveTx: (x: Transaction) => void;
+  let cleanupTx: (x: undefined) => void;
+  // biome-ignore lint/suspicious/noAssignInExpressions: it's cool
+  const getTx = new Promise<Transaction>((resolve) => (resolveTx = resolve));
+  // biome-ignore lint/suspicious/noAssignInExpressions: it's also cool
+  const blocker = new Promise<undefined>((resolve) => (cleanupTx = resolve));
+  (db as Client)
+    .withConfig({ session_idle_transaction_timeout: Duration.from({ hours: 24 }) }) // otherwise we get an IdleTransactionTimeoutError nearly instantly
+    .transaction(async (tx) => {
+      resolveTx(tx);
+      await blocker;
+    });
+  return {
+    txn: await getTx,
+    // @ts-ignore
+    cleanupTx,
+  };
+}
+// I don't think this is required
+// export const backtrack = deskOrAdmin
+//   .route({ method: "GET", path: "/{ucard_number}/backtrack", tags: ["hidden"] })
+//   .input(eventIterator(InitialiseStep.extend({type: StepType})))
+//   .handler(async function* ({ input }) {
+//     for await (const message of input) {
+//     const flow = SIGN_INS[`${message.name}-${message.ucard_number}`]
+//     const maybePrevious = flow[message.type]
+//     if (Object.keys(maybePrevious).length === 1) { // they INITIALISE
+//       yield maybePrevious;
+//     }
+//     yield
+//     }
+//   });

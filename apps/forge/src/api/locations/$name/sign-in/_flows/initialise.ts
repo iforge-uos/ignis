@@ -1,11 +1,11 @@
-import { SignInUser } from "@/lib/utils/sign-in";
+import { SignInUser } from "@/lib/utils/queries";
 import { ErrorMap } from "@orpc/server";
 import e from "@packages/db/edgeql-js";
 import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
 import { CreateInfractionSchema } from "@packages/db/zod/modules/users";
 import { logger } from "@sentry/tanstackstart-react";
 import * as z from "zod";
-import { StepType, createFinaliseStep, createInitialiseStep, createTransmitStep } from "./_steps";
+import { StepType, createFinaliseStep, createInitialiseStep, createReceiveStep, createTransmitStep } from "./_steps";
 import type { Params, Return } from "./_types";
 
 export const Initialise = createInitialiseStep(StepType.enum.INITIALISE);
@@ -14,7 +14,7 @@ export const Transmit = createTransmitStep(StepType.enum.INITIALISE).extend({
   user: z.custom<SignInUser>(),
 });
 
-export const Receive = z.object({ type: z.literal(StepType.enum.INITIALISE) });
+export const Receive = createReceiveStep(StepType.enum.INITIALISE);
 
 export const Finalise = createFinaliseStep(
   StepType.enum.INITIALISE,
@@ -24,18 +24,22 @@ export const Finalise = createFinaliseStep(
 export const Errors = {
   USER_HAS_ACTIVE_INFRACTIONS: {
     message: "User has unresolved infractions",
-    status: 421,
+    status: 412,
     data: z.array(CreateInfractionSchema),
   },
   ALREADY_SIGNED_IN: {
     message: "User is already signed in at a different location, please sign out there before signing in",
-    status: 421,
+    status: 412,
     data: LocationNameSchema,
   },
   NOT_IN_QUEUE: {
     message: "We are still waiting for people who have been queued to show up",
-    status: 421,
+    status: 412,
   },
+  NEW_USER_BUT_WERE_SLAMMED: {
+    message: "User is new but we are full, please direct them to complete setup on their own device",
+    status: 412,
+  }
 } as const satisfies ErrorMap;
 
 export default async function* ({
@@ -57,23 +61,19 @@ export default async function* ({
     throw errors.USER_HAS_ACTIVE_INFRACTIONS({ data: unresolvedInfractions });
   }
 
-  const alreadyName = await e
-    .assert_single(
-      e.select($user.sign_ins, (sign_in) => ({
-        filter: e.op("not", sign_in.signed_out),
-      })),
-    )
-    .location.name.run(tx);
-  if (alreadyName) {
-    if (alreadyName !== name) {
-      throw errors.ALREADY_SIGNED_IN({ data: alreadyName });
-    }
+  if (user.location) {
+    if (user.location !== name) {
+      throw errors.ALREADY_SIGNED_IN({ data: user.location });
+    }x
 
     return { next: StepType.enum.SIGN_OUT };
   }
 
   // Queue checking
   if ((await $location.available_capacity.run(tx)) <= 0) {
+    if (user.registered) {
+      throw errors.NEW_USER_BUT_WERE_SLAMMED()
+    }
     if (await $location.queue_in_use.run(tx)) {
       // could raise so cannot fetch all these at once
       logger.info(logger.fmt`Queue in use, checking if user ${user.ucard_number} has queued at location: ${name}`);

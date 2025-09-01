@@ -3,7 +3,7 @@ import { ErrorMap, call } from "@orpc/server";
 import e from "@packages/db/edgeql-js";
 import { CreateAgreementSchema } from "@packages/db/zod/modules/sign_in";
 import * as z from "zod";
-import { StepType, createFinaliseStep, createInitialiseStep, createTransmitStep } from "./_steps";
+import { StepType, createFinaliseStep, createInitialiseStep, createReceiveStep, createTransmitStep } from "./_steps";
 import { type Params, Return } from "./_types";
 
 export const Initialise = createInitialiseStep(StepType.enum.AGREEMENTS);
@@ -12,7 +12,7 @@ export const Transmit = createTransmitStep(StepType.enum.AGREEMENTS).extend({
   agreements: z.array(CreateAgreementSchema.extend({ id: z.uuid() })),
 });
 
-export const Receive = z.object({ type: z.literal(StepType.enum.AGREEMENTS) });
+export const Receive = createReceiveStep(StepType.enum.AGREEMENTS)
 
 export const Finalise = createFinaliseStep(StepType.enum.AGREEMENTS, StepType.enum.MAILING_LISTS);
 
@@ -43,12 +43,13 @@ export default async function* ({
   };
   yield data;
   for (const agreement of data.agreements) {
+    // FIXME this should handle backtracking causing this to fail
     await call(
       signAgreement,
       { id: user.id, agreement_id: agreement.id },
       {
         // this probably isn't perfectly safe but it's good enough
-        context: { db: tx } as Parameters<(typeof signAgreement)["~orpc"]["handler"]>[0]["context"] as any,
+        context: { db: tx, user } as Parameters<(typeof signAgreement)["~orpc"]["handler"]>[0]["context"] as any,
       },
     );
   }

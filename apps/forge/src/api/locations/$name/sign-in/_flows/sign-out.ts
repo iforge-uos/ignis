@@ -4,14 +4,15 @@ import e from "@packages/db/edgeql-js";
 import { logger } from "@sentry/tanstackstart-react";
 import { CardinalityViolationError } from "gel";
 import * as z from "zod";
-import { StepType, createFinaliseStep, createInitialiseStep, createTransmitStep } from "./_steps";
+import { StepType, createFinaliseStep, createInitialiseStep, createReceiveStep, createTransmitStep } from "./_steps";
 import type { Params, Return } from "./_types";
+import email from "@/email"
 
 export const Initialise = createInitialiseStep(StepType.enum.SIGN_OUT);
 
 export const Transmit = createTransmitStep(StepType.enum.SIGN_OUT);
 
-export const Receive = z.object({ type: z.literal(StepType.enum.SIGN_OUT) });
+export const Receive = createReceiveStep(StepType.enum.SIGN_OUT);
 
 export const Finalise = createFinaliseStep(StepType.enum.SIGN_OUT, z.undefined());
 
@@ -33,8 +34,9 @@ export default async function* ({
   z.infer<typeof Finalise>,
   z.infer<typeof Receive>
 > {
+  let sign_in: {id: string};
   try {
-    await e
+    sign_in = await e
       .assert_exists(
         e.update(e.sign_in.SignIn, (sign_in) => ({
           filter_single: e.all(
