@@ -96,7 +96,7 @@ module printing {
         required multi type: Type;  # multi as printers print exotics (TPU and PETG and this is the easiest way to represent this)
         required location: sign_in::Location;
         multi prints := (
-            select Print filter .`on`.printer = __source__
+            select Print filter __source__ in .`on`.printer
         )
     }
 
@@ -198,6 +198,7 @@ module printing {
     type PrinterAuditEntry extending AuditEntry {
         overloaded required status: PrinterStatus;
     }
+
     type PrintAuditEntry extending AuditEntry {
         overloaded required status: PrintStatus;
         required print: Print;

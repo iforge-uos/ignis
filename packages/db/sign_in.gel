@@ -4,7 +4,7 @@ module sign_in {
             on target delete delete source;
         }
         required location: Location;
-        required tools: array<str>;
+        required tools: array<str>;  # should have a link prop for whether it was removed from
         required reason: Reason;
         required signed_out := exists .ends_at;
 
@@ -244,8 +244,10 @@ module sign_in {
         access policy view_rep
             allow select
             using (
-                global default::user is users::Rep
-                and all(for category in .reasons.category union (select category = ReasonCategory.REP_SIGN_IN))
+                (
+                    all(for category in .reasons.category union (select category = ReasonCategory.REP_SIGN_IN))
+                    and global default::user is users::Rep
+                ) ?? false
             ) {
                 errmessage := "Only the rep can view this agreement"
             };

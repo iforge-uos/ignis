@@ -20,7 +20,7 @@ module tools {
         required multi training: training::Training {
             annotation description := "The training required to unlock this tool"
         }
-        required rep: training::Training {
+        required multi rep: training::Training {
             annotation description := "The associated training that reps should have to supervise this. Empty if the training is for reps."
         }
         required location: sign_in::Location;
@@ -34,6 +34,7 @@ module tools {
             default := (select <duration>"1h" if .is_bookable else {})
         };
         required quantity: int16;
+        required borrowable: bool;
 
         # trigger status_check after update for each do (
         #     dispatch notification somehow that we can't guarantee that it'll work
