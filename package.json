@@ -36,7 +36,7 @@
     "regen": "bun --filter @packages/db regen"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
+    "@biomejs/biome": "^2.0.6",
     "turbo": "^2.5.5"
   },
   "packageManager": "bun@1.2.19"
