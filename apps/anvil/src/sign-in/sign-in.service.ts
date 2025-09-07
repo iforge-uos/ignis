@@ -748,7 +748,7 @@ export class SignInService implements OnModuleInit {
     // - SU clubs
     // - CCAs
     return await this.dbService.query(
-      e.select(e.sign_in.Reason, () => ({ ...e.sign_in.Reason["*"], agreement: true })),
+      e.select(e.sign_in.Reason, (r) => ({ ...e.sign_in.Reason["*"], agreement: true, filter: r.active })),
     );
   }
 

@@ -167,10 +167,10 @@ module sign_in {
             constraint exclusive;
         }
         required category: ReasonCategory;
+        required active: bool {
+            default := true;
+        }
         agreement: Agreement;
-        index on ((.name));
-
-
     }
 
     type Agreement extending default::Auditable {
