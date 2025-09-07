@@ -162,7 +162,7 @@ module sign_in {
         EVENT,
     >;
 
-    type Reason extending default::CreatedAt {
+    type Reason extending default::Auditable {
         required name: str {
             constraint exclusive;
         }
