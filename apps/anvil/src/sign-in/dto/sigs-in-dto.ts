@@ -1,4 +1,4 @@
-import { CreateSignInSchema as _CreateSignInSchema } from "@dbschema/edgedb-zod/modules/sign_in";
+import { CreateSignInSchema as _CreateSignInSchema, UpdateReasonSchema } from "@dbschema/edgedb-zod/modules/sign_in";
 import { createZodDto } from "nestjs-zod";
 import { z } from "zod";
 
@@ -14,3 +14,4 @@ const UpdateSignInSchema = CreateSignInSchema.partial({
 export class CreateSignInDto extends createZodDto(SignInSchema) {}
 export class FinaliseSignInDto extends createZodDto(CreateSignInSchema) {}
 export class UpdateSignInDto extends createZodDto(UpdateSignInSchema) {}
+export class UpdateReasonDto extends createZodDto(UpdateReasonSchema.omit({updated_at: true})) {}
