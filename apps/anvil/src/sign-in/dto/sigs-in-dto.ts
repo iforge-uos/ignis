@@ -14,4 +14,3 @@ const UpdateSignInSchema = CreateSignInSchema.partial({
 export class CreateSignInDto extends createZodDto(SignInSchema) {}
 export class FinaliseSignInDto extends createZodDto(CreateSignInSchema) {}
 export class UpdateSignInDto extends createZodDto(UpdateSignInSchema) {}
-export class UpdateReasonDto extends createZodDto(UpdateReasonSchema.omit({updated_at: true})) {}
