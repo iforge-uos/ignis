@@ -50,6 +50,13 @@ export class UsersController {
     return this.usersService.update(user.id, data as z.infer<typeof UpdateUserSchema>);
   }
 
+  @Get("/search/:query")
+  async search(@Param("query") query: string, @Query("limit") limit: number = 10) {
+    this.logger.log(`Searching users with query: ${query}`, UsersController.name);
+    return this.usersService.search(query, limit);
+  }
+
+
   @Get(":id")
   @IsRep()
   async findOne(@Param("id") id: string) {
@@ -140,12 +147,6 @@ export class UsersController {
   async getSignIns(@Param("id") id: string) {
     this.logger.log(`Retrieving sign-ins for user with ID: ${id}`, UsersController.name);
     return this.usersService.signInStats(id);
-  }
-
-  @Get("/search/:query")
-  async search(@Param("query") query: string, @Query("limit") limit: number = 10) {
-    this.logger.log(`Searching users with query: ${query}`, UsersController.name);
-    return this.usersService.search(query, limit);
   }
 
   @Post("/:id/sign-agreements/:agreement_id")
