@@ -3,7 +3,7 @@ import {
   resetSessionAtom,
   sessionAtom,
   sessionNavigationBacktrackingAtom,
-  sessionUserAtom
+  sessionUserAtom,
 } from "@/atoms/signInAppAtoms.ts";
 import useDoubleTapEscape from "@/hooks/useDoubleTapEscape.ts";
 import QueueDispatcher from "@/routes/_authenticated/_reponly/sign-in/actions/-components/QueueDispatcher.tsx";
@@ -29,6 +29,7 @@ import { Button } from "@ui/components/ui/button.tsx";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import React, { ReactElement, useEffect, useLayoutEffect, useState } from "react";
 import SigningInUserCard from "./SigningInUserCard.tsx";
+import { Link } from "@tanstack/react-router";
 
 const flowConfig: FlowConfiguration = {
   [FlowType.SignIn]: {
@@ -62,9 +63,9 @@ interface SignInManagerProps<FlowT extends FlowType | undefined = undefined> {
 }
 
 export const getStepComponent = (
-    currentFlow: FlowType,
-    currentStep: SignInSteps | SignOutSteps | EnqueueSteps,
-    flowConfig: FlowConfiguration,
+  currentFlow: FlowType,
+  currentStep: SignInSteps | SignOutSteps | EnqueueSteps,
+  flowConfig: FlowConfiguration,
 ): FlowStepComponent => {
   switch (currentFlow) {
     case FlowType.SignIn:
@@ -79,9 +80,9 @@ export const getStepComponent = (
 };
 
 export default function SignInActionsManager<FlowT extends FlowType | undefined = undefined>({
-                                                                                               initialFlow,
-                                                                                               initialStep,
-                                                                                             }: SignInManagerProps<FlowT>): React.ReactElement {
+  initialFlow,
+  initialStep,
+}: SignInManagerProps<FlowT>): React.ReactElement {
   const [currentFlow, setCurrentFlow] = useState<FlowType | null>(null);
   const [currentStep, setCurrentStep] = useState<AnyStep | null>(null);
   const activeLocation = useAtomValue(activeLocationAtom);
@@ -173,9 +174,7 @@ export default function SignInActionsManager<FlowT extends FlowType | undefined 
       if (currentStep === SignInSteps.Step3) {
         setNavigationBacktracking(true);
       }
-      return StepComponent ? (
-          <StepComponent onPrimary={moveToNextStep} onSecondary={moveToPreviousStep} />
-      ) : null;
+      return StepComponent ? <StepComponent onPrimary={moveToNextStep} onSecondary={moveToPreviousStep} /> : null;
     }
     return <div>Flow completed or invalid step</div>;
   };
@@ -190,75 +189,64 @@ export default function SignInActionsManager<FlowT extends FlowType | undefined 
   const buttonStyles = "h-16 w-full sm:h-20 sm:w-64";
 
   return (
-      <div className="p-2 sm:p-4">
+    <div className="p-2 sm:p-4">
+      {currentFlow && (
+        <div className="flex items-center justify-between p-2 sm:p-3 space-y-2 sm:space-y-0 space-x-0 sm:space-x-4 bg-card text-card-foreground mt-2 sm:mt-4 mb-2 sm:mb-4 drop-shadow-lg dark:shadow-none flex-col sm:flex-row">
+          <div className="flex items-center">
+            <span className="text-base sm:text-lg font-bold mr-2">Current Flow:</span>
+            <span className="text-ring uppercase text-lg sm:text-xl">{flowTypeToPrintTable(currentFlow)}</span>
+          </div>
+          <Button
+            onClick={async () => {
+              setCurrentFlow(null);
+              await navigate({ to: "/sign-in" });
+            }}
+            className="w-full sm:w-auto"
+          >
+            Clear Flow
+          </Button>
+        </div>
+      )}
+
+      <div className="flex flex-col lg:flex-row">
         {currentFlow && (
-            <div className="flex items-center justify-between p-2 sm:p-3 space-y-2 sm:space-y-0 space-x-0 sm:space-x-4 bg-card text-card-foreground mt-2 sm:mt-4 mb-2 sm:mb-4 drop-shadow-lg dark:shadow-none flex-col sm:flex-row">
-              <div className="flex items-center">
-                <span className="text-base sm:text-lg font-bold mr-2">Current Flow:</span>
-                <span className="text-ring uppercase text-lg sm:text-xl">{flowTypeToPrintTable(currentFlow)}</span>
-              </div>
-              <Button
-                  onClick={async () => {
-                    setCurrentFlow(null);
-                    await navigate({ to: "/sign-in" });
-                  }}
-                  className="w-full sm:w-auto"
-              >
-                Clear Flow
-              </Button>
+          <>
+            <SignInFlowProgress
+              currentStep={currentStep as AnyStep}
+              flowType={currentFlow}
+              totalSteps={totalSteps}
+              className="w-full lg:w-auto"
+            >
+              <div className="text-sm sm:text-base">{`Current Step: ${currentStepIndex + 1} of ${totalSteps}`}</div>
+            </SignInFlowProgress>
+            <div className="mt-4 lg:mt-0 lg:ml-4 w-full">
+              {user && <SigningInUserCard user={user} className="w-full" />}
+              <div className="mt-4 w-full">{renderCurrentStep()}</div>
             </div>
+          </>
         )}
 
-        <div className="flex flex-col lg:flex-row">
-          {currentFlow && (
-              <>
-                <SignInFlowProgress
-                    currentStep={currentStep as AnyStep}
-                    flowType={currentFlow}
-                    totalSteps={totalSteps}
-                    className="w-full lg:w-auto"
-                >
-                  <div className="text-sm sm:text-base">
-                    {`Current Step: ${currentStepIndex + 1} of ${totalSteps}`}
-                  </div>
-                </SignInFlowProgress>
-                <div className="mt-4 lg:mt-0 lg:ml-4 w-full">
-                  {user && <SigningInUserCard user={user} className="w-full" />}
-                  <div className="mt-4 w-full">{renderCurrentStep()}</div>
-                </div>
-              </>
-          )}
-
-          {!currentFlow && (
-              <div className="flex flex-1 items-center justify-center w-full">
-                <div className="p-3 sm:p-6 space-y-4 w-full rounded-xl shadow-lg bg-card text-card-foreground">
-                  <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 justify-center">
-                    <Button
-                        variant="success"
-                        className={buttonStyles}
-                        onClick={() => startFlow(FlowType.SignIn)}
-                    >
-                      Start Sign In
-                    </Button>
-                    <Button
-                        variant="destructive"
-                        className={buttonStyles}
-                        onClick={() => startFlow(FlowType.SignOut)}
-                    >
-                      Start Sign Out
-                    </Button>
-                    <Button
-                        variant="warning"
-                        className={buttonStyles}
-                        onClick={() => startFlow(FlowType.Enqueue)}
-                    >
-                      Enqueue User
-                    </Button>
-                  </div>
-                </div>
+        {!currentFlow && (
+          <div className="flex flex-1 items-center justify-center w-full">
+            <div className="p-3 sm:p-6 space-y-4 w-full rounded-xl shadow-lg bg-card text-card-foreground">
+              <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 justify-center">
+                <Button variant="success" className={buttonStyles} onClick={() => startFlow(FlowType.SignIn)}>
+                  Start Sign In
+                </Button>
+                <Button variant="destructive" className={buttonStyles} onClick={() => startFlow(FlowType.SignOut)}>
+                  Start Sign Out
+                </Button>
+                <Button variant="warning" className={buttonStyles} onClick={() => startFlow(FlowType.Enqueue)}>
+                  Enqueue User
+                </Button>
+                <Button asChild>
+                  <Link to="/sign-in/actions/sign-agreement">Sign Agreement for User</Link>
+                </Button>
               </div>
-          )}
-        </div>
+            </div>
+          </div>
+        )}
       </div>
+    </div>
   );
 }

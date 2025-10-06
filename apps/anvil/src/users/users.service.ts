@@ -133,6 +133,52 @@ export class UsersService {
     );
   }
 
+  async search(query: string, limit: number) {
+    return await this.dbService.query(e
+        .select(
+          e.select(e.users.User, (user) => ({
+            similarity: e.ext.pg_trgm.word_similarity(
+              query,
+              /*
+             "000" ++ to_str(.ucard_number) ++ " " ++
+             .username ++ " " ++
+             .email ++ " " ++
+             .display_name
+
+             Good luck
+             */
+              e.op(
+                e.op(
+                  e.op(
+                    e.op(
+                      e.op(e.op(e.op("000", "++", e.to_str(user.ucard_number)), "++", " "), "++", user.username),
+                      "++",
+                      " ",
+                    ),
+                    "++",
+                    user.email,
+                  ),
+                  "++",
+                  " ",
+                ),
+                "++",
+                user.display_name,
+              ),
+            ),
+          })),
+          (user) => ({
+            ...UserProps(user),
+            filter: e.op(user.similarity, ">", 0.3),
+            order_by: {
+              expression: user.similarity,
+              direction: e.DESC,
+            },
+            limit,
+          }),
+        ))
+
+  }
+
   async update(id: string, updateUserDto: UpdateUserDto): Promise<void> {
     try {
       await this.dbService.query(

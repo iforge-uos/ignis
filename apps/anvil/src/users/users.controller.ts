@@ -4,7 +4,7 @@ import type { UpdateUserSchema } from "@dbschema/edgedb-zod/modules/users";
 import { sign_in, training, users } from "@ignis/types";
 import { LocationName } from "@ignis/types/sign_in";
 import type { Training, User } from "@ignis/types/users";
-import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Query, UseGuards } from "@nestjs/common";
 import { Logger } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import type { z } from "zod";
@@ -18,6 +18,7 @@ import type {
   UpdateUserDto,
 } from "./dto/users.dto";
 import { UsersService } from "./users.service";
+import { RootService } from "@/root/root.service";
 
 @Controller("users")
 @UseGuards(AuthGuard("jwt"))
@@ -25,6 +26,7 @@ export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly logger: Logger,
+    private readonly rootService: RootService,
   ) {}
 
   @Get()
@@ -138,5 +140,18 @@ export class UsersController {
   async getSignIns(@Param("id") id: string) {
     this.logger.log(`Retrieving sign-ins for user with ID: ${id}`, UsersController.name);
     return this.usersService.signInStats(id);
+  }
+
+  @Get("/search/:query")
+  async search(@Param("query") query: string, @Query("limit") limit: number = 10) {
+    this.logger.log(`Searching users with query: ${query}`, UsersController.name);
+    return this.usersService.search(query, limit);
+  }
+
+  @Post("/:id/sign-agreements/:agreement_id")
+  @IsAdmin()
+  async signAgreement(@Param("id") id: string, @Param("agreement_id") agreement_id: string) {
+    this.logger.log(`Signing agreement for user with ID: ${id}`, UsersController.name);
+    return this.rootService.signAgreement(agreement_id, {id});
   }
 }
