@@ -1,10 +1,12 @@
 import axiosInstance from "@/api/axiosInstance";
 import ActiveLocationSelector from "@/components/sign-in/ActiveLocationSelector";
 import Title from "@/components/title";
+import { sleep } from "@/lib/utils";
 import { getAgreements } from "@/services/root/getAgreements";
 import { search } from "@/services/users/search";
+import { Agreement } from "@ignis/types/root";
 import { User } from "@ignis/types/users";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Button } from "@ui/components/ui/button";
 import { Input } from "@ui/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@ui/components/ui/select";
@@ -15,8 +17,8 @@ const OutComponent = () => {
   const [agreements, setAgreements] = useState<Agreement[]>([]);
   const [agreement, setAgreement] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [users, setUsers] = useState<User[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<User[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -34,8 +36,8 @@ const OutComponent = () => {
 
   // Debounced search
   useEffect(() => {
-    if (!searchQuery || searchQuery.length < 2) {
-      setSearchResults([]);
+    if (!searchQuery) {
+      setUsers([]);
       return;
     }
 
@@ -43,10 +45,10 @@ const OutComponent = () => {
       setIsSearching(true);
       try {
         const results = await search(searchQuery);
-        setSearchResults(results);
+        setUsers(results);
       } catch (error) {
         console.error("Error searching users:", error);
-        setSearchResults([]);
+        setUsers([]);
       } finally {
         setIsSearching(false);
       }
@@ -66,10 +68,8 @@ const OutComponent = () => {
     try {
       await axiosInstance.post(`/users/${user.id}/sign-agreements/${agreement}`);
       toast.success(`Agreement signed for ${user.display_name || user.username}`);
-      // Reset form
-      setUser(null);
-      setSearchQuery("");
-      setSearchResults([]);
+      await sleep(3_000);
+      throw redirect({ to: "/sign-in" });
     } catch (error) {
       console.error("Error signing agreement:", error);
       toast.error("Failed to sign agreement");
@@ -97,16 +97,16 @@ const OutComponent = () => {
               className="w-full"
             />
             {isSearching && <p className="text-sm text-muted-foreground mt-1">Searching...</p>}
-            {searchResults.length > 0 && (
+            {users.length > 0 && (
               <div className="mt-2 border rounded-md max-h-60 overflow-y-auto">
-                {searchResults.map((result) => (
+                {users.map((result) => (
                   <button
                     type="button"
                     key={result.id}
                     onClick={() => {
                       setUser(result);
                       setSearchQuery(result.display_name || result.username);
-                      setSearchResults([]);
+                      setUsers([]);
                     }}
                     className="w-full text-left p-2 hover:bg-accent cursor-pointer border-b last:border-b-0"
                   >

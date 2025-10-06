@@ -50,8 +50,8 @@ export class UsersController {
     return this.usersService.update(user.id, data as z.infer<typeof UpdateUserSchema>);
   }
 
-  @Get("/search/:query")
-  async search(@Param("query") query: string, @Query("limit") limit: number = 10) {
+  @Get("search")
+  async search(@Query("query") query: string, @Query("limit") limit: number = 10) {
     this.logger.log(`Searching users with query: ${query}`, UsersController.name);
     return this.usersService.search(query, limit);
   }
