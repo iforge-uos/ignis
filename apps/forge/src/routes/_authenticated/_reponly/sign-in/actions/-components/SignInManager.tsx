@@ -239,7 +239,7 @@ export default function SignInActionsManager<FlowT extends FlowType | undefined 
                 <Button variant="warning" className={buttonStyles} onClick={() => startFlow(FlowType.Enqueue)}>
                   Enqueue User
                 </Button>
-                <Button asChild>
+                <Button asChild variant="info" className={buttonStyles}>
                   <Link to="/sign-in/actions/sign-agreement">Sign Agreement for User</Link>
                 </Button>
               </div>
