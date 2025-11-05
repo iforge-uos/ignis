@@ -1,26 +1,104 @@
-# module shop {
-#     type `Module` {
-#         required name: str;
-#         multi members: User;
-#         multi purchases := .<`module`[is Purchase];
-#         required total := sum(.purchases.price);
-#     }
+module shop {
+    type `Module` {
+        required name: str;
+        multi users: users::User;
+        multi purchases := .<`module`[is Purchase];
+        required total := sum(.purchases.items.price);
+    }
 
-#     type Purchase extending default::CreatedAt {
-#         required user: users::User;
-#         required item: Item;
-#         `module`: `Module`;
-#     }
+    type LineItem {
+        required price: int64 {
+            annotation description := "Price at time of sale"
+        }
+        required skew: Skew;
+    }
 
-#     type Item {
-#         required price: int64;
-#         required name: str;
-#         count: int16;
-#         required category: Category;
-#     }
+    type Purchase extending default::CreatedAt {
+        required user: users::User {
+            on target delete delete source;
+        }
+        required multi items: LineItem;
 
-#     type Category {
-#         required name: str;
-#         multi items := .<category[is Item];
-#     }
-# }
+        required reverted: bool {
+            default := false;
+        };
+        collected_at: datetime {
+            annotation description := "Whether the order has been collected";
+            default := datetime_of_statement();
+        };
+        `module`: `Module`;
+    }
+
+    abstract type Dimension {
+        # required unit := select <str>assert(false);
+        # required formatted := select <str>assert(false);
+    }
+
+    function get_quantities(type_: schema::ObjectType) -> set of str {
+        using (
+            select assert_exists(
+                (select type_.pointers filter .name not in {"__type__", "id", "unit", "formatted", "quantities"})
+            ).name
+        );
+    }
+
+    module dimensions {
+        type Cylindrical extending shop::Dimension {
+            required unit := "mm";
+            required formatted := "\(.diameter)ø x \(.length)\(.unit)";
+            required diameter: int64;
+            required length: int64;
+        }
+
+        type Cuboid extending shop::Dimension {
+            required unit := "mm";
+            required formatted := "\(.length) x \(.width) x \(.height)\(.unit)";
+            required length: int64;
+            required width: int64;
+            required height: int64;
+        }
+
+        type Mass extending shop::Dimension {
+            required unit := "kg";
+            required formatted := "\(.mass)\(.unit)";
+            required mass: int64;
+        }
+
+        type LiquidVolume extending shop::Dimension {
+            required unit := "L";
+            required formatted := "\(.volume)\(.unit)";
+            required volume: int64;
+        }
+
+        type ISO216 extending shop::Dimension {  # paper sizes
+            required unit := "A";
+            required formatted := "\(.unit)\(.size)";
+            required size: int16;
+        }
+    }
+
+    type Skew extending default::Auditable {
+        required till_id: int16 {
+            annotation description := "The PLU ID in EMOS"
+        }
+        required price: int64 {
+            annotation description := "Price in pence, cause using floats is silly *cough* *cough* EMOS"
+        }
+        required item: Item;
+        required dimensions: Dimension;
+        count: int16;
+        colour: str;
+        icon_url: str {
+            annotation description := "For the different colours if needed"
+        }
+    }
+
+    type Item {
+        required name: str;
+        required icon_url: str;
+        required supplier: str;
+        required supplier_url: str;
+
+        multi skews := .<item[is Skew];
+    }
+}

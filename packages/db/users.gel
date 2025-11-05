@@ -47,6 +47,12 @@ module users {
             infraction: uuid;  # same as above
         }
 
+        multi purchases := .<user[is shop::Purchase];
+        required funds: int32 {
+            annotation description := "Users get £10 credit a semester (in pence)";
+            default := 10_00;
+        }
+
         required identity: ext::auth::Identity;
         multi roles: Role;
         multi integrations := .<user[is Integration];
