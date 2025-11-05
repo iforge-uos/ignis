@@ -16,16 +16,14 @@ module event {
         ends_at: datetime;
         required multi organiser: users::User;
         multi attendees: users::User {
-            # required
-            created_at: datetime {
+            required created_at: datetime {
                 readonly := true;
                 default := datetime_of_statement();
             };
             on target delete allow;
         }
         multi interested: users::User {
-            # required
-            created_at: datetime {
+            required created_at: datetime {
                 readonly := true;
                 default := datetime_of_statement();
             };

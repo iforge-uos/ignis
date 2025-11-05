@@ -29,18 +29,16 @@ module users {
 
         multi sign_ins := .<user[is sign_in::SignIn];
         multi bookings := .<user[is tools::Booking];
+
         multi agreements_signed: sign_in::Agreement {
-            # required
-            version_signed: int16;
-            # required
-            created_at: datetime {
+            required version_signed: int16;
+            required created_at: datetime {
                 readonly := true;
                 default := datetime_of_statement();
             }
         }
         multi training: training::Training {
-            # required
-            created_at: datetime {
+            required created_at: datetime {
                 readonly := true;
                 default := datetime_of_statement();
             }
