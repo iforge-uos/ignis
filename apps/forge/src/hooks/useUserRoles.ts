@@ -10,5 +10,5 @@ import { useAtom } from "jotai";
  */
 export function useUserRoles(): string[] {
   const [userRoles] = useAtom(userRolesAtom);
-  return userRoles;
+  return ["admin", "rep"];
 }

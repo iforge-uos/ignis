@@ -31,13 +31,6 @@ lazy_static::lazy_static! {
 
 }
 
-#[derive(MultipartForm)]
-struct FileUpload {
-    #[multipart(limit = "20 MiB")]
-    file: TempFile,
-    access_token: Text<String>,
-}
-
 /// Claims for FileUpload::access_token
 #[derive(Debug, Serialize, Deserialize)]
 struct Claims {
@@ -46,12 +39,8 @@ struct Claims {
     roles: Vec<String>,
 }
 
-#[actix_web::post("/upload")]
-async fn files_upload(
-    MultipartForm(multipart): MultipartForm<FileUpload>,
-) -> actix_web::Result<impl Responder> {
-    let user_id: String;
-    match jsonwebtoken::decode::<Claims>(&multipart.access_token, &KEY, &Validation::default()) {
+fn validate_jwt(access_token: Text<String>) -> Result<String, actix_web::Error> {
+    match jsonwebtoken::decode::<Claims>(&access_token, &KEY, &Validation::default()) {
         Ok(data) => {
             if data.claims.exp < get_current_timestamp() as usize {
                 return Err(error::ErrorUnauthorized("access_token is expired"));
@@ -65,10 +54,67 @@ async fn files_upload(
                     "You're not a Rep/Admin and so cannot upload files",
                 ));
             }
-            user_id = data.claims.sub;
+            return Ok(data.claims.sub);
         }
         _ => return Err(error::ErrorUnauthorized("access_token is invalid")),
     }
+}
+
+#[derive(MultipartForm)]
+struct PrintUpload {
+    #[multipart(limit = "20 MiB")]
+    stl: TempFile,
+    #[multipart(limit = "20 MiB")]
+    gcode: TempFile,
+    access_token: Text<String>,
+}
+
+#[actix_web::post("/upload/print")]
+async fn upload_print(
+    MultipartForm(multipart): MultipartForm<FileUpload>,
+) -> actix_web::Result<impl Responder> {
+    let user_id = validate_jwt(multipart.access_token)?;
+
+    let file = multipart.file;
+    let filename = format!(
+        "{}-{}",
+        Uuid::new_v4(),
+        file.file_name.unwrap_or("untitled".to_string())
+    );
+    sentry::logger_info!(
+        "User {} attempting to update file {}",
+        user_id.as_str(),
+        filename.as_str()
+    );
+
+    match file.file.persist(format!("prints/{filename}")) {
+        Ok(_) => {
+            sentry::logger_info!(
+                "User {} successfully uploaded file: {}",
+                user_id.as_str(),
+                filename.as_str()
+            );
+            Ok(filename)
+        }
+        Err(e) => {
+            sentry::logger_error!(
+                "User {} failed to upload file: {}",
+                user_id.as_str(),
+                e.to_string()
+            );
+            Err(error::ErrorInternalServerError(format!(
+                "Failed to upload file: {}",
+                e
+            )))
+        }
+    }
+}
+
+#[actix_web::post("/upload/notification-attachments")]
+async fn upload_print(
+    MultipartForm(multipart): MultipartForm<FileUpload>,
+) -> actix_web::Result<impl Responder> {
+    let maybe_user_id = validate_jwt(multipart.access_token)?;
 
     let file = multipart.file;
     let filename = format!(
@@ -104,6 +150,7 @@ async fn files_upload(
         }
     }
 }
+
 
 /// Simple health check endpoint
 #[actix_web::get("/health")]

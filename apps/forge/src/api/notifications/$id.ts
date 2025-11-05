@@ -1,10 +1,10 @@
 import e from "@packages/db/edgeql-js";
 import { UpdateAuthoredNotificationSchema } from "@packages/db/zod/modules/notification";
 import { z } from "zod";
-import { auth, eventsOrDeskOrAdmin } from "@/orpc";
-import { PartialUserShape } from "@/lib/utils/queries";
-import { Target } from "@/lib/utils/notifications";
 import { exhaustiveGuard } from "@/lib/utils";
+import { Target } from "@/lib/utils/notifications";
+import { PartialUserShape } from "@/lib/utils/queries";
+import { auth, eventsOrDeskOrAdmin } from "@/orpc";
 
 export const get = auth
   .route({ path: "/" })
@@ -78,8 +78,31 @@ export const remove = eventsOrDeskOrAdmin
       .run(db),
   );
 
+export const acknowledge = auth
+.route({ method: "POST", path: "/acknowledge" })
+.input(z.object({ id: z.uuid() }))
+.handler(async ({ input: { id }, context: { db, $user } }) =>
+  e
+    .assert_exists(
+      e.update($user, () => ({
+        set: {
+          notifications: {
+            "+=": e.assert_exists(
+              e.select(e.notification.Notification, () => ({
+                filter_single: { id },
+                "@acknowledged_at": e.datetime_of_statement(),
+              })),
+            ),
+          },
+        },
+      })),
+    )
+    .run(db),
+);
+
 export const idRouter = auth.prefix("/{id}").router({
   get,
   remove,
   update,
+  acknowledge,
 });

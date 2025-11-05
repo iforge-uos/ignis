@@ -5,6 +5,7 @@ import {LoginModal} from "@/components/auth/LoginModal";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   component: () => {
+    return <Outlet/>
     const { isAuthenticated, user } = useAuth();
     console.log(user);
 

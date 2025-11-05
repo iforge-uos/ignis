@@ -9,7 +9,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@packages/ui/components/dialog";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@packages/ui/components/empty";
 import { Input } from "@packages/ui/components/input";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@packages/ui/components/input-group";
 import { Label } from "@packages/ui/components/label";
 import { useDebounce } from "@packages/ui/components/multi-select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@packages/ui/components/table";
@@ -304,15 +306,16 @@ export default function AdminDashboardPage() {
               <CardDescription>Manage all your mailing lists</CardDescription>
             </div>
             <div className="flex items-center">
-              <div className="relative flex-1 w-fit">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                <Input
+              <InputGroup className="flex-1 w-fit">
+                <InputGroupInput
                   placeholder="Search mailing lists..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
                 />
-              </div>
+                <InputGroupAddon>
+                  <Search />
+                </InputGroupAddon>
+              </InputGroup>
             </div>
             <div className="flex justify-end w-auto">
               <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
@@ -438,23 +441,31 @@ export default function AdminDashboardPage() {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={columns.length} className="h-24 text-center">
+                      <TableCell colSpan={columns.length} className="h-24">
                         {isSearching ? (
-                          <div className="text-center py-12">
-                            <Mail className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                            <h3 className="text-lg font-semibold text-foreground mb-2">Searching...</h3>
-                            <p className="text-muted-foreground">Finding mailing lists that match your search</p>
-                          </div>
+                          <Empty className="border-0">
+                            <EmptyHeader>
+                              <EmptyMedia variant="icon">
+                                <Mail />
+                              </EmptyMedia>
+                              <EmptyTitle>Searching...</EmptyTitle>
+                              <EmptyDescription>Finding mailing lists that match your search</EmptyDescription>
+                            </EmptyHeader>
+                          </Empty>
                         ) : (
-                          <div className="text-center py-12">
-                            <Mail className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                            <h3 className="text-lg font-semibold text-foreground mb-2">No mailing lists found</h3>
-                            <p className="text-muted-foreground">
-                              {debouncedSearchTerm.length > 0
-                                ? "Try adjusting your search terms or create a new list"
-                                : "Create your first mailing list to get started"}
-                            </p>
-                          </div>
+                          <Empty className="border-0">
+                            <EmptyHeader>
+                              <EmptyMedia variant="icon">
+                                <Mail />
+                              </EmptyMedia>
+                              <EmptyTitle>No mailing lists found</EmptyTitle>
+                              <EmptyDescription>
+                                {debouncedSearchTerm.length > 0
+                                  ? "Try adjusting your search terms or create a new list"
+                                  : "Create your first mailing list to get started"}
+                              </EmptyDescription>
+                            </EmptyHeader>
+                          </Empty>
                         )}
                       </TableCell>
                     </TableRow>

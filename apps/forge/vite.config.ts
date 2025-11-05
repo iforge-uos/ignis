@@ -1,4 +1,3 @@
-import type { SecureServerOptions } from "node:http2";
 import { wrapVinxiConfigWithSentry } from "@sentry/tanstackstart-react";
 import { sentryVitePlugin } from "@sentry/vite-plugin";
 import spotlightSidecar from "@spotlightjs/sidecar/vite-plugin";
@@ -8,7 +7,6 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import react from "@vitejs/plugin-react";
 import { visualizer } from "rollup-plugin-visualizer";
 import { createLogger, defineConfig } from "vite";
-import { compression } from "vite-plugin-compression2";
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
 import lqip from "vite-plugin-lqip";
 import svgr from "vite-plugin-svgr";
@@ -30,6 +28,7 @@ const config = defineConfig({
     target: "esnext",
   },
   plugins: [
+    // basicSsl(),
     tsconfigPaths(),
     tanstackStart(),
     react({
@@ -50,7 +49,7 @@ const config = defineConfig({
       },
     }),
     ViteImageOptimizer(),
-    ...(process.env.NODE_ENV === "development" ? [spotlight({ anchor: "bottomLeft" }), spotlightSidecar()] : []),
+    // ...(process.env.NODE_ENV === "development" ? [spotlight({ anchor: "bottomLeft" }), spotlightSidecar()] : []),
     sentryVitePlugin({
       org: "iforge-uos",
       project: "forge",
@@ -60,8 +59,8 @@ const config = defineConfig({
       open: true,
       filename: "dist/stats.html",
       gzipSize: true,
-      brotliSize: true,
     }),
+    // compression({ algorithms: ["zstandard"], deleteOriginalAssets: false }),
   ],
   customLogger: logger,
 });

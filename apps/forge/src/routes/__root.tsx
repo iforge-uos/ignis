@@ -21,7 +21,7 @@ import { getRequestInfo } from "@/lib/request-info";
 
 export interface RouterAppContext {
   queryClient: QueryClient;
-  user: User;
+  user: User | null;
 }
 
 const RootDocument = () => {

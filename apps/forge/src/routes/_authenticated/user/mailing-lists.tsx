@@ -56,13 +56,13 @@ function RouteComponent() {
     },
   });
 
-  const handleSubscriptionToggle =     (mailingListId: string, isCurrentlySubscribed: boolean | null) => {
-      if (isCurrentlySubscribed) {
-        unsubscribe({ id: user.id, mailing_list_id: mailingListId });
-      } else {
-        subscribe({ id: user.id, mailing_list_id: mailingListId });
-      }
+  const handleSubscriptionToggle = (mailingListId: string, isCurrentlySubscribed: boolean | null) => {
+    if (isCurrentlySubscribed) {
+      unsubscribe({ id: user.id, mailing_list_id: mailingListId });
+    } else {
+      subscribe({ id: user.id, mailing_list_id: mailingListId });
     }
+  };
 
   // Determine which mailing lists to display
   const displayedMailingLists = useMemo(() => {
@@ -70,18 +70,18 @@ function RouteComponent() {
       return [];
     }
 
-    const subscriptionMap = new Map(
-      subscriptions.map((sub) => [sub.id, sub.is_subscribed])
-    );
+    const subscriptionMap = new Map(subscriptions.map((sub) => [sub.id, sub.is_subscribed]));
 
-      const searchResultIds = searchResults ? new Set(searchResults.map((result) => result.id)) : null;
-      const filteredLists = searchResults ? allMailingLists.filter((list) => searchResultIds!.has(list.id)) : allMailingLists;
+    const searchResultIds = searchResults ? new Set(searchResults.map((result) => result.id)) : null;
+    const filteredLists = searchResults
+      ? allMailingLists.filter((list) => searchResultIds!.has(list.id))
+      : allMailingLists;
 
-      return filteredLists.map((list) => ({
-        ...list,
-        is_subscribed: subscriptionMap.get(list.id) ?? false,
-      }));
-    }, [isSearching, searchResults, allMailingLists, subscriptions]);
+    return filteredLists.map((list) => ({
+      ...list,
+      is_subscribed: subscriptionMap.get(list.id) ?? false,
+    }));
+  }, [isSearching, searchResults, allMailingLists, subscriptions]);
 
   const activeSubscriptions = subscriptions.filter((sub) => sub.is_subscribed).length;
 
@@ -114,10 +114,16 @@ function RouteComponent() {
                 <div className="flex items-center gap-4">
                   <Users className="w-6 h-6 text-secondary" />
                   <div>
-                    <p className="text-2xl font-bold text-foreground">{(() => {
-                      const allLists = Array.isArray(allMailingLists) ? allMailingLists : (allMailingLists ? [allMailingLists] : []);
-                      return allLists.length;
-                    })()}</p>
+                    <p className="text-2xl font-bold text-foreground">
+                      {(() => {
+                        const allLists = Array.isArray(allMailingLists)
+                          ? allMailingLists
+                          : allMailingLists
+                            ? [allMailingLists]
+                            : [];
+                        return allLists.length;
+                      })()}
+                    </p>
                     <p className="text-sm text-muted-foreground">Available Lists</p>
                   </div>
                 </div>
@@ -129,10 +135,16 @@ function RouteComponent() {
                 <div className="flex items-center gap-4">
                   <Bell className="w-6 h-6 text-accent-foreground" />
                   <div>
-                    <p className="text-2xl font-bold text-foreground">{(() => {
-                      const allLists = Array.isArray(allMailingLists) ? allMailingLists : (allMailingLists ? [allMailingLists] : []);
-                      return allLists.length - activeSubscriptions;
-                    })()}</p>
+                    <p className="text-2xl font-bold text-foreground">
+                      {(() => {
+                        const allLists = Array.isArray(allMailingLists)
+                          ? allMailingLists
+                          : allMailingLists
+                            ? [allMailingLists]
+                            : [];
+                        return allLists.length - activeSubscriptions;
+                      })()}
+                    </p>
                     <p className="text-sm text-muted-foreground">Unsubscribed</p>
                   </div>
                 </div>
@@ -217,11 +229,9 @@ function RouteComponent() {
 
 export const Route = createFileRoute("/_authenticated/user/mailing-lists")({
   loader: ({ context }) => {
+    context.queryClient.prefetchQuery(orpc.users.mailingLists.subscriptions.queryOptions({ input: context.user }));
     context.queryClient.prefetchQuery(
-      orpc.users.mailingLists.subscriptions.queryOptions({ input: context.user })
-    );
-    context.queryClient.prefetchQuery(
-      orpc.notifications.mailingLists.all.queryOptions({ input: { include_subscribers: false } })
+      orpc.notifications.mailingLists.all.queryOptions({ input: { include_subscribers: false } }),
     );
   },
   component: RouteComponent,

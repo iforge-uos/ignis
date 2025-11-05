@@ -4,13 +4,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { Outlet, createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated")({
-  component: () => {
-    // const { isAuthenticated } = useAuth();
-
-    // if (!isAuthenticated) {
-    //   return <LoginModal />;
+  beforeLoad: ({ context }) => {
+    // if (!context.user) {
+    //   throw new Error('Not authenticated')
     // }
-
-    return <Outlet />;
   },
 });

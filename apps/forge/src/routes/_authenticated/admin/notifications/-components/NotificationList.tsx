@@ -2,7 +2,8 @@ import { notification } from "@packages/db/interfaces";
 import { StatusSchema } from "@packages/db/zod/modules/notification";
 import { Button } from "@packages/ui/components/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@packages/ui/components/card";
-import { Input } from "@packages/ui/components/input";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@packages/ui/components/empty";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@packages/ui/components/input-group";
 import MultipleSelector from "@packages/ui/components/multi-select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@packages/ui/components/table";
 import { flexRender, getCoreRowModel, getExpandedRowModel, useReactTable } from "@tanstack/react-table";
@@ -57,15 +58,16 @@ export function NotificationList({
       </CardHeader>
       <CardContent>
         <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center mb-4 -mt-1">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
+          <InputGroup className="flex-1">
+            <InputGroupInput
               placeholder="Search notifications..."
               value={searchTerm}
               onChange={(e) => onSearchTermChange(e.target.value)}
-              className="pl-9"
             />
-          </div>
+            <InputGroupAddon>
+              <Search />
+            </InputGroupAddon>
+          </InputGroup>
           <div className="relative flex-1">
             <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10" />
             <MultipleSelector
@@ -116,22 +118,28 @@ export function NotificationList({
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={columns.length} className="h-96 text-center">
-                    <div className="flex flex-col items-center justify-center gap-4">
-                      <Send className="h-12 w-12 text-muted-foreground" />
-                      <h3 className="text-lg font-medium text-foreground">No notifications found</h3>
-                      <p className="text-muted-foreground">
-                        {searchTerm || statusFilter.length > 0
-                          ? "Try adjusting your search or filter criteria."
-                          : "Create your first notification to get started."}
-                      </p>
+                  <TableCell colSpan={columns.length} className="h-96">
+                    <Empty className="border-0">
+                      <EmptyHeader>
+                        <EmptyMedia variant="icon">
+                          <Send />
+                        </EmptyMedia>
+                        <EmptyTitle>No notifications found</EmptyTitle>
+                        <EmptyDescription>
+                          {searchTerm || statusFilter.length > 0
+                            ? "Try adjusting your search or filter criteria."
+                            : "Create your first notification to get started."}
+                        </EmptyDescription>
+                      </EmptyHeader>
                       {!searchTerm && statusFilter.length === 0 && (
-                        <Button onClick={() => setIsCreateDialogOpen(true)}>
-                          <Plus className="h-4 w-4 mr-2" />
-                          Create notification
-                        </Button>
+                        <EmptyContent>
+                          <Button onClick={() => setIsCreateDialogOpen(true)}>
+                            <Plus className="h-4 w-4 mr-2" />
+                            Create notification
+                          </Button>
+                        </EmptyContent>
                       )}
-                    </div>
+                    </Empty>
                   </TableCell>
                 </TableRow>
               )}
