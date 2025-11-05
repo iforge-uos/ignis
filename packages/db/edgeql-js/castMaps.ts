@@ -42,7 +42,6 @@ export type scalarAssignableBy<T extends $.ScalarType> =
   T extends _sys.$TransactionAccessMode ? _sys.$TransactionAccessMode : 
   T extends _sys.$QueryType ? _sys.$QueryType : 
   T extends _sys.$OutputFormat ? _sys.$OutputFormat : 
-  T extends _std.$uuid ? _std.$uuid : 
   T extends _std.$str ? _std.$str : 
   T extends _stdpg.$timestamptz ? _stdpg.$timestamptz : 
   T extends _stdpg.$timestamp ? _stdpg.$timestamp : 
@@ -103,13 +102,16 @@ export type scalarAssignableBy<T extends $.ScalarType> =
   T extends _notification.$Type ? _notification.$Type : 
   T extends _notification.$Status ? _notification.$Status : 
   T extends _notification.$DeliveryMethod ? _notification.$DeliveryMethod : 
-  T extends _notification.$AllTargetTarget ? _notification.$AllTargetTarget : 
   T extends _extpgvector.$vector ? _extpgvector.$vectorλIAssignableBy : 
   T extends _extpgvector.$sparsevec ? _extpgvector.$sparsevecλIAssignableBy : 
   T extends _extpgvector.$halfvec ? _extpgvector.$halfvecλIAssignableBy : 
+  T extends _extauth.$client_token_id_cf124ea43852588dafb909f19e68f1b9 ? _extauth.$client_token_id_cf124ea43852588dafb909f19e68f1b9 : 
+  T extends _std.$uuid ? _std.$uuid : 
   T extends _extauth.$WebhookEvent ? _extauth.$WebhookEvent : 
+  T extends _extauth.$VerificationMethod ? _extauth.$VerificationMethod : 
   T extends _extauth.$JWTAlgo ? _extauth.$JWTAlgo : 
   T extends _extauth.$FlowType ? _extauth.$FlowType : 
+  T extends _extauth.$AuthenticationAttemptType ? _extauth.$AuthenticationAttemptType : 
   T extends _extai.$ProviderAPIStyle ? _extai.$ProviderAPIStyle : 
   T extends _extai.$IndexType ? _extai.$IndexType : 
   T extends _extai.$DistanceFunction ? _extai.$DistanceFunction : 
@@ -140,7 +142,6 @@ export type scalarCastableFrom<T extends $.ScalarType> =
   T extends _sys.$TransactionAccessMode ? _sys.$TransactionAccessMode : 
   T extends _sys.$QueryType ? _sys.$QueryType : 
   T extends _sys.$OutputFormat ? _sys.$OutputFormat : 
-  T extends _std.$uuid ? _std.$uuid : 
   T extends _std.$str ? _std.$str : 
   T extends _stdpg.$timestamptz ? _stdpg.$timestamptz : 
   T extends _stdpg.$timestamp ? _stdpg.$timestamp : 
@@ -201,13 +202,16 @@ export type scalarCastableFrom<T extends $.ScalarType> =
   T extends _notification.$Type ? _notification.$Type : 
   T extends _notification.$Status ? _notification.$Status : 
   T extends _notification.$DeliveryMethod ? _notification.$DeliveryMethod : 
-  T extends _notification.$AllTargetTarget ? _notification.$AllTargetTarget : 
   T extends _extpgvector.$vector ? _extpgvector.$vectorλICastableTo : 
   T extends _extpgvector.$sparsevec ? _extpgvector.$sparsevec : 
   T extends _extpgvector.$halfvec ? _extpgvector.$halfvec : 
+  T extends _extauth.$client_token_id_cf124ea43852588dafb909f19e68f1b9 ? _extauth.$client_token_id_cf124ea43852588dafb909f19e68f1b9 : 
+  T extends _std.$uuid ? _std.$uuid : 
   T extends _extauth.$WebhookEvent ? _extauth.$WebhookEvent : 
+  T extends _extauth.$VerificationMethod ? _extauth.$VerificationMethod : 
   T extends _extauth.$JWTAlgo ? _extauth.$JWTAlgo : 
   T extends _extauth.$FlowType ? _extauth.$FlowType : 
+  T extends _extauth.$AuthenticationAttemptType ? _extauth.$AuthenticationAttemptType : 
   T extends _extai.$ProviderAPIStyle ? _extai.$ProviderAPIStyle : 
   T extends _extai.$IndexType ? _extai.$IndexType : 
   T extends _extai.$DistanceFunction ? _extai.$DistanceFunction : 
@@ -309,12 +313,6 @@ type getSharedParentScalar<A, B> =
   :
   A extends _sys.$OutputFormat ?
     B extends _sys.$OutputFormat ?
-    B
-    :
-    never
-  :
-  A extends _std.$uuid ?
-    B extends _std.$uuid ?
     B
     :
     never
@@ -697,12 +695,6 @@ type getSharedParentScalar<A, B> =
     :
     never
   :
-  A extends _notification.$AllTargetTarget ?
-    B extends _notification.$AllTargetTarget ?
-    B
-    :
-    never
-  :
   A extends _extpgvector.$vector ?
     B extends _extpgvector.$vector ?
     B
@@ -727,8 +719,26 @@ type getSharedParentScalar<A, B> =
     :
     never
   :
+  A extends _extauth.$client_token_id_cf124ea43852588dafb909f19e68f1b9 ?
+    B extends _extauth.$client_token_id_cf124ea43852588dafb909f19e68f1b9 ?
+    B
+    :
+    never
+  :
+  A extends _std.$uuid ?
+    B extends _std.$uuid ?
+    B
+    :
+    never
+  :
   A extends _extauth.$WebhookEvent ?
     B extends _extauth.$WebhookEvent ?
+    B
+    :
+    never
+  :
+  A extends _extauth.$VerificationMethod ?
+    B extends _extauth.$VerificationMethod ?
     B
     :
     never
@@ -741,6 +751,12 @@ type getSharedParentScalar<A, B> =
   :
   A extends _extauth.$FlowType ?
     B extends _extauth.$FlowType ?
+    B
+    :
+    never
+  :
+  A extends _extauth.$AuthenticationAttemptType ?
+    B extends _extauth.$AuthenticationAttemptType ?
     B
     :
     never
@@ -908,12 +924,6 @@ function getSharedParentScalar<A extends $.ScalarType, B extends $.ScalarType>(a
     }
   if (a.__name__ === "sys::OutputFormat") {
     if(b.__name__ === "sys::OutputFormat") {
-      return b;
-    }
-    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
-    }
-  if (a.__name__ === "std::uuid") {
-    if(b.__name__ === "std::uuid") {
       return b;
     }
     throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
@@ -1296,12 +1306,6 @@ function getSharedParentScalar<A extends $.ScalarType, B extends $.ScalarType>(a
     }
     throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
     }
-  if (a.__name__ === "notification::AllTargetTarget") {
-    if(b.__name__ === "notification::AllTargetTarget") {
-      return b;
-    }
-    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
-    }
   if (a.__name__ === "ext::pgvector::vector") {
     if(b.__name__ === "ext::pgvector::vector") {
       return b;
@@ -1326,8 +1330,26 @@ function getSharedParentScalar<A extends $.ScalarType, B extends $.ScalarType>(a
     }
     throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
     }
+  if (a.__name__ === "ext::auth::_client_token_id") {
+    if(b.__name__ === "ext::auth::_client_token_id") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
+  if (a.__name__ === "std::uuid") {
+    if(b.__name__ === "std::uuid") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
   if (a.__name__ === "ext::auth::WebhookEvent") {
     if(b.__name__ === "ext::auth::WebhookEvent") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
+  if (a.__name__ === "ext::auth::VerificationMethod") {
+    if(b.__name__ === "ext::auth::VerificationMethod") {
       return b;
     }
     throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
@@ -1340,6 +1362,12 @@ function getSharedParentScalar<A extends $.ScalarType, B extends $.ScalarType>(a
     }
   if (a.__name__ === "ext::auth::FlowType") {
     if(b.__name__ === "ext::auth::FlowType") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
+  if (a.__name__ === "ext::auth::AuthenticationAttemptType") {
+    if(b.__name__ === "ext::auth::AuthenticationAttemptType") {
       return b;
     }
     throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
@@ -1449,7 +1477,7 @@ export type scalarLiterals =
   | gel.Range<any> | gel.MultiRange<any>;
 
 type getTsType<T extends $.BaseType> = T extends $.ScalarType
-  ? T extends _extpgvector.$halfvec | _extpgvector.$sparsevec | _std.$decimal | _stdfts.$document | _std.$json | _stdpg.$date | _stdpg.$interval | _stdpg.$json | _stdpg.$timestamp | _stdpg.$timestamptz | _std.$uuid
+  ? T extends _std.$uuid | _extpgvector.$halfvec | _extpgvector.$sparsevec | _std.$decimal | _stdfts.$document | _std.$json | _stdpg.$date | _stdpg.$interval | _stdpg.$json | _stdpg.$timestamp | _stdpg.$timestamptz
     ? never
     : T["__tstype__"]
   : T extends $.RangeType

@@ -10,7 +10,8 @@
     "@js-temporal/polyfill": "^0.5.1",
     "gel": "2.0.1",
     "gel-zod": "github:iforge-uos/edgedb-zod#73b2a90af1e62c631b4d1f2af18d7a49e652026b",
-    "zod": "^4.0.5"
+    "zod": "^4.0.5",
+    "zod-temporal": "^1.1.0"
   },
   "scripts": {
     "interfaces": "bunx @gel/generate interfaces -I ignis",

@@ -4,14 +4,14 @@ import * as $ from "../reflection";
 import * as _ from "../imports";
 import type * as _std from "./std";
 export type $QuestionλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
-  "answer": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
-  "title": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "rep_only": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, true>;
+  "title": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
+  "answer": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
 }>;
 type $Question = $.ObjectType<"ai_rep::Question", $QuestionλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
 ], "ai_rep::Question">;
-const $Question = $.makeType<$Question>(_.spec, "f4973154-68ca-11f0-8328-1d0246a8f356", _.syntax.literal);
+const $Question = $.makeType<$Question>(_.spec, "6ac4799c-b8ec-11f0-9664-8dbb4034f3b0", _.syntax.literal);
 
 const Question: $.$expr_PathNode<$.TypeSet<$Question, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Question, $.Cardinality.Many), null);
 

@@ -20,7 +20,7 @@ module users {
         required first_name: str;
         last_name: str;  # not everyone has a last name
         required display_name: str {
-            default := str_trim(.first_name ++ " " ++ .last_name) IF .last_name ?!= "" ELSE .first_name;
+            default := str_trim(.first_name ++ " " ++ .last_name) if .last_name ?!= "" else .first_name;
         };
         pronouns: str;
         profile_picture: str {

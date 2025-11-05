@@ -5,8 +5,8 @@ import * as _ from "../imports";
 import type * as _std from "./std";
 import type * as _default from "./default";
 import type * as _users from "./users";
-import type * as _tools from "./tools";
 import type * as _sign_in from "./sign_in";
+import type * as _tools from "./tools";
 export type $AnswerType = {
   "SINGLE": $.$expr_Literal<$AnswerType>;
   "MULTI": $.$expr_Literal<$AnswerType>;
@@ -71,8 +71,8 @@ const $Page = $.makeType<$Page>(_.spec, "77779cc3-c275-11ef-a0bd-67996ce251ba", 
 const Page: $.$expr_PathNode<$.TypeSet<$Page, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Page, $.Cardinality.Many), null);
 
 export type $QuestionλShape = $.typeutil.flatten<$InteractableλShape & {
-  "type": $.PropertyDesc<$AnswerType, $.Cardinality.One, false, false, false, false>;
   "answers": $.LinkDesc<$Answer, $.Cardinality.AtLeastOne, {}, false, false,  false, false>;
+  "type": $.PropertyDesc<$AnswerType, $.Cardinality.One, false, false, false, false>;
   "<questions[is training::Training]": $.LinkDesc<$Training, $.Cardinality.Many, {}, false, false,  false, false>;
   "<questions": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
@@ -86,8 +86,8 @@ const Question: $.$expr_PathNode<$.TypeSet<$Question, $.Cardinality.Many>, null>
 export type $SessionλShape = $.typeutil.flatten<_default.$AuditableλShape & {
   "index": $.PropertyDesc<_std.$int16, $.Cardinality.One, false, false, false, true>;
   "training": $.LinkDesc<$Training, $.Cardinality.One, {}, false, false,  false, false>;
-  "next_section": $.LinkDesc<$TrainingPage | $Question, $.Cardinality.AtMostOne, {}, false, true,  false, false>;
   "user": $.LinkDesc<_users.$User, $.Cardinality.One, {}, false, false,  false, false>;
+  "next_section": $.LinkDesc<$TrainingPage | $Question, $.Cardinality.AtMostOne, {}, false, true,  false, false>;
 }>;
 type $Session = $.ObjectType<"training::Session", $SessionλShape, null, [
   ..._default.$Auditable['__exclusives__'],
@@ -98,8 +98,10 @@ const $Session = $.makeType<$Session>(_.spec, "29ff9cb7-f86c-11ee-9653-fdc4b5973
 const Session: $.$expr_PathNode<$.TypeSet<$Session, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Session, $.Cardinality.Many), null);
 
 export type $TrainingλShape = $.typeutil.flatten<_default.$AuditableλShape & {
+  "rep": $.LinkDesc<$Training, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
   "in_person": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, false>;
   "locations": $.PropertyDesc<$LocationName, $.Cardinality.Many, false, false, false, false>;
+  "pages": $.LinkDesc<$TrainingPage, $.Cardinality.Many, {}, false, false,  false, false>;
   "name": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "compulsory": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, true>;
   "description": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
@@ -107,23 +109,21 @@ export type $TrainingλShape = $.typeutil.flatten<_default.$AuditableλShape & {
   "expires_after": $.PropertyDesc<_std.$duration, $.Cardinality.AtMostOne, false, false, false, false>;
   "icon_url": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "training_lockout": $.PropertyDesc<_std.$duration, $.Cardinality.AtMostOne, false, false, false, false>;
-  "rep": $.LinkDesc<$Training, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
-  "pages": $.LinkDesc<$TrainingPage, $.Cardinality.Many, {}, false, false,  false, false>;
   "questions": $.LinkDesc<$Question, $.Cardinality.Many, {}, false, false,  false, false>;
   "sections": $.LinkDesc<$TrainingPage | $Question, $.Cardinality.Many, {}, false, true,  false, false>;
   "<rep[is training::Training]": $.LinkDesc<$Training, $.Cardinality.Many, {}, false, false,  false, false>;
   "<training[is users::User]": $.LinkDesc<_users.$User, $.Cardinality.Many, {}, false, false,  false, false>;
   "<training[is users::Rep]": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<training[is user]": $.LinkDesc<_default.$user, $.Cardinality.Many, {}, false, false,  false, false>;
   "<supervisable_training[is users::Rep]": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<training[is user]": $.LinkDesc<_default.$user, $.Cardinality.Many, {}, false, false,  false, false>;
   "<parent[is training::Interactable]": $.LinkDesc<$Interactable, $.Cardinality.Many, {}, false, false,  false, false>;
   "<parent[is training::TrainingPage]": $.LinkDesc<$TrainingPage, $.Cardinality.Many, {}, false, false,  false, false>;
   "<parent[is training::Page]": $.LinkDesc<$Page, $.Cardinality.Many, {}, false, false,  false, false>;
   "<parent[is training::Question]": $.LinkDesc<$Question, $.Cardinality.Many, {}, false, false,  false, false>;
   "<training[is training::Session]": $.LinkDesc<$Session, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<supervisable_training[is sign_in::Location]": $.LinkDesc<_sign_in.$Location, $.Cardinality.Many, {}, false, false,  false, false>;
   "<rep[is tools::Tool]": $.LinkDesc<_tools.$Tool, $.Cardinality.Many, {}, false, false,  false, false>;
   "<training[is tools::Tool]": $.LinkDesc<_tools.$Tool, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<supervisable_training[is sign_in::Location]": $.LinkDesc<_sign_in.$Location, $.Cardinality.Many, {}, false, false,  false, false>;
   "<parent": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<rep": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<supervisable_training": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;

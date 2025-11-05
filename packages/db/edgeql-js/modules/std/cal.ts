@@ -23,16 +23,16 @@ export type $relative_durationλICastableTo = $relative_duration | $date_duratio
 export type $relative_durationλIAssignableBy = $relative_duration | $date_duration;
 
 type to_local_timeλFuncExpr<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$datetime>>,
-  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$str>>,
-> = $.$expr_Function<
-  $local_time, $.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.paramCardinality<P2>>
->;
-type to_local_timeλFuncExpr2<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$str>>,
   P2 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$str>> | undefined,
 > = $.$expr_Function<
   $local_time, $.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.optionalParamCardinality<P2>>
+>;
+type to_local_timeλFuncExpr2<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$datetime>>,
+  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$str>>,
+> = $.$expr_Function<
+  $local_time, $.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.paramCardinality<P2>>
 >;
 type to_local_timeλFuncExpr3<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
@@ -45,21 +45,21 @@ type to_local_timeλFuncExpr3<
  * Create a `std::cal::local_time` value.
  */
 function to_local_time<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$datetime>>,
-  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$str>>,
->(
-  dt: P1,
-  zone: P2,
-): to_local_timeλFuncExpr<P1, P2>;
-/**
- * Create a `std::cal::local_time` value.
- */
-function to_local_time<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$str>>,
   P2 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$str>> | undefined,
 >(
   s: P1,
   fmt?: P2,
+): to_local_timeλFuncExpr<P1, P2>;
+/**
+ * Create a `std::cal::local_time` value.
+ */
+function to_local_time<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$datetime>>,
+  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$str>>,
+>(
+  dt: P1,
+  zone: P2,
 ): to_local_timeλFuncExpr2<P1, P2>;
 /**
  * Create a `std::cal::local_time` value.
@@ -75,8 +75,8 @@ function to_local_time<
 ): to_local_timeλFuncExpr3<P1, P2, P3>;
 function to_local_time(...args: any[]) {
   const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('std::cal::to_local_time', args, _.spec, [
-    {args: [{typeId: "00000000-0000-0000-0000-00000000010a", optional: false, setoftype: false, variadic: false}, {typeId: "00000000-0000-0000-0000-000000000101", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-00000000010d"},
     {args: [{typeId: "00000000-0000-0000-0000-000000000101", optional: false, setoftype: false, variadic: false}, {typeId: "00000000-0000-0000-0000-000000000101", optional: true, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-00000000010d"},
+    {args: [{typeId: "00000000-0000-0000-0000-00000000010a", optional: false, setoftype: false, variadic: false}, {typeId: "00000000-0000-0000-0000-000000000101", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-00000000010d"},
     {args: [{typeId: "00000000-0000-0000-0000-0000000001ff", optional: false, setoftype: false, variadic: false}, {typeId: "00000000-0000-0000-0000-0000000001ff", optional: false, setoftype: false, variadic: false}, {typeId: "00000000-0000-0000-0000-0000000001ff", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-00000000010d"},
   ]);
   return _.syntax.$expressionify({

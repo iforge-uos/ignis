@@ -39,11 +39,12 @@ export const CreateToolSchema = z.
     is_bookable: z.boolean(), // std::bool
     status: z.enum(["NOMINAL", "IN_USE", "OUT_OF_ORDER"]), // tools::Status
     min_booking_time: zt.duration().optional().nullable(), // std::duration
+    borrowable: z.boolean(), // std::bool
+    description: z.string(), // std::str
     max_booking_daily: zt.duration().nullable(), // std::duration
     max_booking_weekly: zt.duration().nullable(), // std::duration
     name: z.string(), // std::str
     quantity: z.int().min(-32768).max(32767), // std::int16
-    borrowable: z.boolean(), // std::bool
   });
 
 export const UpdateToolSchema = z.
@@ -51,10 +52,11 @@ export const UpdateToolSchema = z.
     is_bookable: z.boolean(), // std::bool
     status: z.enum(["NOMINAL", "IN_USE", "OUT_OF_ORDER"]), // tools::Status
     min_booking_time: zt.duration().optional().nullable(), // std::duration
+    borrowable: z.boolean(), // std::bool
+    description: z.string(), // std::str
     max_booking_daily: zt.duration().nullable(), // std::duration
     max_booking_weekly: zt.duration().nullable(), // std::duration
     name: z.string(), // std::str
     quantity: z.int().min(-32768).max(32767), // std::int16
-    borrowable: z.boolean(), // std::bool
   });
 // #endregion

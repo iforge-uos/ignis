@@ -115,8 +115,7 @@ const $ExtensionPackageMigration = $.makeType<$ExtensionPackageMigration>(_.spec
 const ExtensionPackageMigration: $.$expr_PathNode<$.TypeSet<$ExtensionPackageMigration, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($ExtensionPackageMigration, $.Cardinality.Many), null);
 
 export type $QueryStatsλShape = $.typeutil.flatten<$ExternalObjectλShape & {
-  "stats_since": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne, false, false, false, false>;
-  "minmax_stats_since": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne, false, false, false, false>;
+  "branch": $.LinkDesc<$Branch, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
   "query": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "query_type": $.PropertyDesc<$QueryType, $.Cardinality.AtMostOne, false, false, false, false>;
   "tag": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
@@ -143,7 +142,8 @@ export type $QueryStatsλShape = $.typeutil.flatten<$ExternalObjectλShape & {
   "mean_exec_time": $.PropertyDesc<_std.$duration, $.Cardinality.AtMostOne, false, false, false, false>;
   "stddev_exec_time": $.PropertyDesc<_std.$duration, $.Cardinality.AtMostOne, false, false, false, false>;
   "rows": $.PropertyDesc<_std.$int64, $.Cardinality.AtMostOne, false, false, false, false>;
-  "branch": $.LinkDesc<$Branch, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
+  "stats_since": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne, false, false, false, false>;
+  "minmax_stats_since": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne, false, false, false, false>;
 }>;
 type $QueryStats = $.ObjectType<"sys::QueryStats", $QueryStatsλShape, null, [
   ...$ExternalObject['__exclusives__'],
@@ -159,8 +159,9 @@ export type $RoleλShape = $.typeutil.flatten<$SystemObjectλShape & _schema.$In
   "password": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "permissions": $.PropertyDesc<_std.$str, $.Cardinality.Many, false, false, false, false>;
   "branches": $.PropertyDesc<_std.$str, $.Cardinality.Many, false, false, false, false>;
-  "all_permissions": $.PropertyDesc<_std.$str, $.Cardinality.Many, false, true, false, false>;
+  "apply_access_policies_pg_default": $.PropertyDesc<_std.$bool, $.Cardinality.AtMostOne, false, false, false, false>;
   "member_of": $.LinkDesc<$Role, $.Cardinality.Many, {}, false, false,  false, false>;
+  "all_permissions": $.PropertyDesc<_std.$str, $.Cardinality.Many, false, true, false, false>;
   "<member_of[is sys::Role]": $.LinkDesc<$Role, $.Cardinality.Many, {}, false, false,  false, false>;
   "<member_of": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
@@ -376,6 +377,15 @@ function approximate_count(...args: any[]) {
   }) as any;
 };
 
+const $sys__globals: {  current_role: _.syntax.$expr_Global<
+              // "sys::current_role",
+              _std.$str,
+              $.Cardinality.One
+              >} = {  current_role: _.syntax.makeGlobal(
+              "sys::current_role",
+              $.makeType(_.spec, "00000000-0000-0000-0000-000000000101", _.syntax.literal),
+              $.Cardinality.One) as any};
+
 
 
 export { OutputFormat, QueryType, TransactionAccessMode, TransactionDeferrability, TransactionIsolation, VersionStage, $SystemObject, SystemObject, $ExternalObject, ExternalObject, $Branch, Branch, $Database, Database, $ExtensionPackage, ExtensionPackage, $ExtensionPackageMigration, ExtensionPackageMigration, $QueryStats, QueryStats, $Role, Role };
@@ -402,7 +412,8 @@ type __defaultExports = {
   "get_transaction_isolation": typeof get_transaction_isolation;
   "get_current_database": typeof get_current_database;
   "get_current_branch": typeof get_current_branch;
-  "approximate_count": typeof approximate_count
+  "approximate_count": typeof approximate_count;
+  "global": typeof $sys__globals
 };
 const __defaultExports: __defaultExports = {
   "OutputFormat": OutputFormat,
@@ -426,6 +437,7 @@ const __defaultExports: __defaultExports = {
   "get_transaction_isolation": get_transaction_isolation,
   "get_current_database": get_current_database,
   "get_current_branch": get_current_branch,
-  "approximate_count": approximate_count
+  "approximate_count": approximate_count,
+  "global": $sys__globals
 };
 export default __defaultExports;

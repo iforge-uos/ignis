@@ -50,14 +50,14 @@ export type $FailureReason = {
   "ENCLOSURE_PANELS": $.$expr_Literal<$FailureReason>;
   "FILAMENT_FEEDING": $.$expr_Literal<$FailureReason>;
 } & $.EnumType<"printing::printer_status::FailureReason", ["MAIN_CONTROLLER_BOARD", "POWER_SUPPLY", "DISPLAY_BOARD", "WIFI_MODULE", "HOTEND_THERMISTOR", "HEATBED_THERMISTOR", "HOTEND_HEATER_CARTRIDGE", "HEATBED_HEATING_ELEMENT", "HEATER_BLOCK", "EXTRUDER_MOTOR", "X_AXIS_MOTOR", "Y_AXIS_MOTOR", "Z_AXIS_MOTOR", "LINEAR_RAILS", "LINEAR_BEARINGS", "BELT_SYSTEM", "PULLEYS", "LEAD_SCREW_NUT", "HOTEND_FAN", "PART_COOLING_FAN", "CHAMBER_FAN", "POWER_SUPPLY_FAN", "NOZZLE", "HEAT_BREAK", "HEAT_SINK", "EXTRUDER_GEARS", "BOWDEN_TUBE", "FILAMENT_SENSOR", "BED_LEVELING_SENSOR", "DOOR_SENSOR", "CRASH_DETECTION_SENSOR", "POWER_PANIC_SENSOR", "PRINT_BED_SURFACE", "BED_LEVELLING_SPRINGS", "BED_MOUNTING_HARDWARE", "HOTEND_WIRING", "HEATBED_WIRING", "MOTOR_WIRING", "MAIN_POWER_CABLE", "USB_CONNECTION", "FRAME_COMPONENTS", "SMOOTH_RODS", "ENCLOSURE_PANELS", "FILAMENT_FEEDING"]>;
-const FailureReason: $FailureReason = $.makeType<$FailureReason>(_.spec, "05f16b0e-68cb-11f0-ad96-f1d41f2fe586", _.syntax.literal);
+const FailureReason: $FailureReason = $.makeType<$FailureReason>(_.spec, "8c812858-b8e9-11f0-9268-4de50c43f019", _.syntax.literal);
 
 export type $DisabledλShape = $.typeutil.flatten<_printing.$PrinterStatusλShape & {
 }>;
 type $Disabled = $.ObjectType<"printing::printer_status::Disabled", $DisabledλShape, null, [
   ..._printing.$PrinterStatus['__exclusives__'],
 ], "printing::printer_status::Disabled">;
-const $Disabled = $.makeType<$Disabled>(_.spec, "06416bfe-68cb-11f0-b2db-c93643db8900", _.syntax.literal);
+const $Disabled = $.makeType<$Disabled>(_.spec, "6cafb73a-b8ec-11f0-89a4-b37cd41ca1b3", _.syntax.literal);
 
 const Disabled: $.$expr_PathNode<$.TypeSet<$Disabled, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Disabled, $.Cardinality.Many), null);
 
@@ -66,7 +66,7 @@ export type $DisconnectedλShape = $.typeutil.flatten<_printing.$PrinterStatusλ
 type $Disconnected = $.ObjectType<"printing::printer_status::Disconnected", $DisconnectedλShape, null, [
   ..._printing.$PrinterStatus['__exclusives__'],
 ], "printing::printer_status::Disconnected">;
-const $Disconnected = $.makeType<$Disconnected>(_.spec, "0642c6f2-68cb-11f0-b05e-ef77a3169cfe", _.syntax.literal);
+const $Disconnected = $.makeType<$Disconnected>(_.spec, "6cb16f58-b8ec-11f0-a390-b54b2817529a", _.syntax.literal);
 
 const Disconnected: $.$expr_PathNode<$.TypeSet<$Disconnected, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Disconnected, $.Cardinality.Many), null);
 
@@ -77,7 +77,7 @@ export type $FailedλShape = $.typeutil.flatten<_printing.$PrinterStatusλShape 
 type $Failed = $.ObjectType<"printing::printer_status::Failed", $FailedλShape, null, [
   ..._printing.$PrinterStatus['__exclusives__'],
 ], "printing::printer_status::Failed">;
-const $Failed = $.makeType<$Failed>(_.spec, "06441c3c-68cb-11f0-865d-a17dc21352f3", _.syntax.literal);
+const $Failed = $.makeType<$Failed>(_.spec, "6cb34b34-b8ec-11f0-a4d7-072284fc3d1b", _.syntax.literal);
 
 const Failed: $.$expr_PathNode<$.TypeSet<$Failed, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Failed, $.Cardinality.Many), null);
 
@@ -86,7 +86,7 @@ export type $IdleλShape = $.typeutil.flatten<_printing.$PrinterStatusλShape & 
 type $Idle = $.ObjectType<"printing::printer_status::Idle", $IdleλShape, null, [
   ..._printing.$PrinterStatus['__exclusives__'],
 ], "printing::printer_status::Idle">;
-const $Idle = $.makeType<$Idle>(_.spec, "0645c3f2-68cb-11f0-b142-8bea419b89d4", _.syntax.literal);
+const $Idle = $.makeType<$Idle>(_.spec, "6cb553ca-b8ec-11f0-976c-cd1657befde3", _.syntax.literal);
 
 const Idle: $.$expr_PathNode<$.TypeSet<$Idle, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Idle, $.Cardinality.Many), null);
 
@@ -96,7 +96,7 @@ export type $PrintingλShape = $.typeutil.flatten<_printing.$PrinterStatusλShap
 type $Printing = $.ObjectType<"printing::printer_status::Printing", $PrintingλShape, null, [
   ..._printing.$PrinterStatus['__exclusives__'],
 ], "printing::printer_status::Printing">;
-const $Printing = $.makeType<$Printing>(_.spec, "0639ec6c-68cb-11f0-889f-efe6995802ad", _.syntax.literal);
+const $Printing = $.makeType<$Printing>(_.spec, "6cb84684-b8ec-11f0-9e6b-edd302df788e", _.syntax.literal);
 
 const Printing: $.$expr_PathNode<$.TypeSet<$Printing, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Printing, $.Cardinality.Many), null);
 

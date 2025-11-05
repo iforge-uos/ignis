@@ -94,19 +94,19 @@ module training {
         constraint exclusive on ((.parent, .index));
 
         # TODO consider adding stats? e.g. failure rate
-        access policy desk_or_higher_edit
-            allow all
-            using (
-                with user := global default::user,
-                select (
-                    exists ({"Admin"} intersect user.roles.name)
-                    or user is users::Rep and exists ({"H&S"} intersect user[is users::Rep].teams.name)
-                ) ?? false
-            ) {
-                errmessage := "Only H&S members or admins can update training"
-            };
-        access policy everyone
-            allow select
+        # access policy desk_or_higher_edit
+        #     allow all
+        #     using (
+        #         with user := global default::user,
+        #         select (
+        #             exists ({"Admin"} intersect user.roles.name)
+        #             or user is users::Rep and exists ({"H&S"} intersect user[is users::Rep].teams.name)
+        #         ) ?? false
+        #     ) {
+        #         errmessage := "Only H&S members or admins can update training"
+        #     };
+        # access policy everyone
+        #     allow select
     }
 
     type TrainingPage extending Interactable {

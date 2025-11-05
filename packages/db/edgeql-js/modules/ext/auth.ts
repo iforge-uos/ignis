@@ -2,10 +2,19 @@
 
 import * as $ from "../../reflection";
 import * as _ from "../../imports";
-import type * as _cfg from "../cfg";
 import type * as _std from "../std";
+import type * as _cfg from "../cfg";
 import type * as _users from "../users";
 import type * as _default from "../default";
+export type $AuthenticationAttemptType = {
+  "SignIn": $.$expr_Literal<$AuthenticationAttemptType>;
+  "EmailVerification": $.$expr_Literal<$AuthenticationAttemptType>;
+  "PasswordReset": $.$expr_Literal<$AuthenticationAttemptType>;
+  "MagicLink": $.$expr_Literal<$AuthenticationAttemptType>;
+  "OneTimeCode": $.$expr_Literal<$AuthenticationAttemptType>;
+} & $.EnumType<"ext::auth::AuthenticationAttemptType", ["SignIn", "EmailVerification", "PasswordReset", "MagicLink", "OneTimeCode"]>;
+const AuthenticationAttemptType: $AuthenticationAttemptType = $.makeType<$AuthenticationAttemptType>(_.spec, "f28da68c-9dc9-528a-a54d-a516aca41b47", _.syntax.literal);
+
 export type $FlowType = {
   "PKCE": $.$expr_Literal<$FlowType>;
   "Implicit": $.$expr_Literal<$FlowType>;
@@ -18,6 +27,12 @@ export type $JWTAlgo = {
 } & $.EnumType<"ext::auth::JWTAlgo", ["RS256", "HS256"]>;
 const JWTAlgo: $JWTAlgo = $.makeType<$JWTAlgo>(_.spec, "14113b4e-86a8-5b08-8ee9-9cfc1c7dc1e8", _.syntax.literal);
 
+export type $VerificationMethod = {
+  "Link": $.$expr_Literal<$VerificationMethod>;
+  "Code": $.$expr_Literal<$VerificationMethod>;
+} & $.EnumType<"ext::auth::VerificationMethod", ["Link", "Code"]>;
+const VerificationMethod: $VerificationMethod = $.makeType<$VerificationMethod>(_.spec, "617e4abd-ca3f-5b1d-94cd-47f6080e7e4d", _.syntax.literal);
+
 export type $WebhookEvent = {
   "IdentityCreated": $.$expr_Literal<$WebhookEvent>;
   "IdentityAuthenticated": $.$expr_Literal<$WebhookEvent>;
@@ -26,8 +41,13 @@ export type $WebhookEvent = {
   "EmailVerificationRequested": $.$expr_Literal<$WebhookEvent>;
   "PasswordResetRequested": $.$expr_Literal<$WebhookEvent>;
   "MagicLinkRequested": $.$expr_Literal<$WebhookEvent>;
-} & $.EnumType<"ext::auth::WebhookEvent", ["IdentityCreated", "IdentityAuthenticated", "EmailFactorCreated", "EmailVerified", "EmailVerificationRequested", "PasswordResetRequested", "MagicLinkRequested"]>;
+  "OneTimeCodeRequested": $.$expr_Literal<$WebhookEvent>;
+  "OneTimeCodeVerified": $.$expr_Literal<$WebhookEvent>;
+} & $.EnumType<"ext::auth::WebhookEvent", ["IdentityCreated", "IdentityAuthenticated", "EmailFactorCreated", "EmailVerified", "EmailVerificationRequested", "PasswordResetRequested", "MagicLinkRequested", "OneTimeCodeRequested", "OneTimeCodeVerified"]>;
 const WebhookEvent: $WebhookEvent = $.makeType<$WebhookEvent>(_.spec, "8ca59fbe-2a6d-5fde-b746-99bc372de3d5", _.syntax.literal);
+
+export type $client_token_id_cf124ea43852588dafb909f19e68f1b9 = $.ScalarType<"std::uuid", string>;
+const client_token_id_cf124ea43852588dafb909f19e68f1b9: $.scalarTypeWithConstructor<_std.$uuid, never> = $.makeType<$.scalarTypeWithConstructor<_std.$uuid, never>>(_.spec, "cf124ea4-3852-588d-afb9-09f19e68f1b9", _.syntax.literal);
 
 export type $ProviderConfigλShape = $.typeutil.flatten<_cfg.$ConfigObjectλShape & {
   "name": $.PropertyDesc<_std.$str, $.Cardinality.One, true, false, true, false>;
@@ -75,12 +95,15 @@ export type $AuditableλShape = $.typeutil.flatten<_std.$BaseObjectλShape & {
 }>;
 type $Auditable = $.ObjectType<"ext::auth::Auditable", $AuditableλShape, null, [
   ..._std.$BaseObject['__exclusives__'],
-], "ext::auth::Identity" | "ext::auth::ClientTokenIdentity" | "ext::auth::EmailFactor" | "ext::auth::EmailPasswordFactor" | "ext::auth::LocalIdentity" | "ext::auth::MagicLinkFactor" | "ext::auth::PKCEChallenge" | "ext::auth::WebAuthnAuthenticationChallenge" | "ext::auth::WebAuthnFactor" | "ext::auth::WebAuthnRegistrationChallenge">;
+], "ext::auth::AuthenticationAttempt" | "ext::auth::Identity" | "ext::auth::ClientTokenIdentity" | "ext::auth::EmailFactor" | "ext::auth::EmailPasswordFactor" | "ext::auth::LocalIdentity" | "ext::auth::MagicLinkFactor" | "ext::auth::OneTimeCode" | "ext::auth::PKCEChallenge" | "ext::auth::WebAuthnAuthenticationChallenge" | "ext::auth::WebAuthnFactor" | "ext::auth::WebAuthnRegistrationChallenge">;
 const $Auditable = $.makeType<$Auditable>(_.spec, "4315a540-bc94-58fa-8e95-a5816e134135", _.syntax.literal);
 
 const Auditable: $.$expr_PathNode<$.TypeSet<$Auditable, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Auditable, $.Cardinality.Many), null);
 
 export type $AuthConfigλShape = $.typeutil.flatten<_cfg.$ExtensionConfigλShape & {
+  "providers": $.LinkDesc<$ProviderConfig, $.Cardinality.Many, {}, false, false,  false, false>;
+  "ui": $.LinkDesc<$UIConfig, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
+  "webhooks": $.LinkDesc<$WebhookConfig, $.Cardinality.Many, {}, false, false,  false, false>;
   "app_name": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "logo_url": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "dark_logo_url": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
@@ -88,9 +111,6 @@ export type $AuthConfigλShape = $.typeutil.flatten<_cfg.$ExtensionConfigλShape
   "auth_signing_key": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "token_time_to_live": $.PropertyDesc<_std.$duration, $.Cardinality.AtMostOne, false, false, false, true>;
   "allowed_redirect_urls": $.PropertyDesc<_std.$str, $.Cardinality.Many, false, false, false, false>;
-  "providers": $.LinkDesc<$ProviderConfig, $.Cardinality.Many, {}, false, false,  false, false>;
-  "ui": $.LinkDesc<$UIConfig, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
-  "webhooks": $.LinkDesc<$WebhookConfig, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
 type $AuthConfig = $.ObjectType<"ext::auth::AuthConfig", $AuthConfigλShape, null, [
   ..._cfg.$ExtensionConfig['__exclusives__'],
@@ -98,6 +118,18 @@ type $AuthConfig = $.ObjectType<"ext::auth::AuthConfig", $AuthConfigλShape, nul
 const $AuthConfig = $.makeType<$AuthConfig>(_.spec, "3e1bc003-0fc3-5ff8-9064-26627924dca5", _.syntax.literal);
 
 const AuthConfig: $.$expr_PathNode<$.TypeSet<$AuthConfig, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($AuthConfig, $.Cardinality.Many), null);
+
+export type $AuthenticationAttemptλShape = $.typeutil.flatten<$AuditableλShape & {
+  "factor": $.LinkDesc<$Factor, $.Cardinality.One, {}, false, false,  false, false>;
+  "attempt_type": $.PropertyDesc<$AuthenticationAttemptType, $.Cardinality.One, false, false, false, false>;
+  "successful": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, false>;
+}>;
+type $AuthenticationAttempt = $.ObjectType<"ext::auth::AuthenticationAttempt", $AuthenticationAttemptλShape, null, [
+  ...$Auditable['__exclusives__'],
+], "ext::auth::AuthenticationAttempt">;
+const $AuthenticationAttempt = $.makeType<$AuthenticationAttempt>(_.spec, "1e04cc8e-8b25-5354-8e81-50ab8f2412e3", _.syntax.literal);
+
+const AuthenticationAttempt: $.$expr_PathNode<$.TypeSet<$AuthenticationAttempt, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($AuthenticationAttempt, $.Cardinality.Many), null);
 
 export type $AzureOAuthProviderλShape = $.typeutil.flatten<Omit<$OAuthProviderConfigλShape, "name" | "display_name"> & {
   "name": $.PropertyDesc<_std.$str, $.Cardinality.One, true, false, true, true>;
@@ -116,8 +148,8 @@ export type $IdentityλShape = $.typeutil.flatten<$AuditableλShape & {
   "subject": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "<identity[is ext::auth::PKCEChallenge]": $.LinkDesc<$PKCEChallenge, $.Cardinality.Many, {}, false, false,  false, false>;
   "<identity[is users::User]": $.LinkDesc<_users.$User, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<identity[is user]": $.LinkDesc<_default.$user, $.Cardinality.Many, {}, false, false,  false, false>;
   "<identity[is users::Rep]": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<identity[is user]": $.LinkDesc<_default.$user, $.Cardinality.Many, {}, false, false,  false, false>;
   "<identity": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
 type $Identity = $.ObjectType<"ext::auth::Identity", $IdentityλShape, null, [
@@ -151,6 +183,9 @@ const DiscordOAuthProvider: $.$expr_PathNode<$.TypeSet<$DiscordOAuthProvider, $.
 
 export type $FactorλShape = $.typeutil.flatten<$AuditableλShape & {
   "identity": $.LinkDesc<$LocalIdentity, $.Cardinality.One, {}, true, false,  false, false>;
+  "<factor[is ext::auth::OneTimeCode]": $.LinkDesc<$OneTimeCode, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<factor[is ext::auth::AuthenticationAttempt]": $.LinkDesc<$AuthenticationAttempt, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<factor": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
 type $Factor = $.ObjectType<"ext::auth::Factor", $FactorλShape, null, [
   ...$Auditable['__exclusives__'],
@@ -186,6 +221,7 @@ const EmailPasswordFactor: $.$expr_PathNode<$.TypeSet<$EmailPasswordFactor, $.Ca
 export type $EmailPasswordProviderConfigλShape = $.typeutil.flatten<Omit<$ProviderConfigλShape, "name"> & {
   "name": $.PropertyDesc<_std.$str, $.Cardinality.One, true, false, true, true>;
   "require_verification": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, true>;
+  "verification_method": $.PropertyDesc<$VerificationMethod, $.Cardinality.One, false, false, false, true>;
 }>;
 type $EmailPasswordProviderConfig = $.ObjectType<"ext::auth::EmailPasswordProviderConfig", $EmailPasswordProviderConfigλShape, null, [
   ...$ProviderConfig['__exclusives__'],
@@ -249,6 +285,8 @@ const MagicLinkFactor: $.$expr_PathNode<$.TypeSet<$MagicLinkFactor, $.Cardinalit
 export type $MagicLinkProviderConfigλShape = $.typeutil.flatten<Omit<$ProviderConfigλShape, "name"> & {
   "name": $.PropertyDesc<_std.$str, $.Cardinality.One, true, false, true, true>;
   "token_time_to_live": $.PropertyDesc<_std.$duration, $.Cardinality.One, false, false, false, true>;
+  "verification_method": $.PropertyDesc<$VerificationMethod, $.Cardinality.One, false, false, false, true>;
+  "auto_signup": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, true>;
 }>;
 type $MagicLinkProviderConfig = $.ObjectType<"ext::auth::MagicLinkProviderConfig", $MagicLinkProviderConfigλShape, null, [
   ...$ProviderConfig['__exclusives__'],
@@ -257,6 +295,19 @@ type $MagicLinkProviderConfig = $.ObjectType<"ext::auth::MagicLinkProviderConfig
 const $MagicLinkProviderConfig = $.makeType<$MagicLinkProviderConfig>(_.spec, "94669beb-b17f-5923-b1ce-42cdbaba861b", _.syntax.literal);
 
 const MagicLinkProviderConfig: $.$expr_PathNode<$.TypeSet<$MagicLinkProviderConfig, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($MagicLinkProviderConfig, $.Cardinality.Many), null);
+
+export type $OneTimeCodeλShape = $.typeutil.flatten<$AuditableλShape & {
+  "code_hash": $.PropertyDesc<_std.$bytes, $.Cardinality.One, true, false, false, false>;
+  "expires_at": $.PropertyDesc<_std.$datetime, $.Cardinality.One, false, false, false, false>;
+  "factor": $.LinkDesc<$Factor, $.Cardinality.One, {}, false, false,  false, false>;
+}>;
+type $OneTimeCode = $.ObjectType<"ext::auth::OneTimeCode", $OneTimeCodeλShape, null, [
+  ...$Auditable['__exclusives__'],
+  {code_hash: {__element__: _std.$bytes, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
+], "ext::auth::OneTimeCode">;
+const $OneTimeCode = $.makeType<$OneTimeCode>(_.spec, "5b73520e-12d1-5bd6-a6b8-6c5f09c365fd", _.syntax.literal);
+
+const OneTimeCode: $.$expr_PathNode<$.TypeSet<$OneTimeCode, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($OneTimeCode, $.Cardinality.Many), null);
 
 export type $OpenIDConnectProviderλShape = $.typeutil.flatten<Omit<$OAuthProviderConfigλShape, "name" | "display_name"> & {
   "name": $.PropertyDesc<_std.$str, $.Cardinality.One, true, false, true, false>;
@@ -350,6 +401,7 @@ export type $WebAuthnProviderConfigλShape = $.typeutil.flatten<Omit<$ProviderCo
   "name": $.PropertyDesc<_std.$str, $.Cardinality.One, true, false, true, true>;
   "relying_party_origin": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "require_verification": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, true>;
+  "verification_method": $.PropertyDesc<$VerificationMethod, $.Cardinality.One, false, false, false, true>;
 }>;
 type $WebAuthnProviderConfig = $.ObjectType<"ext::auth::WebAuthnProviderConfig", $WebAuthnProviderConfigλShape, null, [
   ...$ProviderConfig['__exclusives__'],
@@ -518,6 +570,10 @@ const $ext_auth__globals: {  ClientTokenIdentity: _.syntax.$expr_Global<
               // "ext::auth::ClientTokenIdentity",
               $ClientTokenIdentity,
               $.Cardinality.AtMostOne
+              >,  _client_token_id: _.syntax.$expr_Global<
+              // "ext::auth::_client_token_id",
+              $client_token_id_cf124ea43852588dafb909f19e68f1b9,
+              $.Cardinality.AtMostOne
               >,  client_token: _.syntax.$expr_Global<
               // "ext::auth::client_token",
               _std.$str,
@@ -525,6 +581,9 @@ const $ext_auth__globals: {  ClientTokenIdentity: _.syntax.$expr_Global<
               >} = {  ClientTokenIdentity: _.syntax.makeGlobal(
               "ext::auth::ClientTokenIdentity",
               $.makeType(_.spec, "7b736e73-4ce5-5dbe-a4a7-d0b278be5ec8", _.syntax.literal),
+              $.Cardinality.AtMostOne) as any,  _client_token_id: _.syntax.makeGlobal(
+              "ext::auth::_client_token_id",
+              $.makeType(_.spec, "cf124ea4-3852-588d-afb9-09f19e68f1b9", _.syntax.literal),
               $.Cardinality.AtMostOne) as any,  client_token: _.syntax.makeGlobal(
               "ext::auth::client_token",
               $.makeType(_.spec, "00000000-0000-0000-0000-000000000101", _.syntax.literal),
@@ -532,17 +591,21 @@ const $ext_auth__globals: {  ClientTokenIdentity: _.syntax.$expr_Global<
 
 
 
-export { FlowType, JWTAlgo, WebhookEvent, $ProviderConfig, ProviderConfig, $OAuthProviderConfig, OAuthProviderConfig, $AppleOAuthProvider, AppleOAuthProvider, $Auditable, Auditable, $AuthConfig, AuthConfig, $AzureOAuthProvider, AzureOAuthProvider, $Identity, Identity, $ClientTokenIdentity, ClientTokenIdentity, $DiscordOAuthProvider, DiscordOAuthProvider, $Factor, Factor, $EmailFactor, EmailFactor, $EmailPasswordFactor, EmailPasswordFactor, $EmailPasswordProviderConfig, EmailPasswordProviderConfig, $GitHubOAuthProvider, GitHubOAuthProvider, $GoogleOAuthProvider, GoogleOAuthProvider, $LocalIdentity, LocalIdentity, $MagicLinkFactor, MagicLinkFactor, $MagicLinkProviderConfig, MagicLinkProviderConfig, $OpenIDConnectProvider, OpenIDConnectProvider, $PKCEChallenge, PKCEChallenge, $SlackOAuthProvider, SlackOAuthProvider, $UIConfig, UIConfig, $WebAuthnAuthenticationChallenge, WebAuthnAuthenticationChallenge, $WebAuthnFactor, WebAuthnFactor, $WebAuthnProviderConfig, WebAuthnProviderConfig, $WebAuthnRegistrationChallenge, WebAuthnRegistrationChallenge, $WebhookConfig, WebhookConfig };
+export { AuthenticationAttemptType, FlowType, JWTAlgo, VerificationMethod, WebhookEvent, client_token_id_cf124ea43852588dafb909f19e68f1b9, $ProviderConfig, ProviderConfig, $OAuthProviderConfig, OAuthProviderConfig, $AppleOAuthProvider, AppleOAuthProvider, $Auditable, Auditable, $AuthConfig, AuthConfig, $AuthenticationAttempt, AuthenticationAttempt, $AzureOAuthProvider, AzureOAuthProvider, $Identity, Identity, $ClientTokenIdentity, ClientTokenIdentity, $DiscordOAuthProvider, DiscordOAuthProvider, $Factor, Factor, $EmailFactor, EmailFactor, $EmailPasswordFactor, EmailPasswordFactor, $EmailPasswordProviderConfig, EmailPasswordProviderConfig, $GitHubOAuthProvider, GitHubOAuthProvider, $GoogleOAuthProvider, GoogleOAuthProvider, $LocalIdentity, LocalIdentity, $MagicLinkFactor, MagicLinkFactor, $MagicLinkProviderConfig, MagicLinkProviderConfig, $OneTimeCode, OneTimeCode, $OpenIDConnectProvider, OpenIDConnectProvider, $PKCEChallenge, PKCEChallenge, $SlackOAuthProvider, SlackOAuthProvider, $UIConfig, UIConfig, $WebAuthnAuthenticationChallenge, WebAuthnAuthenticationChallenge, $WebAuthnFactor, WebAuthnFactor, $WebAuthnProviderConfig, WebAuthnProviderConfig, $WebAuthnRegistrationChallenge, WebAuthnRegistrationChallenge, $WebhookConfig, WebhookConfig };
 
 type __defaultExports = {
+  "AuthenticationAttemptType": typeof AuthenticationAttemptType;
   "FlowType": typeof FlowType;
   "JWTAlgo": typeof JWTAlgo;
+  "VerificationMethod": typeof VerificationMethod;
   "WebhookEvent": typeof WebhookEvent;
+  "_client_token_id": typeof client_token_id_cf124ea43852588dafb909f19e68f1b9;
   "ProviderConfig": typeof ProviderConfig;
   "OAuthProviderConfig": typeof OAuthProviderConfig;
   "AppleOAuthProvider": typeof AppleOAuthProvider;
   "Auditable": typeof Auditable;
   "AuthConfig": typeof AuthConfig;
+  "AuthenticationAttempt": typeof AuthenticationAttempt;
   "AzureOAuthProvider": typeof AzureOAuthProvider;
   "Identity": typeof Identity;
   "ClientTokenIdentity": typeof ClientTokenIdentity;
@@ -556,6 +619,7 @@ type __defaultExports = {
   "LocalIdentity": typeof LocalIdentity;
   "MagicLinkFactor": typeof MagicLinkFactor;
   "MagicLinkProviderConfig": typeof MagicLinkProviderConfig;
+  "OneTimeCode": typeof OneTimeCode;
   "OpenIDConnectProvider": typeof OpenIDConnectProvider;
   "PKCEChallenge": typeof PKCEChallenge;
   "SlackOAuthProvider": typeof SlackOAuthProvider;
@@ -573,14 +637,18 @@ type __defaultExports = {
   "global": typeof $ext_auth__globals
 };
 const __defaultExports: __defaultExports = {
+  "AuthenticationAttemptType": AuthenticationAttemptType,
   "FlowType": FlowType,
   "JWTAlgo": JWTAlgo,
+  "VerificationMethod": VerificationMethod,
   "WebhookEvent": WebhookEvent,
+  "_client_token_id": client_token_id_cf124ea43852588dafb909f19e68f1b9,
   "ProviderConfig": ProviderConfig,
   "OAuthProviderConfig": OAuthProviderConfig,
   "AppleOAuthProvider": AppleOAuthProvider,
   "Auditable": Auditable,
   "AuthConfig": AuthConfig,
+  "AuthenticationAttempt": AuthenticationAttempt,
   "AzureOAuthProvider": AzureOAuthProvider,
   "Identity": Identity,
   "ClientTokenIdentity": ClientTokenIdentity,
@@ -594,6 +662,7 @@ const __defaultExports: __defaultExports = {
   "LocalIdentity": LocalIdentity,
   "MagicLinkFactor": MagicLinkFactor,
   "MagicLinkProviderConfig": MagicLinkProviderConfig,
+  "OneTimeCode": OneTimeCode,
   "OpenIDConnectProvider": OpenIDConnectProvider,
   "PKCEChallenge": PKCEChallenge,
   "SlackOAuthProvider": SlackOAuthProvider,

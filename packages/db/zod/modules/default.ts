@@ -58,6 +58,7 @@ export const CreateuserSchema = z.
     profile_picture: z.string().nullable(), // std::str
     pronouns: z.string().nullable(), // std::str
     username: z.string(), // std::str
+    funds: z.int().min(-2147483648).max(2147483647).optional(), // std::int32
     ucard_number: z.int().min(-2147483648).max(2147483647), // std::int32
   })
   .extend({ // default::Auditable
@@ -79,6 +80,7 @@ export const UpdateuserSchema = z.
     profile_picture: z.string().nullable(), // std::str
     pronouns: z.string().nullable(), // std::str
     username: z.string(), // std::str
+    funds: z.int().min(-2147483648).max(2147483647).optional(), // std::int32
     ucard_number: z.int().min(-2147483648).max(2147483647), // std::int32
   })
   .extend({ // default::Auditable

@@ -196,11 +196,14 @@ module sign_in {
         EVENT,
     >;
 
-    type Reason extending default::CreatedAt {
+    type Reason extending default::Auditable {
         required name: str {
             constraint exclusive;
         }
         required category: ReasonCategory;
+        required active: bool {
+            default := true;
+        }
         agreement: Agreement;
 
         access policy desk_or_higher

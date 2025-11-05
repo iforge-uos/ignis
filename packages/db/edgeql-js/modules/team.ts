@@ -19,7 +19,7 @@ export type $Name = {
   "Future Reps": $.$expr_Literal<$Name>;
   "Staff": $.$expr_Literal<$Name>;
 } & $.EnumType<"team::Name", ["IT", "3DP", "Hardware", "Publicity", "Events", "Relations", "Operations", "Recruitment & Development", "Health & Safety", "Inclusions", "Unsorted Reps", "Future Reps", "Staff"]>;
-const Name: $Name = $.makeType<$Name>(_.spec, "f723674e-68ca-11f0-9953-fbb0ccc9079d", _.syntax.literal);
+const Name: $Name = $.makeType<$Name>(_.spec, "8c816e6c-b8e9-11f0-b42a-4921684ed637", _.syntax.literal);
 
 export type $TeamλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
   "description": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;

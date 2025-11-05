@@ -22,7 +22,7 @@ export type GetSignInTrainingsReturns = {
     "enabled": boolean;
     "icon_url": string | null;
     "selectable": Array<("UNTRAINED" | "REVOKED" | "EXPIRED" | "REPS_UNTRAINED" | "IN_PERSON_MISSING")>;
-    "@created_at": Date | null;
+    "@created_at": Date;
     "@in_person_created_at": Date | null;
   }>;
 };

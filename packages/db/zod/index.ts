@@ -7,6 +7,7 @@ export * as users from "./modules/users";
 export * as event from "./modules/event";
 export * as notification from "./modules/notification";
 export * as printing from "./modules/printing";
+export * as shop from "./modules/shop";
 export * as sign_in from "./modules/sign_in";
 export * as team from "./modules/team";
 export * as tools from "./modules/tools";

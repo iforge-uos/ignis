@@ -8,12 +8,15 @@ import _module__fts from "./std/fts";
 import _module__net from "./std/net";
 import _module__pg from "./std/pg";
 import _module__math from "./std/math";
+import type * as _extpgvector from "./ext/pgvector";
 import type * as _cfg from "./cfg";
 import type * as _stdcal from "./std/cal";
 import type * as _stdpg from "./std/pg";
-import type * as _extpgvector from "./ext/pgvector";
 import type * as _schema from "./schema";
-type $anyscalar = $anypoint | $anyreal | $.EnumType | $bool | $bytes | $uuid | $str | $json | _cfg.$memory | _stdcal.$local_time | _stdcal.$relative_duration | _stdcal.$date_duration | _stdpg.$json | _extpgvector.$vector | _extpgvector.$halfvec | _extpgvector.$sparsevec;
+type $anyscalar = $anypoint | _extpgvector.$vector | _extpgvector.$halfvec | _extpgvector.$sparsevec | $anyreal | $.EnumType | $bool | $bytes | $uuid | $str | $json | _cfg.$memory | _stdcal.$local_time | _stdcal.$relative_duration | _stdcal.$date_duration | _stdpg.$json;
+
+export type $uuid = $.ScalarType<"std::uuid", string>;
+const uuid: $.scalarTypeWithConstructor<$uuid, never> = $.makeType<$.scalarTypeWithConstructor<$uuid, never>>(_.spec, "00000000-0000-0000-0000-000000000100", _.syntax.literal);
 
 export type $Endian = {
   "Little": $.$expr_Literal<$Endian>;
@@ -88,9 +91,6 @@ const $sequence: $sequence = $.makeType<$sequence>(_.spec, "fd1c52ea-74a9-541b-8
 export type $str = $.ScalarType<"std::str", string>;
 const str: $.scalarTypeWithConstructor<$str, never> = $.makeType<$.scalarTypeWithConstructor<$str, never>>(_.spec, "00000000-0000-0000-0000-000000000101", _.syntax.literal);
 
-export type $uuid = $.ScalarType<"std::uuid", string>;
-const uuid: $.scalarTypeWithConstructor<$uuid, never> = $.makeType<$.scalarTypeWithConstructor<$uuid, never>>(_.spec, "00000000-0000-0000-0000-000000000100", _.syntax.literal);
-
 export type $number = $.ScalarType<"std::number", number>;
 const number: $.scalarTypeWithConstructor<$number, string> = $.makeType<$.scalarTypeWithConstructor<$number, string>>(_.spec, "00000000-0000-0000-0000-0000000001ff", _.syntax.literal);
 
@@ -100,7 +100,7 @@ export type $BaseObjectλShape = $.typeutil.flatten<{
 }>;
 type $BaseObject = $.ObjectType<"std::BaseObject", $BaseObjectλShape, null, [
   {id: {__element__: $uuid, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
-], "ai_rep::Question" | "cfg::Auth" | "cfg::DatabaseConfig" | "cfg::BranchConfig" | "cfg::Config" | "cfg::InstanceConfig" | "cfg::JWT" | "cfg::Password" | "cfg::SCRAM" | "cfg::SMTPProviderConfig" | "cfg::Trust" | "cfg::mTLS" | "users::User" | "default::user" | "event::Event" | "ext::ai::AnthropicProviderConfig" | "ext::ai::ChatPrompt" | "ext::ai::ChatPromptMessage" | "ext::ai::Config" | "ext::ai::CustomProviderConfig" | "ext::ai::MistralProviderConfig" | "ext::ai::OllamaProviderConfig" | "ext::ai::OpenAIProviderConfig" | "ext::auth::AppleOAuthProvider" | "ext::auth::AuthConfig" | "ext::auth::AzureOAuthProvider" | "ext::auth::Identity" | "ext::auth::ClientTokenIdentity" | "ext::auth::DiscordOAuthProvider" | "ext::auth::EmailFactor" | "ext::auth::EmailPasswordFactor" | "ext::auth::EmailPasswordProviderConfig" | "ext::auth::GitHubOAuthProvider" | "ext::auth::GoogleOAuthProvider" | "ext::auth::LocalIdentity" | "ext::auth::MagicLinkFactor" | "ext::auth::MagicLinkProviderConfig" | "ext::auth::OpenIDConnectProvider" | "ext::auth::PKCEChallenge" | "ext::auth::SlackOAuthProvider" | "ext::auth::UIConfig" | "ext::auth::WebAuthnAuthenticationChallenge" | "ext::auth::WebAuthnFactor" | "ext::auth::WebAuthnProviderConfig" | "ext::auth::WebAuthnRegistrationChallenge" | "ext::auth::WebhookConfig" | "ext::pg_trgm::Config" | "ext::pgvector::Config" | "notification::AllTarget" | "notification::Notification" | "notification::AuthoredNotification" | "notification::MailingList" | "notification::SystemNotification" | "printing::Print" | "printing::PrintAuditEntry" | "printing::PrintHistory" | "printing::Printer" | "printing::PrinterAuditEntry" | "printing::print_status::Cancelled" | "printing::print_status::Complete" | "printing::print_status::Failed" | "printing::print_status::Printing" | "printing::print_status::Queued" | "printing::printer_status::Disabled" | "printing::printer_status::Disconnected" | "printing::printer_status::Failed" | "printing::printer_status::Idle" | "printing::printer_status::Printing" | "schema::AccessPolicy" | "schema::Alias" | "schema::Annotation" | "schema::Array" | "schema::ArrayExprAlias" | "schema::Cast" | "schema::Constraint" | "schema::Delta" | "schema::Extension" | "schema::Function" | "schema::FutureBehavior" | "schema::Global" | "schema::Index" | "schema::Link" | "schema::Migration" | "schema::Module" | "schema::MultiRange" | "schema::MultiRangeExprAlias" | "schema::ObjectType" | "schema::Operator" | "schema::Parameter" | "schema::Permission" | "schema::Property" | "schema::PseudoType" | "schema::Range" | "schema::RangeExprAlias" | "schema::Rewrite" | "schema::ScalarType" | "schema::Trigger" | "schema::Tuple" | "schema::TupleElement" | "schema::TupleExprAlias" | "sign_in::Agreement" | "sign_in::Location" | "sign_in::QueuePlace" | "sign_in::Reason" | "sign_in::SignIn" | "sign_in::UserRegistration" | "std::net::http::Response" | "std::net::http::ScheduledRequest" | "sys::Branch" | "sys::Database" | "sys::ExtensionPackage" | "sys::ExtensionPackageMigration" | "sys::QueryStats" | "sys::Role" | "team::Team" | "tools::Booking" | "tools::Tool" | "training::Answer" | "training::TrainingPage" | "training::Page" | "training::Question" | "training::Session" | "training::Training" | "users::Infraction" | "users::Integration" | "users::Rep" | "users::Role" | "users::SettingTemplate" | "users::UserSettingValue">;
+], "ai_rep::Question" | "cfg::Auth" | "cfg::DatabaseConfig" | "cfg::BranchConfig" | "cfg::Config" | "cfg::InstanceConfig" | "cfg::JWT" | "cfg::Password" | "cfg::SCRAM" | "cfg::SMTPProviderConfig" | "cfg::Trust" | "cfg::mTLS" | "users::User" | "default::user" | "event::Event" | "ext::ai::AnthropicProviderConfig" | "ext::ai::ChatPrompt" | "ext::ai::ChatPromptMessage" | "ext::ai::Config" | "ext::ai::CustomProviderConfig" | "ext::ai::MistralProviderConfig" | "ext::ai::OllamaProviderConfig" | "ext::ai::OpenAIProviderConfig" | "ext::auth::AppleOAuthProvider" | "ext::auth::AuthConfig" | "ext::auth::AuthenticationAttempt" | "ext::auth::AzureOAuthProvider" | "ext::auth::Identity" | "ext::auth::ClientTokenIdentity" | "ext::auth::DiscordOAuthProvider" | "ext::auth::EmailFactor" | "ext::auth::EmailPasswordFactor" | "ext::auth::EmailPasswordProviderConfig" | "ext::auth::GitHubOAuthProvider" | "ext::auth::GoogleOAuthProvider" | "ext::auth::LocalIdentity" | "ext::auth::MagicLinkFactor" | "ext::auth::MagicLinkProviderConfig" | "ext::auth::OneTimeCode" | "ext::auth::OpenIDConnectProvider" | "ext::auth::PKCEChallenge" | "ext::auth::SlackOAuthProvider" | "ext::auth::UIConfig" | "ext::auth::WebAuthnAuthenticationChallenge" | "ext::auth::WebAuthnFactor" | "ext::auth::WebAuthnProviderConfig" | "ext::auth::WebAuthnRegistrationChallenge" | "ext::auth::WebhookConfig" | "ext::pg_trgm::Config" | "ext::pgvector::Config" | "notification::AllReps" | "notification::AllUsers" | "notification::Notification" | "notification::AuthoredNotification" | "notification::MailingList" | "notification::SystemNotification" | "printing::Print" | "printing::PrintAuditEntry" | "printing::PrintHistory" | "printing::Printer" | "printing::PrinterAuditEntry" | "printing::print_status::Cancelled" | "printing::print_status::Complete" | "printing::print_status::Failed" | "printing::print_status::Printing" | "printing::print_status::Queued" | "printing::printer_status::Disabled" | "printing::printer_status::Disconnected" | "printing::printer_status::Failed" | "printing::printer_status::Idle" | "printing::printer_status::Printing" | "schema::AccessPolicy" | "schema::Alias" | "schema::Annotation" | "schema::Array" | "schema::ArrayExprAlias" | "schema::Cast" | "schema::Constraint" | "schema::Delta" | "schema::Extension" | "schema::Function" | "schema::FutureBehavior" | "schema::Global" | "schema::Index" | "schema::Link" | "schema::Migration" | "schema::Module" | "schema::MultiRange" | "schema::MultiRangeExprAlias" | "schema::ObjectType" | "schema::Operator" | "schema::Parameter" | "schema::Permission" | "schema::Property" | "schema::PseudoType" | "schema::Range" | "schema::RangeExprAlias" | "schema::Rewrite" | "schema::ScalarType" | "schema::Trigger" | "schema::Tuple" | "schema::TupleElement" | "schema::TupleExprAlias" | "shop::Item" | "shop::LineItem" | "shop::Module" | "shop::Purchase" | "shop::Skew" | "shop::dimensions::Cuboid" | "shop::dimensions::Cylindrical" | "shop::dimensions::ISO216" | "shop::dimensions::LiquidVolume" | "shop::dimensions::Mass" | "sign_in::Agreement" | "sign_in::Location" | "sign_in::QueuePlace" | "sign_in::Reason" | "sign_in::SignIn" | "sign_in::UserRegistration" | "std::net::http::Response" | "std::net::http::ScheduledRequest" | "sys::Branch" | "sys::Database" | "sys::ExtensionPackage" | "sys::ExtensionPackageMigration" | "sys::QueryStats" | "sys::Role" | "team::Team" | "tools::Booking" | "tools::Tool" | "training::Answer" | "training::TrainingPage" | "training::Page" | "training::Question" | "training::Session" | "training::Training" | "users::Infraction" | "users::Integration" | "users::Rep" | "users::Role" | "users::SettingTemplate" | "users::UserSettingValue">;
 const $BaseObject = $.makeType<$BaseObject>(_.spec, "0d14e49f-d9f9-51f0-b8f4-c432982cbac2", _.syntax.literal);
 
 const BaseObject: $.$expr_PathNode<$.TypeSet<$BaseObject, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($BaseObject, $.Cardinality.Many), null);
@@ -109,7 +109,7 @@ export type $Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape = $.typeutil.flatten
 }>;
 type $Object_8ce8c71ee4fa5f73840c22d7eaa58588 = $.ObjectType<"std::Object", $Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape, null, [
   ...$BaseObject['__exclusives__'],
-], "ai_rep::Question" | "users::User" | "default::user" | "event::Event" | "notification::AllTarget" | "notification::Notification" | "notification::AuthoredNotification" | "notification::MailingList" | "notification::SystemNotification" | "printing::Print" | "printing::PrintAuditEntry" | "printing::PrintHistory" | "printing::Printer" | "printing::PrinterAuditEntry" | "printing::print_status::Cancelled" | "printing::print_status::Complete" | "printing::print_status::Failed" | "printing::print_status::Printing" | "printing::print_status::Queued" | "printing::printer_status::Disabled" | "printing::printer_status::Disconnected" | "printing::printer_status::Failed" | "printing::printer_status::Idle" | "printing::printer_status::Printing" | "sign_in::Agreement" | "sign_in::Location" | "sign_in::QueuePlace" | "sign_in::Reason" | "sign_in::SignIn" | "sign_in::UserRegistration" | "team::Team" | "tools::Booking" | "tools::Tool" | "training::Answer" | "training::TrainingPage" | "training::Page" | "training::Question" | "training::Session" | "training::Training" | "users::Infraction" | "users::Integration" | "users::Rep" | "users::Role" | "users::SettingTemplate" | "users::UserSettingValue">;
+], "ai_rep::Question" | "users::User" | "default::user" | "event::Event" | "notification::AllReps" | "notification::AllUsers" | "notification::Notification" | "notification::AuthoredNotification" | "notification::MailingList" | "notification::SystemNotification" | "printing::Print" | "printing::PrintAuditEntry" | "printing::PrintHistory" | "printing::Printer" | "printing::PrinterAuditEntry" | "printing::print_status::Cancelled" | "printing::print_status::Complete" | "printing::print_status::Failed" | "printing::print_status::Printing" | "printing::print_status::Queued" | "printing::printer_status::Disabled" | "printing::printer_status::Disconnected" | "printing::printer_status::Failed" | "printing::printer_status::Idle" | "printing::printer_status::Printing" | "shop::Item" | "shop::LineItem" | "shop::Module" | "shop::Purchase" | "shop::Skew" | "shop::dimensions::Cuboid" | "shop::dimensions::Cylindrical" | "shop::dimensions::ISO216" | "shop::dimensions::LiquidVolume" | "shop::dimensions::Mass" | "sign_in::Agreement" | "sign_in::Location" | "sign_in::QueuePlace" | "sign_in::Reason" | "sign_in::SignIn" | "sign_in::UserRegistration" | "team::Team" | "tools::Booking" | "tools::Tool" | "training::Answer" | "training::TrainingPage" | "training::Page" | "training::Question" | "training::Session" | "training::Training" | "users::Infraction" | "users::Integration" | "users::Rep" | "users::Role" | "users::SettingTemplate" | "users::UserSettingValue">;
 export type $Object = $Object_8ce8c71ee4fa5f73840c22d7eaa58588
 const $Object_8ce8c71ee4fa5f73840c22d7eaa58588 = $.makeType<$Object_8ce8c71ee4fa5f73840c22d7eaa58588>(_.spec, "8ce8c71e-e4fa-5f73-840c-22d7eaa58588", _.syntax.literal);
 
@@ -765,44 +765,44 @@ type maxλFuncExpr5<
   $duration, $.cardutil.overrideUpperBound<$.cardutil.paramCardinality<P1>, "One">
 >;
 type maxλFuncExpr6<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_date>>,
-> = $.$expr_Function<
-  _stdcal.$local_date, $.cardutil.overrideUpperBound<$.cardutil.paramCardinality<P1>, "One">
->;
-type maxλFuncExpr7<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_time>>,
-> = $.$expr_Function<
-  _stdcal.$local_time, $.cardutil.overrideUpperBound<$.cardutil.paramCardinality<P1>, "One">
->;
-type maxλFuncExpr8<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$date_duration>>,
-> = $.$expr_Function<
-  _stdcal.$date_duration, $.cardutil.overrideUpperBound<$.cardutil.paramCardinality<P1>, "One">
->;
-type maxλFuncExpr9<
-  P1 extends $.TypeSet<$.ArrayType<_stdcal.$local_datetimeλICastableTo>>,
-> = $.$expr_Function<
-  $.ArrayType<_stdcal.$local_datetime>, $.cardutil.overrideUpperBound<$.cardutil.paramCardinality<P1>, "One">
->;
-type maxλFuncExpr10<
-  P1 extends $.TypeSet<$.ArrayType<_stdcal.$local_date>>,
-> = $.$expr_Function<
-  $.ArrayType<_stdcal.$local_date>, $.cardutil.overrideUpperBound<$.cardutil.paramCardinality<P1>, "One">
->;
-type maxλFuncExpr11<
   P1 extends $.TypeSet<$.ArrayType<_stdcal.$local_time>>,
 > = $.$expr_Function<
   $.ArrayType<_stdcal.$local_time>, $.cardutil.overrideUpperBound<$.cardutil.paramCardinality<P1>, "One">
 >;
-type maxλFuncExpr12<
+type maxλFuncExpr7<
   P1 extends $.TypeSet<$.ArrayType<_stdcal.$relative_durationλICastableTo>>,
 > = $.$expr_Function<
   $.ArrayType<_stdcal.$relative_duration>, $.cardutil.overrideUpperBound<$.cardutil.paramCardinality<P1>, "One">
 >;
-type maxλFuncExpr13<
+type maxλFuncExpr8<
   P1 extends $.TypeSet<$.ArrayType<_stdcal.$date_duration>>,
 > = $.$expr_Function<
   $.ArrayType<_stdcal.$date_duration>, $.cardutil.overrideUpperBound<$.cardutil.paramCardinality<P1>, "One">
+>;
+type maxλFuncExpr9<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_date>>,
+> = $.$expr_Function<
+  _stdcal.$local_date, $.cardutil.overrideUpperBound<$.cardutil.paramCardinality<P1>, "One">
+>;
+type maxλFuncExpr10<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_time>>,
+> = $.$expr_Function<
+  _stdcal.$local_time, $.cardutil.overrideUpperBound<$.cardutil.paramCardinality<P1>, "One">
+>;
+type maxλFuncExpr11<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$date_duration>>,
+> = $.$expr_Function<
+  _stdcal.$date_duration, $.cardutil.overrideUpperBound<$.cardutil.paramCardinality<P1>, "One">
+>;
+type maxλFuncExpr12<
+  P1 extends $.TypeSet<$.ArrayType<_stdcal.$local_datetimeλICastableTo>>,
+> = $.$expr_Function<
+  $.ArrayType<_stdcal.$local_datetime>, $.cardutil.overrideUpperBound<$.cardutil.paramCardinality<P1>, "One">
+>;
+type maxλFuncExpr13<
+  P1 extends $.TypeSet<$.ArrayType<_stdcal.$local_date>>,
+> = $.$expr_Function<
+  $.ArrayType<_stdcal.$local_date>, $.cardutil.overrideUpperBound<$.cardutil.paramCardinality<P1>, "One">
 >;
 type maxλFuncExpr14<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_datetimeλICastableTo>>,
@@ -863,7 +863,7 @@ function max<
  * Return the smallest value of the input set.
  */
 function max<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_date>>,
+  P1 extends $.TypeSet<$.ArrayType<_stdcal.$local_time>>,
 >(
   vals: P1,
 ): maxλFuncExpr6<P1>;
@@ -871,15 +871,15 @@ function max<
  * Return the smallest value of the input set.
  */
 function max<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_time>>,
+  P1 extends $.TypeSet<$.ArrayType<_stdcal.$relative_durationλICastableTo>>,
 >(
   vals: P1,
 ): maxλFuncExpr7<P1>;
 /**
- * Return the greatest value of the input set.
+ * Return the smallest value of the input set.
  */
 function max<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$date_duration>>,
+  P1 extends $.TypeSet<$.ArrayType<_stdcal.$date_duration>>,
 >(
   vals: P1,
 ): maxλFuncExpr8<P1>;
@@ -887,7 +887,7 @@ function max<
  * Return the smallest value of the input set.
  */
 function max<
-  P1 extends $.TypeSet<$.ArrayType<_stdcal.$local_datetimeλICastableTo>>,
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_date>>,
 >(
   vals: P1,
 ): maxλFuncExpr9<P1>;
@@ -895,15 +895,15 @@ function max<
  * Return the smallest value of the input set.
  */
 function max<
-  P1 extends $.TypeSet<$.ArrayType<_stdcal.$local_date>>,
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_time>>,
 >(
   vals: P1,
 ): maxλFuncExpr10<P1>;
 /**
- * Return the smallest value of the input set.
+ * Return the greatest value of the input set.
  */
 function max<
-  P1 extends $.TypeSet<$.ArrayType<_stdcal.$local_time>>,
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$date_duration>>,
 >(
   vals: P1,
 ): maxλFuncExpr11<P1>;
@@ -911,7 +911,7 @@ function max<
  * Return the smallest value of the input set.
  */
 function max<
-  P1 extends $.TypeSet<$.ArrayType<_stdcal.$relative_durationλICastableTo>>,
+  P1 extends $.TypeSet<$.ArrayType<_stdcal.$local_datetimeλICastableTo>>,
 >(
   vals: P1,
 ): maxλFuncExpr12<P1>;
@@ -919,7 +919,7 @@ function max<
  * Return the smallest value of the input set.
  */
 function max<
-  P1 extends $.TypeSet<$.ArrayType<_stdcal.$date_duration>>,
+  P1 extends $.TypeSet<$.ArrayType<_stdcal.$local_date>>,
 >(
   vals: P1,
 ): maxλFuncExpr13<P1>;
@@ -954,14 +954,14 @@ function max(...args: any[]) {
     {args: [{typeId: "00000000-0000-0000-0000-000000000101", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000101", returnTypemod: "OptionalType", preservesOptionality: true},
     {args: [{typeId: "00000000-0000-0000-0000-00000000010a", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-00000000010a", returnTypemod: "OptionalType", preservesOptionality: true},
     {args: [{typeId: "00000000-0000-0000-0000-00000000010e", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-00000000010e", returnTypemod: "OptionalType", preservesOptionality: true},
+    {args: [{typeId: "75ba1b6e-7f51-5c49-b955-e32f20e4f72e", optional: false, setoftype: true, variadic: false}], returnTypeId: "75ba1b6e-7f51-5c49-b955-e32f20e4f72e", returnTypemod: "OptionalType", preservesOptionality: true},
+    {args: [{typeId: "d50ba716-d5fd-5f69-8afe-9c82fe7436d9", optional: false, setoftype: true, variadic: false}], returnTypeId: "d50ba716-d5fd-5f69-8afe-9c82fe7436d9", returnTypemod: "OptionalType", preservesOptionality: true},
+    {args: [{typeId: "5b410a6f-a231-524b-8682-4ce2020c1d98", optional: false, setoftype: true, variadic: false}], returnTypeId: "5b410a6f-a231-524b-8682-4ce2020c1d98", returnTypemod: "OptionalType", preservesOptionality: true},
     {args: [{typeId: "00000000-0000-0000-0000-00000000010c", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-00000000010c", returnTypemod: "OptionalType", preservesOptionality: true},
     {args: [{typeId: "00000000-0000-0000-0000-00000000010d", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-00000000010d", returnTypemod: "OptionalType", preservesOptionality: true},
     {args: [{typeId: "00000000-0000-0000-0000-000000000112", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000112", returnTypemod: "OptionalType", preservesOptionality: true},
     {args: [{typeId: "c05958e2-0753-5a63-b7c4-db3626b0d6b5", optional: false, setoftype: true, variadic: false}], returnTypeId: "c05958e2-0753-5a63-b7c4-db3626b0d6b5", returnTypemod: "OptionalType", preservesOptionality: true},
     {args: [{typeId: "8571477b-d954-5809-b360-4b1f03253699", optional: false, setoftype: true, variadic: false}], returnTypeId: "8571477b-d954-5809-b360-4b1f03253699", returnTypemod: "OptionalType", preservesOptionality: true},
-    {args: [{typeId: "75ba1b6e-7f51-5c49-b955-e32f20e4f72e", optional: false, setoftype: true, variadic: false}], returnTypeId: "75ba1b6e-7f51-5c49-b955-e32f20e4f72e", returnTypemod: "OptionalType", preservesOptionality: true},
-    {args: [{typeId: "d50ba716-d5fd-5f69-8afe-9c82fe7436d9", optional: false, setoftype: true, variadic: false}], returnTypeId: "d50ba716-d5fd-5f69-8afe-9c82fe7436d9", returnTypemod: "OptionalType", preservesOptionality: true},
-    {args: [{typeId: "5b410a6f-a231-524b-8682-4ce2020c1d98", optional: false, setoftype: true, variadic: false}], returnTypeId: "5b410a6f-a231-524b-8682-4ce2020c1d98", returnTypemod: "OptionalType", preservesOptionality: true},
     {args: [{typeId: "00000000-0000-0000-0000-00000000010b", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-00000000010b", returnTypemod: "OptionalType", preservesOptionality: true},
     {args: [{typeId: "00000000-0000-0000-0000-000000000111", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000111", returnTypemod: "OptionalType", preservesOptionality: true},
     {args: [{typeId: "00000000-0000-0000-0000-000000000001", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000001", returnTypemod: "OptionalType", preservesOptionality: true},
@@ -5357,6 +5357,30 @@ function to_uuid(...args: any[]) {
   }) as any;
 };
 
+type sequence_nextλFuncExpr<
+  P1 extends $.TypeSet<_schema.$ScalarType>,
+> = $.$expr_Function<
+  $number, $.cardutil.paramCardinality<P1>
+>;
+function sequence_next<
+  P1 extends $.TypeSet<_schema.$ScalarType>,
+>(
+  seq: P1,
+): sequence_nextλFuncExpr<P1>;
+function sequence_next(...args: any[]) {
+  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('std::sequence_next', args, _.spec, [
+    {args: [{typeId: "d055dd47-3eb9-5a31-9d8f-5e7053bbe11e", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-0000000001ff"},
+  ]);
+  return _.syntax.$expressionify({
+    __kind__: $.ExpressionKind.Function,
+    __element__: returnType,
+    __cardinality__: cardinality,
+    __name__: "std::sequence_next",
+    __args__: positionalArgs,
+    __namedargs__: namedArgs,
+  }) as any;
+};
+
 type sequence_resetλFuncExpr<
   P1 extends $.TypeSet<_schema.$ScalarType>,
 > = $.$expr_Function<
@@ -5395,37 +5419,14 @@ function sequence_reset(...args: any[]) {
   }) as any;
 };
 
-type sequence_nextλFuncExpr<
-  P1 extends $.TypeSet<_schema.$ScalarType>,
-> = $.$expr_Function<
-  $number, $.cardutil.paramCardinality<P1>
->;
-function sequence_next<
-  P1 extends $.TypeSet<_schema.$ScalarType>,
->(
-  seq: P1,
-): sequence_nextλFuncExpr<P1>;
-function sequence_next(...args: any[]) {
-  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('std::sequence_next', args, _.spec, [
-    {args: [{typeId: "d055dd47-3eb9-5a31-9d8f-5e7053bbe11e", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-0000000001ff"},
-  ]);
-  return _.syntax.$expressionify({
-    __kind__: $.ExpressionKind.Function,
-    __element__: returnType,
-    __cardinality__: cardinality,
-    __name__: "std::sequence_next",
-    __args__: positionalArgs,
-    __namedargs__: namedArgs,
-  }) as any;
-};
 
 
-
-export { Endian, JsonEmpty, bigint, bool, bytes, datetime, decimal, duration, float32, float64, int16, int32, int64, json, $sequence, str, uuid, number, $BaseObject, BaseObject, $Object_8ce8c71ee4fa5f73840c22d7eaa58588, Object_8ce8c71ee4fa5f73840c22d7eaa58588, $FreeObject, FreeObject };
+export { uuid, Endian, JsonEmpty, bigint, bool, bytes, datetime, decimal, duration, float32, float64, int16, int32, int64, json, $sequence, str, number, $BaseObject, BaseObject, $Object_8ce8c71ee4fa5f73840c22d7eaa58588, Object_8ce8c71ee4fa5f73840c22d7eaa58588, $FreeObject, FreeObject };
 
 export type { $anyscalar, $anypoint, $anycontiguous, $anydiscrete, $anyreal, $anyfloat, $anyint, $anynumeric };
 
 type __defaultExports = {
+  "uuid": typeof uuid;
   "Endian": typeof Endian;
   "JsonEmpty": typeof JsonEmpty;
   "bigint": typeof bigint;
@@ -5441,7 +5442,6 @@ type __defaultExports = {
   "int64": typeof int64;
   "json": typeof json;
   "str": typeof str;
-  "uuid": typeof uuid;
   "BaseObject": typeof BaseObject;
   "Object": typeof Object_8ce8c71ee4fa5f73840c22d7eaa58588;
   "FreeObject": typeof FreeObject;
@@ -5543,8 +5543,8 @@ type __defaultExports = {
   "to_float64": typeof to_float64;
   "to_float32": typeof to_float32;
   "to_uuid": typeof to_uuid;
-  "sequence_reset": typeof sequence_reset;
   "sequence_next": typeof sequence_next;
+  "sequence_reset": typeof sequence_reset;
   "cal": typeof _module__cal;
   "enc": typeof _module__enc;
   "fts": typeof _module__fts;
@@ -5553,6 +5553,7 @@ type __defaultExports = {
   "math": typeof _module__math
 };
 const __defaultExports: __defaultExports = {
+  "uuid": uuid,
   "Endian": Endian,
   "JsonEmpty": JsonEmpty,
   "bigint": bigint,
@@ -5568,7 +5569,6 @@ const __defaultExports: __defaultExports = {
   "int64": int64,
   "json": json,
   "str": str,
-  "uuid": uuid,
   "BaseObject": BaseObject,
   "Object": Object_8ce8c71ee4fa5f73840c22d7eaa58588,
   "FreeObject": FreeObject,
@@ -5670,8 +5670,8 @@ const __defaultExports: __defaultExports = {
   "to_float64": to_float64,
   "to_float32": to_float32,
   "to_uuid": to_uuid,
-  "sequence_reset": sequence_reset,
   "sequence_next": sequence_next,
+  "sequence_reset": sequence_reset,
   "cal": _module__cal,
   "enc": _module__enc,
   "fts": _module__fts,
