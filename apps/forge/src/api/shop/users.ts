@@ -13,14 +13,11 @@ const Errors = {
   },
 } as const satisfies ErrorMap;
 
-// TODO decide if this uses ucard or username
 export const get = deskOrAdmin
   .route({ path: "/{username}" })
   .errors(Errors)
   .input(z.object({ username: z.string() }))
   .handler(async ({ input: { username }, errors }) => {
-    // console.log(client)
-    // console.trace("Ayo")
     try {
       const [details, costCenters] = await Promise.all([
         client.getUserDetails(username),
