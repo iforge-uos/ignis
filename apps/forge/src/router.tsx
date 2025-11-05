@@ -1,4 +1,3 @@
-import "./index.css";
 import { Hammer } from "@/components/loading";
 import { GenericError } from "@/components/routing/GenericError";
 import { NotFound } from "@/components/routing/NotFound";
@@ -22,7 +21,7 @@ const serializer = new StandardRPCJsonSerializer({
   customJsonSerializers: serialisers,
 });
 
-export const createRouter = () => {
+export const getRouter = () => {
   const queryClient = new QueryClient({
     queryCache: new QueryCache({
       onError: (error) => {
@@ -60,10 +59,7 @@ export const createRouter = () => {
     scrollRestoration: true,
     context: {
       queryClient,
-      user: {
-        first_name: "James",
-        last_name: "Hilton-Balfe",
-        display_name: "James Hilton-Balfe",
+      user: null,
     },
     // serializationAdapters: tanstackSerialisers,
     defaultPreload: "intent",
@@ -97,6 +93,6 @@ export const createRouter = () => {
 
 declare module "@tanstack/react-router" {
   interface Register {
-    router: ReturnType<typeof createRouter>;
+    router: ReturnType<typeof getRouter>;
   }
 }

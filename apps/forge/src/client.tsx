@@ -1,12 +1,9 @@
-import env from "@/lib/env";
 import * as Sentry from "@sentry/tanstackstart-react";
-import { StartClient } from "@tanstack/react-start";
+import { StartClient } from '@tanstack/react-start/client'
 import React from "react";
 import { hydrateRoot } from "react-dom/client";
-import { createRouter } from "./router";
+import env from "@/lib/env";
 import "./polyfill";
-
-const router = createRouter();
 
 Sentry.init({
   dsn: "https://893631a88ccccc18a9b65d8b5c3e1395@o4507082090414080.ingest.de.sentry.io/4508127275122768",
@@ -32,6 +29,6 @@ if (import.meta.env.DEV) {
 hydrateRoot(
   document,
   <React.StrictMode>
-    <StartClient router={router} />
+    <StartClient />
   </React.StrictMode>,
 );

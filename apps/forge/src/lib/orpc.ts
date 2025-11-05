@@ -6,7 +6,7 @@ import { type RouterClient, createRouterClient } from "@orpc/server";
 import { createTanstackQueryUtils } from "@orpc/tanstack-query";
 import { type RouterUtils } from "@orpc/tanstack-query";
 import { createIsomorphicFn } from "@tanstack/react-start";
-import { getWebRequest } from "@tanstack/react-start/server";
+import { getRequest } from "@tanstack/react-start/server";
 
 export type ORPCReactUtils = RouterUtils<RouterClient<Router>>;
 
@@ -21,7 +21,7 @@ const getORPCClient = createIsomorphicFn()
        * For per-request context, use middleware context or pass a function as the initial context.
        */
       context: async () => ({
-        request: getWebRequest(),
+        request: getRequest(),
       }),
     }),
   )
