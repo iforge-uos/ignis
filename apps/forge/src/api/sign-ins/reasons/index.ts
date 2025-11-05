@@ -5,7 +5,7 @@ import { idRouter } from "./$id";
 
 export const all = auth
   .route({ path: "/" })
-  .handler(async ({ context: { db } }) => e.select(e.sign_in.Reason, () => e.sign_in.Reason["*"]).run(db));
+  .handler(async ({ context: { db } }) => e.select(e.sign_in.Reason, (r) => ({...e.sign_in.Reason["*"], filter: r.active})).run(db));
 
 export const add = auth
   .route({ method: "POST", path: "/" })
