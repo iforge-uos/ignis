@@ -36,9 +36,7 @@ export const interact = auth
       context: { tx, $user },
     }): Promise<InteractionResponse> => {
       // TODO per-session locks to prevent funny things happening
-      const session = e.assert_exists(
-        e.select(e.training.Session, () => ({ filter_single: { id: session_id } })),
-      );
+      const session = e.assert_exists(e.select(e.training.Session, () => ({ filter_single: { id: session_id } })));
 
       // validate the response
       const selector = e.shape(e.training.Interactable, () => ({
@@ -82,10 +80,11 @@ export const interact = auth
                     return e.op(t, "if", e.op(t, "!=", session.training), "else", e.cast(e.training.Training, e.set()));
                   }),
                 ),
-                "union",
-                e.delete(e.training.Session, () => ({
+                "union", // add it back in while atomically deleting the session
+                e.select(e.delete(e.training.Session, () => ({
                   filter_single: { id: session_id },
-                })).training, // add it back in while atomically deleting the session
+                })).training, () => ({"@created_at": e.datetime_of_transaction()})),
+                // FIXME redoing the online training will wipe in person (Whoops)
               ),
             },
           }))
