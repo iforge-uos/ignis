@@ -4,10 +4,8 @@
     "outDir": "./dist",
     "emitDeclarationOnly": true,
     "rootDir": "./src",
-    "baseUrl": ".",
     "paths": {
-      "@anvil/*": ["../../apps/anvil2/src/*"],
-      "@db/*": ["../db/*"],
+      "@packages/db/*": ["../db/*"],
       "@packages/types/*": ["./src/*"]
     },
     "composite": true

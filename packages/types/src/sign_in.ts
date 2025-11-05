@@ -1,5 +1,5 @@
-import { sign_in, std, training } from "@db/interfaces";
-import type { GetSignInTrainingsReturns } from "@db/queries/getSignInTrainings.query";
+import { sign_in, std, training } from "@packages/db/interfaces";
+import type { GetSignInTrainingsReturns } from "@packages/db/queries/getSignInTrainings.query";
 import type { Temporal } from "@js-temporal/polyfill";
 import type { LocalTime } from "gel";
 import * as users from "./users";

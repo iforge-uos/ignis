@@ -1,4 +1,4 @@
-import { helper, std, users } from "@db/interfaces";
+import { helper, std, users, notification } from "@packages/db/interfaces";
 import { LocationName } from "./sign_in";
 import type { CalendarDatum } from "@nivo/calendar";
 import { training } from ".";
@@ -47,6 +47,9 @@ export type User = helper.Props<users.User> &
       version: number;
     }[];
     profile_picture?: string | null;
+    notifications: (notification.Notification & {
+      "@acknowledged_at": Date | null
+    })[]
   };
 
 export type Infraction = Omit<users.Infraction, "user">;

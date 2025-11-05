@@ -21,10 +21,8 @@
   },
   "dependencies": {
     "@nivo/calendar": "^0.99.0",
-    "@trpc/client": "^11.4.3",
-    "@trpc/server": "^11.4.3",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "zod": "^4.0.5"
   },
   "devDependencies": {
