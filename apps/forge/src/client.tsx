@@ -10,7 +10,7 @@ Sentry.init({
   // dsn: config.client.sentryDsn,
   tunnel: "/api/sentry-tunnel",
   environment: import.meta.env.DEV ? "development" : "production",
-  integrations: [Sentry.tanstackRouterBrowserTracingIntegration(router), Sentry.replayIntegration()],
+  // integrations: [Sentry.tanstackRouterBrowserTracingIntegration(router), Sentry.replayIntegration()],
   tracesSampleRate: import.meta.env.DEV ? 1.0 : 0.1,
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1.0,
@@ -24,8 +24,9 @@ Sentry.init({
 
 // only load Spotlight in dev
 if (import.meta.env.DEV) {
-  import("@spotlightjs/spotlight").then(({ init }) => init({ anchor: "bottomLeft", openOnInit: false }));
+  // import("@spotlightjs/spotlight").then(({ init }) => init({ anchor: "bottomLeft", openOnInit: false }));
 }
+
 hydrateRoot(
   document,
   <React.StrictMode>
