@@ -1,5 +1,5 @@
-import e from "@packages/db/edgeql-js";
 import { ORPCError } from "@orpc/server";
+import e from "@packages/db/edgeql-js";
 import { sign_in } from "@packages/db/interfaces";
 import { logger } from "@sentry/tanstackstart-react";
 import { Executor } from "gel";
@@ -32,6 +32,7 @@ export const UserShape = e.shape(e.users.User, () => ({
   },
   roles: { id: true, name: true },
   mailing_list_subscriptions: true,
+  notifications: true,
 }));
 
 export const RepShape = e.shape(e.users.Rep, () => ({
@@ -66,6 +67,15 @@ export const LocationStatusShape = e.shape(e.sign_in.Location, (location) => ({
   opening_time: true,
   closing_time: true,
   queue_in_use: true,
+}));
+
+export const ToolShape = e.shape(e.tools.Tool, () => ({
+  id: true,
+  name: true,
+  // description: true,
+  location: { name: true },
+  quantity: true,
+  training: { id: true, name: true },
 }));
 
 export const TrainingShape = e.shape(e.training.Training, () => ({
