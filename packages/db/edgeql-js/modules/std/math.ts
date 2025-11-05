@@ -3,6 +3,47 @@
 import * as $ from "../../reflection";
 import * as _ from "../../imports";
 import type * as _std from "../std";
+type lnλFuncExpr<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
+> = $.$expr_Function<
+  _std.$number, $.cardutil.paramCardinality<P1>
+>;
+type lnλFuncExpr2<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>,
+> = $.$expr_Function<
+  _std.$decimal, $.cardutil.paramCardinality<P1>
+>;
+/**
+ * Return the natural logarithm of the input value.
+ */
+function ln<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
+>(
+  x: P1,
+): lnλFuncExpr<P1>;
+/**
+ * Return the natural logarithm of the input value.
+ */
+function ln<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>,
+>(
+  x: P1,
+): lnλFuncExpr2<P1>;
+function ln(...args: any[]) {
+  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('std::math::ln', args, _.spec, [
+    {args: [{typeId: "00000000-0000-0000-0000-0000000001ff", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-0000000001ff"},
+    {args: [{typeId: "00000000-0000-0000-0000-000000000108", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000108"},
+  ]);
+  return _.syntax.$expressionify({
+    __kind__: $.ExpressionKind.Function,
+    __element__: returnType,
+    __cardinality__: cardinality,
+    __name__: "std::math::ln",
+    __args__: positionalArgs,
+    __namedargs__: namedArgs,
+  }) as any;
+};
+
 type lgλFuncExpr<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
 > = $.$expr_Function<
@@ -181,34 +222,34 @@ function floor(...args: any[]) {
   }) as any;
 };
 
-type lnλFuncExpr<
+type expλFuncExpr<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
 > = $.$expr_Function<
   _std.$number, $.cardutil.paramCardinality<P1>
 >;
-type lnλFuncExpr2<
+type expλFuncExpr2<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>,
 > = $.$expr_Function<
   _std.$decimal, $.cardutil.paramCardinality<P1>
 >;
 /**
- * Return the natural logarithm of the input value.
+ * Return the exponential of the input value.
  */
-function ln<
+function exp<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
 >(
   x: P1,
-): lnλFuncExpr<P1>;
+): expλFuncExpr<P1>;
 /**
- * Return the natural logarithm of the input value.
+ * Return the exponential of the input value.
  */
-function ln<
+function exp<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>,
 >(
   x: P1,
-): lnλFuncExpr2<P1>;
-function ln(...args: any[]) {
-  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('std::math::ln', args, _.spec, [
+): expλFuncExpr2<P1>;
+function exp(...args: any[]) {
+  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('std::math::exp', args, _.spec, [
     {args: [{typeId: "00000000-0000-0000-0000-0000000001ff", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-0000000001ff"},
     {args: [{typeId: "00000000-0000-0000-0000-000000000108", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000108"},
   ]);
@@ -216,7 +257,7 @@ function ln(...args: any[]) {
     __kind__: $.ExpressionKind.Function,
     __element__: returnType,
     __cardinality__: cardinality,
-    __name__: "std::math::ln",
+    __name__: "std::math::exp",
     __args__: positionalArgs,
     __namedargs__: namedArgs,
   }) as any;
@@ -523,6 +564,27 @@ function pi(...args: any[]) {
   }) as any;
 };
 
+type eλFuncExpr = $.$expr_Function<
+  _std.$number, $.Cardinality.One
+>;
+/**
+ * Return the constant value of e.
+ */
+function e(): eλFuncExpr;
+function e(...args: any[]) {
+  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('std::math::e', args, _.spec, [
+    {args: [], returnTypeId: "00000000-0000-0000-0000-0000000001ff"},
+  ]);
+  return _.syntax.$expressionify({
+    __kind__: $.ExpressionKind.Function,
+    __element__: returnType,
+    __cardinality__: cardinality,
+    __name__: "std::math::e",
+    __args__: positionalArgs,
+    __namedargs__: namedArgs,
+  }) as any;
+};
+
 type acosλFuncExpr<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>,
 > = $.$expr_Function<
@@ -745,11 +807,12 @@ function tan(...args: any[]) {
 
 
 type __defaultExports = {
+  "ln": typeof ln;
   "lg": typeof lg;
   "abs": typeof abs;
   "ceil": typeof ceil;
   "floor": typeof floor;
-  "ln": typeof ln;
+  "exp": typeof exp;
   "log": typeof log;
   "sqrt": typeof sqrt;
   "mean": typeof mean;
@@ -758,6 +821,7 @@ type __defaultExports = {
   "var": typeof var_6499cc9d9d4c58bcaa35075aa52c9823;
   "var_pop": typeof var_pop;
   "pi": typeof pi;
+  "e": typeof e;
   "acos": typeof acos;
   "asin": typeof asin;
   "atan": typeof atan;
@@ -768,11 +832,12 @@ type __defaultExports = {
   "tan": typeof tan
 };
 const __defaultExports: __defaultExports = {
+  "ln": ln,
   "lg": lg,
   "abs": abs,
   "ceil": ceil,
   "floor": floor,
-  "ln": ln,
+  "exp": exp,
   "log": log,
   "sqrt": sqrt,
   "mean": mean,
@@ -781,6 +846,7 @@ const __defaultExports: __defaultExports = {
   "var": var_6499cc9d9d4c58bcaa35075aa52c9823,
   "var_pop": var_pop,
   "pi": pi,
+  "e": e,
   "acos": acos,
   "asin": asin,
   "atan": atan,

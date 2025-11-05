@@ -13,14 +13,14 @@ export type $LocationName = {
   "MAINSPACE": $.$expr_Literal<$LocationName>;
   "HEARTSPACE": $.$expr_Literal<$LocationName>;
 } & $.EnumType<"sign_in::LocationName", ["MAINSPACE", "HEARTSPACE"]>;
-const LocationName: $LocationName = $.makeType<$LocationName>(_.spec, "2a13a185-f86c-11ee-9cc4-adb90289bc48", _.syntax.literal);
+const LocationName: $LocationName = $.makeType<$LocationName>(_.spec, "df172df3-b9ed-11f0-b62b-d5623fe25629", _.syntax.literal);
 
 export type $LocationStatus = {
   "OPEN": $.$expr_Literal<$LocationStatus>;
   "SOON": $.$expr_Literal<$LocationStatus>;
   "CLOSED": $.$expr_Literal<$LocationStatus>;
 } & $.EnumType<"sign_in::LocationStatus", ["OPEN", "SOON", "CLOSED"]>;
-const LocationStatus: $LocationStatus = $.makeType<$LocationStatus>(_.spec, "7d36a292-c275-11ef-bbf5-172463b15051", _.syntax.literal);
+const LocationStatus: $LocationStatus = $.makeType<$LocationStatus>(_.spec, "df175083-b9ed-11f0-b23e-0fd4b616a478", _.syntax.literal);
 
 export type $ReasonCategory = {
   "UNIVERSITY_MODULE": $.$expr_Literal<$ReasonCategory>;
@@ -30,7 +30,7 @@ export type $ReasonCategory = {
   "REP_SIGN_IN": $.$expr_Literal<$ReasonCategory>;
   "EVENT": $.$expr_Literal<$ReasonCategory>;
 } & $.EnumType<"sign_in::ReasonCategory", ["UNIVERSITY_MODULE", "CO_CURRICULAR_GROUP", "PERSONAL_PROJECT", "SOCIETY", "REP_SIGN_IN", "EVENT"]>;
-const ReasonCategory: $ReasonCategory = $.makeType<$ReasonCategory>(_.spec, "2a29220b-f86c-11ee-a779-cb4e116cbc72", _.syntax.literal);
+const ReasonCategory: $ReasonCategory = $.makeType<$ReasonCategory>(_.spec, "df175dd3-b9ed-11f0-9ac9-67714aa6e0b5", _.syntax.literal);
 
 export type $AgreementλShape = $.typeutil.flatten<_default.$AuditableλShape & {
   "content": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
@@ -49,7 +49,7 @@ type $Agreement = $.ObjectType<"sign_in::Agreement", $AgreementλShape, null, [
   ..._default.$Auditable['__exclusives__'],
   {version: {__element__: _std.$int16, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },_content_hash: {__element__: _std.$bytes, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
 ], "sign_in::Agreement">;
-const $Agreement = $.makeType<$Agreement>(_.spec, "2a201087-f86c-11ee-9c4c-b15082421766", _.syntax.literal);
+const $Agreement = $.makeType<$Agreement>(_.spec, "df17c8c5-b9ed-11f0-b9dc-3d84fcc57edd", _.syntax.literal);
 
 const Agreement: $.$expr_PathNode<$.TypeSet<$Agreement, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Agreement, $.Cardinality.Many), null);
 
@@ -75,8 +75,8 @@ export type $LocationλShape = $.typeutil.flatten<_default.$AuditableλShape & {
   "max_count": $.PropertyDesc<_std.$int64, $.Cardinality.One, false, true, false, false>;
   "available_capacity": $.PropertyDesc<_std.$int64, $.Cardinality.One, false, true, false, false>;
   "can_sign_in": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, true, false, false>;
-  "<location[is sign_in::SignIn]": $.LinkDesc<$SignIn, $.Cardinality.Many, {}, false, false,  false, false>;
   "<location[is sign_in::QueuePlace]": $.LinkDesc<$QueuePlace, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<location[is sign_in::SignIn]": $.LinkDesc<$SignIn, $.Cardinality.Many, {}, false, false,  false, false>;
   "<location[is sign_in::UserRegistration]": $.LinkDesc<$UserRegistration, $.Cardinality.Many, {}, false, false,  false, false>;
   "<location[is printing::Printer]": $.LinkDesc<_printing.$Printer, $.Cardinality.Many, {}, false, false,  false, false>;
   "<location[is tools::Tool]": $.LinkDesc<_tools.$Tool, $.Cardinality.Many, {}, false, false,  false, false>;
@@ -86,7 +86,7 @@ type $Location = $.ObjectType<"sign_in::Location", $LocationλShape, null, [
   ..._default.$Auditable['__exclusives__'],
   {name: {__element__: $LocationName, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
 ], "sign_in::Location">;
-const $Location = $.makeType<$Location>(_.spec, "62346fcc-3624-11ef-b15b-875e445cbbff", _.syntax.literal);
+const $Location = $.makeType<$Location>(_.spec, "df5ba6eb-b9ed-11f0-adbc-95e1248b9552", _.syntax.literal);
 
 const Location: $.$expr_PathNode<$.TypeSet<$Location, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Location, $.Cardinality.Many), null);
 
@@ -102,15 +102,15 @@ type $QueuePlace = $.ObjectType<"sign_in::QueuePlace", $QueuePlaceλShape, null,
   ..._default.$CreatedAt['__exclusives__'],
   {user: {__element__: _users.$User, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
 ], "sign_in::QueuePlace">;
-const $QueuePlace = $.makeType<$QueuePlace>(_.spec, "624db45a-3624-11ef-9662-3fbb2f6f5798", _.syntax.literal);
+const $QueuePlace = $.makeType<$QueuePlace>(_.spec, "df7903eb-b9ed-11f0-b063-535d336f8cf3", _.syntax.literal);
 
 const QueuePlace: $.$expr_PathNode<$.TypeSet<$QueuePlace, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($QueuePlace, $.Cardinality.Many), null);
 
 export type $ReasonλShape = $.typeutil.flatten<_default.$AuditableλShape & {
   "name": $.PropertyDesc<_std.$str, $.Cardinality.One, true, false, false, false>;
   "agreement": $.LinkDesc<$Agreement, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
-  "active": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, true>;
   "category": $.PropertyDesc<$ReasonCategory, $.Cardinality.One, false, false, false, false>;
+  "active": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, true>;
   "<reason[is sign_in::SignIn]": $.LinkDesc<$SignIn, $.Cardinality.Many, {}, false, false,  false, false>;
   "<reasons[is sign_in::Agreement]": $.LinkDesc<$Agreement, $.Cardinality.Many, {}, false, false,  false, false>;
   "<reason": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
@@ -120,7 +120,7 @@ type $Reason = $.ObjectType<"sign_in::Reason", $ReasonλShape, null, [
   ..._default.$Auditable['__exclusives__'],
   {name: {__element__: _std.$str, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
 ], "sign_in::Reason">;
-const $Reason = $.makeType<$Reason>(_.spec, "62316732-3624-11ef-93b3-9d0e27cb2778", _.syntax.literal);
+const $Reason = $.makeType<$Reason>(_.spec, "df465492-b9ed-11f0-9538-27bbd53b2fcc", _.syntax.literal);
 
 const Reason: $.$expr_PathNode<$.TypeSet<$Reason, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Reason, $.Cardinality.Many), null);
 
@@ -139,7 +139,7 @@ export type $SignInλShape = $.typeutil.flatten<_default.$TimedλShape & {
 type $SignIn = $.ObjectType<"sign_in::SignIn", $SignInλShape, null, [
   ..._default.$Timed['__exclusives__'],
 ], "sign_in::SignIn">;
-const $SignIn = $.makeType<$SignIn>(_.spec, "623a1c56-3624-11ef-a122-53995ca92969", _.syntax.literal);
+const $SignIn = $.makeType<$SignIn>(_.spec, "dfc524b6-b9ed-11f0-bb82-27e99edf727d", _.syntax.literal);
 
 const SignIn: $.$expr_PathNode<$.TypeSet<$SignIn, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($SignIn, $.Cardinality.Many), null);
 
@@ -151,7 +151,7 @@ type $UserRegistration = $.ObjectType<"sign_in::UserRegistration", $UserRegistra
   ..._default.$CreatedAt['__exclusives__'],
   {user: {__element__: _users.$User, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
 ], "sign_in::UserRegistration">;
-const $UserRegistration = $.makeType<$UserRegistration>(_.spec, "62c123cc-3624-11ef-ade9-69f82391f43e", _.syntax.literal);
+const $UserRegistration = $.makeType<$UserRegistration>(_.spec, "e001431b-b9ed-11f0-ba8e-39c804415a0d", _.syntax.literal);
 
 const UserRegistration: $.$expr_PathNode<$.TypeSet<$UserRegistration, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($UserRegistration, $.Cardinality.Many), null);
 

@@ -14,7 +14,7 @@ export type $DimensionλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73
 type $Dimension = $.ObjectType<"shop::Dimension", $DimensionλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
 ], "shop::dimensions::Cuboid" | "shop::dimensions::Cylindrical" | "shop::dimensions::ISO216" | "shop::dimensions::LiquidVolume" | "shop::dimensions::Mass">;
-const $Dimension = $.makeType<$Dimension>(_.spec, "8c8e1f86-b8e9-11f0-bb9b-d7e0e35f19d2", _.syntax.literal);
+const $Dimension = $.makeType<$Dimension>(_.spec, "04363912-b9ee-11f0-81b6-47fb0e000b04", _.syntax.literal);
 
 const Dimension: $.$expr_PathNode<$.TypeSet<$Dimension, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Dimension, $.Cardinality.Many), null);
 
@@ -30,7 +30,7 @@ export type $ItemλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c2
 type $Item = $.ObjectType<"shop::Item", $ItemλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
 ], "shop::Item">;
-const $Item = $.makeType<$Item>(_.spec, "6cc6a774-b8ec-11f0-8162-130d64bbf2d9", _.syntax.literal);
+const $Item = $.makeType<$Item>(_.spec, "1819da47-b9ee-11f0-9187-ad9a76101ef9", _.syntax.literal);
 
 const Item: $.$expr_PathNode<$.TypeSet<$Item, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Item, $.Cardinality.Many), null);
 
@@ -43,7 +43,7 @@ export type $LineItemλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f738
 type $LineItem = $.ObjectType<"shop::LineItem", $LineItemλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
 ], "shop::LineItem">;
-const $LineItem = $.makeType<$LineItem>(_.spec, "6ccebbee-b8ec-11f0-a23b-679b49fe36b5", _.syntax.literal);
+const $LineItem = $.makeType<$LineItem>(_.spec, "183b6883-b9ee-11f0-94f4-837b175613da", _.syntax.literal);
 
 const LineItem: $.$expr_PathNode<$.TypeSet<$LineItem, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($LineItem, $.Cardinality.Many), null);
 
@@ -58,7 +58,7 @@ export type $ModuleλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840
 type $Module = $.ObjectType<"shop::Module", $ModuleλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
 ], "shop::Module">;
-const $Module = $.makeType<$Module>(_.spec, "6cd20fce-b8ec-11f0-8beb-a1e34331ff74", _.syntax.literal);
+const $Module = $.makeType<$Module>(_.spec, "183d27f0-b9ee-11f0-953c-5b686dbe8a09", _.syntax.literal);
 
 const Module: $.$expr_PathNode<$.TypeSet<$Module, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Module, $.Cardinality.Many), null);
 
@@ -68,16 +68,16 @@ export type $PurchaseλShape = $.typeutil.flatten<_default.$CreatedAtλShape & {
   "reverted": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, true>;
   "items": $.LinkDesc<$LineItem, $.Cardinality.AtLeastOne, {}, false, false,  false, false>;
   "module": $.LinkDesc<$Module, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
+  "<purchases[is shop::Module]": $.LinkDesc<$Module, $.Cardinality.Many, {}, false, false,  false, false>;
   "<purchases[is users::User]": $.LinkDesc<_users.$User, $.Cardinality.Many, {}, false, false,  false, false>;
   "<purchases[is users::Rep]": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, false,  false, false>;
   "<purchases[is user]": $.LinkDesc<_default.$user, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<purchases[is shop::Module]": $.LinkDesc<$Module, $.Cardinality.Many, {}, false, false,  false, false>;
   "<purchases": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
 type $Purchase = $.ObjectType<"shop::Purchase", $PurchaseλShape, null, [
   ..._default.$CreatedAt['__exclusives__'],
 ], "shop::Purchase">;
-const $Purchase = $.makeType<$Purchase>(_.spec, "6af2dabc-b8ec-11f0-915e-0321cc01511f", _.syntax.literal);
+const $Purchase = $.makeType<$Purchase>(_.spec, "176b7e72-b9ee-11f0-8c6e-59819ca37555", _.syntax.literal);
 
 const Purchase: $.$expr_PathNode<$.TypeSet<$Purchase, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Purchase, $.Cardinality.Many), null);
 
@@ -97,7 +97,7 @@ export type $SkewλShape = $.typeutil.flatten<_default.$AuditableλShape & {
 type $Skew = $.ObjectType<"shop::Skew", $SkewλShape, null, [
   ..._default.$Auditable['__exclusives__'],
 ], "shop::Skew">;
-const $Skew = $.makeType<$Skew>(_.spec, "6cc8ed90-b8ec-11f0-8a57-293b9b16e4da", _.syntax.literal);
+const $Skew = $.makeType<$Skew>(_.spec, "18231f08-b9ee-11f0-889d-cddc608a26d6", _.syntax.literal);
 
 const Skew: $.$expr_PathNode<$.TypeSet<$Skew, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Skew, $.Cardinality.Many), null);
 

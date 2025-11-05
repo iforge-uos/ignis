@@ -14,14 +14,14 @@ export type $Selectability = {
   "REPS_UNTRAINED": $.$expr_Literal<$Selectability>;
   "IN_PERSON_MISSING": $.$expr_Literal<$Selectability>;
 } & $.EnumType<"tools::Selectability", ["UNTRAINED", "REVOKED", "EXPIRED", "REPS_UNTRAINED", "IN_PERSON_MISSING"]>;
-const Selectability: $Selectability = $.makeType<$Selectability>(_.spec, "8c8185be-b8e9-11f0-bb08-97bc4860b5e7", _.syntax.literal);
+const Selectability: $Selectability = $.makeType<$Selectability>(_.spec, "042f80c0-b9ee-11f0-a84b-65fe6f500dfe", _.syntax.literal);
 
 export type $Status = {
   "NOMINAL": $.$expr_Literal<$Status>;
   "IN_USE": $.$expr_Literal<$Status>;
   "OUT_OF_ORDER": $.$expr_Literal<$Status>;
 } & $.EnumType<"tools::Status", ["NOMINAL", "IN_USE", "OUT_OF_ORDER"]>;
-const Status: $Status = $.makeType<$Status>(_.spec, "8c819bee-b8e9-11f0-8d1a-1d807b22062d", _.syntax.literal);
+const Status: $Status = $.makeType<$Status>(_.spec, "042f8d34-b9ee-11f0-b36b-0dc32d9afab1", _.syntax.literal);
 
 export type $BookingλShape = $.typeutil.flatten<_default.$AuditableλShape & {
   "user": $.LinkDesc<_users.$User, $.Cardinality.One, {}, false, false,  false, false>;
@@ -39,7 +39,7 @@ export type $BookingλShape = $.typeutil.flatten<_default.$AuditableλShape & {
 type $Booking = $.ObjectType<"tools::Booking", $BookingλShape, null, [
   ..._default.$Auditable['__exclusives__'],
 ], "tools::Booking">;
-const $Booking = $.makeType<$Booking>(_.spec, "6ae3d918-b8ec-11f0-86aa-e593de311c96", _.syntax.literal);
+const $Booking = $.makeType<$Booking>(_.spec, "175ecee9-b9ee-11f0-8cac-8ddc81fbb551", _.syntax.literal);
 
 const Booking: $.$expr_PathNode<$.TypeSet<$Booking, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Booking, $.Cardinality.Many), null);
 
@@ -63,7 +63,7 @@ export type $ToolλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c2
 type $Tool = $.ObjectType<"tools::Tool", $ToolλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
 ], "tools::Tool">;
-const $Tool = $.makeType<$Tool>(_.spec, "7daba4d6-b8ec-11f0-be33-e57764ff23ca", _.syntax.literal);
+const $Tool = $.makeType<$Tool>(_.spec, "20a3c8f3-b9ee-11f0-b6c9-8328352b6208", _.syntax.literal);
 
 const Tool: $.$expr_PathNode<$.TypeSet<$Tool, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Tool, $.Cardinality.Many), null);
 

@@ -107,8 +107,8 @@ export const CreateReasonSchema = z.
   })
   .extend({ // sign_in::Reason
     name: z.string(), // std::str
-    active: z.boolean().optional(), // std::bool
     category: z.enum(["UNIVERSITY_MODULE", "CO_CURRICULAR_GROUP", "PERSONAL_PROJECT", "SOCIETY", "REP_SIGN_IN", "EVENT"]), // sign_in::ReasonCategory
+    active: z.boolean().optional(), // std::bool
   });
 
 export const UpdateReasonSchema = z.
@@ -119,8 +119,8 @@ export const UpdateReasonSchema = z.
   })
   .extend({ // sign_in::Reason
     name: z.string(), // std::str
-    active: z.boolean().optional(), // std::bool
     category: z.enum(["UNIVERSITY_MODULE", "CO_CURRICULAR_GROUP", "PERSONAL_PROJECT", "SOCIETY", "REP_SIGN_IN", "EVENT"]), // sign_in::ReasonCategory
+    active: z.boolean().optional(), // std::bool
   });
 // #endregion
 

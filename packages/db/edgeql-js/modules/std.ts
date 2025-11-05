@@ -8,12 +8,12 @@ import _module__fts from "./std/fts";
 import _module__net from "./std/net";
 import _module__pg from "./std/pg";
 import _module__math from "./std/math";
-import type * as _extpgvector from "./ext/pgvector";
 import type * as _cfg from "./cfg";
 import type * as _stdcal from "./std/cal";
 import type * as _stdpg from "./std/pg";
+import type * as _extpgvector from "./ext/pgvector";
 import type * as _schema from "./schema";
-type $anyscalar = $anypoint | _extpgvector.$vector | _extpgvector.$halfvec | _extpgvector.$sparsevec | $anyreal | $.EnumType | $bool | $bytes | $uuid | $str | $json | _cfg.$memory | _stdcal.$local_time | _stdcal.$relative_duration | _stdcal.$date_duration | _stdpg.$json;
+type $anyscalar = $anypoint | $anyreal | $.EnumType | $bool | $bytes | $uuid | $str | $json | _cfg.$memory | _stdcal.$local_time | _stdcal.$relative_duration | _stdcal.$date_duration | _stdpg.$json | _extpgvector.$vector | _extpgvector.$halfvec | _extpgvector.$sparsevec;
 
 export type $uuid = $.ScalarType<"std::uuid", string>;
 const uuid: $.scalarTypeWithConstructor<$uuid, never> = $.makeType<$.scalarTypeWithConstructor<$uuid, never>>(_.spec, "00000000-0000-0000-0000-000000000100", _.syntax.literal);
@@ -765,54 +765,54 @@ type maxλFuncExpr5<
   $duration, $.cardutil.overrideUpperBound<$.cardutil.paramCardinality<P1>, "One">
 >;
 type maxλFuncExpr6<
-  P1 extends $.TypeSet<$.ArrayType<_stdcal.$local_time>>,
-> = $.$expr_Function<
-  $.ArrayType<_stdcal.$local_time>, $.cardutil.overrideUpperBound<$.cardutil.paramCardinality<P1>, "One">
->;
-type maxλFuncExpr7<
-  P1 extends $.TypeSet<$.ArrayType<_stdcal.$relative_durationλICastableTo>>,
-> = $.$expr_Function<
-  $.ArrayType<_stdcal.$relative_duration>, $.cardutil.overrideUpperBound<$.cardutil.paramCardinality<P1>, "One">
->;
-type maxλFuncExpr8<
-  P1 extends $.TypeSet<$.ArrayType<_stdcal.$date_duration>>,
-> = $.$expr_Function<
-  $.ArrayType<_stdcal.$date_duration>, $.cardutil.overrideUpperBound<$.cardutil.paramCardinality<P1>, "One">
->;
-type maxλFuncExpr9<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_date>>,
 > = $.$expr_Function<
   _stdcal.$local_date, $.cardutil.overrideUpperBound<$.cardutil.paramCardinality<P1>, "One">
 >;
-type maxλFuncExpr10<
+type maxλFuncExpr7<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_time>>,
 > = $.$expr_Function<
   _stdcal.$local_time, $.cardutil.overrideUpperBound<$.cardutil.paramCardinality<P1>, "One">
 >;
-type maxλFuncExpr11<
+type maxλFuncExpr8<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$date_duration>>,
 > = $.$expr_Function<
   _stdcal.$date_duration, $.cardutil.overrideUpperBound<$.cardutil.paramCardinality<P1>, "One">
 >;
-type maxλFuncExpr12<
+type maxλFuncExpr9<
   P1 extends $.TypeSet<$.ArrayType<_stdcal.$local_datetimeλICastableTo>>,
 > = $.$expr_Function<
   $.ArrayType<_stdcal.$local_datetime>, $.cardutil.overrideUpperBound<$.cardutil.paramCardinality<P1>, "One">
 >;
-type maxλFuncExpr13<
+type maxλFuncExpr10<
   P1 extends $.TypeSet<$.ArrayType<_stdcal.$local_date>>,
 > = $.$expr_Function<
   $.ArrayType<_stdcal.$local_date>, $.cardutil.overrideUpperBound<$.cardutil.paramCardinality<P1>, "One">
 >;
-type maxλFuncExpr14<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_datetimeλICastableTo>>,
+type maxλFuncExpr11<
+  P1 extends $.TypeSet<$.ArrayType<_stdcal.$local_time>>,
 > = $.$expr_Function<
-  _stdcal.$local_datetime, $.cardutil.overrideUpperBound<$.cardutil.paramCardinality<P1>, "One">
+  $.ArrayType<_stdcal.$local_time>, $.cardutil.overrideUpperBound<$.cardutil.paramCardinality<P1>, "One">
 >;
-type maxλFuncExpr15<
+type maxλFuncExpr12<
+  P1 extends $.TypeSet<$.ArrayType<_stdcal.$relative_durationλICastableTo>>,
+> = $.$expr_Function<
+  $.ArrayType<_stdcal.$relative_duration>, $.cardutil.overrideUpperBound<$.cardutil.paramCardinality<P1>, "One">
+>;
+type maxλFuncExpr13<
+  P1 extends $.TypeSet<$.ArrayType<_stdcal.$date_duration>>,
+> = $.$expr_Function<
+  $.ArrayType<_stdcal.$date_duration>, $.cardutil.overrideUpperBound<$.cardutil.paramCardinality<P1>, "One">
+>;
+type maxλFuncExpr14<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$relative_durationλICastableTo>>,
 > = $.$expr_Function<
   _stdcal.$relative_duration, $.cardutil.overrideUpperBound<$.cardutil.paramCardinality<P1>, "One">
+>;
+type maxλFuncExpr15<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_datetimeλICastableTo>>,
+> = $.$expr_Function<
+  _stdcal.$local_datetime, $.cardutil.overrideUpperBound<$.cardutil.paramCardinality<P1>, "One">
 >;
 type maxλFuncExpr16<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$.BaseType>>,
@@ -863,7 +863,7 @@ function max<
  * Return the smallest value of the input set.
  */
 function max<
-  P1 extends $.TypeSet<$.ArrayType<_stdcal.$local_time>>,
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_date>>,
 >(
   vals: P1,
 ): maxλFuncExpr6<P1>;
@@ -871,34 +871,10 @@ function max<
  * Return the smallest value of the input set.
  */
 function max<
-  P1 extends $.TypeSet<$.ArrayType<_stdcal.$relative_durationλICastableTo>>,
->(
-  vals: P1,
-): maxλFuncExpr7<P1>;
-/**
- * Return the smallest value of the input set.
- */
-function max<
-  P1 extends $.TypeSet<$.ArrayType<_stdcal.$date_duration>>,
->(
-  vals: P1,
-): maxλFuncExpr8<P1>;
-/**
- * Return the smallest value of the input set.
- */
-function max<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_date>>,
->(
-  vals: P1,
-): maxλFuncExpr9<P1>;
-/**
- * Return the smallest value of the input set.
- */
-function max<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_time>>,
 >(
   vals: P1,
-): maxλFuncExpr10<P1>;
+): maxλFuncExpr7<P1>;
 /**
  * Return the greatest value of the input set.
  */
@@ -906,7 +882,7 @@ function max<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$date_duration>>,
 >(
   vals: P1,
-): maxλFuncExpr11<P1>;
+): maxλFuncExpr8<P1>;
 /**
  * Return the smallest value of the input set.
  */
@@ -914,7 +890,7 @@ function max<
   P1 extends $.TypeSet<$.ArrayType<_stdcal.$local_datetimeλICastableTo>>,
 >(
   vals: P1,
-): maxλFuncExpr12<P1>;
+): maxλFuncExpr9<P1>;
 /**
  * Return the smallest value of the input set.
  */
@@ -922,20 +898,44 @@ function max<
   P1 extends $.TypeSet<$.ArrayType<_stdcal.$local_date>>,
 >(
   vals: P1,
-): maxλFuncExpr13<P1>;
+): maxλFuncExpr10<P1>;
 /**
  * Return the smallest value of the input set.
  */
 function max<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_datetimeλICastableTo>>,
+  P1 extends $.TypeSet<$.ArrayType<_stdcal.$local_time>>,
 >(
   vals: P1,
-): maxλFuncExpr14<P1>;
+): maxλFuncExpr11<P1>;
+/**
+ * Return the smallest value of the input set.
+ */
+function max<
+  P1 extends $.TypeSet<$.ArrayType<_stdcal.$relative_durationλICastableTo>>,
+>(
+  vals: P1,
+): maxλFuncExpr12<P1>;
+/**
+ * Return the smallest value of the input set.
+ */
+function max<
+  P1 extends $.TypeSet<$.ArrayType<_stdcal.$date_duration>>,
+>(
+  vals: P1,
+): maxλFuncExpr13<P1>;
 /**
  * Return the greatest value of the input set.
  */
 function max<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$relative_durationλICastableTo>>,
+>(
+  vals: P1,
+): maxλFuncExpr14<P1>;
+/**
+ * Return the smallest value of the input set.
+ */
+function max<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_datetimeλICastableTo>>,
 >(
   vals: P1,
 ): maxλFuncExpr15<P1>;
@@ -954,16 +954,16 @@ function max(...args: any[]) {
     {args: [{typeId: "00000000-0000-0000-0000-000000000101", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000101", returnTypemod: "OptionalType", preservesOptionality: true},
     {args: [{typeId: "00000000-0000-0000-0000-00000000010a", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-00000000010a", returnTypemod: "OptionalType", preservesOptionality: true},
     {args: [{typeId: "00000000-0000-0000-0000-00000000010e", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-00000000010e", returnTypemod: "OptionalType", preservesOptionality: true},
-    {args: [{typeId: "75ba1b6e-7f51-5c49-b955-e32f20e4f72e", optional: false, setoftype: true, variadic: false}], returnTypeId: "75ba1b6e-7f51-5c49-b955-e32f20e4f72e", returnTypemod: "OptionalType", preservesOptionality: true},
-    {args: [{typeId: "d50ba716-d5fd-5f69-8afe-9c82fe7436d9", optional: false, setoftype: true, variadic: false}], returnTypeId: "d50ba716-d5fd-5f69-8afe-9c82fe7436d9", returnTypemod: "OptionalType", preservesOptionality: true},
-    {args: [{typeId: "5b410a6f-a231-524b-8682-4ce2020c1d98", optional: false, setoftype: true, variadic: false}], returnTypeId: "5b410a6f-a231-524b-8682-4ce2020c1d98", returnTypemod: "OptionalType", preservesOptionality: true},
     {args: [{typeId: "00000000-0000-0000-0000-00000000010c", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-00000000010c", returnTypemod: "OptionalType", preservesOptionality: true},
     {args: [{typeId: "00000000-0000-0000-0000-00000000010d", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-00000000010d", returnTypemod: "OptionalType", preservesOptionality: true},
     {args: [{typeId: "00000000-0000-0000-0000-000000000112", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000112", returnTypemod: "OptionalType", preservesOptionality: true},
     {args: [{typeId: "c05958e2-0753-5a63-b7c4-db3626b0d6b5", optional: false, setoftype: true, variadic: false}], returnTypeId: "c05958e2-0753-5a63-b7c4-db3626b0d6b5", returnTypemod: "OptionalType", preservesOptionality: true},
     {args: [{typeId: "8571477b-d954-5809-b360-4b1f03253699", optional: false, setoftype: true, variadic: false}], returnTypeId: "8571477b-d954-5809-b360-4b1f03253699", returnTypemod: "OptionalType", preservesOptionality: true},
-    {args: [{typeId: "00000000-0000-0000-0000-00000000010b", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-00000000010b", returnTypemod: "OptionalType", preservesOptionality: true},
+    {args: [{typeId: "75ba1b6e-7f51-5c49-b955-e32f20e4f72e", optional: false, setoftype: true, variadic: false}], returnTypeId: "75ba1b6e-7f51-5c49-b955-e32f20e4f72e", returnTypemod: "OptionalType", preservesOptionality: true},
+    {args: [{typeId: "d50ba716-d5fd-5f69-8afe-9c82fe7436d9", optional: false, setoftype: true, variadic: false}], returnTypeId: "d50ba716-d5fd-5f69-8afe-9c82fe7436d9", returnTypemod: "OptionalType", preservesOptionality: true},
+    {args: [{typeId: "5b410a6f-a231-524b-8682-4ce2020c1d98", optional: false, setoftype: true, variadic: false}], returnTypeId: "5b410a6f-a231-524b-8682-4ce2020c1d98", returnTypemod: "OptionalType", preservesOptionality: true},
     {args: [{typeId: "00000000-0000-0000-0000-000000000111", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000111", returnTypemod: "OptionalType", preservesOptionality: true},
+    {args: [{typeId: "00000000-0000-0000-0000-00000000010b", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-00000000010b", returnTypemod: "OptionalType", preservesOptionality: true},
     {args: [{typeId: "00000000-0000-0000-0000-000000000001", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000001", returnTypemod: "OptionalType", preservesOptionality: true},
   ]);
   return _.syntax.$expressionify({

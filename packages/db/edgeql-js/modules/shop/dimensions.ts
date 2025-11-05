@@ -14,7 +14,7 @@ export type $CuboidλShape = $.typeutil.flatten<_shop.$DimensionλShape & {
 type $Cuboid = $.ObjectType<"shop::dimensions::Cuboid", $CuboidλShape, null, [
   ..._shop.$Dimension['__exclusives__'],
 ], "shop::dimensions::Cuboid">;
-const $Cuboid = $.makeType<$Cuboid>(_.spec, "6cd85f14-b8ec-11f0-ac76-55ef50482fbe", _.syntax.literal);
+const $Cuboid = $.makeType<$Cuboid>(_.spec, "1840b169-b9ee-11f0-830c-11a627161442", _.syntax.literal);
 
 const Cuboid: $.$expr_PathNode<$.TypeSet<$Cuboid, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Cuboid, $.Cardinality.Many), null);
 
@@ -27,7 +27,7 @@ export type $CylindricalλShape = $.typeutil.flatten<_shop.$DimensionλShape & {
 type $Cylindrical = $.ObjectType<"shop::dimensions::Cylindrical", $CylindricalλShape, null, [
   ..._shop.$Dimension['__exclusives__'],
 ], "shop::dimensions::Cylindrical">;
-const $Cylindrical = $.makeType<$Cylindrical>(_.spec, "6cdcc9be-b8ec-11f0-9b6d-739ce691df3c", _.syntax.literal);
+const $Cylindrical = $.makeType<$Cylindrical>(_.spec, "1844008b-b9ee-11f0-9491-c7417069fe5e", _.syntax.literal);
 
 const Cylindrical: $.$expr_PathNode<$.TypeSet<$Cylindrical, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Cylindrical, $.Cardinality.Many), null);
 
@@ -39,7 +39,7 @@ export type $ISO216λShape = $.typeutil.flatten<_shop.$DimensionλShape & {
 type $ISO216 = $.ObjectType<"shop::dimensions::ISO216", $ISO216λShape, null, [
   ..._shop.$Dimension['__exclusives__'],
 ], "shop::dimensions::ISO216">;
-const $ISO216 = $.makeType<$ISO216>(_.spec, "6ce14322-b8ec-11f0-b2ad-af3064f5e75a", _.syntax.literal);
+const $ISO216 = $.makeType<$ISO216>(_.spec, "1845fdf5-b9ee-11f0-9a66-65d9a36f24f2", _.syntax.literal);
 
 const ISO216: $.$expr_PathNode<$.TypeSet<$ISO216, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($ISO216, $.Cardinality.Many), null);
 
@@ -51,7 +51,7 @@ export type $LiquidVolumeλShape = $.typeutil.flatten<_shop.$DimensionλShape & 
 type $LiquidVolume = $.ObjectType<"shop::dimensions::LiquidVolume", $LiquidVolumeλShape, null, [
   ..._shop.$Dimension['__exclusives__'],
 ], "shop::dimensions::LiquidVolume">;
-const $LiquidVolume = $.makeType<$LiquidVolume>(_.spec, "6ce4ea72-b8ec-11f0-921c-3d32ecea909a", _.syntax.literal);
+const $LiquidVolume = $.makeType<$LiquidVolume>(_.spec, "1847b20a-b9ee-11f0-9271-d38800305e84", _.syntax.literal);
 
 const LiquidVolume: $.$expr_PathNode<$.TypeSet<$LiquidVolume, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($LiquidVolume, $.Cardinality.Many), null);
 
@@ -63,7 +63,7 @@ export type $MassλShape = $.typeutil.flatten<_shop.$DimensionλShape & {
 type $Mass = $.ObjectType<"shop::dimensions::Mass", $MassλShape, null, [
   ..._shop.$Dimension['__exclusives__'],
 ], "shop::dimensions::Mass">;
-const $Mass = $.makeType<$Mass>(_.spec, "6ce82188-b8ec-11f0-a131-cdd8608cb638", _.syntax.literal);
+const $Mass = $.makeType<$Mass>(_.spec, "18495360-b9ee-11f0-bb77-cd58cedd3797", _.syntax.literal);
 
 const Mass: $.$expr_PathNode<$.TypeSet<$Mass, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Mass, $.Cardinality.Many), null);
 

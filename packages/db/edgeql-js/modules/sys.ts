@@ -377,11 +377,18 @@ function approximate_count(...args: any[]) {
   }) as any;
 };
 
-const $sys__globals: {  current_role: _.syntax.$expr_Global<
+const $sys__globals: {  current_permissions: _.syntax.$expr_Global<
+              // "sys::current_permissions",
+              $.ArrayType<_std.$str>,
+              $.Cardinality.One
+              >,  current_role: _.syntax.$expr_Global<
               // "sys::current_role",
               _std.$str,
               $.Cardinality.One
-              >} = {  current_role: _.syntax.makeGlobal(
+              >} = {  current_permissions: _.syntax.makeGlobal(
+              "sys::current_permissions",
+              $.makeType(_.spec, "bb221d39-09f1-507e-8851-62075bb61823", _.syntax.literal),
+              $.Cardinality.One) as any,  current_role: _.syntax.makeGlobal(
               "sys::current_role",
               $.makeType(_.spec, "00000000-0000-0000-0000-000000000101", _.syntax.literal),
               $.Cardinality.One) as any};

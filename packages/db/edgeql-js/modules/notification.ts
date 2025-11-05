@@ -14,7 +14,7 @@ export type $DeliveryMethod = {
   "POPUP": $.$expr_Literal<$DeliveryMethod>;
   "DISCORD": $.$expr_Literal<$DeliveryMethod>;
 } & $.EnumType<"notification::DeliveryMethod", ["BANNER", "EMAIL", "TRAY", "POPUP", "DISCORD"]>;
-const DeliveryMethod: $DeliveryMethod = $.makeType<$DeliveryMethod>(_.spec, "2a7a7de5-f86c-11ee-826a-1b9d731735e7", _.syntax.literal);
+const DeliveryMethod: $DeliveryMethod = $.makeType<$DeliveryMethod>(_.spec, "df16dd36-b9ed-11f0-9638-21f3e831f1c8", _.syntax.literal);
 
 export type $Status = {
   "DRAFT": $.$expr_Literal<$Status>;
@@ -24,7 +24,7 @@ export type $Status = {
   "SENT": $.$expr_Literal<$Status>;
   "ERRORED": $.$expr_Literal<$Status>;
 } & $.EnumType<"notification::Status", ["DRAFT", "REVIEW", "QUEUED", "SENDING", "SENT", "ERRORED"]>;
-const Status: $Status = $.makeType<$Status>(_.spec, "f8090070-e827-11ef-af74-9bb573ef61ed", _.syntax.literal);
+const Status: $Status = $.makeType<$Status>(_.spec, "df16fa5a-b9ed-11f0-b93d-913c5e25b857", _.syntax.literal);
 
 export type $Type = {
   "ADMIN": $.$expr_Literal<$Type>;
@@ -40,7 +40,7 @@ export type $Type = {
   "REMINDER": $.$expr_Literal<$Type>;
   "TRAINING": $.$expr_Literal<$Type>;
 } & $.EnumType<"notification::Type", ["ADMIN", "ADVERT", "ANNOUNCEMENT", "EVENT", "HEALTH_AND_SAFETY", "INFRACTION", "PRINTING", "QUEUE_SLOT_ACTIVE", "RECRUITMENT", "REFERRAL", "REMINDER", "TRAINING"]>;
-const Type: $Type = $.makeType<$Type>(_.spec, "f80da6f2-e827-11ef-aa9c-0199e4c8ea57", _.syntax.literal);
+const Type: $Type = $.makeType<$Type>(_.spec, "df17092a-b9ed-11f0-9028-2dfb8b398e14", _.syntax.literal);
 
 export type $AllRepsλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
   "MAGIC": $.PropertyDesc<_std.$int16, $.Cardinality.One, true, false, true, true>;
@@ -49,7 +49,7 @@ type $AllReps = $.ObjectType<"notification::AllReps", $AllRepsλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
   {MAGIC: {__element__: _std.$int16, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
 ], "notification::AllReps">;
-const $AllReps = $.makeType<$AllReps>(_.spec, "f81681b4-e827-11ef-b530-7d2a9c256c61", _.syntax.literal);
+const $AllReps = $.makeType<$AllReps>(_.spec, "def81bcc-b9ed-11f0-b41c-f754699ab751", _.syntax.literal);
 
 const AllReps: $.$expr_PathNode<$.TypeSet<$AllReps, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($AllReps, $.Cardinality.Many), null);
 
@@ -60,7 +60,7 @@ type $AllUsers = $.ObjectType<"notification::AllUsers", $AllUsersλShape, null, 
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
   {MAGIC: {__element__: _std.$int16, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
 ], "notification::AllUsers">;
-const $AllUsers = $.makeType<$AllUsers>(_.spec, "6c00bd16-b8ec-11f0-84a5-e56fc8ec5e9f", _.syntax.literal);
+const $AllUsers = $.makeType<$AllUsers>(_.spec, "17cd75e2-b9ee-11f0-8792-758a8c74bfc0", _.syntax.literal);
 
 const AllUsers: $.$expr_PathNode<$.TypeSet<$AllUsers, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($AllUsers, $.Cardinality.Many), null);
 
@@ -69,7 +69,7 @@ export type $NotificationλShape = $.typeutil.flatten<_default.$AuditableλShape
   "status": $.PropertyDesc<$Status, $.Cardinality.One, false, false, false, false>;
   "title": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "type": $.PropertyDesc<$Type, $.Cardinality.One, false, false, false, false>;
-  "targets": $.LinkDesc<_users.$User | _team.$Team | _event.$Event | $MailingList | $AllReps | $AllUsers, $.Cardinality.AtLeastOne, {}, false, false,  false, false>;
+  "targets": $.LinkDesc<_users.$User | _team.$Team | _event.$Event | $AllReps | $MailingList | $AllUsers, $.Cardinality.AtLeastOne, {}, false, false,  false, false>;
   "delivery_methods": $.PropertyDesc<$DeliveryMethod, $.Cardinality.AtLeastOne, false, false, false, false>;
   "dispatched_at": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne, false, false, false, false>;
   "priority": $.PropertyDesc<_std.$int16, $.Cardinality.One, false, false, false, true>;
@@ -81,7 +81,7 @@ export type $NotificationλShape = $.typeutil.flatten<_default.$AuditableλShape
 type $Notification = $.ObjectType<"notification::Notification", $NotificationλShape, null, [
   ..._default.$Auditable['__exclusives__'],
 ], "notification::Notification" | "notification::AuthoredNotification" | "notification::SystemNotification">;
-const $Notification = $.makeType<$Notification>(_.spec, "2a3e3d92-f86c-11ee-8262-a3d7cf83406d", _.syntax.literal);
+const $Notification = $.makeType<$Notification>(_.spec, "e4646e20-b9ed-11f0-86d7-cbab95b3788e", _.syntax.literal);
 
 const Notification: $.$expr_PathNode<$.TypeSet<$Notification, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Notification, $.Cardinality.Many), null);
 
@@ -93,7 +93,7 @@ export type $AuthoredNotificationλShape = $.typeutil.flatten<$NotificationλSha
 type $AuthoredNotification = $.ObjectType<"notification::AuthoredNotification", $AuthoredNotificationλShape, null, [
   ...$Notification['__exclusives__'],
 ], "notification::AuthoredNotification">;
-const $AuthoredNotification = $.makeType<$AuthoredNotification>(_.spec, "ff316ec8-e827-11ef-bdf1-f363b9ffd9bc", _.syntax.literal);
+const $AuthoredNotification = $.makeType<$AuthoredNotification>(_.spec, "e466774b-b9ed-11f0-b493-67ae88ae9ec2", _.syntax.literal);
 
 const AuthoredNotification: $.$expr_PathNode<$.TypeSet<$AuthoredNotification, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($AuthoredNotification, $.Cardinality.Many), null);
 
@@ -109,7 +109,7 @@ export type $MailingListλShape = $.typeutil.flatten<_default.$AuditableλShape 
 type $MailingList = $.ObjectType<"notification::MailingList", $MailingListλShape, null, [
   ..._default.$Auditable['__exclusives__'],
 ], "notification::MailingList">;
-const $MailingList = $.makeType<$MailingList>(_.spec, "29f1828c-f86c-11ee-ad46-afd9776f856d", _.syntax.literal);
+const $MailingList = $.makeType<$MailingList>(_.spec, "e468b828-b9ed-11f0-9316-5907731045dc", _.syntax.literal);
 
 const MailingList: $.$expr_PathNode<$.TypeSet<$MailingList, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($MailingList, $.Cardinality.Many), null);
 
@@ -119,7 +119,7 @@ export type $SystemNotificationλShape = $.typeutil.flatten<$NotificationλShape
 type $SystemNotification = $.ObjectType<"notification::SystemNotification", $SystemNotificationλShape, null, [
   ...$Notification['__exclusives__'],
 ], "notification::SystemNotification">;
-const $SystemNotification = $.makeType<$SystemNotification>(_.spec, "ff49a290-e827-11ef-b73a-256c28b5ae09", _.syntax.literal);
+const $SystemNotification = $.makeType<$SystemNotification>(_.spec, "e46be406-b9ed-11f0-801c-033391b5c733", _.syntax.literal);
 
 const SystemNotification: $.$expr_PathNode<$.TypeSet<$SystemNotification, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($SystemNotification, $.Cardinality.Many), null);
 

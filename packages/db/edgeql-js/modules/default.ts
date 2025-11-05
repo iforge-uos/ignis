@@ -10,7 +10,7 @@ export type $CreatedAtλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73
 type $CreatedAt = $.ObjectType<"default::CreatedAt", $CreatedAtλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
 ], "users::User" | "default::user" | "event::Event" | "notification::Notification" | "notification::AuthoredNotification" | "notification::MailingList" | "notification::SystemNotification" | "printing::PrintAuditEntry" | "printing::PrintHistory" | "printing::PrinterAuditEntry" | "shop::Purchase" | "shop::Skew" | "sign_in::Agreement" | "sign_in::Location" | "sign_in::QueuePlace" | "sign_in::Reason" | "sign_in::SignIn" | "sign_in::UserRegistration" | "tools::Booking" | "training::Session" | "training::Training" | "users::Infraction" | "users::Integration" | "users::Rep">;
-const $CreatedAt = $.makeType<$CreatedAt>(_.spec, "29bb1669-f86c-11ee-822f-63593ae3e634", _.syntax.literal);
+const $CreatedAt = $.makeType<$CreatedAt>(_.spec, "dedc88fa-b9ed-11f0-a5d6-13a441de3d80", _.syntax.literal);
 
 const CreatedAt: $.$expr_PathNode<$.TypeSet<$CreatedAt, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($CreatedAt, $.Cardinality.Many), null);
 
@@ -20,7 +20,7 @@ export type $AuditableλShape = $.typeutil.flatten<$CreatedAtλShape & {
 type $Auditable = $.ObjectType<"default::Auditable", $AuditableλShape, null, [
   ...$CreatedAt['__exclusives__'],
 ], "users::User" | "default::user" | "notification::Notification" | "notification::AuthoredNotification" | "notification::MailingList" | "notification::SystemNotification" | "shop::Skew" | "sign_in::Agreement" | "sign_in::Location" | "sign_in::Reason" | "tools::Booking" | "training::Session" | "training::Training" | "users::Integration" | "users::Rep">;
-const $Auditable = $.makeType<$Auditable>(_.spec, "29bd512f-f86c-11ee-bb9f-9fa1f6cbb17a", _.syntax.literal);
+const $Auditable = $.makeType<$Auditable>(_.spec, "dedd9139-b9ed-11f0-9cd0-293e19b6dd6b", _.syntax.literal);
 
 const Auditable: $.$expr_PathNode<$.TypeSet<$Auditable, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Auditable, $.Cardinality.Many), null);
 
@@ -31,7 +31,7 @@ export type $TimedλShape = $.typeutil.flatten<$CreatedAtλShape & {
 type $Timed = $.ObjectType<"default::Timed", $TimedλShape, null, [
   ...$CreatedAt['__exclusives__'],
 ], "sign_in::SignIn">;
-const $Timed = $.makeType<$Timed>(_.spec, "2a0ef0e5-f86c-11ee-b392-bb6d91c9ab55", _.syntax.literal);
+const $Timed = $.makeType<$Timed>(_.spec, "dfc236dd-b9ed-11f0-a59a-fdecf235133a", _.syntax.literal);
 
 const Timed: $.$expr_PathNode<$.TypeSet<$Timed, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Timed, $.Cardinality.Many), null);
 
@@ -40,7 +40,7 @@ export type $userλShape = $.typeutil.flatten<_users.$UserλShape & {
 type $user = $.ObjectType<"default::user", $userλShape, null, [
   ..._users.$User['__exclusives__'],
 ], "default::user">;
-const $user = $.makeType<$user>(_.spec, "8cd0d894-b8e9-11f0-9988-57da3db1272f", _.syntax.literal);
+const $user = $.makeType<$user>(_.spec, "045e594f-b9ee-11f0-89dc-f1d061409122", _.syntax.literal);
 
 const user: $.$expr_PathNode<$.TypeSet<$user, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($user, $.Cardinality.Many), null);
 
@@ -64,7 +64,7 @@ const $default__globals: {  CDN_URL: _.syntax.$expr_Global<
               $.makeType(_.spec, "00000000-0000-0000-0000-000000000101", _.syntax.literal),
               $.Cardinality.AtMostOne) as any,  user: _.syntax.makeGlobal(
               "default::user",
-              $.makeType(_.spec, "8cd0d894-b8e9-11f0-9988-57da3db1272f", _.syntax.literal),
+              $.makeType(_.spec, "045e594f-b9ee-11f0-89dc-f1d061409122", _.syntax.literal),
               $.Cardinality.AtMostOne) as any};
 
 
