@@ -19,8 +19,8 @@ export const commonReasons = auth
         e.select(e.sign_in.Reason, (reason) => ({
           filter: e.op(
             reason.category,
-            "in",
-            e.set(...(is_rep ? [e.sign_in.ReasonCategory.REP_SIGN_IN] : []), e.sign_in.ReasonCategory.PERSONAL_PROJECT),
+            "=",
+            is_rep ? e.sign_in.ReasonCategory.REP_SIGN_IN : e.sign_in.ReasonCategory.PERSONAL_PROJECT,
           ),
           order_by: e.op(
             // Personal then on then off
@@ -44,12 +44,9 @@ export const commonReasons = auth
                   e.op(sign_in.created_at, ">", e.op(e.datetime_current(), "-", e.cal.relative_duration("3d"))),
                   e.op(sign_in.location.name, "=", e.cast(e.sign_in.LocationName, name)),
                   e.op(
-                    sign_in.reason.name,
+                    sign_in.reason.category,
                     "not in",
-                    e.set(
-                      ...(is_rep ? [e.sign_in.ReasonCategory.REP_SIGN_IN] : []),
-                      e.sign_in.ReasonCategory.PERSONAL_PROJECT,
-                    ),
+                    e.set(e.sign_in.ReasonCategory.REP_SIGN_IN, e.sign_in.ReasonCategory.PERSONAL_PROJECT),
                   ),
                 ),
               ),
