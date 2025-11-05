@@ -1,10 +1,13 @@
-import { HeartspaceIcon, MainspaceIcon } from "@/icons/Locations";
-import { DiscordIcon, GitHubIcon, InstagramIcon, LinkedInIcon, TwitterIcon, YouTubeIcon } from "@/icons/Socials";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@packages/ui/components/card";
 import { createFileRoute } from "@tanstack/react-router";
-import { Mail, MapPin } from "lucide-react";
+import { Mail } from "lucide-react";
 import type React from "react";
+
+import LocationCard, { locations } from "@/components/LocationCard";
+import { DiscordIcon, GitHubIcon, InstagramIcon, LinkedInIcon, TwitterIcon, YouTubeIcon } from "@/icons/Socials";
 import { TeamIcon } from "@/icons/Team";
+import { LOCATIONS } from "../lib/constants";
+import Title from "../components/title";
 
 const socialMediaLinks = [
   {
@@ -77,41 +80,19 @@ const teamContacts = [
   reason: string;
 }[];
 
-const locations = [
-  {
-    name: "iForge Mainspace",
-    address: "The Diamond, 32 Leavygreave Rd, Broomhall, Sheffield S3 7RD",
-    mapUrl:
-      "https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d297.48147569419643!2d-1.4819840000000002!3d53.381701!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4879827f58841ec5%3A0xe3195a4b79f146d6!2siForge%20Makerspace!5e0!3m2!1sen!2suk!4v1744830529840!5m2!1sen!2suk",
-    icon: <MainspaceIcon tooltip={false} />,
-  },
-  {
-    name: "iForge Heartspace",
-    address: "Engineering Heartspace, 3 Portobello St, Sheffield City Centre, Sheffield S1 4DT",
-    mapUrl:
-      "https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d194.34675116288207!2d-1.479033377632158!3d53.381706784119764!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487979006229ee6d%3A0xa8a5140013495cc2!2siForge%20Heartspace!5e0!3m2!1sen!2suk!4v1744830589795!5m2!1sen!2suk",
-    icon: <HeartspaceIcon tooltip={false} />,
-  },
-] satisfies {
-  name: string;
-  address: string;
-  mapUrl: string;
-  icon: React.ReactNode;
-}[];
-
 export function Component() {
   return (
-    <div className="container mx-auto py-10 px-4 md:px-6">
-      <div className="space-y-12">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold tracking-tight">Contact Us</h1>
-          <div className="h-1 w-[40vw] bg-primary mx-auto mt-4 mb-6" />
-        </div>
-        The iForge is Sheffield University's student-run makerspace, providing access to tools, equipment to turn your
-        ideas into reality. Whether you have a question about our facilities, need technical assistance, or want to
-        collaborate, we're here to help.
+    <>
+      <Title prompt="Contact Us" />
+      <div className="py-8 px-14">
+        <h1 className="text-5xl font-futura mb-4">Contact Us</h1>
+        <p className="text-lg">
+          The iForge is Sheffield University's student-run makerspace, providing access to tools, equipment to turn your
+          ideas into reality. Whether you have a question about our facilities, need technical assistance, or want to
+          collaborate, we're here to help.
+        </p>
         <section className="mt-4">
-          <h2 className="text-2xl font-bold mb-6">General Enquiries</h2>
+          <h2 className="text-3xl font-bold mb-6">General Enquiries</h2>
           <Card>
             <CardHeader>
               <CardTitle>Get in Touch</CardTitle>
@@ -131,7 +112,7 @@ export function Component() {
 
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Social Media</h3>
-                <div className="flex justify-between gap-4">
+                <div className="flex flex-wrap justify-between gap-4">
                   {socialMediaLinks.map((social, index) => (
                     <SocialLink key={index} {...social} />
                   ))}
@@ -141,7 +122,7 @@ export function Component() {
           </Card>
         </section>
         <section className="mt-8">
-          <h2 className="text-2xl font-bold mb-6">Specific Enquiries</h2>
+          <h2 className="text-2xl font-bold my-6">Specific Enquiries</h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {teamContacts.map((team, index) => (
               <TeamContactCard key={index} {...team} />
@@ -149,70 +130,38 @@ export function Component() {
           </div>
         </section>
         <section>
-          <h2 className="text-2xl font-bold mb-6">Our Locations</h2>
+          <h2 className="text-2xl font-bold my-6">Our Locations</h2>
           <div className="grid gap-8 md:grid-cols-2">
-            {locations.map((location, index) => (
-              <LocationCard key={index} {...location} />
+            {LOCATIONS.map((location, index) => (
+              <LocationCard name={location} key={index} />
             ))}
           </div>
         </section>
       </div>
-    </div>
-  );
-}
-
-function LocationCard({ name, address, mapUrl, icon }: (typeof locations)[number]) {
-  return (
-    <Card className="overflow-hidden">
-      <CardHeader className="pb-0">
-        <div className="flex items-center gap-2">
-          {icon}
-          <CardTitle>{name}</CardTitle>
-        </div>
-        <CardDescription className="mt-2">
-          <div className="flex items-center gap-2">
-            <MapPin className="h-5 w-5 text-primary" />
-            {address}
-          </div>
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="p-0 mt-4">
-        <div className="aspect-video w-full">
-          <iframe
-            src={mapUrl}
-            width="100%"
-            height="100%"
-            style={{ border: 0 }}
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            title={`Map showing location of ${name}`}
-          />
-        </div>
-      </CardContent>
-    </Card>
+    </>
   );
 }
 
 function TeamContactCard({ icon, team, email, reason }: (typeof teamContacts)[number]) {
   return (
     <Card className="h-full flex flex-col">
-      <div className="bg-primary/10 p-4 flex items-center gap-4">
-        <div className="flex h-12 w-12 items-center justify-center text-primary rounded-lg">{icon}</div>
-        <h3 className="text-lg font-medium">{team}</h3>
-      </div>
-      <div className="flex flex-col flex-1">
+      <CardHeader>
+        <CardTitle className="flex items-center">
+          <div className="flex h-12 w-12 items-center justify-center text-primary rounded-lg">{icon}</div>
+          <h3 className="text-lg font-medium">{team}</h3>
+        </CardTitle>
         <CardDescription className="m-4 flex-grow">{reason}</CardDescription>
+      </CardHeader>
 
-        <CardContent className="mt-auto pt-3">
-          <a
-            href={`mailto:${email}`}
-            className="text-sm text-muted-foreground hover:text-primary hover:underline flex items-center gap-2"
-          >
-            <Mail className="h-5" />
-            {email}
-          </a>
-        </CardContent>
-      </div>
+      <CardContent className="mt-auto px-9">
+        <a
+          href={`mailto:${email}`}
+          className="text-sm text-muted-foreground hover:text-primary hover:underline flex items-center gap-2"
+        >
+          <Mail className="h-5" />
+          {email}
+        </a>
+      </CardContent>
     </Card>
   );
 }
