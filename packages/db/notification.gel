@@ -93,6 +93,9 @@ module notification {
             annotation description := "Who will be receiving the notification";
             on target delete allow;
         }
+        multi attachments: str {
+            annotation description := "The paths for the attachments to be uploaded on the CDN e.g. attachments/{id}."
+        }
     }
 
     type SystemNotification extending Notification {
