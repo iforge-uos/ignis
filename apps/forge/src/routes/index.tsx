@@ -1,20 +1,19 @@
-import DotIndicator from "@/components/dot-indicator";
-import Title from "@/components/title";
-import { IForgeLogo } from "@/icons/IForge";
-import { HeartspaceIcon, MainspaceIcon } from "@/icons/Locations";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@packages/ui/components/accordion";
 import { Button } from "@packages/ui/components/button";
 import { Card, CardContent, CardDescription, CardHeader } from "@packages/ui/components/card";
 import { Carousel, CarouselApi, CarouselContent, CarouselItem } from "@packages/ui/components/carousel";
 import { Separator } from "@packages/ui/components/separator";
 import { Timeline, TimelineDot, TimelineHeading, TimelineItem, TimelineLine } from "@packages/ui/components/timeline";
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import Autoplay from "embla-carousel-autoplay";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import { useScroll, useTransform } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import React from "react";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import DotIndicator from "@/components/dot-indicator";
+import Title from "@/components/title";
+import { IForgeLogo } from "@/icons/IForge";
+import { HeartspaceIcon, MainspaceIcon } from "@/icons/Locations";
 
 type FAQItem = {
   question: string;
@@ -199,22 +198,22 @@ const faqItems: FAQItem[] = [
   },
 ];
 
-import boba from "@/../public/homepage/boba.jpg?lqip";
-import inspectingMaterials from "@/../public/homepage/inspecting-materials.jpg?lqip";
-import reps2024 from "@/../public/homepage/reps-2024.jpg?lqip";
-import repsInspectingBadges from "@/../public/homepage/reps-inspecting-badges.jpg?lqip";
-import usersAtTheSocialSpace from "@/../public/homepage/users-at-the-social-space.jpg?lqip";
-import usingTheDremel from "@/../public/homepage/using-the-dremel.jpg?lqip";
-import usingTheElectronicsBench from "@/../public/homepage/using-the-electronics-bench.jpg?lqip";
-import usingTheLaserCutter from "@/../public/homepage/using-the-laser-cutter.jpg?lqip";
-import usingTheSewingMachine from "@/../public/homepage/using-the-sewing-machine.jpg?lqip";
-import usingTheWaterJet from "@/../public/homepage/using-the-water-jet.jpg?lqip";
+import boba from "@/../public/homepage/boba.webp?lqip";
+import inspectingMaterials from "@/../public/homepage/inspecting-materials.webp?lqip";
+import reps from "@/../public/reps/25.webp?lqip";
+import repsInspectingBadges from "@/../public/homepage/reps-inspecting-badges.webp?lqip";
+import usersAtTheSocialSpace from "@/../public/homepage/users-at-the-social-space.webp?lqip";
+import usingTheDremel from "@/../public/homepage/using-the-dremel.webp?lqip";
+import usingTheElectronicsBench from "@/../public/homepage/using-the-electronics-bench.webp?lqip";
+import usingTheLaserCutter from "@/../public/homepage/using-the-laser-cutter.webp?lqip";
+import usingTheSewingMachine from "@/../public/homepage/using-the-sewing-machine.webp?lqip";
+import usingTheWaterJet from "@/../public/homepage/using-the-water-jet.webp?lqip";
 
 const imagesForCarousel = [
   { ...boba, alt: "3D printed Boba Fett cosplay" },
   { ...inspectingMaterials, alt: "Users inspecting materials" },
   { ...repsInspectingBadges, alt: "Reps inspecting badges" },
-  { ...reps2024, alt: "Reps 2024-2025" },
+  { ...reps, alt: "Reps of this year" },
   { ...usingTheLaserCutter, alt: "Users using a laser cutter" },
   { ...usingTheDremel, alt: "Users using the dremel" },
   { ...usersAtTheSocialSpace, alt: "Reps and users at the social space" },
@@ -279,10 +278,10 @@ const ImageCarousel = () => {
   );
 };
 
-import heartspaceFront from "@/../public/homepage/hs-front.jpg?lqip";
-import heartspaceInside from "@/../public/homepage/hs-inside.jpg?lqip";
-import mainspaceFront from "@/../public/homepage/ms-front.jpg?lqip";
-import msInside from "@/../public/homepage/ms-inside.jpg?lqip";
+import heartspaceFront from "@/../public/homepage/hs-front.webp?lqip";
+import heartspaceInside from "@/../public/homepage/hs-inside.webp?lqip";
+import mainspaceFront from "@/../public/homepage/ms-front.webp?lqip";
+import msInside from "@/../public/homepage/ms-inside.webp?lqip";
 
 const mainspaceCards = [
   {
@@ -425,7 +424,7 @@ const LocationCards = () => {
 
   return (
     <div className="relative h-[85vh]">
-      <div className="snap-y snap-mandatory h-[85vh] overflow-y-scroll hide-scrollbar sm:overflow-y-scroll" ref={ref}>
+      <div className="snap-y h-[85vh] overflow-y-scroll hide-scrollbar" ref={ref}>
         {mainspaceCards}
         {heartspaceCards}
       </div>
@@ -472,7 +471,7 @@ const IndexComponent = () => {
         <ImageCarousel />
       </div>
       <h3>
-        <p className="mx-14 text-2xl mt-8 mb-4 text-balance">
+        <p className="mx-14 text-2xl mt-10 mb-4 text-balance">
           Join us to collaborate, create, and innovate through hands-on making and learning.
         </p>
       </h3>
@@ -485,7 +484,7 @@ const IndexComponent = () => {
         <Card className="flex-col w-full">
           <CardHeader className="font-bold text-center text-3xl font-futura">Sign Up Now!</CardHeader>
           <CardDescription className="p-4 pt-0 mx-auto">
-            <span className="flex text-lg text-balance">
+            <span className="text-lg text-balance">
               It's easy:
               <Timeline>
                 {[

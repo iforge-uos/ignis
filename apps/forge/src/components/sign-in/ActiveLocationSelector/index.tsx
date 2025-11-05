@@ -1,4 +1,4 @@
-import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
+import { ChevronsUpDown, CheckIcon } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import { MessageCircleWarning } from "lucide-react";
@@ -41,7 +41,7 @@ const ActiveLocationSelector = () => {
               className={`w-full md:w-[200px] justify-between border-2 ${borderColor} h-10`}
             >
               {activeLocation ? toTitleCase(activeLocation) : "No active location selected"}
-              <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-full p-0">
