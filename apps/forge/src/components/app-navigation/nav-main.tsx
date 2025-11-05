@@ -1,7 +1,3 @@
-import { ChevronRight } from "lucide-react";
-
-import { useUserRoles } from "@/hooks/useUserRoles";
-import { Route } from "@/types/nav";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@packages/ui/components/collapsible";
 import {
   SidebarGroup,
@@ -15,6 +11,9 @@ import {
   useSidebar,
 } from "@packages/ui/components/sidebar";
 import { Link } from "@tanstack/react-router";
+import { ChevronRight } from "lucide-react";
+import { useUserRoles } from "@/hooks/useUserRoles";
+import { Route } from "@/types/nav";
 
 interface NavMainProps {
   items: Route[];

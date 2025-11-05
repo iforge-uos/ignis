@@ -36,7 +36,7 @@ export function NavSub({ elements }: NavSubProps) {
                   <span>{item.name}</span>
                 </a>
               ) : (
-                <Link to={item.url as RoutePath} onClick={handleClick}>
+                <Link to={item.url} onClick={handleClick}>
                   <item.icon />
                   <span>{item.name}</span>
                 </Link>

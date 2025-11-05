@@ -1,5 +1,3 @@
-import { ChevronsUpDown } from "lucide-react";
-
 import { appConfig } from "@/config/nav";
 import useCurrentApp from "@/hooks/useCurrentApp";
 import { useUserRoles } from "@/hooks/useUserRoles";
@@ -12,6 +10,8 @@ import {
 } from "@packages/ui/components/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@packages/ui/components/sidebar";
 import { Link } from "@tanstack/react-router";
+import { ChevronUpDown } from "@/icons/ChevronUpDown";
+import { AnimateIcon } from "@packages/ui/components/icon";
 
 export function AppSwitcher() {
   const { isMobile } = useSidebar();
@@ -41,22 +41,24 @@ export function AppSwitcher() {
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
-              size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
-              <div
-                className="flex aspect-square size-8 items-center justify-center rounded-lg"
-                style={{ backgroundColor: currentApp.color }}
+            <AnimateIcon animateOnHover asChild>
+              <SidebarMenuButton
+                size="lg"
+                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               >
-                <currentApp.logo className="size-4 text-white" />
-              </div>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{currentApp.name}</span>
-                <span className="truncate text-xs">{currentApp.description}</span>
-              </div>
-              <ChevronsUpDown className="ml-auto" />
-            </SidebarMenuButton>
+                <div
+                  className="flex aspect-square size-8 items-center justify-center rounded-lg"
+                  style={{ backgroundColor: currentApp.color }}
+                >
+                  <currentApp.logo className="size-4 text-white" />
+                </div>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-semibold">{currentApp.name}</span>
+                  <span className="truncate text-xs">{currentApp.description}</span>
+                </div>
+                <ChevronUpDown className="ml-auto" />
+              </SidebarMenuButton>
+            </AnimateIcon>
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-[--radix-dropdown-menu-trigger-width] min-w-36 rounded-lg"

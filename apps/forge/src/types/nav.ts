@@ -1,5 +1,5 @@
-import { Apps } from "@/types/app";
 import { LucideIcon } from "lucide-react";
+import { Apps } from "@/types/app";
 import { RoutePath } from "@/types/router";
 
 export interface AppConfig {
@@ -16,7 +16,7 @@ export interface AppConfig {
 export interface Route {
   title: string;
   url: RoutePath;
-  icon?: LucideIcon;
+  icon?: Omit<LucideIcon, "$$typeof">;  // our own icons don't have this
   isActive?: boolean;
   requiredRoles?: string[];
   items?: Route[];
@@ -24,7 +24,7 @@ export interface Route {
 
 export interface NavSub {
   name: string;
-  url: string | RoutePath;
+  url: RoutePath;
   icon: LucideIcon;
   isExternal?: boolean;
 }

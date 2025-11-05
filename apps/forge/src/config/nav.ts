@@ -12,10 +12,12 @@ import {
   FileWarningIcon,
   FingerprintIcon,
   HammerIcon,
+  HeartIcon,
   HouseIcon,
   LayoutDashboardIcon,
   ListEndIcon,
   MailboxIcon,
+  PartyPopperIcon,
   PencilRulerIcon,
   PrinterIcon,
   RssIcon,
@@ -30,9 +32,11 @@ import {
   UserCogIcon,
   UserIcon,
   UsersIcon,
+  WrenchIcon,
   ZapIcon,
 } from "lucide-react";
 import { AppConfig } from "@/types/nav";
+import { RepIcon } from "../icons/Rep";
 
 export const appConfig: AppConfig[] = [
   {
@@ -47,6 +51,36 @@ export const appConfig: AppConfig[] = [
         title: "Home",
         url: "/",
         icon: HouseIcon,
+        isActive: true,
+      },
+      {
+        title: "Locations",
+        icon: EarthIcon,
+        isActive: true,
+        items: [
+          {
+            title: "Mainspace",
+            icon: WrenchIcon,
+            url: "/locations#mainspace",
+          },
+          {
+            title: "Heartspace",
+            icon: HeartIcon,
+            url: "/locations#heartspace",
+          },
+        ],
+        url: "",
+      },
+      {
+        title: "Our Reps",
+        url:"/our-reps",
+        icon: RepIcon,
+        isActive: true,
+      },
+      {
+        title: "Events",
+        url:"/events",
+        icon: PartyPopperIcon,
         isActive: true,
       },
     ],

@@ -7,7 +7,6 @@ import {
   DropdownMenuTrigger,
 } from "@packages/ui/components/dropdown-menu";
 import { SidebarMenuButton, useSidebar } from "@packages/ui/components/sidebar";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@packages/ui/components/tooltip";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react";
