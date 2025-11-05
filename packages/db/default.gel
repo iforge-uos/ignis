@@ -8,7 +8,8 @@ using extension pg_trgm;
 module default {
     global user := assert_single((
         select users::User
-        filter .identity = global ext::auth::ClientTokenIdentity
+        filter .username = "eik21jh"
+        # filter .identity = global ext::auth::ClientTokenIdentity
     ));
     global INFRACTIONS_WEBHOOK_URL: str;
     global CDN_URL: str;
