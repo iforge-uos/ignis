@@ -19,13 +19,17 @@
     {
       "name": "DB",
       "path": "../packages/db"
+    },
+    {
+      "name": "Email",
+      "path": "../packages/email"
     }
   ],
   "settings": {
     "files.exclude": {
-      "node_modules/": true,
+      // "node_modules/": true,
       "apps/": true,
-      "packages/": true
+      // "packages/": true
     },
     "[typescriptreact]": {
       "editor.defaultFormatter": "biomejs.biome"

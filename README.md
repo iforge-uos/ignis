@@ -12,4 +12,6 @@ Each [app](/apps) has installation instructions in its README.
 
 ## Docker
 
-Docker instructions soon tm
+You must run the startup script
+I just use "Run All Services" button in VSC to start the containers in [`.devcontainer/docker-compose.yml`](.devcontainer/docker-compose.yml)
+Generate a credentials in the 1password connect devcontainer-testing

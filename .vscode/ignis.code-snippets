@@ -19,8 +19,8 @@
 		"scope": "typescript",
 		"prefix": "route",
 		"body": [
-			"import { pub, rep, auth } from \"@/router\";",
-			"import e from \"@db/edgeql-js\";",
+			"import { pub, rep, auth } from \"@/orpc\";",
+			"import e from \"@packages/db/edgeql-js\";",
 			"import { z } from \"zod\";",
 			"",
 			"export const get = ${1|pub,rep,authed|}",

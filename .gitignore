@@ -14,3 +14,14 @@ deploy/container-images/**
 
 **/dist/**
 *.tsbuildinfo
+
+gel.local.toml
+.devcontainer/volumes
+config/**/*.env
+config/**/*.json
+config/**/*.pem
+config/**/*.conf
+!config/**/*.env.tpl
+!config/**/*.json.tpl
+!config/**/*.pem.tpl
+!config/**/*.conf.tpl

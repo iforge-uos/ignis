@@ -2,11 +2,6 @@
   "name": "Ignis",
   "portsAttributes": {
     "3000": {
-      "label": "anvil",
-      "onAutoForward": "silent",
-      "requireLocalPort": true
-    },
-    "8000": {
       "label": "forge",
       "onAutoForward": "openBrowser",
       "requireLocalPort": true
@@ -18,12 +13,10 @@
     }
   },
   "dockerComposeFile": [
-    "../docker-compose.yml",
-    "docker-compose.yml"
-  ],
-  service: "",
+    "./docker-compose.yml"
+    ],
   "mounts": [
     "source=${localWorkspaceFolderBasename}-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
     "source=${localWorkspaceFolder} ,target=/code,type=bind,consistency=cached"
-  ],
+  ]
 }

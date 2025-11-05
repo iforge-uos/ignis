@@ -1,26 +1,42 @@
-version: "3.8"
 services:
-  db:
-    image: edgedb/edgedb:5.0-beta.3
+  gel:
+    image: geldata/gel:7.0-rc.3
+    container_name: ignis_gel
+    ports:
+      - "5656:5656"
+    volumes:
+      - "../packages/db:/dbschema"
+      - "./volumes/gel/data:/var/lib/gel"
+      - "../config/docker/ignis_cert.pem:/ignis_cert.pem"
+      - "../config/docker/ignis_key.pem:/ignis_key.pem"
+    restart: unless-stopped
     env_file:
-      - ../.env
+      - ../config/docker/.gel.env
+
   op-connect-api:
     image: 1password/connect-api:latest
     ports:
       - "8080:8080"
     volumes:
-      - "./1password-credentials.json:/home/opuser/.op/1password-credentials.json"
+      - "../config/docker/1password-credentials.json:/home/opuser/.op/1password-credentials.json"
       - "1p_data:/home/opuser/.op/data"
   op-connect-sync:
     image: 1password/connect-sync:latest
     volumes:
-      - "./1password-credentials.json:/home/opuser/.op/1password-credentials.json"
+      - "../config/docker/1password-credentials.json:/home/opuser/.op/1password-credentials.json"
       - "1p_data:/home/opuser/.op/data"
 
-
-networks:
+  valkey:
+    image: valkey/valkey:latest
+    container_name: ignis-keyval
+    restart: unless-stopped
+    entrypoint: "valkey-server /usr/local/etc/valkey/valkey.conf"
+    ports:
+      - "6379:6379"
+    volumes:
+      - ../config/docker/valkey.conf:/usr/local/etc/valkey/valkey.conf
 
 volumes:
   db_data:
-  redis_data:
+  valkey_data:
   1p_data:
