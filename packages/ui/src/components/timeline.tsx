@@ -1,5 +1,5 @@
 // https://github.com/shadcn-ui/ui/pull/3374
-import { CheckIcon, Cross1Icon } from "@radix-ui/react-icons";
+import { CheckIcon, CrossIcon } from "lucide-react";
 import { VariantProps, cva } from "class-variance-authority";
 import React from "react";
 
@@ -78,7 +78,7 @@ function TimelineDot({ className, status, customIcon, ref, ...props }: TimelineD
     <output className={cn("timeline-dot", timelineDotVariants({ status }), className)} ref={ref} {...props}>
       <div className="radix-circle size-2.5 rounded-full" />
       <CheckIcon className="radix-check size-3" />
-      <Cross1Icon className="radix-cross size-2.5" />
+      <CrossIcon className="radix-cross size-2.5" />
       {customIcon}
     </output>
   );

@@ -13,8 +13,12 @@
   "aliases": {
     "components": "@packages/ui/components",
     "utils": "@packages/ui/lib/utils",
-    "hooks": "@packages/ui/hooks",
+    "ui": "@packages/ui/components",
     "lib": "@packages/ui/lib",
-    "ui": "@packages/ui/components"
+    "hooks": "@packages/ui/hooks"
+  },
+  "registries": {
+    "@kibo-ui": "https://www.kibo-ui.com/r/{name}.json",
+    "@animate-ui": "https://animate-ui.com/r/{name}.json"
   }
 }
