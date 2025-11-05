@@ -31,8 +31,14 @@ const config = defineConfig({
   },
   plugins: [
     tsconfigPaths(),
-    tanstackStart({ customViteReactPlugin: true }),
-    react(),
+    tanstackStart(),
+    react({
+      babel: {
+        plugins: [
+          "babel-plugin-react-compiler", // must run first!
+        ],
+      },
+    }),
     tailwindcss(),
     lqip(),
     svgr({
