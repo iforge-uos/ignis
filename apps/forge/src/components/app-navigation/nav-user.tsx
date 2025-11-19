@@ -89,23 +89,6 @@ export function NavUser() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {!isRep && (
-              <>
-                <DropdownMenuGroup>
-                  <a
-                    href="https://docs.google.com/forms/d/e/1FAIpQLSflZdw7fz1kEQqs6mxt6-9g2JPIO9uXGiQNOuOozlNct-0tJg/viewform"
-                    rel="noreferrer"
-                    target="_blank"
-                  >
-                    <DropdownMenuItem>
-                      <Sparkles className="mr-2 h-4 w-4" />
-                      Apply to become a rep!
-                    </DropdownMenuItem>
-                  </a>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-              </>
-            )}
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
                 <Link to="/user/me" onClick={handleClick}>
