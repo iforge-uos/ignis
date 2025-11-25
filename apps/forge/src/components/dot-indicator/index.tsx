@@ -12,23 +12,26 @@ const DotIndicator: React.FC<DotIndicatorProps> = ({ count, current = 1, orienta
   return (
     <div
       className={cn(
+        "flex absolute bottom-0",
         orientation === "horizontal"
-          ? "absolute bottom-0 left-1/2 -translate-x-1/2 flex space-x-2"
-          : "absolute right-2 top-0 bottom-0 flex flex-col items-center justify-center space-y-2",
+          ? "left-1/2 -translate-x-1/2 space-x-2"
+          : "right-2 top-0 flex-col items-center justify-center space-y-2",
         className,
       )}
     >
-      {[...Array(count)].map((_, index) => (
+      {[...Array(count)].map((_, index) => {
+        const active = current === index + 1;
+        return (
         <div
-          // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+          // biome-ignore lint/suspicious/noArrayIndexKey: FP
           key={index}
-          className={cn(`size-4 rounded-lg duration-500 border-2 transition-all`, current === index + 1 ? `border-ring` : "border-border")}
+          className={cn(`size-4 rounded-lg duration-500 border-2 transition-all`, active ? `border-ring` : "border-border")}
           style={{
-            width: current === index + 1 && orientation === "horizontal" ? "32px" : "16px",
-            height: current === index + 1 && orientation === "vertical" ? "32px" : "16px",
+            width: active && orientation === "horizontal" ? "32px" : "16px",
+            height: active && orientation === "vertical" ? "32px" : "16px",
           }}
         />
-      ))}
+      )})}
     </div>
   );
 };
