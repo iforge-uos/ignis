@@ -75,16 +75,24 @@ export const interact = auth
               training: e.op(
                 e.op(
                   "distinct",
-                  e.for(user.training, (t) => {
+                  e.for(user.training, (t) =>
                     // filter out the previous training if they had it
-                    return e.op(t, "if", e.op(t, "!=", session.training), "else", e.cast(e.training.Training, e.set()));
-                  }),
+                    e.op(t, "if", e.op(t, "!=", session.training), "else", e.cast(e.training.Training, e.set())),
+                  ),
                 ),
-                "union", // add it back in while atomically deleting the session
-                e.select(e.delete(e.training.Session, () => ({
-                  filter_single: { id: session_id },
-                })).training, () => ({"@created_at": e.datetime_of_transaction()})),
-                // FIXME redoing the online training will wipe in person (Whoops)
+                "union",
+                e.select(user.training, (t) => ({
+                  "@created_at": e.datetime_of_transaction(),
+                  "@in_person_created_at": t["@in_person_created_at"],
+                  "@in_person_signed_off_by": t["@in_person_signed_off_by"],
+                  "@infraction": t["@infraction"],
+                  filter_single: {
+                    // add it back in while atomically deleting the session
+                    id: e.delete(e.training.Session, () => ({
+                      filter_single: { id: session_id },
+                    })).training.id,
+                  },
+                })),
               ),
             },
           }))
