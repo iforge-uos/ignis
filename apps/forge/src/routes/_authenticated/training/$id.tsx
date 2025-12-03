@@ -32,6 +32,7 @@ export function TrainingContent({ content, className }: { content: string; class
 const Component: React.FC = () => {
   const { id } = Route.useParams();
   const data = Route.useLoaderData();
+
   const ref = React.useRef<HTMLElement | null>(null);
   const navigate = useNavigate();
   const [sessionId, setSessionId] = React.useState<string | null>(null);
