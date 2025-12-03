@@ -11,13 +11,14 @@ import { Progress } from "@packages/ui/components/progress";
 import { RadioGroup, RadioGroupItem } from "@packages/ui/components/radio-group";
 import { Separator } from "@packages/ui/components/separator";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { ArrowDown } from "lucide-react";
 import React from "react";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 
 const PROGRESS_BAR_SAMPLE_MS = 50;
-type Section = Extract<InteractionResponse, { __typename: "training::Page" | "training::Question" }>;  // ones we can display
+type Section = Extract<InteractionResponse, { __typename: "training::Page" | "training::Question" }>; // ones we can display
 
 export function TrainingContent({ content, className }: { content: string; className?: string }) {
   return (
@@ -31,7 +32,7 @@ export function TrainingContent({ content, className }: { content: string; class
 const Component: React.FC = () => {
   const { id } = Route.useParams();
   const data = Route.useLoaderData();
-
+  const ref = React.useRef<HTMLElement | null>(null);
   const navigate = useNavigate();
   const [sessionId, setSessionId] = React.useState<string | null>(null);
   const [buttonName, setButtonName] = React.useState<string>("Start Training");
@@ -177,6 +178,13 @@ const Component: React.FC = () => {
                 </>
               </div>
             ))}
+            <Button
+              className="fixed bottom-15 right-8"
+              onClick={() => ref.current?.scrollIntoView({ behavior: "smooth" })}
+            >
+              <ArrowDown className="pr-2" />
+              To bottom of page
+            </Button>
           </div>
           <Separator />
         </div>
@@ -191,6 +199,7 @@ const Component: React.FC = () => {
               }
               className="w-full h-12 rounded-md flex flex-col items-center justify-center"
               onClick={() => interactWithTraining(id)}
+              ref={ref}
             >
               <div>{buttonName}</div>
               <Progress
