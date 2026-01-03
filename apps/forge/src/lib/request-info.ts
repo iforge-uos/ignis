@@ -1,17 +1,24 @@
 import { getHints } from "@/components/client-hint-check";
-import { createServerFn } from "@tanstack/react-start";
+import { createIsomorphicFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { getTheme } from "./theme";
 
-export const getRequestInfo = createServerFn().handler(async () => {
-  const request = getRequest();
+export const getRequestInfo = createIsomorphicFn()
+  .server(async () => {
+    const request = getRequest();
 
-  const requestInfo = {
-    hints: getHints(request),
-    userPreferences: {
-      theme: await getTheme(),
-    },
-  };
-
-  return requestInfo;
-});
+    return {
+      hints: getHints(request),
+      userPreferences: {
+        theme: await getTheme(),
+      },
+    };
+  })
+  .client(async () => {
+    return {
+      hints: { theme: window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light" } as const,
+      userPreferences: {
+        theme: await getTheme(),
+      }
+    };
+  });

@@ -3,13 +3,13 @@ import {
   clientHint as colorSchemeHint,
   subscribeToSchemeChange,
 } from '@epic-web/client-hints/color-scheme'
-import { clientHint as timeZoneHint } from '@epic-web/client-hints/time-zone'
+// import { clientHint as timeZoneHint } from '@epic-web/client-hints/time-zone'
 import { useRouter } from '@tanstack/react-router'
 import { useEffect } from 'react'
 
 export const { getHints, getClientHintCheckScript } = getHintUtils({
   theme: colorSchemeHint,
-  timezone: timeZoneHint,
+  // timezone: timeZoneHint,
 })
 
 export function ClientHintCheck() {
