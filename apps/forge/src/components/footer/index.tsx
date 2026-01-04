@@ -64,7 +64,7 @@ export function Footer() {
           </p>
         </div>
         <div className="flex flex-col gap-2 w-full md:w-auto">
-          <h5 className="text-2xl font-bold font-futura">Opening Hours</h5>
+          <h5 className="text-2xl font-bold font-futura" id="opening-hours">Opening Hours</h5>
           <p className="text-balance">Open weekdays, subject to exams and holidays</p>
           {isLoading && (
             <div>

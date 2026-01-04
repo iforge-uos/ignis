@@ -85,7 +85,7 @@ export function EventDetailsDialog({ event, children, editable = true }: IProps)
               <div>
                 <p className="text-sm font-medium">Location</p>
                 <p className="text-sm text-muted-foreground">
-                  <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer" className="link-underline text-primary">
+                  <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer" className="link-underline">
                     {formatLocation(location)}
                   </a>
                 </p>

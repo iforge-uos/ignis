@@ -15,11 +15,11 @@ function RouteComponent() {
         <h1 className="text-5xl font-futura mb-4">Our Reps</h1>
         <p className="text-lg">
           The iForge is run by University of Sheffield students who volunteer their time and energy managing the{" "}
-          <Link to="/locations#mainspace" className="text-primary link-underline">
+          <Link to="/locations#mainspace" className="link-underline">
             Mainspace
           </Link>{" "}
           in the Diamond and the{" "}
-          <Link to="/locations#heartspace" className="text-primary link-underline">
+          <Link to="/locations#heartspace" className="link-underline">
             Heartspace
           </Link>{" "}
           and working behind the scenes to continually improve what the iForge can offer you. You can identify them by
@@ -28,14 +28,14 @@ function RouteComponent() {
         {/* <p>
         This page is a tribute to all the Reps who are working with the iForge now. If you would like to see our past
         Reps you can take a look at our "
-        <Link to="/alumni" className="text-primary link-underline">
+        <Link to="/alumni" className="link-underline">
           Our Legacy
         </Link>
         " page.
       </p> */}
         <p className="text-lg">
           If you would like to become an iForge Rep, please register your interest{" "}
-          <a href="https://forms.gle/FQ81QtXQWAUuEW4E8" className="text-primary link-underline">
+          <a href="https://forms.gle/FQ81QtXQWAUuEW4E8" className="link-underline">
             here
           </a>
           .

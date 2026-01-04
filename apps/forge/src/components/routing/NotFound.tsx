@@ -20,8 +20,8 @@ export const NotFound: NotFoundRouteComponent = (props) => {
             </p>
             <p className="text-sm text-foreground">
               Note: This site is still under development. For assistance, join our{" "}
-              <a href="/discord">
-                <Button variant="hyperlink">Discord server</Button>
+              <a href="/discord" target="_blank" rel="noopener noreferrer" className="link-underline">
+                Discord server
               </a>
               .
             </p>

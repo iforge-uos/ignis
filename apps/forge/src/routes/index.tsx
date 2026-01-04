@@ -37,21 +37,26 @@ const faqItems: FAQItem[] = [
       <>
         The Mainspace is open from 12:00 to 20:00 and the Heartspace from 12:00 to 17:00, both Monday to Friday.
         However, we have limited hours during exams and holidays. Check our{" "}
-        <a href="https://instagram.com/users/iforge_uos">
-          <Button variant="hyperlink" className="text-lg">
-            Instagram
-          </Button>
+        <a
+          href="https://instagram.com/users/iforge_uos"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="link-underline"
+        >
+          Instagram
         </a>{" "}
-        or the bottom of the page for short-notice closures during term time due to events or unforeseen circumstances.
+        or our{" "}
+        <a href="#opening-hours" className="link-underline">
+          opening hours
+        </a>{" "}
+        for short-notice closures during term time due to events or unforeseen circumstances.
         <br />
         We may be open outside of these hours. To check, you can go to the{" "}
-        <Link to="/sign-in">
-          <Button variant="hyperlink" className="text-lg">
-            Sign in page
-          </Button>
+        <Link to="/sign-in" className="link-underline">
+          Sign in page
         </Link>{" "}
-        or the bottom of any page on this website.
-        {/* TODO /status */}
+        or the <a href="#opening-hours" className="link-underline">bottom of any page on this website.</a>
+        {/* TODO IFO-247 */}
       </>
     ),
   },
@@ -70,12 +75,13 @@ const faqItems: FAQItem[] = [
       <div>
         We organise, run and host several workshops and events and offer skills workshops such as lamp making, furniture
         making, and CAD over the academic year. Events range from activities with limited numbers that users register
-        for to day-long events where anyone can come and go throughout the day. To stay updated on our events, follow
-        our{" "}
-        <a href="https://instagram.com/users/iforge_uos">
-          <Button variant="hyperlink" className="text-lg">
-            Instagram
-          </Button>
+        for to day-long events where anyone can come and go throughout the day. To stay updated on our events, go to our{" "}
+        <Link to="/events" className="link-underline">
+          events page
+        </Link>{" "}
+        or follow our{" "}
+        <a href="https://instagram.com/users/iforge_uos" className="link-underline">
+          Instagram
         </a>
         .
         <br />
@@ -83,10 +89,8 @@ const faqItems: FAQItem[] = [
         We also collaborate with societies from The University of Sheffield or companies to run activities! If you're
         interested in creating an event with the iForge, our team would love to hear from you using any of the links on
         our{" "}
-        <Link to="/contact">
-          <Button variant="hyperlink" className="text-lg">
-            Contact
-          </Button>
+        <Link to="/contact" className="link-underline ">
+          Contact
         </Link>{" "}
         page.
       </div>
@@ -128,35 +132,35 @@ const faqItems: FAQItem[] = [
             The general induction for the location, either
             <ul className="list-disc pl-5">
               <li>
-                <Link to="/training/$id" params={{ id: "2c8f9ab8-fa6a-11ee-9708-bbe8cad44a7b" }}>
-                  <Button variant="hyperlink" className="text-lg">
-                    Mainspace Induction
-                  </Button>
+                <Link
+                  to="/training/$id"
+                  params={{ id: "2c8f9ab8-fa6a-11ee-9708-bbe8cad44a7b" }}
+                  className="link-underline"
+                >
+                  Mainspace Induction
                 </Link>
               </li>
               <li>
-                <Link to="/training/$id" params={{ id: "2c906c68-fa6a-11ee-9708-b7e22c4ed9e6" }}>
-                  <Button variant="hyperlink" className="text-lg">
-                    Heartspace Induction
-                  </Button>
+                <Link
+                  to="/training/$id"
+                  params={{ id: "2c906c68-fa6a-11ee-9708-b7e22c4ed9e6" }}
+                  className="link-underline"
+                >
+                  Heartspace Induction
                 </Link>
               </li>
             </ul>
           </li>
           <li>
-            <Link to="/training/$id" params={{ id: "2c900a48-fa6a-11ee-9708-e701e7356315" }}>
-              <Button variant="hyperlink" className="text-lg">
-                Unpowered Hand Tools
-              </Button>
+            <Link to="/training/$id" params={{ id: "2c900a48-fa6a-11ee-9708-e701e7356315" }} className="link-underline">
+              Unpowered Hand Tools
             </Link>
           </li>
         </ul>
         You should also complete training for any machines you're planning to use. For machines the require in-person
         training, please book with a rep in the{" "}
-        <a href="/discord">
-          <Button variant="hyperlink" className="text-lg">
-            Discord
-          </Button>
+        <a href="/discord" target="_blank" rel="noopener noreferrer" className="link-underline">
+          Discord server
         </a>{" "}
         or ask an on-shift rep (someone in a black apron) to train you and update your training record.
       </>
@@ -167,11 +171,11 @@ const faqItems: FAQItem[] = [
     question: "How should I dress?",
     answer: (
       <ul className="list-disc pl-5">
-        <li>No skirts or shorts</li>
-        <li>Tie long hair back</li>
-        <li>Wear closed toe shoes</li>
-        <li>Wear our red aprons</li>
-        <li>Wear safety glasses</li>
+        <li>No skirts or shorts - don't help avoid chemical exposure</li>
+        <li>Tie long hair back - helps avoid it getting caught in machinery</li>
+        <li>Wear closed toe shoes - help avoid chemical exposure</li>
+        <li>Wear our red aprons - help protect your clothes from dust etc.</li>
+        <li>Wear safety glasses - help protect your eyes from projectiles</li>
       </ul>
     ),
   },
@@ -183,10 +187,8 @@ const faqItems: FAQItem[] = [
         <ul className="list-disc pl-5">
           <li>
             Get in contact with us via our{" "}
-            <Link to="/contact">
-              <Button variant="hyperlink" className="text-lg">
-                Contact
-              </Button>
+            <Link to="/contact" className="link-underline">
+              Contact
             </Link>{" "}
             page.
           </li>
@@ -307,10 +309,8 @@ const mainspaceCards = [
     text: (
       <>
         The Mainspace is located in{" "}
-        <a href="https://g.co/kgs/hXYvVNH">
-          <Button variant="hyperlink" className="text-xl">
-            The Diamond
-          </Button>
+        <a href="https://g.co/kgs/hXYvVNH" target="_blank" rel="noopener noreferrer" className="link-underline">
+          The Diamond
         </a>{" "}
         on the first floor. This location is easily accessible for students and staff to pop in to after lectures to
         design and manufacture with our volunteer reps.
@@ -360,10 +360,8 @@ const heartspaceCards = [
     text: (
       <>
         The Heartspace is located in{" "}
-        <a href="https://g.co/kgs/R65qVGb">
-          <Button variant="hyperlink" className="text-xl">
-            The Engineering Heartspace
-          </Button>
+        <a href="https://g.co/kgs/R65qVGb" target="_blank" rel="noopener noreferrer" className="link-underline">
+          The Engineering Heartspace
         </a>{" "}
         above the café, the Heartspace offers an easily accessible, inspiring environment for students and staff.
       </>
@@ -395,9 +393,7 @@ function renderLocationCard(header: React.ReactNode) {
       <div className="absolute bottom-28 left-0 flex items-center justify-center">
         <h1 className="text-white font-bold flex-col max-w-[75%] text-left">
           <div className="flex items-center text-3xl pb-2">{header}</div>
-          <p className="text-xl font-light text-balance">
-            {value.text}
-          </p>
+          <p className="text-xl font-light text-balance">{value.text}</p>
         </h1>
       </div>
     </div>

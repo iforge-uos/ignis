@@ -21,37 +21,37 @@ function RouteComponent() {
 
           <ul className="list-disc my-3">
             <li>
-              <a href="#contact" className="link-underline text-primary">
+              <a href="#contact" className="link-underline">
                 Contact details
               </a>
             </li>
             <li>
-              <a href="#collect" className="link-underline text-primary">
+              <a href="#collect" className="link-underline">
                 What information we collect, use, and why
               </a>
             </li>
             <li>
-              <a href="#lawful" className="link-underline text-primary">
+              <a href="#lawful" className="link-underline">
                 Lawful bases and data protection rights
               </a>
             </li>
             <li>
-              <a href="#infofrom" className="link-underline text-primary">
+              <a href="#infofrom" className="link-underline">
                 Where we get personal information from
               </a>
             </li>
             <li>
-              <a href="#retention" className="link-underline text-primary">
+              <a href="#retention" className="link-underline">
                 How long we keep information
               </a>
             </li>
             <li>
-              <a href="#share" className="link-underline text-primary">
+              <a href="#share" className="link-underline">
                 Who we share information with
               </a>
             </li>
             <li>
-              <a href="#complain" className="link-underline text-primary">
+              <a href="#complain" className="link-underline">
                 How to complain
               </a>
             </li>
@@ -60,7 +60,7 @@ function RouteComponent() {
             Contact details
           </h2>
           <h3 className="text-xl font-futura my-1">Email</h3>
-          <a className="my-3 leading-7 link-underline text-primary" href="mailto:iforge@sheffield.ac.uk">
+          <a className="my-3 leading-7 link-underline" href="mailto:iforge@sheffield.ac.uk">
             iforge@sheffield.ac.uk
           </a>
           <h2 id="collect" className="text-3xl font-futura mt-8 mb-4">
@@ -123,7 +123,7 @@ function RouteComponent() {
               href="https://ico.org.uk/for-organisations/advice-for-small-organisations/getting-started-with-gdpr/data-protection-principles-definitions-and-key-terms/#lawfulbasis"
               target="_blank"
               rel="noopener noreferrer"
-              className="link-underline text-primary"
+              className="link-underline"
             >
               lawful bases
             </a>{" "}
@@ -143,7 +143,7 @@ function RouteComponent() {
                 href="https://ico.org.uk/for-organisations/advice-for-small-organisations/privacy-notices-and-cookies/create-your-own-privacy-notice/your-data-protection-rights/#roa"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="link-underline text-primary"
+                className="link-underline"
               >
                 Read more about the right of access
               </a>
@@ -156,7 +156,7 @@ function RouteComponent() {
                 href="https://ico.org.uk/for-organisations/advice-for-small-organisations/privacy-notices-and-cookies/create-your-own-privacy-notice/your-data-protection-rights/#rtr"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="link-underline text-primary"
+                className="link-underline"
               >
                 Read more about the right to rectification
               </a>
@@ -168,7 +168,7 @@ function RouteComponent() {
                 href="https://ico.org.uk/for-organisations/advice-for-small-organisations/privacy-notices-and-cookies/create-your-own-privacy-notice/your-data-protection-rights/#rte"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="link-underline text-primary"
+                className="link-underline"
               >
                 Read more about the right to erasure
               </a>
@@ -181,7 +181,7 @@ function RouteComponent() {
                 href="https://ico.org.uk/for-organisations/advice-for-small-organisations/privacy-notices-and-cookies/create-your-own-privacy-notice/your-data-protection-rights/#rtrop"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="link-underline text-primary"
+                className="link-underline"
               >
                 Read more about the right to restriction of processing
               </a>
@@ -194,7 +194,7 @@ function RouteComponent() {
                 href="https://ico.org.uk/for-organisations/advice-for-small-organisations/privacy-notices-and-cookies/create-your-own-privacy-notice/your-data-protection-rights/#rto"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="link-underline text-primary"
+                className="link-underline"
               >
                 Read more about the right to object to processing
               </a>
@@ -207,7 +207,7 @@ function RouteComponent() {
                 href="https://ico.org.uk/for-organisations/advice-for-small-organisations/privacy-notices-and-cookies/create-your-own-privacy-notice/your-data-protection-rights/#rtdp"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="link-underline text-primary"
+                className="link-underline"
               >
                 Read more about the right to data portability
               </a>
@@ -220,7 +220,7 @@ function RouteComponent() {
                 href="https://ico.org.uk/for-organisations/advice-for-small-organisations/privacy-notices-and-cookies/create-your-own-privacy-notice/your-data-protection-rights/#rtwc"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="link-underline text-primary"
+                className="link-underline"
               >
                 Read more about the right to withdraw consent
               </a>

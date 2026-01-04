@@ -241,6 +241,7 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   .link-underline {
+    color: var(--primary);
     text-underline-offset: 4px;
   }
   .link-underline:hover {
