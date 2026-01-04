@@ -1,44 +1,35 @@
-import { Alert, AlertDescription, AlertTitle } from "@packages/ui/components/alert";
-import { Button } from "@packages/ui/components/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@packages/ui/components/card";
+import { useSidebar } from "@packages/ui/components/sidebar";
 import { createFileRoute } from "@tanstack/react-router";
-import { ExternalLink, ShieldAlert } from "lucide-react";
-import { client } from "@/lib/orpc";
+import { useEffect } from "react";
+import { orpc } from "@/lib/orpc";
+import { ensureQueryData } from "@/lib/query-utils";
 
 function Component() {
   const authToken = Route.useLoaderData();
+  const { setOpen, setOpenMobile } = useSidebar();
+
+  const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+
+  useEffect(() => {
+    // auto-collapse the sidebar
+    setOpen(false);
+    setOpenMobile(false);
+  }, [setOpen, setOpenMobile]);
 
   return (
-    <div className="container max-w-md py-10 mx-auto">
-      <Card>
-        <CardHeader>
-          <CardTitle>Database Access</CardTitle>
-          <CardDescription>Access the iForge database</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <Alert variant="warning">
-            <ShieldAlert className="h-4 w-4" />
-            <AlertTitle>Security Warning</AlertTitle>
-            <AlertDescription>
-              *Do not* share the URL this creates with others as it contains the access credentials to the database.
-            </AlertDescription>
-          </Alert>
-        </CardContent>
-        <CardFooter>
-          <Button
-            onClick={() => window.open(`https://db.iforge.sheffield.ac.uk/ui?authToken=${authToken}`)}
-            className="w-full"
-          >
-            <ExternalLink className="mr-2 h-4 w-4" />
-            Access Database
-          </Button>
-        </CardFooter>
-      </Card>
-    </div>
+      <iframe
+        title="iForge Database UI"
+        src={isLocalhost ? `https://localhost:10705/ui?authToken=${authToken}` : `https://db.iforge.sheffield.ac.uk/ui?authToken=${authToken}`}
+        className="w-full h-full border-0"
+        referrerPolicy="no-referrer"
+      />
   );
 }
 
 export const Route = createFileRoute("/_authenticated/admin/db")({
   component: Component,
-  loader: client.admin.getGelUI,
+  loader: async ({ context }) => await ensureQueryData(
+    context.queryClient,
+    orpc.admin.getGelUI.queryOptions(),
+  ),
 });
