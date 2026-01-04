@@ -1,16 +1,17 @@
-import { commandMenuIsOpenAtom } from "@/atoms/commandMenuAtoms";
-import { useShortcutKey } from "@/hooks/useShortcutKey";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@packages/ui/components/input-group";
 import { Shortcut } from "@packages/ui/components/kbd";
 import { Label } from "@packages/ui/components/label";
 import {
   SidebarGroup,
   SidebarGroupContent,
-  SidebarInput,
   SidebarMenuButton,
   useSidebar,
 } from "@packages/ui/components/sidebar";
 import { useSetAtom } from "jotai";
-import { Search } from "lucide-react";
+import { Search } from "@/icons/Search";
+import { commandMenuIsOpenAtom } from "@/atoms/commandMenuAtoms";
+import { useShortcutKey } from "@/hooks/useShortcutKey";
+import { AnimateIcon } from "@packages/ui/components/icon";
 
 export function NavSearch() {
   const setCommandMenuOpen = useSetAtom(commandMenuIsOpenAtom);
@@ -26,23 +27,27 @@ export function NavSearch() {
     <SidebarGroup className="py-0 p-0">
       <SidebarGroupContent>
         {state === "expanded" ? (
-          <div className="relative">
+        <AnimateIcon animateOnHover>
+          <InputGroup>
             <Label htmlFor="search" className="sr-only">
               Search
             </Label>
-            <SidebarInput
+            <InputGroupInput
               id="search"
               placeholder="Search the site..."
-              className="pl-8 cursor-pointer"
+              className="cursor-pointer"
               onClick={handleClick}
               readOnly
               value=""
             />
-            <Search className="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 select-none opacity-50" />
-            <div className="absolute right-2 top-1/2 -translate-y-1/2">
+            <InputGroupAddon>
+              <Search animation="find"/>
+            </InputGroupAddon>
+            <InputGroupAddon align="inline-end">
               <Shortcut size="small" keys={[metaKey, "K"]} />
-            </div>
-          </div>
+            </InputGroupAddon>
+          </InputGroup>
+        </AnimateIcon>
         ) : (
           <SidebarMenuButton onClick={handleClick} tooltip="Search" className="w-full justify-center items-center">
             <Search className="size-4" />

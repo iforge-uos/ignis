@@ -1,7 +1,6 @@
-import { UserAvatar } from "@/components/avatar";
 import { PartialUser } from "@packages/types/users";
 import { Avatar, AvatarFallback, AvatarImage } from "@packages/ui/components/avatar";
-import { Input } from "@packages/ui/components/input";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@packages/ui/components/input-group";
 import {
   Pagination,
   PaginationContent,
@@ -12,9 +11,10 @@ import {
   PaginationPrevious,
 } from "@packages/ui/components/pagination";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@packages/ui/components/table";
-import { notFound, createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
+import { UserAvatar } from "@/components/avatar";
 
 async function getUsers(pageNumber: number): Promise<PartialUser[]> {
   return [
@@ -65,15 +65,16 @@ const UsersIndexPageComponent = () => {
       </header>
       <div className="flex">
         <form className="flex-grow mb-6">
-          <div className="flex items-center">
-            <Search />
-            <Input
-              className="pl-8"
+          <InputGroup>
+            <InputGroupInput
               id="search"
               placeholder="Search by name, UCard number, username, or email"
               type="search"
             />
-          </div>
+            <InputGroupAddon>
+              <Search />
+            </InputGroupAddon>
+          </InputGroup>
         </form>
         <Pagination className="justify-end">
           <PaginationContent>

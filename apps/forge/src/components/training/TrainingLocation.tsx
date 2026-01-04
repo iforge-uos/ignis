@@ -1,17 +1,18 @@
-import Title from "@/components/title";
-import { useUser } from "@/hooks/useUser";
-import { toTitleCase } from "@/lib/utils";
-import { locationNameToCSSName } from "@/lib/utils/training";
 import { LocationName, PartialTrainingWithStatus } from "@packages/types/training";
 import { Button } from "@packages/ui/components/button";
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@packages/ui/components/empty";
 import { Separator } from "@packages/ui/components/separator";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { CirclePlus } from "lucide-react";
+import { CirclePlus, GraduationCap } from "lucide-react";
+import Title from "@/components/title";
+import { useUser } from "@/hooks/useUser";
+import { useUserRoles } from "@/hooks/useUserRoles";
 import { orpc } from "@/lib/orpc";
+import { toTitleCase } from "@/lib/utils";
+import { locationNameToCSSName } from "@/lib/utils/training";
 import ImageGradient from "./ImageGradient";
 import TrainingCourseCard from "./TrainingCourseCard";
-import { useUserRoles } from "@/hooks/useUserRoles";
 
 interface TrainingLocationProps {
   location: LocationName;
@@ -67,12 +68,35 @@ export function TrainingLocation({ location, optionalTrainingText, img, training
                 </div>
               </div>
               <div className="grid gap-4 align-middle w-full grid-cols-1 items-stretch justify-center md:grid-cols-2 lg:grid-cols-3">
-                {compulsory
-                  .sort((a, b) => a.name.localeCompare(b.name))
-                  .map((training) => (
-                    <TrainingCourseCard key={training.id} training={training} userTraining={userTraining} />
-                  ))}
-                {isRep && <AddNewTraining location={location} compulsory />}
+                {compulsory.length > 0 ? (
+                  <>
+                    {compulsory
+                      .sort((a, b) => a.name.localeCompare(b.name))
+                      .map((training) => (
+                        <TrainingCourseCard key={training.id} training={training} userTraining={userTraining} />
+                      ))}
+                    {isRep && <AddNewTraining location={location} compulsory />}
+                  </>
+                ) : (
+                  <div className="col-span-full">
+                    <Empty>
+                      <EmptyHeader>
+                        <EmptyMedia variant="icon">
+                          <GraduationCap />
+                        </EmptyMedia>
+                        <EmptyTitle>No compulsory training</EmptyTitle>
+                        <EmptyDescription>
+                          There are currently no compulsory training courses for this location.
+                        </EmptyDescription>
+                      </EmptyHeader>
+                      {isRep && (
+                        <div className="mt-4">
+                          <AddNewTraining location={location} compulsory />
+                        </div>
+                      )}
+                    </Empty>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -90,12 +114,35 @@ export function TrainingLocation({ location, optionalTrainingText, img, training
                 </div>
               </div>
               <div className="grid gap-4 align-middle w-full grid-cols-1 items-stretch justify-center md:grid-cols-2 lg:grid-cols-3">
-                {not_compulsory
-                  .sort((a, b) => a.name.localeCompare(b.name))
-                  .map((training) => (
-                    <TrainingCourseCard key={training.id} training={training} userTraining={userTraining} />
-                  ))}
-                {isRep && <AddNewTraining location={location} />}
+                {not_compulsory.length > 0 ? (
+                  <>
+                    {not_compulsory
+                      .sort((a, b) => a.name.localeCompare(b.name))
+                      .map((training) => (
+                        <TrainingCourseCard key={training.id} training={training} userTraining={userTraining} />
+                      ))}
+                    {isRep && <AddNewTraining location={location} />}
+                  </>
+                ) : (
+                  <div className="col-span-full">
+                    <Empty>
+                      <EmptyHeader>
+                        <EmptyMedia variant="icon">
+                          <GraduationCap />
+                        </EmptyMedia>
+                        <EmptyTitle>No machine & equipment training</EmptyTitle>
+                        <EmptyDescription>
+                          There are currently no machine and equipment training courses for this location.
+                        </EmptyDescription>
+                      </EmptyHeader>
+                      {isRep && (
+                        <div className="mt-4">
+                          <AddNewTraining location={location} />
+                        </div>
+                      )}
+                    </Empty>
+                  </div>
+                )}
               </div>
             </div>
           </div>
