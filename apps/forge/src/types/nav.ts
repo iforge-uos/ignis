@@ -15,16 +15,17 @@ export interface AppConfig {
 }
 export interface Route {
   title: string;
-  url: RoutePath;
+  url?: RoutePath;
   icon?: Omit<LucideIcon, "$$typeof">;  // our own icons don't have this
   isActive?: boolean;
   requiredRoles?: string[];
   items?: Route[];
+  disabled?: boolean;
 }
 
 export interface NavSub {
   name: string;
-  url: RoutePath;
+  url: RoutePath | string;
   icon: LucideIcon;
   isExternal?: boolean;
 }

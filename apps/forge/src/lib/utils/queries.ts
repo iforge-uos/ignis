@@ -141,6 +141,11 @@ export const LocationParams = e.params({ name: e.sign_in.LocationName }, ({ name
   e.assert_exists(e.select(e.sign_in.Location, () => ({ filter_single: { name } }))),
 );
 
+export const SkewShape = e.shape(e.shop.Skew, () => ({
+  ...e.shop.Skew["*"],
+  dimensions: true,
+}));
+
 export const TeamShape = e.shape(e.team.Team, () => ({
   name: true,
   description: true,

@@ -7,7 +7,6 @@ try {
   const timeoutPromise = new Promise((_, reject) =>
     setTimeout(() => reject(new Error('Pharos client creation timed out after 3s')), 3000)
   );
-
   const clientPromise = PharosClient.create(`${env.pharos.url}?wsdl`, env.pharos.auth);
 
   client = await Promise.race([clientPromise, timeoutPromise]) as PharosClient;

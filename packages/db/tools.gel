@@ -36,7 +36,7 @@ module tools {
         };
         required quantity: int16;
         required borrowable: bool;
-
+        # TODO link to the materials
 
         trigger check_rep after insert, update for each do (  # TODO this probably has strange interactions for the last sentence of .rep
             assert(not exists __new__.rep.rep, message := "Tool's rep training isn't rep training?")

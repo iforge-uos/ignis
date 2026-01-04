@@ -17,6 +17,8 @@ const useCurrentApp = (): Apps => {
         return "Sign In";
       case "printing":
         return "Printing";
+      case "shop":
+        return "Shop"
       case "user":
       case "users":
         return "User";
