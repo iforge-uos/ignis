@@ -13,6 +13,15 @@
   font-display: optional;
 }
 
+@keyframes fillLeftToRight {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
 :root {
   --heartspace: oklab(69.428% -0.08995 -0.05021);
   --mainspace: oklab(61.098% 0.1309 0.07412);
