@@ -28,4 +28,5 @@ export interface NavSub {
   url: RoutePath | string;
   icon: LucideIcon;
   isExternal?: boolean;
+  disabled?: boolean;
 }
