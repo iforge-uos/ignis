@@ -3,7 +3,7 @@ import { logger } from "@sentry/tanstackstart-react";
 import { Client, Entry } from "ldapts";
 import * as z from "zod";
 import env from "@/lib/env";
-import { sleep } from "@/lib/utils";
+import { sleep } from "bun";
 import { ldapLibraryToUcardNumber, removeDomain } from "@/lib/utils/sign-in";
 
 function escapeLDAPFilterCharacters(str: string): string {
