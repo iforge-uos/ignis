@@ -12,6 +12,7 @@ import {
   Megaphone,
   Printer,
   Puzzle,
+  Recycle,
   Send,
   Users,
 } from "lucide-react";
@@ -40,6 +41,8 @@ export default function Team({ team, ...props }: { team: team.Name } & React.Com
       return <HardHat {...props} />;
     case "Inclusions":
       return <Users {...props} />;
+    case "Sustainability":
+      return <Recycle {...props} />;
     case "Unsorted Reps":
       return <Puzzle {...props} />;
     case "Future Reps":
