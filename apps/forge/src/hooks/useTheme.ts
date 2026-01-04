@@ -20,7 +20,7 @@ export const useOptimisticThemeMutation = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (theme: Theme | 'system') => setTheme({ data: theme }),
+    mutationFn: (theme: Theme | 'system') => setTheme(theme),
     onMutate: async (theme) => {
       await queryClient.cancelQueries({ queryKey: themeQueryKey })
 
