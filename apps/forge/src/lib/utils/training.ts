@@ -2,9 +2,10 @@
 // import { createPlateEditor } from "@ui/components/plate-ui/plate-editor";
 
 import { sign_in, training } from "@packages/db/interfaces";
-import { exhaustiveGuard } from ".";
+import { bigIntMax, exhaustiveGuard } from ".";
 import { Procedures } from "@/types/router";
 import { iForgeEpoch } from "../constants";
+import { Temporal } from "@js-temporal/polyfill";
 
 export function deserializeMd(content: string) {
   const editor = createPlateEditor();
@@ -131,7 +132,7 @@ export function isTrainingStarted(user: User, training: Training): boolean {
 /**
  * Get completion date for sorting
  */
-export function getCompletionDate(user: User, training: Training): Date {
+export function getCompletionDate(user: User, training: Training): Temporal.ZonedDateTime {
   const onlineComplete = training["@created_at"];
   const inPersonComplete = training["@in_person_created_at"];
   const repTraining = findRepTraining(user, training);
@@ -150,16 +151,18 @@ export function getCompletionDate(user: User, training: Training): Date {
 /**
  * Get the most recent activity date for a training
  */
-export function getLastActivityDate(user: User, training: Training): Date {
+export function getLastActivityDate(user: User, training: Training): Temporal.ZonedDateTime {
   const repTraining = findRepTraining(user, training);
   const dates = [
     training["@created_at"],
     training["@in_person_created_at"],
     repTraining?.["@created_at"],
     repTraining?.["@in_person_created_at"],
-  ].filter((date): date is Date => Boolean(date));
+  ].filter((date): date is Temporal.ZonedDateTime => Boolean(date));
 
-  return dates.length > 0 ? new Date(Math.max(...dates.map((d) => new Date(d).getTime()))) : new Date(0);
+  return dates.length > 0
+    ? new Temporal.ZonedDateTime(bigIntMax(...dates.map((d) => d.epochNanoseconds)), "UTC")
+    : new Temporal.ZonedDateTime(0n, "UTC");
 }
 
 /*
@@ -302,10 +305,7 @@ export function getTrainingStatus(training: TrainingWithRep, isRep: boolean, col
   };
 }
 
-export function getTrainingCompletionStatus(
-  user: User,
-  training: Training,
-) {
+export function getTrainingCompletionStatus(user: User, training: Training) {
   return {
     isCompleted: isTrainingCompleted(user, training),
     isStarted: isTrainingStarted(user, training),

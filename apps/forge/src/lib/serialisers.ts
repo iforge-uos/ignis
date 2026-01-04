@@ -1,7 +1,6 @@
 import { Temporal } from "@js-temporal/polyfill";
 import type { StandardRPCCustomJsonSerializer } from "@orpc/client/standard";
 import { createSerializationAdapter } from "@tanstack/react-router";
-import { Duration, LocalDate, LocalDateTime } from "gel";
 
 function* count(start = 0, step = 1) {
   let n = start;
@@ -13,51 +12,46 @@ function* count(start = 0, step = 1) {
 
 const TYPE_COUNTER = count(100);
 
-// Type for a constructor of a class T
-type Constructor<T = any> = new (...args: any[]) => T;
-
-export interface ToJSONable {
+interface TemporalLike {
   toJSON(): string;
 }
 
-type FromableConstructor<TInstance extends ToJSONable> = Constructor<TInstance> & {
-  from(value: string | Record<string, unknown>): TInstance;
+type TemporalConstructor<T extends TemporalLike> = {
+  from(value: string | Record<string, unknown>): T;
 };
 
-function createSerializer<
-  PInstance extends ToJSONable,
-  TInstance extends ToJSONable,
->(primaryType: Constructor<PInstance>, temporalType: FromableConstructor<TInstance>): StandardRPCCustomJsonSerializer {
+function createSerializer<T extends TemporalLike>(
+  temporalType: TemporalConstructor<T> & Function
+): StandardRPCCustomJsonSerializer {
   return {
-    type: TYPE_COUNTER.next().value as number, // Ensure type is number
-    condition: (data: any) => data instanceof primaryType || data instanceof temporalType,
-    serialize: (data: PInstance | TInstance) => data.toJSON(),
-    deserialize: (value: string | Record<string, unknown>): TInstance => temporalType.from(value),
+    type: TYPE_COUNTER.next().value as number,
+    condition: (data: any) => data instanceof temporalType,
+    serialize: (data: T) => data.toJSON(),
+    deserialize: (value: string | Record<string, unknown>): T => temporalType.from(value),
   };
 }
 
-function createTanstackSerializer<
-  PInstance extends ToJSONable,
-  TInstance extends ToJSONable,
->(primaryType: Constructor<PInstance>, temporalType: FromableConstructor<TInstance>) {
+function createTanstackSerializer<T extends TemporalLike>(
+  temporalType: TemporalConstructor<T> & Function
+) {
   return createSerializationAdapter({
-    key: typeof primaryType,
-    test: (data: any): data is (PInstance | TInstance) => data instanceof primaryType || data instanceof temporalType,
-    toSerializable: (data: PInstance | TInstance) => data.toJSON(),
-    fromSerializable: (value: string | Record<string, unknown>): TInstance => temporalType.from(value),
+    key: temporalType.name,
+    test: (data: any): data is T => data instanceof temporalType,
+    toSerializable: (data: T) => data.toJSON(),
+    fromSerializable: (value: string | Record<string, unknown>): T => temporalType.from(value),
   });
 }
 
 export default [
-  createSerializer(Duration, Temporal.Duration),
-  createSerializer(LocalDate as any, Temporal.PlainDate),
-  createSerializer(LocalDateTime as any, Temporal.Instant),
-  createSerializer(Date, Temporal.ZonedDateTime),
+  createSerializer(Temporal.Duration),
+  createSerializer(Temporal.PlainDate),
+  createSerializer(Temporal.Instant),
+  createSerializer(Temporal.ZonedDateTime),
 ] satisfies StandardRPCCustomJsonSerializer[];
 
 export const tanstackSerialisers = [
-  createTanstackSerializer(Duration, Temporal.Duration),
-  createTanstackSerializer(LocalDate as any, Temporal.PlainDate),
-  createTanstackSerializer(LocalDateTime as any, Temporal.Instant),
-  createTanstackSerializer(Date, Temporal.ZonedDateTime),
-]
+  createTanstackSerializer(Temporal.Duration),
+  createTanstackSerializer(Temporal.PlainDate),
+  createTanstackSerializer(Temporal.Instant),
+  createTanstackSerializer(Temporal.ZonedDateTime),
+];

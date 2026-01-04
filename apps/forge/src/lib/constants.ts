@@ -1,3 +1,4 @@
+import { Temporal } from "@js-temporal/polyfill";
 import type { notification, sign_in, training, users } from "@packages/db/interfaces";
 import type { Tuple } from "@packages/types";
 
@@ -52,8 +53,7 @@ export const USER_EMAIL_DOMAIN = "sheffield.ac.uk";
 
 export const SIGN_IN_REASONS_STORAGE_KEY = "sign_in_reasons";
 
-export const iForgeEpoch = new Date(Date.UTC(2017, 0, 1));
-
+export const iForgeEpoch = Temporal.ZonedDateTime.from({year: 2017, month: 1, day: 1, timeZone: "UTC"});
 export const ATOM_KEYS = {
   AUTH_REDIRECT_PATH: "Ignis:authRedirectPath",
   USER: "Ignis:user",

@@ -21,11 +21,11 @@ function* processActivityByMonth(groupedSignIns: SignIns) {
   if (!groupedSignIns.at(0)?.sign_ins) return;
 
   const currentDay = groupedSignIns[0].sign_ins[0].created_at;
-  let currentMonth = format(currentDay, "MMM y");
+  let currentMonth = format(currentDay.epochMilliseconds, "MMM y");
   let monthActivity = { month: currentMonth, duration: 0, visits: 0 };
   for (const { sign_ins } of groupedSignIns) {
     const day = sign_ins[0].created_at;
-    const month = format(day, "MMM y");
+    const month = format(day.epochMilliseconds, "MMM y");
     if (month !== currentMonth) {
       yield {...monthActivity, duration: Math.round(monthActivity.duration)};
       currentMonth = month;
@@ -67,9 +67,8 @@ export default function UserAnalytics({ user }: UserAnalyticsProps) {
   const locationUsage = user.grouped_sign_ins
     .flatMap((day) => day.sign_ins)
     .reduce((acc, { duration, location }) => {
-      const durationInSeconds = Temporal.Duration.from(duration).total("seconds");
       const currentDuration = acc.get(location.name) ?? 0;
-      return acc.set(location.name, currentDuration + durationInSeconds);
+      return acc.set(location.name, currentDuration + duration.total("seconds"));
     }, new Map<sign_in.LocationName, number>());
 
   const totalLocationTime = locationUsage.values().reduce((acc, duration) => acc + duration, 0);

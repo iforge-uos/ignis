@@ -35,7 +35,6 @@ export default function Component() {
   const params = Route.useParams();
 
   const { data: user } = useSuspenseQuery(orpc.users.profile.get.queryOptions({ input: params }));
-  console.log("Got user", user)
   const isRep = user.__typename === "users::Rep";
 
   const [displayName, setDisplayName] = useState(user.display_name);
@@ -82,12 +81,11 @@ export default function Component() {
 
   const totalHours = user.grouped_sign_ins.reduce((acc, day) => acc + day.value / 3600, 0);
 
-  let longestStreak = 1;
-  let currentStreak = 1;
+  let longestStreak = 0;
+  let currentStreak = 0;
   let previousDoy = 0;
   let previousDate: Temporal.PlainDate | undefined;
-  const _end = user.grouped_sign_ins.at(0)?.date;
-  let endStreak = _end ? Temporal.PlainDate.from(_end) : null;
+  let endStreak = user.grouped_sign_ins.at(0)?.date;
   for (const entry of user.grouped_sign_ins) {
     const date = Temporal.PlainDate.from(entry.date);
     if (date.dayOfYear === 1) {
@@ -170,18 +168,15 @@ export default function Component() {
                       <TooltipTrigger asChild>
                         <Badge variant="secondary" className="text-sm">
                           <Calendar className="!size-4 mr-1" />
-                          Member since {user.created_at.getFullYear()}
+                          Member since {user.created_at.year}
                         </Badge>
                       </TooltipTrigger>
                       <TooltipContent>
                         You joined the iForge{" "}
                         {formatDuration(
-                          Temporal.Now.zonedDateTimeISO("UTC").since(
-                            user.created_at.toTemporalInstant().toZonedDateTimeISO("UTC"),
-                            {
-                              largestUnit: "years",
-                            },
-                          ),
+                          Temporal.Now.zonedDateTimeISO("UTC").since(user.created_at, {
+                            largestUnit: "years",
+                          }),
                           { format: ["years", "months"] },
                         )}{" "}
                         ago
@@ -338,9 +333,8 @@ export default function Component() {
 }
 
 export const Route = createFileRoute("/_authenticated/users/$id")({
+  validateSearch: z.object({ tab: z.literal([...USER_TABS, ...REP_TABS]).default("overview") }),
   loader: async ({ context, params }) =>
     context.queryClient.prefetchQuery(orpc.users.profile.get.queryOptions({ input: params })),
-  validateSearch: z.object({ tab: z.literal([...USER_TABS, ...REP_TABS]).default("overview") }),
   component: Component,
-  ssr: false,
 });

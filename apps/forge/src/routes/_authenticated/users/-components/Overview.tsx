@@ -1,4 +1,3 @@
-import { Temporal } from "@js-temporal/polyfill";
 import { Badge } from "@packages/ui/components/badge";
 import { Button } from "@packages/ui/components/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@packages/ui/components/card";
@@ -11,7 +10,7 @@ import {
   TimelineLine,
 } from "@packages/ui/components/timeline";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@packages/ui/components/tooltip";
-import { formatDuration } from "date-fns";
+import { format, formatDuration } from "date-fns";
 import { Activity, Award, Calendar, Clock, CreditCard, InfoIcon, Plus, Users, Wallet } from "lucide-react";
 import { LocationIcon } from "@/icons/Locations";
 import { toTitleCase } from "@/lib/utils";
@@ -83,7 +82,7 @@ export default function UserOverview({ user }: UserAnalyticsProps) {
     .sort((a, b) => {
       const statusA = getTrainingCompletionStatus(user, a);
       const statusB = getTrainingCompletionStatus(user, b);
-      return statusB.completionDate.getTime() - statusA.completionDate.getTime();
+      return statusB.completionDate.epochMilliseconds - statusA.completionDate.epochMilliseconds;
     });
 
   // Filter started but not completed trainings
@@ -95,7 +94,7 @@ export default function UserOverview({ user }: UserAnalyticsProps) {
     .sort((a, b) => {
       const statusA = getTrainingCompletionStatus(user, a);
       const statusB = getTrainingCompletionStatus(user, b);
-      return statusB.lastActivityDate.getTime() - statusA.lastActivityDate.getTime();
+      return statusB.lastActivityDate.epochMilliseconds - statusA.lastActivityDate.epochMilliseconds;
     });
 
   // Combine completed and in-progress trainings for timeline
@@ -107,7 +106,7 @@ export default function UserOverview({ user }: UserAnalyticsProps) {
     const statusB = getTrainingCompletionStatus(user, b);
     const dateA = a._isCompleted ? statusA.completionDate : statusA.lastActivityDate;
     const dateB = b._isCompleted ? statusB.completionDate : statusB.lastActivityDate;
-    return dateB.getTime() - dateA.getTime();
+    return dateB.epochMilliseconds - dateA.epochMilliseconds;
   });
 
   const supervisableTrainings: Training[] = isRep
@@ -221,8 +220,8 @@ export default function UserOverview({ user }: UserAnalyticsProps) {
                       <div className="text-sm text-muted-foreground mb-2 flex items-center gap-1">
                         <Calendar className="h-3 w-3" />
                         {training._isCompleted
-                          ? `Completed ${getTrainingCompletionStatus(user, training).completionDate.toLocaleDateString()}`
-                          : `Last activity ${getTrainingCompletionStatus(user, training).lastActivityDate.toLocaleDateString()}`}
+                          ? `Completed ${getTrainingCompletionStatus(user, training).completionDate.toLocaleString()}`
+                          : `Last activity ${getTrainingCompletionStatus(user, training).lastActivityDate.toLocaleString()}`}
                       </div>
 
                       {/* Badges */}
@@ -297,7 +296,7 @@ export default function UserOverview({ user }: UserAnalyticsProps) {
                       <div className="flex justify-between gap-2">
                         <span className="font-medium text-md truncate">{toTitleCase(signIn.location.name)}</span>
                         <Badge variant="outline" className="text-sm flex-shrink-0 py-0">
-                          {formatDuration(Temporal.Duration.from(signIn.duration))}
+                          {formatDuration(signIn.duration.round({ smallestUnit: "minutes", largestUnit: "hours" }))}
                         </Badge>
                       </div>
 
@@ -328,14 +327,11 @@ export default function UserOverview({ user }: UserAnalyticsProps) {
                       <div className="flex items-center justify-between text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Calendar className="h-3 w-3" />
-                          {signIn.created_at.toLocaleDateString()}
+                          {format(signIn.created_at.epochMilliseconds, "dd/MM/yyyy")}
                         </div>
                         <div className="flex items-center gap-1">
                           <Clock className="h-3 w-3" />
-                          {signIn.created_at.toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
+                          {format(signIn.created_at.epochMilliseconds, "HH:mm")}
                         </div>
                       </div>
                     </div>

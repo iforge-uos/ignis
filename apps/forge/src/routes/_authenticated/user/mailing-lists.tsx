@@ -10,6 +10,7 @@ import { useCallback, useMemo, useState } from "react";
 import Title from "@/components/title";
 import { useUser } from "@/hooks/useUser";
 import { orpc } from "@/lib/orpc";
+import { format } from "date-fns";
 
 function RouteComponent() {
   const user = useUser()!;
@@ -200,7 +201,7 @@ function RouteComponent() {
                       <div className="flex items-center gap-6 text-sm text-muted-foreground">
                         <div className="flex items-center gap-2">
                           <Calendar className="w-4 h-4" />
-                          <span>Updated: {mailingList.updated_at.toLocaleDateString()}</span>
+                          <span>Updated: {format(mailingList.updated_at.epochMilliseconds, "PPP")}</span>
                         </div>
                       </div>
                     </CardContent>

@@ -28,6 +28,7 @@ import {
   type TrainingStatus,
  } from "@/lib/utils/training";
 import { Procedures } from "@/types/router";
+import { format } from "date-fns";
 
 type Training = Procedures["users"]["profile"]["get"]["training"][number];
 
@@ -145,7 +146,7 @@ export default function TrainingTable({ training, isRep }: TrainingTableProps) {
           <button
             type="button"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="flex my-auto items-center h-auto p-0 font-semibold hover:cursor-pointer link-underline"
+            className="flex my-auto items-center h-auto p-0 font-semibold hover:cursor-pointer link-underline text-inherit"
           >
             Name
             <ArrowDown
@@ -321,11 +322,8 @@ export default function TrainingTable({ training, isRep }: TrainingTableProps) {
                                           <CheckCircle className="w-3 h-3 text-tick" />
                                           <span className="text-muted-foreground">Online completed:</span>
                                           <span className="font-medium">
-                                            {row.original["@created_at"].toLocaleDateString()} at{" "}
-                                            {row.original["@created_at"].toLocaleTimeString([], {
-                                              hour: "2-digit",
-                                              minute: "2-digit",
-                                            })}
+                                            {format(row.original["@created_at"].epochMilliseconds, "dd/MM/yyyy")} at{" "}
+                                            {format(row.original["@created_at"].epochMilliseconds, "HH:mm")}
                                           </span>
                                         </div>
                                       ) : (
@@ -337,17 +335,22 @@ export default function TrainingTable({ training, isRep }: TrainingTableProps) {
 
                                       {row.original.in_person &&
                                         (row.original["@in_person_created_at"] ? (
-                                          <div className="flex items-center gap-2 text-sm">
-                                            <CheckCircle className="w-3 h-3 text-tick" />
-                                            <span className="text-muted-foreground">In-person completed:</span>
-                                            <span className="font-medium">
-                                              {row.original["@in_person_created_at"].toLocaleDateString()} at{" "}
-                                              {row.original["@in_person_created_at"].toLocaleTimeString([], {
-                                                hour: "2-digit",
-                                                minute: "2-digit",
-                                              })}
-                                            </span>
-                                          </div>
+                                          <>
+                                            <div className="flex items-center gap-2 text-sm">
+                                              <CheckCircle className="w-3 h-3 text-tick" />
+                                              <span className="text-muted-foreground">In-person completed:</span>
+                                              <span className="font-medium">
+                                                {format(row.original["@in_person_created_at"].epochMilliseconds, "dd/MM/yyyy")} at{" "}
+                                                {format(row.original["@in_person_created_at"].epochMilliseconds, "HH:mm")}
+                                              </span>
+                                            </div>
+                                            <div className="flex items-center gap-2 text-sm pl-5">
+                                              <span className="text-muted-foreground">Signed off by:</span>
+                                              <span className="font-medium">
+                                                {row.original.in_person_signed_off_by?.display_name}
+                                              </span>
+                                            </div>
+                                          </>
                                         ) : (
                                           <div className="flex items-center gap-2 text-sm">
                                             <Clock className="w-3 h-3 text-muted-foreground" />
@@ -362,11 +365,8 @@ export default function TrainingTable({ training, isRep }: TrainingTableProps) {
                                               <CheckCircle className="w-3 h-3 text-tick" />
                                               <span className="text-muted-foreground">Rep online completed:</span>
                                               <span className="font-medium">
-                                                {row.original.rep["@created_at"].toLocaleDateString()} at{" "}
-                                                {row.original.rep["@created_at"].toLocaleTimeString([], {
-                                                  hour: "2-digit",
-                                                  minute: "2-digit",
-                                                })}
+                                                {format(row.original.rep["@created_at"].epochMilliseconds, "dd/MM/yyyy")} at{" "}
+                                                {format(row.original.rep["@created_at"].epochMilliseconds, "HH:mm")}
                                               </span>
                                             </div>
                                           ) : (
@@ -377,17 +377,22 @@ export default function TrainingTable({ training, isRep }: TrainingTableProps) {
                                           )}
 
                                           {row.original.rep.in_person && row.original.rep["@in_person_created_at"] ? (
-                                            <div className="flex items-center gap-2 text-sm">
-                                              <CheckCircle className="w-3 h-3 text-tick" />
-                                              <span className="text-muted-foreground">Rep in-person completed:</span>
-                                              <span className="font-medium">
-                                                {row.original.rep["@in_person_created_at"].toLocaleDateString()} at{" "}
-                                                {row.original.rep["@in_person_created_at"].toLocaleTimeString([], {
-                                                  hour: "2-digit",
-                                                  minute: "2-digit",
-                                                })}
-                                              </span>
-                                            </div>
+                                            <>
+                                              <div className="flex items-center gap-2 text-sm">
+                                                <CheckCircle className="w-3 h-3 text-tick" />
+                                                <span className="text-muted-foreground">Rep in-person completed:</span>
+                                                <span className="font-medium">
+                                                  {format(row.original.rep["@in_person_created_at"].epochMilliseconds, "dd/MM/yyyy")} at{" "}
+                                                  {format(row.original.rep["@in_person_created_at"].epochMilliseconds, "HH:mm")}
+                                                </span>
+                                              </div>
+                                              <div className="flex items-center gap-2 text-sm pl-5">
+                                                <span className="text-muted-foreground">Signed off by:</span>
+                                                <span className="font-medium">
+                                                  {row.original.rep.in_person_signed_off_by?.display_name}
+                                                </span>
+                                              </div>
+                                            </>
                                           ) : row.original.rep.in_person ? (
                                             <div className="flex items-center gap-2 text-sm">
                                               <Clock className="w-3 h-3 text-muted-foreground" />

@@ -13,7 +13,7 @@ export const groupSignIns = (signIns: typeof _signIns) =>
       e.select({
         day: e.to_str(group.key.created_at, "YYYY-MM-DD"),
         date: e.cal.to_local_date(group.key.created_at, "Europe/London"),
-        value: e.sum(e.duration_to_seconds(group.elements.duration)),
+        value: e.duration_to_seconds(e.sum(group.elements.duration)),
         sign_ins: e.select(group.elements, () => ({
           id: true,
           location: { name: true },

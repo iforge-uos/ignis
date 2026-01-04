@@ -6,7 +6,7 @@ export const me = auth.route({ method: "GET", path: "/@me" }).handler(async ({ c
   e
     .select($user, (user) => ({
       ...UserShape(user),
-      ...e.is(e.users.Rep, RepShape(user)), // TODO temporal shim? needs tanstack-start plugin
+      ...e.is(e.users.Rep, RepShape(user)),
       infractions: InfractionShape(user),
     }))
     .run(db)

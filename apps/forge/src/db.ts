@@ -6,9 +6,9 @@ import { $expr_PathNode, ObjectType, pointerToTsType, TypeSet } from "@packages/
 import z from "zod";
 import env from "./lib/env";
 
-// https://accounts.google.com/v3/signin/accountchooser?client_id=766658830983-f4lsr0rjebuabe1mjlqe9oagfouikkfg.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Flocalhost%3A10705%2Fdb%2Fmain%2Fext%2Fauth%2Fcallback&response_type=code&scope=openid+profile+email+&state=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3NjY5NDk3NzYsImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0OjEwNzA1L2RiL21haW4vZXh0L2F1dGgiLCJpYXQiOjE3NjY5NDk0NzYsIm5iZiI6MTc2Njk0OTQ0NiwicHJvdmlkZXIiOiJidWlsdGluOjpvYXV0aF9nb29nbGUiLCJyZWRpcmVjdF90b19vbl9zaWdudXAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAvYXBpL2F1dGgvY29tcGxldGU_aXNTaWduVXA9dHJ1ZSIsImNoYWxsZW5nZSI6Im8xTDY1UXNrWHVSOTZObDlRakI0RTF5ZnhyZTFkOHdXU1JERTNENWdFSTAiLCJyZWRpcmVjdF90byI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzAwMC9hcGkvYXV0aC9jb21wbGV0ZSIsInJlZGlyZWN0X3VyaSI6Imh0dHBzOi8vbG9jYWxob3N0OjEwNzA1L2RiL21haW4vZXh0L2F1dGgvY2FsbGJhY2sifQ.dRL1yVAw0FJZQ2_17lxcadOzZPZ1CSZ2ewyDkyWwOjM&dsh=S-435723545%3A1766949477235674&o2v=2&service=lso&flowName=GeneralOAuthFlow&opparams=%253F&continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAM0YOQp5uFhN56GY-l8JHubRHzyOJxbRadoETtsPGk_bRumbuXQBqI5RVQAoPmz1lXqQW27Ef19T8kWAz865qD9q1VqvnJhPyuPKXHixyHrZN-NgdUPCYqqwywO4sbtQm-H2MBxA3fPca4mdD6HKbq_cKvfahSohmQet4ZyBLJYoIBgkol8nxkoqjuOMkoocEzDU6LCyZwAUEnWaHNu8V1XUjsovgBwF4VjdCEQCY78g-ShJDizszQXJ85NQI_7XT1_YZQd-ZluQMLZbfO5ihI4s_Lc2yeNfYRPZejMo4aqiqESsXapRJll5yL0waTrTrU_s2yVMA2kr3Gvnp0Ae-JQqcgI2jPd_nFMVNHx0CZYG-DsgNMLVePKJCBpkLX5iI-_0wLoMjBbtPKhFte6uf3IAjoT4f65y2Q2buBR_tFWX7uqNk0onfU85BYkyveZUNiQExTCkc08cPBUKXyheODaQAY4gw%26flowName%3DGeneralOAuthFlow%26as%3DS-435723545%253A1766949477235674%26client_id%3D766658830983-f4lsr0rjebuabe1mjlqe9oagfouikkfg.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fconsent%23&app_domain=https%3A%2F%2Flocalhost%3A10705
-// https://accounts.google.com/v3/signin/accountchooser?client_id=766658830983-f4lsr0rjebuabe1mjlqe9oagfouikkfg.apps.googleusercontent.com&flowName=GeneralOAuthFlow
-const client = createClient({ branch: "main", tlsSecurity: "insecure" })
+const MICROSECONDS_SINCE_2000 = 946684800000000n;
+
+const client = createClient({ branch: "main", tlsSecurity: process.env.NODE_ENV === "development" ? "insecure" : "default"})
   .withGlobals(env.db.globals)
   .withConfig({ apply_access_policies: false })
   .withCodecs({
@@ -27,6 +27,28 @@ const client = createClient({ branch: "main", tlsSecurity: "insecure" })
       },
       fromDatabase(data: bigint): Temporal.Duration {
         return Temporal.Duration.from({ microseconds: Number(data) });
+      },
+    },
+    "cal::local_date": {
+      toDatabase(data: Temporal.PlainDate): [number, number, number] {
+        return [data.year, data.month, data.day];
+      },
+      fromDatabase(data: [number, number, number]): Temporal.PlainDate {
+        const [year, month, day] = data;
+        return Temporal.PlainDate.from({ year, month, day });
+      },
+    },
+    "cal::local_datetime": {
+      toDatabase(data: Temporal.PlainDateTime) {
+        // gel stores local_datetime as microseconds since 2000-01-01
+        const instant = data.toZonedDateTime("UTC").toInstant();
+        const epochMicros = instant.epochNanoseconds / 1000n;
+        return epochMicros - MICROSECONDS_SINCE_2000;
+      },
+      fromDatabase(data: bigint): Temporal.PlainDateTime {
+        const epochNanos = (data + MICROSECONDS_SINCE_2000) * 1000n;
+        const instant = Temporal.Instant.fromEpochNanoseconds(epochNanos);
+        return instant.toZonedDateTimeISO("UTC").toPlainDateTime();
       },
     },
   });

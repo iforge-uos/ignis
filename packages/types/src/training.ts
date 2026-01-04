@@ -44,8 +44,8 @@ export interface PartialTraining {
     description: string;
   } | null;
   locations: LocationName[];
-  created_at: Date;
-  updated_at: Date;
+  created_at: Temporal.ZonedDateTime;
+  updated_at: Temporal.ZonedDateTime;
   in_person: boolean;
   icon_url?: string | null;
   enabled?: boolean | null;
