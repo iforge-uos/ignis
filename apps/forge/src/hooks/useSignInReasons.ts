@@ -1,6 +1,5 @@
 import { client, orpc } from "@/lib/orpc";
 import { SIGN_IN_REASONS_STORAGE_KEY } from "@/lib/constants.ts";
-import { LocationName, PartialReason, Reason } from "@ignis/types/sign_in";
 import { UseQueryResult, useQuery } from "@tanstack/react-query";
 
 type LocalSignInReasonsData = {
@@ -8,11 +7,11 @@ type LocalSignInReasonsData = {
   signInReasons: Reason[];
 };
 
-export const getCommonReasons = async (location: LocationName, rep?: boolean): Promise<PartialReason[]> => {
+export const getCommonReasons = async (location: LocationName, rep?: boolean) => {
   return await client.locations.commonReasons({ name: location, is_rep: rep });
 };
 
-export const useSignInReasons = (): UseQueryResult<Reason[], unknown> => {
+export const useSignInReasons = () => { // TODO use atom with query + local storage
   return useQuery({
     queryKey: ["signInReasons"],
     queryFn: async () => {
