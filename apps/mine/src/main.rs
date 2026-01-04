@@ -63,24 +63,23 @@ fn validate_jwt(access_token: Text<String>) -> Result<String, actix_web::Error> 
 #[derive(MultipartForm)]
 struct PrintUpload {
     #[multipart(limit = "20 MiB")]
-    stl: TempFile,
+    threemf: TempFile,
     #[multipart(limit = "20 MiB")]
     gcode: TempFile,
     access_token: Text<String>,
 }
 
-#[actix_web::post("/upload/print")]
+#[actix_web::post("/upload/print/{id}")]
 async fn upload_print(
-    MultipartForm(multipart): MultipartForm<FileUpload>,
+    MultipartForm(multipart): MultipartForm<PrintUpload>,
 ) -> actix_web::Result<impl Responder> {
     let user_id = validate_jwt(multipart.access_token)?;
 
-    let file = multipart.file;
-    let filename = format!(
-        "{}-{}",
-        Uuid::new_v4(),
-        file.file_name.unwrap_or("untitled".to_string())
-    );
+    let file = multipart.threemf;
+    // let filename = format!(
+    //     Uuid::new_v4(),
+    //     file.file_name.unwrap_or("untitled".to_string())
+    // );
     sentry::logger_info!(
         "User {} attempting to update file {}",
         user_id.as_str(),
