@@ -69,6 +69,24 @@ export const LocationStatusShape = e.shape(e.sign_in.Location, (location) => ({
   queue_in_use: true,
 }));
 
+export const FullLocation = e.shape(e.sign_in.Location, (location) => ({
+  ...e.sign_in.Location["*"],
+  sign_ins: {
+    ...e.sign_in.SignIn["*"],
+    reason: e.sign_in.Reason["*"],
+    user: (user) => ({
+      ...PartialUserShape(user),
+      ...e.is(e.users.Rep, {
+        teams: { name: true, description: true, id: true },
+      }),
+    }),
+  },
+  queued: {
+    ...e.sign_in.QueuePlace["*"],
+    user: PartialUserShape,
+  },
+}));
+
 export const ToolShape = e.shape(e.tools.Tool, () => ({
   id: true,
   name: true,
