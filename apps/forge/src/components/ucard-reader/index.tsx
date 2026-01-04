@@ -2,7 +2,7 @@ import { activeLocationAtom, sessionAtom } from "@/atoms/signInAppAtoms";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { Button } from "@packages/ui/components/button";
 import { useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useAtom, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -71,7 +71,7 @@ export default function UCardReader() {
           );
         };
 
-        if (matchingUser.signed_in) {
+        if (matchingUser.location) {
           const t = toast(
             PopUp("out", async () => {
               toast.promise(PostSignOut(userProps), {
@@ -80,12 +80,13 @@ export default function UCardReader() {
                 error: (e) => {
                   return (
                     <>
-                      <a
+                      <Link
                         className="font-bold hover:underline underline-offset-4 hover:cursor-pointer"
-                        href={`/users/${matchingUser.id}`}
+                        to={`/users/$id`}
+                        params={matchingUser}
                       >
                         {matchingUser.display_name}
-                      </a>
+                      </Link>
                       <br />
                       {(e as any).toString()}
                     </>
