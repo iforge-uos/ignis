@@ -2,7 +2,8 @@ import { UserAvatar } from "@/components/avatar";
 import Title from "@/components/title";
 import { useUser } from "@/hooks/useUser";
 import { LocationIcon } from "@/icons/Locations";
-import { client } from "@/lib/orpc";
+import { orpc } from "@/lib/orpc";
+import { ensureQueryData } from "@/lib/query-utils";
 import { toTitleCase } from "@/lib/utils";
 import { Badge } from "@packages/ui/components/badge";
 import { Button } from "@packages/ui/components/button";
@@ -101,6 +102,9 @@ export default function Component() {
 }
 
 export const Route = createFileRoute("/_authenticated/sign-ins/$id")({
-  loader: async ({ params }) => await client.signIns.get({ id: params.id }),
+  loader: async ({ context, params }) => await ensureQueryData(
+    context.queryClient,
+    orpc.signIns.get.queryOptions({ input: { id: params.id } }),
+  ),
   component: Component,
 });

@@ -1,8 +1,3 @@
-import type { InteractionResponse } from "@/api/training/interact.$interaction_id";
-import Title from "@/components/title";
-import { TrainingHeader } from "@/components/training/TrainingHeader";
-import { client, orpc } from "@/lib/orpc";
-import { cn } from "@/lib/utils";
 import { Temporal } from "@js-temporal/polyfill";
 import { Button } from "@packages/ui/components/button";
 import { Checkbox } from "@packages/ui/components/checkbox";
@@ -16,6 +11,12 @@ import React from "react";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
+import type { InteractionResponse } from "@/api/training/interact.$interaction_id";
+import Title from "@/components/title";
+import { TrainingHeader } from "@/components/training/TrainingHeader";
+import { orpc } from "@/lib/orpc";
+import { ensureQueryData } from "@/lib/query-utils";
+import { cn } from "@/lib/utils";
 
 const PROGRESS_BAR_SAMPLE_MS = 50;
 type Section = Extract<InteractionResponse, { __typename: "training::Page" | "training::Question" }>; // ones we can display
@@ -218,6 +219,11 @@ const Component: React.FC = () => {
 };
 
 export const Route = createFileRoute("/_authenticated/training/$id")({
-  loader: async ({ params }) => await client.training.get(params),
+  loader: async ({ context, params }) => {
+    return await ensureQueryData(
+      context.queryClient,
+      orpc.training.get.queryOptions({input: params}),
+    );
+  },
   component: Component,
 });

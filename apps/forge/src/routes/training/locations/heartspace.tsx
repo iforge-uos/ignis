@@ -1,7 +1,8 @@
 import heartspaceLocationImage from "@/../public/training/heartspace.jpg?lqip";
 import { TrainingLocation } from "@/components/training/TrainingLocation";
 import { createFileRoute } from "@tanstack/react-router";
-import { orpc, client } from "@/lib/orpc";
+import { orpc } from "@/lib/orpc";
+import { ensureQueryData } from "@/lib/query-utils";
 
 const Heartspace = () => (
   <TrainingLocation
@@ -23,5 +24,8 @@ const Heartspace = () => (
 
 export const Route = createFileRoute("/training/locations/heartspace")({
   component: Heartspace,
-  loader: async () =>  client.locations.training.all({name: "HEARTSPACE"}),
+  loader: async ({ context }) => await ensureQueryData(
+    context.queryClient,
+    orpc.locations.training.all.queryOptions({ input: { name: "HEARTSPACE" } }),
+  ),
 });

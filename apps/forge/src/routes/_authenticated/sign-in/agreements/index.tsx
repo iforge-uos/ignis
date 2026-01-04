@@ -1,5 +1,6 @@
 import Title from "@/components/title";
-import { client } from "@/lib/orpc";
+import { orpc } from "@/lib/orpc";
+import { ensureQueryData } from "@/lib/query-utils";
 import { createFileRoute } from "@tanstack/react-router";
 import {} from "@tanstack/react-router";
 import { AgreementCard } from "./-components/AgreementCard";
@@ -25,5 +26,8 @@ export default function Component() {
 
 export const Route = createFileRoute("/_authenticated/sign-in/agreements/")({
   component: Component,
-  loader: async ({context}) => client.agreements.all(),
+  loader: async ({ context }) => await ensureQueryData(
+    context.queryClient,
+    orpc.agreements.all.queryOptions(),
+  ),
 });

@@ -2,7 +2,8 @@ import Title from "@/components/title";
 import ImageGradient from "@/components/training/ImageGradient";
 import { useUser } from "@/hooks/useUser";
 import { GeorgePorterIcon, HeartspaceIcon, LocationIcon, MainspaceIcon } from "@/icons/Locations";
-import { client } from "@/lib/orpc";
+import { orpc } from "@/lib/orpc";
+import { ensureQueryData } from "@/lib/query-utils";
 import IndexCard from "@/routes/training/-components/IndexCard";
 import { Button } from "@packages/ui/components/button";
 import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from "@packages/ui/components/command";
@@ -224,5 +225,8 @@ export default function TrainingIndexPage() {
 
 export const Route = createFileRoute("/training/")({
   component: TrainingIndexPage,
-  loader: async () => client.training.all(),
+  loader: async ({ context }) => await ensureQueryData(
+    context.queryClient,
+    orpc.training.all.queryOptions(),
+  ),
 });

@@ -1,6 +1,7 @@
 import mainspaceLocationImage from "@/../public/training/mainspace.jpg?lqip";
 import { TrainingLocation } from "@/components/training/TrainingLocation";
-import { client, orpc } from "@/lib/orpc";
+import { orpc } from "@/lib/orpc";
+import { ensureQueryData } from "@/lib/query-utils";
 import { createFileRoute } from "@tanstack/react-router";
 
 const Mainspace = () => (
@@ -23,5 +24,8 @@ const Mainspace = () => (
 
 export const Route = createFileRoute("/training/locations/mainspace")({
   component: Mainspace,
-  loader: async () => client.locations.training.all({ name: "MAINSPACE" }),
+  loader: async ({ context }) => await ensureQueryData(
+    context.queryClient,
+    orpc.locations.training.all.queryOptions({ input: { name: "MAINSPACE" } }),
+  ),
 });

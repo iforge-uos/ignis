@@ -1,6 +1,7 @@
 import Title from "@/components/title";
 import { IForgeLogo } from "@/icons/IForge";
-import { client, orpc } from "@/lib/orpc";
+import { orpc } from "@/lib/orpc";
+import { ensureQueryData } from "@/lib/query-utils";
 import { Button } from "@packages/ui/components/button";
 import { Checkbox } from "@packages/ui/components/checkbox";
 import { Label } from "@packages/ui/components/label";
@@ -70,6 +71,10 @@ export default function Component() {
 }
 
 export const Route = createFileRoute("/_authenticated/sign-in/agreements/$id")({
-  loader: ({ params }) => client.agreements.get({ id: params.id }),
+  loader: async ({ context, params }) =>
+    await ensureQueryData(
+      context.queryClient,
+      orpc.agreements.get.queryOptions({ input: { id: params.id } }),
+    ),
   component: Component,
 });

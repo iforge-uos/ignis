@@ -1,15 +1,16 @@
-import Title from "@/components/title";
-import { TrainingHeader } from "@/components/training/TrainingHeader";
-import { client, orpc } from "@/lib/orpc";
-import { TrainingForTags } from "@/lib/utils";
 import { Button } from "@packages/ui/components/button";
 import { Input } from "@packages/ui/components/input";
 import { Separator } from "@packages/ui/components/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@packages/ui/components/tooltip";
-import { deepEqual, createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, deepEqual } from "@tanstack/react-router";
 // import { PlateEditor } from "@ui/components/plate-ui/plate-editor";
 import { EyeIcon, EyeOffIcon, HourglassIcon, InfoIcon, PlusIcon, TrashIcon } from "lucide-react";
 import React from "react";
+import Title from "@/components/title";
+import { TrainingHeader } from "@/components/training/TrainingHeader";
+import { orpc } from "@/lib/orpc";
+import { ensureQueryData } from "@/lib/query-utils";
+import { TrainingForTags } from "@/lib/utils";
 
 function Component() {
   const { id } = Route.useParams();
@@ -219,6 +220,9 @@ function Component() {
 
 export const Route = createFileRoute("/_authenticated/_reponly/training/$id/edit")({
   component: Component,
-  loader: async ({ params, context }) => client.training.getForEditing({ input: params }),
+  loader: async ({ params, context }) => await ensureQueryData(
+    context.queryClient,
+    orpc.training.getForEditing.queryOptions({ input: { id: params.id } }),
+  ),
   // onLeave: () => saveSession  // Should also be doing this every time a change is made? maybe put in cache IDK
 });
