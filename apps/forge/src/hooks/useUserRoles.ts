@@ -1,5 +1,5 @@
-import { userRolesAtom } from "@/atoms/authSessionAtoms";
 import { useAtom } from "jotai";
+import { userRolesAtom } from "@/atoms/authSessionAtoms";
 
 /**
  * Retrieves the roles of the current user in lowercase.
@@ -10,5 +10,5 @@ import { useAtom } from "jotai";
  */
 export function useUserRoles(): string[] {
   const [userRoles] = useAtom(userRolesAtom);
-  return ["admin", "rep"];
+  return userRoles;
 }

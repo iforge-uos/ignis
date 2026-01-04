@@ -36,14 +36,14 @@ export type $FailureReason = {
   "FILAMENT_RAN_OUT": $.$expr_Literal<$FailureReason>;
   "NOT_A_CLUE": $.$expr_Literal<$FailureReason>;
 } & $.EnumType<"printing::print_status::FailureReason", ["NO_EXTRUSION_AT_PRINT_START", "POOR_BED_ADHESION", "UNDER_EXTRUSION", "OVER_EXTRUSION", "GAPS_IN_TOP_LAYERS", "STRINGING_AND_OOZING", "OVERHEATING", "LAYER_SHIFTING", "LAYER_SEPARATION_AND_SPLITTING", "FILAMENT_GRINDING", "EXTRUDER_CLOG", "EXTRUSION_STOPS_MID_PRINT", "WEAK_INFILL", "BLOBS_AND_ZITS", "GAPS_BETWEEN_INFILL_AND_PERIMETER", "CORNER_CURLING_AND_ROUGHNESS", "TOP_SURFACE_SCARRING", "CORNER_GAPS_IN_BOTTOM_LAYER", "LAYER_LINES_ON_SIDES", "VIBRATION_AND_RINGING", "THIN_WALL_GAPS", "SMALL_FEATURE_LOSS", "INCONSISTENT_EXTRUSION", "WARPING", "POOR_OVERHANG_QUALITY", "DIMENSIONAL_INACCURACY", "POOR_BRIDGING", "FILAMENT_FEEDING", "FILAMENT_RAN_OUT", "NOT_A_CLUE"]>;
-const FailureReason: $FailureReason = $.makeType<$FailureReason>(_.spec, "042f5acc-b9ee-11f0-a26a-4b35ecb459b4", _.syntax.literal);
+const FailureReason: $FailureReason = $.makeType<$FailureReason>(_.spec, "211741b4-e43c-11f0-bc5c-6b6072f711c6", _.syntax.literal);
 
 export type $CancelledλShape = $.typeutil.flatten<_printing.$PrintStatusλShape & {
 }>;
 type $Cancelled = $.ObjectType<"printing::print_status::Cancelled", $CancelledλShape, null, [
   ..._printing.$PrintStatus['__exclusives__'],
 ], "printing::print_status::Cancelled">;
-const $Cancelled = $.makeType<$Cancelled>(_.spec, "1813b1e2-b9ee-11f0-aab0-e3dbb66d8e94", _.syntax.literal);
+const $Cancelled = $.makeType<$Cancelled>(_.spec, "2dc460ea-e43c-11f0-9c16-bbee9c6cc632", _.syntax.literal);
 
 const Cancelled: $.$expr_PathNode<$.TypeSet<$Cancelled, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Cancelled, $.Cardinality.Many), null);
 
@@ -52,7 +52,7 @@ export type $CompleteλShape = $.typeutil.flatten<_printing.$PrintStatusλShape 
 type $Complete = $.ObjectType<"printing::print_status::Complete", $CompleteλShape, null, [
   ..._printing.$PrintStatus['__exclusives__'],
 ], "printing::print_status::Complete">;
-const $Complete = $.makeType<$Complete>(_.spec, "1814992f-b9ee-11f0-ad41-abf589097d01", _.syntax.literal);
+const $Complete = $.makeType<$Complete>(_.spec, "2dc53a56-e43c-11f0-b0ed-0335df0c73c9", _.syntax.literal);
 
 const Complete: $.$expr_PathNode<$.TypeSet<$Complete, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Complete, $.Cardinality.Many), null);
 
@@ -63,7 +63,7 @@ export type $FailedλShape = $.typeutil.flatten<_printing.$PrintStatusλShape & 
 type $Failed = $.ObjectType<"printing::print_status::Failed", $FailedλShape, null, [
   ..._printing.$PrintStatus['__exclusives__'],
 ], "printing::print_status::Failed">;
-const $Failed = $.makeType<$Failed>(_.spec, "18157b0b-b9ee-11f0-9bc5-15acd90c5066", _.syntax.literal);
+const $Failed = $.makeType<$Failed>(_.spec, "2dc61494-e43c-11f0-87d1-ad527614aaa0", _.syntax.literal);
 
 const Failed: $.$expr_PathNode<$.TypeSet<$Failed, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Failed, $.Cardinality.Many), null);
 
@@ -73,7 +73,7 @@ export type $PrintingλShape = $.typeutil.flatten<_printing.$PrintStatusλShape 
 type $Printing = $.ObjectType<"printing::print_status::Printing", $PrintingλShape, null, [
   ..._printing.$PrintStatus['__exclusives__'],
 ], "printing::print_status::Printing">;
-const $Printing = $.makeType<$Printing>(_.spec, "1816da64-b9ee-11f0-a95c-e9c38741326f", _.syntax.literal);
+const $Printing = $.makeType<$Printing>(_.spec, "2dc718c6-e43c-11f0-b946-971879b8e124", _.syntax.literal);
 
 const Printing: $.$expr_PathNode<$.TypeSet<$Printing, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Printing, $.Cardinality.Many), null);
 
@@ -82,7 +82,7 @@ export type $QueuedλShape = $.typeutil.flatten<_printing.$PrintStatusλShape & 
 type $Queued = $.ObjectType<"printing::print_status::Queued", $QueuedλShape, null, [
   ..._printing.$PrintStatus['__exclusives__'],
 ], "printing::print_status::Queued">;
-const $Queued = $.makeType<$Queued>(_.spec, "1818abb3-b9ee-11f0-801f-5ba8c9d16334", _.syntax.literal);
+const $Queued = $.makeType<$Queued>(_.spec, "2dc81c3a-e43c-11f0-bb34-01b5c01fe1e9", _.syntax.literal);
 
 const Queued: $.$expr_PathNode<$.TypeSet<$Queued, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Queued, $.Cardinality.Many), null);
 

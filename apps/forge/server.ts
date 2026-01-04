@@ -2,8 +2,8 @@ import "./src/instrument";
 import "./src/polyfill";
 import path from "node:path";
 import * as Sentry from "@sentry/tanstackstart-react";
-import { createStartHandler, defaultStreamHandler } from "@tanstack/react-start/server";
 import { CronJob } from "cron";
+import ws from "./ws";
 
 const CronJobWithCheckIn = Sentry.cron.instrumentCron(CronJob, "my-cron-job");
 
@@ -422,7 +422,7 @@ async function initializeServer() {
   // Create Bun server
   const server = Bun.serve({
     port: 3000,
-
+    ...ws,
     routes: {
       // Serve static assets (preloaded or on-demand)
       ...routes,
@@ -437,7 +437,6 @@ async function initializeServer() {
         }
       },
     },
-
     // Global error handler
     error(error) {
       log.error(`Uncaught server error: ${error instanceof Error ? error.message : String(error)}`);

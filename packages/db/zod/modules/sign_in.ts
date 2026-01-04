@@ -19,8 +19,12 @@ export const CreateAgreementSchema = z.
   object({ // default::Auditable
     updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
+  .extend({ // default::ListenableWithChanges
+  })
   .extend({ // default::CreatedAt
     created_at: zt.zonedDateTime().optional(), // std::datetime
+  })
+  .extend({ // default::_BaseListenable
   })
   .extend({ // sign_in::Agreement
     content: z.string(), // std::str
@@ -33,7 +37,11 @@ export const UpdateAgreementSchema = z.
   object({ // default::Auditable
     updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
+  .extend({ // default::ListenableWithChanges
+  })
   .extend({ // default::CreatedAt
+  })
+  .extend({ // default::_BaseListenable
   })
   .extend({ // sign_in::Agreement
     content: z.string(), // std::str
@@ -48,8 +56,12 @@ export const CreateLocationSchema = z.
   object({ // default::Auditable
     updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
+  .extend({ // default::ListenableWithChanges
+  })
   .extend({ // default::CreatedAt
     created_at: zt.zonedDateTime().optional(), // std::datetime
+  })
+  .extend({ // default::_BaseListenable
   })
   .extend({ // sign_in::Location
     closing_time: z.never(), // std::cal::local_time
@@ -66,7 +78,11 @@ export const UpdateLocationSchema = z.
   object({ // default::Auditable
     updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
+  .extend({ // default::ListenableWithChanges
+  })
   .extend({ // default::CreatedAt
+  })
+  .extend({ // default::_BaseListenable
   })
   .extend({ // sign_in::Location
     closing_time: z.never(), // std::cal::local_time
@@ -107,8 +123,8 @@ export const CreateReasonSchema = z.
   })
   .extend({ // sign_in::Reason
     name: z.string(), // std::str
-    category: z.enum(["UNIVERSITY_MODULE", "CO_CURRICULAR_GROUP", "PERSONAL_PROJECT", "SOCIETY", "REP_SIGN_IN", "EVENT"]), // sign_in::ReasonCategory
     active: z.boolean().optional(), // std::bool
+    category: z.enum(["UNIVERSITY_MODULE", "CO_CURRICULAR_GROUP", "PERSONAL_PROJECT", "SOCIETY", "REP_SIGN_IN", "EVENT"]), // sign_in::ReasonCategory
   });
 
 export const UpdateReasonSchema = z.
@@ -119,8 +135,8 @@ export const UpdateReasonSchema = z.
   })
   .extend({ // sign_in::Reason
     name: z.string(), // std::str
-    category: z.enum(["UNIVERSITY_MODULE", "CO_CURRICULAR_GROUP", "PERSONAL_PROJECT", "SOCIETY", "REP_SIGN_IN", "EVENT"]), // sign_in::ReasonCategory
     active: z.boolean().optional(), // std::bool
+    category: z.enum(["UNIVERSITY_MODULE", "CO_CURRICULAR_GROUP", "PERSONAL_PROJECT", "SOCIETY", "REP_SIGN_IN", "EVENT"]), // sign_in::ReasonCategory
   });
 // #endregion
 
@@ -129,8 +145,12 @@ export const CreateSignInSchema = z.
   object({ // default::Timed
     ends_at: zt.zonedDateTime().nullable(), // std::datetime
   })
+  .extend({ // default::Listenable
+  })
   .extend({ // default::CreatedAt
     created_at: zt.zonedDateTime().optional(), // std::datetime
+  })
+  .extend({ // default::_BaseListenable
   })
   .extend({ // sign_in::SignIn
     tools: z.string().array(), // array<std::str>
@@ -140,7 +160,11 @@ export const UpdateSignInSchema = z.
   object({ // default::Timed
     ends_at: zt.zonedDateTime().nullable(), // std::datetime
   })
+  .extend({ // default::Listenable
+  })
   .extend({ // default::CreatedAt
+  })
+  .extend({ // default::_BaseListenable
   })
   .extend({ // sign_in::SignIn
     tools: z.string().array(), // array<std::str>

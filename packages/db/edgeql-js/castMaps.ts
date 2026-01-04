@@ -16,6 +16,7 @@ import type * as _stdfts from "./modules/std/fts";
 import type * as _stdenc from "./modules/std/enc";
 import type * as _stdcal from "./modules/std/cal";
 import type * as _sign_in from "./modules/sign_in";
+import type * as _shop from "./modules/shop";
 import type * as _schema from "./modules/schema";
 import type * as _printingprinter_status from "./modules/printing/printer_status";
 import type * as _printingprint_status from "./modules/printing/print_status";
@@ -51,7 +52,6 @@ export type scalarAssignableBy<T extends $.ScalarType> =
   T extends _stdnethttp.$Method ? _stdnethttp.$Method : 
   T extends _stdnet.$RequestState ? _stdnet.$RequestState : 
   T extends _stdnet.$RequestFailureKind ? _stdnet.$RequestFailureKind : 
-  T extends _std.$json ? _std.$json : 
   T extends _std.$int64 ? _std.$int64 : 
   T extends _std.$int32 ? _std.$int32 : 
   T extends _std.$int16 ? _std.$int16 : 
@@ -80,6 +80,8 @@ export type scalarAssignableBy<T extends $.ScalarType> =
   T extends _sign_in.$ReasonCategory ? _sign_in.$ReasonCategory : 
   T extends _sign_in.$LocationStatus ? _sign_in.$LocationStatus : 
   T extends _sign_in.$LocationName ? _sign_in.$LocationName : 
+  T extends _shop.$DimensionType ? _shop.$DimensionType : 
+  T extends _std.$json ? _std.$json : 
   T extends _schema.$Volatility ? _schema.$Volatility : 
   T extends _schema.$TypeModifier ? _schema.$TypeModifier : 
   T extends _schema.$TriggerTiming ? _schema.$TriggerTiming : 
@@ -151,7 +153,6 @@ export type scalarCastableFrom<T extends $.ScalarType> =
   T extends _stdnethttp.$Method ? _stdnethttp.$Method : 
   T extends _stdnet.$RequestState ? _stdnet.$RequestState : 
   T extends _stdnet.$RequestFailureKind ? _stdnet.$RequestFailureKind : 
-  T extends _std.$json ? _std.$json : 
   T extends _std.$int64 ? _std.$int64 : 
   T extends _std.$int32 ? _std.$int32 : 
   T extends _std.$int16 ? _std.$int16 : 
@@ -180,6 +181,8 @@ export type scalarCastableFrom<T extends $.ScalarType> =
   T extends _sign_in.$ReasonCategory ? _sign_in.$ReasonCategory : 
   T extends _sign_in.$LocationStatus ? _sign_in.$LocationStatus : 
   T extends _sign_in.$LocationName ? _sign_in.$LocationName : 
+  T extends _shop.$DimensionType ? _shop.$DimensionType : 
+  T extends _std.$json ? _std.$json : 
   T extends _schema.$Volatility ? _schema.$Volatility : 
   T extends _schema.$TypeModifier ? _schema.$TypeModifier : 
   T extends _schema.$TriggerTiming ? _schema.$TriggerTiming : 
@@ -371,12 +374,6 @@ type getSharedParentScalar<A, B> =
     :
     never
   :
-  A extends _std.$json ?
-    B extends _std.$json ?
-    B
-    :
-    never
-  :
   A extends _std.$int64 ?
     B extends _std.$int64 ?
     B
@@ -559,6 +556,18 @@ type getSharedParentScalar<A, B> =
   :
   A extends _sign_in.$LocationName ?
     B extends _sign_in.$LocationName ?
+    B
+    :
+    never
+  :
+  A extends _shop.$DimensionType ?
+    B extends _shop.$DimensionType ?
+    B
+    :
+    never
+  :
+  A extends _std.$json ?
+    B extends _std.$json ?
     B
     :
     never
@@ -982,12 +991,6 @@ function getSharedParentScalar<A extends $.ScalarType, B extends $.ScalarType>(a
     }
     throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
     }
-  if (a.__name__ === "std::json") {
-    if(b.__name__ === "std::json") {
-      return b;
-    }
-    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
-    }
   if (a.__name__ === "std::int64") {
     if(b.__name__ === "std::int64") {
       return b;
@@ -1170,6 +1173,18 @@ function getSharedParentScalar<A extends $.ScalarType, B extends $.ScalarType>(a
     }
   if (a.__name__ === "sign_in::LocationName") {
     if(b.__name__ === "sign_in::LocationName") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
+  if (a.__name__ === "shop::DimensionType") {
+    if(b.__name__ === "shop::DimensionType") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
+  if (a.__name__ === "std::json") {
+    if(b.__name__ === "std::json") {
       return b;
     }
     throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
@@ -1477,7 +1492,7 @@ export type scalarLiterals =
   | gel.Range<any> | gel.MultiRange<any>;
 
 type getTsType<T extends $.BaseType> = T extends $.ScalarType
-  ? T extends _std.$uuid | _extpgvector.$halfvec | _extpgvector.$sparsevec | _std.$decimal | _stdfts.$document | _std.$json | _stdpg.$date | _stdpg.$interval | _stdpg.$json | _stdpg.$timestamp | _stdpg.$timestamptz
+  ? T extends _std.$uuid | _extpgvector.$halfvec | _extpgvector.$sparsevec | _std.$json | _std.$decimal | _stdfts.$document | _stdpg.$date | _stdpg.$interval | _stdpg.$json | _stdpg.$timestamp | _stdpg.$timestamptz
     ? never
     : T["__tstype__"]
   : T extends $.RangeType

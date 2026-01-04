@@ -5,84 +5,100 @@ import * as _ from "../../imports";
 import type * as _shop from "../shop";
 import type * as _std from "../std";
 export type $CuboidλShape = $.typeutil.flatten<_shop.$DimensionλShape & {
-  "height": $.PropertyDesc<_std.$int64, $.Cardinality.One, false, false, false, false>;
-  "length": $.PropertyDesc<_std.$int64, $.Cardinality.One, false, false, false, false>;
   "unit": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
-  "width": $.PropertyDesc<_std.$int64, $.Cardinality.One, false, false, false, false>;
+  "height": $.PropertyDesc<_std.$float64, $.Cardinality.One, false, false, false, false>;
+  "length": $.PropertyDesc<_std.$float64, $.Cardinality.One, false, false, false, false>;
+  "width": $.PropertyDesc<_std.$float64, $.Cardinality.One, false, false, false, false>;
   "formatted": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
 }>;
 type $Cuboid = $.ObjectType<"shop::dimensions::Cuboid", $CuboidλShape, null, [
   ..._shop.$Dimension['__exclusives__'],
 ], "shop::dimensions::Cuboid">;
-const $Cuboid = $.makeType<$Cuboid>(_.spec, "1840b169-b9ee-11f0-830c-11a627161442", _.syntax.literal);
+const $Cuboid = $.makeType<$Cuboid>(_.spec, "2dd1e45e-e43c-11f0-97c3-337d403723c1", _.syntax.literal);
 
 const Cuboid: $.$expr_PathNode<$.TypeSet<$Cuboid, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Cuboid, $.Cardinality.Many), null);
 
 export type $CylindricalλShape = $.typeutil.flatten<_shop.$DimensionλShape & {
-  "diameter": $.PropertyDesc<_std.$int64, $.Cardinality.One, false, false, false, false>;
-  "length": $.PropertyDesc<_std.$int64, $.Cardinality.One, false, false, false, false>;
   "unit": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
+  "diameter": $.PropertyDesc<_std.$float64, $.Cardinality.One, false, false, false, false>;
+  "length": $.PropertyDesc<_std.$float64, $.Cardinality.One, false, false, false, false>;
   "formatted": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
 }>;
 type $Cylindrical = $.ObjectType<"shop::dimensions::Cylindrical", $CylindricalλShape, null, [
   ..._shop.$Dimension['__exclusives__'],
 ], "shop::dimensions::Cylindrical">;
-const $Cylindrical = $.makeType<$Cylindrical>(_.spec, "1844008b-b9ee-11f0-9491-c7417069fe5e", _.syntax.literal);
+const $Cylindrical = $.makeType<$Cylindrical>(_.spec, "2dd4638c-e43c-11f0-97e4-71e31349e81e", _.syntax.literal);
 
 const Cylindrical: $.$expr_PathNode<$.TypeSet<$Cylindrical, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Cylindrical, $.Cardinality.Many), null);
 
 export type $ISO216λShape = $.typeutil.flatten<_shop.$DimensionλShape & {
   "size": $.PropertyDesc<_std.$int16, $.Cardinality.One, false, false, false, false>;
   "unit": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
+  "thickness": $.PropertyDesc<_std.$float64, $.Cardinality.AtMostOne, false, false, false, false>;
   "formatted": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
 }>;
 type $ISO216 = $.ObjectType<"shop::dimensions::ISO216", $ISO216λShape, null, [
   ..._shop.$Dimension['__exclusives__'],
 ], "shop::dimensions::ISO216">;
-const $ISO216 = $.makeType<$ISO216>(_.spec, "1845fdf5-b9ee-11f0-9a66-65d9a36f24f2", _.syntax.literal);
+const $ISO216 = $.makeType<$ISO216>(_.spec, "2dd6765e-e43c-11f0-b123-6549c11b596a", _.syntax.literal);
 
 const ISO216: $.$expr_PathNode<$.TypeSet<$ISO216, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($ISO216, $.Cardinality.Many), null);
 
 export type $LiquidVolumeλShape = $.typeutil.flatten<_shop.$DimensionλShape & {
   "unit": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
-  "volume": $.PropertyDesc<_std.$int64, $.Cardinality.One, false, false, false, false>;
+  "volume": $.PropertyDesc<_std.$float64, $.Cardinality.One, false, false, false, false>;
   "formatted": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
 }>;
 type $LiquidVolume = $.ObjectType<"shop::dimensions::LiquidVolume", $LiquidVolumeλShape, null, [
   ..._shop.$Dimension['__exclusives__'],
 ], "shop::dimensions::LiquidVolume">;
-const $LiquidVolume = $.makeType<$LiquidVolume>(_.spec, "1847b20a-b9ee-11f0-9271-d38800305e84", _.syntax.literal);
+const $LiquidVolume = $.makeType<$LiquidVolume>(_.spec, "2de85e3c-e43c-11f0-b19b-5543ba89bf22", _.syntax.literal);
 
 const LiquidVolume: $.$expr_PathNode<$.TypeSet<$LiquidVolume, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($LiquidVolume, $.Cardinality.Many), null);
 
 export type $MassλShape = $.typeutil.flatten<_shop.$DimensionλShape & {
-  "mass": $.PropertyDesc<_std.$int64, $.Cardinality.One, false, false, false, false>;
   "unit": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
+  "mass": $.PropertyDesc<_std.$float64, $.Cardinality.One, false, false, false, false>;
   "formatted": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
 }>;
 type $Mass = $.ObjectType<"shop::dimensions::Mass", $MassλShape, null, [
   ..._shop.$Dimension['__exclusives__'],
 ], "shop::dimensions::Mass">;
-const $Mass = $.makeType<$Mass>(_.spec, "18495360-b9ee-11f0-bb77-cd58cedd3797", _.syntax.literal);
+const $Mass = $.makeType<$Mass>(_.spec, "2dea5e12-e43c-11f0-b637-efa7ba56b024", _.syntax.literal);
 
 const Mass: $.$expr_PathNode<$.TypeSet<$Mass, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Mass, $.Cardinality.Many), null);
 
+export type $ThreadλShape = $.typeutil.flatten<_shop.$DimensionλShape & {
+  "unit": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
+  "diameter": $.PropertyDesc<_std.$float64, $.Cardinality.One, false, false, false, false>;
+  "length": $.PropertyDesc<_std.$float64, $.Cardinality.One, false, false, false, false>;
+  "formatted": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
+}>;
+type $Thread = $.ObjectType<"shop::dimensions::Thread", $ThreadλShape, null, [
+  ..._shop.$Dimension['__exclusives__'],
+], "shop::dimensions::Thread">;
+const $Thread = $.makeType<$Thread>(_.spec, "b2504d56-e43c-11f0-ba63-33de567b0abd", _.syntax.literal);
+
+const Thread: $.$expr_PathNode<$.TypeSet<$Thread, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Thread, $.Cardinality.Many), null);
 
 
-export { $Cuboid, Cuboid, $Cylindrical, Cylindrical, $ISO216, ISO216, $LiquidVolume, LiquidVolume, $Mass, Mass };
+
+export { $Cuboid, Cuboid, $Cylindrical, Cylindrical, $ISO216, ISO216, $LiquidVolume, LiquidVolume, $Mass, Mass, $Thread, Thread };
 
 type __defaultExports = {
   "Cuboid": typeof Cuboid;
   "Cylindrical": typeof Cylindrical;
   "ISO216": typeof ISO216;
   "LiquidVolume": typeof LiquidVolume;
-  "Mass": typeof Mass
+  "Mass": typeof Mass;
+  "Thread": typeof Thread
 };
 const __defaultExports: __defaultExports = {
   "Cuboid": Cuboid,
   "Cylindrical": Cylindrical,
   "ISO216": ISO216,
   "LiquidVolume": LiquidVolume,
-  "Mass": Mass
+  "Mass": Mass,
+  "Thread": Thread
 };
 export default __defaultExports;

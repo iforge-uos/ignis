@@ -53,7 +53,10 @@ module users {
             default := 10_00;
         }
 
-        required identity: ext::auth::Identity;
+        identity: ext::auth::Identity {
+        # required identity: ext::auth::Identity {
+            constraint exclusive;
+        }
         multi roles: Role;
         multi integrations := .<user[is Integration];
 

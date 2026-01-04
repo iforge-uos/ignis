@@ -1,12 +1,3 @@
-import serialisers from "@/lib/serialisers";
-import { pub } from "@/orpc";
-import { OpenAPIGenerator } from "@orpc/openapi";
-import { OpenAPIHandler } from "@orpc/openapi/fetch";
-import { onError } from "@orpc/server";
-import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
-import { createMiddleware, json } from "@tanstack/react-start";
-import { createServerFileRoute } from "@tanstack/react-start/server";
-
 import { adminRouter } from "@/api/admin";
 import { agreementsRouter } from "@/api/agreements";
 import { authRouter } from "@/api/auth";
@@ -17,9 +8,18 @@ import { notificationsRouter } from "@/api/notifications";
 import { shopRouter } from "@/api/shop";
 import { signInsRouter } from "@/api/sign-ins";
 import { teamsRouter } from "@/api/teams";
+import { toolsRouter } from "@/api/tools";
 import { trainingRouter } from "@/api/training";
 import { usersRouter } from "@/api/users";
-
+import serialisers from "@/lib/serialisers";
+import { withSession } from "@/lib/utils/auth";
+import { pub } from "@/orpc";
+import { OpenAPIGenerator } from "@orpc/openapi";
+import { OpenAPIHandler } from "@orpc/openapi/fetch";
+import { onError } from "@orpc/server";
+import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
+import { createFileRoute } from "@tanstack/react-router";
+import { Executor } from "gel";
 
 export const router = pub.router({
   admin: adminRouter,
@@ -32,13 +32,16 @@ export const router = pub.router({
   shop: shopRouter,
   signIns: signInsRouter,
   teams: teamsRouter,
+  tools: toolsRouter,
   training: trainingRouter,
   users: usersRouter,
 });
 
 export type Router = typeof router;
 export type InitialContext = {
-  request: Request;
+  session: {
+    client: Executor;
+  };
 };
 
 const openAPIGenerator = new OpenAPIGenerator({
@@ -55,6 +58,7 @@ const specFromRouter = await openAPIGenerator.generate(router, {
 
 const handler = new OpenAPIHandler(router, {
   plugins: [
+    // new CompressionPlugin(),
     // new SmartCoercionPlugin({
     //   schemaConverters: [new ZodToJsonSchemaConverter()],
     // }),
@@ -64,77 +68,61 @@ const handler = new OpenAPIHandler(router, {
   interceptors: [onError(console.error)],
 });
 
-interface HandlerProps {
-  request: Request;
-  context: {
-    isAwesome: boolean;
-  };
-}
+export const Route = createFileRoute("/api/$")({
+  server: {
+    middleware: [withSession],
+    handlers: {
+      ANY: async ({ request, context }) => {
+        const { pathname } = new URL(request.url);
 
-async function handle({ request, context }: HandlerProps) {
-  const { pathname } = new URL(request.url);
-  if (pathname === "/api/spec.json") {
-    return json(specFromRouter);
-  }
-  if (pathname === "/api/spec.html") {
-    return new Response(
-      `
-    <!doctype html>
-    <html>
-      <head>
-        <title>My Client</title>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" type="image/svg+xml" href="https://orpc.unnoq.com/icon.svg" />
-      </head>
-      <body>
-        <div id="app"></div>
+        switch (pathname) {
+          case "/api/spec.json": {
+            return Response.json(specFromRouter);
+          }
+          case "/api/spec.html": {
+            return new Response(
+              `
+              <!doctype html>
+              <html>
 
-        <script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
-        <script>
-          Scalar.createApiReference('#app', {
-            url: '/api/spec.json',
-            servers: [{
-               url: "http://localhost:3000/api",
-                description: "Server for testing override"
-            }],
-            authentication: {
-              securitySchemes: {
-                bearerAuth: {
-                  token: 'default-token',
-                },
+              <head>
+                  <title>iForge API</title>
+                  <meta charset="utf-8" />
+                  <meta name="viewport" content="width=device-width, initial-scale=1" />
+                  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+              </head>
+
+              <body>
+                  <div id="app"></div>
+
+                  <script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
+                  <script>
+                      Scalar.createApiReference('#app', {
+                          url: '/api/spec.json',
+                          servers: [{
+                              url: "http://localhost:3000/api",
+                              description: "Server for testing override"
+                          }],
+                      })
+                  </script>
+              </body>
+
+              </html>`,
+              {
+                status: 200,
+                headers: { "Content-Type": "text/html" },
               },
-            },
-          })
-        </script>
-      </body>
-    </html>
-  `,
-      { status: 200, headers: { "Content-Type": "text/html" } },
-    );
-  }
-  const { response } = await handler.handle(request, {
-    prefix: "/api",
-    context: { request },
-  });
-
-  return response ?? new Response("Not Found", { status: 404 });
-}
-
-const awesomeMiddleware = createMiddleware({ type: "request" }).server(({ next }) => {
-  return next({
-    context: {
-      isAwesome: Math.random() > 0.5,
+            );
+          }
+          default: {
+            const { response } = await handler.handle(request, {
+              prefix: "/api",
+              context,
+            });
+            return response ?? new Response("Not Found", { status: 404 });
+          }
+        }
+      },
     },
-  });
-});
-
-export const ServerRoute = createServerFileRoute("/api/$").middleware([awesomeMiddleware]).methods({
-  HEAD: handle,
-  GET: handle,
-  POST: handle,
-  PUT: handle,
-  PATCH: handle,
-  DELETE: handle,
-  OPTIONS: handle,
+  },
 });

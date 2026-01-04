@@ -10,7 +10,7 @@ import {
 } from "@packages/ui/components/dropdown-menu";
 import { Shortcut } from "@packages/ui/components/kbd";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@packages/ui/components/sidebar";
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { UserAvatar } from "@/components/avatar";
 import { useShortcutKey } from "@/hooks/useShortcutKey";
 import { useUser } from "@/hooks/useUser";
@@ -27,6 +27,9 @@ import { User } from "@/icons/User";
 export function NavUser() {
   const user = useUser();
   const { isMobile, state, toggleSidebar, openMobile } = useSidebar();
+  const pathname = useLocation({
+    select: (location) => location.pathname,
+  });
 
   const metaKey = useShortcutKey();
 
@@ -47,14 +50,14 @@ export function NavUser() {
           size={isMinimized ? "icon" : "default"}
           className="w-full justify-center items-center"
         >
-          <Link to="/sign-in/dashboard" className="w-full" onClick={handleClick}>
+          <Link to="/auth/login" search={{ redirect: pathname }} className="w-full" onClick={handleClick}>
             <AnimateIcon asChild animateOnHover>
               {isMinimized ? (
                 <LogIn className="h-4 w-4" />
               ) : (
                 <div className="flex items-center justify-center gap-1">
                   <LogIn className="h-4 w-4" />
-                  Sign in
+                  Log in
                 </div>
               )}
             </AnimateIcon>
@@ -134,7 +137,7 @@ export function NavUser() {
                     </Link>
                   </AnimateIcon>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild disabled>
+                <DropdownMenuItem asChild>
                   <AnimateIcon animateOnHover asChild>
                     <Link to="/user/settings" onClick={handleClick}>
                       <Settings className="mr-2 h-4 w-4" />

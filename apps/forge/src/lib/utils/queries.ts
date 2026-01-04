@@ -3,7 +3,6 @@ import e from "@packages/db/edgeql-js";
 import { sign_in } from "@packages/db/interfaces";
 import { logger } from "@sentry/tanstackstart-react";
 import { Executor } from "gel";
-import { onUserInsert } from "@/db";
 import ldap from "@/ldap";
 import { ldapLibraryToUcardNumber } from "./sign-in";
 
@@ -33,6 +32,7 @@ export const UserShape = e.shape(e.users.User, () => ({
   roles: { id: true, name: true },
   mailing_list_subscriptions: true,
   notifications: true,
+  // TODO figure out how to get RepShape inside of here
 }));
 
 export const RepShape = e.shape(e.users.Rep, () => ({
@@ -157,7 +157,7 @@ export type SignInUser = Omit<NonNullable<Awaited<ReturnType<typeof getSignInUse
   /**
    * Whether the user was just registered
    */
-  registered: boolean;
+  registered_now: boolean;
   /**
    * Whether the user has visited the space before
    */
@@ -277,10 +277,6 @@ export const ensureUser = async ({
       }),
     )
     .run(tx);
-
-  if (!u) {
-    await onUserInsert(new_user);
-  }
 
   return new_user;
 };

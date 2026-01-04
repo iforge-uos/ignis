@@ -1,8 +1,7 @@
 import { Temporal } from "@js-temporal/polyfill";
 import type { StandardRPCCustomJsonSerializer } from "@orpc/client/standard";
-import { Duration, LocalDateTime } from "gel";
-
-// import { createSerializationAdapter } from "@tanstack/react-router";
+import { createSerializationAdapter } from "@tanstack/react-router";
+import { Duration, LocalDate, LocalDateTime } from "gel";
 
 function* count(start = 0, step = 1) {
   let n = start;
@@ -17,7 +16,7 @@ const TYPE_COUNTER = count(100);
 // Type for a constructor of a class T
 type Constructor<T = any> = new (...args: any[]) => T;
 
-interface ToJSONable {
+export interface ToJSONable {
   toJSON(): string;
 }
 
@@ -26,8 +25,8 @@ type FromableConstructor<TInstance extends ToJSONable> = Constructor<TInstance> 
 };
 
 function createSerializer<
-  PInstance extends ToJSONable, // Instance type for primaryType
-  TInstance extends ToJSONable, // Instance type for temporalEquivalentType
+  PInstance extends ToJSONable,
+  TInstance extends ToJSONable,
 >(primaryType: Constructor<PInstance>, temporalType: FromableConstructor<TInstance>): StandardRPCCustomJsonSerializer {
   return {
     type: TYPE_COUNTER.next().value as number, // Ensure type is number
@@ -38,8 +37,8 @@ function createSerializer<
 }
 
 function createTanstackSerializer<
-  PInstance extends ToJSONable, // Instance type for primaryType
-  TInstance extends ToJSONable, // Instance type for temporalEquivalentType
+  PInstance extends ToJSONable,
+  TInstance extends ToJSONable,
 >(primaryType: Constructor<PInstance>, temporalType: FromableConstructor<TInstance>) {
   return createSerializationAdapter({
     key: typeof primaryType,
@@ -50,13 +49,15 @@ function createTanstackSerializer<
 }
 
 export default [
-  // createSerializer(Duration, Temporal.Duration),
-  // createSerializer(LocalDateTime as any, Temporal.Instant),
-  // createSerializer(Date, Temporal.ZonedDateTime),
+  createSerializer(Duration, Temporal.Duration),
+  createSerializer(LocalDate as any, Temporal.PlainDate),
+  createSerializer(LocalDateTime as any, Temporal.Instant),
+  createSerializer(Date, Temporal.ZonedDateTime),
 ] satisfies StandardRPCCustomJsonSerializer[];
 
 export const tanstackSerialisers = [
-  //   createTanstackSerializer(Duration, Temporal.Duration),
-  // createTanstackSerializer(LocalDateTime as any, Temporal.Instant),
-  // createTanstackSerializer(Date, Temporal.ZonedDateTime),
+  createTanstackSerializer(Duration, Temporal.Duration),
+  createTanstackSerializer(LocalDate as any, Temporal.PlainDate),
+  createTanstackSerializer(LocalDateTime as any, Temporal.Instant),
+  createTanstackSerializer(Date, Temporal.ZonedDateTime),
 ]

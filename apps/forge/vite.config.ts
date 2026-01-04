@@ -1,7 +1,4 @@
-import { wrapVinxiConfigWithSentry } from "@sentry/tanstackstart-react";
 import { sentryVitePlugin } from "@sentry/vite-plugin";
-import spotlightSidecar from "@spotlightjs/sidecar/vite-plugin";
-import spotlight from "@spotlightjs/spotlight/vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import react from "@vitejs/plugin-react";
@@ -11,7 +8,7 @@ import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
 import lqip from "vite-plugin-lqip";
 import svgr from "vite-plugin-svgr";
 import tsconfigPaths from "vite-tsconfig-paths";
-import env from "@/lib/env";
+import ws from "./ws";
 
 const logger = createLogger();
 const loggerWarn = logger.warn;
@@ -28,7 +25,6 @@ const config = defineConfig({
     target: "esnext",
   },
   plugins: [
-    // basicSsl(),
     tsconfigPaths(),
     tanstackStart(),
     react({
@@ -39,6 +35,15 @@ const config = defineConfig({
       },
     }),
     tailwindcss(),
+    {
+      name: "orpc-websocket-dev",
+      configureServer() {
+        Bun.serve({
+          port: 3001,
+          ...ws,
+        });
+      },
+    },
     lqip(),
     svgr({
       svgrOptions: {

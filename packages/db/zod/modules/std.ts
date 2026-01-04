@@ -26,6 +26,10 @@ export const durationSchema = zt.duration();
 export const float32Schema = z.number().min(-3.40282347e+38).max(3.40282347e+38);
 // #endregion
 
+// #region std::float64
+export const float64Schema = z.number();
+// #endregion
+
 // #region std::int16
 export const int16Schema = z.int().min(-32768).max(32767);
 // #endregion

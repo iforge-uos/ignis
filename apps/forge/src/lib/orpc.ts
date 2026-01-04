@@ -1,39 +1,62 @@
+import dbClient from "@/db";
+import { DEFAULT_AUTH_COOKIE } from "@/lib/constants";
+import serialisers from "@/lib/serialisers";
 import { type Router, router } from "@/routes/api/$";
-import { createORPCClient } from "@orpc/client";
-import { RPCLink } from "@orpc/client/fetch";
-import { SimpleCsrfProtectionLinkPlugin } from "@orpc/client/plugins";
-import { type RouterClient, createRouterClient } from "@orpc/server";
-import { createTanstackQueryUtils } from "@orpc/tanstack-query";
-import { type RouterUtils } from "@orpc/tanstack-query";
+import { createORPCClient, onError } from "@orpc/client";
+import { RPCLink } from "@orpc/client/websocket";
+import { createRouterClient, type RouterClient } from "@orpc/server";
+import { createTanstackQueryUtils, type RouterUtils } from "@orpc/tanstack-query";
 import { createIsomorphicFn } from "@tanstack/react-start";
-import { getRequest } from "@tanstack/react-start/server";
+import { getCookie } from "@tanstack/react-start/server";
+import { WebSocket } from "partysocket";
+
 
 export type ORPCReactUtils = RouterUtils<RouterClient<Router>>;
+
+let websocketInstance: WebSocket | null = null;
+let clientInstance: RouterClient<typeof router> | null = null;
+
+function createWebSocketClient(): RouterClient<typeof router> {
+  const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+  // Cookies are automatically sent in the WebSocket handshake
+  websocketInstance = new WebSocket(`${protocol}//${window.location.host.split(":")[0]}:3001`);
+  const link = new RPCLink({
+    websocket: websocketInstance as any,
+    customJsonSerializers: serialisers,
+    plugins: [],
+    interceptors: [onError(console.error)],
+  });
+  return createORPCClient(link);
+}
 
 const getORPCClient = createIsomorphicFn()
   .server(() =>
     createRouterClient(router, {
-      /**
-       * Provide initial context if needed.
-       *
-       * Because this client instance is shared across all requests,
-       * only include context that's safe to reuse globally.
-       * For per-request context, use middleware context or pass a function as the initial context.
-       */
+      // Per-request initial context
       context: async () => ({
-        request: getRequest(),
+        session: {
+          client: dbClient.withGlobals({ "ext::auth::client_token": getCookie(DEFAULT_AUTH_COOKIE) }),
+        },
       }),
     }),
   )
   .client((): RouterClient<typeof router> => {
-    const link = new RPCLink({
-      url: `${window.location.origin}/api/rpc`,
-      plugins: [new SimpleCsrfProtectionLinkPlugin()],
-    });
-
-    return createORPCClient(link);
+    if (!clientInstance) {
+      clientInstance = createWebSocketClient();
+    }
+    return clientInstance;
   });
 
 export const client = getORPCClient();
 
 export const orpc = createTanstackQueryUtils(client);
+
+export function reconnectWebSocket() {
+  if (typeof window === "undefined") return;
+
+  if (websocketInstance) {
+    websocketInstance.close();
+  }
+
+  clientInstance = createWebSocketClient();
+}

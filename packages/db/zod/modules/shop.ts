@@ -2,6 +2,10 @@ import * as z from "zod/v4";
 import * as zt from "zod-temporal";
 
 
+// #region shop::DimensionType
+export const DimensionTypeSchema = z.never();
+// #endregion
+
 // #region shop::Dimension
 export const CreateDimensionSchema = z.
   object({
@@ -17,18 +21,18 @@ export const CreatedimensionsSchema = z.
   object({ // shop::Dimension
   })
   .extend({ // shop::dimensions::Cuboid
-    height: z.bigint().min(-9223372036854775808n).max(9223372036854775807n), // std::int64
-    length: z.bigint().min(-9223372036854775808n).max(9223372036854775807n), // std::int64
-    width: z.bigint().min(-9223372036854775808n).max(9223372036854775807n), // std::int64
+    height: z.number(), // std::float64
+    length: z.number(), // std::float64
+    width: z.number(), // std::float64
   });
 
 export const UpdatedimensionsSchema = z.
   object({ // shop::Dimension
   })
   .extend({ // shop::dimensions::Cuboid
-    height: z.bigint().min(-9223372036854775808n).max(9223372036854775807n), // std::int64
-    length: z.bigint().min(-9223372036854775808n).max(9223372036854775807n), // std::int64
-    width: z.bigint().min(-9223372036854775808n).max(9223372036854775807n), // std::int64
+    height: z.number(), // std::float64
+    length: z.number(), // std::float64
+    width: z.number(), // std::float64
   });
 // #endregion
 
@@ -37,16 +41,16 @@ export const CreatedimensionsSchema = z.
   object({ // shop::Dimension
   })
   .extend({ // shop::dimensions::Cylindrical
-    diameter: z.bigint().min(-9223372036854775808n).max(9223372036854775807n), // std::int64
-    length: z.bigint().min(-9223372036854775808n).max(9223372036854775807n), // std::int64
+    diameter: z.number(), // std::float64
+    length: z.number(), // std::float64
   });
 
 export const UpdatedimensionsSchema = z.
   object({ // shop::Dimension
   })
   .extend({ // shop::dimensions::Cylindrical
-    diameter: z.bigint().min(-9223372036854775808n).max(9223372036854775807n), // std::int64
-    length: z.bigint().min(-9223372036854775808n).max(9223372036854775807n), // std::int64
+    diameter: z.number(), // std::float64
+    length: z.number(), // std::float64
   });
 // #endregion
 
@@ -56,6 +60,7 @@ export const CreatedimensionsSchema = z.
   })
   .extend({ // shop::dimensions::ISO216
     size: z.int().min(-32768).max(32767), // std::int16
+    thickness: z.number().nullable(), // std::float64
   });
 
 export const UpdatedimensionsSchema = z.
@@ -63,6 +68,7 @@ export const UpdatedimensionsSchema = z.
   })
   .extend({ // shop::dimensions::ISO216
     size: z.int().min(-32768).max(32767), // std::int16
+    thickness: z.number().nullable(), // std::float64
   });
 // #endregion
 
@@ -71,14 +77,14 @@ export const CreatedimensionsSchema = z.
   object({ // shop::Dimension
   })
   .extend({ // shop::dimensions::LiquidVolume
-    volume: z.bigint().min(-9223372036854775808n).max(9223372036854775807n), // std::int64
+    volume: z.number(), // std::float64
   });
 
 export const UpdatedimensionsSchema = z.
   object({ // shop::Dimension
   })
   .extend({ // shop::dimensions::LiquidVolume
-    volume: z.bigint().min(-9223372036854775808n).max(9223372036854775807n), // std::int64
+    volume: z.number(), // std::float64
   });
 // #endregion
 
@@ -87,14 +93,32 @@ export const CreatedimensionsSchema = z.
   object({ // shop::Dimension
   })
   .extend({ // shop::dimensions::Mass
-    mass: z.bigint().min(-9223372036854775808n).max(9223372036854775807n), // std::int64
+    mass: z.number(), // std::float64
   });
 
 export const UpdatedimensionsSchema = z.
   object({ // shop::Dimension
   })
   .extend({ // shop::dimensions::Mass
-    mass: z.bigint().min(-9223372036854775808n).max(9223372036854775807n), // std::int64
+    mass: z.number(), // std::float64
+  });
+// #endregion
+
+// #region shop::dimensions::Thread
+export const CreatedimensionsSchema = z.
+  object({ // shop::Dimension
+  })
+  .extend({ // shop::dimensions::Thread
+    diameter: z.number(), // std::float64
+    length: z.number(), // std::float64
+  });
+
+export const UpdatedimensionsSchema = z.
+  object({ // shop::Dimension
+  })
+  .extend({ // shop::dimensions::Thread
+    diameter: z.number(), // std::float64
+    length: z.number(), // std::float64
   });
 // #endregion
 
@@ -142,7 +166,10 @@ export const UpdateModuleSchema = z.
 
 // #region shop::Purchase
 export const CreatePurchaseSchema = z.
-  object({ // default::CreatedAt
+  object({ // default::Auditable
+    updated_at: zt.zonedDateTime().optional(), // std::datetime
+  })
+  .extend({ // default::CreatedAt
     created_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({ // shop::Purchase
@@ -151,7 +178,10 @@ export const CreatePurchaseSchema = z.
   });
 
 export const UpdatePurchaseSchema = z.
-  object({ // default::CreatedAt
+  object({ // default::Auditable
+    updated_at: zt.zonedDateTime().optional(), // std::datetime
+  })
+  .extend({ // default::CreatedAt
   })
   .extend({ // shop::Purchase
     collected_at: zt.zonedDateTime().optional().nullable(), // std::datetime
@@ -169,10 +199,10 @@ export const CreateSkewSchema = z.
   })
   .extend({ // shop::Skew
     colour: z.string().nullable(), // std::str
-    count: z.int().min(-32768).max(32767).nullable(), // std::int16
     icon_url: z.string().nullable(), // std::str
     price: z.bigint().min(-9223372036854775808n).max(9223372036854775807n), // std::int64
     till_id: z.int().min(-32768).max(32767), // std::int16
+    count: z.int().min(-32768).max(32767).nullable(), // std::int16
   });
 
 export const UpdateSkewSchema = z.
@@ -183,9 +213,9 @@ export const UpdateSkewSchema = z.
   })
   .extend({ // shop::Skew
     colour: z.string().nullable(), // std::str
-    count: z.int().min(-32768).max(32767).nullable(), // std::int16
     icon_url: z.string().nullable(), // std::str
     price: z.bigint().min(-9223372036854775808n).max(9223372036854775807n), // std::int64
     till_id: z.int().min(-32768).max(32767), // std::int16
+    count: z.int().min(-32768).max(32767).nullable(), // std::int16
   });
 // #endregion

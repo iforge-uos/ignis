@@ -1,38 +1,29 @@
-import { previousPathnameAtom } from "@/atoms/authSessionAtoms";
-import { Hammer } from "@/components/loading";
-import { useVerifyAuthentication } from "@/hooks/useVerifyAuthentication";
-import { Navigate, createFileRoute } from "@tanstack/react-router";
-import { useAtom } from "jotai";
-import { useEffect, useState } from "react";
+import { originalUserRolesAtom, previousPathnameAtom, userAtom } from "@/atoms/authSessionAtoms";
+import { createFileRoute, Navigate, redirect } from "@tanstack/react-router";
+import { useAtomValue, useSetAtom } from "jotai";
+import { reconnectWebSocket } from "@/lib/orpc";
 
 export const CompleteComponent = () => {
-  const { user, loading } = useVerifyAuthentication();
-  const [redirect] = useAtom(previousPathnameAtom);
-  const [verificationComplete, setVerificationComplete] = useState(false);
-
-  useEffect(() => {
-    if (!loading) {
-      // Add a small delay to ensure all state updates have been processed
-      const timer = setTimeout(() => {
-        setVerificationComplete(true);
-      }, 100);
-
-      return () => clearTimeout(timer);
-    }
-  }, [loading, user]);
-
-  if (loading || !verificationComplete) {
-    return <Hammer />;
+  const {user} = Route.useRouteContext();
+  const previousPathname = useAtomValue(previousPathnameAtom);
+  const setUser = useSetAtom(userAtom);
+  const setOriginalRoles = useSetAtom(originalUserRolesAtom);
+  setUser(user);
+  setOriginalRoles(user.roles.map((role) => role.name.toLowerCase()));
+  reconnectWebSocket();
+  if (Route.useSearch().registered_now) {
+    // TODO tutorial param for the home page?
   }
-
-  if (!user) {
-    return <Navigate to="/auth/login" replace={true} />;
-  }
-
-  // Redirect to the stored path, or default to a specific path if null
-  return <Navigate to={redirect || "/"} replace={true} />;
+  return <Navigate to={previousPathname ?? "/"} replace={true} />;
 };
 
 export const Route = createFileRoute("/auth/login/complete")({
   component: CompleteComponent,
+  validateSearch: <T extends {registered_now: boolean}>(search: T): T => search,
+  beforeLoad: async ({context: {user}}) => {
+    if (!user) {
+     throw redirect({ to: "/auth/login", replace: true });
+    }
+    return { user };
+  },
 });

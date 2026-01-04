@@ -1,4 +1,3 @@
-import { User } from "@packages/types/users";
 import { SidebarInset, SidebarProvider } from "@packages/ui/components/sidebar";
 import { Toaster } from "@packages/ui/components/sonner";
 import { wrapCreateRootRouteWithSentry } from "@sentry/tanstackstart-react";
@@ -6,7 +5,6 @@ import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import { userAtom } from "@/atoms/authSessionAtoms";
 import { AppSidebar } from "@/components/app-navigation";
 import { SidebarHeader } from "@/components/app-navigation/sidebar-header";
 import { ClientHintCheck } from "@/components/client-hint-check";
@@ -16,12 +14,14 @@ import { Footer } from "@/components/footer";
 import UCardReader from "@/components/ucard-reader";
 import { themeQueryKey, useTheme } from "@/hooks/useTheme";
 import appCss from "@/index.css?url";
-import { client } from "@/lib/orpc";
+import { orpc } from "@/lib/orpc";
+import { ensureQueryData } from "@/lib/query-utils";
 import { getRequestInfo } from "@/lib/request-info";
+import { Procedures } from "../types/router";
 
 export interface RouterAppContext {
   queryClient: QueryClient;
-  user: User | null;
+  user: Procedures["users"]["me"] | null;
 }
 
 const RootDocument = () => {
@@ -150,13 +150,15 @@ export const Route = wrapCreateRootRouteWithSentry(createRootRouteWithContext<Ro
       },
     ],
   }),
-  // beforeLoad: async () => ({ user: await client.users.me() }),
+  beforeLoad: async ({ context }) => {
+    const user = await ensureQueryData(context.queryClient, orpc.users.me.queryOptions(), { catchErrors: true } );
+    return { user };
+  },
   loader: async ({ context }) => {
     const requestInfo = await getRequestInfo();
 
     context.queryClient.setQueryData(themeQueryKey, requestInfo.userPreferences.theme);
-
-    return { requestInfo}
+    return { requestInfo };
   },
   component: RootDocument,
 });

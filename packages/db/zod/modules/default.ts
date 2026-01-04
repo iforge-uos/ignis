@@ -2,6 +2,16 @@ import * as z from "zod/v4";
 import * as zt from "zod-temporal";
 
 
+// #region default::_BaseListenable
+export const Create_BaseListenableSchema = z.
+  object({
+  });
+
+export const Update_BaseListenableSchema = z.
+  object({
+  });
+// #endregion
+
 // #region default::Auditable
 export const CreateAuditableSchema = z.
   object({ // default::CreatedAt
@@ -27,6 +37,34 @@ export const CreateCreatedAtSchema = z.
 
 export const UpdateCreatedAtSchema = z.
   object({
+  });
+// #endregion
+
+// #region default::Listenable
+export const CreateListenableSchema = z.
+  object({ // default::_BaseListenable
+  })
+  .extend({ // default::Listenable
+  });
+
+export const UpdateListenableSchema = z.
+  object({ // default::_BaseListenable
+  })
+  .extend({ // default::Listenable
+  });
+// #endregion
+
+// #region default::ListenableWithChanges
+export const CreateListenableWithChangesSchema = z.
+  object({ // default::_BaseListenable
+  })
+  .extend({ // default::ListenableWithChanges
+  });
+
+export const UpdateListenableWithChangesSchema = z.
+  object({ // default::_BaseListenable
+  })
+  .extend({ // default::ListenableWithChanges
   });
 // #endregion
 
@@ -64,8 +102,12 @@ export const CreateuserSchema = z.
   .extend({ // default::Auditable
     updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
+  .extend({ // default::Listenable
+  })
   .extend({ // default::CreatedAt
     created_at: zt.zonedDateTime().optional(), // std::datetime
+  })
+  .extend({ // default::_BaseListenable
   })
   .extend({ // default::user
   });
@@ -86,7 +128,11 @@ export const UpdateuserSchema = z.
   .extend({ // default::Auditable
     updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
+  .extend({ // default::Listenable
+  })
   .extend({ // default::CreatedAt
+  })
+  .extend({ // default::_BaseListenable
   })
   .extend({ // default::user
   });

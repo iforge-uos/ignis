@@ -1,30 +1,25 @@
 import { ErrorMap, os } from "@orpc/server";
-import e, { $infer } from "@packages/db/edgeql-js";
+import e from "@packages/db/edgeql-js";
 import { team } from "@packages/db/interfaces";
 import { Client, Executor } from "gel";
 import z from "zod";
-import client from "@/db";
-import env from "@/lib/env";
+import dbClient from "@/db";
 import { RepShape, UserShape } from "@/lib/utils/queries";
 import { InitialContext } from "@/routes/api/$";
+import sentryMiddleware from "@/lib/sentry/server"
 
 export type Context = Awaited<ReturnType<typeof createContext>>;
 
-export const createContext = async ({ request }: InitialContext) => {
-  const db = client;
-  // const db = req.session?.client ?? client;
+export const createContext = async ({ session: { client } }: InitialContext) => {
+  const db = client ?? dbClient;
   return {
     user: await e
-      .select(e.users.User, (u) => ({
+      .select(e.global.user, (u) => ({
         ...UserShape(u),
         ...e.is(e.users.Rep, RepShape(u)),
-        filter_single: { username: "eik21jh" },
       }))
       .run(db),
-    // session: req.session,
-    db: db.withGlobals({ ...env.db.globals }) as Executor,
-    // req,
-    // res,
+    db: db as Executor,
   };
 };
 
@@ -43,10 +38,10 @@ export const pub = os
     NOT_FOUND: {},
     FORBIDDEN: {},
   })
-  // .use(sentryMiddleware({ captureInputs: true }))
-  .use(async ({ next, context: { request, ...props } }) => {
+  .use(sentryMiddleware({ captureInputs: true }))
+  .use(async ({ next, context }) => {
     return next({
-      context: { request, ...(await createContext({ request })) },
+      context: await createContext(context),
     });
   });
 
@@ -57,9 +52,9 @@ export const auth = pub
     },
   })
   .use(async ({ next, context: { user, ...props }, errors }) => {
-    // if (!user) {
-    //   throw errors.UNAUTHORIZED();
-    // }
+    if (!user) {
+      throw errors.UNAUTHORIZED();
+    }
     return next({
       context: { user, $user: e.assert_exists(e.global.user), ...props } as AuthContext,
     });

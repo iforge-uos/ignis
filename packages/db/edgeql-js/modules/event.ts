@@ -5,6 +5,8 @@ import * as _ from "../imports";
 import type * as _default from "./default";
 import type * as _std from "./std";
 import type * as _users from "./users";
+import type * as _sign_in from "./sign_in";
+import type * as _training from "./training";
 export type $Type = {
   "WORKSHOP": $.$expr_Literal<$Type>;
   "LECTURE": $.$expr_Literal<$Type>;
@@ -13,7 +15,7 @@ export type $Type = {
   "EXHIBITION": $.$expr_Literal<$Type>;
   "WEBINAR": $.$expr_Literal<$Type>;
 } & $.EnumType<"event::Type", ["WORKSHOP", "LECTURE", "MEETUP", "HACKATHON", "EXHIBITION", "WEBINAR"]>;
-const Type: $Type = $.makeType<$Type>(_.spec, "def5ec4f-b9ed-11f0-acd5-8d4bd98352f7", _.syntax.literal);
+const Type: $Type = $.makeType<$Type>(_.spec, "2a1b71a4-f86c-11ee-a7c6-8fd6344eb0e6", _.syntax.literal);
 
 export type $EventλShape = $.typeutil.flatten<_default.$CreatedAtλShape & {
   "ends_at": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne, false, false, false, false>;
@@ -28,11 +30,13 @@ export type $EventλShape = $.typeutil.flatten<_default.$CreatedAtλShape & {
     "@created_at": $.PropertyDesc<_std.$datetime, $.Cardinality.One>;
   }, false, false, false, false>;
   "organiser": $.LinkDesc<_users.$User, $.Cardinality.AtLeastOne, {}, false, false,  false, false>;
+  "location": $.LinkDesc<_sign_in.$Location, $.Cardinality.One, {}, false, false,  false, false>;
+  "required_training": $.LinkDesc<_training.$Training, $.Cardinality.AtLeastOne, {}, false, false,  false, false>;
 }>;
 type $Event = $.ObjectType<"event::Event", $EventλShape, null, [
   ..._default.$CreatedAt['__exclusives__'],
 ], "event::Event">;
-const $Event = $.makeType<$Event>(_.spec, "def5fba3-b9ed-11f0-975d-7bbf2852d122", _.syntax.literal);
+const $Event = $.makeType<$Event>(_.spec, "2a1b87a3-f86c-11ee-a18c-118b431adf11", _.syntax.literal);
 
 const Event: $.$expr_PathNode<$.TypeSet<$Event, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Event, $.Cardinality.Many), null);
 

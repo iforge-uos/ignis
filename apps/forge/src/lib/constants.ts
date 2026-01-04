@@ -56,8 +56,12 @@ export const iForgeEpoch = new Date(Date.UTC(2017, 0, 1));
 
 export const ATOM_KEYS = {
   AUTH_REDIRECT_PATH: "Ignis:authRedirectPath",
+  USER: "Ignis:user",
   ADMIN_OVERWRITTEN_ROLES: "Ignis:adminOverwrittenRoles",
   ADMIN_OVERWRITE_ROLES: "Ignis:adminOverwriteRoles",
 };
 
 export const AVAILABLE_ROLES = ["admin", "rep"];
+
+export const DEFAULT_PKCE_COOKIE = "edgedb-pkce-verifier";
+export const DEFAULT_AUTH_COOKIE = "edgedb-session";

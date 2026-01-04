@@ -13,10 +13,14 @@ import type * as _stdcal from "./std/cal";
 import type * as _stdpg from "./std/pg";
 import type * as _extpgvector from "./ext/pgvector";
 import type * as _schema from "./schema";
+import { Temporal } from "@js-temporal/polyfill";
 type $anyscalar = $anypoint | $anyreal | $.EnumType | $bool | $bytes | $uuid | $str | $json | _cfg.$memory | _stdcal.$local_time | _stdcal.$relative_duration | _stdcal.$date_duration | _stdpg.$json | _extpgvector.$vector | _extpgvector.$halfvec | _extpgvector.$sparsevec;
 
 export type $uuid = $.ScalarType<"std::uuid", string>;
 const uuid: $.scalarTypeWithConstructor<$uuid, never> = $.makeType<$.scalarTypeWithConstructor<$uuid, never>>(_.spec, "00000000-0000-0000-0000-000000000100", _.syntax.literal);
+
+export type $json = $.ScalarType<"std::json", unknown>;
+const json: $.scalarTypeWithConstructor<$json, never> = $.makeType<$.scalarTypeWithConstructor<$json, never>>(_.spec, "00000000-0000-0000-0000-00000000010f", _.syntax.literal);
 
 export type $Endian = {
   "Little": $.$expr_Literal<$Endian>;
@@ -56,7 +60,7 @@ const bool: $.scalarTypeWithConstructor<$bool, never> = $.makeType<$.scalarTypeW
 export type $bytes = $.ScalarType<"std::bytes", Uint8Array>;
 const bytes: $.scalarTypeWithConstructor<$bytes, never> = $.makeType<$.scalarTypeWithConstructor<$bytes, never>>(_.spec, "00000000-0000-0000-0000-000000000102", _.syntax.literal);
 
-export type $datetime = $.ScalarType<"std::datetime", Date>;
+export type $datetime = $.ScalarType<"std::datetime", Temporal.ZonedDateTime>;
 const datetime: $.scalarTypeWithConstructor<$datetime, string> = $.makeType<$.scalarTypeWithConstructor<$datetime, string>>(_.spec, "00000000-0000-0000-0000-00000000010a", _.syntax.literal);
 
 export type $decimal = $.ScalarType<"std::decimal", string>;
@@ -64,7 +68,7 @@ const decimal: $.scalarTypeWithConstructor<$decimal, never> = $.makeType<$.scala
 export type $decimalλICastableTo = $decimal | $bigint;
 export type $decimalλIAssignableBy = $decimal | $bigint;
 
-export type $duration = $.ScalarType<"std::duration", _.gel.Duration>;
+export type $duration = $.ScalarType<"std::duration", Temporal.Duration>;
 const duration: $.scalarTypeWithConstructor<$duration, string> = $.makeType<$.scalarTypeWithConstructor<$duration, string>>(_.spec, "00000000-0000-0000-0000-00000000010e", _.syntax.literal);
 
 export type $float32 = $.ScalarType<"std::number", number>;
@@ -82,9 +86,6 @@ const int32: $.scalarTypeWithConstructor<$number, string> = $.makeType<$.scalarT
 export type $int64 = $.ScalarType<"std::number", number>;
 const int64: $.scalarTypeWithConstructor<$number, string> = $.makeType<$.scalarTypeWithConstructor<$number, string>>(_.spec, "00000000-0000-0000-0000-000000000105", _.syntax.literal);
 
-export type $json = $.ScalarType<"std::json", unknown>;
-const json: $.scalarTypeWithConstructor<$json, never> = $.makeType<$.scalarTypeWithConstructor<$json, never>>(_.spec, "00000000-0000-0000-0000-00000000010f", _.syntax.literal);
-
 interface $sequence extends $int64 {}
 const $sequence: $sequence = $.makeType<$sequence>(_.spec, "fd1c52ea-74a9-541b-88e2-378d1edb02fd", _.syntax.literal);
 
@@ -100,7 +101,7 @@ export type $BaseObjectλShape = $.typeutil.flatten<{
 }>;
 type $BaseObject = $.ObjectType<"std::BaseObject", $BaseObjectλShape, null, [
   {id: {__element__: $uuid, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
-], "ai_rep::Question" | "cfg::Auth" | "cfg::DatabaseConfig" | "cfg::BranchConfig" | "cfg::Config" | "cfg::InstanceConfig" | "cfg::JWT" | "cfg::Password" | "cfg::SCRAM" | "cfg::SMTPProviderConfig" | "cfg::Trust" | "cfg::mTLS" | "users::User" | "default::user" | "event::Event" | "ext::ai::AnthropicProviderConfig" | "ext::ai::ChatPrompt" | "ext::ai::ChatPromptMessage" | "ext::ai::Config" | "ext::ai::CustomProviderConfig" | "ext::ai::MistralProviderConfig" | "ext::ai::OllamaProviderConfig" | "ext::ai::OpenAIProviderConfig" | "ext::auth::AppleOAuthProvider" | "ext::auth::AuthConfig" | "ext::auth::AuthenticationAttempt" | "ext::auth::AzureOAuthProvider" | "ext::auth::Identity" | "ext::auth::ClientTokenIdentity" | "ext::auth::DiscordOAuthProvider" | "ext::auth::EmailFactor" | "ext::auth::EmailPasswordFactor" | "ext::auth::EmailPasswordProviderConfig" | "ext::auth::GitHubOAuthProvider" | "ext::auth::GoogleOAuthProvider" | "ext::auth::LocalIdentity" | "ext::auth::MagicLinkFactor" | "ext::auth::MagicLinkProviderConfig" | "ext::auth::OneTimeCode" | "ext::auth::OpenIDConnectProvider" | "ext::auth::PKCEChallenge" | "ext::auth::SlackOAuthProvider" | "ext::auth::UIConfig" | "ext::auth::WebAuthnAuthenticationChallenge" | "ext::auth::WebAuthnFactor" | "ext::auth::WebAuthnProviderConfig" | "ext::auth::WebAuthnRegistrationChallenge" | "ext::auth::WebhookConfig" | "ext::pg_trgm::Config" | "ext::pgvector::Config" | "notification::AllReps" | "notification::AllUsers" | "notification::Notification" | "notification::AuthoredNotification" | "notification::MailingList" | "notification::SystemNotification" | "printing::Print" | "printing::PrintAuditEntry" | "printing::PrintHistory" | "printing::Printer" | "printing::PrinterAuditEntry" | "printing::print_status::Cancelled" | "printing::print_status::Complete" | "printing::print_status::Failed" | "printing::print_status::Printing" | "printing::print_status::Queued" | "printing::printer_status::Disabled" | "printing::printer_status::Disconnected" | "printing::printer_status::Failed" | "printing::printer_status::Idle" | "printing::printer_status::Printing" | "schema::AccessPolicy" | "schema::Alias" | "schema::Annotation" | "schema::Array" | "schema::ArrayExprAlias" | "schema::Cast" | "schema::Constraint" | "schema::Delta" | "schema::Extension" | "schema::Function" | "schema::FutureBehavior" | "schema::Global" | "schema::Index" | "schema::Link" | "schema::Migration" | "schema::Module" | "schema::MultiRange" | "schema::MultiRangeExprAlias" | "schema::ObjectType" | "schema::Operator" | "schema::Parameter" | "schema::Permission" | "schema::Property" | "schema::PseudoType" | "schema::Range" | "schema::RangeExprAlias" | "schema::Rewrite" | "schema::ScalarType" | "schema::Trigger" | "schema::Tuple" | "schema::TupleElement" | "schema::TupleExprAlias" | "shop::Item" | "shop::LineItem" | "shop::Module" | "shop::Purchase" | "shop::Skew" | "shop::dimensions::Cuboid" | "shop::dimensions::Cylindrical" | "shop::dimensions::ISO216" | "shop::dimensions::LiquidVolume" | "shop::dimensions::Mass" | "sign_in::Agreement" | "sign_in::Location" | "sign_in::QueuePlace" | "sign_in::Reason" | "sign_in::SignIn" | "sign_in::UserRegistration" | "std::net::http::Response" | "std::net::http::ScheduledRequest" | "sys::Branch" | "sys::Database" | "sys::ExtensionPackage" | "sys::ExtensionPackageMigration" | "sys::QueryStats" | "sys::Role" | "team::Team" | "tools::Booking" | "tools::Tool" | "training::Answer" | "training::TrainingPage" | "training::Page" | "training::Question" | "training::Session" | "training::Training" | "users::Infraction" | "users::Integration" | "users::Rep" | "users::Role" | "users::SettingTemplate" | "users::UserSettingValue">;
+], "ai_rep::Question" | "cfg::Auth" | "cfg::DatabaseConfig" | "cfg::BranchConfig" | "cfg::Config" | "cfg::InstanceConfig" | "cfg::JWT" | "cfg::Password" | "cfg::SCRAM" | "cfg::SMTPProviderConfig" | "cfg::Trust" | "cfg::mTLS" | "users::User" | "default::user" | "event::Event" | "ext::ai::AnthropicProviderConfig" | "ext::ai::ChatPrompt" | "ext::ai::ChatPromptMessage" | "ext::ai::Config" | "ext::ai::CustomProviderConfig" | "ext::ai::MistralProviderConfig" | "ext::ai::OllamaProviderConfig" | "ext::ai::OpenAIProviderConfig" | "ext::auth::AppleOAuthProvider" | "ext::auth::AuthConfig" | "ext::auth::AuthenticationAttempt" | "ext::auth::AzureOAuthProvider" | "ext::auth::Identity" | "ext::auth::ClientTokenIdentity" | "ext::auth::DiscordOAuthProvider" | "ext::auth::EmailFactor" | "ext::auth::EmailPasswordFactor" | "ext::auth::EmailPasswordProviderConfig" | "ext::auth::GitHubOAuthProvider" | "ext::auth::GoogleOAuthProvider" | "ext::auth::LocalIdentity" | "ext::auth::MagicLinkFactor" | "ext::auth::MagicLinkProviderConfig" | "ext::auth::OneTimeCode" | "ext::auth::OpenIDConnectProvider" | "ext::auth::PKCEChallenge" | "ext::auth::SlackOAuthProvider" | "ext::auth::UIConfig" | "ext::auth::WebAuthnAuthenticationChallenge" | "ext::auth::WebAuthnFactor" | "ext::auth::WebAuthnProviderConfig" | "ext::auth::WebAuthnRegistrationChallenge" | "ext::auth::WebhookConfig" | "ext::pg_trgm::Config" | "ext::pgvector::Config" | "notification::AllReps" | "notification::AllUsers" | "notification::Notification" | "notification::AuthoredNotification" | "notification::MailingList" | "notification::SystemNotification" | "printing::Print" | "printing::PrintAuditEntry" | "printing::PrintHistory" | "printing::Printer" | "printing::PrinterAuditEntry" | "printing::print_status::Cancelled" | "printing::print_status::Complete" | "printing::print_status::Failed" | "printing::print_status::Printing" | "printing::print_status::Queued" | "printing::printer_status::Disabled" | "printing::printer_status::Disconnected" | "printing::printer_status::Failed" | "printing::printer_status::Idle" | "printing::printer_status::Printing" | "schema::AccessPolicy" | "schema::Alias" | "schema::Annotation" | "schema::Array" | "schema::ArrayExprAlias" | "schema::Cast" | "schema::Constraint" | "schema::Delta" | "schema::Extension" | "schema::Function" | "schema::FutureBehavior" | "schema::Global" | "schema::Index" | "schema::Link" | "schema::Migration" | "schema::Module" | "schema::MultiRange" | "schema::MultiRangeExprAlias" | "schema::ObjectType" | "schema::Operator" | "schema::Parameter" | "schema::Permission" | "schema::Property" | "schema::PseudoType" | "schema::Range" | "schema::RangeExprAlias" | "schema::Rewrite" | "schema::ScalarType" | "schema::Trigger" | "schema::Tuple" | "schema::TupleElement" | "schema::TupleExprAlias" | "shop::Item" | "shop::LineItem" | "shop::Module" | "shop::Purchase" | "shop::Skew" | "shop::dimensions::Cuboid" | "shop::dimensions::Cylindrical" | "shop::dimensions::ISO216" | "shop::dimensions::LiquidVolume" | "shop::dimensions::Mass" | "shop::dimensions::Thread" | "sign_in::Agreement" | "sign_in::Location" | "sign_in::QueuePlace" | "sign_in::Reason" | "sign_in::SignIn" | "sign_in::UserRegistration" | "std::net::http::Response" | "std::net::http::ScheduledRequest" | "sys::Branch" | "sys::Database" | "sys::ExtensionPackage" | "sys::ExtensionPackageMigration" | "sys::QueryStats" | "sys::Role" | "team::Team" | "tools::Booking" | "tools::Tool" | "training::Answer" | "training::TrainingPage" | "training::Page" | "training::Question" | "training::Session" | "training::Training" | "users::Infraction" | "users::Integration" | "users::Rep" | "users::Role" | "users::SettingTemplate" | "users::UserSettingValue">;
 const $BaseObject = $.makeType<$BaseObject>(_.spec, "0d14e49f-d9f9-51f0-b8f4-c432982cbac2", _.syntax.literal);
 
 const BaseObject: $.$expr_PathNode<$.TypeSet<$BaseObject, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($BaseObject, $.Cardinality.Many), null);
@@ -109,7 +110,7 @@ export type $Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape = $.typeutil.flatten
 }>;
 type $Object_8ce8c71ee4fa5f73840c22d7eaa58588 = $.ObjectType<"std::Object", $Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape, null, [
   ...$BaseObject['__exclusives__'],
-], "ai_rep::Question" | "users::User" | "default::user" | "event::Event" | "notification::AllReps" | "notification::AllUsers" | "notification::Notification" | "notification::AuthoredNotification" | "notification::MailingList" | "notification::SystemNotification" | "printing::Print" | "printing::PrintAuditEntry" | "printing::PrintHistory" | "printing::Printer" | "printing::PrinterAuditEntry" | "printing::print_status::Cancelled" | "printing::print_status::Complete" | "printing::print_status::Failed" | "printing::print_status::Printing" | "printing::print_status::Queued" | "printing::printer_status::Disabled" | "printing::printer_status::Disconnected" | "printing::printer_status::Failed" | "printing::printer_status::Idle" | "printing::printer_status::Printing" | "shop::Item" | "shop::LineItem" | "shop::Module" | "shop::Purchase" | "shop::Skew" | "shop::dimensions::Cuboid" | "shop::dimensions::Cylindrical" | "shop::dimensions::ISO216" | "shop::dimensions::LiquidVolume" | "shop::dimensions::Mass" | "sign_in::Agreement" | "sign_in::Location" | "sign_in::QueuePlace" | "sign_in::Reason" | "sign_in::SignIn" | "sign_in::UserRegistration" | "team::Team" | "tools::Booking" | "tools::Tool" | "training::Answer" | "training::TrainingPage" | "training::Page" | "training::Question" | "training::Session" | "training::Training" | "users::Infraction" | "users::Integration" | "users::Rep" | "users::Role" | "users::SettingTemplate" | "users::UserSettingValue">;
+], "ai_rep::Question" | "users::User" | "default::user" | "event::Event" | "notification::AllReps" | "notification::AllUsers" | "notification::Notification" | "notification::AuthoredNotification" | "notification::MailingList" | "notification::SystemNotification" | "printing::Print" | "printing::PrintAuditEntry" | "printing::PrintHistory" | "printing::Printer" | "printing::PrinterAuditEntry" | "printing::print_status::Cancelled" | "printing::print_status::Complete" | "printing::print_status::Failed" | "printing::print_status::Printing" | "printing::print_status::Queued" | "printing::printer_status::Disabled" | "printing::printer_status::Disconnected" | "printing::printer_status::Failed" | "printing::printer_status::Idle" | "printing::printer_status::Printing" | "shop::Item" | "shop::LineItem" | "shop::Module" | "shop::Purchase" | "shop::Skew" | "shop::dimensions::Cuboid" | "shop::dimensions::Cylindrical" | "shop::dimensions::ISO216" | "shop::dimensions::LiquidVolume" | "shop::dimensions::Mass" | "shop::dimensions::Thread" | "sign_in::Agreement" | "sign_in::Location" | "sign_in::QueuePlace" | "sign_in::Reason" | "sign_in::SignIn" | "sign_in::UserRegistration" | "team::Team" | "tools::Booking" | "tools::Tool" | "training::Answer" | "training::TrainingPage" | "training::Page" | "training::Question" | "training::Session" | "training::Training" | "users::Infraction" | "users::Integration" | "users::Rep" | "users::Role" | "users::SettingTemplate" | "users::UserSettingValue">;
 export type $Object = $Object_8ce8c71ee4fa5f73840c22d7eaa58588
 const $Object_8ce8c71ee4fa5f73840c22d7eaa58588 = $.makeType<$Object_8ce8c71ee4fa5f73840c22d7eaa58588>(_.spec, "8ce8c71e-e4fa-5f73-840c-22d7eaa58588", _.syntax.literal);
 
@@ -410,12 +411,27 @@ type sumλFuncExpr2<
   $number, $.Cardinality.One
 >;
 type sumλFuncExpr3<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$duration>>,
+> = $.$expr_Function<
+  $duration, $.Cardinality.One
+>;
+type sumλFuncExpr4<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$date_duration>>,
+> = $.$expr_Function<
+  _stdcal.$date_duration, $.Cardinality.One
+>;
+type sumλFuncExpr5<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$decimalλICastableTo>>,
 > = $.$expr_Function<
   $decimal, $.Cardinality.One
 >;
+type sumλFuncExpr6<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$relative_durationλICastableTo>>,
+> = $.$expr_Function<
+  _stdcal.$relative_duration, $.Cardinality.One
+>;
 /**
- * Return the sum of the set of numbers.
+ * Return the arithmetic sum of values in a set.
  */
 function sum<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$bigint>>,
@@ -423,7 +439,7 @@ function sum<
   s: P1,
 ): sumλFuncExpr<P1>;
 /**
- * Return the sum of the set of numbers.
+ * Return the arithmetic sum of values in a set.
  */
 function sum<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$number>>,
@@ -431,18 +447,45 @@ function sum<
   s: P1,
 ): sumλFuncExpr2<P1>;
 /**
- * Return the sum of the set of numbers.
+ * Return the arithmetic sum of values in a set.
+ */
+function sum<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$duration>>,
+>(
+  s: P1,
+): sumλFuncExpr3<P1>;
+/**
+ * Return the arithmetic sum of values in a set.
+ */
+function sum<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$date_duration>>,
+>(
+  s: P1,
+): sumλFuncExpr4<P1>;
+/**
+ * Return the arithmetic sum of values in a set.
  */
 function sum<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$decimalλICastableTo>>,
 >(
   s: P1,
-): sumλFuncExpr3<P1>;
+): sumλFuncExpr5<P1>;
+/**
+ * Return the arithmetic sum of values in a set.
+ */
+function sum<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$relative_durationλICastableTo>>,
+>(
+  s: P1,
+): sumλFuncExpr6<P1>;
 function sum(...args: any[]) {
   const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('std::sum', args, _.spec, [
     {args: [{typeId: "00000000-0000-0000-0000-000000000110", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000110"},
     {args: [{typeId: "00000000-0000-0000-0000-0000000001ff", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-0000000001ff"},
+    {args: [{typeId: "00000000-0000-0000-0000-00000000010e", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-00000000010e"},
+    {args: [{typeId: "00000000-0000-0000-0000-000000000112", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000112"},
     {args: [{typeId: "00000000-0000-0000-0000-000000000108", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000108"},
+    {args: [{typeId: "00000000-0000-0000-0000-000000000111", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000111"},
   ]);
   return _.syntax.$expressionify({
     __kind__: $.ExpressionKind.Function,
@@ -1887,6 +1930,33 @@ function array_unpack(...args: any[]) {
   }) as any;
 };
 
+type str_upperλFuncExpr<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>>,
+> = $.$expr_Function<
+  $str, $.cardutil.paramCardinality<P1>
+>;
+/**
+ * Return an uppercase copy of the input *string*.
+ */
+function str_upper<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>>,
+>(
+  s: P1,
+): str_upperλFuncExpr<P1>;
+function str_upper(...args: any[]) {
+  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('std::str_upper', args, _.spec, [
+    {args: [{typeId: "00000000-0000-0000-0000-000000000101", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000101"},
+  ]);
+  return _.syntax.$expressionify({
+    __kind__: $.ExpressionKind.Function,
+    __element__: returnType,
+    __cardinality__: cardinality,
+    __name__: "std::str_upper",
+    __args__: positionalArgs,
+    __namedargs__: namedArgs,
+  }) as any;
+};
+
 type array_replaceλFuncExpr<
   P1 extends $.TypeSet<$.ArrayType<_extpgvector.$vectorλICastableTo>>,
   P2 extends $.TypeSet<_extpgvector.$vectorλICastableTo>,
@@ -2832,6 +2902,33 @@ function datetime_truncate(...args: any[]) {
   }) as any;
 };
 
+type str_titleλFuncExpr<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>>,
+> = $.$expr_Function<
+  $str, $.cardutil.paramCardinality<P1>
+>;
+/**
+ * Return a titlecase copy of the input *string*.
+ */
+function str_title<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>>,
+>(
+  s: P1,
+): str_titleλFuncExpr<P1>;
+function str_title(...args: any[]) {
+  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('std::str_title', args, _.spec, [
+    {args: [{typeId: "00000000-0000-0000-0000-000000000101", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000101"},
+  ]);
+  return _.syntax.$expressionify({
+    __kind__: $.ExpressionKind.Function,
+    __element__: returnType,
+    __cardinality__: cardinality,
+    __name__: "std::str_title",
+    __args__: positionalArgs,
+    __namedargs__: namedArgs,
+  }) as any;
+};
+
 type str_pad_startλFuncExpr<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>>,
   P2 extends _.castMaps.orScalarLiteral<$.TypeSet<$number>>,
@@ -2860,39 +2957,6 @@ function str_pad_start(...args: any[]) {
     __element__: returnType,
     __cardinality__: cardinality,
     __name__: "std::str_pad_start",
-    __args__: positionalArgs,
-    __namedargs__: namedArgs,
-  }) as any;
-};
-
-type str_lpadλFuncExpr<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>>,
-  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<$number>>,
-  P3 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>> | undefined,
-> = $.$expr_Function<
-  $str, $.cardutil.multiplyCardinalities<$.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.paramCardinality<P2>>, $.cardutil.optionalParamCardinality<P3>>
->;
-/**
- * Return the input string left-padded to the length *n*.
- */
-function str_lpad<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>>,
-  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<$number>>,
-  P3 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>> | undefined,
->(
-  s: P1,
-  n: P2,
-  fill?: P3,
-): str_lpadλFuncExpr<P1, P2, P3>;
-function str_lpad(...args: any[]) {
-  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('std::str_lpad', args, _.spec, [
-    {args: [{typeId: "00000000-0000-0000-0000-000000000101", optional: false, setoftype: false, variadic: false}, {typeId: "00000000-0000-0000-0000-0000000001ff", optional: false, setoftype: false, variadic: false}, {typeId: "00000000-0000-0000-0000-000000000101", optional: true, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000101"},
-  ]);
-  return _.syntax.$expressionify({
-    __kind__: $.ExpressionKind.Function,
-    __element__: returnType,
-    __cardinality__: cardinality,
-    __name__: "std::str_lpad",
     __args__: positionalArgs,
     __namedargs__: namedArgs,
   }) as any;
@@ -3477,55 +3541,34 @@ function str_lower(...args: any[]) {
   }) as any;
 };
 
-type str_upperλFuncExpr<
+type str_lpadλFuncExpr<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>>,
+  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<$number>>,
+  P3 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>> | undefined,
 > = $.$expr_Function<
-  $str, $.cardutil.paramCardinality<P1>
+  $str, $.cardutil.multiplyCardinalities<$.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.paramCardinality<P2>>, $.cardutil.optionalParamCardinality<P3>>
 >;
 /**
- * Return an uppercase copy of the input *string*.
+ * Return the input string left-padded to the length *n*.
  */
-function str_upper<
+function str_lpad<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>>,
+  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<$number>>,
+  P3 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>> | undefined,
 >(
   s: P1,
-): str_upperλFuncExpr<P1>;
-function str_upper(...args: any[]) {
-  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('std::str_upper', args, _.spec, [
-    {args: [{typeId: "00000000-0000-0000-0000-000000000101", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000101"},
+  n: P2,
+  fill?: P3,
+): str_lpadλFuncExpr<P1, P2, P3>;
+function str_lpad(...args: any[]) {
+  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('std::str_lpad', args, _.spec, [
+    {args: [{typeId: "00000000-0000-0000-0000-000000000101", optional: false, setoftype: false, variadic: false}, {typeId: "00000000-0000-0000-0000-0000000001ff", optional: false, setoftype: false, variadic: false}, {typeId: "00000000-0000-0000-0000-000000000101", optional: true, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000101"},
   ]);
   return _.syntax.$expressionify({
     __kind__: $.ExpressionKind.Function,
     __element__: returnType,
     __cardinality__: cardinality,
-    __name__: "std::str_upper",
-    __args__: positionalArgs,
-    __namedargs__: namedArgs,
-  }) as any;
-};
-
-type str_titleλFuncExpr<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>>,
-> = $.$expr_Function<
-  $str, $.cardutil.paramCardinality<P1>
->;
-/**
- * Return a titlecase copy of the input *string*.
- */
-function str_title<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>>,
->(
-  s: P1,
-): str_titleλFuncExpr<P1>;
-function str_title(...args: any[]) {
-  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('std::str_title', args, _.spec, [
-    {args: [{typeId: "00000000-0000-0000-0000-000000000101", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000101"},
-  ]);
-  return _.syntax.$expressionify({
-    __kind__: $.ExpressionKind.Function,
-    __element__: returnType,
-    __cardinality__: cardinality,
-    __name__: "std::str_title",
+    __name__: "std::str_lpad",
     __args__: positionalArgs,
     __namedargs__: namedArgs,
   }) as any;
@@ -5421,12 +5464,13 @@ function sequence_reset(...args: any[]) {
 
 
 
-export { uuid, Endian, JsonEmpty, bigint, bool, bytes, datetime, decimal, duration, float32, float64, int16, int32, int64, json, $sequence, str, number, $BaseObject, BaseObject, $Object_8ce8c71ee4fa5f73840c22d7eaa58588, Object_8ce8c71ee4fa5f73840c22d7eaa58588, $FreeObject, FreeObject };
+export { uuid, json, Endian, JsonEmpty, bigint, bool, bytes, datetime, decimal, duration, float32, float64, int16, int32, int64, $sequence, str, number, $BaseObject, BaseObject, $Object_8ce8c71ee4fa5f73840c22d7eaa58588, Object_8ce8c71ee4fa5f73840c22d7eaa58588, $FreeObject, FreeObject };
 
 export type { $anyscalar, $anypoint, $anycontiguous, $anydiscrete, $anyreal, $anyfloat, $anyint, $anynumeric };
 
 type __defaultExports = {
   "uuid": typeof uuid;
+  "json": typeof json;
   "Endian": typeof Endian;
   "JsonEmpty": typeof JsonEmpty;
   "bigint": typeof bigint;
@@ -5440,7 +5484,6 @@ type __defaultExports = {
   "int16": typeof int16;
   "int32": typeof int32;
   "int64": typeof int64;
-  "json": typeof json;
   "str": typeof str;
   "BaseObject": typeof BaseObject;
   "Object": typeof Object_8ce8c71ee4fa5f73840c22d7eaa58588;
@@ -5472,6 +5515,7 @@ type __defaultExports = {
   "bit_count": typeof bit_count;
   "array_agg": typeof array_agg;
   "array_unpack": typeof array_unpack;
+  "str_upper": typeof str_upper;
   "array_replace": typeof array_replace;
   "array_get": typeof array_get;
   "array_set": typeof array_set;
@@ -5483,8 +5527,8 @@ type __defaultExports = {
   "datetime_of_statement": typeof datetime_of_statement;
   "datetime_get": typeof datetime_get;
   "datetime_truncate": typeof datetime_truncate;
+  "str_title": typeof str_title;
   "str_pad_start": typeof str_pad_start;
-  "str_lpad": typeof str_lpad;
   "duration_get": typeof duration_get;
   "duration_truncate": typeof duration_truncate;
   "duration_to_seconds": typeof duration_to_seconds;
@@ -5500,8 +5544,7 @@ type __defaultExports = {
   "re_replace": typeof re_replace;
   "str_repeat": typeof str_repeat;
   "str_lower": typeof str_lower;
-  "str_upper": typeof str_upper;
-  "str_title": typeof str_title;
+  "str_lpad": typeof str_lpad;
   "str_pad_end": typeof str_pad_end;
   "str_rpad": typeof str_rpad;
   "str_trim_start": typeof str_trim_start;
@@ -5554,6 +5597,7 @@ type __defaultExports = {
 };
 const __defaultExports: __defaultExports = {
   "uuid": uuid,
+  "json": json,
   "Endian": Endian,
   "JsonEmpty": JsonEmpty,
   "bigint": bigint,
@@ -5567,7 +5611,6 @@ const __defaultExports: __defaultExports = {
   "int16": int16,
   "int32": int32,
   "int64": int64,
-  "json": json,
   "str": str,
   "BaseObject": BaseObject,
   "Object": Object_8ce8c71ee4fa5f73840c22d7eaa58588,
@@ -5599,6 +5642,7 @@ const __defaultExports: __defaultExports = {
   "bit_count": bit_count,
   "array_agg": array_agg,
   "array_unpack": array_unpack,
+  "str_upper": str_upper,
   "array_replace": array_replace,
   "array_get": array_get,
   "array_set": array_set,
@@ -5610,8 +5654,8 @@ const __defaultExports: __defaultExports = {
   "datetime_of_statement": datetime_of_statement,
   "datetime_get": datetime_get,
   "datetime_truncate": datetime_truncate,
+  "str_title": str_title,
   "str_pad_start": str_pad_start,
-  "str_lpad": str_lpad,
   "duration_get": duration_get,
   "duration_truncate": duration_truncate,
   "duration_to_seconds": duration_to_seconds,
@@ -5627,8 +5671,7 @@ const __defaultExports: __defaultExports = {
   "re_replace": re_replace,
   "str_repeat": str_repeat,
   "str_lower": str_lower,
-  "str_upper": str_upper,
-  "str_title": str_title,
+  "str_lpad": str_lpad,
   "str_pad_end": str_pad_end,
   "str_rpad": str_rpad,
   "str_trim_start": str_trim_start,

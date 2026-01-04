@@ -81,8 +81,12 @@ export const CreateRepSchema = z.
   .extend({ // default::Auditable
     updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
+  .extend({ // default::Listenable
+  })
   .extend({ // default::CreatedAt
     created_at: zt.zonedDateTime().optional(), // std::datetime
+  })
+  .extend({ // default::_BaseListenable
   })
   .extend({ // users::Rep
     status: z.enum(["ACTIVE", "BREAK", "ALUMNI", "FUTURE", "REMOVED"]).optional(), // users::RepStatus
@@ -104,7 +108,11 @@ export const UpdateRepSchema = z.
   .extend({ // default::Auditable
     updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
+  .extend({ // default::Listenable
+  })
   .extend({ // default::CreatedAt
+  })
+  .extend({ // default::_BaseListenable
   })
   .extend({ // users::Rep
     status: z.enum(["ACTIVE", "BREAK", "ALUMNI", "FUTURE", "REMOVED"]).optional(), // users::RepStatus
@@ -142,8 +150,12 @@ export const CreateUserSchema = z.
   object({ // default::Auditable
     updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
+  .extend({ // default::Listenable
+  })
   .extend({ // default::CreatedAt
     created_at: zt.zonedDateTime().optional(), // std::datetime
+  })
+  .extend({ // default::_BaseListenable
   })
   .extend({ // users::User
     first_name: z.string(), // std::str
@@ -162,7 +174,11 @@ export const UpdateUserSchema = z.
   object({ // default::Auditable
     updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
+  .extend({ // default::Listenable
+  })
   .extend({ // default::CreatedAt
+  })
+  .extend({ // default::_BaseListenable
   })
   .extend({ // users::User
     first_name: z.string(), // std::str

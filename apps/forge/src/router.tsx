@@ -6,7 +6,7 @@ import { orpc } from "@/lib/orpc";
 import "./index.css";
 import { StandardRPCJsonSerializer } from "@orpc/client/standard";
 import { TooltipProvider } from "@packages/ui/components/tooltip";
-import { QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRouter as createTanstackRouter } from "@tanstack/react-router";
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
 import { Provider as JotaiProvider } from "jotai";
@@ -16,6 +16,7 @@ import { toast } from "sonner";
 // import { AuthProvider } from "@/providers/AuthProvider";
 import serialisers from "@/lib/serialisers";
 import { routeTree } from "@/routeTree.gen";
+import { ORPCError } from "@orpc/client";
 
 const serializer = new StandardRPCJsonSerializer({
   customJsonSerializers: serialisers,
@@ -23,8 +24,29 @@ const serializer = new StandardRPCJsonSerializer({
 
 export const getRouter = () => {
   const queryClient = new QueryClient({
+    mutationCache: new MutationCache({
+      onSuccess(_data, _variables, _onMutateResult, mutation, _context) {
+        // [ [ "todo", "create" ], { "type": "mutation" } ]
+        const key = mutation.options.mutationKey;
+        if (!key) return; // if there is no mutation key, we won't invalidate anything
+        // [ [ [ "todo", "getAll" ], { "type": "query" } ] ]
+        for (const query of queryClient.getQueryCache().getAll()) {
+          // Invalidate queries that share any segment with the mutation key
+          const hasOverlap = query.queryKey.some((segment) => key.includes(segment));
+          if (hasOverlap) {
+            queryClient.invalidateQueries({ queryKey: query.queryKey });
+          }
+        }
+      },
+    }),
     queryCache: new QueryCache({
       onError: (error) => {
+        if (error instanceof ORPCError) {
+          if (error.status === 401) {
+            // Unauthorized error, don't show a toast
+            return;
+          }
+        }
         toast.error(`Error: ${error.message}`, {
           action: {
             label: "retry",

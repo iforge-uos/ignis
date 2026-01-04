@@ -12,6 +12,7 @@ import _ext from "./modules/ext";
 import _notification from "./modules/notification";
 import _printing from "./modules/printing";
 import _schema from "./modules/schema";
+import _shop from "./modules/shop";
 import _sign_in from "./modules/sign_in";
 import _sys from "./modules/sys";
 import _team from "./modules/team";
@@ -20,7 +21,6 @@ import _training from "./modules/training";
 import _users from "./modules/users";
 import _ai_rep from "./modules/ai_rep";
 import _default from "./modules/default";
-import _shop from "./modules/shop";
 
 const ExportDefault: typeof _std & 
   typeof _default & 
@@ -33,6 +33,7 @@ const ExportDefault: typeof _std &
   "notification": typeof _notification;
   "printing": typeof _printing;
   "schema": typeof _schema;
+  "shop": typeof _shop;
   "sign_in": typeof _sign_in;
   "sys": typeof _sys;
   "team": typeof _team;
@@ -41,7 +42,6 @@ const ExportDefault: typeof _std &
   "users": typeof _users;
   "ai_rep": typeof _ai_rep;
   "default": typeof _default;
-  "shop": typeof _shop;
 } = {
   ..._std,
   ..._default,
@@ -54,6 +54,7 @@ const ExportDefault: typeof _std &
   "notification": _notification,
   "printing": _printing,
   "schema": _schema,
+  "shop": _shop,
   "sign_in": _sign_in,
   "sys": _sys,
   "team": _team,
@@ -62,7 +63,6 @@ const ExportDefault: typeof _std &
   "users": _users,
   "ai_rep": _ai_rep,
   "default": _default,
-  "shop": _shop,
 };
 const Cardinality = $.Cardinality;
 type Cardinality = $.Cardinality;

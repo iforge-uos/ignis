@@ -46,6 +46,7 @@ export const CreateAuthoredNotificationSchema = z.
     delivery_methods: z.enum(["BANNER", "EMAIL", "TRAY", "POPUP", "DISCORD"]), // notification::DeliveryMethod
     dispatched_at: zt.zonedDateTime().nullable(), // std::datetime
     priority: z.int().min(-32768).max(32767).optional(), // std::int16
+    attachments: z.string(), // std::str
   })
   .extend({ // default::Auditable
     updated_at: zt.zonedDateTime().optional(), // std::datetime
@@ -66,6 +67,7 @@ export const UpdateAuthoredNotificationSchema = z.
     delivery_methods: z.enum(["BANNER", "EMAIL", "TRAY", "POPUP", "DISCORD"]), // notification::DeliveryMethod
     dispatched_at: zt.zonedDateTime().nullable(), // std::datetime
     priority: z.int().min(-32768).max(32767).optional(), // std::int16
+    attachments: z.string(), // std::str
   })
   .extend({ // default::Auditable
     updated_at: zt.zonedDateTime().optional(), // std::datetime
@@ -118,6 +120,7 @@ export const CreateNotificationSchema = z.
     delivery_methods: z.enum(["BANNER", "EMAIL", "TRAY", "POPUP", "DISCORD"]), // notification::DeliveryMethod
     dispatched_at: zt.zonedDateTime().nullable(), // std::datetime
     priority: z.int().min(-32768).max(32767).optional(), // std::int16
+    attachments: z.string(), // std::str
   });
 
 export const UpdateNotificationSchema = z.
@@ -134,6 +137,7 @@ export const UpdateNotificationSchema = z.
     delivery_methods: z.enum(["BANNER", "EMAIL", "TRAY", "POPUP", "DISCORD"]), // notification::DeliveryMethod
     dispatched_at: zt.zonedDateTime().nullable(), // std::datetime
     priority: z.int().min(-32768).max(32767).optional(), // std::int16
+    attachments: z.string(), // std::str
   });
 // #endregion
 
@@ -147,6 +151,7 @@ export const CreateSystemNotificationSchema = z.
     delivery_methods: z.enum(["BANNER", "EMAIL", "TRAY", "POPUP", "DISCORD"]), // notification::DeliveryMethod
     dispatched_at: zt.zonedDateTime().nullable(), // std::datetime
     priority: z.int().min(-32768).max(32767).optional(), // std::int16
+    attachments: z.string(), // std::str
   })
   .extend({ // default::Auditable
     updated_at: zt.zonedDateTime().optional(), // std::datetime
@@ -167,6 +172,7 @@ export const UpdateSystemNotificationSchema = z.
     delivery_methods: z.enum(["BANNER", "EMAIL", "TRAY", "POPUP", "DISCORD"]), // notification::DeliveryMethod
     dispatched_at: zt.zonedDateTime().nullable(), // std::datetime
     priority: z.int().min(-32768).max(32767).optional(), // std::int16
+    attachments: z.string(), // std::str
   })
   .extend({ // default::Auditable
     updated_at: zt.zonedDateTime().optional(), // std::datetime

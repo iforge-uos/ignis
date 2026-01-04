@@ -1,7 +1,6 @@
-import { userAtom } from "@/atoms/authSessionAtoms";
-import { useAtom } from "jotai";
+import { Route } from "../routes/__root";
 
-export function useUser() {
-  const [user] = useAtom(userAtom);
+export const useUser = () => {
+  const { user } = Route.useRouteContext();
   return user;
-}
+};

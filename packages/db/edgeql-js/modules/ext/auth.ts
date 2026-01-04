@@ -4,8 +4,8 @@ import * as $ from "../../reflection";
 import * as _ from "../../imports";
 import type * as _std from "../std";
 import type * as _cfg from "../cfg";
-import type * as _users from "../users";
 import type * as _default from "../default";
+import type * as _users from "../users";
 export type $AuthenticationAttemptType = {
   "SignIn": $.$expr_Literal<$AuthenticationAttemptType>;
   "EmailVerification": $.$expr_Literal<$AuthenticationAttemptType>;
@@ -147,9 +147,9 @@ export type $IdentityλShape = $.typeutil.flatten<$AuditableλShape & {
   "issuer": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "subject": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "<identity[is ext::auth::PKCEChallenge]": $.LinkDesc<$PKCEChallenge, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<identity[is users::User]": $.LinkDesc<_users.$User, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<identity[is users::Rep]": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, false,  false, false>;
   "<identity[is user]": $.LinkDesc<_default.$user, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<identity[is users::Rep]": $.LinkDesc<_users.$Rep, $.Cardinality.AtMostOne, {}, true, false,  false, false>;
+  "<identity[is users::User]": $.LinkDesc<_users.$User, $.Cardinality.AtMostOne, {}, true, false,  false, false>;
   "<identity": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
 type $Identity = $.ObjectType<"ext::auth::Identity", $IdentityλShape, null, [
@@ -172,6 +172,7 @@ const ClientTokenIdentity: $.$expr_PathNode<$.TypeSet<$ClientTokenIdentity, $.Ca
 export type $DiscordOAuthProviderλShape = $.typeutil.flatten<Omit<$OAuthProviderConfigλShape, "name" | "display_name"> & {
   "name": $.PropertyDesc<_std.$str, $.Cardinality.One, true, false, true, true>;
   "display_name": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, true, true>;
+  "prompt": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, true>;
 }>;
 type $DiscordOAuthProvider = $.ObjectType<"ext::auth::DiscordOAuthProvider", $DiscordOAuthProviderλShape, null, [
   ...$OAuthProviderConfig['__exclusives__'],
