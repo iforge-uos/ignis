@@ -8,12 +8,19 @@ module event {
         WEBINAR,
     >;
 
+    # type FakeLocation {
+    #     required name: str;
+    # }
+
     type Event extending default::CreatedAt {
         required name: str;
         required description: str;
         required type: Type;
         required starts_at: datetime;
         ends_at: datetime;
+        required location: sign_in::Location;
+        # required location: sign_in::Location | FakeLocation;
+        required multi required_training: training::Training;
         required multi organiser: users::User;
         multi attendees: users::User {
             required created_at: datetime {

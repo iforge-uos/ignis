@@ -12,6 +12,7 @@ module default {
     ));
     global INFRACTIONS_WEBHOOK_URL: str;
     global CDN_URL: str;
+    global PUB_SUB_SECRET: str;
 
     abstract type CreatedAt {
         required created_at: datetime {
@@ -40,4 +41,69 @@ module default {
         ends_at: datetime;
         # duration := .ends_at - .created_at if exists .ends_at else datetime_of_transaction() - .created_at;
     }
+
+    function notify_webhook(body: json) -> net::http::ScheduledRequest {
+        using (
+            select net::http::schedule_request(
+                "http://localhost:3000/db",
+                method := net::http::Method.POST,
+                headers := [
+                    ('Content-Type', 'application/json'),
+                    ("Authorization", assert_exists(global default::PUB_SUB_SECRET, message := "PUB_SUB_SECRET is not set")),
+                ],
+                body := to_bytes(body)
+            )
+        )
+    }
+
+    abstract type _BaseListenable {
+        trigger send_insert after insert for each do (
+            notify_webhook(<json>{
+                `type` := __new__.__type__.name,
+                action := "insert",
+                id := __new__.id,
+            })
+        );
+
+        trigger send_delete after delete for each do (
+            notify_webhook(<json>{
+                `type` := __old__.__type__.name,
+                action := "delete",
+                id := __old__.id,
+            })
+        );
+    }
+
+    abstract type Listenable extending _BaseListenable {
+        trigger send_update after update for each do (
+            notify_webhook(<json>{
+                `type` := __new__.__type__.name,
+                action := "update",
+                id := __new__.id,
+            })
+        );
+    }
+
+    abstract type ListenableWithChanges extending _BaseListenable {  # please only use for small/infrequently changing objects, I have a feeling this will otherwise tank perf
+        trigger send_update after update for each do (
+            with
+                old_values := json_object_unpack(<json>__old__ {**}),
+                new := <json>__new__ {**},
+                changes := for entry in old_values union (
+                    with
+                        key := entry.0,  # no tuple unpacking :(
+                        value := entry.1,
+                        new_value := json_get(new, key),
+                    select (key, <json>{ old := value, new := new_value } if value != new_value else {} )
+                ),
+
+            select notify_webhook(<json>{
+                `type` := __new__.__type__.name,
+                action := "update",
+                id := __new__.id,
+                fields_changed := json_object_pack(changes),  # Record<FieldName, { new: FieldValue, old: FieldValue }>
+            })
+        );
+    }
+
 }

@@ -100,6 +100,14 @@ module printing {
         )
     }
 
+    function cdn_url(id: uuid) -> str {
+        using (
+            with
+                root := assert_exists(global default::CDN_URL, message := "CDN_URL is not set"),
+            select "\(root)/prints/\(id)/"
+        )
+    }
+
     type Print {
         required name: str;
         required type: Type;
@@ -108,8 +116,8 @@ module printing {
         required author: users::User;
         required approved_by: users::Rep;
         multi `on`: PrintHistory;
-        required gcode_path := "\(assert_exists(global default::CDN_URL))/prints/\(.id)/.gcode";
-        required stl_path :=  "\(assert_exists(global default::CDN_URL))/prints/\(.id)/.stl";
+        required gcode_path := "\(cdn_url(.id))/.gcode";
+        required stl_path :=  "\(cdn_url(.id))/.stl";
     }
 
     type PrintHistory extending default::CreatedAt {

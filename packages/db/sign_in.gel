@@ -1,5 +1,5 @@
 module sign_in {
-    type SignIn extending default::Timed {
+    type SignIn extending default::Timed, default::Listenable {
         required user: users::User {
             on target delete delete source;
         }
@@ -36,7 +36,7 @@ module sign_in {
         CLOSED,
     >;
 
-    type Location extending default::Auditable {
+    type Location extending default::Auditable, default::ListenableWithChanges {
         required name: LocationName {
             constraint exclusive;
         }
@@ -213,7 +213,7 @@ module sign_in {
             };
     }
 
-    type Agreement extending default::Auditable {
+    type Agreement extending default::Auditable, default::ListenableWithChanges {
         required name: str;
         multi reasons := .<agreement[is Reason];
         required content: str {
@@ -231,8 +231,7 @@ module sign_in {
             rewrite update using (
                 # updating the name shouldn't trigger everyone to re-sign
                 .version + 1 if __subject__.content != __old__.content else .version
-                # TODO make this make a request to the server to send out a notification to make everyone re-sign
-                # using ext::net or the events system
+                # changing this makes a request to the server to send out a notification to make everyone re-sign
             )
         }
 

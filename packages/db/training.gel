@@ -85,7 +85,7 @@ module training {
         required parent: Training;  # edgedb/edgedb#7209
         # required parent := (
         #     select assert_exists(assert_single(Training filter __subject__ in .sections))
-        # }  # ideal solution is a compute but we need this now
+        # )  # ideal solution is a compute but we need this now
         required index: int16;
         required content: str;
         required enabled: bool {

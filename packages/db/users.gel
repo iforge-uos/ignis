@@ -1,5 +1,5 @@
 module users {
-    type User extending default::Auditable {
+    type User extending default::Auditable, default::Listenable {
         required ucard_number: int32 {
             annotation description := "The user's UCard number without the issue number (first 3 digits)";
             constraint exclusive;
@@ -132,6 +132,19 @@ module users {
         TRAINING_ISSUE,
     >;
 
+     function send_infraction(body: json) -> net::http::ScheduledRequest {
+        using (
+            select net::http::schedule_request(
+                assert_exists(global default::INFRACTIONS_WEBHOOK_URL, message := "INFRACTIONS_WEBHOOK_URL is not set"),
+                method := net::http::Method.POST,
+                headers := [
+                    ('Content-Type', 'application/json'),
+                ],
+                body := to_bytes(body)
+            )
+        )
+    }
+
     type Infraction extending default::CreatedAt {
         required user: User;
         required type: InfractionType;
@@ -149,48 +162,60 @@ module users {
                 errmessage := "Only the desk account or admins can update infractions"
             };
 
-    #     trigger log_insert after insert for each do (
-    #         net::http::schedule_request(
-    #             (select global default::INFRACTIONS_WEBHOOK_URL),
-    #             method := net::http::Method.POST,
-    #             headers := [('Content-Type', 'application/json')],
-    #             body := <bytes>"{
-    #                 "embeds": [{
-    #                     "title": "User Infraction Added to \(__new__.user.name)",
-    #                     "description": "Type: \(__new__.type)\nReason: \(__new__.reason)\nResolved: \(__new__.resolved)\n\n\(
-    #                         "Ends <t:" ++ datetime_get(__new__.ends_at, "epochseconds") ++ ">"
-    #                         if exists __new__.duration
-    #                         else ""
-    #                     )",
-    #                     "color": 10953233,
-    #                     "url": "https://iforge.sheffield.ac.uk/users/\(__new__.user.id)",
-    #                     "thumbnail": {
-    #                         "url": "\(__new__.user.profile_picture)"
-    #                     }
-    #                 }]}",
-    #         )
-    #     );
-    #     trigger log_update after update for each do (
-    #         net::http::schedule_request(
-    #             (select global default::INFRACTIONS_WEBHOOK_URL),
-    #             method := net::http::Method.POST,
-    #             headers := [('Content-Type', 'application/json')],
-    #             body := <bytes>"{
-    #                 "embeds": [{
-    #                     "title": "User Infraction Updated for \(__new__.user.name)",
-    #                     "description": "Type: \(__new__.type)\nReason: \(__new__.reason)\nResolved: \(__new__.resolved)\n\n\(
-    #                         "Ends <t:" ++ datetime_get(__new__.ends_at, "epochseconds") ++ ">"
-    #                         if exists __new__.duration
-    #                         else ""
-    #                     )",
-    #                     "color": 10953233,
-    #                     "url": "https://iforge.sheffield.ac.uk/users/\(__new__.user.id)",
-    #                     "thumbnail": {
-    #                         "url": "\(__new__.user.profile_picture)"
-    #                     }
-    #                 }]}"",
-    #         )
-    #     );
+        trigger log_insert after insert for each do (
+            with
+                sign_in := (
+                    select __new__.user.sign_ins
+                    filter not .signed_out
+                    limit 1
+                ),
+                supervising_reps := sign_in.location.supervising_reps,
+            select send_infraction(
+                <json>{
+                    embeds := [{
+                        title := 'User Infraction Added to \(__new__.user.display_name)',
+                        description := "Type: \(__new__.type)\n" ++
+                                        "Reason: \(__new__.reason)\n" ++
+                                        "Supervising Reps: \(array_join(array_agg(supervising_reps.display_name), ', '))\n" ++
+                                        "Resolved: \(__new__.resolved)\n\n" ++
+
+                                        (
+                                            "Ends <t:\(datetime_get(__new__.ends_at, 'epochseconds'))>"
+                                            if exists __new__.duration
+                                            else ""
+                                        ),
+                        color := 10953233,
+                        url := 'https://iforge.sheffield.ac.uk/users/\(__new__.user.id)',
+                        thumbnail := {
+                            url := __new__.user.profile_picture
+                        }
+                    }]
+                }
+            )
+        );
+        trigger log_update after update for each do (
+            select send_infraction(
+                <json>{
+                    embeds := [{
+                        title := "User Infraction Updated for \(__new__.user.display_name)",
+                        description := "Type: \(__new__.type)\n" ++
+                                       "Reason: \(__new__.reason)\n" ++
+                                       "Resolved: \(__new__.resolved)\n\n" ++
+
+                                       (
+                                           "Ends <t:\(datetime_get(__new__.ends_at, 'epochseconds'))>"
+                                           if exists __new__.duration
+                                           else ""
+                                       ),
+                        color := 10953233,
+                        url := 'https://iforge.sheffield.ac.uk/users/\(__new__.user.id)',
+                        thumbnail := {
+                            url := __new__.user.profile_picture
+                        }
+                    }]
+                }
+            )
+        );
     }
 
     type SettingTemplate {

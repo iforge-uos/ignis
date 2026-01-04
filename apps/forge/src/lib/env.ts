@@ -4,16 +4,16 @@ import * as z from "zod";
 export default createEnv({
   server: {
     // Auth Configuration
-    CSRF_SECRET: z.string().min(1),
-    CSRF_EXCLUDE_ROUTES: z
-      .string()
-      .default("")
-      .transform((str) =>
-        str
-          .split(",")
-          .map((route) => route.trim())
-          .filter(Boolean),
-      ),
+    // CSRF_SECRET: z.string().min(1),
+    // CSRF_EXCLUDE_ROUTES: z
+    //   .string()
+    //   .default("")
+    //   .transform((str) =>
+    //     str
+    //       .split(",")
+    //       .map((route) => route.trim())
+    //       .filter(Boolean),
+    //   ),
     ADMIN_ROLE: z.uuid(),
     JWT_SECRET: z.string().min(1),
 
@@ -102,8 +102,8 @@ export default createEnv({
   createFinalSchema: (shape) =>
     z.object(shape).partial().transform((env) => ({
       auth: {
-        csrfSecret: env.CSRF_SECRET,
-        csrfExcludeRoutes: env.CSRF_EXCLUDE_ROUTES,
+        // csrfSecret: env.CSRF_SECRET,
+        // csrfExcludeRoutes: env.CSRF_EXCLUDE_ROUTES,
         adminRole: env.ADMIN_ROLE,
         repRole: [], // This was hardcoded as empty array in the original
         jwtSecret: env.JWT_SECRET,
@@ -176,18 +176,19 @@ export default createEnv({
       db: {
         globals: {
           INFRACTIONS_WEBHOOK_URL: env.INFRACTIONS_WEBHOOK_URL,
+          PUB_SUB_SECRET: env.JWT_SECRET,
         },
       },
       pharos: {
         url: env.PHAROS_URL,
         auth: env.PHAROS_AUTH,
-      }
-    //   client: {
-    //     apiUrl: env.VITE_API_URL,
-    //     cdnUrl: env.VITE_CDN_URL,
-    //     sentryDsn: env.VITE_SENTRY_DSN,
-    //     sentryOrg: env.VITE_SENTRY_ORG,
-    //     sentryProject: env.VITE_SENTRY_PROJECT,
-    //   },
+      },
+      //   client: {
+      //     apiUrl: env.VITE_API_URL,
+      //     cdnUrl: env.VITE_CDN_URL,
+      //     sentryDsn: env.VITE_SENTRY_DSN,
+      //     sentryOrg: env.VITE_SENTRY_ORG,
+      //     sentryProject: env.VITE_SENTRY_PROJECT,
+      //   },
     })),
 });
