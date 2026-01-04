@@ -1,9 +1,10 @@
-import Title from "@/components/title";
-import env from "@/lib/env";
-import { client } from "@/lib/orpc";
 import { ClientContainer } from "@packages/ui/calendar/components/client-container";
 import { CalendarProvider } from "@packages/ui/calendar/contexts/calendar-context";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import Title from "@/components/title";
+import env from "@/lib/env";
+import { client, orpc } from "@/lib/orpc";
+import { ensureQueryData } from "@/lib/query-utils";
 
 function RouteComponent() {
   return (
@@ -19,7 +20,7 @@ function RouteComponent() {
         <p>
           We also host activities done in collaboration with societies from The University of Sheffield! If you know of
           a society that is interested in creating an event with the iForge please contact our team using any of the
-          links on our <Link to="/contact" className="link-underline text-primary">Contact Us</Link> page.
+          links on our <Link to="/contact" className="link-underline">Contact Us</Link> page.
         </p>
         <br />
         <p>
@@ -35,7 +36,7 @@ function RouteComponent() {
 
 export const Route = createFileRoute("/events")({
   component: () => {
-    const {events, googleCalendarId} = Route.useLoaderData()
+    const {events, calendarId} = Route.useLoaderData()
     return <CalendarProvider
       users={
         [ // TODO use this for distinguishing between Event.type (events, workshops etc.)
@@ -43,13 +44,16 @@ export const Route = createFileRoute("/events")({
         ]
       }
       events={events}
-      googleCalendarId={googleCalendarId}
+      googleCalendarId={calendarId}
     >
       <RouteComponent />
     </CalendarProvider>
   },
-  loader: async () => {
-    const events = await client.events.upcoming();
-    return { events, googleCalendarId: env.google.EVENTS_CALENDAR };
+  loader: async ({ context }) => {
+    const events = await ensureQueryData(
+      context.queryClient,
+      orpc.events.upcoming.queryOptions(),
+    );
+    return { events, calendarId: env.google.calendarIds[0] };
   },
 });

@@ -23,7 +23,12 @@ export default createEnv({
     GOOGLE_CLIENT_CALLBACK_URL: z.url(),
     GOOGLE_SERVICE_ACCOUNT_EMAIL: z.email(),
     GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY: z.string().min(1),
-    GOOGLE_EVENTS_CALENDAR: z.string(),
+    GOOGLE_CALENDARS: z.string().transform((str) =>
+      str
+        .split(",")
+        .map((route) => route.trim())
+        .filter(Boolean),
+    ),
 
     // Discord OAuth Configuration
     DISCORD_TOKEN: z.string().min(1),
@@ -130,9 +135,9 @@ export default createEnv({
         password: env.REDIS_PASSWORD,
       },
       google: {
-        EVENTS_CALENDAR: env.GOOGLE_EVENTS_CALENDAR,
-        PRIVATE_KEY: env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY,
-        CLIENT_EMAIL: env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+        calendarIds: env.GOOGLE_CALENDARS,
+        privateKey: env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY,
+        clientEmail: env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
       },
       ldap: {
         host: env.LDAP_HOST,

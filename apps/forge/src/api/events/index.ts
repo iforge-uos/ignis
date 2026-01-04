@@ -27,30 +27,34 @@ export const create = eventsOrDeskOrAdmin
   );
 
 export const upcoming = pub.route({ method: "GET", path: "/upcoming" }).handler(async () => {
-  const {
-    data: { items },
-  } = await calendar.events.list({
-    calendarId: env.google.EVENTS_CALENDAR,
-    timeMin: new Date().toISOString(),
-    maxResults: 10,
-    singleEvents: true,
-    orderBy: "startTime",
-  });
-
-  return (
-    items?.map((event): IEvent => {
-      return {
-        id: event.id!,
-        location: event.location!,
-        startDate: event.start?.dateTime!,
-        endDate: event.end?.dateTime!,
-        title: event.summary!,
-        color: "blue",
-        description: event.description!,
-        user: { id: "0", name: "Events", picturePath: "/favicon.svg" },
-      };
-    }) || []
+  const items = await Promise.all(
+    env.google.calendarIds.map(async (calendarId) => {
+      const {
+        data: { items },
+      } = await calendar.events.list({
+        calendarId,
+        timeMin: new Date().toISOString(),
+        maxResults: 10,
+        singleEvents: true,
+        orderBy: "startTime",
+      });
+      return (
+        items?.map((event): IEvent => {
+          return {
+            id: event.id!,
+            location: event.location!,
+            startDate: event.start?.dateTime!,
+            endDate: event.end?.dateTime!,
+            title: event.summary!,
+            color: "blue",
+            description: event.description!,
+            user: { id: "0", name: "Events", picturePath: "/favicon.svg" },
+          };
+        }) || []
+      );
+    }),
   );
+  return items.flat();
 });
 
 // export const photos = () =>
