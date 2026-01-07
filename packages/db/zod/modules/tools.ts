@@ -3,7 +3,7 @@ import * as zt from "zod-temporal";
 
 
 // #region tools::Status
-export const StatusSchema = z.enum(["NOMINAL", "IN_USE", "OUT_OF_ORDER"]);
+export const StatusSchema = z.enum(["NOMINAL", "IN_USE", "PARTIALLY_FUNCTIONAL", "OUT_OF_ORDER"]);
 // #endregion
 
 // #region tools::Booking
@@ -33,11 +33,22 @@ export const UpdateBookingSchema = z.
   });
 // #endregion
 
+// #region tools::GroupedTool
+export const CreateGroupedToolSchema = z.
+  object({
+    name: z.string(), // std::str
+  });
+
+export const UpdateGroupedToolSchema = z.
+  object({
+    name: z.string(), // std::str
+  });
+// #endregion
+
 // #region tools::Tool
 export const CreateToolSchema = z.
   object({
     is_bookable: z.boolean(), // std::bool
-    status: z.enum(["NOMINAL", "IN_USE", "OUT_OF_ORDER"]), // tools::Status
     min_booking_time: zt.duration().optional().nullable(), // std::duration
     borrowable: z.boolean(), // std::bool
     description: z.string(), // std::str
@@ -45,12 +56,17 @@ export const CreateToolSchema = z.
     max_booking_weekly: zt.duration().nullable(), // std::duration
     name: z.string(), // std::str
     quantity: z.int().min(-32768).max(32767), // std::int16
+    grouped: z.boolean().optional(), // std::bool
+    bookable_hours: z.never(), // std::cal::local_time
+    status: z.tuple([
+      z.enum(["NOMINAL", "IN_USE", "PARTIALLY_FUNCTIONAL", "OUT_OF_ORDER"]),
+      z.string(),
+    ]), // tuple<code:tools::Status, reason:std::str>
   });
 
 export const UpdateToolSchema = z.
   object({
     is_bookable: z.boolean(), // std::bool
-    status: z.enum(["NOMINAL", "IN_USE", "OUT_OF_ORDER"]), // tools::Status
     min_booking_time: zt.duration().optional().nullable(), // std::duration
     borrowable: z.boolean(), // std::bool
     description: z.string(), // std::str
@@ -58,5 +74,11 @@ export const UpdateToolSchema = z.
     max_booking_weekly: zt.duration().nullable(), // std::duration
     name: z.string(), // std::str
     quantity: z.int().min(-32768).max(32767), // std::int16
+    grouped: z.boolean().optional(), // std::bool
+    bookable_hours: z.never(), // std::cal::local_time
+    status: z.tuple([
+      z.enum(["NOMINAL", "IN_USE", "PARTIALLY_FUNCTIONAL", "OUT_OF_ORDER"]),
+      z.string(),
+    ]), // tuple<code:tools::Status, reason:std::str>
   });
 // #endregion

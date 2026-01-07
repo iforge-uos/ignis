@@ -391,11 +391,14 @@ export namespace tools {
     "cancelled"?: boolean | null;
     "tool": Tool;
   }
+  export interface GroupedTool extends std.$Object {
+    "tools": Tool[];
+    "name": string;
+  }
   export type Selectability = "UNTRAINED" | "REVOKED" | "EXPIRED" | "REPS_UNTRAINED" | "IN_PERSON_MISSING";
-  export type Status = "NOMINAL" | "IN_USE" | "OUT_OF_ORDER";
+  export type Status = "NOMINAL" | "IN_USE" | "PARTIALLY_FUNCTIONAL" | "OUT_OF_ORDER";
   export interface Tool extends std.$Object {
     "is_bookable": boolean;
-    "status": Status;
     "min_booking_time"?: gel.Duration | null;
     "location": sign_in.Location;
     "rep": training.Training[];
@@ -407,12 +410,13 @@ export namespace tools {
     "name": string;
     "quantity": number;
     "bookings": Booking[];
+    "grouped": boolean;
+    "responsible_reps": users.Rep[];
+    "bookable_hours": gel.LocalTime[];
+    "status": {code: Status, reason: string};
   }
 }
 export namespace shop {
-  export interface Dimension extends std.$Object {
-    "fields": schema.Pointer[];
-  }
   export interface Item extends std.$Object {
     "icon_url": string;
     "name": string;
@@ -446,45 +450,8 @@ export namespace shop {
     "till_id": number;
     "item": Item;
     "count"?: number | null;
-    "_dimensions": Dimension;
+    "_dimensions": dimensions.Dimension;
     "dimensions": unknown;
-  }
-  export namespace dimensions {
-    export interface Cuboid extends shop.Dimension {
-      "unit": string;
-      "height": number;
-      "length": number;
-      "width": number;
-      "formatted": string;
-    }
-    export interface Cylindrical extends shop.Dimension {
-      "unit": string;
-      "diameter": number;
-      "length": number;
-      "formatted": string;
-    }
-    export interface ISO216 extends shop.Dimension {
-      "size": number;
-      "unit": string;
-      "thickness"?: number | null;
-      "formatted": string;
-    }
-    export interface LiquidVolume extends shop.Dimension {
-      "unit": string;
-      "volume": number;
-      "formatted": string;
-    }
-    export interface Mass extends shop.Dimension {
-      "unit": string;
-      "mass": number;
-      "formatted": string;
-    }
-    export interface Thread extends shop.Dimension {
-      "unit": string;
-      "diameter": number;
-      "length": number;
-      "formatted": string;
-    }
   }
 }
 export namespace training {
@@ -786,93 +753,44 @@ export namespace ext {
     }
   }
 }
-export namespace event {
-  export interface Event extends $default.CreatedAt {
-    "ends_at"?: Date | null;
-    "starts_at": Date;
-    "type": Type;
-    "description": string;
-    "name": string;
-    "attendees": users.User[];
-    "interested": users.User[];
-    "organiser": users.User[];
-    "location": sign_in.Location;
-    "required_training": training.Training[];
+export namespace dimensions {
+  export interface Dimension extends std.$Object {
+    "fields": schema.Pointer[];
   }
-  export type Type = "WORKSHOP" | "LECTURE" | "MEETUP" | "HACKATHON" | "EXHIBITION" | "WEBINAR";
-}
-export namespace team {
-  export type Name = "IT" | "3DP" | "Hardware" | "Publicity" | "Events" | "Relations" | "Operations" | "Recruitment & Development" | "Health & Safety" | "Inclusions" | "Sustainability" | "Unsorted Reps" | "Future Reps" | "Staff";
-  export interface Team extends std.$Object {
-    "description": string;
-    "name": string;
-    "all_members": users.Rep[];
-    "members": users.Rep[];
+  export interface Cuboid extends Dimension {
+    "unit": string;
+    "height": number;
+    "length": number;
+    "width": number;
+    "formatted": string;
   }
-}
-export namespace printing {
-  export interface AuditEntry extends $default.CreatedAt {
-    "status": PrintStatus | PrinterStatus;
-    "printer": Printer;
+  export interface Cylindrical extends Dimension {
+    "unit": string;
+    "diameter": number;
+    "length": number;
+    "formatted": string;
   }
-  export interface Print extends std.$Object {
-    "approved_by": users.Rep;
-    "author": users.User;
-    "duration": gel.Duration;
+  export interface ISO216 extends Dimension {
+    "size": number;
+    "unit": string;
+    "thickness"?: number | null;
+    "formatted": string;
+  }
+  export interface LiquidVolume extends Dimension {
+    "unit": string;
+    "volume": number;
+    "formatted": string;
+  }
+  export interface Mass extends Dimension {
+    "unit": string;
     "mass": number;
-    "name": string;
-    "type": Type;
-    "on": PrintHistory[];
-    "gcode_path": string;
-    "stl_path": string;
+    "formatted": string;
   }
-  export interface PrintAuditEntry extends AuditEntry {
-    "status": PrintStatus;
-    "print": Print;
-  }
-  export interface PrintHistory extends $default.CreatedAt {
-    "printer": Printer;
-    "status": PrintStatus;
-  }
-  export interface PrintStatus extends std.$Object {}
-  export interface Printer extends std.$Object {
-    "location": sign_in.Location;
-    "status": PrinterStatus;
-    "name": string;
-    "remote_ip": string;
-    "type": Type[];
-    "prints": Print[];
-  }
-  export interface PrinterAuditEntry extends AuditEntry {
-    "status": PrinterStatus;
-  }
-  export interface PrinterStatus extends std.$Object {}
-  export type Type = "PLA" | "TPU" | "PETG" | "RESIN";
-  export namespace print_status {
-    export interface Cancelled extends printing.PrintStatus {}
-    export interface Complete extends printing.PrintStatus {}
-    export interface Failed extends printing.PrintStatus {
-      "note"?: string | null;
-      "reason": FailureReason;
-    }
-    export type FailureReason = "NO_EXTRUSION_AT_PRINT_START" | "POOR_BED_ADHESION" | "UNDER_EXTRUSION" | "OVER_EXTRUSION" | "GAPS_IN_TOP_LAYERS" | "STRINGING_AND_OOZING" | "OVERHEATING" | "LAYER_SHIFTING" | "LAYER_SEPARATION_AND_SPLITTING" | "FILAMENT_GRINDING" | "EXTRUDER_CLOG" | "EXTRUSION_STOPS_MID_PRINT" | "WEAK_INFILL" | "BLOBS_AND_ZITS" | "GAPS_BETWEEN_INFILL_AND_PERIMETER" | "CORNER_CURLING_AND_ROUGHNESS" | "TOP_SURFACE_SCARRING" | "CORNER_GAPS_IN_BOTTOM_LAYER" | "LAYER_LINES_ON_SIDES" | "VIBRATION_AND_RINGING" | "THIN_WALL_GAPS" | "SMALL_FEATURE_LOSS" | "INCONSISTENT_EXTRUSION" | "WARPING" | "POOR_OVERHANG_QUALITY" | "DIMENSIONAL_INACCURACY" | "POOR_BRIDGING" | "FILAMENT_FEEDING" | "FILAMENT_RAN_OUT" | "NOT_A_CLUE";
-    export interface Printing extends printing.PrintStatus {
-      "print": printing.Print;
-    }
-    export interface Queued extends printing.PrintStatus {}
-  }
-  export namespace printer_status {
-    export interface Disabled extends printing.PrinterStatus {}
-    export interface Disconnected extends printing.PrinterStatus {}
-    export interface Failed extends printing.PrinterStatus {
-      "note": string;
-      "reason": FailureReason;
-    }
-    export type FailureReason = "MAIN_CONTROLLER_BOARD" | "POWER_SUPPLY" | "DISPLAY_BOARD" | "WIFI_MODULE" | "HOTEND_THERMISTOR" | "HEATBED_THERMISTOR" | "HOTEND_HEATER_CARTRIDGE" | "HEATBED_HEATING_ELEMENT" | "HEATER_BLOCK" | "EXTRUDER_MOTOR" | "X_AXIS_MOTOR" | "Y_AXIS_MOTOR" | "Z_AXIS_MOTOR" | "LINEAR_RAILS" | "LINEAR_BEARINGS" | "BELT_SYSTEM" | "PULLEYS" | "LEAD_SCREW_NUT" | "HOTEND_FAN" | "PART_COOLING_FAN" | "CHAMBER_FAN" | "POWER_SUPPLY_FAN" | "NOZZLE" | "HEAT_BREAK" | "HEAT_SINK" | "EXTRUDER_GEARS" | "BOWDEN_TUBE" | "FILAMENT_SENSOR" | "BED_LEVELING_SENSOR" | "DOOR_SENSOR" | "CRASH_DETECTION_SENSOR" | "POWER_PANIC_SENSOR" | "PRINT_BED_SURFACE" | "BED_LEVELLING_SPRINGS" | "BED_MOUNTING_HARDWARE" | "HOTEND_WIRING" | "HEATBED_WIRING" | "MOTOR_WIRING" | "MAIN_POWER_CABLE" | "USB_CONNECTION" | "FRAME_COMPONENTS" | "SMOOTH_RODS" | "ENCLOSURE_PANELS" | "FILAMENT_FEEDING";
-    export interface Idle extends printing.PrinterStatus {}
-    export interface Printing extends printing.PrinterStatus {
-      "print": printing.Print;
-    }
+  export interface Thread extends Dimension {
+    "unit": string;
+    "diameter": number;
+    "length": number;
+    "formatted": string;
   }
 }
 export namespace schema {
@@ -1091,6 +1009,95 @@ export namespace schema {
   export type TypeModifier = "SetOfType" | "OptionalType" | "SingletonType";
   export type Volatility = "Immutable" | "Stable" | "Volatile" | "Modifying";
 }
+export namespace event {
+  export interface Event extends $default.CreatedAt {
+    "ends_at"?: Date | null;
+    "starts_at": Date;
+    "type": Type;
+    "description": string;
+    "name": string;
+    "attendees": users.User[];
+    "interested": users.User[];
+    "organiser": users.User[];
+    "location": sign_in.Location;
+    "required_training": training.Training[];
+  }
+  export type Type = "WORKSHOP" | "LECTURE" | "MEETUP" | "HACKATHON" | "EXHIBITION" | "WEBINAR";
+}
+export namespace team {
+  export type Name = "IT" | "3DP" | "Hardware" | "Publicity" | "Events" | "Relations" | "Operations" | "Recruitment & Development" | "Health & Safety" | "Inclusions" | "Sustainability" | "Unsorted Reps" | "Future Reps" | "Staff";
+  export interface Team extends std.$Object {
+    "description": string;
+    "name": string;
+    "all_members": users.Rep[];
+    "members": users.Rep[];
+  }
+}
+export namespace printing {
+  export interface AuditEntry extends $default.CreatedAt {
+    "status": PrintStatus | PrinterStatus;
+    "printer": Printer;
+  }
+  export interface Print extends std.$Object {
+    "approved_by": users.Rep;
+    "author": users.User;
+    "duration": gel.Duration;
+    "mass": number;
+    "name": string;
+    "type": Type;
+    "on": PrintHistory[];
+    "gcode_path": string;
+    "stl_path": string;
+  }
+  export interface PrintAuditEntry extends AuditEntry {
+    "status": PrintStatus;
+    "print": Print;
+  }
+  export interface PrintHistory extends $default.CreatedAt {
+    "printer": Printer;
+    "status": PrintStatus;
+  }
+  export interface PrintStatus extends std.$Object {}
+  export interface Printer extends std.$Object {
+    "location": sign_in.Location;
+    "status": PrinterStatus;
+    "name": string;
+    "remote_ip": string;
+    "type": Type[];
+    "prints": Print[];
+  }
+  export interface PrinterAuditEntry extends AuditEntry {
+    "status": PrinterStatus;
+  }
+  export interface PrinterStatus extends std.$Object {}
+  export type Type = "PLA" | "TPU" | "PETG" | "RESIN";
+  export namespace print_status {
+    export interface Cancelled extends printing.PrintStatus {}
+    export interface Complete extends printing.PrintStatus {}
+    export interface Failed extends printing.PrintStatus {
+      "note"?: string | null;
+      "reason": FailureReason;
+    }
+    export type FailureReason = "NO_EXTRUSION_AT_PRINT_START" | "POOR_BED_ADHESION" | "UNDER_EXTRUSION" | "OVER_EXTRUSION" | "GAPS_IN_TOP_LAYERS" | "STRINGING_AND_OOZING" | "OVERHEATING" | "LAYER_SHIFTING" | "LAYER_SEPARATION_AND_SPLITTING" | "FILAMENT_GRINDING" | "EXTRUDER_CLOG" | "EXTRUSION_STOPS_MID_PRINT" | "WEAK_INFILL" | "BLOBS_AND_ZITS" | "GAPS_BETWEEN_INFILL_AND_PERIMETER" | "CORNER_CURLING_AND_ROUGHNESS" | "TOP_SURFACE_SCARRING" | "CORNER_GAPS_IN_BOTTOM_LAYER" | "LAYER_LINES_ON_SIDES" | "VIBRATION_AND_RINGING" | "THIN_WALL_GAPS" | "SMALL_FEATURE_LOSS" | "INCONSISTENT_EXTRUSION" | "WARPING" | "POOR_OVERHANG_QUALITY" | "DIMENSIONAL_INACCURACY" | "POOR_BRIDGING" | "FILAMENT_FEEDING" | "FILAMENT_RAN_OUT" | "NOT_A_CLUE";
+    export interface Printing extends printing.PrintStatus {
+      "print": printing.Print;
+    }
+    export interface Queued extends printing.PrintStatus {}
+  }
+  export namespace printer_status {
+    export interface Disabled extends printing.PrinterStatus {}
+    export interface Disconnected extends printing.PrinterStatus {}
+    export interface Failed extends printing.PrinterStatus {
+      "note": string;
+      "reason": FailureReason;
+    }
+    export type FailureReason = "MAIN_CONTROLLER_BOARD" | "POWER_SUPPLY" | "DISPLAY_BOARD" | "WIFI_MODULE" | "HOTEND_THERMISTOR" | "HEATBED_THERMISTOR" | "HOTEND_HEATER_CARTRIDGE" | "HEATBED_HEATING_ELEMENT" | "HEATER_BLOCK" | "EXTRUDER_MOTOR" | "X_AXIS_MOTOR" | "Y_AXIS_MOTOR" | "Z_AXIS_MOTOR" | "LINEAR_RAILS" | "LINEAR_BEARINGS" | "BELT_SYSTEM" | "PULLEYS" | "LEAD_SCREW_NUT" | "HOTEND_FAN" | "PART_COOLING_FAN" | "CHAMBER_FAN" | "POWER_SUPPLY_FAN" | "NOZZLE" | "HEAT_BREAK" | "HEAT_SINK" | "EXTRUDER_GEARS" | "BOWDEN_TUBE" | "FILAMENT_SENSOR" | "BED_LEVELING_SENSOR" | "DOOR_SENSOR" | "CRASH_DETECTION_SENSOR" | "POWER_PANIC_SENSOR" | "PRINT_BED_SURFACE" | "BED_LEVELLING_SPRINGS" | "BED_MOUNTING_HARDWARE" | "HOTEND_WIRING" | "HEATBED_WIRING" | "MOTOR_WIRING" | "MAIN_POWER_CABLE" | "USB_CONNECTION" | "FRAME_COMPONENTS" | "SMOOTH_RODS" | "ENCLOSURE_PANELS" | "FILAMENT_FEEDING";
+    export interface Idle extends printing.PrinterStatus {}
+    export interface Printing extends printing.PrinterStatus {
+      "print": printing.Print;
+    }
+  }
+}
 export interface types {
   "std": {
     "BaseObject": std.BaseObject;
@@ -1206,25 +1213,17 @@ export interface types {
   };
   "tools": {
     "Booking": tools.Booking;
+    "GroupedTool": tools.GroupedTool;
     "Selectability": tools.Selectability;
     "Status": tools.Status;
     "Tool": tools.Tool;
   };
   "shop": {
-    "Dimension": shop.Dimension;
     "Item": shop.Item;
     "LineItem": shop.LineItem;
     "Module": shop.Module;
     "Purchase": shop.Purchase;
     "Skew": shop.Skew;
-    "dimensions": {
-      "Cuboid": shop.dimensions.Cuboid;
-      "Cylindrical": shop.dimensions.Cylindrical;
-      "ISO216": shop.dimensions.ISO216;
-      "LiquidVolume": shop.dimensions.LiquidVolume;
-      "Mass": shop.dimensions.Mass;
-      "Thread": shop.dimensions.Thread;
-    };
   };
   "training": {
     "Answer": training.Answer;
@@ -1331,40 +1330,14 @@ export interface types {
       "Config": ext.pgvector.Config;
     };
   };
-  "event": {
-    "Event": event.Event;
-    "Type": event.Type;
-  };
-  "team": {
-    "Name": team.Name;
-    "Team": team.Team;
-  };
-  "printing": {
-    "AuditEntry": printing.AuditEntry;
-    "Print": printing.Print;
-    "PrintAuditEntry": printing.PrintAuditEntry;
-    "PrintHistory": printing.PrintHistory;
-    "PrintStatus": printing.PrintStatus;
-    "Printer": printing.Printer;
-    "PrinterAuditEntry": printing.PrinterAuditEntry;
-    "PrinterStatus": printing.PrinterStatus;
-    "Type": printing.Type;
-    "print_status": {
-      "Cancelled": printing.print_status.Cancelled;
-      "Complete": printing.print_status.Complete;
-      "Failed": printing.print_status.Failed;
-      "FailureReason": printing.print_status.FailureReason;
-      "Printing": printing.print_status.Printing;
-      "Queued": printing.print_status.Queued;
-    };
-    "printer_status": {
-      "Disabled": printing.printer_status.Disabled;
-      "Disconnected": printing.printer_status.Disconnected;
-      "Failed": printing.printer_status.Failed;
-      "FailureReason": printing.printer_status.FailureReason;
-      "Idle": printing.printer_status.Idle;
-      "Printing": printing.printer_status.Printing;
-    };
+  "dimensions": {
+    "Dimension": dimensions.Dimension;
+    "Cuboid": dimensions.Cuboid;
+    "Cylindrical": dimensions.Cylindrical;
+    "ISO216": dimensions.ISO216;
+    "LiquidVolume": dimensions.LiquidVolume;
+    "Mass": dimensions.Mass;
+    "Thread": dimensions.Thread;
   };
   "schema": {
     "AccessKind": schema.AccessKind;
@@ -1427,6 +1400,41 @@ export interface types {
     "TupleExprAlias": schema.TupleExprAlias;
     "TypeModifier": schema.TypeModifier;
     "Volatility": schema.Volatility;
+  };
+  "event": {
+    "Event": event.Event;
+    "Type": event.Type;
+  };
+  "team": {
+    "Name": team.Name;
+    "Team": team.Team;
+  };
+  "printing": {
+    "AuditEntry": printing.AuditEntry;
+    "Print": printing.Print;
+    "PrintAuditEntry": printing.PrintAuditEntry;
+    "PrintHistory": printing.PrintHistory;
+    "PrintStatus": printing.PrintStatus;
+    "Printer": printing.Printer;
+    "PrinterAuditEntry": printing.PrinterAuditEntry;
+    "PrinterStatus": printing.PrinterStatus;
+    "Type": printing.Type;
+    "print_status": {
+      "Cancelled": printing.print_status.Cancelled;
+      "Complete": printing.print_status.Complete;
+      "Failed": printing.print_status.Failed;
+      "FailureReason": printing.print_status.FailureReason;
+      "Printing": printing.print_status.Printing;
+      "Queued": printing.print_status.Queued;
+    };
+    "printer_status": {
+      "Disabled": printing.printer_status.Disabled;
+      "Disconnected": printing.printer_status.Disconnected;
+      "Failed": printing.printer_status.Failed;
+      "FailureReason": printing.printer_status.FailureReason;
+      "Idle": printing.printer_status.Idle;
+      "Printing": printing.printer_status.Printing;
+    };
   };
 }
 

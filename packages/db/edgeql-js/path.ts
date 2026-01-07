@@ -34,7 +34,6 @@ import type {
   ScalarType,
 } from "./typesystem";
 import type { future } from "./future";
-import { Temporal } from "@js-temporal/polyfill";
 // import {typeutil} from "./typeutil";
 // import {cardutil} from "./cardinality";
 
@@ -194,7 +193,7 @@ export type getPropsShape<T extends ObjectType> = typeutil.flatten<
   }>
 >;
 
-export const typenameSymbol = Symbol("typename");
+const typenameSymbol = Symbol("typename");
 
 export type $expr_PathNode<
   Root extends ObjectTypeSet = ObjectTypeSet,

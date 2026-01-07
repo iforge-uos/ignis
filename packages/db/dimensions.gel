@@ -1,0 +1,53 @@
+# when updating make sure to add case for Skew.dimensions
+module dimensions {
+    abstract type Dimension {
+        # required unit := select <str>assert(false);
+        # required formatted := select <str>assert(false);
+        required fields := assert_exists(
+            (select .__type__.pointers filter .name not in {"__type__", "id", "unit", "formatted", "fields"})
+        )  # select { name, required }
+    }
+
+    type Cylindrical extending Dimension {
+        required unit := "mm";
+        required formatted := "\(.diameter)ø x \(.length)\(.unit)";
+        required diameter: float64;
+        required length: float64;
+    }
+
+    type Thread extending Dimension {
+        required unit := "mm";
+        required formatted := "M\(.diameter) x \(.length)\(.unit)";
+        required diameter: float64;
+        required length: float64;
+    }
+
+    type Cuboid extending Dimension {
+        required unit := "mm";
+        required formatted := "\(.length) x \(.width) x \(.height)\(.unit)";
+        required length: float64;
+        required width: float64;
+        required height: float64;
+    }
+
+    type Mass extending Dimension {
+        required unit := "kg";
+        required formatted := "\(.mass)\(.unit)";
+        required mass: float64;
+    }
+
+    type LiquidVolume extending Dimension {
+        required unit := "L";
+        required formatted := "\(.volume)\(.unit)";
+        required volume: float64;
+    }
+
+    type ISO216 extending Dimension {  # paper sizes
+        required unit := "A";
+        required formatted := (
+            select "\(.unit)\(.size) - \(assert_exists(.thickness))mm" if exists .thickness else "\(.unit)\(.size)"
+        );
+        required size: int16;
+        thickness: float64;
+    }
+}

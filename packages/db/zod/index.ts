@@ -4,6 +4,7 @@ export * as std from "./modules/std";
 export * as ai_rep from "./modules/ai_rep";
 export * as default from "./modules/default";
 export * as users from "./modules/users";
+export * as dimensions from "./modules/dimensions";
 export * as event from "./modules/event";
 export * as notification from "./modules/notification";
 export * as printing from "./modules/printing";

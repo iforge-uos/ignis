@@ -2,36 +2,13 @@
 
 import * as $ from "../reflection";
 import * as _ from "../imports";
-import _module__dimensions from "./shop/dimensions";
 import type * as _std from "./std";
-import type * as _schema from "./schema";
 import type * as _tools from "./tools";
 import type * as _users from "./users";
 import type * as _default from "./default";
-import { getPropsShape } from "../path";
-import { $Cuboid, $Cylindrical, $LiquidVolume, $Mass, $Thread } from "./shop/dimensions";
-import { Temporal } from "@js-temporal/polyfill";
-export type SealedDimensions =
-| {__typename: $Cuboid["__polyTypenames__"]} & $.computeObjectShape<$Cuboid["__pointers__"], Omit<getPropsShape<$Cuboid>, "id" | "formatted">>  
-| {__typename: $Cylindrical["__polyTypenames__"]} & $.computeObjectShape<$Cylindrical["__pointers__"], Omit<getPropsShape<$Cylindrical>, "id" | "formatted">>  
-| {__typename: $LiquidVolume["__polyTypenames__"]} & $.computeObjectShape<$LiquidVolume["__pointers__"], Omit<getPropsShape<$LiquidVolume>, "id" | "formatted">>  
-| {__typename: $Mass["__polyTypenames__"]} & $.computeObjectShape<$Mass["__pointers__"], Omit<getPropsShape<$Mass>, "id" | "formatted">>  
-| {__typename: $Thread["__polyTypenames__"]} & $.computeObjectShape<$Thread["__pointers__"], Omit<getPropsShape<$Thread>, "id" | "formatted">>
-export type $DimensionType = $.ScalarType<"std::json", SealedDimensions & { fields: { name: string, required: boolean }[] }>;
-        
+import type * as _dimensions from "./dimensions";
+export type $DimensionType = $.ScalarType<"std::json", unknown>;
 const DimensionType: $.scalarTypeWithConstructor<_std.$json, never> = $.makeType<$.scalarTypeWithConstructor<_std.$json, never>>(_.spec, "c08d600c-e43c-11f0-8cb7-a9674bfb5f29", _.syntax.literal);
-
-export type $DimensionλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
-  "fields": $.LinkDesc<_schema.$Pointer, $.Cardinality.AtLeastOne, {}, false, true,  false, false>;
-  "<_dimensions[is shop::Skew]": $.LinkDesc<$Skew, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<_dimensions": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
-}>;
-type $Dimension = $.ObjectType<"shop::Dimension", $DimensionλShape, null, [
-  ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
-], "shop::dimensions::Cuboid" | "shop::dimensions::Cylindrical" | "shop::dimensions::ISO216" | "shop::dimensions::LiquidVolume" | "shop::dimensions::Mass" | "shop::dimensions::Thread">;
-const $Dimension = $.makeType<$Dimension>(_.spec, "211e83c0-e43c-11f0-b836-f792691ecb33", _.syntax.literal);
-
-const Dimension: $.$expr_PathNode<$.TypeSet<$Dimension, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Dimension, $.Cardinality.Many), null);
 
 export type $ItemλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
   "icon_url": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
@@ -107,7 +84,7 @@ export type $SkewλShape = $.typeutil.flatten<_default.$AuditableλShape & {
   "till_id": $.PropertyDesc<_std.$int16, $.Cardinality.One, false, false, false, false>;
   "item": $.LinkDesc<$Item, $.Cardinality.One, {}, false, true,  false, false>;
   "count": $.PropertyDesc<_std.$int16, $.Cardinality.AtMostOne, false, false, false, false>;
-  "_dimensions": $.LinkDesc<$Dimension, $.Cardinality.One, {}, false, false,  false, false>;
+  "_dimensions": $.LinkDesc<_dimensions.$Dimension, $.Cardinality.One, {}, false, false,  false, false>;
   "dimensions": $.PropertyDesc<$DimensionType, $.Cardinality.One, false, true, false, false>;
   "<skew[is shop::LineItem]": $.LinkDesc<$LineItem, $.Cardinality.Many, {}, false, false,  false, false>;
   "<skews[is shop::Item]": $.LinkDesc<$Item, $.Cardinality.Many, {}, false, false,  false, false>;
@@ -123,26 +100,22 @@ const Skew: $.$expr_PathNode<$.TypeSet<$Skew, $.Cardinality.Many>, null> = _.syn
 
 
 
-export { DimensionType, $Dimension, Dimension, $Item, Item, $LineItem, LineItem, $Module, Module, $Purchase, Purchase, $Skew, Skew };
+export { DimensionType, $Item, Item, $LineItem, LineItem, $Module, Module, $Purchase, Purchase, $Skew, Skew };
 
 type __defaultExports = {
   "DimensionType": typeof DimensionType;
-  "Dimension": typeof Dimension;
   "Item": typeof Item;
   "LineItem": typeof LineItem;
   "Module": typeof Module;
   "Purchase": typeof Purchase;
-  "Skew": typeof Skew;
-  "dimensions": typeof _module__dimensions
+  "Skew": typeof Skew
 };
 const __defaultExports: __defaultExports = {
   "DimensionType": DimensionType,
-  "Dimension": Dimension,
   "Item": Item,
   "LineItem": LineItem,
   "Module": Module,
   "Purchase": Purchase,
-  "Skew": Skew,
-  "dimensions": _module__dimensions
+  "Skew": Skew
 };
 export default __defaultExports;

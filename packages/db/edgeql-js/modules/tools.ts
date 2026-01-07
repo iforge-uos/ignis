@@ -7,6 +7,7 @@ import type * as _users from "./users";
 import type * as _std from "./std";
 import type * as _sign_in from "./sign_in";
 import type * as _training from "./training";
+import type * as _stdcal from "./std/cal";
 import type * as _shop from "./shop";
 export type $Selectability = {
   "UNTRAINED": $.$expr_Literal<$Selectability>;
@@ -20,8 +21,9 @@ const Selectability: $Selectability = $.makeType<$Selectability>(_.spec, "211769
 export type $Status = {
   "NOMINAL": $.$expr_Literal<$Status>;
   "IN_USE": $.$expr_Literal<$Status>;
+  "PARTIALLY_FUNCTIONAL": $.$expr_Literal<$Status>;
   "OUT_OF_ORDER": $.$expr_Literal<$Status>;
-} & $.EnumType<"tools::Status", ["NOMINAL", "IN_USE", "OUT_OF_ORDER"]>;
+} & $.EnumType<"tools::Status", ["NOMINAL", "IN_USE", "PARTIALLY_FUNCTIONAL", "OUT_OF_ORDER"]>;
 const Status: $Status = $.makeType<$Status>(_.spec, "21177576-e43c-11f0-b00b-fb66dc29f896", _.syntax.literal);
 
 export type $BookingλShape = $.typeutil.flatten<_default.$AuditableλShape & {
@@ -44,9 +46,19 @@ const $Booking = $.makeType<$Booking>(_.spec, "2d09e6c0-e43c-11f0-996f-2bfaa2f22
 
 const Booking: $.$expr_PathNode<$.TypeSet<$Booking, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Booking, $.Cardinality.Many), null);
 
+export type $GroupedToolλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
+  "tools": $.LinkDesc<$Tool, $.Cardinality.AtLeastOne, {}, false, false,  false, false>;
+  "name": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
+}>;
+type $GroupedTool = $.ObjectType<"tools::GroupedTool", $GroupedToolλShape, null, [
+  ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
+], "tools::GroupedTool">;
+const $GroupedTool = $.makeType<$GroupedTool>(_.spec, "2a29336a-eaaa-11f0-b879-03b7573133f9", _.syntax.literal);
+
+const GroupedTool: $.$expr_PathNode<$.TypeSet<$GroupedTool, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($GroupedTool, $.Cardinality.Many), null);
+
 export type $ToolλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
   "is_bookable": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, false>;
-  "status": $.PropertyDesc<$Status, $.Cardinality.One, false, false, false, false>;
   "min_booking_time": $.PropertyDesc<_std.$duration, $.Cardinality.AtMostOne, false, false, false, true>;
   "location": $.LinkDesc<_sign_in.$Location, $.Cardinality.One, {}, false, false,  false, false>;
   "rep": $.LinkDesc<_training.$Training, $.Cardinality.AtLeastOne, {}, false, false,  false, false>;
@@ -58,8 +70,13 @@ export type $ToolλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c2
   "name": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "quantity": $.PropertyDesc<_std.$int16, $.Cardinality.One, false, false, false, false>;
   "bookings": $.LinkDesc<$Booking, $.Cardinality.Many, {}, false, true,  false, false>;
+  "grouped": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, true>;
+  "responsible_reps": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, false,  false, false>;
+  "bookable_hours": $.PropertyDesc<_stdcal.$local_time, $.Cardinality.Many, false, false, false, false>;
+  "status": $.PropertyDesc<$.NamedTupleType<{code: $Status, reason: _std.$str}>, $.Cardinality.One, false, false, false, false>;
   "<tools[is shop::Item]": $.LinkDesc<_shop.$Item, $.Cardinality.Many, {}, false, false,  false, false>;
   "<tool[is tools::Booking]": $.LinkDesc<$Booking, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<tools[is tools::GroupedTool]": $.LinkDesc<$GroupedTool, $.Cardinality.Many, {}, false, false,  false, false>;
   "<tool": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<tools": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
@@ -72,18 +89,20 @@ const Tool: $.$expr_PathNode<$.TypeSet<$Tool, $.Cardinality.Many>, null> = _.syn
 
 
 
-export { Selectability, Status, $Booking, Booking, $Tool, Tool };
+export { Selectability, Status, $Booking, Booking, $GroupedTool, GroupedTool, $Tool, Tool };
 
 type __defaultExports = {
   "Selectability": typeof Selectability;
   "Status": typeof Status;
   "Booking": typeof Booking;
+  "GroupedTool": typeof GroupedTool;
   "Tool": typeof Tool
 };
 const __defaultExports: __defaultExports = {
   "Selectability": Selectability,
   "Status": Status,
   "Booking": Booking,
+  "GroupedTool": GroupedTool,
   "Tool": Tool
 };
 export default __defaultExports;

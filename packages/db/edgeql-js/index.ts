@@ -21,6 +21,7 @@ import _training from "./modules/training";
 import _users from "./modules/users";
 import _ai_rep from "./modules/ai_rep";
 import _default from "./modules/default";
+import _dimensions from "./modules/dimensions";
 
 const ExportDefault: typeof _std & 
   typeof _default & 
@@ -42,6 +43,7 @@ const ExportDefault: typeof _std &
   "users": typeof _users;
   "ai_rep": typeof _ai_rep;
   "default": typeof _default;
+  "dimensions": typeof _dimensions;
 } = {
   ..._std,
   ..._default,
@@ -63,6 +65,7 @@ const ExportDefault: typeof _std &
   "users": _users,
   "ai_rep": _ai_rep,
   "default": _default,
+  "dimensions": _dimensions,
 };
 const Cardinality = $.Cardinality;
 type Cardinality = $.Cardinality;

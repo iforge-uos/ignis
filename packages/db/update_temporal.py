@@ -8,7 +8,7 @@ sealed_dimensions: list[str] = [
     f"${name}"
     for name in re.findall(
         r"type \$([A-Za-z]+) = ",
-        (ROOT / "edgeql-js" / "modules" / "shop" / "dimensions.ts").read_text(),
+        (ROOT / "edgeql-js" / "modules" / "dimensions.ts").read_text(),
     )
 ]
 
@@ -33,7 +33,7 @@ REPLACEMENTS: list[tuple[str, str]] = [
         'export type $DimensionType = $.ScalarType<"std::json", unknown>;',
         f"""\
 import {{ getPropsShape }} from "../path";
-import {{ {", ".join(sealed_dimensions)} }} from "./shop/dimensions";
+import {{ {", ".join(sealed_dimensions)} }} from "./dimensions";
 export type SealedDimensions =
 {"  \n".join(f'| {{__typename: {name}["__polyTypenames__"]}} & $.computeObjectShape<{name}["__pointers__"], Omit<getPropsShape<{name}>, "id" | "formatted">>' for name in sealed_dimensions)}
 export type $DimensionType = $.ScalarType<"std::json", SealedDimensions & {{ fields: {{ name: string, required: boolean }}[] }}>;
