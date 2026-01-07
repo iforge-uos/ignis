@@ -9,7 +9,7 @@ export const CompleteComponent = () => {
   const setUser = useSetAtom(userAtom);
   const setOriginalRoles = useSetAtom(originalUserRolesAtom);
   setUser(user);
-  setOriginalRoles(user.roles.map((role) => role.name.toLowerCase()));
+  setOriginalRoles(user!.roles.map((role) => role.name.toLowerCase()));
   reconnectWebSocket();
   if (Route.useSearch().registered_now) {
     // TODO tutorial param for the home page?
