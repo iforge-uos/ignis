@@ -17,9 +17,11 @@ import { pub } from "@/orpc";
 import { OpenAPIGenerator } from "@orpc/openapi";
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { onError } from "@orpc/server";
+import { CompressionPlugin } from "@orpc/server/fetch";
 import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
 import { createFileRoute } from "@tanstack/react-router";
 import { Executor } from "gel";
+import { SmartCoercionPlugin } from '@orpc/json-schema'
 
 export const router = pub.router({
   admin: adminRouter,
@@ -58,11 +60,12 @@ const specFromRouter = await openAPIGenerator.generate(router, {
 
 const handler = new OpenAPIHandler(router, {
   plugins: [
-    // new CompressionPlugin(),
-    // new SmartCoercionPlugin({
-    //   schemaConverters: [new ZodToJsonSchemaConverter()],
-    // }),
-    // new SimpleCsrfProtectionHandlerPlugin(),
+    new CompressionPlugin(),
+    new SmartCoercionPlugin({
+      schemaConverters: [
+        new ZodToJsonSchemaConverter(),
+      ],
+    })
   ],
   customJsonSerializers: serialisers,
   interceptors: [onError(console.error)],
@@ -107,7 +110,8 @@ export const Route = createFileRoute("/api/$")({
                   </script>
               </body>
 
-              </html>`,
+              </html>
+              `,
               {
                 status: 200,
                 headers: { "Content-Type": "text/html" },
