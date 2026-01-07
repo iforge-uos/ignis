@@ -45,7 +45,7 @@ module default {
     function notify_webhook(body: json) -> net::http::ScheduledRequest {
         using (
             select net::http::schedule_request(
-                "http://localhost:3000/db",
+                "http://localhost:3000/api/db/webhook",  # replace with global default::INFRACTIONS_WEBHOOK_URL when testing is done
                 method := net::http::Method.POST,
                 headers := [
                     ('Content-Type', 'application/json'),
@@ -56,6 +56,7 @@ module default {
         )
     }
 
+    # TODO unify these using https://docs.geldata.com/reference/datamodel/annotations and marking fields or whole objects as listenable
     abstract type _BaseListenable {
         trigger send_insert after insert for each do (
             notify_webhook(<json>{

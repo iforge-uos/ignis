@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import env from "@/lib/env";
 import { DB_LISTENERS, Listenable } from "@/db";
 
-export const Route = createFileRoute("/db")({
+export const Route = createFileRoute("/api/db/webhook")({
   server: {
     handlers: {
       POST: async ({ request }) => {
