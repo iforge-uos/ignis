@@ -125,8 +125,18 @@ export type $expr_Group<
         true,
         false
       >;
+      // The elements link must include the full ObjectType with normaliseShape
+      // to ensure proper type inference when selecting from group.elements.
+      // Using Expr["__element__"] directly would lose shape information,
+      // causing TypeScript to infer __element__: never in the callback scope.
       elements: LinkDesc<
-        Expr["__element__"],
+        ObjectType<
+          Expr["__element__"]["__name__"],
+          Expr["__element__"]["__pointers__"],
+          normaliseShape<Shape, "by">,
+          Expr["__element__"]["__exclusives__"],
+          Expr["__element__"]["__polyTypenames__"]
+        >,
         Cardinality.Many,
         // todo check if this can be fixed better
         // eslint-disable-next-line @typescript-eslint/no-empty-object-type

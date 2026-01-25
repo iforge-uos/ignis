@@ -32,7 +32,10 @@ export type scalarAssignableBy<T extends $.ScalarType> =
   T extends _users.$RepStatus ? _users.$RepStatus : 
   T extends _users.$Platform ? _users.$Platform : 
   T extends _users.$InfractionType ? _users.$InfractionType : 
+  T extends _training.$Status ? _training.$Status : 
+  T extends _training.$NextStep ? _training.$NextStep : 
   T extends _training.$LocationName ? _training.$LocationName : 
+  T extends _training.$ExpiresReturn ? _training.$ExpiresReturn : 
   T extends _training.$AnswerType ? _training.$AnswerType : 
   T extends _tools.$Status ? _tools.$Status : 
   T extends _tools.$Selectability ? _tools.$Selectability : 
@@ -133,7 +136,10 @@ export type scalarCastableFrom<T extends $.ScalarType> =
   T extends _users.$RepStatus ? _users.$RepStatus : 
   T extends _users.$Platform ? _users.$Platform : 
   T extends _users.$InfractionType ? _users.$InfractionType : 
+  T extends _training.$Status ? _training.$Status : 
+  T extends _training.$NextStep ? _training.$NextStep : 
   T extends _training.$LocationName ? _training.$LocationName : 
+  T extends _training.$ExpiresReturn ? _training.$ExpiresReturn : 
   T extends _training.$AnswerType ? _training.$AnswerType : 
   T extends _tools.$Status ? _tools.$Status : 
   T extends _tools.$Selectability ? _tools.$Selectability : 
@@ -254,8 +260,26 @@ type getSharedParentScalar<A, B> =
     :
     never
   :
+  A extends _training.$Status ?
+    B extends _training.$Status ?
+    B
+    :
+    never
+  :
+  A extends _training.$NextStep ?
+    B extends _training.$NextStep ?
+    B
+    :
+    never
+  :
   A extends _training.$LocationName ?
     B extends _training.$LocationName ?
+    B
+    :
+    never
+  :
+  A extends _training.$ExpiresReturn ?
+    B extends _training.$ExpiresReturn ?
     B
     :
     never
@@ -871,8 +895,26 @@ function getSharedParentScalar<A extends $.ScalarType, B extends $.ScalarType>(a
     }
     throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
     }
+  if (a.__name__ === "training::Status") {
+    if(b.__name__ === "training::Status") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
+  if (a.__name__ === "training::NextStep") {
+    if(b.__name__ === "training::NextStep") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
   if (a.__name__ === "training::LocationName") {
     if(b.__name__ === "training::LocationName") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
+  if (a.__name__ === "training::ExpiresReturn") {
+    if(b.__name__ === "training::ExpiresReturn") {
       return b;
     }
     throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);

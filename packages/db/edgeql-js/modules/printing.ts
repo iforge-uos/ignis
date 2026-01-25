@@ -16,7 +16,7 @@ export type $Type = {
   "PETG": $.$expr_Literal<$Type>;
   "RESIN": $.$expr_Literal<$Type>;
 } & $.EnumType<"printing::Type", ["PLA", "TPU", "PETG", "RESIN"]>;
-const Type: $Type = $.makeType<$Type>(_.spec, "211733ae-e43c-11f0-aa86-c77011328e52", _.syntax.literal);
+const Type: $Type = $.makeType<$Type>(_.spec, "e11f496e-f98d-11f0-9b4e-455400b60ba8", _.syntax.literal);
 
 export type $AuditEntryλShape = $.typeutil.flatten<_default.$CreatedAtλShape & {
   "status": $.LinkDesc<$PrintStatus | $PrinterStatus, $.Cardinality.One, {}, false, false,  false, false>;
@@ -25,11 +25,13 @@ export type $AuditEntryλShape = $.typeutil.flatten<_default.$CreatedAtλShape &
 type $AuditEntry = $.ObjectType<"printing::AuditEntry", $AuditEntryλShape, null, [
   ..._default.$CreatedAt['__exclusives__'],
 ], "printing::PrintAuditEntry" | "printing::PrinterAuditEntry">;
-const $AuditEntry = $.makeType<$AuditEntry>(_.spec, "2da09688-e43c-11f0-b883-5f452fbc0bb0", _.syntax.literal);
+const $AuditEntry = $.makeType<$AuditEntry>(_.spec, "16dbaffc-f98e-11f0-b663-659e6b3b6d71", _.syntax.literal);
 
 const AuditEntry: $.$expr_PathNode<$.TypeSet<$AuditEntry, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($AuditEntry, $.Cardinality.Many), null);
 
 export type $PrintλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
+  "gcode_path": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
+  "stl_path": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
   "approved_by": $.LinkDesc<_users.$Rep, $.Cardinality.One, {}, false, false,  false, false>;
   "author": $.LinkDesc<_users.$User, $.Cardinality.One, {}, false, false,  false, false>;
   "duration": $.PropertyDesc<_std.$duration, $.Cardinality.One, false, false, false, false>;
@@ -37,19 +39,17 @@ export type $PrintλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c
   "name": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "type": $.PropertyDesc<$Type, $.Cardinality.One, false, false, false, false>;
   "on": $.LinkDesc<$PrintHistory, $.Cardinality.Many, {}, false, false,  false, false>;
-  "gcode_path": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
-  "stl_path": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
-  "<print[is printing::printer_status::Printing]": $.LinkDesc<_printingprinter_status.$Printing, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<print[is printing::print_status::Printing]": $.LinkDesc<_printingprint_status.$Printing, $.Cardinality.Many, {}, false, false,  false, false>;
   "<print[is printing::PrintAuditEntry]": $.LinkDesc<$PrintAuditEntry, $.Cardinality.Many, {}, false, false,  false, false>;
   "<prints[is printing::Printer]": $.LinkDesc<$Printer, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<print[is printing::printer_status::Printing]": $.LinkDesc<_printingprinter_status.$Printing, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<print[is printing::print_status::Printing]": $.LinkDesc<_printingprint_status.$Printing, $.Cardinality.Many, {}, false, false,  false, false>;
   "<print": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<prints": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
 type $Print = $.ObjectType<"printing::Print", $PrintλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
 ], "printing::Print">;
-const $Print = $.makeType<$Print>(_.spec, "211b716c-e43c-11f0-b86b-0fa5f01dedd9", _.syntax.literal);
+const $Print = $.makeType<$Print>(_.spec, "fc800d1a-f98d-11f0-8df4-41b9919b7f23", _.syntax.literal);
 
 const Print: $.$expr_PathNode<$.TypeSet<$Print, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Print, $.Cardinality.Many), null);
 
@@ -60,7 +60,7 @@ export type $PrintAuditEntryλShape = $.typeutil.flatten<Omit<$AuditEntryλShape
 type $PrintAuditEntry = $.ObjectType<"printing::PrintAuditEntry", $PrintAuditEntryλShape, null, [
   ...$AuditEntry['__exclusives__'],
 ], "printing::PrintAuditEntry">;
-const $PrintAuditEntry = $.makeType<$PrintAuditEntry>(_.spec, "2da87718-e43c-11f0-be27-d365b8e6180d", _.syntax.literal);
+const $PrintAuditEntry = $.makeType<$PrintAuditEntry>(_.spec, "16e6ec46-f98e-11f0-b426-d1f615ceb9aa", _.syntax.literal);
 
 const PrintAuditEntry: $.$expr_PathNode<$.TypeSet<$PrintAuditEntry, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($PrintAuditEntry, $.Cardinality.Many), null);
 
@@ -73,7 +73,7 @@ export type $PrintHistoryλShape = $.typeutil.flatten<_default.$CreatedAtλShape
 type $PrintHistory = $.ObjectType<"printing::PrintHistory", $PrintHistoryλShape, null, [
   ..._default.$CreatedAt['__exclusives__'],
 ], "printing::PrintHistory">;
-const $PrintHistory = $.makeType<$PrintHistory>(_.spec, "2daba636-e43c-11f0-bfac-1d0810f80f22", _.syntax.literal);
+const $PrintHistory = $.makeType<$PrintHistory>(_.spec, "16ebb19a-f98e-11f0-8dde-1596fd02dd61", _.syntax.literal);
 
 const PrintHistory: $.$expr_PathNode<$.TypeSet<$PrintHistory, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($PrintHistory, $.Cardinality.Many), null);
 
@@ -85,7 +85,7 @@ export type $PrintStatusλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f
 type $PrintStatus = $.ObjectType<"printing::PrintStatus", $PrintStatusλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
 ], "printing::print_status::Cancelled" | "printing::print_status::Complete" | "printing::print_status::Failed" | "printing::print_status::Printing" | "printing::print_status::Queued">;
-const $PrintStatus = $.makeType<$PrintStatus>(_.spec, "211a8e00-e43c-11f0-b296-1f83ed6f6da2", _.syntax.literal);
+const $PrintStatus = $.makeType<$PrintStatus>(_.spec, "fc7e978c-f98d-11f0-a89d-cf1d617910dc", _.syntax.literal);
 
 const PrintStatus: $.$expr_PathNode<$.TypeSet<$PrintStatus, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($PrintStatus, $.Cardinality.Many), null);
 
@@ -105,7 +105,7 @@ export type $PrinterλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f7384
 type $Printer = $.ObjectType<"printing::Printer", $PrinterλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
 ], "printing::Printer">;
-const $Printer = $.makeType<$Printer>(_.spec, "2da335be-e43c-11f0-ad69-739521ca1342", _.syntax.literal);
+const $Printer = $.makeType<$Printer>(_.spec, "16df125a-f98e-11f0-b2ef-4d6966497dd9", _.syntax.literal);
 
 const Printer: $.$expr_PathNode<$.TypeSet<$Printer, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Printer, $.Cardinality.Many), null);
 
@@ -115,7 +115,7 @@ export type $PrinterAuditEntryλShape = $.typeutil.flatten<Omit<$AuditEntryλSha
 type $PrinterAuditEntry = $.ObjectType<"printing::PrinterAuditEntry", $PrinterAuditEntryλShape, null, [
   ...$AuditEntry['__exclusives__'],
 ], "printing::PrinterAuditEntry">;
-const $PrinterAuditEntry = $.makeType<$PrinterAuditEntry>(_.spec, "2da56834-e43c-11f0-91b9-7b91fbacb819", _.syntax.literal);
+const $PrinterAuditEntry = $.makeType<$PrinterAuditEntry>(_.spec, "16e2693c-f98e-11f0-9ca0-1bcdeff7b338", _.syntax.literal);
 
 const PrinterAuditEntry: $.$expr_PathNode<$.TypeSet<$PrinterAuditEntry, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($PrinterAuditEntry, $.Cardinality.Many), null);
 
@@ -127,7 +127,7 @@ export type $PrinterStatusλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa
 type $PrinterStatus = $.ObjectType<"printing::PrinterStatus", $PrinterStatusλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
 ], "printing::printer_status::Disabled" | "printing::printer_status::Disconnected" | "printing::printer_status::Failed" | "printing::printer_status::Idle" | "printing::printer_status::Printing">;
-const $PrinterStatus = $.makeType<$PrinterStatus>(_.spec, "2d9fa3fe-e43c-11f0-8c58-27cc626ae8ad", _.syntax.literal);
+const $PrinterStatus = $.makeType<$PrinterStatus>(_.spec, "16daa1a2-f98e-11f0-b9cf-e983e2d6ca43", _.syntax.literal);
 
 const PrinterStatus: $.$expr_PathNode<$.TypeSet<$PrinterStatus, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($PrinterStatus, $.Cardinality.Many), null);
 

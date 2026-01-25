@@ -7,9 +7,9 @@ import type * as _std from "./std";
 import type * as _users from "./users";
 import type * as _stdcal from "./std/cal";
 import type * as _training from "./training";
+import type * as _event from "./event";
 import type * as _printing from "./printing";
 import type * as _tools from "./tools";
-import type * as _event from "./event";
 export type $LocationName = {
   "MAINSPACE": $.$expr_Literal<$LocationName>;
   "HEARTSPACE": $.$expr_Literal<$LocationName>;
@@ -41,8 +41,8 @@ export type $AgreementλShape = $.typeutil.flatten<_default.$AuditableλShape & 
   "reasons": $.LinkDesc<$Reason, $.Cardinality.Many, {}, false, true,  false, false>;
   "<agreement[is sign_in::Reason]": $.LinkDesc<$Reason, $.Cardinality.Many, {}, false, false,  false, false>;
   "<agreements_signed[is users::User]": $.LinkDesc<_users.$User, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<agreements_signed[is user]": $.LinkDesc<_default.$user, $.Cardinality.Many, {}, false, false,  false, false>;
   "<agreements_signed[is users::Rep]": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<agreements_signed[is user]": $.LinkDesc<_default.$user, $.Cardinality.Many, {}, false, false,  false, false>;
   "<agreement": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<agreements_signed": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
@@ -70,19 +70,20 @@ export type $LocationλShape = $.typeutil.flatten<_default.$AuditableλShape & _
   "queue_in_use": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, true, false, false>;
   "status": $.PropertyDesc<$LocationStatus, $.Cardinality.One, false, true, false, false>;
   "queued_users_that_can_sign_in": $.LinkDesc<_users.$User, $.Cardinality.Many, {}, false, true,  false, false>;
+  "in_hours_rep_multiplier": $.PropertyDesc<_std.$int16, $.Cardinality.One, false, false, false, false>;
   "off_shift_reps": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, true,  false, false>;
   "on_shift_reps": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, true,  false, false>;
   "queued": $.LinkDesc<$QueuePlace, $.Cardinality.Many, {}, false, true,  false, false>;
-  "in_hours_rep_multiplier": $.PropertyDesc<_std.$int16, $.Cardinality.One, false, false, false, false>;
   "max_count": $.PropertyDesc<_std.$int64, $.Cardinality.One, false, true, false, false>;
   "available_capacity": $.PropertyDesc<_std.$int64, $.Cardinality.One, false, true, false, false>;
   "can_sign_in": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, true, false, false>;
   "<location[is sign_in::SignIn]": $.LinkDesc<$SignIn, $.Cardinality.Many, {}, false, false,  false, false>;
   "<location[is sign_in::QueuePlace]": $.LinkDesc<$QueuePlace, $.Cardinality.Many, {}, false, false,  false, false>;
   "<location[is sign_in::UserRegistration]": $.LinkDesc<$UserRegistration, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<location[is event::Event]": $.LinkDesc<_event.$Event, $.Cardinality.Many, {}, false, false,  false, false>;
   "<location[is printing::Printer]": $.LinkDesc<_printing.$Printer, $.Cardinality.Many, {}, false, false,  false, false>;
   "<location[is tools::Tool]": $.LinkDesc<_tools.$Tool, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<location[is event::Event]": $.LinkDesc<_event.$Event, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<location[is tools::GroupedTool]": $.LinkDesc<_tools.$GroupedTool, $.Cardinality.Many, {}, false, false,  false, false>;
   "<location": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
 type $Location = $.ObjectType<"sign_in::Location", $LocationλShape, null, [
@@ -113,8 +114,8 @@ const QueuePlace: $.$expr_PathNode<$.TypeSet<$QueuePlace, $.Cardinality.Many>, n
 export type $ReasonλShape = $.typeutil.flatten<_default.$AuditableλShape & {
   "name": $.PropertyDesc<_std.$str, $.Cardinality.One, true, false, false, false>;
   "agreement": $.LinkDesc<$Agreement, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
-  "active": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, true>;
   "category": $.PropertyDesc<$ReasonCategory, $.Cardinality.One, false, false, false, false>;
+  "active": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, true>;
   "<reason[is sign_in::SignIn]": $.LinkDesc<$SignIn, $.Cardinality.Many, {}, false, false,  false, false>;
   "<reasons[is sign_in::Agreement]": $.LinkDesc<$Agreement, $.Cardinality.Many, {}, false, false,  false, false>;
   "<reason": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
@@ -134,9 +135,9 @@ export type $SignInλShape = $.typeutil.flatten<_default.$TimedλShape & _defaul
   "tools": $.PropertyDesc<$.ArrayType<_std.$str>, $.Cardinality.One, false, false, false, false>;
   "user": $.LinkDesc<_users.$User, $.Cardinality.One, {}, false, false,  false, false>;
   "signed_out": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, true, false, false>;
-  "<sign_ins[is users::User]": $.LinkDesc<_users.$User, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<sign_ins[is user]": $.LinkDesc<_default.$user, $.Cardinality.Many, {}, false, false,  false, false>;
   "<sign_ins[is sign_in::Location]": $.LinkDesc<$Location, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<sign_ins[is user]": $.LinkDesc<_default.$user, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<sign_ins[is users::User]": $.LinkDesc<_users.$User, $.Cardinality.Many, {}, false, false,  false, false>;
   "<sign_ins[is users::Rep]": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, false,  false, false>;
   "<sign_ins": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;

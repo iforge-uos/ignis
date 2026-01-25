@@ -14,6 +14,10 @@ export const bytesSchema = z.never();
 export const calSchema = z.never();
 // #endregion
 
+// #region std::cal::relative_duration
+export const calSchema = z.never();
+// #endregion
+
 // #region std::datetime
 export const datetimeSchema = zt.zonedDateTime();
 // #endregion

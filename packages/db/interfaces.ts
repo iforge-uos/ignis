@@ -232,6 +232,7 @@ export type Timed = $default.Timed;
 export type user = $default.user;
 export namespace users {
   export interface User extends $default.Auditable, $default.Listenable {
+    "identity": ext.auth.Identity;
     "roles": Role[];
     "first_name": string;
     "last_name"?: string | null;
@@ -243,16 +244,15 @@ export namespace users {
     "username": string;
     "infractions": Infraction[];
     "mailing_list_subscriptions": notification.MailingList[];
-    "integrations": Integration[];
-    "notifications": notification.Notification[];
     "sign_ins": sign_in.SignIn[];
-    "funds": number;
     "agreements_signed": sign_in.Agreement[];
     "bookings": tools.Booking[];
+    "integrations": Integration[];
+    "notifications": notification.Notification[];
     "purchases": shop.Purchase[];
     "training": training.Training[];
+    "funds": number;
     "ucard_number": number;
-    "identity"?: ext.auth.Identity | null;
   }
   export interface Infraction extends $default.CreatedAt {
     "user": User;
@@ -287,216 +287,6 @@ export namespace users {
     "template": SettingTemplate;
     "user": User;
     "value": string;
-  }
-}
-export namespace notification {
-  export interface AllReps extends std.$Object {
-    "MAGIC": number;
-  }
-  export interface AllUsers extends std.$Object {
-    "MAGIC": number;
-  }
-  export interface Notification extends $default.Auditable {
-    "content": string;
-    "status": Status;
-    "title": string;
-    "type": Type;
-    "targets": users.User | team.Team | event.Event | MailingList | AllReps | AllUsers[];
-    "delivery_methods": DeliveryMethod[];
-    "dispatched_at"?: Date | null;
-    "priority": number;
-    "attachments": string[];
-  }
-  export interface AuthoredNotification extends Notification {
-    "approved_by"?: users.Rep | null;
-    "author": users.User;
-    "approved_on"?: Date | null;
-  }
-  export type DeliveryMethod = "BANNER" | "EMAIL" | "TRAY" | "POPUP" | "DISCORD";
-  export interface MailingList extends $default.Auditable {
-    "description": string;
-    "name": string;
-    "subscribers": users.User[];
-  }
-  export type Status = "DRAFT" | "REVIEW" | "QUEUED" | "SENDING" | "SENT" | "ERRORED";
-  export interface SystemNotification extends Notification {
-    "source": string;
-  }
-  export type Type = "ADMIN" | "ADVERT" | "ANNOUNCEMENT" | "EVENT" | "HEALTH_AND_SAFETY" | "INFRACTION" | "PRINTING" | "QUEUE_SLOT_ACTIVE" | "RECRUITMENT" | "REFERRAL" | "REMINDER" | "TRAINING";
-}
-export namespace sign_in {
-  export interface Agreement extends $default.Auditable, $default.ListenableWithChanges {
-    "content": string;
-    "_content_hash": Uint8Array;
-    "version": number;
-    "name": string;
-    "reasons": Reason[];
-  }
-  export interface Location extends $default.Auditable, $default.ListenableWithChanges {
-    "closing_time": gel.LocalTime;
-    "opening_days": number[];
-    "opening_time": gel.LocalTime;
-    "out_of_hours": boolean;
-    "name": LocationName;
-    "max_users": number;
-    "out_of_hours_rep_multiplier": number;
-    "queue_enabled": boolean;
-    "sign_ins": SignIn[];
-    "supervising_reps": users.Rep[];
-    "supervisable_training": training.Training[];
-    "queue_in_use": boolean;
-    "status": LocationStatus;
-    "queued_users_that_can_sign_in": users.User[];
-    "off_shift_reps": users.Rep[];
-    "on_shift_reps": users.Rep[];
-    "queued": QueuePlace[];
-    "in_hours_rep_multiplier": number;
-    "max_count": number;
-    "available_capacity": number;
-    "can_sign_in": boolean;
-  }
-  export type LocationName = "MAINSPACE" | "HEARTSPACE";
-  export type LocationStatus = "OPEN" | "SOON" | "CLOSED";
-  export interface QueuePlace extends $default.CreatedAt {
-    "location": Location;
-    "notified_at"?: Date | null;
-    "ends_at"?: Date | null;
-    "user": users.User;
-  }
-  export interface Reason extends $default.Auditable {
-    "name": string;
-    "agreement"?: Agreement | null;
-    "active": boolean;
-    "category": ReasonCategory;
-  }
-  export type ReasonCategory = "UNIVERSITY_MODULE" | "CO_CURRICULAR_GROUP" | "PERSONAL_PROJECT" | "SOCIETY" | "REP_SIGN_IN" | "EVENT";
-  export interface SignIn extends $default.Timed, $default.Listenable {
-    "location": Location;
-    "reason": Reason;
-    "tools": string[];
-    "user": users.User;
-    "signed_out": boolean;
-  }
-  export interface UserRegistration extends $default.CreatedAt {
-    "location": Location;
-    "user": users.User;
-  }
-}
-export namespace tools {
-  export interface Booking extends $default.Auditable {
-    "user": users.User;
-    "ends_at": Date;
-    "starts_at": Date;
-    "duration": gel.Duration;
-    "cancelled"?: boolean | null;
-    "tool": Tool;
-  }
-  export interface GroupedTool extends std.$Object {
-    "tools": Tool[];
-    "name": string;
-  }
-  export type Selectability = "UNTRAINED" | "REVOKED" | "EXPIRED" | "REPS_UNTRAINED" | "IN_PERSON_MISSING";
-  export type Status = "NOMINAL" | "IN_USE" | "PARTIALLY_FUNCTIONAL" | "OUT_OF_ORDER";
-  export interface Tool extends std.$Object {
-    "is_bookable": boolean;
-    "min_booking_time"?: gel.Duration | null;
-    "location": sign_in.Location;
-    "rep": training.Training[];
-    "training": training.Training[];
-    "borrowable": boolean;
-    "description": string;
-    "max_booking_daily"?: gel.Duration | null;
-    "max_booking_weekly"?: gel.Duration | null;
-    "name": string;
-    "quantity": number;
-    "bookings": Booking[];
-    "grouped": boolean;
-    "responsible_reps": users.Rep[];
-    "bookable_hours": gel.LocalTime[];
-    "status": {code: Status, reason: string};
-  }
-}
-export namespace shop {
-  export interface Item extends std.$Object {
-    "icon_url": string;
-    "name": string;
-    "supplier": string;
-    "supplier_url": string;
-    "skews": Skew[];
-    "tools": tools.Tool[];
-  }
-  export interface LineItem extends std.$Object {
-    "skew": Skew;
-    "price": number;
-    "wraps": Item;
-  }
-  export interface Module extends std.$Object {
-    "users": users.User[];
-    "name": string;
-    "purchases": Purchase[];
-    "total": number;
-  }
-  export interface Purchase extends $default.Auditable {
-    "user": users.User;
-    "collected_at"?: Date | null;
-    "reverted": boolean;
-    "items": LineItem[];
-    "module"?: Module | null;
-  }
-  export interface Skew extends $default.Auditable {
-    "colour"?: string | null;
-    "icon_url"?: string | null;
-    "price": number;
-    "till_id": number;
-    "item": Item;
-    "count"?: number | null;
-    "_dimensions": dimensions.Dimension;
-    "dimensions": unknown;
-  }
-}
-export namespace training {
-  export interface Answer extends std.$Object {
-    "content": string;
-    "correct": boolean;
-    "description"?: string | null;
-  }
-  export type AnswerType = "SINGLE" | "MULTI";
-  export interface Interactable extends std.$Object {
-    "content": string;
-    "enabled": boolean;
-    "index": number;
-    "parent": Training;
-  }
-  export type LocationName = "MAINSPACE" | "HEARTSPACE" | "GEORGE_PORTER";
-  export interface TrainingPage extends Interactable {
-    "duration"?: gel.Duration | null;
-    "name": string;
-  }
-  export interface Page extends TrainingPage {}
-  export interface Question extends Interactable {
-    "answers": Answer[];
-    "type": AnswerType;
-  }
-  export interface Session extends $default.Auditable {
-    "index": number;
-    "training": Training;
-    "user": users.User;
-    "next_section"?: TrainingPage | Question | null;
-  }
-  export interface Training extends $default.Auditable {
-    "rep"?: Training | null;
-    "in_person": boolean;
-    "locations": LocationName[];
-    "pages": TrainingPage[];
-    "name": string;
-    "compulsory": boolean;
-    "description": string;
-    "enabled": boolean;
-    "expires_after"?: gel.Duration | null;
-    "icon_url"?: string | null;
-    "training_lockout"?: gel.Duration | null;
-    "questions": Question[];
-    "sections": TrainingPage | Question[];
   }
 }
 export namespace ext {
@@ -753,27 +543,241 @@ export namespace ext {
     }
   }
 }
+export namespace notification {
+  export interface AllReps extends std.$Object {
+    "MAGIC": number;
+  }
+  export interface AllUsers extends std.$Object {
+    "MAGIC": number;
+  }
+  export interface Notification extends $default.Auditable {
+    "content": string;
+    "status": Status;
+    "title": string;
+    "type": Type;
+    "targets": users.User | team.Team | event.Event | MailingList | AllReps | AllUsers[];
+    "attachments": string[];
+    "delivery_methods": DeliveryMethod[];
+    "dispatched_at"?: Date | null;
+    "priority": number;
+  }
+  export interface AuthoredNotification extends Notification {
+    "approved_by"?: users.Rep | null;
+    "author": users.User;
+    "approved_on"?: Date | null;
+  }
+  export type DeliveryMethod = "BANNER" | "EMAIL" | "TRAY" | "POPUP" | "DISCORD";
+  export interface MailingList extends $default.Auditable {
+    "description": string;
+    "name": string;
+    "subscribers": users.User[];
+  }
+  export type Status = "DRAFT" | "REVIEW" | "QUEUED" | "SENDING" | "SENT" | "ERRORED";
+  export interface SystemNotification extends Notification {
+    "source": string;
+  }
+  export type Type = "ADMIN" | "ADVERT" | "ANNOUNCEMENT" | "EVENT" | "HEALTH_AND_SAFETY" | "INFRACTION" | "PRINTING" | "QUEUE_SLOT_ACTIVE" | "RECRUITMENT" | "REFERRAL" | "REMINDER" | "TRAINING";
+}
+export namespace sign_in {
+  export interface Agreement extends $default.Auditable, $default.ListenableWithChanges {
+    "content": string;
+    "_content_hash": Uint8Array;
+    "version": number;
+    "name": string;
+    "reasons": Reason[];
+  }
+  export interface Location extends $default.Auditable, $default.ListenableWithChanges {
+    "closing_time": gel.LocalTime;
+    "opening_days": number[];
+    "opening_time": gel.LocalTime;
+    "out_of_hours": boolean;
+    "name": LocationName;
+    "max_users": number;
+    "out_of_hours_rep_multiplier": number;
+    "queue_enabled": boolean;
+    "sign_ins": SignIn[];
+    "supervising_reps": users.Rep[];
+    "supervisable_training": training.Training[];
+    "queue_in_use": boolean;
+    "status": LocationStatus;
+    "queued_users_that_can_sign_in": users.User[];
+    "in_hours_rep_multiplier": number;
+    "off_shift_reps": users.Rep[];
+    "on_shift_reps": users.Rep[];
+    "queued": QueuePlace[];
+    "max_count": number;
+    "available_capacity": number;
+    "can_sign_in": boolean;
+  }
+  export type LocationName = "MAINSPACE" | "HEARTSPACE";
+  export type LocationStatus = "OPEN" | "SOON" | "CLOSED";
+  export interface QueuePlace extends $default.CreatedAt {
+    "location": Location;
+    "notified_at"?: Date | null;
+    "ends_at"?: Date | null;
+    "user": users.User;
+  }
+  export interface Reason extends $default.Auditable {
+    "name": string;
+    "agreement"?: Agreement | null;
+    "category": ReasonCategory;
+    "active": boolean;
+  }
+  export type ReasonCategory = "UNIVERSITY_MODULE" | "CO_CURRICULAR_GROUP" | "PERSONAL_PROJECT" | "SOCIETY" | "REP_SIGN_IN" | "EVENT";
+  export interface SignIn extends $default.Timed, $default.Listenable {
+    "location": Location;
+    "reason": Reason;
+    "tools": string[];
+    "user": users.User;
+    "signed_out": boolean;
+  }
+  export interface UserRegistration extends $default.CreatedAt {
+    "location": Location;
+    "user": users.User;
+  }
+}
+export namespace tools {
+  export interface Booking extends $default.Auditable {
+    "user": users.User;
+    "ends_at": Date;
+    "starts_at": Date;
+    "duration": gel.Duration;
+    "cancelled"?: boolean | null;
+    "tool": Tool;
+  }
+  export interface GroupedTool extends std.$Object {
+    "location": sign_in.Location;
+    "tools": Tool[];
+    "training": training.Training[];
+    "name": string;
+  }
+  export type Selectability = "DO_ONLINE" | "REVOKED" | "EXPIRED" | "DO_IN_PERSON" | "NONE_REMAINING" | "DO_IN_PERSON_OR_REP_ONLINE" | "DO_REP_ONLINE" | "DO_IN_PERSON_OR_REP_IN_PERSON" | "DO_REP_IN_PERSON" | "REPS_UNTRAINED" | "TOOL_BROKEN" | "NONE";
+  export type Status = "NOMINAL" | "IN_USE" | "PARTIALLY_FUNCTIONAL" | "OUT_OF_ORDER";
+  export interface Tool extends std.$Object {
+    "is_bookable": boolean;
+    "status": {code: Status, reason: string};
+    "min_booking_time"?: gel.Duration | null;
+    "grouped": boolean;
+    "location": sign_in.Location;
+    "training": training.Training[];
+    "rep": training.Training[];
+    "responsible_reps": users.Rep[];
+    "bookable_hours": gel.LocalTime[];
+    "borrowable": boolean;
+    "description": string;
+    "max_booking_daily"?: gel.Duration | null;
+    "max_booking_weekly"?: gel.Duration | null;
+    "name": string;
+    "quantity": number;
+    "bookings": Booking[];
+  }
+}
+export namespace shop {
+  export interface Item extends std.$Object {
+    "skews": Skew[];
+    "icon_url": string;
+    "name": string;
+    "supplier": string;
+    "supplier_url": string;
+    "tools": tools.Tool[];
+  }
+  export interface LineItem extends std.$Object {
+    "wraps": Item;
+    "skew": Skew;
+    "price": number;
+  }
+  export interface Module extends std.$Object {
+    "users": users.User[];
+    "name": string;
+    "purchases": Purchase[];
+    "total": number;
+  }
+  export interface Purchase extends $default.Auditable {
+    "user": users.User;
+    "collected_at"?: Date | null;
+    "reverted": boolean;
+    "items": LineItem[];
+    "module"?: Module | null;
+  }
+  export interface Skew extends $default.Auditable {
+    "_dimensions": dimensions.Dimension;
+    "dimensions": unknown;
+    "colour"?: string | null;
+    "count"?: number | null;
+    "icon_url"?: string | null;
+    "price": number;
+    "till_id": number;
+    "item": Item;
+  }
+}
+export namespace training {
+  export interface Answer extends std.$Object {
+    "content": string;
+    "correct": boolean;
+    "description"?: string | null;
+  }
+  export type AnswerType = "SINGLE" | "MULTI";
+  export interface Interactable extends std.$Object {
+    "content": string;
+    "enabled": boolean;
+    "index": number;
+    "parent": Training;
+  }
+  export type LocationName = "MAINSPACE" | "HEARTSPACE" | "GEORGE_PORTER";
+  export type NextStep = "DO_ONLINE" | "DO_IN_PERSON" | "DO_IN_PERSON_OR_REP_ONLINE" | "DO_REP_ONLINE" | "DO_IN_PERSON_OR_REP_IN_PERSON" | "DO_REP_IN_PERSON" | "NONE";
+  export interface TrainingPage extends Interactable {
+    "duration"?: gel.Duration | null;
+    "name": string;
+  }
+  export interface Page extends TrainingPage {}
+  export interface Question extends Interactable {
+    "answers": Answer[];
+    "type": AnswerType;
+  }
+  export interface Session extends $default.Auditable {
+    "index": number;
+    "training": Training;
+    "user": users.User;
+    "next_section"?: TrainingPage | Question | null;
+  }
+  export type Status = "UNTRAINED" | "REVOKED" | "EXPIRED" | "ONLINE_COMPLETE" | "FULLY_COMPLETE" | "REP_ONLINE_COMPLETE_NO_IN_PERSON" | "USER_TRAINING_COMPLETE" | "REP_ONLINE_COMPLETE";
+  export interface Training extends $default.Auditable {
+    "rep"?: Training | null;
+    "in_person": boolean;
+    "locations": LocationName[];
+    "pages": TrainingPage[];
+    "name": string;
+    "compulsory": boolean;
+    "description": string;
+    "enabled": boolean;
+    "icon_url"?: string | null;
+    "training_lockout"?: gel.Duration | null;
+    "questions": Question[];
+    "sections": TrainingPage | Question[];
+    "expires_after": gel.RelativeDuration;
+  }
+}
 export namespace dimensions {
   export interface Dimension extends std.$Object {
     "fields": schema.Pointer[];
   }
   export interface Cuboid extends Dimension {
-    "unit": string;
     "height": number;
     "length": number;
+    "unit": string;
     "width": number;
     "formatted": string;
   }
   export interface Cylindrical extends Dimension {
-    "unit": string;
     "diameter": number;
     "length": number;
+    "unit": string;
     "formatted": string;
   }
   export interface ISO216 extends Dimension {
     "size": number;
-    "unit": string;
     "thickness"?: number | null;
+    "unit": string;
     "formatted": string;
   }
   export interface LiquidVolume extends Dimension {
@@ -782,14 +786,14 @@ export namespace dimensions {
     "formatted": string;
   }
   export interface Mass extends Dimension {
-    "unit": string;
     "mass": number;
+    "unit": string;
     "formatted": string;
   }
   export interface Thread extends Dimension {
-    "unit": string;
     "diameter": number;
     "length": number;
+    "unit": string;
     "formatted": string;
   }
 }
@@ -1018,8 +1022,8 @@ export namespace event {
     "name": string;
     "attendees": users.User[];
     "interested": users.User[];
-    "organiser": users.User[];
     "location": sign_in.Location;
+    "organiser": users.User[];
     "required_training": training.Training[];
   }
   export type Type = "WORKSHOP" | "LECTURE" | "MEETUP" | "HACKATHON" | "EXHIBITION" | "WEBINAR";
@@ -1039,6 +1043,8 @@ export namespace printing {
     "printer": Printer;
   }
   export interface Print extends std.$Object {
+    "gcode_path": string;
+    "stl_path": string;
     "approved_by": users.Rep;
     "author": users.User;
     "duration": gel.Duration;
@@ -1046,8 +1052,6 @@ export namespace printing {
     "name": string;
     "type": Type;
     "on": PrintHistory[];
-    "gcode_path": string;
-    "stl_path": string;
   }
   export interface PrintAuditEntry extends AuditEntry {
     "status": PrintStatus;
@@ -1189,53 +1193,6 @@ export interface types {
     "SettingTemplate": users.SettingTemplate;
     "UserSettingValue": users.UserSettingValue;
   };
-  "notification": {
-    "AllReps": notification.AllReps;
-    "AllUsers": notification.AllUsers;
-    "Notification": notification.Notification;
-    "AuthoredNotification": notification.AuthoredNotification;
-    "DeliveryMethod": notification.DeliveryMethod;
-    "MailingList": notification.MailingList;
-    "Status": notification.Status;
-    "SystemNotification": notification.SystemNotification;
-    "Type": notification.Type;
-  };
-  "sign_in": {
-    "Agreement": sign_in.Agreement;
-    "Location": sign_in.Location;
-    "LocationName": sign_in.LocationName;
-    "LocationStatus": sign_in.LocationStatus;
-    "QueuePlace": sign_in.QueuePlace;
-    "Reason": sign_in.Reason;
-    "ReasonCategory": sign_in.ReasonCategory;
-    "SignIn": sign_in.SignIn;
-    "UserRegistration": sign_in.UserRegistration;
-  };
-  "tools": {
-    "Booking": tools.Booking;
-    "GroupedTool": tools.GroupedTool;
-    "Selectability": tools.Selectability;
-    "Status": tools.Status;
-    "Tool": tools.Tool;
-  };
-  "shop": {
-    "Item": shop.Item;
-    "LineItem": shop.LineItem;
-    "Module": shop.Module;
-    "Purchase": shop.Purchase;
-    "Skew": shop.Skew;
-  };
-  "training": {
-    "Answer": training.Answer;
-    "AnswerType": training.AnswerType;
-    "Interactable": training.Interactable;
-    "LocationName": training.LocationName;
-    "TrainingPage": training.TrainingPage;
-    "Page": training.Page;
-    "Question": training.Question;
-    "Session": training.Session;
-    "Training": training.Training;
-  };
   "ext": {
     "auth": {
       "ProviderConfig": ext.auth.ProviderConfig;
@@ -1329,6 +1286,55 @@ export interface types {
     "pgvector": {
       "Config": ext.pgvector.Config;
     };
+  };
+  "notification": {
+    "AllReps": notification.AllReps;
+    "AllUsers": notification.AllUsers;
+    "Notification": notification.Notification;
+    "AuthoredNotification": notification.AuthoredNotification;
+    "DeliveryMethod": notification.DeliveryMethod;
+    "MailingList": notification.MailingList;
+    "Status": notification.Status;
+    "SystemNotification": notification.SystemNotification;
+    "Type": notification.Type;
+  };
+  "sign_in": {
+    "Agreement": sign_in.Agreement;
+    "Location": sign_in.Location;
+    "LocationName": sign_in.LocationName;
+    "LocationStatus": sign_in.LocationStatus;
+    "QueuePlace": sign_in.QueuePlace;
+    "Reason": sign_in.Reason;
+    "ReasonCategory": sign_in.ReasonCategory;
+    "SignIn": sign_in.SignIn;
+    "UserRegistration": sign_in.UserRegistration;
+  };
+  "tools": {
+    "Booking": tools.Booking;
+    "GroupedTool": tools.GroupedTool;
+    "Selectability": tools.Selectability;
+    "Status": tools.Status;
+    "Tool": tools.Tool;
+  };
+  "shop": {
+    "Item": shop.Item;
+    "LineItem": shop.LineItem;
+    "Module": shop.Module;
+    "Purchase": shop.Purchase;
+    "Skew": shop.Skew;
+  };
+  "training": {
+    "Answer": training.Answer;
+    "AnswerType": training.AnswerType;
+    "Interactable": training.Interactable;
+    "LocationName": training.LocationName;
+    "NextStep": training.NextStep;
+    "TrainingPage": training.TrainingPage;
+    "Page": training.Page;
+    "Question": training.Question;
+    "Session": training.Session;
+    "Status": training.Status;
+    "Training": training.Training;
   };
   "dimensions": {
     "Dimension": dimensions.Dimension;

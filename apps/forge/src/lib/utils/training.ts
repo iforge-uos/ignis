@@ -165,61 +165,7 @@ export function getLastActivityDate(user: User, training: Training): Temporal.Zo
     : new Temporal.ZonedDateTime(0n, "UTC");
 }
 
-/*
- * +===============+=========================================+
- * | Status        | Meaning                                 |
- * +===============+=========================================+
- * | Can           | Rep can supervise others                |
- * | supervise     |                                         |
- * +---------------+-----------------------------------------+
- * | Rep           | Rep completed training, needs in person |
- * | complete      | training completing if it exists        |
- * +---------------+-----------------------------------------+
- * | User training | Rep completed all user training         |
- * | complete      | (in person and online)                  |
- * +---------------+-----------------------------------------+
- * | Fully         | User completed all required training    |
- * | complete      | (in person and online)                  |
- * +---------------+-----------------------------------------+
- * | Online        | Only online portion completed, needs in |
- * | complete      | person training completing if it exists |
- * +---------------+-----------------------------------------+
- * | Not started   | No training completed yet               |
- * +===============+=========================================+
- *
- * +--- isRep parameter
- * |       +--- collapsed (no rep training is shown and rep training for the user training is collapsed into the user entry)
- * |       |     +--- training.in_person (training requires in-person)
- * |       |     |     +--- rep.in_person (supervision requires in-person)
- * |       |     |     |     +--- training["@created_at"] (online complete)
- * |       |     |     |     |    +--- training["@in_person_created_at"] (in-person complete)
- * |       |     |     |     |    |  +--- rep["@created_at"] (rep online complete)
- * |       |     |     |     |     |     |     +--- rep["@in_person_created_at"] (rep in-person complete)
- * v       v     v     v     v     v     v     v
- *                                                   |      Badge Result            |          Next Step
- * +=======+=====+=====+=====+=====+=====+=====+=====+==============================+============================+
- * |  N/A  |  no | N/A | N/A |  no | N/A | N/A | N/A | Not started                  | Start online               |
- * +-------+-----+-----+-----+-----+-----+-----+-----+------------------------------+----------------------------+
- * |  N/A  |  no | yes | N/A | yes |  no | N/A | N/A | Online complete              | Do in-person               |
- * +-------+-----+-----+-----+-----+-----+-----+-----+------------------------------+----------------------------+
- * | false |  no |  no | N/A | yes |  no | N/A | N/A | Fully complete               | N/A                        |
- * +-------+-----+-----+-----+-----+-----+-----+-----+------------------------------+----------------------------+
- * | false |  no | yes | N/A | yes | yes | N/A | N/A | Fully complete               | N/A                        |
- * +-------+-----+-----+-----+-----+-----+-----+-----+------------------------------+----------------------------+
- * |  true |  no |  no | N/A | yes |  no | yes | N/A | User online complete         | Do in-person or rep online |
- * +-------+-----+-----+-----+-----+-----+-----+-----+------------------------------+----------------------------+
- * |  true | yes | yes | yes | yes | yes | yes |  no | User and rep online complete | Do rep in-person           |
- * +-------+-----+-----+-----+-----+-----+-----+-----+------------------------------+----------------------------+
- * |  true | yes | yes |  no | yes | yes | yes | N/A | Can supervise                | N/A                        |
- * +-------+-----+-----+-----+-----+-----+-----+-----+------------------------------+----------------------------+
- * |  true | yes | yes | yes | yes | yes | yes | yes | Can supervise                | N/A                        |
- * +=======+=====+=====+=====+=====+=====+=====+=====+==============================+============================+
- *
- * Note: Online (rep) training is a prerequisite for (rep) in-person training.
- *       User online training is a prerequisite for online rep training
- *       States with in-person=yes but online=no are impossible.
- *       States with rep online=yes but online=no are impossible.
- */
+
 export function getTrainingStatus(training: TrainingWithRep, isRep: boolean, collapseEntries: boolean): TrainingStatus {
   const onlineComplete = training["@created_at"];
   const inPersonComplete = training["@in_person_created_at"];

@@ -7,15 +7,26 @@ import type * as _tools from "./tools";
 import type * as _users from "./users";
 import type * as _default from "./default";
 import type * as _dimensions from "./dimensions";
-export type $DimensionType = $.ScalarType<"std::json", unknown>;
-const DimensionType: $.scalarTypeWithConstructor<_std.$json, never> = $.makeType<$.scalarTypeWithConstructor<_std.$json, never>>(_.spec, "c08d600c-e43c-11f0-8cb7-a9674bfb5f29", _.syntax.literal);
+import { getPropsShape } from "../path";
+import { $Dimension, $Cuboid, $Cylindrical, $LiquidVolume, $Mass, $Thread } from "./dimensions";
+import { Temporal } from "@js-temporal/polyfill";
+export type SealedDimensions =
+| {__typename: $Dimension["__polyTypenames__"]} & $.computeObjectShape<$Dimension["__pointers__"], Omit<getPropsShape<$Dimension>, "id" | "formatted">>  
+| {__typename: $Cuboid["__polyTypenames__"]} & $.computeObjectShape<$Cuboid["__pointers__"], Omit<getPropsShape<$Cuboid>, "id" | "formatted">>  
+| {__typename: $Cylindrical["__polyTypenames__"]} & $.computeObjectShape<$Cylindrical["__pointers__"], Omit<getPropsShape<$Cylindrical>, "id" | "formatted">>  
+| {__typename: $LiquidVolume["__polyTypenames__"]} & $.computeObjectShape<$LiquidVolume["__pointers__"], Omit<getPropsShape<$LiquidVolume>, "id" | "formatted">>  
+| {__typename: $Mass["__polyTypenames__"]} & $.computeObjectShape<$Mass["__pointers__"], Omit<getPropsShape<$Mass>, "id" | "formatted">>  
+| {__typename: $Thread["__polyTypenames__"]} & $.computeObjectShape<$Thread["__pointers__"], Omit<getPropsShape<$Thread>, "id" | "formatted">>
+export type $DimensionType = $.ScalarType<"std::json", SealedDimensions & { fields: { name: string, required: boolean }[] }>;
+        
+const DimensionType: $.scalarTypeWithConstructor<_std.$json, never> = $.makeType<$.scalarTypeWithConstructor<_std.$json, never>>(_.spec, "e11f95c2-f98d-11f0-8532-1d2ef2055c2a", _.syntax.literal);
 
 export type $ItemλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
+  "skews": $.LinkDesc<$Skew, $.Cardinality.AtLeastOne, {}, false, false,  false, false>;
   "icon_url": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "name": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "supplier": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "supplier_url": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
-  "skews": $.LinkDesc<$Skew, $.Cardinality.AtLeastOne, {}, false, false,  false, false>;
   "tools": $.LinkDesc<_tools.$Tool, $.Cardinality.Many, {}, false, false,  false, false>;
   "<item[is shop::Skew]": $.LinkDesc<$Skew, $.Cardinality.Many, {}, false, false,  false, false>;
   "<wraps[is shop::LineItem]": $.LinkDesc<$LineItem, $.Cardinality.Many, {}, false, false,  false, false>;
@@ -25,21 +36,21 @@ export type $ItemλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c2
 type $Item = $.ObjectType<"shop::Item", $ItemλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
 ], "shop::Item">;
-const $Item = $.makeType<$Item>(_.spec, "2dc8f4ac-e43c-11f0-b524-e91ae9278ef4", _.syntax.literal);
+const $Item = $.makeType<$Item>(_.spec, "1714b572-f98e-11f0-85d0-0bebb2586eb6", _.syntax.literal);
 
 const Item: $.$expr_PathNode<$.TypeSet<$Item, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Item, $.Cardinality.Many), null);
 
 export type $LineItemλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
+  "wraps": $.LinkDesc<$Item, $.Cardinality.One, {}, false, false,  false, false>;
   "skew": $.LinkDesc<$Skew, $.Cardinality.One, {}, false, false,  false, false>;
   "price": $.PropertyDesc<_std.$int64, $.Cardinality.One, false, false, false, false>;
-  "wraps": $.LinkDesc<$Item, $.Cardinality.One, {}, false, false,  false, false>;
   "<items[is shop::Purchase]": $.LinkDesc<$Purchase, $.Cardinality.Many, {}, false, false,  false, false>;
   "<items": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
 type $LineItem = $.ObjectType<"shop::LineItem", $LineItemλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
 ], "shop::LineItem">;
-const $LineItem = $.makeType<$LineItem>(_.spec, "2dccfc64-e43c-11f0-8056-4bf39d882fa4", _.syntax.literal);
+const $LineItem = $.makeType<$LineItem>(_.spec, "171fbce2-f98e-11f0-ba6b-f18f98181a01", _.syntax.literal);
 
 const LineItem: $.$expr_PathNode<$.TypeSet<$LineItem, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($LineItem, $.Cardinality.Many), null);
 
@@ -54,7 +65,7 @@ export type $ModuleλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840
 type $Module = $.ObjectType<"shop::Module", $ModuleλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
 ], "shop::Module">;
-const $Module = $.makeType<$Module>(_.spec, "2dce6aea-e43c-11f0-9b75-f96020a96029", _.syntax.literal);
+const $Module = $.makeType<$Module>(_.spec, "1722329c-f98e-11f0-8f4e-7da5b73b997a", _.syntax.literal);
 
 const Module: $.$expr_PathNode<$.TypeSet<$Module, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Module, $.Cardinality.Many), null);
 
@@ -66,35 +77,35 @@ export type $PurchaseλShape = $.typeutil.flatten<_default.$AuditableλShape & {
   "module": $.LinkDesc<$Module, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
   "<purchases[is users::User]": $.LinkDesc<_users.$User, $.Cardinality.Many, {}, false, false,  false, false>;
   "<purchases[is users::Rep]": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<purchases[is shop::Module]": $.LinkDesc<$Module, $.Cardinality.Many, {}, false, false,  false, false>;
   "<purchases[is user]": $.LinkDesc<_default.$user, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<purchases[is shop::Module]": $.LinkDesc<$Module, $.Cardinality.Many, {}, false, false,  false, false>;
   "<purchases": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
 type $Purchase = $.ObjectType<"shop::Purchase", $PurchaseλShape, null, [
   ..._default.$Auditable['__exclusives__'],
 ], "shop::Purchase">;
-const $Purchase = $.makeType<$Purchase>(_.spec, "2d12d96a-e43c-11f0-97bd-4f4a36b63928", _.syntax.literal);
+const $Purchase = $.makeType<$Purchase>(_.spec, "15658d8c-f98e-11f0-831b-811e94353d32", _.syntax.literal);
 
 const Purchase: $.$expr_PathNode<$.TypeSet<$Purchase, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Purchase, $.Cardinality.Many), null);
 
 export type $SkewλShape = $.typeutil.flatten<_default.$AuditableλShape & {
+  "_dimensions": $.LinkDesc<_dimensions.$Dimension, $.Cardinality.One, {}, false, false,  false, false>;
+  "dimensions": $.PropertyDesc<$DimensionType, $.Cardinality.One, false, true, false, false>;
   "colour": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
+  "count": $.PropertyDesc<_std.$int16, $.Cardinality.AtMostOne, false, false, false, false>;
   "icon_url": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "price": $.PropertyDesc<_std.$int64, $.Cardinality.One, false, false, false, false>;
   "till_id": $.PropertyDesc<_std.$int16, $.Cardinality.One, false, false, false, false>;
   "item": $.LinkDesc<$Item, $.Cardinality.One, {}, false, true,  false, false>;
-  "count": $.PropertyDesc<_std.$int16, $.Cardinality.AtMostOne, false, false, false, false>;
-  "_dimensions": $.LinkDesc<_dimensions.$Dimension, $.Cardinality.One, {}, false, false,  false, false>;
-  "dimensions": $.PropertyDesc<$DimensionType, $.Cardinality.One, false, true, false, false>;
-  "<skew[is shop::LineItem]": $.LinkDesc<$LineItem, $.Cardinality.Many, {}, false, false,  false, false>;
   "<skews[is shop::Item]": $.LinkDesc<$Item, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<skew[is shop::LineItem]": $.LinkDesc<$LineItem, $.Cardinality.Many, {}, false, false,  false, false>;
   "<skew": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<skews": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
 type $Skew = $.ObjectType<"shop::Skew", $SkewλShape, null, [
   ..._default.$Auditable['__exclusives__'],
 ], "shop::Skew">;
-const $Skew = $.makeType<$Skew>(_.spec, "2dca1cd8-e43c-11f0-a34d-7bfd56cffcf5", _.syntax.literal);
+const $Skew = $.makeType<$Skew>(_.spec, "164e637c-f98e-11f0-a070-4385f9928e74", _.syntax.literal);
 
 const Skew: $.$expr_PathNode<$.TypeSet<$Skew, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Skew, $.Cardinality.Many), null);
 

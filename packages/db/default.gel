@@ -42,6 +42,28 @@ module default {
         # duration := .ends_at - .created_at if exists .ends_at else datetime_of_transaction() - .created_at;
     }
 
+    function bin(string: str) -> int64 {
+        using (
+            # "10011" => 19
+            select sum(
+                for idx_char_pair in enumerate(array_unpack(str_split(str_reverse(str_replace(string, "_", "")), ""))) union (
+                    with
+                        idx := idx_char_pair.0,
+                        char := <int64>idx_char_pair.1,
+                    select bit_lshift(char, idx)
+                )
+            )
+        )
+    }
+
+    # function zip(iter1: array<anytype>, iter2: array<anytype>) -> set of tuple<anytype, anytype> {
+    #     using (
+    #         for i in range_unpack(range(0, len(iter1))) union (
+    #             select (iter1[i], iter2[i])
+    #         )
+    #     )
+    # }
+
     function notify_webhook(body: json) -> net::http::ScheduledRequest {
         using (
             select net::http::schedule_request(

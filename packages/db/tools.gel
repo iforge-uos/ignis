@@ -1,10 +1,18 @@
 module tools {
-    scalar type Selectability extending enum<
-        UNTRAINED,
+    scalar type Selectability extending enum<  # this is a superset of training::NextStep
+        DO_ONLINE,
         REVOKED,
         EXPIRED,
+        DO_IN_PERSON,
+        NONE_REMAINING,
+        # rep exclusive
+        DO_IN_PERSON_OR_REP_ONLINE,
+        DO_REP_ONLINE,
+        DO_IN_PERSON_OR_REP_IN_PERSON,
+        DO_REP_IN_PERSON,
         REPS_UNTRAINED,
-        IN_PERSON_MISSING,
+        TOOL_BROKEN,
+        NONE,  # this means you can select it, you can filter out this value
     >;
 
     scalar type Status extending enum<
@@ -160,9 +168,27 @@ module tools {
     type GroupedTool {
         required name: str;
         required multi tools: Tool;
+        # ideally these would be distinct .tools.location and training but that doesn't currently work cause we can't union this with Tool otherwise
+        required location: sign_in::Location;
+        required multi training: training::Training;
 
         trigger check_grouped after insert, update for each do (
-            assert(all(__new__.tools.grouped), message := "All tools in a GroupedTool must have grouped := true")
-        )
+            select assert(all(__new__.tools.grouped), message := "All tools in a GroupedTool must have grouped := true")
+        );
+
+        trigger check_locations after insert, update for each do (
+            select assert(
+                count(distinct __new__.tools.location) = 1,
+                message := "All tools in a GroupedTool must be in the same location",
+            )
+        );
+
+        trigger check_trainings after insert, update for each do (
+            with everything_must_have_training := distinct __new__.tools.training,
+            select assert(
+                all(for tool in __new__.tools union (select tool.training = everything_must_have_training)),
+                message := "All tools in a GroupedTool must have the same training requirements",
+            )
+        );
     }
 }

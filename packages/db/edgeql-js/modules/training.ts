@@ -5,14 +5,18 @@ import * as _ from "../imports";
 import type * as _std from "./std";
 import type * as _default from "./default";
 import type * as _users from "./users";
-import type * as _tools from "./tools";
-import type * as _event from "./event";
+import type * as _stdcal from "./std/cal";
 import type * as _sign_in from "./sign_in";
+import type * as _event from "./event";
+import type * as _tools from "./tools";
 export type $AnswerType = {
   "SINGLE": $.$expr_Literal<$AnswerType>;
   "MULTI": $.$expr_Literal<$AnswerType>;
 } & $.EnumType<"training::AnswerType", ["SINGLE", "MULTI"]>;
 const AnswerType: $AnswerType = $.makeType<$AnswerType>(_.spec, "2a661b84-f86c-11ee-b8b7-7f68abb2382d", _.syntax.literal);
+
+export type $ExpiresReturn = $.ScalarType<"std::json", unknown>;
+const ExpiresReturn: $.scalarTypeWithConstructor<_std.$json, never> = $.makeType<$.scalarTypeWithConstructor<_std.$json, never>>(_.spec, "e11fcb00-f98d-11f0-b7a5-813995819383", _.syntax.literal);
 
 export type $LocationName = {
   "MAINSPACE": $.$expr_Literal<$LocationName>;
@@ -20,6 +24,29 @@ export type $LocationName = {
   "GEORGE_PORTER": $.$expr_Literal<$LocationName>;
 } & $.EnumType<"training::LocationName", ["MAINSPACE", "HEARTSPACE", "GEORGE_PORTER"]>;
 const LocationName: $LocationName = $.makeType<$LocationName>(_.spec, "29f700df-f86c-11ee-b1b6-fbc5c14c912b", _.syntax.literal);
+
+export type $NextStep = {
+  "DO_ONLINE": $.$expr_Literal<$NextStep>;
+  "DO_IN_PERSON": $.$expr_Literal<$NextStep>;
+  "DO_IN_PERSON_OR_REP_ONLINE": $.$expr_Literal<$NextStep>;
+  "DO_REP_ONLINE": $.$expr_Literal<$NextStep>;
+  "DO_IN_PERSON_OR_REP_IN_PERSON": $.$expr_Literal<$NextStep>;
+  "DO_REP_IN_PERSON": $.$expr_Literal<$NextStep>;
+  "NONE": $.$expr_Literal<$NextStep>;
+} & $.EnumType<"training::NextStep", ["DO_ONLINE", "DO_IN_PERSON", "DO_IN_PERSON_OR_REP_ONLINE", "DO_REP_ONLINE", "DO_IN_PERSON_OR_REP_IN_PERSON", "DO_REP_IN_PERSON", "NONE"]>;
+const NextStep: $NextStep = $.makeType<$NextStep>(_.spec, "e11fd9ba-f98d-11f0-8a02-31e85c185893", _.syntax.literal);
+
+export type $Status = {
+  "UNTRAINED": $.$expr_Literal<$Status>;
+  "REVOKED": $.$expr_Literal<$Status>;
+  "EXPIRED": $.$expr_Literal<$Status>;
+  "ONLINE_COMPLETE": $.$expr_Literal<$Status>;
+  "FULLY_COMPLETE": $.$expr_Literal<$Status>;
+  "REP_ONLINE_COMPLETE_NO_IN_PERSON": $.$expr_Literal<$Status>;
+  "USER_TRAINING_COMPLETE": $.$expr_Literal<$Status>;
+  "REP_ONLINE_COMPLETE": $.$expr_Literal<$Status>;
+} & $.EnumType<"training::Status", ["UNTRAINED", "REVOKED", "EXPIRED", "ONLINE_COMPLETE", "FULLY_COMPLETE", "REP_ONLINE_COMPLETE_NO_IN_PERSON", "USER_TRAINING_COMPLETE", "REP_ONLINE_COMPLETE"]>;
+const Status: $Status = $.makeType<$Status>(_.spec, "e11fe5e0-f98d-11f0-a5f1-1187c667fbe7", _.syntax.literal);
 
 export type $AnswerλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
   "content": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
@@ -107,25 +134,26 @@ export type $TrainingλShape = $.typeutil.flatten<_default.$AuditableλShape & {
   "compulsory": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, true>;
   "description": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "enabled": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, true>;
-  "expires_after": $.PropertyDesc<_std.$duration, $.Cardinality.AtMostOne, false, false, false, false>;
   "icon_url": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "training_lockout": $.PropertyDesc<_std.$duration, $.Cardinality.AtMostOne, false, false, false, false>;
   "questions": $.LinkDesc<$Question, $.Cardinality.Many, {}, false, false,  false, false>;
   "sections": $.LinkDesc<$TrainingPage | $Question, $.Cardinality.Many, {}, false, true,  false, false>;
+  "expires_after": $.PropertyDesc<_stdcal.$relative_duration, $.Cardinality.One, false, false, false, true>;
   "<rep[is training::Training]": $.LinkDesc<$Training, $.Cardinality.Many, {}, false, false,  false, false>;
   "<training[is users::User]": $.LinkDesc<_users.$User, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<training[is users::Rep]": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, false,  false, false>;
   "<supervisable_training[is users::Rep]": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, false,  false, false>;
   "<parent[is training::Interactable]": $.LinkDesc<$Interactable, $.Cardinality.Many, {}, false, false,  false, false>;
   "<parent[is training::TrainingPage]": $.LinkDesc<$TrainingPage, $.Cardinality.Many, {}, false, false,  false, false>;
   "<parent[is training::Page]": $.LinkDesc<$Page, $.Cardinality.Many, {}, false, false,  false, false>;
   "<parent[is training::Question]": $.LinkDesc<$Question, $.Cardinality.Many, {}, false, false,  false, false>;
   "<training[is training::Session]": $.LinkDesc<$Session, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<training[is users::Rep]": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, false,  false, false>;
   "<training[is user]": $.LinkDesc<_default.$user, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<rep[is tools::Tool]": $.LinkDesc<_tools.$Tool, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<training[is tools::Tool]": $.LinkDesc<_tools.$Tool, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<required_training[is event::Event]": $.LinkDesc<_event.$Event, $.Cardinality.Many, {}, false, false,  false, false>;
   "<supervisable_training[is sign_in::Location]": $.LinkDesc<_sign_in.$Location, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<required_training[is event::Event]": $.LinkDesc<_event.$Event, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<training[is tools::Tool]": $.LinkDesc<_tools.$Tool, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<rep[is tools::Tool]": $.LinkDesc<_tools.$Tool, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<training[is tools::GroupedTool]": $.LinkDesc<_tools.$GroupedTool, $.Cardinality.Many, {}, false, false,  false, false>;
   "<parent": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<rep": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<required_training": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
@@ -139,30 +167,129 @@ const $Training = $.makeType<$Training>(_.spec, "29f7181e-f86c-11ee-b1f9-2f77f7e
 
 const Training: $.$expr_PathNode<$.TypeSet<$Training, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Training, $.Cardinality.Many), null);
 
+type get_expiry_datesλFuncExpr<
+  P1 extends $.TypeSet<_users.$User>,
+> = $.$expr_Function<
+  $ExpiresReturn, $.cardutil.paramCardinality<P1>
+>;
+function get_expiry_dates<
+  P1 extends $.TypeSet<_users.$User>,
+>(
+  user: P1,
+): get_expiry_datesλFuncExpr<P1>;
+function get_expiry_dates(...args: any[]) {
+  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('training::get_expiry_dates', args, _.spec, [
+    {args: [{typeId: "29c43a34-f86c-11ee-a6b1-c1a89f83e7fe", optional: false, setoftype: false, variadic: false}], returnTypeId: "e11fcb00-f98d-11f0-b7a5-813995819383"},
+  ]);
+  return _.syntax.$expressionify({
+    __kind__: $.ExpressionKind.Function,
+    __element__: returnType,
+    __cardinality__: cardinality,
+    __name__: "training::get_expiry_dates",
+    __args__: positionalArgs,
+    __namedargs__: namedArgs,
+  }) as any;
+};
+
+type get_statusλFuncExpr<
+  NamedArgs extends {
+    "collapse"?: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bool>>,
+  },
+  P1 extends $.TypeSet<$Training>,
+  P2 extends $.TypeSet<_users.$User>,
+> = $.$expr_Function<
+  $.NamedTupleType<{care: _std.$int64, value: _std.$int64, status: $Status, next_step: $NextStep}>, $.cardutil.overrideLowerBound<$.cardutil.multiplyCardinalities<$.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.paramCardinality<P2>>, $.cardutil.optionalParamCardinality<NamedArgs["collapse"]>>, "Zero">
+>;
+type get_statusλFuncExpr2<
+  P1 extends $.TypeSet<$Training>,
+  P2 extends $.TypeSet<_users.$User>,
+> = $.$expr_Function<
+  $.NamedTupleType<{care: _std.$int64, value: _std.$int64, status: $Status, next_step: $NextStep}>, $.cardutil.overrideLowerBound<$.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.paramCardinality<P2>>, "Zero">
+>;
+function get_status<
+  NamedArgs extends {
+    "collapse"?: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bool>>,
+  },
+  P1 extends $.TypeSet<$Training>,
+  P2 extends $.TypeSet<_users.$User>,
+>(
+  namedArgs: NamedArgs,
+  training: P1,
+  user: P2,
+): get_statusλFuncExpr<NamedArgs, P1, P2>;
+function get_status<
+  P1 extends $.TypeSet<$Training>,
+  P2 extends $.TypeSet<_users.$User>,
+>(
+  training: P1,
+  user: P2,
+): get_statusλFuncExpr2<P1, P2>;
+function get_status(...args: any[]) {
+  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('training::get_status', args, _.spec, [
+    {args: [{typeId: "29f7181e-f86c-11ee-b1f9-2f77f7e7a3fd", optional: false, setoftype: false, variadic: false}, {typeId: "29c43a34-f86c-11ee-a6b1-c1a89f83e7fe", optional: false, setoftype: false, variadic: false}], namedArgs: {"collapse": {typeId: "00000000-0000-0000-0000-000000000109", optional: true, setoftype: false, variadic: false}}, returnTypeId: "45b93cf8-f9f8-11f0-908c-793d926efdd6", returnTypemod: "OptionalType"},
+  ]);
+  return _.syntax.$expressionify({
+    __kind__: $.ExpressionKind.Function,
+    __element__: returnType,
+    __cardinality__: cardinality,
+    __name__: "training::get_status",
+    __args__: positionalArgs,
+    __namedargs__: namedArgs,
+  }) as any;
+};
+
+const $training__globals: {  COLLAPSED_LOOKUPS: _.syntax.$expr_Global<
+              // "training::COLLAPSED_LOOKUPS",
+              $.NamedTupleType<{care: _std.$int64, value: _std.$int64, status: $Status, next_step: $NextStep}>,
+              $.Cardinality.AtLeastOne
+              >,  LOOKUPS: _.syntax.$expr_Global<
+              // "training::LOOKUPS",
+              $.NamedTupleType<{care: _std.$int64, value: _std.$int64, status: $Status, next_step: $NextStep}>,
+              $.Cardinality.AtLeastOne
+              >} = {  COLLAPSED_LOOKUPS: _.syntax.makeGlobal(
+              "training::COLLAPSED_LOOKUPS",
+              $.makeType(_.spec, "45b94022-f9f8-11f0-8cb7-31d035e37331", _.syntax.literal),
+              $.Cardinality.AtLeastOne) as any,  LOOKUPS: _.syntax.makeGlobal(
+              "training::LOOKUPS",
+              $.makeType(_.spec, "45bd3f24-f9f8-11f0-8d58-29abeecd033f", _.syntax.literal),
+              $.Cardinality.AtLeastOne) as any};
 
 
-export { AnswerType, LocationName, $Answer, Answer, $Interactable, Interactable, $TrainingPage, TrainingPage, $Page, Page, $Question, Question, $Session, Session, $Training, Training };
+
+export { AnswerType, ExpiresReturn, LocationName, NextStep, Status, $Answer, Answer, $Interactable, Interactable, $TrainingPage, TrainingPage, $Page, Page, $Question, Question, $Session, Session, $Training, Training };
 
 type __defaultExports = {
   "AnswerType": typeof AnswerType;
+  "ExpiresReturn": typeof ExpiresReturn;
   "LocationName": typeof LocationName;
+  "NextStep": typeof NextStep;
+  "Status": typeof Status;
   "Answer": typeof Answer;
   "Interactable": typeof Interactable;
   "TrainingPage": typeof TrainingPage;
   "Page": typeof Page;
   "Question": typeof Question;
   "Session": typeof Session;
-  "Training": typeof Training
+  "Training": typeof Training;
+  "get_expiry_dates": typeof get_expiry_dates;
+  "get_status": typeof get_status;
+  "global": typeof $training__globals
 };
 const __defaultExports: __defaultExports = {
   "AnswerType": AnswerType,
+  "ExpiresReturn": ExpiresReturn,
   "LocationName": LocationName,
+  "NextStep": NextStep,
+  "Status": Status,
   "Answer": Answer,
   "Interactable": Interactable,
   "TrainingPage": TrainingPage,
   "Page": Page,
   "Question": Question,
   "Session": Session,
-  "Training": Training
+  "Training": Training,
+  "get_expiry_dates": get_expiry_dates,
+  "get_status": get_status,
+  "global": $training__globals
 };
 export default __defaultExports;

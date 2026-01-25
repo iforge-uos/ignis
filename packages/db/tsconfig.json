@@ -9,6 +9,7 @@
     "edgeql-js/**/*.ts",
     "zod/**/*.ts",
     "queries/**/*.ts",
+    "tests/**/*.ts",
     "interfaces.ts"
   ],
   "exclude": ["node_modules", "dist"]

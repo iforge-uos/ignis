@@ -83,10 +83,10 @@ export const CreateSkewSchema = z.
   })
   .extend({ // shop::Skew
     colour: z.string().nullable(), // std::str
+    count: z.int().min(-32768).max(32767).nullable(), // std::int16
     icon_url: z.string().nullable(), // std::str
     price: z.bigint().min(-9223372036854775808n).max(9223372036854775807n), // std::int64
     till_id: z.int().min(-32768).max(32767), // std::int16
-    count: z.int().min(-32768).max(32767).nullable(), // std::int16
   });
 
 export const UpdateSkewSchema = z.
@@ -97,9 +97,9 @@ export const UpdateSkewSchema = z.
   })
   .extend({ // shop::Skew
     colour: z.string().nullable(), // std::str
+    count: z.int().min(-32768).max(32767).nullable(), // std::int16
     icon_url: z.string().nullable(), // std::str
     price: z.bigint().min(-9223372036854775808n).max(9223372036854775807n), // std::int64
     till_id: z.int().min(-32768).max(32767), // std::int16
-    count: z.int().min(-32768).max(32767).nullable(), // std::int16
   });
 // #endregion

@@ -36,3 +36,11 @@ However, please be careful to not allow full access to the database either way. 
 Please avoid putting them on abstract types.
 
 Update policies on fields are a good idea.
+
+## Testing
+
+Tests are located in the `tests/` folder, performed on a separate test branch to the main database in isolated transactions. We use [Vitest](https://vitest.dev/) / [bun's test runner](https://bun.sh/docs/cli/test) for testing.
+
+To run tests, use the command `bun run test` from the `packages/db` directory. Or run an individual test in your IDE with the bun extension for VSCode.
+
+We mainly test key functions for critical behaviour and hopefully access policies.

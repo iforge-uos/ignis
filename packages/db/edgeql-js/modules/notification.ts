@@ -60,7 +60,7 @@ type $AllUsers = $.ObjectType<"notification::AllUsers", $AllUsersλShape, null, 
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
   {MAGIC: {__element__: _std.$int16, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
 ], "notification::AllUsers">;
-const $AllUsers = $.makeType<$AllUsers>(_.spec, "2d8d2706-e43c-11f0-99be-39fff321d357", _.syntax.literal);
+const $AllUsers = $.makeType<$AllUsers>(_.spec, "16bbb346-f98e-11f0-b180-ffc57b298f4b", _.syntax.literal);
 
 const AllUsers: $.$expr_PathNode<$.TypeSet<$AllUsers, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($AllUsers, $.Cardinality.Many), null);
 
@@ -70,10 +70,10 @@ export type $NotificationλShape = $.typeutil.flatten<_default.$AuditableλShape
   "title": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "type": $.PropertyDesc<$Type, $.Cardinality.One, false, false, false, false>;
   "targets": $.LinkDesc<_users.$User | _team.$Team | _event.$Event | $MailingList | $AllReps | $AllUsers, $.Cardinality.AtLeastOne, {}, false, false,  false, false>;
+  "attachments": $.PropertyDesc<_std.$str, $.Cardinality.Many, false, false, false, false>;
   "delivery_methods": $.PropertyDesc<$DeliveryMethod, $.Cardinality.AtLeastOne, false, false, false, false>;
   "dispatched_at": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne, false, false, false, false>;
   "priority": $.PropertyDesc<_std.$int16, $.Cardinality.One, false, false, false, true>;
-  "attachments": $.PropertyDesc<_std.$str, $.Cardinality.Many, false, false, false, false>;
   "<notifications[is users::User]": $.LinkDesc<_users.$User, $.Cardinality.Many, {}, false, false,  false, false>;
   "<notifications[is users::Rep]": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, false,  false, false>;
   "<notifications[is user]": $.LinkDesc<_default.$user, $.Cardinality.Many, {}, false, false,  false, false>;
@@ -103,8 +103,8 @@ export type $MailingListλShape = $.typeutil.flatten<_default.$AuditableλShape 
   "name": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "subscribers": $.LinkDesc<_users.$User, $.Cardinality.Many, {}, false, true,  false, false>;
   "<mailing_list_subscriptions[is users::User]": $.LinkDesc<_users.$User, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<mailing_list_subscriptions[is user]": $.LinkDesc<_default.$user, $.Cardinality.Many, {}, false, false,  false, false>;
   "<mailing_list_subscriptions[is users::Rep]": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<mailing_list_subscriptions[is user]": $.LinkDesc<_default.$user, $.Cardinality.Many, {}, false, false,  false, false>;
   "<mailing_list_subscriptions": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
 type $MailingList = $.ObjectType<"notification::MailingList", $MailingListλShape, null, [

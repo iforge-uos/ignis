@@ -1,4 +1,5 @@
 import re
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).parent
@@ -108,6 +109,7 @@ def apply_replacements(path: Path):
 
 def main():
     """Main function to run the script."""
+    time.sleep(10)  # let schema generation finish
     print("Starting script to update temporal types...")
 
     apply_replacements(ROOT / "edgeql-js" / "modules" / "std.ts")

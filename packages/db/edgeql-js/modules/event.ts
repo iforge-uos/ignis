@@ -29,8 +29,8 @@ export type $EventλShape = $.typeutil.flatten<_default.$CreatedAtλShape & {
   "interested": $.LinkDesc<_users.$User, $.Cardinality.Many, {
     "@created_at": $.PropertyDesc<_std.$datetime, $.Cardinality.One>;
   }, false, false, false, false>;
-  "organiser": $.LinkDesc<_users.$User, $.Cardinality.AtLeastOne, {}, false, false,  false, false>;
   "location": $.LinkDesc<_sign_in.$Location, $.Cardinality.One, {}, false, false,  false, false>;
+  "organiser": $.LinkDesc<_users.$User, $.Cardinality.AtLeastOne, {}, false, false,  false, false>;
   "required_training": $.LinkDesc<_training.$Training, $.Cardinality.AtLeastOne, {}, false, false,  false, false>;
 }>;
 type $Event = $.ObjectType<"event::Event", $EventλShape, null, [

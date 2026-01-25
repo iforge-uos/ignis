@@ -6,19 +6,23 @@
   "author": "iForge IT team",
   "license": "GPL-3.0-or-later",
   "dependencies": {
+    "@faker-js/faker": "^10.2.0",
     "@gel/generate": "0.6.2",
     "@js-temporal/polyfill": "^0.5.1",
-    "gel": "2.0.1",
+    "gel": "^2.2.0",
     "gel-zod": "github:iforge-uos/edgedb-zod#73b2a90af1e62c631b4d1f2af18d7a49e652026b",
+    "vitest": "^4.0.17",
     "zod": "^4.0.5",
     "zod-temporal": "^1.1.0"
   },
   "scripts": {
+    "dev": "gel watch --migrate",
+    "test": "gel branch switch test -ce && bun test  --concurrent --max-concurrency --timeout 10000 --randomize && gel branch switch main",
     "interfaces": "bunx @gel/generate interfaces -I ignis",
     "edgeql": "bunx @gel/generate edgeql-js --future --target=ts -I ignis",
     "queries": "bunx @gel/generate queries --future --target=ts -I ignis",
     "temporal": "uv run -p 3.14 update_temporal.py",
     "zod": "bunx gel-zod --target=ts",
-    "regen": "bunx npm-run-all2 --parallel interfaces edgeql queries temporal zod"
+    "regen": "bunx npm-run-all2 --parallel interfaces edgeql queries zod && bun run temporal"
   }
 }

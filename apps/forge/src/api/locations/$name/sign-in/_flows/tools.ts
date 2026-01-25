@@ -1,7 +1,5 @@
 import { ErrorMap } from "@orpc/server";
-import e from "@packages/db/edgeql-js";
-import { tools } from "@packages/db/interfaces";
-import { getSignInTrainings } from "@packages/db/queries/getSignInTrainings.query";
+import { getSignInTools, GetSignInToolsReturns } from "@packages/db/queries/getSignInTools.query";
 import * as z from "zod";
 import { StepType, createFinaliseStep, createInitialiseStep, createReceiveStep, createTransmitStep } from "./_steps";
 import type { Params, Return } from "./_types";
@@ -9,7 +7,7 @@ import type { Params, Return } from "./_types";
 export const Initialise = createInitialiseStep(StepType.enum.TOOLS);
 
 export const Transmit = createTransmitStep(StepType.enum.TOOLS).extend({
-  tools: z.custom<Awaited<ReturnType<typeof getSignInTrainings>>["training"]>(),
+  tools: z.custom<GetSignInToolsReturns >(),
 });
 
 export const Receive = createReceiveStep(StepType.enum.TOOLS).extend({
@@ -24,38 +22,14 @@ export default async function* ({
   user: { id },
   input: { name },
   context: { tx },
-  $location,
 }: Params<z.infer<typeof Initialise>>): Return<
   z.infer<typeof Transmit>,
   z.infer<typeof Finalise>,
   z.infer<typeof Receive>
 > {
-  const { training } = await getSignInTrainings(tx, { id, name, name_: name });
+  const tools = await getSignInTools(tx, { id, name });
 
-  const all_training = (await e
-    .select(e.training.Training, (training_) => ({
-      id: true,
-      name: true,
-      compulsory: true,
-      in_person: true,
-      rep: { id: true, description: true },
-      description: true,
-      enabled: true,
-      icon_url: true,
-      selectable: e.array(["UNTRAINED" satisfies tools.Selectability]),
-      filter: e.all(
-        e.set(
-          e.op(training_.id, "not in", e.cast(e.uuid, e.set(...training.map((training) => training.id)))),
-          e.op("exists", training_.rep),
-          e.op($location, "in", training_.locations),
-          training_.enabled,
-        ),
-      ),
-    }))
-    .run(tx)) as typeof training;
-
-  const selected = yield { tools: [...training, ...all_training] };
-  // TODO check if booked and selectable?
+  const selected = yield { tools };
 
   return {
     next: StepType.enum.FINALISE,

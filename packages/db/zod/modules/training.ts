@@ -130,9 +130,9 @@ export const CreateTrainingSchema = z.
     compulsory: z.boolean().optional(), // std::bool
     description: z.string(), // std::str
     enabled: z.boolean().optional(), // std::bool
-    expires_after: zt.duration().nullable(), // std::duration
     icon_url: z.string().nullable(), // std::str
     training_lockout: zt.duration().nullable(), // std::duration
+    expires_after: z.never().optional(), // std::cal::relative_duration
   });
 
 export const UpdateTrainingSchema = z.
@@ -148,9 +148,9 @@ export const UpdateTrainingSchema = z.
     compulsory: z.boolean().optional(), // std::bool
     description: z.string(), // std::str
     enabled: z.boolean().optional(), // std::bool
-    expires_after: zt.duration().nullable(), // std::duration
     icon_url: z.string().nullable(), // std::str
     training_lockout: zt.duration().nullable(), // std::duration
+    expires_after: z.never().optional(), // std::cal::relative_duration
   });
 // #endregion
 

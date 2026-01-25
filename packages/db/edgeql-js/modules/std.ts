@@ -13,6 +13,7 @@ import type * as _stdcal from "./std/cal";
 import type * as _stdpg from "./std/pg";
 import type * as _extpgvector from "./ext/pgvector";
 import type * as _schema from "./schema";
+import { Temporal } from "@js-temporal/polyfill";
 type $anyscalar = $anypoint | $anyreal | $.EnumType | $bool | $bytes | $uuid | $str | $json | _cfg.$memory | _stdcal.$local_time | _stdcal.$relative_duration | _stdcal.$date_duration | _stdpg.$json | _extpgvector.$vector | _extpgvector.$halfvec | _extpgvector.$sparsevec;
 
 export type $uuid = $.ScalarType<"std::uuid", string>;
@@ -59,7 +60,7 @@ const bool: $.scalarTypeWithConstructor<$bool, never> = $.makeType<$.scalarTypeW
 export type $bytes = $.ScalarType<"std::bytes", Uint8Array>;
 const bytes: $.scalarTypeWithConstructor<$bytes, never> = $.makeType<$.scalarTypeWithConstructor<$bytes, never>>(_.spec, "00000000-0000-0000-0000-000000000102", _.syntax.literal);
 
-export type $datetime = $.ScalarType<"std::datetime", Date>;
+export type $datetime = $.ScalarType<"std::datetime", Temporal.ZonedDateTime>;
 const datetime: $.scalarTypeWithConstructor<$datetime, string> = $.makeType<$.scalarTypeWithConstructor<$datetime, string>>(_.spec, "00000000-0000-0000-0000-00000000010a", _.syntax.literal);
 
 export type $decimal = $.ScalarType<"std::decimal", string>;
@@ -67,7 +68,7 @@ const decimal: $.scalarTypeWithConstructor<$decimal, never> = $.makeType<$.scala
 export type $decimalλICastableTo = $decimal | $bigint;
 export type $decimalλIAssignableBy = $decimal | $bigint;
 
-export type $duration = $.ScalarType<"std::duration", _.gel.Duration>;
+export type $duration = $.ScalarType<"std::duration", Temporal.Duration>;
 const duration: $.scalarTypeWithConstructor<$duration, string> = $.makeType<$.scalarTypeWithConstructor<$duration, string>>(_.spec, "00000000-0000-0000-0000-00000000010e", _.syntax.literal);
 
 export type $float32 = $.ScalarType<"std::number", number>;

@@ -34,10 +34,12 @@ module training {
         rep: Training {
             annotation description := "The associated training that reps should have to supervise this. Empty if the training is for reps."
         }
-        expires_after: duration;
+        required expires_after: cal::relative_duration {
+            default := <cal::relative_duration>"P1Y"
+        }
 
         # multi history: json {
-        #     # @reset_training: bool {
+        #     # reset_training: bool {
         #     #     annotation description := "Whether this was a large enough change to "
         #     # }
         #     annotation description := "We keep track of these for the edit functionality."
@@ -79,6 +81,228 @@ module training {
             };
         access policy everyone
             allow select
+    }
+
+    scalar type Status extending enum<
+        UNTRAINED,  # no training completed yet
+        REVOKED,  # user has an infraction associated with the training
+        EXPIRED,  # training was completed but has since expired
+        ONLINE_COMPLETE,  # only online portion completed, needs in person training completing
+        FULLY_COMPLETE,  # user completed all required training, if rep can supervise others
+        # rep exclusive
+        REP_ONLINE_COMPLETE_NO_IN_PERSON,  # completed rep online training but not done user in person
+        USER_TRAINING_COMPLETE,  # rep completed all user training
+        REP_ONLINE_COMPLETE,  # rep completed training, needs in person training completing
+    >;
+
+    scalar type NextStep extending enum<
+        DO_ONLINE,
+        DO_IN_PERSON,
+        # rep exclusive
+        DO_IN_PERSON_OR_REP_ONLINE,
+        DO_REP_ONLINE,
+        DO_IN_PERSON_OR_REP_IN_PERSON,
+        DO_REP_IN_PERSON,
+        NONE,  # can't use empty set because of the named tuple
+    >;
+
+    # care bits are parts without the X numbers, they are &ed from the result
+    # value is the value in the table with all the X bits set to 0
+    # For a regular user doesn't matter if collapsed
+    # For reps, collapsed state is the same as user
+    #   +--- training.in_person (training requires in-person)
+    #   |   +--- exists training@in_person_created_at (in-person complete)
+    #   |   |   +--- training_expired
+    #   |   |   |   +--- exists training@infraction
+    #   v   v   v   v
+    #                 |      Status     |   Next Step
+    # +===+===+===+===+=================+==============+
+    # | X | X | X | 1 | REVOKED         | DO_ONLINE    |
+    # | X | X | 1 | 0 | EXPIRED         | DO_ONLINE    |
+    # | 0 | X | 0 | 0 | FULLY_COMPLETE  | NONE         |
+    # | 1 | X | 0 | 0 | ONLINE_COMPLETE | DO_IN_PERSON |
+    # | 1 | 1 | 0 | 0 | FULLY_COMPLETE  | NONE         |
+    # +===+===+===+===+=================+==============+
+    required global LOOKUPS := (
+        with
+            module default,
+        select
+                  (care := bin("0001"), value := bin("0001"),
+                    status := training::Status.REVOKED, next_step := training::NextStep.DO_ONLINE)
+            union (care := bin("0011"), value := bin("0010"),
+                    status := training::Status.EXPIRED, next_step := training::NextStep.DO_ONLINE)
+            union (care := bin("1011"), value := bin("0000"),
+                    status := training::Status.FULLY_COMPLETE, next_step := training::NextStep.NONE)
+            union (care := bin("1011"), value := bin("1000"),
+                    status := training::Status.ONLINE_COMPLETE, next_step := training::NextStep.DO_IN_PERSON)
+            union (care := bin("1111"), value := bin("1100"),
+                    status := training::Status.FULLY_COMPLETE, next_step := training::NextStep.NONE)
+    );
+
+    # slight more complicated cases for reps and if collapsed
+    # in person is not a pre-requisite for doing rep training
+    #   +--- training.in_person (training requires in-person)
+    #   |   +--- rep.in_person (supervision requires in-person)
+    #   |   |   +--- exists training@in_person_created_at (in-person complete)
+    #   |   |   |   +--- exists rep@created_at (rep online complete)
+    #   |   |   |   |   +--- exists rep@in_person_created_at (rep in-person complete)
+    #   |   |   |   |   |   +--- training_expired
+    #   |   |   |   |   |   |   +--- exists training@infraction
+    #   |   |   |   |   |   |   |   +--- rep_expired
+    #   |   |   |   |   |   |   |   |   +--- exists rep@infraction
+    #   v   v   v   v   v   v   v   v   v |               Status             |           Next Step
+    # +===+===+===+===+===+===+===+===+===+==================================+===============================+
+    # | X | X | X | X | X | X | 1 | X | X | REVOKED                          | DO_ONLINE                     |
+    # | X | X | X | X | X | X | X | X | 1 | REVOKED                          | DO_ONLINE                     |
+    # | X | X | X | X | X | 1 | 0 | X | 0 | EXPIRED                          | DO_ONLINE                     |
+    # | X | X | X | X | X | X | 0 | 1 | 0 | EXPIRED                          | DO_ONLINE                     |
+    # | 0 | X | X | 0 | X | 0 | 0 | 0 | 0 | ONLINE_COMPLETE                  | DO_REP_ONLINE                 |
+    # | 1 | X | 0 | 0 | 0 | 0 | 0 | 0 | 0 | ONLINE_COMPLETE                  | DO_IN_PERSON_OR_REP_ONLINE    |
+    # | 1 | 1 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | USER_TRAINING_COMPLETE           | DO_REP_IN_PERSON              |
+    # | 1 | X | 1 | 0 | X | 0 | 0 | 0 | 0 | USER_TRAINING_COMPLETE           | DO_REP_ONLINE                 |
+    # | 0 | 1 | X | 1 | 0 | 0 | 0 | 0 | 0 | REP_ONLINE_COMPLETE              | DO_REP_IN_PERSON              |
+    # | 1 | 1 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | REP_ONLINE_COMPLETE              | DO_IN_PERSON_OR_REP_IN_PERSON |
+    # | 1 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | REP_ONLINE_COMPLETE_NO_IN_PERSON | DO_IN_PERSON                  |
+    # | 0 | 0 | X | 1 | X | 0 | 0 | 0 | 0 | FULLY_COMPLETE                   | NONE                          |
+    # | 0 | 1 | X | 1 | 1 | 0 | 0 | 0 | 0 | FULLY_COMPLETE                   | NONE                          |
+    # | 1 | 0 | 1 | 1 | X | 0 | 0 | 0 | 0 | FULLY_COMPLETE                   | NONE                          |
+    # | 1 | 1 | 1 | 1 | 1 | 0 | 0 | 0 | 0 | FULLY_COMPLETE                   | NONE                          |
+    # +===+===+===+===+===+===+===+===+===+==================================+===============================+
+    #
+    # Note: Online (rep) training is a pre-requisite for (rep) in-person training.
+    #       training@created_at must always exist for user training
+    #       User online training is a pre-requisite for online rep training
+    #       States with in-person=yes but online=no are impossible.
+    #       States with rep online=yes but online=no are impossible.
+    required global COLLAPSED_LOOKUPS := (
+        with
+            module default,
+        select
+              (care := bin("0_0000_1000"), value := bin("0_0000_1000"),
+                status := training::Status.REVOKED, next_step := training::NextStep.DO_ONLINE)
+        union (care := bin("0_0000_0010"), value := bin("0_0000_0010"),
+                status := training::Status.REVOKED, next_step := training::NextStep.DO_ONLINE)
+        union (care := bin("0_0001_1010"), value := bin("0_0001_0010"),
+                status := training::Status.EXPIRED, next_step := training::NextStep.DO_ONLINE)
+        union (care := bin("0_0000_1110"), value := bin("0_0000_1100"),
+                status := training::Status.EXPIRED, next_step := training::NextStep.DO_ONLINE)
+        union (care := bin("1_0000_1111"), value := bin("0_0000_0000"),
+                status := training::Status.ONLINE_COMPLETE, next_step := training::NextStep.DO_REP_ONLINE)
+        union (care := bin("1_0110_1111"), value := bin("1_0000_0000"),
+                status := training::Status.ONLINE_COMPLETE, next_step := training::NextStep.DO_IN_PERSON_OR_REP_ONLINE)
+        union (care := bin("1_1111_1111"), value := bin("1_1110_0000"),
+                status := training::Status.USER_TRAINING_COMPLETE, next_step := training::NextStep.DO_REP_IN_PERSON)
+        union (care := bin("1_0110_1111"), value := bin("1_0100_0000"),
+                status := training::Status.USER_TRAINING_COMPLETE, next_step := training::NextStep.DO_REP_ONLINE)
+        union (care := bin("1_1011_1111"), value := bin("0_1010_0000"),
+                status := training::Status.REP_ONLINE_COMPLETE, next_step := training::NextStep.DO_REP_IN_PERSON)
+        union (care := bin("1_1111_1111"), value := bin("1_1010_0000"),
+                status := training::Status.REP_ONLINE_COMPLETE, next_step := training::NextStep.DO_IN_PERSON_OR_REP_IN_PERSON)
+        union (care := bin("1_1111_1111"), value := bin("1_0010_0000"),
+                status := training::Status.REP_ONLINE_COMPLETE_NO_IN_PERSON, next_step := training::NextStep.DO_IN_PERSON)
+        union (care := bin("1_1010_1111"), value := bin("0_0010_0000"),
+                status := training::Status.FULLY_COMPLETE, next_step := training::NextStep.NONE)
+        union (care := bin("1_1011_1111"), value := bin("0_1011_0000"),
+                status := training::Status.FULLY_COMPLETE, next_step := training::NextStep.NONE)
+        union (care := bin("1_1110_1111"), value := bin("1_0110_0000"),
+                status := training::Status.FULLY_COMPLETE, next_step := training::NextStep.NONE)
+        union (care := bin("1_1111_1111"), value := bin("1_1111_0000"),
+                status := training::Status.FULLY_COMPLETE, next_step := training::NextStep.NONE)
+    );
+
+    # Warning this function is quite slow, I do not understand why, doing things batched over user.training is somehow slower as well
+    # TODO consider inlining calls to this function inside of query files or doing the scary thing and profiling gel to figure out where it's going wrong
+    function get_status(training: Training, user: users::User, named only collapse: bool = true) -> optional tuple<care: int64, value: int64, status: Status, next_step: NextStep> {
+        using (
+            with
+                is_rep := user is users::Rep,
+                collapse_ := collapse and is_rep,  # collapse_ should always be false for users
+                # expires := get_expiry_dates(user),
+
+                is_user_training := exists training.rep,
+                u := user{training filter .id = training.id},  # stupid but you can't do training@created_at directly for some reason
+                training_in_person_needed := training.in_person,
+                training_in_person_done := exists u.training@in_person_created_at,
+                # the presence of any revocation means they can't use it.
+                training_revoked := exists u.training@infraction,
+                training_expired := false, # datetime_of_statement() > <datetime>json_get(expires, <str>training.id),
+
+                r := user{training filter .id = training.rep.id},
+                rep_online := exists r.training@created_at,
+                rep_in_person_needed := training.rep.in_person ?? false,
+                rep_in_person_done := exists r.training@in_person_created_at,
+                rep_revoked := exists r.training@infraction,
+                rep_expired := false, # datetime_of_statement() > <datetime>json_get(expires, <str>training.rep.id),
+
+                 key := (
+                    select default::bin(
+                        ("1" if training_in_person_needed else "0") ++
+
+                        ("1" if rep_in_person_needed else "0") ++
+                        ("1" if training_in_person_done else "0") ++
+                        ("1" if rep_online else "0") ++
+                        ("1" if rep_in_person_done else "0") ++
+
+                        ("1" if training_expired else "0") ++
+                        ("1" if rep_expired else "0") ++
+                        ("1" if training_revoked else "0") ++
+                        ("1" if rep_revoked else "0")
+                    ) if collapse_
+                    else default::bin(
+                        ("1" if training_in_person_needed else "0") ++
+                        ("1" if training_in_person_done else "0") ++
+                        ("1" if training_expired else "0") ++
+                        ("1" if training_revoked else "0")
+                    )
+                ),
+                lookups := global COLLAPSED_LOOKUPS if collapse_ else global LOOKUPS,
+                select (
+                    if not collapse_ or is_user_training then
+                        assert_exists(
+                            select lookups
+                            filter bit_and(key, .care) = .value
+                            order by .value desc  # more specific ones first
+                            limit 1
+                        )
+                    else
+                        {}
+                )
+        )
+    }
+
+    scalar type ExpiresReturn extending json;  # {training_id: datetime}
+
+    # By default user training expires with 1 year of not using it
+    # For rep training everyone's induction training expires at the start of the academic year (1st September) along with the laser cutter training
+    # Non-compulsory rep training expires after not using the machine in a year
+    function get_expiry_dates(user: users::User) -> ExpiresReturn {
+        using (
+            select assert_exists(assert_single(<ExpiresReturn>json_object_pack(
+                for training in user.training union (
+                    # with
+                    #     base := (
+                    #         select training@in_person_created_at
+                    #         if training.in_person and exists training@in_person_created_at
+                    #         else training@created_at
+                    #     ),
+                    #     is_rep_training := not exists training.rep,
+                    #     is_compulsory := training.compulsory,
+                    #     month := datetime_get(base, 'month'),
+                    #     year := datetime_get(base, 'year'),
+                    #     next_year := year + (1 if month >= 9 else 0),
+                    #     september := <datetime>("\(to_str(next_year))-09-01T00:00Z"),
+                    #     expiry := (
+                    #         select (
+                    #             if is_rep_training and is_compulsory then
+                    #                 september
+                    #             else
+                    #                 base + training.expires_after
+                    #         )
+                    #     ),
+                    select (<str>training.id, <json>"")
+                )
+            )))
+        )
     }
 
     abstract type Interactable {

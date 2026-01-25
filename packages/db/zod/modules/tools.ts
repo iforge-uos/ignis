@@ -49,36 +49,36 @@ export const UpdateGroupedToolSchema = z.
 export const CreateToolSchema = z.
   object({
     is_bookable: z.boolean(), // std::bool
+    status: z.tuple([
+      z.enum(["NOMINAL", "IN_USE", "PARTIALLY_FUNCTIONAL", "OUT_OF_ORDER"]),
+      z.string(),
+    ]), // tuple<code:tools::Status, reason:std::str>
     min_booking_time: zt.duration().optional().nullable(), // std::duration
+    grouped: z.boolean().optional(), // std::bool
+    bookable_hours: z.never(), // std::cal::local_time
     borrowable: z.boolean(), // std::bool
     description: z.string(), // std::str
     max_booking_daily: zt.duration().nullable(), // std::duration
     max_booking_weekly: zt.duration().nullable(), // std::duration
     name: z.string(), // std::str
     quantity: z.int().min(-32768).max(32767), // std::int16
-    grouped: z.boolean().optional(), // std::bool
-    bookable_hours: z.never(), // std::cal::local_time
-    status: z.tuple([
-      z.enum(["NOMINAL", "IN_USE", "PARTIALLY_FUNCTIONAL", "OUT_OF_ORDER"]),
-      z.string(),
-    ]), // tuple<code:tools::Status, reason:std::str>
   });
 
 export const UpdateToolSchema = z.
   object({
     is_bookable: z.boolean(), // std::bool
+    status: z.tuple([
+      z.enum(["NOMINAL", "IN_USE", "PARTIALLY_FUNCTIONAL", "OUT_OF_ORDER"]),
+      z.string(),
+    ]), // tuple<code:tools::Status, reason:std::str>
     min_booking_time: zt.duration().optional().nullable(), // std::duration
+    grouped: z.boolean().optional(), // std::bool
+    bookable_hours: z.never(), // std::cal::local_time
     borrowable: z.boolean(), // std::bool
     description: z.string(), // std::str
     max_booking_daily: zt.duration().nullable(), // std::duration
     max_booking_weekly: zt.duration().nullable(), // std::duration
     name: z.string(), // std::str
     quantity: z.int().min(-32768).max(32767), // std::int16
-    grouped: z.boolean().optional(), // std::bool
-    bookable_hours: z.never(), // std::cal::local_time
-    status: z.tuple([
-      z.enum(["NOMINAL", "IN_USE", "PARTIALLY_FUNCTIONAL", "OUT_OF_ORDER"]),
-      z.string(),
-    ]), // tuple<code:tools::Status, reason:std::str>
   });
 // #endregion
