@@ -1,43 +1,20 @@
-import { client, orpc } from "@/lib/orpc";
-import { SIGN_IN_REASONS_STORAGE_KEY } from "@/lib/constants.ts";
-import { UseQueryResult, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import { useAtom } from "jotai";
+import { orpc } from "@/lib/orpc";
+import { reasonsAtom, reasonsLastUpdatedAtom } from "../atoms/signInAppAtoms";
 
-type LocalSignInReasonsData = {
-  lastModified: string;
-  signInReasons: Reason[];
-};
+export const useSignInReasons = () => {
+  const [{ data: reasons }, dispatch] = useAtom(reasonsAtom);
+  const [cachedLastUpdated, setCachedLastUpdated] = useAtom(reasonsLastUpdatedAtom);
+  const { data: lastUpdated } = useQuery(orpc.signIns.reasons.lastUpdate.queryOptions());
 
-export const getCommonReasons = async (location: LocationName, rep?: boolean) => {
-  return await client.locations.commonReasons({ name: location, is_rep: rep });
-};
+  if (!reasons || !lastUpdated || !cachedLastUpdated) return null;
 
-export const useSignInReasons = () => { // TODO use atom with query + local storage
-  return useQuery({
-    queryKey: ["signInReasons"],
-    queryFn: async () => {
-      const localData = getLocalSignInReasons();
-      const lastModified = await client.signIns.reasons.lastUpdate();
-      //TODO FIX THIS
-      if (!localData || lastModified > new Date(localData.lastModified)) {
-        const data = await client.signIns.reasons.all();
-        storeLocalSignInReasons(data, lastModified);
-        return data;
-      }
+  if (cachedLastUpdated < lastUpdated) {
+    dispatch({ type: "update" });
+    setCachedLastUpdated(lastUpdated);
+    return null;
+  }
 
-      return localData.signInReasons;
-    },
-  });
-};
-
-const getLocalSignInReasons = (): LocalSignInReasonsData | null => {
-  const localDataJSON = localStorage.getItem(SIGN_IN_REASONS_STORAGE_KEY);
-  return localDataJSON ? JSON.parse(localDataJSON) : null;
-};
-
-const storeLocalSignInReasons = (signInReasons: Reason[], lastModified: Date): void => {
-  const dataToStore: LocalSignInReasonsData = {
-    lastModified: lastModified.toISOString(),
-    signInReasons,
-  };
-  localStorage.setItem(SIGN_IN_REASONS_STORAGE_KEY, JSON.stringify(dataToStore));
+  return reasons;
 };

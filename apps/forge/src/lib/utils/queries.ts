@@ -220,7 +220,7 @@ export const getSignInUser = async ({
         teams: { name: true, description: true, id: true },
       }),
       first_time: FirstTime(name)(user),
-      registered: e.bool(false as boolean),
+      registered_now: e.bool(false as boolean),
       location: e.select(e.sign_in.SignIn, (sign_in) => ({
         filter_single: e.op(e.op(sign_in.user, "=", user), "and", e.op("not", sign_in.signed_out)),
       })).location.name,
@@ -296,7 +296,7 @@ export const ensureUser = async ({
         }),
         signed_in: e.bool(false),
         first_time: FirstTime(name)(user),
-        registered: e.bool(!u),
+        registered_now: e.bool(!u),
       }),
     )
     .run(tx);

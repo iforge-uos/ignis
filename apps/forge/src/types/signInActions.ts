@@ -1,4 +1,7 @@
 import React from "react";
+import { StepType } from "@/api/locations/$name/sign-in/_flows/_steps";
+import z from "zod";
+import type { InitialiseToTransmitMap } from "@/routes/test/$name.$ucard_number";
 
 export enum SignInSteps {
   Step1 = "UCard Input",
@@ -28,7 +31,7 @@ export interface StepComponentProps {
   onSecondary: () => void;
 }
 
-export interface FlowStepComponent extends React.FC<StepComponentProps> {}
+export interface FlowStepComponent<StepT extends z.infer<typeof StepType>> extends React.FC<StepComponentProps & {data: InitialiseToTransmitMap[StepT]}> {}
 
 export interface FlowConfiguration {
   [FlowType.SignIn]: Record<SignInSteps, FlowStepComponent>;

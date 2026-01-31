@@ -1,18 +1,21 @@
-import { REP_ON_SHIFT } from "@/lib/constants";
+import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants";
 import { AgreementShape } from "@/lib/utils/queries";
 import { ErrorMap } from "@orpc/server";
-import e from "@packages/db/edgeql-js";
+import e, { $infer } from "@packages/db/edgeql-js";
 import { Agreement } from "@packages/db/edgeql-js/modules/sign_in";
 import { CreateAgreementSchema } from "@packages/db/zod/modules/sign_in";
 import * as z from "zod";
 import { StepType, createFinaliseStep, createInitialiseStep, createReceiveStep, createTransmitStep } from "./_steps";
 import type { Params, Return } from "./_types";
+import { getCommonReasons } from "../../common-reasons";
 
 export const Initialise = createInitialiseStep(StepType.enum.REASON);
 
-export const Transmit = createTransmitStep(StepType.enum.REASON);
+export const Transmit = createTransmitStep(StepType.enum.REASON).extend({
+  common_reasons: z.custom<ReturnType<typeof getCommonReasons>>(),
+});
 
-export const Receive = createReceiveStep(StepType.enum.REASON).extend({reason: z.object({ id: z.uuid() }) });
+export const Receive = createReceiveStep(StepType.enum.REASON).extend({ reason: z.object({ id: z.uuid() }) });
 
 export const Finalise = createFinaliseStep(
   StepType.enum.REASON,
@@ -46,6 +49,7 @@ export default async function* ({
   user,
   context: { tx },
   errors,
+  input,
 }: Params<z.infer<typeof Initialise>>): Return<
   z.infer<typeof Transmit>,
   z.infer<typeof Finalise>,
@@ -57,7 +61,9 @@ export default async function* ({
     })).agreement,
   );
 
-  const { reason } = yield {};
+  const { reason } = yield {
+    common_reasons: await getCommonReasons(tx, input.name, user.__typename === "users::Rep"),
+  };
 
   const {
     id,
@@ -129,6 +135,11 @@ export default async function* ({
     // "exists",
     // e.select($location.queued, (place) => ({ filter: e.op("not", e.op("exists", place.notified_at)) })),
   ) {
+    return {
+      next: StepType.enum.FINALISE,
+    };
+  }
+  if (reasonName === REP_OFF_SHIFT) { // TODO check has queued e.select($location.queued, (place) => ({ filter: e.op("not", e.op("exists", place.notified_at)) })),
     return {
       next: StepType.enum.FINALISE,
     };

@@ -1,4 +1,4 @@
-import { FullLocation, PartialUserShape } from "@/lib/utils/queries";
+import { FullLocation } from "@/lib/utils/queries";
 import { pub, rep } from "@/orpc";
 import e from "@packages/db/edgeql-js";
 import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";

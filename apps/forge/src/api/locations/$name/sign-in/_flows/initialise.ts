@@ -64,17 +64,17 @@ export default async function* ({
   if (user.location) {
     if (user.location !== name) {
       throw errors.ALREADY_SIGNED_IN({ data: user.location });
-    }x
+    }
 
     return { next: StepType.enum.SIGN_OUT };
   }
 
   // Queue checking
-  if ((await $location.available_capacity.run(tx)) <= 0) {
-    if (user.registered) {
+  if ((await $location.available_capacity.run(tx)) <= 0 && user.__typename !== "users::Rep") {
+    if (user.registered_now) {
       throw errors.NEW_USER_BUT_WERE_SLAMMED()
     }
-    if (await $location.queue_in_use.run(tx)) {
+    if (await $location.queue_in_use.run(tx) ) {
       // could raise so cannot fetch all these at once
       logger.info(logger.fmt`Queue in use, checking if user ${user.ucard_number} has queued at location: ${name}`);
 
@@ -91,9 +91,7 @@ export default async function* ({
     }
   }
 
-  // TODO this should go on the front end
-  // if (user.first_time)
-  if (user.registered) {
+  if (await e.op("exists", $user.agreements_signed).run(tx)) {  // TODO this is subtly wrong cause they might be expired
     return {
       next: StepType.enum.REASON,
     };

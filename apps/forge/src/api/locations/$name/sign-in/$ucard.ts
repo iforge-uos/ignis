@@ -54,7 +54,6 @@ const HANDLERS: { [K in z.infer<typeof StepType>]: (...args: any) => FnReturn } 
  */
 export const flow = deskOrAdmin
   .route({ method: "GET", path: "/{ucard_number}", tags: ["hidden"] })
-  // @ts-ignore  // the middleware doesn't work for async generators but the types are useful
   .use(transaction)
   .input(InitialiseStep)
   .errors(Errors)
@@ -83,12 +82,14 @@ export const flow = deskOrAdmin
       const $location = e.assert_exists(e.select(e.sign_in.Location, () => ({ filter_single: { name: input.name } })));
 
       signal?.addEventListener("abort", async () => {
-        console.log("Got a cancel");
+        try {
         await cancel({ ...arg, user, input: { ...input, type: "CANCEL" }, $user, $location }).next();
+        } catch {
+          cleanupTx(undefined);
+        }
       });
 
       for await (const message of initialise) {
-        console.log("Getting an init message", message);
         // lifecycle is:
         // 1. INITIALISE (client) - tells us which function to call and any relevant data (there isn't normally any but future proofing lol)
         // 2. TRANSMIT (server) - send the client the info to display on the frontend
@@ -109,6 +110,7 @@ export const flow = deskOrAdmin
         store.RECEIVE = receive; // cache for the same reason
 
         const { value: fin, done } = (await tx.next(receive)) as { value: z.infer<typeof Finalise>; done: true };
+        fin.type = message.type;  // probably won't ever be used but oh well
         if (!done) exhaustiveGuard(message.type as never);
         if (fin.next === undefined) {
           delete SIGN_INS[key]; // avoid leaking memory :)

@@ -1,4 +1,4 @@
-import { signAgreement } from "@/api/users/$id/agreements.$agreement_id";
+import { signAgreementParams } from "@/api/users/$id/agreements.$agreement_id";
 import { ErrorMap, call } from "@orpc/server";
 import e from "@packages/db/edgeql-js";
 import { CreateAgreementSchema } from "@packages/db/zod/modules/sign_in";
@@ -12,7 +12,7 @@ export const Transmit = createTransmitStep(StepType.enum.AGREEMENTS).extend({
   agreements: z.array(CreateAgreementSchema.extend({ id: z.uuid() })),
 });
 
-export const Receive = createReceiveStep(StepType.enum.AGREEMENTS)
+export const Receive = createReceiveStep(StepType.enum.AGREEMENTS);
 
 export const Finalise = createFinaliseStep(StepType.enum.AGREEMENTS, StepType.enum.MAILING_LISTS);
 
@@ -26,7 +26,7 @@ export default async function* ({
   z.infer<typeof Finalise>,
   z.infer<typeof Receive>
 > {
-  const data = {
+  const data = {  // FIXME only get expired ones, remember to dedupe the logic between init and this
     agreements: await e
       .assert_exists(
         e.select(e.sign_in.Agreement, (agreement) => ({
@@ -36,22 +36,20 @@ export default async function* ({
           updated_at: true,
           created_at: true,
           version: true,
-          filter: e.op(agreement.name, "=", "User Agreement"), // TODO add rep agreement as well
+          filter: e.op(
+            agreement.name,
+            "in",
+            e.set(...["User Agreement", ...(user.__typename === "users::Rep" ? ["Rep Agreement"] : [])]),
+          ),
         })),
       )
       .run(tx),
   };
   yield data;
-  for (const agreement of data.agreements) {
-    // FIXME this should handle backtracking causing this to fail
-    await call(
-      signAgreement,
-      { id: user.id, agreement_id: agreement.id },
-      {
-        // this probably isn't perfectly safe but it's good enough
-        context: { db: tx, user } as Parameters<(typeof signAgreement)["~orpc"]["handler"]>[0]["context"] as any,
-      },
+  if (data.agreements)
+    await Promise.all(
+      data.agreements.map((agreement) => signAgreementParams.run(tx, { id: user.id, agreement_id: agreement.id })),
     );
-  }
+  // FIXME this should handle backtracking causing this to fail
   return { next: StepType.enum.MAILING_LISTS };
 }
