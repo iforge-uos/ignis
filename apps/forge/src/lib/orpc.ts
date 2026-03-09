@@ -6,10 +6,10 @@ import { createORPCClient, onError } from "@orpc/client";
 import { RPCLink } from "@orpc/client/websocket";
 import { createRouterClient, type RouterClient } from "@orpc/server";
 import { createTanstackQueryUtils, type RouterUtils } from "@orpc/tanstack-query";
+import { redirect, useLocation } from "@tanstack/react-router";
 import { createIsomorphicFn } from "@tanstack/react-start";
 import { getCookie } from "@tanstack/react-start/server";
 import { WebSocket } from "partysocket";
-
 
 export type ORPCReactUtils = RouterUtils<RouterClient<Router>>;
 
@@ -25,6 +25,15 @@ function createWebSocketClient(): RouterClient<typeof router> {
     customJsonSerializers: serialisers,
     plugins: [],
     interceptors: [onError(console.error)],
+    clientInterceptors: [
+      async ({ next, request }) => {
+        const response = await next();
+        if (response.status === 401) {
+          throw redirect({ to: "/auth/login", search: { redirect: window.location.pathname } });
+        }
+        return response;
+      },
+    ],
   });
   return createORPCClient(link);
 }
