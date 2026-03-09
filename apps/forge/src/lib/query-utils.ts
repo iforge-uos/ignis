@@ -28,6 +28,10 @@ export async function ensureQueryData<T>(
         revalidateIfStale: true,
       });
     } catch (_) {
+      // Cache null so subsequent calls within staleTime return immediately
+      // without a network request. Without this, errored queries have no cached
+      // data (undefined), causing ensureQueryData to always re-fetch.
+      queryClient.setQueryData(queryOptions.queryKey!, null);
       return null;
     }
   }
