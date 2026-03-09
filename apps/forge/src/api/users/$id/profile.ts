@@ -36,7 +36,7 @@ export const get = auth
 
     const dwellers = e.cast(
       e.float64,
-      // this returns number[] not number[][] as you might except for reasons I cannot explain
+      // this returns number[] not number[][] as you might expect for reasons I cannot explain
       e.duration_to_seconds(
         e.select(e.users.User, () => ({
           sign_ins: last3Months,
@@ -44,7 +44,7 @@ export const get = auth
       ),
     );
 
-    const lambdaDwellers = e.op(1, "/", e.math.mean(dwellers)); // https://en.wikipedia.org/wiki/Exponential_distribution
+    const lambdaDwellers = e.op(e.op(1, "/", e.math.mean(dwellers)), "if", e.op("exists", dwellers), "else", 1); // https://en.wikipedia.org/wiki/Exponential_distribution
     // we assume this because it makes the maths easier but also cause I plotted it and it seemed like a decent fit
 
     const user = await e
@@ -87,7 +87,7 @@ export const get = auth
               ),
             ),
           ),
-          frequent_customer: e.op(e.count(e.select(user.sign_ins, last3Months)), ">", e.math.mean(frequencies)),
+          frequent_customer: e.op(e.op(e.count(e.select(user.sign_ins, last3Months)), ">", e.math.mean(frequencies)), "if", e.op("exists", frequencies), "else", false),
           // streak: e.select(user.sign_ins),
           integrations: IntegrationShape,
           filter_single: { id },
@@ -103,7 +103,9 @@ export const get = auth
     if (shopError && isDefinedError(shopError) && shopError.code === "NOT_FOUND") {
       shopInfo = { balance: 0, cost_centers: [] };
     } else if (shopError) {
-      throw shopError;
+      shopInfo = { balance: 0, cost_centers: [] };
+
+      // throw shopError;
     }
 
     return {
