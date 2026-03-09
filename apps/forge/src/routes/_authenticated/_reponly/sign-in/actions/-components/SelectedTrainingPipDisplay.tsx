@@ -1,4 +1,4 @@
-import { Training } from "@ignis/types/sign_in";
+import { Training } from "@packages/types/sign_in";
 import { Badge } from "@packages/ui/components/badge";
 import React from "react";
 

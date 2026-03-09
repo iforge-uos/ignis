@@ -1,8 +1,3 @@
-import { activeLocationAtom } from "@/atoms/signInAppAtoms";
-import { orpc } from "@/lib/orpc";
-import { cn } from "@/lib/utils";
-import { iForgeEpoch } from "@/lib/constants";
-import { ManageUserWidgetProps } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/ManageUserWidget";
 import { Badge } from "@packages/ui/components/badge";
 import { Button } from "@packages/ui/components/button";
 import { Calendar } from "@packages/ui/components/calendar";
@@ -23,7 +18,12 @@ import { useAtomValue } from "jotai";
 import { CalendarIcon } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
-import { getTrainingCardInfo } from "../../../actions/-components/TrainingSelectionList";
+import { activeLocationAtom } from "@/atoms/signInAppAtoms";
+import { iForgeEpoch } from "@/lib/constants";
+import { orpc } from "@/lib/orpc";
+import { cn } from "@/lib/utils";
+import { ManageUserWidgetProps } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/ManageUserWidget";
+import { getToolCardInfo } from "../../../actions/-components/TrainingSelectionList";
 
 export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locationName: location }) => {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
@@ -52,7 +52,7 @@ export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locatio
                 remainingTrainings
                   .sort((a, b) => a.name.localeCompare(b.name))
                   .map((training) => {
-                    const info = getTrainingCardInfo(training);
+                    const info = getToolCardInfo(training);
                     return (
                       <SelectItem
                         key={training.id}

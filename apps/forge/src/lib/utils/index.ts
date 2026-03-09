@@ -63,11 +63,17 @@ export const formatOrdinals = (n: number) => {
   return `${n}${suffix}`;
 };
 
-export const bigIntMax = (...args: bigint[]) => args.reduce((m, e) => e > m ? e : m);
-export const bigIntMin = (...args: bigint[]) => args.reduce((m, e) => e < m ? e : m);
+export const bigIntMax = (...args: bigint[]) => args.reduce((m, e) => (e > m ? e : m));
+export const bigIntMin = (...args: bigint[]) => args.reduce((m, e) => (e < m ? e : m));
 
 export function clamp(value: number, min: number, max: number) {
-  if (value < min) return min
-  if (value > max) return max
-  return value
+  if (value < min) return min;
+  if (value > max) return max;
+  return value;
+}
+
+export async function sleep(durationMillis: number) {
+  return new Promise<void>((accept) => {
+    setTimeout(() => accept(), durationMillis);
+  });
 }

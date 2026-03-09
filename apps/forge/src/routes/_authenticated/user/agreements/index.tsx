@@ -24,7 +24,7 @@ export default function Component() {
   );
 }
 
-export const Route = createFileRoute("/_authenticated/sign-in/agreements/")({
+export const Route = createFileRoute("/_authenticated/user/agreements/")({
   component: Component,
   loader: async ({ context }) => await ensureQueryData(
     context.queryClient,

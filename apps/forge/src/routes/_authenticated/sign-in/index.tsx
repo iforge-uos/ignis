@@ -6,7 +6,6 @@ import SignInActionsManager from "@/routes/_authenticated/_reponly/sign-in/actio
 import { Button } from "@packages/ui/components/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@packages/ui/components/card";
 import { Separator } from "@packages/ui/components/separator";
-import {} from "@tanstack/react-router";
 import { Book, Coins, MessageCircleMore, ShoppingCart } from "lucide-react";
 
 
@@ -58,14 +57,14 @@ const SignInIndexAppComponent = () => {
         <ActiveLocationSelector />
         <div className="border-2 rounded-md p-4">
           <h1 className="text-xl font-bold mb-4 text-center">Sign in Home</h1>
-          {isAdmin && (
+          {/* {isAdmin && (
             <>
               <div className="mb-2">
                 <SignInActionsManager />
               </div>
               <Separator className="mb-2" />
             </>
-          )}
+          )} */}
           <div className="flex flex-col-reverse md:flex-row">
             <div className="md:w-1/2 flex justify-center items-center p-4">
               <div className="aspect-square relative w-full h-full">
@@ -73,7 +72,6 @@ const SignInIndexAppComponent = () => {
             </div>
             <div className="md:w-1/2 flex justify-center items-center">
               <div className="grid grid-cols-1 gap-4 mx-auto">
-                {/* Use mx-auto for horizontal centering */}
                 {items.map((item) => (
                   <Card key={item.title} className="shadow-md rounded-md p-4 max-w-md">
                     <CardHeader>

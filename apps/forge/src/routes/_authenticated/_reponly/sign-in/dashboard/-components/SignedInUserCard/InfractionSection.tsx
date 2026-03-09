@@ -28,7 +28,8 @@ interface InfractionSectionProps {
 }
 
 export const InfractionSection: React.FC<InfractionSectionProps> = ({ user, locationName: location }) => {
-  // TODO auto log onShiftReps
+  // TODO auto swap this to use query
+  // todo make this a controlled form using tanstack form
   const [type, setType] = React.useState<InfractionType>("WARNING");
   const [reason, setReason] = React.useState<string>("");
   const [resolved, setResolved] = React.useState<boolean>(true);

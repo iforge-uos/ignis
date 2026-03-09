@@ -1,5 +1,10 @@
-import { errorDisplay } from "@/components/errors/ErrorDisplay";
-
+import { Training, User } from "@ignis/types/sign_in";
+import { Alert, AlertDescription, AlertTitle } from "@packages/ui/components/alert";
+import { Button } from "@packages/ui/components/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@packages/ui/components/card";
+import { useQuery } from "@tanstack/react-query";
+import { useAtom } from "jotai";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   activeLocationAtom,
   sessionNavigationBacktrackingAtom,
@@ -7,18 +12,11 @@ import {
   sessionUcardNumberAtom,
   sessionUserAtom,
 } from "@/atoms/signInAppAtoms";
+import { errorDisplay } from "@/components/errors/ErrorDisplay";
 import { Hammer } from "@/components/loading";
 import { SelectedTrainingPipDisplay } from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SelectedTrainingPipDisplay";
 import ToolSelectionList from "@/routes/_authenticated/_reponly/sign-in/actions/-components/TrainingSelectionList";
 import { FlowStepComponent } from "@/types/signInActions";
-import { Training, User } from "@ignis/types/sign_in";
-import { Alert, AlertDescription, AlertTitle } from "@packages/ui/components/alert";
-import { Button } from "@packages/ui/components/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@packages/ui/components/card";
-import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
-import { useQuery } from "@tanstack/react-query";
-import { useAtom } from "jotai";
-import { useCallback, useEffect, useMemo, useState } from "react";
 
 const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const abortController = new AbortController();
@@ -101,44 +99,42 @@ const ToolSelectionInput: FlowStepComponent = ({ onSecondary, onPrimary }) => {
   const userMissingCompulsoryTraining = missingCompulsoryTraining.length !== 0;
 
   return (
-    <>
-      <Card>
-        <CardHeader>
-          <CardTitle>Tool Selection Input</CardTitle>
-          <CardDescription>Select which training (tools) you would like to use!</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <Hammer />
-          ) : error ? (
-            errorDisplay({ error })
-          ) : userMissingCompulsoryTraining ? (
-            <Alert variant="default">
-              <ExclamationTriangleIcon className="h-4 w-4" />
-              <AlertTitle>Cannot Sign In</AlertTitle>
-              <AlertDescription>
-                Compulsory training {missingCompulsoryTraining.map((training) => `"${training.name}"`).join(", ")} has
-                not been completed.
-              </AlertDescription>
-            </Alert>
-          ) : (
-            <ToolSelectionList
-              onSelectionChange={handleOnTrainingSelect}
-              training={training || []}
-              onSubmit={handlePrimaryClick}
-            />
-          )}
-        </CardContent>
-        <CardFooter className="flex justify-between flex-row-reverse">
-          <Button onClick={handlePrimaryClick} disabled={!(canContinue || isRep)}>
-            Continue
-          </Button>
-          <Button onClick={handleSecondaryClick} variant="outline">
-            Go Back
-          </Button>
-        </CardFooter>
-      </Card>
-    </>
+    <Card>
+      <CardHeader>
+        <CardTitle>Tool Selection Input</CardTitle>
+        <CardDescription>Select which training (tools) you would like to use!</CardDescription>
+      </CardHeader>
+      <CardContent>
+        {isLoading ? (
+          <Hammer />
+        ) : error ? (
+          errorDisplay({ error })
+        ) : userMissingCompulsoryTraining ? (
+          <Alert variant="default">
+            <ExclamationTriangleIcon className="h-4 w-4" />
+            <AlertTitle>Cannot Sign In</AlertTitle>
+            <AlertDescription>
+              Compulsory training {missingCompulsoryTraining.map((training) => `"${training.name}"`).join(", ")} has not
+              been completed.
+            </AlertDescription>
+          </Alert>
+        ) : (
+          <ToolSelectionList
+            onSelectionChange={handleOnTrainingSelect}
+            tools={training || []}
+            onSubmit={handlePrimaryClick}
+          />
+        )}
+      </CardContent>
+      <CardFooter className="flex justify-between flex-row-reverse">
+        <Button onClick={handlePrimaryClick} disabled={!(canContinue || isRep)}>
+          Continue
+        </Button>
+        <Button onClick={handleSecondaryClick} variant="outline">
+          Go Back
+        </Button>
+      </CardFooter>
+    </Card>
   );
 };
 

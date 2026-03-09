@@ -53,10 +53,10 @@ module users {
             default := 10_00;
         }
 
-        identity: ext::auth::Identity {
+        required identity: ext::auth::Identity;
         # required identity: ext::auth::Identity {
-            constraint exclusive;
-        }
+        #     constraint exclusive;
+        # }
         multi roles: Role;
         multi integrations := .<user[is Integration];
 
@@ -115,6 +115,11 @@ module users {
                 (not .in_person or exists @in_person_created_at)  # must also have the in person training
             )
         );
+
+        # multi supervisable_tools := (
+        #     select tools::Tool
+        #     filter .training
+        # )
     }
 
     type Role {
@@ -132,7 +137,7 @@ module users {
         TRAINING_ISSUE,
     >;
 
-     function send_infraction(body: json) -> net::http::ScheduledRequest {
+    function send_infraction(body: json) -> net::http::ScheduledRequest {
         using (
             select net::http::schedule_request(
                 assert_exists(global default::INFRACTIONS_WEBHOOK_URL, message := "INFRACTIONS_WEBHOOK_URL is not set"),

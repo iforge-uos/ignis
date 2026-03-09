@@ -1,20 +1,20 @@
 import { DragOverlay, useDroppable } from "@dnd-kit/core";
-import type { PartialReason, SignInEntry } from "@ignis/types/sign_in";
+import type { PartialReason, SignInEntry } from "@packages/types/sign_in";
 import { PartialUserWithTeams } from "@packages/types/users";
 import { Alert, AlertDescription, AlertTitle } from "@packages/ui/components/alert";
 import { Button } from "@packages/ui/components/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@packages/ui/components/collapsible";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@packages/ui/components/tooltip";
-import { InfoCircledIcon } from "@radix-ui/react-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
-import { ArrowDownIcon, ArrowRightIcon, Ban } from "lucide-react";
+import { ArrowDownIcon, ArrowRightIcon, Ban, InfoIcon } from "lucide-react";
 import { FC, useCallback, useMemo, useState } from "react";
 import { useDrop } from "react-dnd";
 import { toast } from "sonner";
 import { activeLocationAtom } from "@/atoms/signInAppAtoms";
 import { cn, exhaustiveGuard, uCardNumberToString } from "@/lib/utils";
 import { SignedInUserCard } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard";
+import { orpc } from "/src/lib/orpc";
 
 // SignInDrawer Props
 interface SignInDrawerProps {
@@ -49,30 +49,18 @@ export const SignInDrawer: FC<SignInDrawerProps> = ({
   const [sortOrder, setSortOrder] = useState<SORT_DIR>("desc");
   const [groupBy, setGroupBy] = useState<(typeof GROUP_BY)[number]>(GROUP_BY[0]);
   const activeLocation = useAtomValue(activeLocationAtom);
-  const abortController = new AbortController();
   const queryClient = useQueryClient();
-  const { mutate: changeReasonMutate } = useMutation({
-    mutationKey: ["patchSignIn"],
-    mutationFn: ({ user, newReason }: { user: PartialUserWithTeams; newReason: PartialReason }) =>
-      PatchSignIn({
-        locationName: activeLocation,
-        uCardNumber: uCardNumberToString(user.ucard_number),
-        signal: abortController.signal,
-        postBody: {
-          reason_id: newReason.id,
-        },
-      }),
+  const { mutate: updateShiftType } = useMutation({
+    ...orpc.signIns.update.mutationOptions(),
     retry: 0,
     onError: (error) => {
       console.error("Error", error);
-      abortController.abort();
       toast.error("Failed to set new shift type");
     },
-    onSuccess: (_data, { user }) => {
-      abortController.abort();
+    onSuccess: (_data) => {
       toast.success("Successfully changed shift type");
-      queryClient.invalidateQueries({ queryKey: ["locationList", activeLocation] });
-      queryClient.invalidateQueries({ queryKey: ["locationStatus"] });
+      queryClient.invalidateQueries({queryKey: orpc.locations.get.queryKey({input:{name: activeLocation}})});
+      queryClient.invalidateQueries({queryKey:orpc.locations.statuses.queryKey()});
     },
   });
 
@@ -87,7 +75,7 @@ export const SignInDrawer: FC<SignInDrawerProps> = ({
           comparison = a.user.display_name.localeCompare(b.user.display_name);
           break;
         case "Time":
-          comparison = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+          comparison = a.created_at.epochMilliseconds - b.created_at.epochMilliseconds;
           break;
         default:
           exhaustiveGuard(sortBy);
@@ -118,10 +106,7 @@ export const SignInDrawer: FC<SignInDrawerProps> = ({
       }
     }
 
-    return Array.from(groups.entries()).map(([groupName, entries]) => ({
-      groupName,
-      entries,
-    }));
+    return Array.from(groups.entries());
   }, [supportsSorting, groupBy, sortedEntries]);
 
   const toggleOpen = () => setIsOpen(!isOpen);
@@ -131,9 +116,11 @@ export const SignInDrawer: FC<SignInDrawerProps> = ({
       isOver: monitor.isOver(),
       canDrop: monitor.canDrop(),
     }),
-    drop: ({ user, reason: oldReason }: { user: PartialUserWithTeams; reason: PartialReason }) => {
+    drop: ({ id, reason: oldReason }: { id: string; reason: PartialReason }) => {  // from SignedInUserCard's item
       if (reason!.id === oldReason.id) return;
-      changeReasonMutate({ user, newReason: reason! });
+      console.log("Dropping", { id, oldReason, newReason: reason });
+      updateShiftType({ id, reason: reason! });
+      console.log("Done")
     },
   }));
 
@@ -226,14 +213,14 @@ export const SignInDrawer: FC<SignInDrawerProps> = ({
           <div className="flex flex-wrap gap-4 mr-4">
             {entries.length === 0 && (
               <Alert variant="default">
-                <InfoCircledIcon className="h-4 w-4" />
+                <InfoIcon className="h-4 w-4" />
                 <AlertTitle>Info</AlertTitle>
                 <AlertDescription>There are no users currently signed in.</AlertDescription>
               </Alert>
             )}
             {groupedEntries ? (
               <div className="w-full space-y-4">
-                {groupedEntries.map(({ groupName, entries: groupEntries }) => (
+                {groupedEntries.map(([groupName, groupEntries]) => (
                   <div key={groupName} className="border rounded-lg p-3 bg-background">
                     <h5 className="font-semibold text-sm mb-3 text-muted-foreground border-b pb-2">
                       {`${groupBy}: ${groupName} (${groupEntries.length} users)`}
@@ -241,6 +228,7 @@ export const SignInDrawer: FC<SignInDrawerProps> = ({
                     <div className="flex flex-wrap gap-4">
                       {groupEntries.map((entry) => (
                         <SignedInUserCard
+                          id={entry.id}
                           key={entry.user.id}
                           user={entry.user as PartialUserWithTeams}
                           tools={entry.tools}
@@ -258,6 +246,7 @@ export const SignInDrawer: FC<SignInDrawerProps> = ({
             ) : (
               sortedEntries.map((entry) => (
                 <SignedInUserCard
+                  id={entry.id}
                   key={entry.user.id}
                   user={entry.user as PartialUserWithTeams}
                   tools={entry.tools}

@@ -1,26 +1,53 @@
 import { EventPublisher } from "@orpc/client";
-import { sign_in } from "@packages/db/interfaces";
-import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { Card, CardFooter } from "@packages/ui/components/card";
+import { queryOptions, useMutation, useQuery } from "@tanstack/react-query";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
 import z from "zod";
-import { InitialiseStep, UCardNumber } from "@/api/locations/$name/sign-in/_flows/_steps"; // TODO double check if this actually problematically not shaken
+import { StepType as _StepType, InitialiseStep, UCardNumber } from "@/api/locations/$name/sign-in/_flows/_steps"; // TODO double check if this actually problematically not shaken
 import type {
   Finalise as _Finalise,
   Initialise as _Initialise,
   Receive as _Receive,
   Transmit as _Transmit,
+  ErrorMap,
   Graph,
 } from "@/api/locations/$name/sign-in/_flows/_types";
 import type { PUBLISHER as SERVER_PUBLISHER } from "@/api/locations/$name/sign-in/$ucard";
-import { client, orpc } from "@/lib/orpc";
+import { Hammer } from "@/components/loading";
+import { client } from "@/lib/orpc";
 import type { SignInUser } from "@/lib/utils/queries";
+import { FlowStepComponent } from "@/types/signInActions";
+import SignInStepsProvider, { SignInSteps } from "/src/providers/SignInSteps";
+import SignInNav from "./-components/SignInNav";
+import { ReasonInput } from "./-components/SignInReasonInput";
+import { SignOut } from "./-components/SignOutDispatcher";
+import { Entries } from "@packages/types";
+import SigningInUserCard from "./-components/SigningInUserCard";
+import { Finalise as FinaliseComponent } from "./-components/Finalise";
+import { PersonalToolsAndMaterials } from "./-components/PersonalToolsAndMaterials";
+import { Tools } from "./-components/ToolSelectionInput";
 
-type Initialise = z.infer<typeof _Initialise>;
-type Receive = z.infer<typeof _Receive>;
-type Transmit = z.infer<typeof _Transmit>;
-type Finalise = z.infer<typeof _Finalise>;
+export type Initialise = z.infer<typeof _Initialise>;
+export type Receive = z.infer<typeof _Receive>;
+export type Transmit = z.infer<typeof _Transmit>;
+export type Finalise = z.infer<typeof _Finalise>;
+export type StepType = z.infer<typeof _StepType>;
 
 export const PUBLISHER: typeof SERVER_PUBLISHER = new EventPublisher();
+const STEP_COMPONENTS = {
+  REASON: ReasonInput,
+  PERSONAL_TOOLS_AND_MATERIALS: PersonalToolsAndMaterials,
+  SIGN_OUT: SignOut,
+  TOOLS: Tools,
+  FINALISE: FinaliseComponent,
+} as const satisfies { [K in StepType]: FlowStepComponent<K> };
+
+export type CommonKeys = "ucard_number" | "name";
+export type RMCommon<T, RMType extends boolean = true> = Omit<
+  T,
+  (RMType extends true ? "type" : "INTENTIONALLY_NOT_VALID_KEY") | CommonKeys
+>;
 
 // represents https://www.mermaidchart.com/play#pako:eNptVE2P2jAQ_SujHNrtAZWwsLAc2iJaVXtopbbsoWr24CQDWCR21mNDEeK_d-x88FEuiEzePL_3PJNDlOkco2nU6_USlWm1lKtpogDsGkucgkLtnwqtN6cHsdfOTmEp_2KeqNC5LPQuWwtjYfHZYwDU5JBEz4QGMqGA5EqBVJAKwhy0gleHDoGssJhER-j14Lvm3w-g4tGfJHoiMLiSZNHwGdFLy-mBv5Fq5ODwH_DYAAfnjEPGfRMbDKagMnorSWolimJfCxMrg2xX2SuC7qT4vjWjtA097ILtYEG4W_PRp8ahb5y1hOBUjoas1jkIlbetgXTEnDPagNVALqXMyLSRyJVSyEKqFRRsja7YF1pD6mhf0zxwXF_Rdp3Bkau8zwoNW-S0-R3sMCVpMciwTRqMd8b_MQh3KWbCkQeC4GcqRFli_u6U_tgL7pxla8w2VF-ejyjmt3NdVq4gbfawMEIq72DucScHcdzg-6z7JwpieU-qcpz9C7zh-pjrX4zRBnQotodfzMjwlmlpr7yeuketyFZFvykMmKiTKr0OuPN3bPDVSR4pWLIQgxW9xy27prM44vuaY-xlD_q3Zceji0F6bO5cLr3OPewEJ8n6wzqchTS6cPvw6cBbl2IxBZ54xZLKoIk5RMgAnJ9NSeqtvVgH6Agn9a78CGs3y6zcYrDm98JQJTL82F3lpG26MW3x402fFHP5l9_057kwfmMbeMflPdBaVPxRMZhZFhYd_wHo9mxr
 // I'm calling this structure an adjacency object (It's a named adjacency list)
@@ -37,78 +64,160 @@ const GRAPH = {
   SIGN_OUT: [undefined],
 } as const satisfies Graph;
 
-type InitialiseToTransmitMap = { [K in Initialise["type"]]: Extract<Transmit, { type: K }> };
-type ReceiveToFinaliseMap = { [K in Receive["type"]]: Extract<Finalise, { type: K }> };
+const MAIN_LINE = [
+  "QUEUE",
+  "REASON",
+  "TOOLS",
+  "PERSONAL_TOOLS_AND_MATERIALS",
+  "FINALISE",
+  "SIGN_OUT",
+] as const satisfies StepType[]; // Steps in the network graph that should be vertical
 
-const flow = async (
-  uCardNumber: z.infer<typeof UCardNumber>,
-  locationName: sign_in.LocationName,
-  signal: AbortSignal,
-) => {
-  const commonData = {
-    ucard_number: uCardNumber,
-    name: locationName,
-  };
+const LOADER_STEPS = new Set<StepType>(["INITIALISE"]);
+export const GRAPH_ENDS = (Object.entries(GRAPH) as Entries<Graph>)
+  .map(([key, value]) => (value[0] === undefined ? key : undefined))
+  .filter(Boolean); // ends should invalidate at the end of their chain
 
-  const key = `${locationName}-${uCardNumber}` as const;
-  const initKey = `${key}-INITIALISE` as const;
-  const recvKey = `${key}-RECEIVE` as const;
-  console.log("Ok so here")
-  const [initialiseTx, receiveTx] = await Promise.all([
-    client.locations.signIn.initialise(PUBLISHER.subscribe(initKey, { signal })),
-    client.locations.signIn.receive(PUBLISHER.subscribe(recvKey, { signal })),
-  ]);
-  console.log("It never returns lol")
-  const fn = await client.locations.signIn.flow(commonData, { signal });
-  // send the data to server, uses the same terminology as server
-  const initialise = async <T extends Omit<Initialise, keyof typeof commonData>>(initialise: T) => {
-    PUBLISHER.publish(initKey, { ...initialise, ...commonData });
-    await initialiseTx.next(); // send it
-    return (await fn.next()).value as InitialiseToTransmitMap[T["type"]];
-  };
+export type StepToTransmitMap = { [K in StepType]: Extract<Transmit, { type: K }> };
+export type StepToReceiveMap = { [K in StepType]: Extract<Receive, { type: K }> };
+export type StepToFinaliseMap = { [K in StepType]: Extract<Finalise, { type: K }> };
 
-  const receive = async <T extends Omit<Receive, keyof typeof commonData>>(receive: T) => {
-    PUBLISHER.publish(recvKey, { ...receive, ...commonData } as Receive);
-    await receiveTx.next(); // send it
-    type FinaliseT = ReceiveToFinaliseMap[T["type"]];
-    return (await fn.next()).value as FinaliseT extends never
-      ? T["type"] extends "FINALISE" // only FINALISE returns a value of the ends of the graph
-        ? { id: string }
-        : undefined
-      : FinaliseT;
-  };
-  return { initialise, receive };
-};
+export type ReceiveReturn<T extends StepType> =
+  | {
+      data: StepToFinaliseMap[T] extends never
+        ? T extends "FINALISE"
+          ? { id: string }
+          : undefined
+        : StepToFinaliseMap[T];
+      error: undefined;
+    }
+  | { data: undefined; error: ErrorMap[T] };
+
+const flowQuery = ({ name, ucard_number }: z.infer<typeof InitialiseStep>) =>
+  queryOptions({
+    queryKey: ["sign-in-flow", name, ucard_number],
+    queryFn: async ({ signal }) => {
+      const commonData = {
+        ucard_number,
+        name,
+      } satisfies Record<CommonKeys, any>;
+
+      const key = `${name}-${ucard_number}` as const;
+      const initKey = `${key}-INITIALISE` as const;
+      const recvKey = `${key}-RECEIVE` as const;
+      const [initialiseTx, receiveTx] = await Promise.all([
+        client.locations.signIn.initialise(PUBLISHER.subscribe(initKey, { signal })),
+        client.locations.signIn.receive(PUBLISHER.subscribe(recvKey, { signal })),
+      ]);
+      const fn = await client.locations.signIn.flow(commonData, { signal });
+
+      // send the data to server, uses the same terminology as server
+      const initialise = async <T extends RMCommon<Initialise, false>>(initialise: T) => {
+        PUBLISHER.publish(initKey, { ...initialise, ...commonData });
+        await initialiseTx.next(); // send it
+        return (await fn.next()).value as StepToTransmitMap[T["type"]];
+      };
+
+      const receive = async <StepT extends StepType>(
+        type: StepT,
+        receive: Omit<StepToReceiveMap[StepT], "type" | keyof typeof commonData>,
+      ): Promise<ReceiveReturn<StepT>> => {
+        PUBLISHER.publish(recvKey, { ...receive, ...commonData, type } as Receive);
+        await receiveTx.next(); // send it
+        try {
+          return {
+            data: (await fn.next()).value,
+            error: undefined,
+          } as Extract<ReceiveReturn<StepT>, { error: undefined }>;
+        } catch (error) {
+          return {
+            data: undefined,
+            error: error as ErrorMap[StepT],
+          };
+        }
+      };
+
+      return {
+        initialise,
+        receive,
+      };
+    },
+  });
 
 export const Route = createFileRoute("/test/$name/$ucard_number")({
   params: InitialiseStep,
-  // loader: async ({ abortController }) => ({ abortController }),
   component: () => {
-    const { ucard_number: uCardNumber, name: locationName } = Route.useParams();
+    const navigate = useNavigate();
+    const { data: { initialise, receive } = {} } = useQuery(flowQuery(Route.useParams()));
     const [user, setUser] = useState<SignInUser | null>(null);
+
+    const [steps, setSteps] = useState<StepType[]>(["INITIALISE"]);
+    const [transmit, setTransmit] = useState<Transmit>();
+    const [finalise, setFinalise] = useState<() => Promise<void>>();
+    const [canContinue, setCanContinue] = useState<boolean>(false);
+    const currentStep = steps.at(-1)!;
+
+    const nextStepRef = useRef<HTMLButtonElement | undefined>(undefined);
+
+    const focusNextStep = () => {
+      if (canContinue) nextStepRef.current!.focus();
+    };
+
     useEffect(() => {
       (async () => {
-        const { initialise, receive } = await flow(uCardNumber, locationName, new AbortController().signal);
-        console.log("Out of flow")
-        const { user: user_ } = await initialise({ type: "INITIALISE" });
-        setUser(user_)
-      })();
-    });
+        if (!initialise || !receive) return;
+        console.log(currentStep, steps);
 
-    console.log("Got the user", user);
+        const transmit = await initialise({ type: currentStep }); // fire off the request for the data when the step changes
+        if (transmit.type === "INITIALISE") {
+          setUser(transmit.user);
+          const { data: finalise } = await receive("INITIALISE", {});
+          return setSteps((steps) => [...steps, finalise!.next]);
+        }
+
+        setTransmit(transmit);
+        console.log("Got transmit", currentStep, transmit);
+      })();
+    }, [initialise, receive, currentStep, navigate]);
+
+    if (
+      !initialise ||
+      !receive ||
+      !user || // everything is still pending
+      LOADER_STEPS.has(currentStep) || // don't show the initialising state
+      transmit === undefined // don't show until the data is ready
+    ) {
+      return <Hammer />;
+    }
+
+    const Step = STEP_COMPONENTS[currentStep];
+    console.log("Rendering step:", currentStep);
+
     return (
-      // <Button
-      //   onClick={() =>
-      //     (async () => {
-      //       // setName(user.display_name);
-      //       const finalise = await receive({ type: "INITIALISE" });
-      //       console.log("Next step is", finalise.next);
-      //     })()
-      //   }
-      // >
-      //   Begin {name}
-      // </Button>
-      <div>Hi {user?.display_name}</div>
-    )
+      <div className="m-4 space-y-5 my-10">
+        <SigningInUserCard user={user} className="w-full " />
+
+        <Card className="rounded-sm">
+          <SignInStepsProvider
+            transmit={transmit}
+            _setTransmit={setTransmit}
+            _continue={receive.bind(undefined, currentStep)}
+            setCanContinue={setCanContinue}
+            canContinue={canContinue}
+            focusNextStep={focusNextStep}
+            _setSteps={setSteps}
+            finalise={finalise}
+            _setFinalise={setFinalise as any}
+          >
+            <Step data={transmit} user={user} />
+
+            <SignInNav steps={steps} setSteps={setSteps} ref={nextStepRef} />
+          </SignInStepsProvider>
+        </Card>
+      </div>
+    );
+  },
+  onLeave: ({ params, context: { queryClient } }) => {
+    // queryClient.invalidateQueries(flowQuery(params));
   },
 });

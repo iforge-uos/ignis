@@ -1,4 +1,4 @@
-import { PartialReason, Training, User } from "@ignis/types/sign_in";
+import { PartialReason, Training, User } from "@packages/types/sign_in";
 import { PartialUserWithTeams } from "@packages/types/users";
 import { Badge } from "@packages/ui/components/badge";
 import { Button } from "@packages/ui/components/button";
@@ -129,7 +129,7 @@ export const SignInReasonWithToolsDisplay: React.FC<SignInReasonWithToolsDisplay
           userData && (
             <>
               <TrainingSelection
-                training={userData?.training || []}
+                tools={userData?.training || []}
                 onSelectionChange={(newTools) => setNewTools(newTools.map((t) => t.name))}
                 onSubmit={() => {
                   newTools?.length !== 0 ? handleUpdateSignIn(newTools) : null;

@@ -61,6 +61,7 @@ export const flow = deskOrAdmin
     z.infer<typeof Transmit> | z.infer<typeof Finalise>,
     { id: string } | undefined
   > {
+    console.log("Flow API called!!!")
     const {
       input,
       context: { db },
@@ -83,7 +84,7 @@ export const flow = deskOrAdmin
 
       signal?.addEventListener("abort", async () => {
         try {
-        await cancel({ ...arg, user, input: { ...input, type: "CANCEL" }, $user, $location }).next();
+          await cancel({ ...arg, user, input: { ...input, type: "CANCEL" }, $user, $location }).next();
         } catch {
           cleanupTx(undefined);
         }
@@ -110,7 +111,7 @@ export const flow = deskOrAdmin
         store.RECEIVE = receive; // cache for the same reason
 
         const { value: fin, done } = (await tx.next(receive)) as { value: z.infer<typeof Finalise>; done: true };
-        fin.type = message.type;  // probably won't ever be used but oh well
+        // fin.type = message.type;  // probably won't ever be used but oh well
         if (!done) exhaustiveGuard(message.type as never);
         if (fin.next === undefined) {
           delete SIGN_INS[key]; // avoid leaking memory :)

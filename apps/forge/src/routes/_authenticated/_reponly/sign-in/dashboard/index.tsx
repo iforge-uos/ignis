@@ -8,16 +8,15 @@ import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants";
 import { orpc } from "@/lib/orpc";
 import { SignInDrawer } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignInDrawer";
 import { Alert, AlertDescription, AlertTitle } from "@packages/ui/components/alert";
-import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import {} from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { QueuedDrawer } from "./-components/QueuedDraw";
+import { MessageSquareWarningIcon } from "lucide-react";
 
 function SignInDashboard() {
-  const queryClient = useQueryClient();
   const [activeLocation] = useAtom(activeLocationAtom);
 
   const [signedInUsers, setSignedInUsers] = useState<SignInEntry[]>([]);
@@ -66,10 +65,10 @@ function SignInDashboard() {
     }
   }, [locationList]);
   const onShiftReps = signedInReps.map((entry) => entry.user);
-  const { data: reasons } = useSignInReasons();
+  const { data: reasons } = useSignInReasons(); // FIXME
   const repOnShiftReason = reasons?.find((reason) => reason.name === REP_ON_SHIFT);
   const repOffShiftReason = reasons?.find((reason) => reason.name === REP_OFF_SHIFT);
-
+  console.log("Reasons", repOnShiftReason, repOffShiftReason);
   return (
     <>
       <Title prompt="Signin Dashboard" />
@@ -119,7 +118,7 @@ function SignInDashboard() {
           {isLoading && <Hammer />}
           {isError && (
             <Alert variant="destructive">
-              <ExclamationTriangleIcon className="h-4 w-4" />
+              <MessageSquareWarningIcon  className="h-4 w-4" />
               <AlertTitle>Error</AlertTitle>
               <AlertDescription>
                 There was an error fetching the sign-in data. Please try again later...

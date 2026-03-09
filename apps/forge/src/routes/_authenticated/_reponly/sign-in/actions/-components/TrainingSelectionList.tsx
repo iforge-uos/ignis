@@ -1,8 +1,5 @@
-import { useShortcutKey } from "@/hooks/useShortcutKey";
-import { NoRepIcon } from "@/icons/NoRep";
-import { RepIcon } from "@/icons/Rep";
-import { cn } from "@/lib/utils";
-import { Training, TrainingSelectability } from "@ignis/types/sign_in";
+import type { tools } from "@packages/db/interfaces";
+import { GetSignInToolsReturns } from "@packages/db/queries/getSignInTools.query";
 import { Badge } from "@packages/ui/components/badge";
 import { Button } from "@packages/ui/components/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@packages/ui/components/card";
@@ -14,21 +11,34 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@packages/ui/components
 import { AnimatePresence, motion } from "framer-motion";
 import Fuse from "fuse.js";
 import {
-  AlertTriangle,
   Ban,
   CheckIcon,
   ChevronLeft,
   ChevronRight,
   Clock,
+  GitMerge,
   HelpCircle,
   MapPin,
+  Monitor,
   Search,
+  UserCheck,
+  Users,
+  UserX,
+  Video,
+  Wrench,
   XCircle,
 } from "lucide-react";
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useShortcutKey } from "@/hooks/useShortcutKey";
+import { NoRepIcon } from "@/icons/NoRep";
+import { RepIcon } from "@/icons/Rep";
+import { cn } from "@/lib/utils";
+import { StepToTransmitMap } from "/src/routes/test/$name.$ucard_number";
 
-interface TrainingCardInfo {
-  name: TrainingSelectability | "SELECTABLE" | "UNREACHABLE";
+type Tool = GetSignInToolsReturns[number];
+
+interface ToolCardInfo {
+  name: tools.Selectability | "SELECTABLE" | "UNREACHABLE";
   icon: React.ElementType;
   colour: string;
   label: string;
@@ -41,15 +51,71 @@ const SELECTABLE = {
   colour: cn("bg-emerald-500/90 dark:bg-emerald-500"),
   label: "Available",
   tooltip: "This training is available and can be selected.",
-} satisfies TrainingCardInfo;
+} satisfies ToolCardInfo;
 
-const UNTRAINED = {
-  name: "UNTRAINED",
-  icon: AlertTriangle,
+const DO_ONLINE = {
+  name: "DO_ONLINE",
+  icon: Monitor,
   colour: cn("bg-amber-500/90 dark:bg-amber-500"),
-  label: "Not Complete",
-  tooltip: "The user hasn't started this training.",
-} satisfies TrainingCardInfo;
+  label: "Online Required",
+  tooltip: "The user needs to complete the online training module first.",
+} satisfies ToolCardInfo;
+
+const DO_IN_PERSON = {
+  name: "DO_IN_PERSON",
+  icon: MapPin,
+  colour: cn("bg-cyan-500/90 text-white dark:bg-cyan-500 dark:text-white"),
+  label: "In-Person Required",
+  tooltip: "This training requires an in-person session.",
+} satisfies ToolCardInfo;
+
+const NONE_REMAINING = {
+  name: "NONE_REMAINING",
+  icon: UserX,
+  colour: cn("bg-red-500/90 dark:bg-red-500"),
+  label: "No Tools Remaining",
+  tooltip: "There are no remaining tools available.",
+} satisfies ToolCardInfo;
+
+const DO_IN_PERSON_OR_REP_ONLINE = {
+  name: "DO_IN_PERSON_OR_REP_ONLINE",
+  icon: GitMerge,
+  colour: cn("bg-blue-500/90 dark:bg-blue-500"),
+  label: "In-Person or Rep Online",
+  tooltip: "This training can be completed in-person or online with a rep.",
+} satisfies ToolCardInfo;
+
+const DO_REP_ONLINE = {
+  name: "DO_REP_ONLINE",
+  icon: Video,
+  colour: cn("bg-sky-500/90 dark:bg-sky-500"),
+  label: "Rep Online Required",
+  tooltip: "A rep needs to complete the online session for this training.",
+} satisfies ToolCardInfo;
+
+const DO_IN_PERSON_OR_REP_IN_PERSON = {
+  name: "DO_IN_PERSON_OR_REP_IN_PERSON",
+  icon: Users,
+  colour: cn("bg-indigo-500/90 dark:bg-indigo-500"),
+  label: "In-Person or Rep In-Person",
+  tooltip: "This training can be completed in-person or with a rep in-person.",
+} satisfies ToolCardInfo;
+
+const DO_REP_IN_PERSON = {
+  name: "DO_REP_IN_PERSON",
+  icon: UserCheck,
+  colour: cn("bg-violet-500/90 dark:bg-violet-500"),
+  label: "Rep In-Person Required",
+  tooltip: "A rep needs to conduct an in-person session for this training.",
+} satisfies ToolCardInfo;
+
+const TOOL_BROKEN = {
+  name: "TOOL_BROKEN",
+  icon: Wrench,
+  colour: cn("bg-zinc-500/90 dark:bg-zinc-600"),
+  label: "Tool Broken",
+  tooltip: "The associated tool is currently broken and unavailable for training.",
+} satisfies ToolCardInfo;
 
 const REPS_UNTRAINED = {
   name: "REPS_UNTRAINED",
@@ -57,15 +123,7 @@ const REPS_UNTRAINED = {
   colour: cn("bg-orange-500/90 dark:bg-orange-500"),
   label: "Reps Untrained",
   tooltip: "The on-shift reps for this training are not yet trained on the associated machine for this.",
-} satisfies TrainingCardInfo;
-
-const IN_PERSON_MISSING = {
-  name: "IN_PERSON_MISSING",
-  icon: MapPin,
-  colour: cn("bg-cyan-500/90 text-white dark:bg-cyan-500 dark:text-white"),
-  label: "In-Person Required",
-  tooltip: "This training requires an in-person session. Please schedule one to complete this training.",
-} satisfies TrainingCardInfo;
+} satisfies ToolCardInfo;
 
 const REVOKED = {
   name: "REVOKED",
@@ -73,7 +131,7 @@ const REVOKED = {
   colour: cn("bg-red-500/90 dark:bg-red-500"),
   label: "Revoked",
   tooltip: "This training has been revoked due to an infraction and has not been retaken since.",
-} satisfies TrainingCardInfo;
+} satisfies ToolCardInfo;
 
 const EXPIRED = {
   name: "EXPIRED",
@@ -81,7 +139,7 @@ const EXPIRED = {
   colour: cn("bg-purple-500/90 dark:bg-purple-500"),
   label: "Expired",
   tooltip: "This training has expired and needs to be retaken.",
-} satisfies TrainingCardInfo;
+} satisfies ToolCardInfo;
 
 const UNREACHABLE = {
   name: "UNREACHABLE",
@@ -89,55 +147,56 @@ const UNREACHABLE = {
   colour: "bg-zinc-800 dark:bg-zinc-900",
   label: "Unknown Status",
   tooltip: "The status of this training is unknown. Please contact IT.",
-} satisfies TrainingCardInfo;
+} satisfies ToolCardInfo;
 
-const STATUS_MAP: Record<TrainingSelectability, TrainingCardInfo> = {
-  UNTRAINED,
+const STATUS_MAP: Record<tools.Selectability, ToolCardInfo> = {
+  DO_ONLINE,
+  DO_IN_PERSON, // TODO allow these to be SELECTABLE but pop a warning saying that they need to be trained (only if the reps are trained to give it.)
+  NONE_REMAINING,
+  DO_IN_PERSON_OR_REP_ONLINE,
+  DO_REP_ONLINE,
+  DO_IN_PERSON_OR_REP_IN_PERSON,
+  DO_REP_IN_PERSON,
   REPS_UNTRAINED,
-  IN_PERSON_MISSING, // TODO allow these to be SELECTABLE but pop a warning saying that they need to be trained (only if the reps are trained to give it.)
+  TOOL_BROKEN,
   REVOKED,
   EXPIRED,
+  NONE: SELECTABLE,
 };
 
-export const getTrainingCardInfo = (training: Training): TrainingCardInfo[] => {
-  if (!training.selectable.length) {
-    return [SELECTABLE];
-  }
-
-  return training.selectable.map((key) => STATUS_MAP[key] || UNREACHABLE);
+export const getToolCardInfo = (tool: Tool): [ToolCardInfo, ...ToolCardInfo[]] => {
+  if (!tool.selectable.length) return [SELECTABLE];
+  return tool.selectable.map((key) => STATUS_MAP[key] || UNREACHABLE) as [ToolCardInfo, ...ToolCardInfo[]];
 };
 
-interface TrainingSelectionCardProps {
-  training: Training;
+interface ToolSelectionCardProps {
+  tool: Tool;
   index: number;
-  toggleTraining: (training: Training) => void;
+  toggleTool: (tool: Tool) => void;
   selected: boolean;
 }
 
-const TrainingSelectionCard = ({ training, index, toggleTraining, selected }: TrainingSelectionCardProps) => {
-  const selectable = training.enabled && !training.selectable.length;
-
-  const info = getTrainingCardInfo(training);
-  if (!info) {
-    return null;
-  }
-
+const TrainingSelectionCard = ({ tool, index, toggleTool: toggleTraining, selected }: ToolSelectionCardProps) => {
+  const info = getToolCardInfo(tool);
+  const selectable = info[0].name === "SELECTABLE";
   return (
     <Card
       className={cn(
         "transition-all relative overflow-hidden h-full",
         selectable ? "cursor-pointer" : "opacity-70",
-        selected ? "ring-2 ring-primary" : "hover:bg-accent hover:text-foreground",
+        selected
+          ? "ring-2 ring-primary bg-accent/40 hover:bg-accent"
+          : "hover:bg-accent hover:text-foreground",
       )}
-      onClick={() => selectable && toggleTraining(training)}
+      onClick={() => selectable && toggleTraining(tool)}
     >
       <CardHeader className="p-2">
         <div className="flex items-center justify-between">
-          <div className="font-medium text-sm">{training.name}</div>
+          <div className="font-medium text-sm">{tool.name}</div>
         </div>
       </CardHeader>
       <CardContent className="p-2">
-        <p className="text-xs text-muted-foreground line-clamp-2">{training.description}</p>
+        <p className="text-xs text-muted-foreground line-clamp-2">{tool.description}</p>
       </CardContent>
       <CardFooter className="flex items-center justify-between p-2">
         <div className="flex space-x-1">
@@ -145,13 +204,14 @@ const TrainingSelectionCard = ({ training, index, toggleTraining, selected }: Tr
             <Tooltip key={entry.label}>
               <TooltipTrigger>
                 <Badge
+                  variant="outline"
                   className={cn(
                     entry.colour,
-                    "px-1.5 py-0.5 text-[10px] text-white font-medium rounded-sm border border-white/10 backdrop-blur-sm",
+                    `px-1.5 py-0.5 text-[10px] text-white font-medium rounded-sm border border-white/10 backdrop-blur-sm`,
                   )}
                 >
                   <entry.icon
-                    className={cn("w-4 h-4 transition-colors", selected ? "text-primary" : "text-muted-foreground")}
+                    className="size-4 text-white"
                   />
                 </Badge>
               </TooltipTrigger>
@@ -168,20 +228,20 @@ const TrainingSelectionCard = ({ training, index, toggleTraining, selected }: Tr
   );
 };
 
-interface TrainingSelectionProps {
-  training: Training[];
-  initialSelection?: Training[];
-  onSelectionChange: (selectedTrainings: Training[]) => void;
+interface ToolSelectionProps {
+  tools: Tool[];
+  initialSelection?: Tool[];
+  onSelectionChange: (selectedTrainings: Tool[]) => void;
   onSubmit: () => void;
 }
 
 export default function TrainingSelection({
-  training,
+  tools: _tools,
   onSelectionChange,
   onSubmit,
   initialSelection = [],
-}: TrainingSelectionProps) {
-  const [selectedTrainings, setSelectedTrainings] = useState<Training[]>(initialSelection);
+}: ToolSelectionProps) {
+  const [selectedTrainings, setSelectedTrainings] = useState<Tool[]>(initialSelection);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [direction, setDirection] = useState(0);
@@ -189,28 +249,32 @@ export default function TrainingSelection({
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const [onlyComplete, setOnlyComplete] = useState<string | boolean>(true);
-  const training_ = training
-    .filter((training) => (onlyComplete ? !training.selectable.includes("UNTRAINED") : training))
+  const tools = _tools
+    .filter((tool) => (onlyComplete ? !tool.selectable.includes("DO_ONLINE") : tool))
     .sort((a, b) => a.name.localeCompare(b.name));
-  const fuse = new Fuse(training_, {
-    keys: ["name", "description"],
-    threshold: 0.3,
-    distance: 100,
-    minMatchCharLength: 2,
-  });
+  const fuse = useMemo(
+    () =>
+      new Fuse(tools, {
+        keys: ["name", "description"],
+        threshold: 0.3,
+        distance: 100,
+        minMatchCharLength: 2,
+      }),
+    [tools],
+  );
 
   const filteredTrainings = useMemo(() => {
-    if (!searchTerm) return training_;
+    if (!searchTerm) return tools;
     return fuse.search(searchTerm).map((result) => result.item);
-  }, [searchTerm, fuse, training_]);
+  }, [searchTerm, fuse, tools]);
 
   const totalPages = Math.ceil(filteredTrainings.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const visibleTrainings = filteredTrainings.slice(startIndex, startIndex + itemsPerPage);
 
-  const toggleTraining = (training: Training) => {
+  const toggleTool = (tool: Tool) => {
     setSelectedTrainings((prev) =>
-      prev.some((t) => t.id === training.id) ? prev.filter((t) => t.id !== training.id) : [...prev, training],
+      prev.some((t) => t.id === tool.id) ? prev.filter((t) => t.id !== tool.id) : [...prev, tool],
     );
   };
 
@@ -233,8 +297,8 @@ export default function TrainingSelection({
         const index = e.key === "0" ? 9 : Number.parseInt(e.key) - 1;
         if (index < visibleTrainings.length) {
           const training = visibleTrainings[index];
-          if (training.enabled && !training.selectable.length) {
-            toggleTraining(training);
+          if (!training.selectable.length) {
+            toggleTool(training);
           }
         }
       } else if (e.key === "f" && (shortcut === "Ctrl" ? e.ctrlKey : e.metaKey)) {
@@ -332,9 +396,9 @@ export default function TrainingSelection({
           {visibleTrainings.map((training, index) => (
             <TrainingSelectionCard
               key={training.id}
-              training={training}
+              tool={training}
               index={index}
-              toggleTraining={toggleTraining}
+              toggleTool={toggleTool}
               selected={selectedTrainings.some((training_) => training_.id === training.id)}
             />
           ))}
@@ -376,26 +440,24 @@ export default function TrainingSelection({
       >
         <AnimatePresence>
           {selectedTrainings.map((training) => (
-            <motion.div key={training.id} variants={badgeVariants} animate="animate" exit="exit" layout>
-              <Badge
-                variant="secondary"
-                className="px-2 py-1 text-xs font-medium rounded-sm flex items-center bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100"
+            <Badge
+              variant="secondary"
+              className="px-2 py-1 text-xs font-medium rounded-sm flex items-center bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100"
+            >
+              {training.name}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-4 w-4 ml-2 p-0 hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleTool(training);
+                }}
               >
-                {training.name}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-4 w-4 ml-2 p-0 hover:bg-zinc-200 dark:hover:bg-zinc-700"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleTraining(training);
-                  }}
-                >
-                  <XCircle className="h-3 w-3" />
-                  <span className="sr-only">Remove</span>
-                </Button>
-              </Badge>
-            </motion.div>
+                <XCircle className="h-3 w-3" />
+                <span className="sr-only">Remove</span>
+              </Button>
+            </Badge>
           ))}
         </AnimatePresence>
       </motion.div>

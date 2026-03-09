@@ -1,11 +1,17 @@
 import { SignInUser } from "@/lib/utils/queries";
-import { ErrorMap } from "@orpc/server";
 import e from "@packages/db/edgeql-js";
 import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
 import { CreateInfractionSchema } from "@packages/db/zod/modules/users";
 import { logger } from "@sentry/tanstackstart-react";
 import * as z from "zod";
-import { StepType, createFinaliseStep, createInitialiseStep, createReceiveStep, createTransmitStep } from "./_steps";
+import {
+  StepType,
+  createErrorMap,
+  createFinaliseStep,
+  createInitialiseStep,
+  createReceiveStep,
+  createTransmitStep,
+} from "./_steps";
 import type { Params, Return } from "./_types";
 
 export const Initialise = createInitialiseStep(StepType.enum.INITIALISE);
@@ -21,7 +27,7 @@ export const Finalise = createFinaliseStep(
   z.literal([StepType.enum.QUEUE, StepType.enum.SIGN_OUT, StepType.enum.REASON, StepType.enum.AGREEMENTS]),
 );
 
-export const Errors = {
+export const Errors = createErrorMap(StepType.enum.INITIALISE, {
   USER_HAS_ACTIVE_INFRACTIONS: {
     message: "User has unresolved infractions",
     status: 412,
@@ -39,8 +45,8 @@ export const Errors = {
   NEW_USER_BUT_WERE_SLAMMED: {
     message: "User is new but we are full, please direct them to complete setup on their own device",
     status: 412,
-  }
-} as const satisfies ErrorMap;
+  },
+} as const);
 
 export default async function* ({
   user,
@@ -72,9 +78,9 @@ export default async function* ({
   // Queue checking
   if ((await $location.available_capacity.run(tx)) <= 0 && user.__typename !== "users::Rep") {
     if (user.registered_now) {
-      throw errors.NEW_USER_BUT_WERE_SLAMMED()
+      throw errors.NEW_USER_BUT_WERE_SLAMMED();
     }
-    if (await $location.queue_in_use.run(tx) ) {
+    if (await $location.queue_in_use.run(tx)) {
       // could raise so cannot fetch all these at once
       logger.info(logger.fmt`Queue in use, checking if user ${user.ucard_number} has queued at location: ${name}`);
 
@@ -91,7 +97,8 @@ export default async function* ({
     }
   }
 
-  if (await e.op("exists", $user.agreements_signed).run(tx)) {  // TODO this is subtly wrong cause they might be expired
+  if (await e.op("exists", $user.agreements_signed).run(tx)) {
+    // TODO this is subtly wrong cause they might be expired
     return {
       next: StepType.enum.REASON,
     };

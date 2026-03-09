@@ -17,15 +17,15 @@ export type SignInEntry = {
   user: users.PartialUserWithTeams;
   reason: PartialReason;
   tools: string[];
-  ends_at: Date | null;
-  created_at: Date;
+  ends_at: Temporal.ZonedDateTime | null;
+  created_at: Temporal.ZonedDateTime;
 };
 export type QueueEntry = {
   id: string;
   user: users.PartialUser;
-  notified_at: Date | null;
-  created_at: Date;
-  ends_at: Date | null;
+  notified_at: Temporal.ZonedDateTime | null;
+  created_at: Temporal.ZonedDateTime;
+  ends_at: Temporal.ZonedDateTime | null;
 };
 
 export type PartialLocation = {
@@ -63,7 +63,7 @@ export type User = users.UserWithInfractions & {
 };
 
 export type Reason = PartialReason & {
-  created_at: Date;
+  created_at: Temporal.ZonedDateTime;
   agreement?: std.BaseObject;
 };
 

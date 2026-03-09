@@ -1,16 +1,15 @@
-import { useAuth } from "@/hooks/useAuth";
-import { Tuple } from "@/lib/constants";
 import { InfractionSection } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/InfractionSection";
 import { TeamManagementSection } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/TeamManagementSection";
 import { TrainingSection } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/TrainingSection";
-import type { LocationName } from "@ignis/types/sign_in";
+import type { LocationName } from "@packages/types/sign_in";
 import { PartialUserWithTeams } from "@packages/types/users";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@packages/ui/components/tabs";
 import * as React from "react";
+import { useUserRoles } from "@/hooks/useUserRoles";
 
-type ManageSections = "Training" | "Infraction" | "Teams";
 
-const ManageSectionList: Tuple<ManageSections> = ["Training", "Infraction", "Teams"];
+const ManageSectionList = ["Training", "Infraction", "Teams"] as const;
+type ManageSections = typeof ManageSectionList[number];
 
 export interface ManageUserWidgetProps {
   user: PartialUserWithTeams;
@@ -35,9 +34,7 @@ const sectionComponents: Record<ManageSections, (props: ManageUserWidgetProps) =
 };
 
 export const ManageUserWidget: React.FC<ManageUserWidgetProps> = ({ user, locationName, onShiftReps }) => {
-  const auth = useAuth();
-
-  const roleNames = auth.user?.roles.map((role) => role.name).filter(Boolean) ?? ["Rep"];
+  const roleNames = useUserRoles();
 
   const sectionPermissions: Record<ManageSections, string> = {
     Training: "Rep",
@@ -45,27 +42,25 @@ export const ManageUserWidget: React.FC<ManageUserWidgetProps> = ({ user, locati
     Teams: "Admin",
   };
 
-  function canUserViewSection(roleNames: string[], section: ManageSections): boolean {
+  function canUserViewSection(section: ManageSections): boolean {
     const requiredRole = sectionPermissions[section];
     return roleNames.includes(requiredRole);
   }
 
   return (
-    <>
       <Tabs className="w-full" defaultValue={ManageSectionList[0]}>
         <TabsList className="w-full">
-          {ManageSectionList.filter((title) => canUserViewSection(roleNames, title)).map((title) => (
+          {ManageSectionList.filter(canUserViewSection).map((title) => (
             <TabsTrigger value={title} key={title}>
               {sectionHeadings[title]}
             </TabsTrigger>
           ))}
         </TabsList>
-        {ManageSectionList.filter((title) => canUserViewSection(roleNames, title)).map((title) => (
+        {ManageSectionList.filter(canUserViewSection).map((title) => (
           <TabsContent className="content-center justify-center" value={title} key={title}>
             {sectionComponents[title]({ user: user, locationName, onShiftReps })}
           </TabsContent>
         ))}
       </Tabs>
-    </>
   );
 };

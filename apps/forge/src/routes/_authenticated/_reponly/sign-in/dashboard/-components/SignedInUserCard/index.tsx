@@ -25,10 +25,11 @@ import { useDrag } from "react-dnd";
 import { toast } from "sonner";
 
 interface SignInUserCardProps {
+  id: string;
   user: PartialUserWithTeams;
   tools?: string[];
   reason?: PartialReason;
-  timeIn?: Date;
+  timeIn?: Temporal.ZonedDateTime;
   onSignOut?: () => void;
   onShiftReps?: PartialUserWithTeams[];
   isAdmin?: boolean;
@@ -62,6 +63,7 @@ export function AddUserAttributes({ onShiftReps, user, activeLocation }: AddUser
 }
 
 export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
+  id,
   user,
   tools,
   reason,
@@ -71,44 +73,34 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
   isAdmin = false,
 }) => {
   const [activeLocation] = useAtom(activeLocationAtom);
-  const abortController = new AbortController();
   const queryClient = useQueryClient();
+  console.log(reason);
 
-  const { mutate: signOutMutate } = useMutation(
-    orpc.locations.signIn.signOut.mutationOptions({
+  const { mutate: signOut } = useMutation(
+    orpc.signIns.out.mutationOptions({
       retry: 0,
       onError: (error) => {
         console.error("Error", error);
-        abortController.abort();
       },
       onSuccess: async () => {
-        abortController.abort();
         toast.success(
           <>
             Successfully signed out{" "}
-            <a className="font-bold hover:underline underline-offset-4 hover:cursor-pointer" href={`/users/${user.id}`}>
+            <Link className="font-bold hyperlink" to="/users/$id" params={user}>
               {user.display_name}
-            </a>
+            </Link>
           </>,
         );
         onSignOut?.();
-        await queryClient.invalidateQueries({ queryKey: ["locationStatus"] });
-        await queryClient.invalidateQueries({ queryKey: ["locationList", activeLocation] });
+        queryClient.invalidateQueries({ queryKey: orpc.locations.get.queryKey({ input: { name: activeLocation } }) });
+        queryClient.invalidateQueries({ queryKey: orpc.locations.statuses.queryKey() });
       },
     }),
   );
 
   const handleSignOut = () => {
     if (window.confirm("Are you sure you want to sign out?")) {
-      signOutMutate(
-        {
-          name: activeLocation,
-          ucard_number: uCardNumberToString(user.ucard_number),
-        },
-        {
-          signal: abortController.signal,
-        },
-      );
+      signOut({ id });
     }
   };
 
@@ -116,9 +108,9 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
   const [{ isDragging }, drag] = useDrag(() => ({
     type: "SignedInUserCard",
     canDrag,
-    item: { user, reason },
+    item: { id, reason },
     collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
+      isDragging: monitor.isDragging(),
       handlerId: monitor.getHandlerId(),
     }),
     // end: (item, monitor) => {
@@ -130,7 +122,7 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
   }));
 
   return (
-    <Card className={cn("bg-card w-[240px] md:w-[300px] p-4 rounded-sm flex flex-col justify-between")} ref={drag}>
+    <Card className={cn("bg-card w-60 md:w-75 p-4 rounded-sm flex flex-col justify-between")} ref={drag}>
       <div>
         <div className="flex items-center justify-between mb-4 w-full space-x-2">
           <div className="w-2/3 p-1 flex-col">

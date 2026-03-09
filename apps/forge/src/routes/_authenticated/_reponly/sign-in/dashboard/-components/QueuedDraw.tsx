@@ -1,9 +1,8 @@
-import type { QueueEntry } from "@ignis/types/sign_in";
+import type { QueueEntry } from "@packages/types/sign_in";
 import { Alert, AlertDescription, AlertTitle } from "@packages/ui/components/alert";
 import { Button } from "@packages/ui/components/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@packages/ui/components/collapsible";
-import { InfoCircledIcon } from "@radix-ui/react-icons";
-import { ArrowDownIcon, ArrowRightIcon, Ban } from "lucide-react";
+import { ArrowDownIcon, ArrowRightIcon, Ban, InfoIcon } from "lucide-react";
 import { FC, useState } from "react";
 import { QueuedUserCard } from "./QueuedUserCard";
 
@@ -54,7 +53,7 @@ export const QueuedDrawer: FC<QueuedDrawerProps> = ({ entries, startExpanded = t
           <div className="flex flex-wrap gap-4 mr-4">
             {entries.length === 0 && (
               <Alert variant="default">
-                <InfoCircledIcon className="h-4 w-4" />
+                <InfoIcon className="h-4 w-4" />
                 <AlertTitle>Info</AlertTitle>
                 <AlertDescription>There are no users currently queued.</AlertDescription>
               </Alert>

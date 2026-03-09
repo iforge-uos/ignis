@@ -1,18 +1,17 @@
-import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants";
-import { AgreementShape } from "@/lib/utils/queries";
-import { ErrorMap } from "@orpc/server";
-import e, { $infer } from "@packages/db/edgeql-js";
+import e from "@packages/db/edgeql-js";
 import { Agreement } from "@packages/db/edgeql-js/modules/sign_in";
 import { CreateAgreementSchema } from "@packages/db/zod/modules/sign_in";
 import * as z from "zod";
-import { StepType, createFinaliseStep, createInitialiseStep, createReceiveStep, createTransmitStep } from "./_steps";
-import type { Params, Return } from "./_types";
+import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants";
+import { AgreementShape } from "@/lib/utils/queries";
 import { getCommonReasons } from "../../common-reasons";
+import { createErrorMap, createFinaliseStep, createInitialiseStep, createReceiveStep, createTransmitStep, StepType } from "./_steps";
+import type { Params, Return } from "./_types";
 
 export const Initialise = createInitialiseStep(StepType.enum.REASON);
 
 export const Transmit = createTransmitStep(StepType.enum.REASON).extend({
-  common_reasons: z.custom<ReturnType<typeof getCommonReasons>>(),
+  common_reasons: z.custom<Awaited<ReturnType<typeof getCommonReasons>>>(),
 });
 
 export const Receive = createReceiveStep(StepType.enum.REASON).extend({ reason: z.object({ id: z.uuid() }) });
@@ -22,18 +21,18 @@ export const Finalise = createFinaliseStep(
   z.literal([StepType.enum.PERSONAL_TOOLS_AND_MATERIALS, StepType.enum.FINALISE]),
 );
 
-export const Errors = {
+export const Errors = createErrorMap(StepType.enum.REASON, {
   USER_AGREEMENT_NOT_SIGNED: {
     message: "User agreement not signed.",
     status: 400,
-    data: CreateAgreementSchema,
+    data: CreateAgreementSchema.extend({id: z.uuid()}),
   },
   REASONS_AGREEMENT_NOT_SIGNED: {
     message: "Agreement for inputted reason not signed.",
     status: 400,
     data: z.object({
       reason: z.object({ name: z.string(), id: z.uuid() }),
-      agreement: CreateAgreementSchema,
+      agreement: CreateAgreementSchema.extend({id: z.uuid()}),
     }),
   },
   INVALID_REASON: {
@@ -42,7 +41,7 @@ export const Errors = {
       reason: z.object({ name: z.string(), id: z.uuid() }),
     }),
   },
-} as const satisfies ErrorMap;
+} as const);
 
 export default async function* ({
   $user,
@@ -89,17 +88,19 @@ export default async function* ({
     });
   }
 
-  const { signed_user_agreement, signed_reasons_agreement } = await e
+  console.log(await e
     .select($user, () => ({
       // check for the user agreement
       signed_user_agreement: e.op(
         "exists",
         e.select($user.agreements_signed, (a) => ({
-          filter_single: e.op(
-            e.op(a.id, "=", userAgreement.id),
-            "and",
-            e.op(a["@version_signed"], "=", userAgreement.version),
-          ),
+          filter_single:
+            // path factoring to a["@version_signed"] breaks
+            e.op(
+              e.op(a.id, "=", userAgreement.id),
+              "and",
+              e.op($user.agreements_signed["@version_signed"], "=", userAgreement.version),
+            ),
         })),
       ),
       // check for the rest of their agreements
@@ -108,9 +109,39 @@ export default async function* ({
             "exists",
             e.select($user.agreements_signed, (a) => ({
               filter_single: e.op(
-                e.op(a.id, "=", agreement.id),
+                e.op(a.id, "=", e.uuid(agreement.id)),
                 "and",
-                e.op(a["@version_signed"], "=", agreement.version),
+                e.op($user.agreements_signed["@version_signed"], "=", agreement.version),
+              ),
+            })),
+          )
+        : e.bool(true),
+    })).toEdgeQL())
+
+  const { signed_user_agreement, signed_reasons_agreement } = await e
+    .select($user, () => ({
+      // check for the user agreement
+      signed_user_agreement: e.op(
+        "exists",
+        e.select($user.agreements_signed, (a) => ({
+          filter_single:
+            // path factoring to a["@version_signed"] breaks
+            e.op(
+              e.op(a.id, "=", userAgreement.id),
+              "and",
+              e.op($user.agreements_signed["@version_signed"], "=", userAgreement.version),
+            ),
+        })),
+      ),
+      // check for the rest of their agreements
+      signed_reasons_agreement: agreement
+        ? e.op(
+            "exists",
+            e.select($user.agreements_signed, (a) => ({
+              filter_single: e.op(
+                e.op(a.id, "=", e.uuid(agreement.id)),
+                "and",
+                e.op($user.agreements_signed["@version_signed"], "=", agreement.version),
               ),
             })),
           )
@@ -126,6 +157,7 @@ export default async function* ({
   }
 
   if (category === "EVENT") {
+    // TODO check required trainings complete associated with event
     return {
       next: StepType.enum.FINALISE,
     };
@@ -139,13 +171,15 @@ export default async function* ({
       next: StepType.enum.FINALISE,
     };
   }
-  if (reasonName === REP_OFF_SHIFT) { // TODO check has queued e.select($location.queued, (place) => ({ filter: e.op("not", e.op("exists", place.notified_at)) })),
+  if (reasonName === REP_OFF_SHIFT) {
+    // TODO check has queued e.select($location.queued, (place) => ({ filter: e.op("not", e.op("exists", place.notified_at)) })),
     return {
       next: StepType.enum.FINALISE,
     };
   }
 
   return {
-    next: StepType.enum.PERSONAL_TOOLS_AND_MATERIALS,
+    // next: StepType.enum.PERSONAL_TOOLS_AND_MATERIALS,
+    next: StepType.enum.TOOLS,
   };
 }

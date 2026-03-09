@@ -72,7 +72,7 @@ function SignInTable({ datum }: { datum: SignInDatum | null }) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {datum?.data.sign_ins.map((sign_in) => {
+        {datum?.data.sign_ins?.map((sign_in) => {
           return (
             <Link key={sign_in.id} to="/sign-ins/$id" params={sign_in} className="contents">
               <TableRow className="hover:bg-accent hover:cursor-pointer" key={sign_in.id}>

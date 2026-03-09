@@ -2,7 +2,7 @@ export * as users from "./users";
 export * as sign_in from "./sign_in";
 export * as training from "./training";
 
-type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void ? I : never;
+export type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void ? I : never;
 
 type LastOf<T> = UnionToIntersection<T extends any ? () => T : never> extends () => infer R ? R : never;
 

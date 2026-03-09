@@ -4,18 +4,22 @@ import e from "@packages/db/edgeql-js";
 import { UpdateSignInSchema } from "@packages/db/zod/modules/sign_in";
 import * as z from "zod";
 
+const SignInShape = e.shape(e.sign_in.SignIn, () => ({
+  ...e.sign_in.SignIn["*"],
+  location: { name: true },
+  user: PartialUserShape,
+  reason: e.sign_in.Reason["*"],
+  duration: true,
+}));
+
 export const get = auth
   .route({ path: "/" })
   .input(z.object({ id: z.uuid() }))
   .handler(async ({ input: { id }, context: { db } }) =>
     e
       .assert_exists(
-        e.select(e.sign_in.SignIn, () => ({
-          ...e.sign_in.SignIn["*"],
-          location: { name: true },
-          user: PartialUserShape,
-          reason: e.sign_in.Reason["*"],
-          duration: true,
+        e.select(e.sign_in.SignIn, (sign_in) => ({
+          ...SignInShape(sign_in),
           filter_single: { id },
         })),
       )
@@ -27,29 +31,47 @@ export const update = auth
   .input(
     UpdateSignInSchema.extend({
       id: z.uuid(),
+      reason: z.object({ id: z.uuid() }).optional(),
+      tools: z.array(z.object({ id: z.uuid() })).optional(),
     }).omit({ ends_at: true }),
   )
-  .handler(async ({ input: { id, ...rest }, context: { db } }) =>
+  .handler(async ({ input: { id, reason, tools, ...rest }, context: { db } }) =>
     e
       .select(
         e.assert_exists(
           e.update(e.sign_in.SignIn, () => ({
             filter_single: { id },
-            set: { ...rest, ends_at: new Date() },
+            set: {
+              ...rest,
+              reason: reason
+                ? e.assert_exists(
+                    e.select(e.sign_in.Reason, () => ({
+                      filter_single: { id: reason.id },
+                    })),
+                  )
+                : undefined,
+            },
           })),
         ),
-        () => ({
-          ...e.sign_in.SignIn["*"],
-          location: { name: true },
-          user: PartialUserShape,
-          reason: e.sign_in.Reason["*"],
-          duration: true,
-        }),
+        SignInShape,
       )
+      .run(db),
+  );
+
+export const out = auth
+  .route({ path: "/out", method: "POST" })
+  .input(z.object({ id: z.uuid() }))
+  .handler(async ({ input: { id }, context: { db } }) =>
+    e
+      .update(e.sign_in.SignIn, () => ({
+        filter_single: { id },
+        set: { ends_at: e.datetime_of_statement() },
+      }))
       .run(db),
   );
 
 export const idRouter = pub.prefix("/id").router({
   get,
   update,
+  out,
 });

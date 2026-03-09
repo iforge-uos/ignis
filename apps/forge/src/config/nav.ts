@@ -99,19 +99,13 @@ export const appConfig: AppConfig[] = [
     url: "/sign-in",
     logo: PencilRulerIcon,
     color: "#500724",
-    description: "Manage your sign-in data",
+    description: "Manage sign-ins",
     mainMenuNavigable: true,
     routes: [
       {
         title: "Home",
         url: "/sign-in",
         icon: HouseIcon,
-        isActive: true,
-      },
-      {
-        title: "Agreements",
-        url: "/sign-in/agreements",
-        icon: ClipboardPenIcon,
         isActive: true,
       },
       {
@@ -267,6 +261,12 @@ export const appConfig: AppConfig[] = [
         title: "Profile",
         url: "/user",
         icon: UserIcon,
+        isActive: true,
+      },
+       {
+        title: "Agreements",
+        url: "/user/agreements",
+        icon: ClipboardPenIcon,
         isActive: true,
       },
       {

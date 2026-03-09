@@ -4,7 +4,9 @@ module sign_in {
             on target delete delete source;
         }
         required location: Location;
-        required tools: array<str>;  # should have a link prop for whether it was removed from
+        required tools: array<str>;
+        multi _tools: tools::Tool | tools::GroupedTool;
+
         required reason: Reason;
         required signed_out := exists .ends_at;
 

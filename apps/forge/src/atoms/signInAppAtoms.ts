@@ -2,12 +2,13 @@
 
 import { sign_in } from "@packages/db/interfaces";
 import { atom } from "jotai";
-import { atomWithStorage } from "jotai/utils";
+import { atomWithStorage, createJSONStorage } from "jotai/utils";
 import { atomWithQuery } from "jotai-tanstack-query";
 import { orpc } from "@/lib/orpc";
 import { SignInSession } from "@/types/sign_in";
 import { SIGN_IN_REASONS_LAST_UPDATED_STORAGE_KEY, SIGN_IN_REASONS_STORAGE_KEY } from "../lib/constants";
-import { atomWithQueryStorage } from "../hooks/useAtomWithQueryStorage";
+import { Temporal } from "@js-temporal/polyfill";
+import { PartialReason } from "@packages/types/sign_in";
 
 // ------ Sign in App Data Management (location data, handling selected location, etc.)
 
@@ -17,14 +18,17 @@ activeLocationAtom.debugLabel = "signIn:activeLocation";
 export const locationStatusesAtom = atomWithQuery(orpc.locations.statuses.experimental_liveOptions);
 locationStatusesAtom.debugLabel = "signIn:locationStatuses";
 
-export const reasonsAtom = atomWithQueryStorage({
-  key: SIGN_IN_REASONS_STORAGE_KEY,
-  ...orpc.signIns.reasons.all.queryOptions(),
-});
+export const reasonsAtom = atomWithStorage<PartialReason[] | undefined>(
+  SIGN_IN_REASONS_STORAGE_KEY,
+  undefined,
+  undefined,
+  { getOnInit: true },
+);
+reasonsAtom.debugLabel = "signIn:reasons";
 
 export const reasonsLastUpdatedAtom = atomWithStorage<Date>(
   SIGN_IN_REASONS_LAST_UPDATED_STORAGE_KEY,
-  new Date(),
+  undefined,
   undefined,
   { getOnInit: true },
 );
@@ -37,7 +41,7 @@ export const sessionUcardNumberAtom = atom<SignInSession["ucard_number"]>("");
 sessionUcardNumberAtom.debugLabel = "signInSession:ucardNumber";
 export const sessionUserAtom = atom<SignInSession["user"]>(null);
 sessionUserAtom.debugLabel = "signInSession:user";
-export const sessionSignInReasonAtom = atom<SignInSession["sign_in_reason"]>(null);
+export const sessionSignInReasonAtom = atom<PartialReason | null>(null);
 sessionSignInReasonAtom.debugLabel = "signInSession:signInReason";
 export const sessionTrainingAtom = atom<SignInSession["training"]>(null);
 sessionTrainingAtom.debugLabel = "signInSession:training";

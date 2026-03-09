@@ -3,6 +3,7 @@ import * as z from "zod";
 import { UCARD_LENGTH } from "@/lib/constants";
 import type { BaseKey } from "../$ucard";
 import type { Initialise, Receive } from "./_types";
+import { ErrorMap } from "@orpc/server";
 
 export const StepType = z.enum([
   "AGREEMENTS",
@@ -18,9 +19,9 @@ export const StepType = z.enum([
 ]);
 
 export const UCardNumber = z
-    .string()
-    .regex(new RegExp(`\\d{${UCARD_LENGTH},}`))
-    .brand("uCardNumber")
+  .string()
+  .regex(new RegExp(`\\d{${UCARD_LENGTH},}`))
+  .brand("uCardNumber");
 export const InitialiseStep = z.object({
   name: LocationNameSchema,
   ucard_number: UCardNumber,
@@ -65,7 +66,16 @@ export const SIGN_INS = new Proxy(
     get: (target, name: BaseKey): Inner =>
       name in target
         ? target[name]
-        // biome-ignore lint/suspicious/noAssignInExpressions: I should probably globally disable this
-        : (target[name] = Object.fromEntries(StepType.options.map((key) => [key, { INITIALISE: {}, RECEIVE: {} }])) as Inner),
+        : // biome-ignore lint/suspicious/noAssignInExpressions: I should probably globally disable this
+          (target[name] = Object.fromEntries(
+            StepType.options.map((key) => [key, { INITIALISE: {}, RECEIVE: {} }]),
+          ) as Inner),
   },
 );
+
+export const createErrorMap = <S extends z.infer<typeof StepType>, MapT extends ErrorMap>(type: S, map: MapT) => {
+  return {
+    type,
+    map,
+  };
+};

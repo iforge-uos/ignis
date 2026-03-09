@@ -5,7 +5,7 @@ import { format } from "date-fns";
 import * as React from "react";
 
 interface TimeDisplayProps {
-  timeIn: Date;
+  timeIn: Temporal.ZonedDateTime;
   inText?: string;
   durationText?: string;
 }
@@ -15,7 +15,7 @@ export const TimeDisplay: React.FC<TimeDisplayProps> = ({ timeIn, inText, durati
 
   React.useMemo(() => {
     const calculateDuration = () => {
-      const durationObj = timeIn.toTemporalInstant().until(Temporal.Now.instant());
+      const durationObj = timeIn.until(Temporal.Now.zonedDateTimeISO("Europe/London"));
       setDuration(`${durationObj.hours}h ${durationObj.minutes}m ${durationObj.seconds}s`);
     };
 
@@ -31,7 +31,7 @@ export const TimeDisplay: React.FC<TimeDisplayProps> = ({ timeIn, inText, durati
         <div className="flex">
           <Badge variant="outline" className="rounded-sm shadow-md flex-col w-[90px]">
             <span className="text-foreground">{inText ?? "Time In:"}</span>{" "}
-            <span className="italic">{format(timeIn, "HH:mm:ss")}</span>
+            <span className="italic">{format(timeIn.epochMilliseconds, "HH:mm:ss")}</span>
           </Badge>
         </div>
         <div className="flex">

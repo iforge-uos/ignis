@@ -33,10 +33,10 @@ export const QueuedUserCard: React.FC<QueuedUserCardProps> = ({ place, onDequeue
       },
       onSuccess: async () => {
         abortController.abort();
-        toast.success(`Successfully signed out ${place.user.display_name}`);
+        toast.success(<>Successfully signed out <Link className="hyperlink" to="/users/$id" params={place.user}>{place.user.display_name}</Link></>);
         onDequeue?.(place.user.id);
-        await queryClient.invalidateQueries({ queryKey: ["locationStatus"] });
-        await queryClient.invalidateQueries({ queryKey: ["locationList", activeLocation] });
+      queryClient.invalidateQueries({ queryKey: orpc.locations.get.queryKey({input:{name: activeLocation}})} );
+      queryClient.invalidateQueries({ queryKey:orpc.locations.statuses.queryKey()} );
       },
     }),
   );

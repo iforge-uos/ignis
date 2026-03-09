@@ -1,12 +1,18 @@
 import { QueuePlaceShape } from "@/lib/utils/queries";
-import { ErrorMap } from "@orpc/server";
 import e from "@packages/db/edgeql-js";
 import { logger } from "@sentry/tanstackstart-react";
 import { CardinalityViolationError } from "gel";
 import * as z from "zod";
-import { StepType, createFinaliseStep, createInitialiseStep, createReceiveStep, createTransmitStep } from "./_steps";
+import {
+  StepType,
+  createErrorMap,
+  createFinaliseStep,
+  createInitialiseStep,
+  createReceiveStep,
+  createTransmitStep,
+} from "./_steps";
 import type { Params, Return } from "./_types";
-import email from "@/email"
+import email from "@/email";
 
 export const Initialise = createInitialiseStep(StepType.enum.SIGN_OUT);
 
@@ -16,12 +22,12 @@ export const Receive = createReceiveStep(StepType.enum.SIGN_OUT);
 
 export const Finalise = createFinaliseStep(StepType.enum.SIGN_OUT, z.undefined());
 
-export const Errors = {
+export const Errors = createErrorMap(StepType.enum.SIGN_OUT, {
   NOT_SIGNED_IN: {
     status: 500,
     message: "User was not signed in",
   },
-} as const satisfies ErrorMap;
+} as const);
 
 export default async function* ({
   $user,
@@ -34,7 +40,7 @@ export default async function* ({
   z.infer<typeof Finalise>,
   z.infer<typeof Receive>
 > {
-  let sign_in: {id: string};
+  let sign_in: { id: string };
   try {
     sign_in = await e
       .assert_exists(
@@ -47,7 +53,7 @@ export default async function* ({
             ),
           ),
           set: {
-            ends_at: new Date(),
+            ends_at: e.datetime_of_statement(),
           },
         })),
       )
@@ -66,33 +72,29 @@ export default async function* ({
   if (can_sign_in) {
     if (available_capacity > 0) {
       const places = await e
-        .select(e.sign_in.QueuePlace, (queue_place) => ({
-          filter: e.op(
-            e.op(queue_place.location, "=", $location),
-            "and",
-            e.op("not", e.op("exists", queue_place.notified_at)),
-          ),
-          order_by: {
-            expression: queue_place.created_at,
-            direction: e.ASC,
-          },
-          limit: available_capacity,
-          ...QueuePlaceShape(queue_place),
-        }))
+        .select(
+          e.update(e.sign_in.QueuePlace, (queue_place) => ({
+            filter: e.op(
+              e.op(queue_place.location, "=", $location),
+              "and",
+              e.op("not", e.op("exists", queue_place.notified_at)),
+            ),
+            order_by: {
+              expression: queue_place.created_at,
+              direction: e.ASC,
+            },
+            limit: available_capacity,
+            set: {
+              notified_at: e.datetime_of_statement(),
+            },
+          })),
+          QueuePlaceShape,
+        )
         .run(tx);
 
       logger.info(logger.fmt`Dequeuing ${places.length} users for ${name}`);
 
       for (const place of places) {
-        await e
-          .update(e.sign_in.QueuePlace, (queue_place) => ({
-            filter: e.op(queue_place.id, "=", e.uuid(place.id)),
-            set: {
-              notified_at: new Date(),
-            },
-          }))
-          .run(tx);
-
         await email.sendUnqueuedEmail(place, name);
         logger.info(logger.fmt`Sent unqueued email to user ${place.user.display_name} (${place.user.ucard_number})`);
       }
@@ -100,6 +102,8 @@ export default async function* ({
       logger.info(logger.fmt`No available capacity to dequeue users for ${name}`);
     }
   }
+
+  yield {};
 
   return { next: undefined as never };
 }

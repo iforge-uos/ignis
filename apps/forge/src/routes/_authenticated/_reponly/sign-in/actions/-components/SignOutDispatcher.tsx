@@ -38,8 +38,8 @@ const SignOutDispatcher: FlowStepComponent = ({ onSecondary, onPrimary }) => {
       setCanContinue(true);
       abortController.abort();
       resetSession();
-      await queryClient.invalidateQueries({ queryKey: ["locationStatus"] });
-      await queryClient.invalidateQueries({ queryKey: ["locationList", activeLocation] });
+      queryClient.invalidateQueries({queryKey: orpc.locations.get.queryKey({input:{name: activeLocation}})});
+      queryClient.invalidateQueries({queryKey:orpc.locations.statuses.queryKey()});
       toast.success("User signed out successfully!");
       await navigate({ to: "/sign-in" });
     },

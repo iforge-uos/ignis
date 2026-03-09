@@ -1,7 +1,7 @@
 import { RollbackTransaction } from "@/orpc";
 import { ErrorMap } from "@orpc/server";
 import * as z from "zod";
-import { StepType, createFinaliseStep, createInitialiseStep, createReceiveStep, createTransmitStep } from "./_steps";
+import { StepType, createErrorMap, createFinaliseStep, createInitialiseStep, createReceiveStep, createTransmitStep } from "./_steps";
 import type { Params, Return } from "./_types";
 
 export const Initialise = createInitialiseStep(StepType.enum.CANCEL);
@@ -12,7 +12,7 @@ export const Receive = createReceiveStep(StepType.enum.CANCEL)
 
 export const Finalise = createFinaliseStep(StepType.enum.CANCEL, z.undefined());
 
-export const Errors = {} as const satisfies ErrorMap;
+export const Errors = createErrorMap(StepType.enum.CANCEL, {} as const);
 
 // biome-ignore lint/correctness/useYield: <explanation>
 export default async function* (

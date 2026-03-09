@@ -1,14 +1,14 @@
-import { useUser } from "@/hooks/useUser";
-import { Category } from "@/icons/SignInReason";
-import { cn } from "@/lib/utils";
-import { Badge, BadgeProps } from "@packages/ui/components/badge";
+import { Badge } from "@packages/ui/components/badge";
 import { Card, CardContent } from "@packages/ui/components/card";
-import { Separator } from "@packages/ui/components/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@packages/ui/components/tooltip";
 import { useNavigate } from "@tanstack/react-router";
+import { format } from "date-fns";
 import { motion } from "framer-motion";
 import { AlertCircle, Calendar, CheckCircle, ExternalLink, Tag } from "lucide-react";
 import { useState } from "react";
+import { useUser } from "@/hooks/useUser";
+import { Category } from "@/icons/SignInReason";
+import { cn } from "@/lib/utils";
 
 interface AgreementCardProps {
   agreement: Agreement;
@@ -31,24 +31,33 @@ export function AgreementCard({ agreement }: AgreementCardProps) {
         return {
           status: "Signed",
           badgeVariant: "default",
-          badgeStyle: "rounded-sm",
+          label: "No Action Required",
+          tooltip: "This agreement has been signed",
+          style: "bg-success text-success-foreground",
+          Icon: CheckCircle,
         };
       }
       return {
         status: "Needs Resigning",
         badgeVariant: "warning",
-        badgeStyle: "rounded-sm",
+        label: "Needs Resigning",
+        tooltip: "Please review and sign the updated agreement version",
+        style: "bg-warning text-warning-foreground",
+        Icon: AlertCircle,
       };
     }
 
     return {
       status: "Not Signed",
       badgeVariant: "warning",
-      badgeStyle: "rounded-sm",
+      label: "Action Required",
+      tooltip: "Review and sign on the agreement page",
+      style: "bg-warning text-warning-foreground",
+      Icon: AlertCircle,
     };
   };
 
-  const { status, badgeVariant, badgeStyle } = getAgreementStatus(agreement);
+  const { label, tooltip, style, Icon } = getAgreementStatus(agreement);
 
   return (
     <motion.div
@@ -86,7 +95,7 @@ export function AgreementCard({ agreement }: AgreementCardProps) {
                       className="text-muted-foreground dark:text-muted-foreground-dark border-muted-foreground dark:border-muted-foreground-dark cursor-pointer"
                     >
                       <Calendar className="mr-1 h-3 w-3" />
-                      {new Date(agreement.updated_at).toLocaleDateString()}
+                      {format(agreement.updated_at.epochMilliseconds, "PPP")}
                     </Badge>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -120,43 +129,17 @@ export function AgreementCard({ agreement }: AgreementCardProps) {
               </div>
             </div>
             <div className="w-full p-2 sm:p-4 flex flex-col justify-center items-center">
-              {status === "Not Signed" ? (
-                <Tooltip>
-                  <TooltipTrigger>
-                    <div className="bg-warning text-warning-foreground p-3 rounded-lg inline-flex items-center">
-                      <AlertCircle className="h-5 w-5 mr-2" />
-                      Action Required
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="text-sm">Review and sign on the agreement page</p>
-                  </TooltipContent>
-                </Tooltip>
-              ) : status === "Needs Resigning" ? (
-                <Tooltip>
-                  <TooltipTrigger>
-                    <div className="bg-warning text-warning-foreground p-3 rounded-lg inline-flex items-center">
-                      <AlertCircle className="h-5 w-5 mr-2" />
-                      Needs Resigning
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="text-sm">Please review and sign the updated agreement version</p>
-                  </TooltipContent>
-                </Tooltip>
-              ) : (
-                <Tooltip>
-                  <TooltipTrigger>
-                    <div className="bg-success text-success-foreground p-3 rounded-lg inline-flex items-center">
-                      <CheckCircle className="h-5 w-5 mr-2" />
-                      No Action Required
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="text-sm">This agreement has been signed</p>
-                  </TooltipContent>
-                </Tooltip>
-              )}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className={cn("p-3 rounded-lg inline-flex items-center", style)}>
+                    <Icon className="h-5 w-5 mr-2" />
+                    {label}
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-sm">{tooltip}</p>
+                </TooltipContent>
+              </Tooltip>
             </div>
           </div>
         </CardContent>

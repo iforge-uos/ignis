@@ -1,9 +1,8 @@
 import { signAgreementParams } from "@/api/users/$id/agreements.$agreement_id";
-import { ErrorMap, call } from "@orpc/server";
 import e from "@packages/db/edgeql-js";
 import { CreateAgreementSchema } from "@packages/db/zod/modules/sign_in";
 import * as z from "zod";
-import { StepType, createFinaliseStep, createInitialiseStep, createReceiveStep, createTransmitStep } from "./_steps";
+import { StepType, createErrorMap, createFinaliseStep, createInitialiseStep, createReceiveStep, createTransmitStep } from "./_steps";
 import { type Params, Return } from "./_types";
 
 export const Initialise = createInitialiseStep(StepType.enum.AGREEMENTS);
@@ -16,7 +15,7 @@ export const Receive = createReceiveStep(StepType.enum.AGREEMENTS);
 
 export const Finalise = createFinaliseStep(StepType.enum.AGREEMENTS, StepType.enum.MAILING_LISTS);
 
-export const Errors = {} as const satisfies ErrorMap;
+export const Errors = createErrorMap(StepType.enum.AGREEMENTS, {} as const);
 
 export default async function* ({
   user,

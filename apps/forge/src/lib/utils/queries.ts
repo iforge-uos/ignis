@@ -58,7 +58,7 @@ export const AgreementShape = e.shape(e.sign_in.Agreement, () => ({
 export const LocationStatusShape = e.shape(e.sign_in.Location, (location) => ({
   on_shift_rep_count: e.count(location.on_shift_reps),
   off_shift_rep_count: e.count(location.off_shift_reps),
-  user_count: e.count(location.sign_ins),
+  user_count: e.count(e.select(location.sign_ins.user, (u) => ({filter: e.op(u.__type__.name, "=", "users::User")}))),
   max_count: true,
   queued_count: e.count(location.queued),
   out_of_hours: true,
@@ -69,7 +69,7 @@ export const LocationStatusShape = e.shape(e.sign_in.Location, (location) => ({
   queue_in_use: true,
 }));
 
-export const FullLocation = e.shape(e.sign_in.Location, (location) => ({
+export const FullLocation = e.shape(e.sign_in.Location, () => ({
   ...e.sign_in.Location["*"],
   sign_ins: {
     ...e.sign_in.SignIn["*"],

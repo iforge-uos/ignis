@@ -1,7 +1,8 @@
 import type { SignInUser } from "@/lib/utils/queries";
-import type { ErrorMap, ORPCErrorConstructorMap } from "@orpc/server";
+import type { ORPCErrorConstructorMap } from "@orpc/server";
+import type { ORPCErrorFromErrorMap } from "@orpc/contract";
 import e from "@packages/db/edgeql-js";
-import { Tuple } from "@packages/types";
+import { Tuple, UnionToIntersection } from "@packages/types";
 import type { Executor } from "gel";
 import * as z from "zod";
 
@@ -80,18 +81,20 @@ import {
 // The types used for the sign in. I've tried to co-locate things as much as possible, I would like a way to do this
 // automatically rather than doing this for each type manually. If you add a new step you need to add to these objects/lists.
 
-export const Errors = {
-  ...AgreementsErrors,
-  ...CancelErrors,
-  ...FinaliseErrors,
-  ...InitialiseErrors,
-  ...MailingListsErrors,
-  ...PersonalToolsAndMaterialsErrors,
-  ...QueueErrors,
-  ...ReasonErrors,
-  ...ToolsErrors,
-  ...SignOutErrors,
-} as const satisfies ErrorMap;
+const _Errors = [
+  AgreementsErrors,
+  CancelErrors,
+  FinaliseErrors,
+  InitialiseErrors,
+  MailingListsErrors,
+  PersonalToolsAndMaterialsErrors,
+  QueueErrors,
+  ReasonErrors,
+  ToolsErrors,
+  SignOutErrors,
+] as const;
+export const Errors = _Errors.map((errors) => errors.map) as unknown as UnionToIntersection<typeof _Errors[number]["map"]>; // for server side orpc
+export type ErrorMap = { [KeyT in (typeof _Errors)[number] as KeyT["type"]]: ORPCErrorFromErrorMap<KeyT["map"]> }; // for client side error handling
 
 export const Initialise = z.discriminatedUnion("type", [
   QueueInitialise,
@@ -149,7 +152,7 @@ const _LOCATION_QUERY = e.assert_exists(
   e.select(e.sign_in.Location, () => ({ filter_single: { name: "MAINSPACE" as const } })),
 );
 const _USER_QUERY = e.assert_exists(e.select(e.users.User, () => ({ filter_single: { id: "" } })));
-const _LOGGED_IN_USER_QUERY = e.assert_exists(e.global.user);  // you don't ever get this but it makes types nice
+const _LOGGED_IN_USER_QUERY = e.assert_exists(e.global.user); // you don't ever get this but it makes types nice
 
 // the types used in a sign in step
 type _SignInParams = Parameters<(typeof flow)["~orpc"]["handler"]>[0];
@@ -161,7 +164,7 @@ export type Params<T extends z.infer<typeof Initialise>> = Omit<
   user: SignInUser;
   $user: typeof _USER_QUERY | typeof _LOGGED_IN_USER_QUERY;
   $location: typeof _LOCATION_QUERY;
-  errors: ORPCErrorConstructorMap<(typeof flow)["~orpc"]["errorMap"]>;
+  errors: ORPCErrorConstructorMap<UnionToIntersection<typeof _Errors[number]["map"]>>;
   context: Omit<_SignInParams["context"], "tx"> & { tx: Executor };
 };
 

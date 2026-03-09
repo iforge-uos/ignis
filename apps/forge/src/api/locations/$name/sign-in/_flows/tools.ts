@@ -1,7 +1,6 @@
-import { ErrorMap } from "@orpc/server";
 import { getSignInTools, GetSignInToolsReturns } from "@packages/db/queries/getSignInTools.query";
 import * as z from "zod";
-import { StepType, createFinaliseStep, createInitialiseStep, createReceiveStep, createTransmitStep } from "./_steps";
+import { StepType, createErrorMap, createFinaliseStep, createInitialiseStep, createReceiveStep, createTransmitStep } from "./_steps";
 import type { Params, Return } from "./_types";
 
 export const Initialise = createInitialiseStep(StepType.enum.TOOLS);
@@ -16,7 +15,7 @@ export const Receive = createReceiveStep(StepType.enum.TOOLS).extend({
 
 export const Finalise = createFinaliseStep(StepType.enum.TOOLS, StepType.enum.FINALISE);
 
-export const Errors = {} as const satisfies ErrorMap;
+export const Errors = createErrorMap(StepType.enum.TOOLS, {} as const) ;
 
 export default async function* ({
   user: { id },
@@ -27,7 +26,9 @@ export default async function* ({
   z.infer<typeof Finalise>,
   z.infer<typeof Receive>
 > {
+  console.log("Calling tools")
   const tools = await getSignInTools(tx, { id, name });
+  console.log("Got tools", tools)
 
   const selected = yield { tools };
 

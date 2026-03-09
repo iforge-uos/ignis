@@ -93,8 +93,8 @@ export default function UCardReader() {
                   );
                 },
                 success: async () => {
-                  await queryClient.invalidateQueries({ queryKey: ["locationStatus"] });
-                  await queryClient.invalidateQueries({ queryKey: ["locationList", activeLocation] });
+      queryClient.invalidateQueries({queryKey: orpc.locations.get.queryKey({input:{name: activeLocation}})});
+      queryClient.invalidateQueries({queryKey:orpc.locations.statuses.queryKey()});
                   return (
                     <>
                       Successfully signed out{" "}

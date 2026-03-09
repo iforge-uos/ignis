@@ -1,11 +1,10 @@
 // import email from "@/email";
 import { QueuePlaceShape } from "@/lib/utils/queries";
-import { ErrorMap } from "@orpc/server";
 import e, { $infer } from "@packages/db/edgeql-js";
 import { logger } from "@sentry/tanstackstart-react";
 import { AccessError, ConstraintViolationError } from "gel";
 import * as z from "zod";
-import { StepType, createFinaliseStep, createInitialiseStep, createReceiveStep, createTransmitStep } from "./_steps";
+import { StepType, createErrorMap, createFinaliseStep, createInitialiseStep, createReceiveStep, createTransmitStep } from "./_steps";
 import type { Params, Return } from "./_types";
 type Place = $infer<typeof QueuePlaceShape>[number];
 
@@ -19,7 +18,7 @@ export const Finalise = createFinaliseStep(StepType.enum.QUEUE, z.undefined()).e
   place: z.custom<Place>((value) => value as any),
 });
 
-export const Errors = {
+export const Errors = createErrorMap(StepType.enum.QUEUE, {
   QUEUE_DISABLED: {
     status: 503,
     message: "The queue has been manually disabled",
@@ -28,7 +27,7 @@ export const Errors = {
     status: 400,
     message: "The user is already in the queue",
   },
-} as const satisfies ErrorMap;
+} as const);
 
 export default async function* (
   { $user, $location, errors, context: { tx } }: Omit<Params<z.infer<typeof Initialise>>, "user">, // cannot use user as it cannot be passed from the queue.add endpoint

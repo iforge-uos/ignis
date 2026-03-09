@@ -1,8 +1,15 @@
-import { ErrorMap } from "@orpc/server";
 import e from "@packages/db/edgeql-js";
 import { logger } from "@sentry/tanstackstart-react";
 import * as z from "zod";
-import { SIGN_INS, StepType, createFinaliseStep, createInitialiseStep, createReceiveStep, createTransmitStep } from "./_steps";
+import {
+  SIGN_INS,
+  StepType,
+  createErrorMap,
+  createFinaliseStep,
+  createInitialiseStep,
+  createReceiveStep,
+  createTransmitStep,
+} from "./_steps";
 import type { Params, Return } from "./_types";
 
 export const Initialise = createInitialiseStep(StepType.enum.FINALISE);
@@ -15,7 +22,7 @@ export const Finalise = createFinaliseStep(StepType.enum.FINALISE, z.undefined()
   sign_in: z.object({ id: z.uuid() }),
 });
 
-export const Errors = {} as const satisfies ErrorMap;
+export const Errors = createErrorMap(StepType.enum.FINALISE, {} as const);
 
 export default async function* ({
   user,
@@ -36,9 +43,12 @@ export default async function* ({
       location: $location,
       user: $user,
       reason: e.select(e.sign_in.Reason, () => ({ filter_single: inputs.REASON.RECEIVE.reason })),
-      tools: inputs.TOOLS?.RECEIVE?.tools ?? [],
+      _tools: e.cast(
+        e.op(e.tools.Tool, "union", e.tools.GroupedTool),
+        e.cast(e.uuid, e.set(...(inputs.TOOLS?.RECEIVE?.tools.map(({ id }) => id) ?? []))),
+      ),
     })
     .run(tx);
-
+  yield {};
   return { next: undefined as never, sign_in };
 }
