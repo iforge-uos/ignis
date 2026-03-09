@@ -1,15 +1,20 @@
 import Title from "@/components/title";
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
 import { useEffect } from "react";
-import { userAtom } from "@/atoms/authSessionAtoms";
+import { originalUserRolesAtom, userAtom, userRolesAtom } from "@/atoms/authSessionAtoms";
 import { useLogout } from "@/hooks/useLogout";
 import { Hammer } from "/src/components/loading";
 
 const LogOutComponent = () => {
   const logout = useLogout();
   const set = useSetAtom(userAtom);
+  const setRoles = useSetAtom(userRolesAtom);
+  const setOriginalRoles = useSetAtom(originalUserRolesAtom);
+
   set(null);
+  setRoles([]);
+  setOriginalRoles([]);
 
   useEffect(() => {
     (async () => {

@@ -1,15 +1,22 @@
-import { originalUserRolesAtom, previousPathnameAtom, userAtom } from "@/atoms/authSessionAtoms";
+import { originalUserRolesAtom, previousPathnameAtom, userAtom, userRolesAtom } from "@/atoms/authSessionAtoms";
 import { createFileRoute, Navigate, redirect } from "@tanstack/react-router";
 import { useAtomValue, useSetAtom } from "jotai";
 import { reconnectWebSocket } from "@/lib/orpc";
 
 export const CompleteComponent = () => {
-  const {user} = Route.useRouteContext();
-  const previousPathname = useAtomValue(previousPathnameAtom);
+  const { user } = Route.useRouteContext();
+  let previousPathname = useAtomValue(previousPathnameAtom);
+  if (previousPathname === "/auth/login") {
+    previousPathname = "/"
+  }
   const setUser = useSetAtom(userAtom);
+  const setRoles = useSetAtom(userRolesAtom);
   const setOriginalRoles = useSetAtom(originalUserRolesAtom);
+
   setUser(user);
-  setOriginalRoles(user!.roles.map((role) => role.name.toLowerCase()));
+  const convertedRoles = user!.roles.map((role) => role.name.toLowerCase())
+  setRoles(convertedRoles)
+  setOriginalRoles(convertedRoles);
   reconnectWebSocket();
   if (Route.useSearch().registered_now) {
     // TODO tutorial param for the home page?
@@ -19,10 +26,10 @@ export const CompleteComponent = () => {
 
 export const Route = createFileRoute("/auth/login/complete")({
   component: CompleteComponent,
-  validateSearch: <T extends {registered_now: boolean}>(search: T): T => search,
-  beforeLoad: async ({context: {user}}) => {
+  validateSearch: <T extends { registered_now: boolean }>(search: T): T => search,
+  beforeLoad: async ({ context: { user } }) => {
     if (!user) {
-     throw redirect({ to: "/auth/login", replace: true });
+      throw redirect({ to: "/auth/login", replace: true });
     }
     return { user };
   },

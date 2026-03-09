@@ -6,13 +6,14 @@ import { MultiSelect } from "@packages/ui/components/multi-select";
 import { Switch } from "@packages/ui/components/switch";
 import { useAtom } from "jotai";
 import { UserIcon } from "lucide-react";
+import { toTitleCase } from "/src/lib/utils";
 
 export function RoleSelector() {
   const [selectedRoles, setSelectedRoles] = useAtom(adminOverwrittenRoles);
   const [overwriteRoles, setOverwriteRoles] = useAtom(adminOverwriteRoles);
 
   const roleOptions = AVAILABLE_ROLES.map((role) => ({
-    label: role.charAt(0).toUpperCase() + role.slice(1),
+    label: toTitleCase(role),
     value: role,
     icon: UserIcon,
   }));
