@@ -3,7 +3,7 @@
     "biomejs.biome",
     "1Password.1Password",
     "magicstack.edgedb",
-    "Orta.vscode-jest",
-    "YoavBls.pretty-ts-errors"
+    "YoavBls.pretty-ts-errors",
+    "oven.bun-vscode",
   ]
 }
