@@ -14,8 +14,8 @@ const GeorgePorter = () => (
         width={georgePorterLocationImage.width}
         height={georgePorterLocationImage.height}
         style={{ backgroundImage: `url("${georgePorterLocationImage.lqip}")`, backgroundSize: "cover" }}
-        alt={"George Porter"}
-        className={"absolute w-full object-fill"}
+        alt="George Porter"
+        className="w-full h-full object-cover"
       />
     }
     trainings={Route.useLoaderData()}

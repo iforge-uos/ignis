@@ -1,3 +1,14 @@
+import { Button } from "@packages/ui/components/button";
+import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from "@packages/ui/components/command";
+import { Separator } from "@packages/ui/components/separator";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { SearchCheckIcon, TriangleAlertIcon } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import approvedMaterials from "@/../public/training/approved_materials.jpg?lqip";
+import georgePorterTraining from "@/../public/training/george_porter.jpg?lqip";
+import heartspaceTraining from "@/../public/training/heartspace.jpg?lqip";
+import mainspaceTraining from "@/../public/training/mainspace.jpg?lqip";
+import riskAssessments from "@/../public/training/risk_assessments.jpg?lqip";
 import Title from "@/components/title";
 import ImageGradient from "@/components/training/ImageGradient";
 import { useUser } from "@/hooks/useUser";
@@ -5,19 +16,7 @@ import { GeorgePorterIcon, HeartspaceIcon, LocationIcon, MainspaceIcon } from "@
 import { orpc } from "@/lib/orpc";
 import { ensureQueryData } from "@/lib/query-utils";
 import IndexCard from "@/routes/training/-components/IndexCard";
-import { Button } from "@packages/ui/components/button";
-import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from "@packages/ui/components/command";
-import { Separator } from "@packages/ui/components/separator";
-import { Link, createFileRoute } from "@tanstack/react-router";
-import { SearchCheckIcon, TriangleAlertIcon } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
 import { TrainingContent } from "../_authenticated/training/$id";
-
-import approvedMaterials from "@/../public/training/approved_materials.jpg?lqip";
-import georgePorterTraining from "@/../public/training/george_porter.jpg?lqip";
-import heartspaceTraining from "@/../public/training/heartspace.jpg?lqip";
-import mainspaceTraining from "@/../public/training/mainspace.jpg?lqip";
-import riskAssessments from "@/../public/training/risk_assessments.jpg?lqip";
 
 export default function TrainingIndexPage() {
   const trainings = Route.useLoaderData();
@@ -83,20 +82,18 @@ export default function TrainingIndexPage() {
         </div>
         <h2 className="text-4xl font-semibold font-futura mb-4 text-center">Locations</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 justify-items-center mx-auto min-h-72 max-w-[1440px]">
-          <div className="w-full max-h-72">
-            <Link to="/training/locations/mainspace">
+          <div className="w-full h-72">
+            <Link to="/training/locations/mainspace" className="h-full block">
               <IndexCard
-                // TODO this doesn't cover the entirety of the box for some reason in lg
                 img={
                   <ImageGradient gradientColor="mainspace">
-                    {/* TODO this doesn't cover the entirety of the box for some reason in lg */}
                     <img
                       src={mainspaceTraining.src}
                       width={mainspaceTraining.width}
                       height={mainspaceTraining.height}
                       style={{ backgroundImage: `url("${mainspaceTraining.lqip}")`, backgroundSize: "cover" }}
                       alt="iForge Mainspace"
-                      className="w-full object-fill"
+                      className="w-full h-full object-cover"
                     />
                   </ImageGradient>
                 }
@@ -111,8 +108,8 @@ export default function TrainingIndexPage() {
               />
             </Link>
           </div>
-          <div className="w-full max-h-72">
-            <Link to="/training/locations/heartspace">
+          <div className="w-full h-72">
+            <Link to="/training/locations/heartspace" className="h-full block">
               <IndexCard
                 img={
                   <ImageGradient gradientColor="heartspace">
@@ -122,7 +119,7 @@ export default function TrainingIndexPage() {
                       height={heartspaceTraining.height}
                       style={{ backgroundImage: `url("${heartspaceTraining.lqip}")`, backgroundSize: "cover" }}
                       alt="iForge Heartspace"
-                      className="w-full object-fill"
+                      className="w-full h-full object-cover"
                     />
                   </ImageGradient>
                 }
@@ -137,8 +134,8 @@ export default function TrainingIndexPage() {
               />
             </Link>
           </div>
-          <div className="w-full max-h-72">
-            <Link to="/training/locations/george-porter">
+          <div className="w-full h-72">
+            <Link to="/training/locations/george-porter" className="h-full block">
               <IndexCard
                 img={
                   <ImageGradient gradientColor="george-porter">
@@ -148,7 +145,7 @@ export default function TrainingIndexPage() {
                       height={georgePorterTraining.height}
                       style={{ backgroundImage: `url("${georgePorterTraining.lqip}")`, backgroundSize: "cover" }}
                       alt="George Porter"
-                      className="w-full object-fill"
+                      className="w-full h-full object-cover"
                     />
                   </ImageGradient>
                 }
@@ -167,8 +164,8 @@ export default function TrainingIndexPage() {
         <Separator className="my-6" />
         <h2 className="text-4xl font-semibold font-futura text-center m-4">Useful Links</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 justify-items-center mx-auto min-h-72 max-w-[1440px]">
-          <div className="flex w-full max-h-80 justify-items-center">
-            <Link to="/training/approved-materials">
+          <div className="flex w-full h-80 justify-items-center">
+            <Link to="/training/approved-materials" className="h-full block w-full">
               <IndexCard
                 img={
                   <ImageGradient gradientColor="tick">
@@ -178,6 +175,7 @@ export default function TrainingIndexPage() {
                       height={approvedMaterials.height}
                       style={{ backgroundImage: `url("${approvedMaterials.lqip}")`, backgroundSize: "cover" }}
                       alt="Approved materials"
+                      className="w-full h-full object-cover"
                     />
                   </ImageGradient>
                 }
@@ -192,8 +190,8 @@ export default function TrainingIndexPage() {
               />
             </Link>
           </div>
-          <div className="w-full max-h-80">
-            <Link to="/training/risk-assessments">
+          <div className="w-full h-80">
+            <Link to="/training/risk-assessments" className="h-full block">
               <IndexCard
                 img={
                   <ImageGradient gradientColor="cross">
@@ -203,6 +201,7 @@ export default function TrainingIndexPage() {
                       height={riskAssessments.height}
                       style={{ backgroundImage: `url("${riskAssessments.lqip}")`, backgroundSize: "cover" }}
                       alt="Risk Assessment"
+                      className="w-full h-full object-cover"
                     />
                   </ImageGradient>
                 }

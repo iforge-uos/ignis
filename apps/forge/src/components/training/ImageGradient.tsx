@@ -12,7 +12,7 @@ const ImageGradient: React.FC<ImageGradientProps> = ({ gradientColor, gradientAm
   const gradientPercentage = `${gradientAmount * 100 * (isMediumScreen ? 1 : 1.25)}%`;
 
   return (
-    <div className="overflow-hidden rounded-lg">
+    <div className="overflow-hidden rounded-lg h-full">
       {children}
       <div
         className="absolute inset-0"

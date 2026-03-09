@@ -14,8 +14,8 @@ const Heartspace = () => (
         width={heartspaceLocationImage.width}
         height={heartspaceLocationImage.height}
         style={{ backgroundImage: `url("${heartspaceLocationImage.lqip}")`, backgroundSize: "cover" }}
-        alt={"Heartspace"}
-        className={"absolute w-full object-fill"}
+        alt="Heartspace"
+        className="w-full h-full object-cover"
       />
     }
     trainings={Route.useLoaderData()}

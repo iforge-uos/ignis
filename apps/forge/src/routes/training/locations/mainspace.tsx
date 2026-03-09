@@ -14,8 +14,8 @@ const Mainspace = () => (
         width={mainspaceLocationImage.width}
         height={mainspaceLocationImage.height}
         style={{ backgroundImage: `url("${mainspaceLocationImage.lqip}")`, backgroundSize: "cover" }}
-        alt={"Mainspace"}
-        className={"absolute w-full object-fill xl:top-[-350px] lg:top-[-250px] md:top-[-100px] sm:top-[-20px] top-0"}
+        alt="Mainspace"
+        className="w-full h-full object-cover"
       />
     }
     trainings={Route.useLoaderData()}
