@@ -28,6 +28,6 @@
   "devDependencies": {
     "@js-temporal/polyfill": "^0.5.1",
     "@orpc/server": "^1.7.4",
-    "gel": "2.0.1"
+    "gel": "^2.2.0"
   }
 }

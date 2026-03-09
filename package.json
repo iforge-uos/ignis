@@ -36,8 +36,11 @@
     "regen": "bun --filter @packages/db regen"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.0.6",
-    "turbo": "^2.5.5"
+    "@biomejs/biome": "^2.4.4",
+    "turbo": "^2.8.11"
   },
-  "packageManager": "bun@1.3.0"
+  "packageManager": "bun@1.3.0",
+  "dependencies": {
+    "gel": "github:Gobot1234/gel-js#feat/publish-dist"
+  }
 }

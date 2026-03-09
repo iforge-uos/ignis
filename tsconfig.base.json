@@ -10,6 +10,7 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "isolatedModules": true,
+    "lib": ["esnext"],
     "module": "esnext",
     "moduleResolution": "bundler",
     "strict": true,
