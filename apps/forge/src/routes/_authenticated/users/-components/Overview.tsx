@@ -132,13 +132,12 @@ export default function UserOverview({ user }: UserAnalyticsProps) {
                     <CreditCard className="size-6" />
                     Balance
                   </div>
-                  {user.balance && (
+                  {user.balance ? (
                     <span className="text-4xl font-bold text-primary">
                       {user.balance > 0 ? `£${(user.balance).toFixed(2)}` : "N/A"}
                     </span>
-                  )}
-                  {!user.balance && <span className="text-2xl font-bold text-primary">
-                      {user.balance > 0 ? `£${(user.balance).toFixed(2)}` : "Not found"}
+                  ) : <span className="text-2xl font-bold text-primary">
+                      Not found
                     </span>}
 
                   <Button onClick={() => handleTopUp(user)} className="w-full gap-2" size="sm" variant="outline">
