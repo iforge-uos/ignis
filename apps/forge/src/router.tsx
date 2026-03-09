@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import serialisers from "@/lib/serialisers";
 import { routeTree } from "@/routeTree.gen";
 import { ORPCError } from "@orpc/client";
+import {captureException} from "@sentry/tanstackstart-react"
 
 const serializer = new StandardRPCJsonSerializer({
   customJsonSerializers: serialisers,
@@ -55,6 +56,8 @@ export const getRouter = () => {
             },
           },
         });
+        console.error(error)
+        captureException(error)
       },
     }),
     defaultOptions: {
