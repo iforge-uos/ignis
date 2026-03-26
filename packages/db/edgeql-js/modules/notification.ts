@@ -60,7 +60,7 @@ type $AllUsers = $.ObjectType<"notification::AllUsers", $AllUsersλShape, null, 
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
   {MAGIC: {__element__: _std.$int16, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
 ], "notification::AllUsers">;
-const $AllUsers = $.makeType<$AllUsers>(_.spec, "16bbb346-f98e-11f0-b180-ffc57b298f4b", _.syntax.literal);
+const $AllUsers = $.makeType<$AllUsers>(_.spec, "62a0c57a-28b0-11f1-9847-7d9f4bc7f23b", _.syntax.literal);
 
 const AllUsers: $.$expr_PathNode<$.TypeSet<$AllUsers, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($AllUsers, $.Cardinality.Many), null);
 

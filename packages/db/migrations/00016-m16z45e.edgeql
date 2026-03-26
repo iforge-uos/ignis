@@ -1,5 +1,0 @@
-CREATE MIGRATION m16z45eg7gfx4hmxufnrcksk6lnsdapnga4tfy5ngvke42tbgedwna
-    ONTO m1upzchsc6efoyn3b5edrhh6l5dzzunzanzulrww2p7zlmmnbrfzyq
-{
-  ALTER SCALAR TYPE tools::Selectability EXTENDING enum<UNTRAINED, REVOKED, EXPIRED, DO_IN_PERSON, DO_IN_PERSON_OR_REP_ONLINE, DO_REP_ONLINE, DO_IN_PERSON_OR_REP_IN_PERSON, DO_REP_IN_PERSON, REPS_UNTRAINED, TOOL_BROKEN>;
-};

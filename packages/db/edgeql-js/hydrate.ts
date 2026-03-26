@@ -305,7 +305,7 @@ export type mergeObjectTypes<
 > = A extends ObjectType
   ? B extends ObjectType
     ? ObjectType<
-        `${A["__name__"]} UNION ${B["__name__"]}`,
+        `${A["__name__"]} | ${B["__name__"]}`,
         mergeObjectShapes<A["__pointers__"], B["__pointers__"]>,
         null
       >
@@ -320,7 +320,7 @@ export function $mergeObjectTypes<A extends ObjectType, B extends ObjectType>(
 ): mergeObjectTypes<A, B> {
   const obj = {
     __kind__: TypeKind.object,
-    __name__: `${a.__name__} UNION ${b.__name__}`,
+    __name__: `${a.__name__} | ${b.__name__}`,
     get __pointers__() {
       const merged: any = {};
       for (const [akey, aitem] of Object.entries(a.__pointers__)) {

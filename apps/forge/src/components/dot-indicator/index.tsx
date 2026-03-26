@@ -1,5 +1,5 @@
-import { cn } from "@packages/ui/lib/utils";
 import React from "react";
+import { cn } from "@/lib/utils/cn";
 
 interface DotIndicatorProps {
   count: number;

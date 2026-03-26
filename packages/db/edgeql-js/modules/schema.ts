@@ -855,7 +855,7 @@ export type $ObjectTypeλShape = $.typeutil.flatten<$SourceλShape & Omit<$Consi
   "<__type__[is ext::ai::OllamaSnowflakeArcticEmbed2Model]": $.LinkDesc<_extai.$OllamaSnowflakeArcticEmbed2Model, $.Cardinality.Many, {}, false, false,  false, false>;
   "<__type__[is ext::ai::ChatPromptMessage]": $.LinkDesc<_extai.$ChatPromptMessage, $.Cardinality.Many, {}, false, false,  false, false>;
   "<__type__[is ext::ai::ChatPrompt]": $.LinkDesc<_extai.$ChatPrompt, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<__type__[is _BaseListenable]": $.LinkDesc<_default.$BaseListenable_e14341caf98d11f099a46382624120f4, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<__type__[is _BaseListenable]": $.LinkDesc<_default.$BaseListenable_3e8e1c0028b011f18145495fd9f6b463, $.Cardinality.Many, {}, false, false,  false, false>;
   "<__type__[is Listenable]": $.LinkDesc<_default.$Listenable, $.Cardinality.Many, {}, false, false,  false, false>;
   "<__type__[is ListenableWithChanges]": $.LinkDesc<_default.$ListenableWithChanges, $.Cardinality.Many, {}, false, false,  false, false>;
   "<__type__[is sign_in::Agreement]": $.LinkDesc<_sign_in.$Agreement, $.Cardinality.Many, {}, false, false,  false, false>;

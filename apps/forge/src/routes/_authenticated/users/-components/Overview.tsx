@@ -17,6 +17,7 @@ import { toTitleCase } from "@/lib/utils";
 import { getTrainingCompletionStatus } from "@/lib/utils/training";
 import { Procedures } from "@/types/router";
 import { SignInReason } from "../../_reponly/sign-in/actions/-components/SignInReason";
+import { handleTopUp } from "@/lib/utils/shop";
 
 type User = Procedures["users"]["profile"]["get"];
 
@@ -27,44 +28,6 @@ interface UserAnalyticsProps {
 type Training = User["training"][number];
 type TrainingWithStatus = Training & { _isCompleted: boolean };
 
-const generateRandomHash = () => {
-  return Array.from({ length: 32 }, () =>
-    Math.floor(Math.random() * 16)
-      .toString(16)
-      .toUpperCase(),
-  ).join("");
-};
-
-const handleTopUp = (user: User) => {
-  // ...please enter the last part only
-  // e.g. for “Van Der Vaart”, enter “Vaart” or for “Garcia Fernandez-Mendoza”, enter “Fernandez-Mendoza”.
-  const lastName = user.last_name?.split(" ").at(-1) || "";
-
-  const form = document.createElement("form");
-  form.method = "POST";
-  form.action = "https://onlinepayments.shef.ac.uk/papercut";
-  form.target = "_blank"; // Open in new tab
-
-  const fields = {
-    username: user.username,
-    lastname: lastName,
-    tandc: "1",
-    [generateRandomHash()]: generateRandomHash(),
-    token: "",
-  };
-
-  Object.entries(fields).forEach(([name, value]) => {
-    const input = document.createElement("input");
-    input.type = "hidden";
-    input.name = name;
-    input.value = value;
-    form.appendChild(input);
-  });
-
-  document.body.appendChild(form);
-  form.submit();
-  document.body.removeChild(form);
-};
 
 // table in Training.tsx
 // Functions moved to @/lib/training-utils.ts for reusability

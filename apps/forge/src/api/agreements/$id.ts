@@ -16,7 +16,7 @@ export const get = pub
             filter_single: { id },
           })),
         )
-        .run(db),
+        .run(db).then((f) => [f, console.log(f)][0]),
   );
 
 export const update = auth

@@ -1,7 +1,7 @@
-import { cn } from "@/lib/utils";
 import { Badge } from "@packages/ui/components/badge";
 import { Ban } from "lucide-react";
 import React from "react";
+import { cn } from "@/lib/utils/cn";
 
 interface QueueStatusProps {
   needs_queue: boolean;

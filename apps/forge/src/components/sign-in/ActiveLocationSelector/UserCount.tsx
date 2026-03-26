@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils";
 import React, { useState } from "react";
+import { cn } from "@/lib/utils/cn";
 
 interface UserCountProps {
   rep_count: number;

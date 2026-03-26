@@ -1,7 +1,7 @@
-import { cn } from "@/lib/utils";
 import { Separator } from "@packages/ui/components/separator";
 import { Moon } from "lucide-react";
 import React from "react";
+import { cn } from "@/lib/utils/cn";
 
 interface StatusBadgeProps {
   is_open: boolean;

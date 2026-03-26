@@ -16,7 +16,7 @@ export type $AnswerType = {
 const AnswerType: $AnswerType = $.makeType<$AnswerType>(_.spec, "2a661b84-f86c-11ee-b8b7-7f68abb2382d", _.syntax.literal);
 
 export type $ExpiresReturn = $.ScalarType<"std::json", unknown>;
-const ExpiresReturn: $.scalarTypeWithConstructor<_std.$json, never> = $.makeType<$.scalarTypeWithConstructor<_std.$json, never>>(_.spec, "e11fcb00-f98d-11f0-b7a5-813995819383", _.syntax.literal);
+const ExpiresReturn: $.scalarTypeWithConstructor<_std.$json, never> = $.makeType<$.scalarTypeWithConstructor<_std.$json, never>>(_.spec, "3e6ff96e-28b0-11f1-9560-63c86ad3464a", _.syntax.literal);
 
 export type $LocationName = {
   "MAINSPACE": $.$expr_Literal<$LocationName>;
@@ -34,7 +34,7 @@ export type $NextStep = {
   "DO_REP_IN_PERSON": $.$expr_Literal<$NextStep>;
   "NONE": $.$expr_Literal<$NextStep>;
 } & $.EnumType<"training::NextStep", ["DO_ONLINE", "DO_IN_PERSON", "DO_IN_PERSON_OR_REP_ONLINE", "DO_REP_ONLINE", "DO_IN_PERSON_OR_REP_IN_PERSON", "DO_REP_IN_PERSON", "NONE"]>;
-const NextStep: $NextStep = $.makeType<$NextStep>(_.spec, "e11fd9ba-f98d-11f0-8a02-31e85c185893", _.syntax.literal);
+const NextStep: $NextStep = $.makeType<$NextStep>(_.spec, "3e7007c4-28b0-11f1-ac9c-f796c973cb48", _.syntax.literal);
 
 export type $Status = {
   "UNTRAINED": $.$expr_Literal<$Status>;
@@ -46,7 +46,7 @@ export type $Status = {
   "USER_TRAINING_COMPLETE": $.$expr_Literal<$Status>;
   "REP_ONLINE_COMPLETE": $.$expr_Literal<$Status>;
 } & $.EnumType<"training::Status", ["UNTRAINED", "REVOKED", "EXPIRED", "ONLINE_COMPLETE", "FULLY_COMPLETE", "REP_ONLINE_COMPLETE_NO_IN_PERSON", "USER_TRAINING_COMPLETE", "REP_ONLINE_COMPLETE"]>;
-const Status: $Status = $.makeType<$Status>(_.spec, "e11fe5e0-f98d-11f0-a5f1-1187c667fbe7", _.syntax.literal);
+const Status: $Status = $.makeType<$Status>(_.spec, "3e701390-28b0-11f1-ba16-615b5f9cd829", _.syntax.literal);
 
 export type $AnswerλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
   "content": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
@@ -179,7 +179,7 @@ function get_expiry_dates<
 ): get_expiry_datesλFuncExpr<P1>;
 function get_expiry_dates(...args: any[]) {
   const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('training::get_expiry_dates', args, _.spec, [
-    {args: [{typeId: "29c43a34-f86c-11ee-a6b1-c1a89f83e7fe", optional: false, setoftype: false, variadic: false}], returnTypeId: "e11fcb00-f98d-11f0-b7a5-813995819383"},
+    {args: [{typeId: "29c43a34-f86c-11ee-a6b1-c1a89f83e7fe", optional: false, setoftype: false, variadic: false}], returnTypeId: "3e6ff96e-28b0-11f1-9560-63c86ad3464a"},
   ]);
   return _.syntax.$expressionify({
     __kind__: $.ExpressionKind.Function,
@@ -226,7 +226,7 @@ function get_status<
 ): get_statusλFuncExpr2<P1, P2>;
 function get_status(...args: any[]) {
   const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('training::get_status', args, _.spec, [
-    {args: [{typeId: "29f7181e-f86c-11ee-b1f9-2f77f7e7a3fd", optional: false, setoftype: false, variadic: false}, {typeId: "29c43a34-f86c-11ee-a6b1-c1a89f83e7fe", optional: false, setoftype: false, variadic: false}], namedArgs: {"collapse": {typeId: "00000000-0000-0000-0000-000000000109", optional: true, setoftype: false, variadic: false}}, returnTypeId: "45b93cf8-f9f8-11f0-908c-793d926efdd6", returnTypemod: "OptionalType"},
+    {args: [{typeId: "29f7181e-f86c-11ee-b1f9-2f77f7e7a3fd", optional: false, setoftype: false, variadic: false}, {typeId: "29c43a34-f86c-11ee-a6b1-c1a89f83e7fe", optional: false, setoftype: false, variadic: false}], namedArgs: {"collapse": {typeId: "00000000-0000-0000-0000-000000000109", optional: true, setoftype: false, variadic: false}}, returnTypeId: "ba4f8a7c-28b0-11f1-9d8d-e582d5123749", returnTypemod: "OptionalType"},
   ]);
   return _.syntax.$expressionify({
     __kind__: $.ExpressionKind.Function,
@@ -248,10 +248,10 @@ const $training__globals: {  COLLAPSED_LOOKUPS: _.syntax.$expr_Global<
               $.Cardinality.AtLeastOne
               >} = {  COLLAPSED_LOOKUPS: _.syntax.makeGlobal(
               "training::COLLAPSED_LOOKUPS",
-              $.makeType(_.spec, "45b94022-f9f8-11f0-8cb7-31d035e37331", _.syntax.literal),
+              $.makeType(_.spec, "ba4f908a-28b0-11f1-94ec-235ec4c0fa14", _.syntax.literal),
               $.Cardinality.AtLeastOne) as any,  LOOKUPS: _.syntax.makeGlobal(
               "training::LOOKUPS",
-              $.makeType(_.spec, "45bd3f24-f9f8-11f0-8d58-29abeecd033f", _.syntax.literal),
+              $.makeType(_.spec, "ba5624b8-28b0-11f1-a50f-612f14752790", _.syntax.literal),
               $.Cardinality.AtLeastOne) as any};
 
 

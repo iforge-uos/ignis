@@ -21,7 +21,7 @@ import { toast } from "sonner";
 import { activeLocationAtom } from "@/atoms/signInAppAtoms";
 import { iForgeEpoch } from "@/lib/constants";
 import { orpc } from "@/lib/orpc";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/cn";
 import { ManageUserWidgetProps } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/ManageUserWidget";
 import { getToolCardInfo } from "../../../actions/-components/TrainingSelectionList";
 

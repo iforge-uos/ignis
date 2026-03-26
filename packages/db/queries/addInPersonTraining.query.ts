@@ -3,9 +3,9 @@
 import type {Executor} from "gel";
 
 export type AddInPersonTrainingArgs = {
-  readonly "rep_id": string;
-  readonly "id": string;
   readonly "created_at": Date;
+  readonly "id": string;
+  readonly "rep_id": string;
   readonly "training_id": string;
 };
 

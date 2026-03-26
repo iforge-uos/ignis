@@ -1,7 +1,7 @@
-import { Card } from "@packages/ui/components/card";
-import { cn } from "@packages/ui/lib/utils";
-import { Link } from "@tanstack/react-router";
 import { Badge } from "@packages/ui/components/badge";
+import { Card } from "@packages/ui/components/card";
+import { Link } from "@tanstack/react-router";
+import { cn } from "@/lib/utils/cn";
 import { UserAvatar } from "/src/components/avatar";
 import { TeamIcon } from "/src/icons/Team";
 import { SignInUser } from "/src/lib/utils/queries";

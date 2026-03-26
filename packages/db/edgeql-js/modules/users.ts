@@ -53,8 +53,8 @@ export type $UserλShape = $.typeutil.flatten<_default.$AuditableλShape & _defa
   "mailing_list_subscriptions": $.LinkDesc<_notification.$MailingList, $.Cardinality.Many, {}, false, false,  false, false>;
   "sign_ins": $.LinkDesc<_sign_in.$SignIn, $.Cardinality.Many, {}, false, true,  false, false>;
   "agreements_signed": $.LinkDesc<_sign_in.$Agreement, $.Cardinality.Many, {
-    "@version_signed": $.PropertyDesc<_std.$int16, $.Cardinality.One>;
     "@created_at": $.PropertyDesc<_std.$datetime, $.Cardinality.One>;
+    "@version_signed": $.PropertyDesc<_std.$int16, $.Cardinality.One>;
   }, false, false, false, false>;
   "bookings": $.LinkDesc<_tools.$Booking, $.Cardinality.Many, {}, false, true,  false, false>;
   "integrations": $.LinkDesc<$Integration, $.Cardinality.Many, {}, false, true,  false, false>;
@@ -63,10 +63,10 @@ export type $UserλShape = $.typeutil.flatten<_default.$AuditableλShape & _defa
   }, false, false, false, false>;
   "purchases": $.LinkDesc<_shop.$Purchase, $.Cardinality.Many, {}, false, true,  false, false>;
   "training": $.LinkDesc<_training.$Training, $.Cardinality.Many, {
+    "@created_at": $.PropertyDesc<_std.$datetime, $.Cardinality.One>;
     "@in_person_created_at": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne>;
     "@in_person_signed_off_by": $.PropertyDesc<_std.$uuid, $.Cardinality.AtMostOne>;
     "@infraction": $.PropertyDesc<_std.$uuid, $.Cardinality.AtMostOne>;
-    "@created_at": $.PropertyDesc<_std.$datetime, $.Cardinality.One>;
   }, false, false, false, false>;
   "funds": $.PropertyDesc<_std.$int32, $.Cardinality.One, false, false, false, true>;
   "ucard_number": $.PropertyDesc<_std.$int32, $.Cardinality.One, true, false, false, false>;

@@ -1,7 +1,8 @@
 import { Banner, BannerAction, BannerClose, BannerIcon, BannerTitle } from "@packages/ui/components/banner";
 import { SidebarTrigger } from "@packages/ui/components/sidebar";
 import { CircleAlert } from "lucide-react";
-import { cn, clamp } from "@/lib/utils";
+import { clamp } from "@/lib/utils";
+import { cn } from "@/lib/utils/cn";
 import { orpc } from "@/lib/orpc";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { userAtom } from "@/atoms/authSessionAtoms";

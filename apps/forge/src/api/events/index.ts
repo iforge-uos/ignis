@@ -1,3 +1,4 @@
+import { Temporal } from "@js-temporal/polyfill";
 import e from "@packages/db/edgeql-js";
 import { CreateEventSchema } from "@packages/db/zod/modules/event";
 import { IEvent } from "@packages/ui/calendar/interfaces.d";
@@ -27,29 +28,41 @@ export const create = eventsOrDeskOrAdmin
   );
 
 export const upcoming = pub.route({ method: "GET", path: "/upcoming" }).handler(async () => {
+  const now = Temporal.Now.zonedDateTimeISO("Europe/London");
+  const startOfMonth = now.with({ day: 1, hour: 0, minute: 0, second: 0 }).subtract({ months: 2 });
+  const calendarIds = env.google?.calendarIds ?? [];
   const items = await Promise.all(
-    env.google.calendarIds.map(async (calendarId) => {
+    calendarIds.map(async (calendarId) => {
       const {
         data: { items },
       } = await calendar.events.list({
         calendarId,
-        timeMin: new Date().toISOString(),
-        maxResults: 10,
+        timeMin: new Date(startOfMonth.epochMilliseconds).toISOString(),
+        maxResults: 100,
         singleEvents: true,
         orderBy: "startTime",
       });
       return (
-        items?.map((event): IEvent => {
-          return {
-            id: event.id!,
-            location: event.location!,
-            startDate: event.start?.dateTime!,
-            endDate: event.end?.dateTime!,
-            title: event.summary!,
-            color: "blue",
-            description: event.description!,
-            user: { id: "0", name: "Events", picturePath: "/favicon.svg" },
-          };
+        items?.flatMap((event): IEvent[] => {
+          const startDate = event.start?.dateTime ?? (event.start?.date ? `${event.start.date}T00:00:00.000Z` : undefined);
+          if (!startDate) {
+            return [];
+          }
+
+          const endDate = event.end?.dateTime ?? (event.end?.date ? `${event.end.date}T00:00:00.000Z` : startDate);
+
+          return [
+            {
+              id: event.id ?? `${calendarId}-${startDate}`,
+              location: event.location ?? "",
+              startDate,
+              endDate,
+              title: event.summary!,
+              color: "blue",
+              description: event.description ?? "",
+              user: { id: "0", name: "Events", picturePath: "/favicon.svg" },
+            },
+          ];
         }) || []
       );
     }),

@@ -3,7 +3,7 @@ import { Badge } from "@packages/ui/components/badge";
 import { Kbd } from "@packages/ui/components/kbd";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@packages/ui/components/tooltip";
 import { Category } from "@/icons/SignInReason";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/cn";
 import { formatReason } from "@/lib/utils/sign-in";
 
 export const SignInReason = ({

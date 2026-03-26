@@ -1,14 +1,3 @@
-import { activeLocationAtom } from "@/atoms/signInAppAtoms";
-import { UserAvatar } from "@/components/avatar";
-import { TeamIcon } from "@/icons/Team";
-import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants";
-import { orpc } from "@/lib/orpc";
-import { uCardNumberToString } from "@/lib/utils";
-import { cn } from "@/lib/utils";
-import { AdminDisplay } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/AdminDisplay";
-import { ManageUserWidget } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/ManageUserWidget";
-import { SignInReasonWithToolsDisplay } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/SignInReasonDisplay";
-import { TimeDisplay } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/TimeDisplay";
 import type { LocationName, PartialReason } from "@ignis/types/sign_in";
 import type { PartialUserWithTeams } from "@packages/types/users";
 import { Badge } from "@packages/ui/components/badge";
@@ -23,6 +12,17 @@ import { LogOut, Plus } from "lucide-react";
 import * as React from "react";
 import { useDrag } from "react-dnd";
 import { toast } from "sonner";
+import { activeLocationAtom } from "@/atoms/signInAppAtoms";
+import { UserAvatar } from "@/components/avatar";
+import { TeamIcon } from "@/icons/Team";
+import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants";
+import { orpc } from "@/lib/orpc";
+import { uCardNumberToString } from "@/lib/utils";
+import { cn } from "@/lib/utils/cn";
+import { AdminDisplay } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/AdminDisplay";
+import { ManageUserWidget } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/ManageUserWidget";
+import { SignInReasonWithToolsDisplay } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/SignInReasonDisplay";
+import { TimeDisplay } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard/TimeDisplay";
 
 interface SignInUserCardProps {
   id: string;

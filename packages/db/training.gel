@@ -111,31 +111,35 @@ module training {
     # For a regular user doesn't matter if collapsed
     # For reps, collapsed state is the same as user
     #   +--- training.in_person (training requires in-person)
-    #   |   +--- exists training@in_person_created_at (in-person complete)
-    #   |   |   +--- training_expired
-    #   |   |   |   +--- exists training@infraction
-    #   v   v   v   v
-    #                 |      Status     |   Next Step
-    # +===+===+===+===+=================+==============+
-    # | X | X | X | 1 | REVOKED         | DO_ONLINE    |
-    # | X | X | 1 | 0 | EXPIRED         | DO_ONLINE    |
-    # | 0 | X | 0 | 0 | FULLY_COMPLETE  | NONE         |
-    # | 1 | X | 0 | 0 | ONLINE_COMPLETE | DO_IN_PERSON |
-    # | 1 | 1 | 0 | 0 | FULLY_COMPLETE  | NONE         |
-    # +===+===+===+===+=================+==============+
+    #   |   +--- exists training@created_at (online complete)
+    #   |   |   +--- exists training@in_person_created_at (in-person complete)
+    #   |   |   |   +--- training_expired
+    #   |   |   |   |   +--- exists training@infraction
+    #   v   v   v   v   v
+    #                     |      Status     |   Next Step
+    # +===+===+===+===+===+=================+==============+
+    # | X | 0 | X | X | X | UNTRAINED       | DO_ONLINE    |
+    # | X | 1 | X | X | 1 | REVOKED         | DO_ONLINE    |
+    # | X | 1 | X | 1 | 0 | EXPIRED         | DO_ONLINE    |
+    # | 0 | 1 | X | 0 | 0 | FULLY_COMPLETE  | NONE         |
+    # | 1 | 1 | 0 | 0 | 0 | ONLINE_COMPLETE | DO_IN_PERSON |
+    # | 1 | 1 | 1 | 0 | 0 | FULLY_COMPLETE  | NONE         |
+    # +===+===+===+===+===+=================+==============+
     required global LOOKUPS := (
         with
             module default,
         select
-                  (care := bin("0001"), value := bin("0001"),
+                                    (care := bin("01000"), value := bin("00000"),
+                status := training::Status.UNTRAINED, next_step := training::NextStep.DO_ONLINE)
+                                union (care := bin("01001"), value := bin("01001"),
                     status := training::Status.REVOKED, next_step := training::NextStep.DO_ONLINE)
-            union (care := bin("0011"), value := bin("0010"),
+                                union (care := bin("01011"), value := bin("01010"),
                     status := training::Status.EXPIRED, next_step := training::NextStep.DO_ONLINE)
-            union (care := bin("1011"), value := bin("0000"),
+                union (care := bin("11011"), value := bin("01000"),
                     status := training::Status.FULLY_COMPLETE, next_step := training::NextStep.NONE)
-            union (care := bin("1011"), value := bin("1000"),
+                union (care := bin("11111"), value := bin("11000"),
                     status := training::Status.ONLINE_COMPLETE, next_step := training::NextStep.DO_IN_PERSON)
-            union (care := bin("1111"), value := bin("1100"),
+                union (care := bin("11111"), value := bin("11100"),
                     status := training::Status.FULLY_COMPLETE, next_step := training::NextStep.NONE)
     );
 
@@ -143,70 +147,74 @@ module training {
     # in person is not a pre-requisite for doing rep training
     #   +--- training.in_person (training requires in-person)
     #   |   +--- rep.in_person (supervision requires in-person)
-    #   |   |   +--- exists training@in_person_created_at (in-person complete)
-    #   |   |   |   +--- exists rep@created_at (rep online complete)
-    #   |   |   |   |   +--- exists rep@in_person_created_at (rep in-person complete)
-    #   |   |   |   |   |   +--- training_expired
-    #   |   |   |   |   |   |   +--- exists training@infraction
+    #   |   |   +--- exists training@created_at (online complete)
+    #   |   |   |   +--- exists training@in_person_created_at (in-person complete)
+    #   |   |   |   |   +--- exists rep@created_at (rep online complete)
+    #   |   |   |   |   |   +--- exists rep@in_person_created_at (rep in-person complete)
+    #   |   |   |   |   |   |   +--- training_expired
     #   |   |   |   |   |   |   |   +--- rep_expired
-    #   |   |   |   |   |   |   |   |   +--- exists rep@infraction
-    #   v   v   v   v   v   v   v   v   v |               Status             |           Next Step
-    # +===+===+===+===+===+===+===+===+===+==================================+===============================+
-    # | X | X | X | X | X | X | 1 | X | X | REVOKED                          | DO_ONLINE                     |
-    # | X | X | X | X | X | X | X | X | 1 | REVOKED                          | DO_ONLINE                     |
-    # | X | X | X | X | X | 1 | 0 | X | 0 | EXPIRED                          | DO_ONLINE                     |
-    # | X | X | X | X | X | X | 0 | 1 | 0 | EXPIRED                          | DO_ONLINE                     |
-    # | 0 | X | X | 0 | X | 0 | 0 | 0 | 0 | ONLINE_COMPLETE                  | DO_REP_ONLINE                 |
-    # | 1 | X | 0 | 0 | 0 | 0 | 0 | 0 | 0 | ONLINE_COMPLETE                  | DO_IN_PERSON_OR_REP_ONLINE    |
-    # | 1 | 1 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | USER_TRAINING_COMPLETE           | DO_REP_IN_PERSON              |
-    # | 1 | X | 1 | 0 | X | 0 | 0 | 0 | 0 | USER_TRAINING_COMPLETE           | DO_REP_ONLINE                 |
-    # | 0 | 1 | X | 1 | 0 | 0 | 0 | 0 | 0 | REP_ONLINE_COMPLETE              | DO_REP_IN_PERSON              |
-    # | 1 | 1 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | REP_ONLINE_COMPLETE              | DO_IN_PERSON_OR_REP_IN_PERSON |
-    # | 1 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | REP_ONLINE_COMPLETE_NO_IN_PERSON | DO_IN_PERSON                  |
-    # | 0 | 0 | X | 1 | X | 0 | 0 | 0 | 0 | FULLY_COMPLETE                   | NONE                          |
-    # | 0 | 1 | X | 1 | 1 | 0 | 0 | 0 | 0 | FULLY_COMPLETE                   | NONE                          |
-    # | 1 | 0 | 1 | 1 | X | 0 | 0 | 0 | 0 | FULLY_COMPLETE                   | NONE                          |
-    # | 1 | 1 | 1 | 1 | 1 | 0 | 0 | 0 | 0 | FULLY_COMPLETE                   | NONE                          |
-    # +===+===+===+===+===+===+===+===+===+==================================+===============================+
+    #   |   |   |   |   |   |   |   |   +--- exists training@infraction
+    #   |   |   |   |   |   |   |   |   |   +--- exists rep@infraction
+    #   v   v   v   v   v   v   v   v   v   v |               Status             |           Next Step
+    # +===+===+===+===+===+===+===+===+===+===+==================================+===============================+
+    # | X | X | 0 | X | X | X | X | X | X | X | UNTRAINED                        | DO_ONLINE                     |
+    # | X | X | 1 | X | X | X | X | X | 1 | X | REVOKED                          | DO_ONLINE                     |
+    # | X | X | 1 | X | X | X | X | X | X | 1 | REVOKED                          | DO_ONLINE                     |
+    # | X | X | 1 | X | X | X | 1 | X | 0 | X | EXPIRED                          | DO_ONLINE                     |
+    # | X | X | 1 | X | X | X | X | 1 | X | 0 | EXPIRED                          | DO_ONLINE                     |
+    # | 0 | X | 1 | X | 0 | X | 0 | 0 | 0 | 0 | ONLINE_COMPLETE                  | DO_REP_ONLINE                 |
+    # | 1 | X | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | ONLINE_COMPLETE                  | DO_IN_PERSON_OR_REP_ONLINE    |
+    # | 1 | 1 | 1 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | USER_TRAINING_COMPLETE           | DO_REP_IN_PERSON              |
+    # | 1 | X | 1 | 1 | 0 | X | 0 | 0 | 0 | 0 | USER_TRAINING_COMPLETE           | DO_REP_ONLINE                 |
+    # | 0 | 1 | 1 | X | 1 | 0 | 0 | 0 | 0 | 0 | REP_ONLINE_COMPLETE              | DO_REP_IN_PERSON              |
+    # | 1 | 1 | 1 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | REP_ONLINE_COMPLETE              | DO_IN_PERSON_OR_REP_IN_PERSON |
+    # | 1 | 0 | 1 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | REP_ONLINE_COMPLETE_NO_IN_PERSON | DO_IN_PERSON                  |
+    # | 0 | 0 | 1 | X | 1 | X | 0 | 0 | 0 | 0 | FULLY_COMPLETE                   | NONE                          |
+    # | 0 | 1 | 1 | X | 1 | 1 | 0 | 0 | 0 | 0 | FULLY_COMPLETE                   | NONE                          |
+    # | 1 | 0 | 1 | 1 | 1 | X | 0 | 0 | 0 | 0 | FULLY_COMPLETE                   | NONE                          |
+    # | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 0 | 0 | 0 | FULLY_COMPLETE                   | NONE                          |
+    # +===+===+===+===+===+===+===+===+===+===+==================================+===============================+
     #
     # Note: Online (rep) training is a pre-requisite for (rep) in-person training.
-    #       training@created_at must always exist for user training
-    #       User online training is a pre-requisite for online rep training
+    #       User online training is a pre-requisite for user in-person training.
+    #       User online training is a pre-requisite for online rep training.
     #       States with in-person=yes but online=no are impossible.
     #       States with rep online=yes but online=no are impossible.
     required global COLLAPSED_LOOKUPS := (
         with
             module default,
         select
-              (care := bin("0_0000_1000"), value := bin("0_0000_1000"),
+                  (care := bin("00_1000_0000"), value := bin("00_0000_0000"),
+                status := training::Status.UNTRAINED, next_step := training::NextStep.DO_ONLINE)
+            union (care := bin("00_1000_0010"), value := bin("00_1000_0010"),
                 status := training::Status.REVOKED, next_step := training::NextStep.DO_ONLINE)
-        union (care := bin("0_0000_0010"), value := bin("0_0000_0010"),
+            union (care := bin("00_1000_0001"), value := bin("00_1000_0001"),
                 status := training::Status.REVOKED, next_step := training::NextStep.DO_ONLINE)
-        union (care := bin("0_0001_1010"), value := bin("0_0001_0010"),
+            union (care := bin("00_1000_1010"), value := bin("00_1000_1000"),
                 status := training::Status.EXPIRED, next_step := training::NextStep.DO_ONLINE)
-        union (care := bin("0_0000_1110"), value := bin("0_0000_1100"),
+            union (care := bin("00_1000_0101"), value := bin("00_1000_0100"),
                 status := training::Status.EXPIRED, next_step := training::NextStep.DO_ONLINE)
-        union (care := bin("1_0000_1111"), value := bin("0_0000_0000"),
+            union (care := bin("10_1010_1111"), value := bin("00_1000_0000"),
                 status := training::Status.ONLINE_COMPLETE, next_step := training::NextStep.DO_REP_ONLINE)
-        union (care := bin("1_0110_1111"), value := bin("1_0000_0000"),
+            union (care := bin("10_1111_1111"), value := bin("10_1000_0000"),
                 status := training::Status.ONLINE_COMPLETE, next_step := training::NextStep.DO_IN_PERSON_OR_REP_ONLINE)
-        union (care := bin("1_1111_1111"), value := bin("1_1110_0000"),
+            union (care := bin("11_1111_1111"), value := bin("11_1110_0000"),
                 status := training::Status.USER_TRAINING_COMPLETE, next_step := training::NextStep.DO_REP_IN_PERSON)
-        union (care := bin("1_0110_1111"), value := bin("1_0100_0000"),
+            union (care := bin("10_1110_1111"), value := bin("10_1100_0000"),
                 status := training::Status.USER_TRAINING_COMPLETE, next_step := training::NextStep.DO_REP_ONLINE)
-        union (care := bin("1_1011_1111"), value := bin("0_1010_0000"),
+            union (care := bin("11_1011_1111"), value := bin("01_1010_0000"),
                 status := training::Status.REP_ONLINE_COMPLETE, next_step := training::NextStep.DO_REP_IN_PERSON)
-        union (care := bin("1_1111_1111"), value := bin("1_1010_0000"),
+            union (care := bin("11_1111_1111"), value := bin("11_1010_0000"),
                 status := training::Status.REP_ONLINE_COMPLETE, next_step := training::NextStep.DO_IN_PERSON_OR_REP_IN_PERSON)
-        union (care := bin("1_1111_1111"), value := bin("1_0010_0000"),
+            union (care := bin("11_1111_1111"), value := bin("10_1010_0000"),
                 status := training::Status.REP_ONLINE_COMPLETE_NO_IN_PERSON, next_step := training::NextStep.DO_IN_PERSON)
-        union (care := bin("1_1010_1111"), value := bin("0_0010_0000"),
+            union (care := bin("11_1010_1111"), value := bin("00_1010_0000"),
                 status := training::Status.FULLY_COMPLETE, next_step := training::NextStep.NONE)
-        union (care := bin("1_1011_1111"), value := bin("0_1011_0000"),
+            union (care := bin("11_1011_1111"), value := bin("01_1011_0000"),
                 status := training::Status.FULLY_COMPLETE, next_step := training::NextStep.NONE)
-        union (care := bin("1_1110_1111"), value := bin("1_0110_0000"),
+            union (care := bin("11_1110_1111"), value := bin("10_1110_0000"),
                 status := training::Status.FULLY_COMPLETE, next_step := training::NextStep.NONE)
-        union (care := bin("1_1111_1111"), value := bin("1_1111_0000"),
+            union (care := bin("11_1111_1111"), value := bin("11_1111_0000"),
                 status := training::Status.FULLY_COMPLETE, next_step := training::NextStep.NONE)
     );
 
@@ -222,6 +230,7 @@ module training {
                 is_user_training := exists training.rep,
                 u := user{training filter .id = training.id},  # stupid but you can't do training@created_at directly for some reason
                 training_in_person_needed := training.in_person,
+                training_online_done := exists u.training@created_at,
                 training_in_person_done := exists u.training@in_person_created_at,
                 # the presence of any revocation means they can't use it.
                 training_revoked := exists u.training@infraction,
@@ -237,8 +246,8 @@ module training {
                  key := (
                     select default::bin(
                         ("1" if training_in_person_needed else "0") ++
-
                         ("1" if rep_in_person_needed else "0") ++
+                        ("1" if training_online_done else "0") ++
                         ("1" if training_in_person_done else "0") ++
                         ("1" if rep_online else "0") ++
                         ("1" if rep_in_person_done else "0") ++
@@ -250,6 +259,7 @@ module training {
                     ) if collapse_
                     else default::bin(
                         ("1" if training_in_person_needed else "0") ++
+                        ("1" if training_online_done else "0") ++
                         ("1" if training_in_person_done else "0") ++
                         ("1" if training_expired else "0") ++
                         ("1" if training_revoked else "0")
@@ -257,7 +267,7 @@ module training {
                 ),
                 lookups := global COLLAPSED_LOOKUPS if collapse_ else global LOOKUPS,
                 select (
-                    if not collapse_ or is_user_training then
+                     if not collapse_ or is_user_training then
                         assert_exists(
                             select lookups
                             filter bit_and(key, .care) = .value

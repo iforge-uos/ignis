@@ -32,7 +32,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useShortcutKey } from "@/hooks/useShortcutKey";
 import { NoRepIcon } from "@/icons/NoRep";
 import { RepIcon } from "@/icons/Rep";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/cn";
 import { StepToTransmitMap } from "/src/routes/test/$name.$ucard_number";
 
 type Tool = GetSignInToolsReturns[number];

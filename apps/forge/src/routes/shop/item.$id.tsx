@@ -20,7 +20,8 @@ import { ArrowDown, ArrowUp, ArrowUpDown, ExternalLink, Package, Search } from "
 import * as React from "react";
 import { orpc } from "@/lib/orpc";
 import { ensureQueryData } from "@/lib/query-utils";
-import { cn, toTitleCase } from "@/lib/utils";
+import { toTitleCase } from "@/lib/utils";
+import { cn } from "@/lib/utils/cn";
 
 export const Route = createFileRoute("/shop/item/$id")({
   component: RouteComponent,

@@ -1,6 +1,6 @@
-import { cn } from "@/lib/utils";
 import { PartialUser } from "@packages/types/users";
 import { Avatar, AvatarFallback, AvatarImage } from "@packages/ui/components/avatar";
+import { cn } from "@/lib/utils/cn";
 
 interface UserAvatarProps {
   user?: PartialUser | null;

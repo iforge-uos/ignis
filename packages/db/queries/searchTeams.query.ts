@@ -3,8 +3,8 @@
 import type {Executor} from "gel";
 
 export type SearchTeamsArgs = {
-  readonly "query": string;
   readonly "limit": number;
+  readonly "query": string;
 };
 
 export type SearchTeamsReturns = Array<{

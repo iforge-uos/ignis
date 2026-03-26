@@ -8,13 +8,13 @@ import _module__fts from "./std/fts";
 import _module__net from "./std/net";
 import _module__pg from "./std/pg";
 import _module__math from "./std/math";
+import type * as _extpgvector from "./ext/pgvector";
 import type * as _cfg from "./cfg";
 import type * as _stdcal from "./std/cal";
 import type * as _stdpg from "./std/pg";
-import type * as _extpgvector from "./ext/pgvector";
 import type * as _schema from "./schema";
 import { Temporal } from "@js-temporal/polyfill";
-type $anyscalar = $anypoint | $anyreal | $.EnumType | $bool | $bytes | $uuid | $str | $json | _cfg.$memory | _stdcal.$local_time | _stdcal.$relative_duration | _stdcal.$date_duration | _stdpg.$json | _extpgvector.$vector | _extpgvector.$halfvec | _extpgvector.$sparsevec;
+type $anyscalar = $anypoint | $anyreal | $.EnumType | _extpgvector.$vector | _extpgvector.$halfvec | _extpgvector.$sparsevec | $bool | $bytes | $uuid | $str | $json | _cfg.$memory | _stdcal.$local_time | _stdcal.$relative_duration | _stdcal.$date_duration | _stdpg.$json;
 
 export type $uuid = $.ScalarType<"std::uuid", string>;
 const uuid: $.scalarTypeWithConstructor<$uuid, never> = $.makeType<$.scalarTypeWithConstructor<$uuid, never>>(_.spec, "00000000-0000-0000-0000-000000000100", _.syntax.literal);

@@ -1,5 +1,6 @@
 import { Temporal } from "@js-temporal/polyfill";
 import type e from "@packages/db/edgeql-js";
+import { cn } from "@/lib/utils/cn";
 
 export const TRAINING_LOCATIONS =  ["MAINSPACE", "HEARTSPACE", "GEORGE_PORTER"] satisfies typeof e.training.LocationName.__values__;
 export const LOCATIONS =  ["MAINSPACE", "HEARTSPACE"] satisfies typeof e.sign_in.LocationName.__values__;
@@ -19,6 +20,7 @@ export const DELIVERY_METHOD_OPTIONS = ["BANNER", "EMAIL", "TRAY", "POPUP", "DIS
 export const USER_EMAIL_DOMAIN = "sheffield.ac.uk";
 
 export const iForgeEpoch = Temporal.ZonedDateTime.from({ year: 2017, month: 1, day: 1, timeZone: "UTC" });
+export const WEBSITE_EPOCH = Temporal.ZonedDateTime.from({ year: 2024, month: 4, day: 20, timeZone: "UTC" });
 export const ATOM_KEYS = {
   AUTH_REDIRECT_PATH: "Ignis:authRedirectPath",
   USER: "Ignis:user",
@@ -30,3 +32,26 @@ export const AVAILABLE_ROLES = ["admin", "rep"];
 
 export const DEFAULT_PKCE_COOKIE = "edgedb-pkce-verifier";
 export const DEFAULT_AUTH_COOKIE = "edgedb-session";
+
+
+export const TOOL_HITBOX_PADDING = 3;
+
+export const EXTRA_TOOLTIP_REGIONS = [
+  "Fastenings",
+  "Cyclone-Extractor",
+  "Flat-surface",
+  "Electronic-Components",
+  "Electronics-Parts",
+  "Scrap-Materials",
+  "Storage",
+  "Bins",
+  "Abrasive-Paper",
+] as const;
+
+export const STATE_COLOUR_GUIDE = [
+  { dot: cn("bg-green-500"), label: "Available" },
+  { dot: cn("bg-orange-400"), label: "Partially in use" },
+  { dot: cn("bg-red-500"), label: "Fully in use" },
+  { dot: cn("bg-slate-400"), label: "No live detail" },
+  { dot: cn("bg-indigo-500"), label: "Selected" },
+] as const;

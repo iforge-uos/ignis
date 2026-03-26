@@ -10,7 +10,8 @@ import { IForgeLogo } from "@/icons/IForge";
 import { LocationIcon } from "@/icons/Locations";
 import { DiscordIcon, GitHubIcon, InstagramIcon, LinkedInIcon, TwitterIcon, YouTubeIcon } from "@/icons/Socials";
 import { LOCATIONS } from "@/lib/constants";
-import { cn, exhaustiveGuard, removeSuffix, toTitleCase } from "@/lib/utils";
+import { exhaustiveGuard, removeSuffix, toTitleCase } from "@/lib/utils";
+import { cn } from "@/lib/utils/cn";
 
 function LocationStatusTooltip({ location }: { location: PartialLocation }) {
   let className: string;

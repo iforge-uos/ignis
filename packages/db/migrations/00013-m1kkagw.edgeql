@@ -1,111 +1,120 @@
-CREATE MIGRATION m15mxz6k5noylgh5ciacghn4bb5jsf5fvjqli3g446kthqjh43yofa
-    ONTO m1hoo2h2524gppemugvzye5f55fsnq5dblq2gwzibgbumxygovvsnq
+CREATE MIGRATION m1kkagwrcjcs5lui7eggbwpomygmbw4ctrmvfliwuy3aivrlp35ezq
+    ONTO m1ppns2llyruympbotb3vjalamvvelncxwh7ownas6v42xocdnvdna
 {
-  DROP FUNCTION training::get_statuses(user: users::User, NAMED ONLY collapsed: std::bool);
   DROP GLOBAL training::COLLAPSED_LOOKUPS;
   CREATE REQUIRED GLOBAL training::COLLAPSED_LOOKUPS := (SELECT
-      (((((((((((((((
-          care := default::bin('0_0000_1000'),
-          value := default::bin('0_0000_1000'),
-          status := training::Status.REVOKED,
+      ((((((((((((((((
+          care := default::bin('00_1000_0000'),
+          value := default::bin('00_0000_0000'),
+          status := training::Status.UNTRAINED,
           next_step := training::NextStep.DO_ONLINE
       ) UNION (
-          care := default::bin('0_0000_0010'),
-          value := default::bin('0_0000_0010'),
+          care := default::bin('00_1000_0010'),
+          value := default::bin('00_1000_0010'),
           status := training::Status.REVOKED,
           next_step := training::NextStep.DO_ONLINE
       )) UNION (
-          care := default::bin('0_0001_1010'),
-          value := default::bin('0_0001_0010'),
+          care := default::bin('00_1000_0001'),
+          value := default::bin('00_1000_0001'),
+          status := training::Status.REVOKED,
+          next_step := training::NextStep.DO_ONLINE
+      )) UNION (
+          care := default::bin('00_1000_1010'),
+          value := default::bin('00_1000_1000'),
           status := training::Status.EXPIRED,
           next_step := training::NextStep.DO_ONLINE
       )) UNION (
-          care := default::bin('0_0000_1110'),
-          value := default::bin('0_0000_1100'),
+          care := default::bin('00_1000_0101'),
+          value := default::bin('00_1000_0100'),
           status := training::Status.EXPIRED,
           next_step := training::NextStep.DO_ONLINE
       )) UNION (
-          care := default::bin('1_0000_1111'),
-          value := default::bin('0_0000_0000'),
+          care := default::bin('10_1010_1111'),
+          value := default::bin('00_1000_0000'),
           status := training::Status.ONLINE_COMPLETE,
           next_step := training::NextStep.DO_REP_ONLINE
       )) UNION (
-          care := default::bin('1_0110_1111'),
-          value := default::bin('1_0000_0000'),
+          care := default::bin('10_1111_1111'),
+          value := default::bin('10_1000_0000'),
           status := training::Status.ONLINE_COMPLETE,
           next_step := training::NextStep.DO_IN_PERSON_OR_REP_ONLINE
       )) UNION (
-          care := default::bin('1_1111_1111'),
-          value := default::bin('1_1110_0000'),
+          care := default::bin('11_1111_1111'),
+          value := default::bin('11_1110_0000'),
           status := training::Status.USER_TRAINING_COMPLETE,
           next_step := training::NextStep.DO_REP_IN_PERSON
       )) UNION (
-          care := default::bin('1_0110_1111'),
-          value := default::bin('1_0100_0000'),
+          care := default::bin('10_1110_1111'),
+          value := default::bin('10_1100_0000'),
           status := training::Status.USER_TRAINING_COMPLETE,
           next_step := training::NextStep.DO_REP_ONLINE
       )) UNION (
-          care := default::bin('1_1011_1111'),
-          value := default::bin('0_1010_0000'),
+          care := default::bin('11_1011_1111'),
+          value := default::bin('01_1010_0000'),
           status := training::Status.REP_ONLINE_COMPLETE,
           next_step := training::NextStep.DO_REP_IN_PERSON
       )) UNION (
-          care := default::bin('1_1111_1111'),
-          value := default::bin('1_1010_0000'),
+          care := default::bin('11_1111_1111'),
+          value := default::bin('11_1010_0000'),
           status := training::Status.REP_ONLINE_COMPLETE,
           next_step := training::NextStep.DO_IN_PERSON_OR_REP_IN_PERSON
       )) UNION (
-          care := default::bin('1_1111_1111'),
-          value := default::bin('1_0010_0000'),
+          care := default::bin('11_1111_1111'),
+          value := default::bin('10_1010_0000'),
           status := training::Status.REP_ONLINE_COMPLETE_NO_IN_PERSON,
           next_step := training::NextStep.DO_IN_PERSON
       )) UNION (
-          care := default::bin('1_1010_1111'),
-          value := default::bin('0_0010_0000'),
+          care := default::bin('11_1010_1111'),
+          value := default::bin('00_1010_0000'),
           status := training::Status.FULLY_COMPLETE,
           next_step := training::NextStep.NONE
       )) UNION (
-          care := default::bin('1_1011_1111'),
-          value := default::bin('0_1011_0000'),
+          care := default::bin('11_1011_1111'),
+          value := default::bin('01_1011_0000'),
           status := training::Status.FULLY_COMPLETE,
           next_step := training::NextStep.NONE
       )) UNION (
-          care := default::bin('1_1110_1111'),
-          value := default::bin('1_0110_0000'),
+          care := default::bin('11_1110_1111'),
+          value := default::bin('10_1110_0000'),
           status := training::Status.FULLY_COMPLETE,
           next_step := training::NextStep.NONE
       )) UNION (
-          care := default::bin('1_1111_1111'),
-          value := default::bin('1_1111_0000'),
+          care := default::bin('11_1111_1111'),
+          value := default::bin('11_1111_0000'),
           status := training::Status.FULLY_COMPLETE,
           next_step := training::NextStep.NONE
       ))
   );
   DROP GLOBAL training::LOOKUPS;
   CREATE REQUIRED GLOBAL training::LOOKUPS := (SELECT
-      (((((
-          care := default::bin('0001'),
-          value := default::bin('0001'),
-          status := training::Status.REVOKED,
+      ((((((
+          care := default::bin('01000'),
+          value := default::bin('00000'),
+          status := training::Status.UNTRAINED,
           next_step := training::NextStep.DO_ONLINE
       ) UNION (
-          care := default::bin('0011'),
-          value := default::bin('0010'),
+          care := default::bin('01001'),
+          value := default::bin('01001'),
+          status := training::Status.REVOKED,
+          next_step := training::NextStep.DO_ONLINE
+      )) UNION (
+          care := default::bin('01011'),
+          value := default::bin('01010'),
           status := training::Status.EXPIRED,
           next_step := training::NextStep.DO_ONLINE
       )) UNION (
-          care := default::bin('1011'),
-          value := default::bin('0000'),
+          care := default::bin('11011'),
+          value := default::bin('01000'),
           status := training::Status.FULLY_COMPLETE,
           next_step := training::NextStep.NONE
       )) UNION (
-          care := default::bin('1011'),
-          value := default::bin('1000'),
+          care := default::bin('11111'),
+          value := default::bin('11000'),
           status := training::Status.ONLINE_COMPLETE,
           next_step := training::NextStep.DO_IN_PERSON
       )) UNION (
-          care := default::bin('1111'),
-          value := default::bin('1100'),
+          care := default::bin('11111'),
+          value := default::bin('11100'),
           status := training::Status.FULLY_COMPLETE,
           next_step := training::NextStep.NONE
       ))
@@ -127,6 +136,9 @@ CREATE MIGRATION m15mxz6k5noylgh5ciacghn4bb5jsf5fvjqli3g446kthqjh43yofa
       ,
       training_in_person_needed := 
           training.in_person
+      ,
+      training_online_done := 
+          EXISTS (u.training@created_at)
       ,
       training_in_person_done := 
           EXISTS (u.training@in_person_created_at)
@@ -159,7 +171,7 @@ CREATE MIGRATION m15mxz6k5noylgh5ciacghn4bb5jsf5fvjqli3g446kthqjh43yofa
       ,
       key := 
           (SELECT
-              (default::bin(((((((((('1' IF training_in_person_needed ELSE '0') ++ ('1' IF rep_in_person_needed ELSE '0')) ++ ('1' IF training_in_person_done ELSE '0')) ++ ('1' IF rep_online ELSE '0')) ++ ('1' IF rep_in_person_done ELSE '0')) ++ ('1' IF training_expired ELSE '0')) ++ ('1' IF rep_expired ELSE '0')) ++ ('1' IF training_revoked ELSE '0')) ++ ('1' IF rep_revoked ELSE '0'))) IF collapse_ ELSE default::bin((((('1' IF training_in_person_needed ELSE '0') ++ ('1' IF training_in_person_done ELSE '0')) ++ ('1' IF training_expired ELSE '0')) ++ ('1' IF training_revoked ELSE '0'))))
+              (default::bin((((((((((('1' IF training_in_person_needed ELSE '0') ++ ('1' IF rep_in_person_needed ELSE '0')) ++ ('1' IF training_online_done ELSE '0')) ++ ('1' IF training_in_person_done ELSE '0')) ++ ('1' IF rep_online ELSE '0')) ++ ('1' IF rep_in_person_done ELSE '0')) ++ ('1' IF training_expired ELSE '0')) ++ ('1' IF rep_expired ELSE '0')) ++ ('1' IF training_revoked ELSE '0')) ++ ('1' IF rep_revoked ELSE '0'))) IF collapse_ ELSE default::bin(((((('1' IF training_in_person_needed ELSE '0') ++ ('1' IF training_online_done ELSE '0')) ++ ('1' IF training_in_person_done ELSE '0')) ++ ('1' IF training_expired ELSE '0')) ++ ('1' IF training_revoked ELSE '0'))))
           )
       ,
       lookups := 
@@ -174,5 +186,9 @@ CREATE MIGRATION m15mxz6k5noylgh5ciacghn4bb5jsf5fvjqli3g446kthqjh43yofa
           1
       )) ELSE {})
   );
+  ALTER TYPE sign_in::SignIn {
+      CREATE MULTI LINK _tools: (tools::Tool | tools::GroupedTool);
+  };
+  ALTER SCALAR TYPE tools::Selectability EXTENDING enum<DO_ONLINE, REVOKED, EXPIRED, DO_IN_PERSON, NONE_REMAINING, DO_IN_PERSON_OR_REP_ONLINE, DO_REP_ONLINE, DO_IN_PERSON_OR_REP_IN_PERSON, DO_REP_IN_PERSON, REPS_UNTRAINED, TOOL_BROKEN, NONE>;
   DROP SCALAR TYPE training::StatusReturn;
 };

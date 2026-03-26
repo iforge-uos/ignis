@@ -70,6 +70,8 @@ export const out = auth
       .run(db),
   );
 
+
+
 export const idRouter = pub.prefix("/id").router({
   get,
   update,

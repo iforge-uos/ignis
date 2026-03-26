@@ -630,6 +630,7 @@ export namespace sign_in {
     "tools": string[];
     "user": users.User;
     "signed_out": boolean;
+    "_tools": tools.Tool | tools.GroupedTool[];
   }
   export interface UserRegistration extends $default.CreatedAt {
     "location": Location;

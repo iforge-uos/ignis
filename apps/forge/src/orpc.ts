@@ -4,9 +4,9 @@ import { team } from "@packages/db/interfaces";
 import { Client, Executor } from "gel";
 import z from "zod";
 import dbClient from "@/db";
+import sentryMiddleware from "@/lib/sentry/server"
 import { RepShape, UserShape } from "@/lib/utils/queries";
 import { InitialContext } from "@/routes/api/$";
-import sentryMiddleware from "@/lib/sentry/server"
 
 export type Context = Awaited<ReturnType<typeof createContext>>;
 

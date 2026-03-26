@@ -27,6 +27,7 @@ import type {
   // normaliseElement,
   objectTypeToSelectShape,
 } from "./select";
+import { Temporal } from "@js-temporal/polyfill";
 
 type SingletonSet = Expression<
   TypeSet<BaseType, Cardinality.One | Cardinality.AtMostOne>

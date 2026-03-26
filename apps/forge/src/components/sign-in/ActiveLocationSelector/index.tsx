@@ -8,7 +8,8 @@ import { activeLocationAtom, locationStatusesAtom } from "@/atoms/signInAppAtoms
 import { QueueStatus } from "@/components/sign-in/ActiveLocationSelector/QueueStatus";
 import { StatusBadge } from "@/components/sign-in/ActiveLocationSelector/StatusBadge";
 import { UserCount } from "@/components/sign-in/ActiveLocationSelector/UserCount";
-import { cn, toTitleCase } from "@/lib/utils";
+import { toTitleCase } from "@/lib/utils";
+import { cn } from "@/lib/utils/cn";
 import { LocationName } from "@packages/types/sign_in";
 
 import { Button } from "@packages/ui/components/button";

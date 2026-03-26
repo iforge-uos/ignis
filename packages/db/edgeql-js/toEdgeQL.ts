@@ -1204,6 +1204,9 @@ ${indent(groupStatement.join("\n"), 4)}
 
           return `${renderEdgeQL(args[0]!, ctx)}[${index}]`;
         }
+        if (operator === "|") {
+          return `(${renderEdgeQL(args[0]!, ctx, false)} | ${renderEdgeQL(args[1]!, ctx, false)})`;
+        }
         return `(${renderEdgeQL(args[0]!, ctx)} ${operator} ${renderEdgeQL(
           args[1]!,
           ctx,

@@ -108,12 +108,14 @@ export const ReasonInput: FlowStepComponent<"REASON"> = ({ data: { common_reason
     }
   }, [signInReason, setCanContinue]);
 
-  const handleSelectReason = (reason: PartialReason) => {
+  const handleSelectReason = (reason: PartialReason, focusNext: boolean = true) => {
     setInputValue("");
     setSignInReason(reason);
     setHighlightedIndex(-1);
     setCanContinue(true);
-    focusNextStep();
+    if (focusNext) {
+      focusNextStep();
+    }
   };
 
   const handleClearReason = () => {
@@ -152,7 +154,7 @@ export const ReasonInput: FlowStepComponent<"REASON"> = ({ data: { common_reason
       const index = Number.parseInt(event.key.slice(1)) - 1;
       if (index < common_reasons.length) {
         event.preventDefault();
-        handleSelectReason(common_reasons[index]);
+        handleSelectReason(common_reasons[index], false);
       }
     }
   };

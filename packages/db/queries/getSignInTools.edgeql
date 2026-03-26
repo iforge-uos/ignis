@@ -6,8 +6,10 @@ with
     tools := (select tools::Tool filter location = .location and not .grouped),
     groups := (select tools::GroupedTool filter location = .location)
 select (tools union groups) {
+    id,
     name,
     description := [is tools::Tool].description ?? [is tools::GroupedTool].tools.description,
+    compulsory := any(.training.compulsory),
     selectable := (
       with
         next_step := training::get_status(.training, user).next_step
@@ -20,7 +22,7 @@ select (tools union groups) {
           else
             <tools::Selectability>{}
         else
-          if all([is tools::GroupedTool].tools.status = tools::Status.OUT_OF_ORDER) then
+          if all([is tools::GroupedTool].tools.status.code = tools::Status.OUT_OF_ORDER) then
             tools::Selectability.TOOL_BROKEN
           else
             <tools::Selectability>{},

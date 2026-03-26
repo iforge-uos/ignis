@@ -1,7 +1,7 @@
-import { helper, std, users, notification } from "@packages/db/interfaces";
-import { LocationName } from "./sign_in";
 import type { CalendarDatum } from "@nivo/calendar";
+import { helper, notification, std, users } from "@packages/db/interfaces";
 import { training } from ".";
+import { LocationName } from "./sign_in";
 
 //** A user useful for templating where resolving isn't entirely necessary */
 export type PartialUser = {
@@ -11,7 +11,7 @@ export type PartialUser = {
   email: string;
   username: string;
   ucard_number: number;
-  created_at: Date;
+  created_at: Temporal.ZonedDateTime;
   profile_picture?: string | null;
   roles: users.Role[];
 };
@@ -42,13 +42,13 @@ export type User = helper.Props<users.User> &
     roles: users.Role[];
     agreements_signed: {
       id: string;
-      "@created_at": Date | null;
+      "@created_at": Temporal.ZonedDateTime | null;
       "@version_signed": number | null;
       version: number;
     }[];
     profile_picture?: string | null;
     notifications: (notification.Notification & {
-      "@acknowledged_at": Date | null
+      "@acknowledged_at": Temporal.ZonedDateTime | null
     })[]
   };
 
@@ -61,8 +61,8 @@ export type InfractionType = users.InfractionType;
 //** A user's trainings. /users/:id/training */
 export type Training = Omit<training.PartialTraining, "created_at" | "updated_at"> & {
   expired?: boolean; // this should be "@expired", though currently a compute
-  "@created_at"?: Date | null;
-  "@in_person_created_at"?: Date | null;
+  "@created_at"?: Temporal.ZonedDateTime | null;
+  "@in_person_created_at"?: Temporal.ZonedDateTime | null;
 };
 
 export type SignInStat = CalendarDatum & {
@@ -70,9 +70,9 @@ export type SignInStat = CalendarDatum & {
   value: number;
   sign_ins: {
     id: string;
-    created_at: Date;
+    created_at: Temporal.ZonedDateTime;
     duration: number | null;
-    ends_at: Date | null;
+    ends_at: Temporal.ZonedDateTime | null;
     location: { name: LocationName };
   }[];
 };

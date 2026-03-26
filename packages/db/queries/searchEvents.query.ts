@@ -3,8 +3,8 @@
 import type {Executor} from "gel";
 
 export type SearchEventsArgs = {
-  readonly "query": string;
   readonly "limit": number;
+  readonly "query": string;
 };
 
 export type SearchEventsReturns = Array<{

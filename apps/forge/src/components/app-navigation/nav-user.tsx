@@ -8,21 +8,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@packages/ui/components/dropdown-menu";
+import { AnimateIcon } from "@packages/ui/components/icon";
 import { Shortcut } from "@packages/ui/components/kbd";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@packages/ui/components/sidebar";
 import { Link, useLocation } from "@tanstack/react-router";
 import { UserAvatar } from "@/components/avatar";
 import { useShortcutKey } from "@/hooks/useShortcutKey";
 import { useUser } from "@/hooks/useUser";
-import { cn } from "@/lib/utils";
-import { ThemeSwitcher } from "./theme-switcher";
-import { EllipsisVertical } from "@/icons/EllipsisVertical";
 import { Bell } from "@/icons/Bell";
-import { AnimateIcon } from "@packages/ui/components/icon";
-import { Settings } from "@/icons/Settings";
-import { LogOut } from "@/icons/LogOut";
+import { EllipsisVertical } from "@/icons/EllipsisVertical";
 import { LogIn } from "@/icons/LogIn";
+import { LogOut } from "@/icons/LogOut";
+import { Settings } from "@/icons/Settings";
 import { User } from "@/icons/User";
+import { cn } from "@/lib/utils/cn";
+import { ThemeSwitcher } from "./theme-switcher";
 
 export function NavUser() {
   const user = useUser();

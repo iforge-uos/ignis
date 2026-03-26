@@ -73,21 +73,25 @@ export default async function* ({
     if (available_capacity > 0) {
       const places = await e
         .select(
-          e.update(e.sign_in.QueuePlace, (queue_place) => ({
-            filter: e.op(
-              e.op(queue_place.location, "=", $location),
-              "and",
-              e.op("not", e.op("exists", queue_place.notified_at)),
-            ),
-            order_by: {
-              expression: queue_place.created_at,
-              direction: e.ASC,
-            },
-            limit: available_capacity,
-            set: {
-              notified_at: e.datetime_of_statement(),
-            },
-          })),
+          e.update(
+            e.select(e.sign_in.QueuePlace, (queue_place) => ({
+              filter: e.op(
+                e.op(queue_place.location, "=", $location),
+                "and",
+                e.op("not", e.op("exists", queue_place.notified_at)),
+              ),
+              order_by: {
+                expression: queue_place.created_at,
+                direction: e.ASC,
+              },
+              limit: available_capacity,
+            })),
+            () => ({
+              set: {
+                notified_at: e.datetime_of_statement(),
+              },
+            }),
+          ),
           QueuePlaceShape,
         )
         .run(tx);

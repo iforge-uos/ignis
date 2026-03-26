@@ -20,9 +20,9 @@ import { activeLocationAtom } from "@/atoms/signInAppAtoms";
 import { uCardNumberToString } from "@/lib/utils";
 import { SignInReason } from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SignInReason";
 import TrainingSelection from "../../../actions/-components/TrainingSelectionList";
-
+import { orpc } from "/src/lib/orpc";
 interface SignInReasonWithToolsDisplayProps {
-  tools: string[]; // FIXME after machines branch is done this should just be training
+  tools: {id: string; name: string}[];
   reason: PartialReason;
   user: PartialUserWithTeams;
 }
@@ -34,21 +34,21 @@ export const SignInReasonWithToolsDisplay: React.FC<SignInReasonWithToolsDisplay
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = React.useState(false);
   const [tools_, setTools] = React.useState(tools);
   tools = tools_;
-  const [newTools, setNewTools] = React.useState<string[] | undefined>();
+  const [newTools, setNewTools] = React.useState<{id: string}[] | undefined>();
   const { data: userData, isPending: isUserDataPending } = useQuery<User>({
-    queryKey: ["getSignIn", user.ucard_number],
-    queryFn: () =>
-      GetSignIn({
-        locationName: activeLocation,
-        uCardNumber: uCardNumberToString(user.ucard_number),
-        signal: abortController.signal,
-        params: { fast: true },
-      }),
+    ...orpc.signIns.get.queryOptions({input: {id}})
+    // queryFn: () =>
+    //   GetSignIn({
+    //     locationName: activeLocation,
+    //     uCardNumber: uCardNumberToString(user.ucard_number),
+    //     signal: abortController.signal,
+    //     params: { fast: true },
+    //   }),
     enabled: isUpdateDialogOpen,
   });
   const { mutate: updateSignInMutate } = useMutation({
     mutationKey: ["patchSignIn", user.ucard_number],
-    mutationFn: (postBody: { tools?: string[]; reason?: PartialReason }) =>
+    mutationFn: (postBody: { tools?: {id: string}[]; reason?: PartialReason }) =>
       PatchSignIn({
         locationName: activeLocation,
         uCardNumber: uCardNumberToString(user.ucard_number),
@@ -85,14 +85,14 @@ export const SignInReasonWithToolsDisplay: React.FC<SignInReasonWithToolsDisplay
         <div className="border-gray-500 p-2 rounded-sm mb-4 justify-items-center">
           <div className="flex justify-center bg-card w-2/3 rounded-sm p-1 font-medium font-mono">Tools Used</div>
           <div className="flex flex-wrap gap-1 mt-2 justify-center">
-            {/* {toolsForSelection
+            {toolsForSelection
               ?.sort((a, b) => a.name.localeCompare(b.name))
               .map((tool) => (
                 <Badge variant="default" className="max-w-48 rounded-sm shadow-lg text-center" key={tool.id}>
                 {tool.name}
                 </Badge>
-                ))} */}
-            {tools.sort().map((tool) => (
+                ))}
+            {tools.sort((a, b) => a.name.localeCompare(b.name)).map((tool) => (
               <Badge variant="default" className="max-w-48 rounded-sm shadow-lg text-center" key={tool}>
                 {tool}
               </Badge>

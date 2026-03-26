@@ -80,6 +80,7 @@ export const FullLocation = e.shape(e.sign_in.Location, () => ({
         teams: { name: true, description: true, id: true },
       }),
     }),
+    _tools: { id: true, name: true },
   },
   queued: {
     ...e.sign_in.QueuePlace["*"],
@@ -242,7 +243,6 @@ export const ensureUser = async ({
 }): Promise<SignInUser> => {
   const user = await getSignInUser({ tx, ucard_number, name });
   if (user) return user;
-  throw new Error("unreachable");
   logger.info(logger.fmt`Registering user: ${ucard_number} at location: ${name}`);
 
   // no user registered, fetch from ldap
@@ -284,7 +284,7 @@ export const ensureUser = async ({
             }))
           : e.insert(e.users.User, {
               ...ldap.toInsert(ldap_user),
-              identity: e.insert(e.ext.auth.Identity, { issuer: "ignis", subject: "", modified_at: new Date() }),
+              identity: e.insert(e.ext.auth.Identity, { issuer: "ignis", subject: "", modified_at: e.datetime_of_statement() }),
             }),
       }).user,
       (user) => ({

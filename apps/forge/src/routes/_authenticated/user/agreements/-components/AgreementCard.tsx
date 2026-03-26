@@ -8,7 +8,7 @@ import { AlertCircle, Calendar, CheckCircle, ExternalLink, Tag } from "lucide-re
 import { useState } from "react";
 import { useUser } from "@/hooks/useUser";
 import { Category } from "@/icons/SignInReason";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/cn";
 
 interface AgreementCardProps {
   agreement: Agreement;

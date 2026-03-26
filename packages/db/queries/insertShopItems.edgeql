@@ -1,0 +1,1030 @@
+select {
+  (insert shop::Item {
+    name := "Plywood Sheet",
+    supplier := "Timberite",
+    supplier_url := "https://timberite.co.uk",
+    icon_url := "/shop/plywood.jpg",
+    skews := {
+      (insert shop::Skew {
+        till_id := 85,
+        price := 170,
+        _dimensions := (insert dimensions::Cuboid { length := 300, width := 300, height := 3 })
+      }),
+      (insert shop::Skew {
+        till_id := 86,
+        price := 450,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 400, height := 3 })
+      }),
+      (insert shop::Skew {
+        till_id := 87,
+        price := 680,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 600, height := 3 })
+      }),
+      (insert shop::Skew {
+        till_id := 88,
+        price := 225,
+        _dimensions := (insert dimensions::Cuboid { length := 300, width := 300, height := 4 })
+      }),
+      (insert shop::Skew {
+        till_id := 89,
+        price := 600,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 400, height := 4 })
+      }),
+      (insert shop::Skew {
+        till_id := 90,
+        price := 900,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 600, height := 4 })
+      }),
+      (insert shop::Skew {
+        till_id := 91,
+        price := 1375,
+        _dimensions := (insert dimensions::Cuboid { length := 900, width := 610, height := 4 })
+      }),
+      (insert shop::Skew {
+        till_id := 92,
+        price := 300,
+        _dimensions := (insert dimensions::Cuboid { length := 300, width := 300, height := 6 })
+      }),
+      (insert shop::Skew {
+        till_id := 93,
+        price := 790,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 400, height := 6 })
+      }),
+      (insert shop::Skew {
+        till_id := 94,
+        price := 1180,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 600, height := 6 })
+      }),
+      (insert shop::Skew {
+        till_id := 95,
+        price := 1800,
+        _dimensions := (insert dimensions::Cuboid { length := 900, width := 610, height := 6 })
+      }),
+      (insert shop::Skew {
+        till_id := 96,
+        price := 360,
+        _dimensions := (insert dimensions::Cuboid { length := 300, width := 300, height := 9 })
+      }),
+      (insert shop::Skew {
+        till_id := 97,
+        price := 875,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 400, height := 9 })
+      }),
+      (insert shop::Skew {
+        till_id := 98,
+        price := 1440,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 600, height := 9 })
+      }),
+      (insert shop::Skew {
+        till_id := 99,
+        price := 2100,
+        _dimensions := (insert dimensions::Cuboid { length := 900, width := 610, height := 9 })
+      }),
+      (insert shop::Skew {
+        till_id := 100,
+        price := 1320,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 400, height := 12 })
+      }),
+      (insert shop::Skew {
+        till_id := 101,
+        price := 1980,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 600, height := 12 })
+      }),
+      (insert shop::Skew {
+        till_id := 102,
+        price := 2900,
+        _dimensions := (insert dimensions::Cuboid { length := 900, width := 610, height := 12 })
+      }),
+      (insert shop::Skew {
+        till_id := 354,
+        price := 1128,
+        _dimensions := (insert dimensions::Cuboid { length := 900, width := 610, height := 3 })
+      }),
+      (insert shop::Skew {
+        till_id := 380,
+        price := 940,
+        _dimensions := (insert dimensions::Cuboid { length := 300, width := 300, height := 12 })
+      })
+    }
+  }),
+
+  (insert shop::Item {
+    name := "Medium Density Fibreboard (MDF) Sheet",
+    supplier := "Timberite",
+    supplier_url := "https://timberite.co.uk",
+    icon_url := "/shop/mdf.jpg",
+    skews := {
+      (insert shop::Skew {
+        till_id := 113,
+        price := 75,
+        _dimensions := (insert dimensions::Cuboid { length := 300, width := 300, height := 3 })
+      }),
+      (insert shop::Skew {
+        till_id := 114,
+        price := 150,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 300, height := 3 })
+      }),
+      (insert shop::Skew {
+        till_id := 115,
+        price := 300,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 600, height := 3 })
+      }),
+      (insert shop::Skew {
+        till_id := 116,
+        price := 420,
+        _dimensions := (insert dimensions::Cuboid { length := 900, width := 610, height := 3 })
+      }),
+      (insert shop::Skew {
+        till_id := 117,
+        price := 90,
+        _dimensions := (insert dimensions::Cuboid { length := 300, width := 300, height := 4 })
+      }),
+      (insert shop::Skew {
+        till_id := 118,
+        price := 180,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 300, height := 4 })
+      }),
+      (insert shop::Skew {
+        till_id := 119,
+        price := 360,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 600, height := 4 })
+      }),
+      (insert shop::Skew {
+        till_id := 120,
+        price := 624,
+        _dimensions := (insert dimensions::Cuboid { length := 900, width := 610, height := 4 })
+      }),
+      (insert shop::Skew {
+        till_id := 121,
+        price := 114,
+        _dimensions := (insert dimensions::Cuboid { length := 300, width := 300, height := 6 })
+      }),
+      (insert shop::Skew {
+        till_id := 122,
+        price := 228,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 300, height := 6 })
+      }),
+      (insert shop::Skew {
+        till_id := 123,
+        price := 456,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 600, height := 6 })
+      }),
+      (insert shop::Skew {
+        till_id := 124,
+        price := 852,
+        _dimensions := (insert dimensions::Cuboid { length := 900, width := 610, height := 6 })
+      }),
+      (insert shop::Skew {
+        till_id := 125,
+        price := 178,
+        _dimensions := (insert dimensions::Cuboid { length := 300, width := 300, height := 9 })
+      }),
+      (insert shop::Skew {
+        till_id := 126,
+        price := 366,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 300, height := 9 })
+      }),
+      (insert shop::Skew {
+        till_id := 127,
+        price := 712,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 600, height := 9 })
+      }),
+      (insert shop::Skew {
+        till_id := 128,
+        price := 1068,
+        _dimensions := (insert dimensions::Cuboid { length := 900, width := 610, height := 9 })
+      }),
+      (insert shop::Skew {
+        till_id := 129,
+        price := 209,
+        _dimensions := (insert dimensions::Cuboid { length := 300, width := 300, height := 12 })
+      }),
+      (insert shop::Skew {
+        till_id := 130,
+        price := 210,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 300, height := 12 })
+      }),
+      (insert shop::Skew {
+        till_id := 131,
+        price := 420,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 600, height := 12 })
+      }),
+      (insert shop::Skew {
+        till_id := 132,
+        price := 630,
+        _dimensions := (insert dimensions::Cuboid { length := 900, width := 610, height := 12 })
+      }),
+      # (insert shop::Skew {
+      #   till_id := 133,
+      #   price := 125,
+      #   _dimensions := (insert dimensions::Cuboid { length := 300, width := 300, height := 15 })
+      # }),
+      # (insert shop::Skew {
+      #   till_id := 134,
+      #   price := 250,
+      #   _dimensions := (insert dimensions::Cuboid { length := 600, width := 300, height := 15 })
+      # }),
+      # (insert shop::Skew {
+      #   till_id := 135,
+      #   price := 500,
+      #   _dimensions := (insert dimensions::Cuboid { length := 600, width := 600, height := 15 })
+      # }),
+      # (insert shop::Skew {
+      #   till_id := 136,
+      #   price := 750,
+      #   _dimensions := (insert dimensions::Cuboid { length := 900, width := 610, height := 15 })
+      # }),
+      (insert shop::Skew {
+        till_id := 318,
+        price := 198,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 400, height := 3 })
+      }),
+      (insert shop::Skew {
+        till_id := 319,
+        price := 228,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 400, height := 4 })
+      }),
+      (insert shop::Skew {
+        till_id := 320,
+        price := 306,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 400, height := 6 })
+      }),
+      # (insert shop::Skew {
+      #   till_id := 321,
+      #   price := 0, # Price is 0 in data.json  TODO check
+      #   _dimensions := (insert dimensions::Cuboid { length := 600, width := 400, height := 9 })
+      # })
+    }
+  }),
+
+  (insert shop::Item {
+    name := "Balsa Beams",
+    supplier := "Unknown",
+    supplier_url := "",
+    icon_url := "/shop/balsa.jpg",
+    skews := {
+      (insert shop::Skew {
+        till_id := 148,
+        price := 50,
+        _dimensions := (insert dimensions::Cuboid { length := 1000, width := 25, height := 25 })
+      }),
+      (insert shop::Skew {
+        till_id := 149,
+        price := 130,
+        _dimensions := (insert dimensions::Cuboid { length := 1000, width := 38, height := 63 })
+      })
+    }
+  }),
+
+  (insert shop::Item {
+    name := "Hardwood Dowel",
+    supplier := "Timberite",
+    supplier_url := "https://timberite.co.uk",
+    icon_url := "/shop/dowel.jpg",
+    skews := {
+      (insert shop::Skew {
+        till_id := 164,
+        price := 4,
+        _dimensions := (insert dimensions::Cylindrical { diameter := 3, length := 600 })
+      }),
+      (insert shop::Skew {
+        till_id := 165,
+        price := 6,
+        _dimensions := (insert dimensions::Cylindrical { diameter := 4, length := 600 })
+      }),
+      (insert shop::Skew {
+        till_id := 166,
+        price := 7,
+        _dimensions := (insert dimensions::Cylindrical { diameter := 5, length := 600 })
+      }),
+      (insert shop::Skew {
+        till_id := 167,
+        price := 9,
+        _dimensions := (insert dimensions::Cylindrical { diameter := 6, length := 600 })
+      }),
+      (insert shop::Skew {
+        till_id := 168,
+        price := 15,
+        _dimensions := (insert dimensions::Cylindrical { diameter := 8, length := 600 })
+      }),
+      (insert shop::Skew {
+        till_id := 169,
+        price := 17,
+        _dimensions := (insert dimensions::Cylindrical { diameter := 9, length := 600 })
+      }),
+      (insert shop::Skew {
+        till_id := 170,
+        price := 20,
+        _dimensions := (insert dimensions::Cylindrical { diameter := 10, length := 600 })
+      }),
+      (insert shop::Skew {
+        till_id := 171,
+        price := 32,
+        _dimensions := (insert dimensions::Cylindrical { diameter := 12, length := 600 })
+      }),
+      (insert shop::Skew {
+        till_id := 172,
+        price := 50,
+        _dimensions := (insert dimensions::Cylindrical { diameter := 15, length := 600 })
+      }),
+      (insert shop::Skew {
+        till_id := 173,
+        price := 84,
+        _dimensions := (insert dimensions::Cylindrical { diameter := 19, length := 600 })
+      }),
+      (insert shop::Skew {
+        till_id := 174,
+        price := 131,
+        _dimensions := (insert dimensions::Cylindrical { diameter := 25, length := 600 })
+      })
+    }
+  }),
+
+  (insert shop::Item {
+    name := "Acrylic Sheet",
+    supplier := "Hindleys",
+    supplier_url := "https://hindleys.com",
+    icon_url := "/shop/acrylic.jpg",
+    skews := {
+      (insert shop::Skew {
+        till_id := 181,
+        price := 600,
+        colour := "Mixed",
+        _dimensions := (insert dimensions::Cuboid { length := 400, width := 300, height := 3 })
+      }),
+      (insert shop::Skew {
+        till_id := 184,
+        price := 2628,
+        colour := "Mixed",
+        _dimensions := (insert dimensions::Cuboid { length := 1000, width := 600, height := 3 })
+      }),
+      (insert shop::Skew {
+        till_id := 186,
+        price := 840,
+        colour := "Mixed",
+        _dimensions := (insert dimensions::Cuboid { length := 400, width := 300, height := 5 })
+      }),
+      (insert shop::Skew {
+        till_id := 188,
+        price := 4310,
+        colour := "Mixed",
+        _dimensions := (insert dimensions::Cuboid { length := 1000, width := 600, height := 5 })
+      }),
+      (insert shop::Skew {
+        till_id := 322,
+        price := 1200,
+        colour := "Mixed",
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 400, height := 3 })
+      }),
+      (insert shop::Skew {
+        till_id := 323,
+        price := 1680,
+        colour := "Mixed",
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 400, height := 5 })
+      }),
+      (insert shop::Skew {
+        till_id := 376,
+        price := 1440,
+        colour := "Clear",
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 400, height := 5 })
+      }),
+      (insert shop::Skew {
+        till_id := 377,
+        price := 3900,
+        colour := "Clear",
+        _dimensions := (insert dimensions::Cuboid { length := 1000, width := 600, height := 5 })
+      }),
+      (insert shop::Skew {
+        till_id := 378,
+        price := 2220,
+        colour := "Clear",
+        _dimensions := (insert dimensions::Cuboid { length := 1000, width := 600, height := 3 })
+      }),
+      (insert shop::Skew {
+        till_id := 379,
+        price := 936,
+        colour := "Clear",
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 400, height := 3 })
+      }),
+      (insert shop::Skew {
+        till_id := 381,
+        price := 720,
+        colour := "Clear",
+        _dimensions := (insert dimensions::Cuboid { length := 400, width := 300, height := 5 })
+      }),
+      (insert shop::Skew {
+        till_id := 382,
+        price := 460,
+        colour := "Clear",
+        _dimensions := (insert dimensions::Cuboid { length := 400, width := 300, height := 3 })
+      })
+    }
+  }),
+
+  (insert shop::Item {
+    name := "Polypropylene Sheet",
+    supplier := "Kitronic",
+    supplier_url := "https://kitronik.co.uk",
+    icon_url := "/shop/polypropylene.jpg",
+    skews := {
+      (insert shop::Skew {
+        till_id := 196,
+        price := 768,
+        _dimensions := (insert dimensions::Cuboid { length := 1100, width := 650, height := 0.8 })
+      }),
+      (insert shop::Skew {
+        till_id := 316,
+        price := 310,
+        _dimensions := (insert dimensions::Cuboid { length := 610, width := 610, height := 3.5 })
+      })
+    }
+  }),
+
+  (insert shop::Item {
+    name := "Laser Laminate",
+    supplier := "Hindleys",
+    supplier_url := "https://hindleys.com",
+    icon_url := "/shop/laser-laminate.jpg",
+    skews := {
+      (insert shop::Skew {
+        till_id := 205,
+        price := 618,
+        _dimensions := (insert dimensions::Cuboid { length := 300, width := 300, height := 1.5 })
+      }),
+      (insert shop::Skew {
+        till_id := 206,
+        price := 1236,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 300, height := 1.5 })
+      })
+    }
+  }),
+
+  (insert shop::Item {
+    name := "Styrofoam/Grey Foam",
+    supplier := "Kitronic",
+    supplier_url := "https://kitronik.co.uk",
+    icon_url := "/shop/styrofoam.jpg",
+    skews := {
+      (insert shop::Skew {
+        till_id := 209,
+        price := 885,
+        _dimensions := (insert dimensions::Cuboid { length := 300, width := 300, height := 50 })
+      }),
+      (insert shop::Skew {
+        till_id := 211,
+        price := 1770,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 600, height := 50 })
+      }),
+      (insert shop::Skew {
+        till_id := 291,
+        price := 450,
+        _dimensions := (insert dimensions::Cuboid { length := 300, width := 300, height := 25 })
+      }),
+      (insert shop::Skew {
+        till_id := 293,
+        price := 900,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 600, height := 25 })
+      })
+    }
+  }),
+
+  (insert shop::Item {
+    name := "Low Density Model Board",
+    supplier := "Easy composites",
+    supplier_url := "https://easycomposites.co.uk",
+    icon_url := "/shop/model-board.jpg",
+    skews := {
+      (insert shop::Skew {
+        till_id := 219,
+        price := 123,
+        _dimensions := (insert dimensions::Cuboid { length := 100, width := 100, height := 100 }) # Height not specified
+      }),
+    }}
+  ),
+  (insert shop::Item {
+    name := "Medium Density Model Board",
+    supplier := "Easy composites",
+    supplier_url := "https://easycomposites.co.uk",
+    icon_url := "/shop/model-board.jpg",
+    skews := {
+      (insert shop::Skew {
+        till_id := 220,
+        price := 147,
+        _dimensions := (insert dimensions::Cuboid { length := 100, width := 100, height := 50 })
+      }),
+      (insert shop::Skew {
+        till_id := 221,
+        price := 286,
+        _dimensions := (insert dimensions::Cuboid { length := 100, width := 100, height := 100 })
+      }),
+    }}),
+  (insert shop::Item {
+    name := "Epoxy Tooling Board",
+    supplier := "Easy composites",
+    supplier_url := "https://easycomposites.co.uk",
+    icon_url := "/shop/model-board.jpg",
+    skews := {
+      (insert shop::Skew {
+        till_id := 222,
+        price := 351,
+        _dimensions := (insert dimensions::Cuboid { length := 100, width := 100, height := 50 })
+      }),
+      (insert shop::Skew {
+        till_id := 223,
+        price := 606,
+        _dimensions := (insert dimensions::Cuboid { length := 100, width := 100, height := 100 })
+      })
+    }
+  }),
+
+  (insert shop::Item {
+    name := "High Impact Polystyrene (HIPS) Sheet",
+    supplier := "Tilgear",
+    supplier_url := "https://tilgear.info",
+    icon_url := "/shop/hips.jpg",
+    skews := {
+      (insert shop::Skew {
+        till_id := 254,
+        price := 250,
+        _dimensions := (insert dimensions::Cuboid { length := 508, width := 457, height := 1 })
+      }),
+      # (insert shop::Skew {
+      #   till_id := 365,
+      #   price := 100,
+      #   _dimensions := (insert dimensions::Cuboid { length := 250, width := 250, height := 1 })
+      # })
+    }
+  }),
+
+  (insert shop::Item {
+    name := "Threaded Bar",
+    supplier := "RS",
+    supplier_url := "https://uk.rs-online.com",
+    icon_url := "/shop/threaded-bar.jpg",
+    skews := {  # TODO pitch
+      (insert shop::Skew {
+        till_id := 258,
+        price := 150,
+        _dimensions := (insert dimensions::Thread { diameter := 3, length := 1000 })
+      }),
+      (insert shop::Skew {
+        till_id := 259,
+        price := 80,
+        _dimensions := (insert dimensions::Thread { diameter := 3, length := 500 })
+      }),
+      (insert shop::Skew {
+        till_id := 260,
+        price := 40,
+        _dimensions := (insert dimensions::Thread { diameter := 3, length := 250 })
+      }),
+      (insert shop::Skew {
+        till_id := 261,
+        price := 150,
+        _dimensions := (insert dimensions::Thread { diameter := 4, length := 1000 })
+      }),
+      (insert shop::Skew {
+        till_id := 262,
+        price := 80,
+        _dimensions := (insert dimensions::Thread { diameter := 4, length := 500 })
+      }),
+      (insert shop::Skew {
+        till_id := 263,
+        price := 40,
+        _dimensions := (insert dimensions::Thread { diameter := 4, length := 250 })
+      }),
+      (insert shop::Skew {
+        till_id := 264,
+        price := 170,
+        _dimensions := (insert dimensions::Thread { diameter := 5, length := 1000 })
+      }),
+      (insert shop::Skew {
+        till_id := 265,
+        price := 90,
+        _dimensions := (insert dimensions::Thread { diameter := 5, length := 500 })
+      }),
+      (insert shop::Skew {
+        till_id := 266,
+        price := 40,
+        _dimensions := (insert dimensions::Thread { diameter := 5, length := 250 })
+      }),
+      (insert shop::Skew {
+        till_id := 267,
+        price := 180,
+        _dimensions := (insert dimensions::Thread { diameter := 6, length := 1000 })
+      }),
+      (insert shop::Skew {
+        till_id := 268,
+        price := 90,
+        _dimensions := (insert dimensions::Thread { diameter := 6, length := 500 })
+      }),
+      (insert shop::Skew {
+        till_id := 269,
+        price := 50,
+        _dimensions := (insert dimensions::Thread { diameter := 6, length := 250 })
+      }),
+      (insert shop::Skew {
+        till_id := 270,
+        price := 210,
+        _dimensions := (insert dimensions::Thread { diameter := 8, length := 1000 })
+      }),
+      (insert shop::Skew {
+        till_id := 271,
+        price := 110,
+        _dimensions := (insert dimensions::Thread { diameter := 8, length := 500 })
+      }),
+      (insert shop::Skew {
+        till_id := 272,
+        price := 50,
+        _dimensions := (insert dimensions::Thread { diameter := 8, length := 250 })
+      }),
+      (insert shop::Skew {
+        till_id := 273,
+        price := 280,
+        _dimensions := (insert dimensions::Thread { diameter := 10, length := 1000 })
+      }),
+      (insert shop::Skew {
+        till_id := 274,
+        price := 140,
+        _dimensions := (insert dimensions::Thread { diameter := 10, length := 500 })
+      }),
+      (insert shop::Skew {
+        till_id := 275,
+        price := 70,
+        _dimensions := (insert dimensions::Thread { diameter := 10, length := 250 })
+      })
+    }
+  }),
+
+  (insert shop::Item {
+    name := "Aluminium Extrusion",
+    supplier := "Unknown",
+    supplier_url := "",
+    icon_url := "/shop/aluminium-extrusion.jpg",
+    skews := {
+      (insert shop::Skew {
+        till_id := 276,
+        price := 690,
+        _dimensions := (insert dimensions::Cuboid { length := 1000, width := 20, height := 20 })
+      }),
+      (insert shop::Skew {
+        till_id := 277,
+        price := 350,
+        _dimensions := (insert dimensions::Cuboid { length := 500, width := 20, height := 20 })
+      }),
+      (insert shop::Skew {
+        till_id := 278,
+        price := 170,
+        _dimensions := (insert dimensions::Cuboid { length := 250, width := 20, height := 20 })
+      }),
+      (insert shop::Skew {
+        till_id := 279,
+        price := 1290,
+        _dimensions := (insert dimensions::Cuboid { length := 1000, width := 30, height := 30 })
+      }),
+      (insert shop::Skew {
+        till_id := 280,
+        price := 650,
+        _dimensions := (insert dimensions::Cuboid { length := 500, width := 30, height := 30 })
+      }),
+      (insert shop::Skew {
+        till_id := 281,
+        price := 320,
+        _dimensions := (insert dimensions::Cuboid { length := 250, width := 30, height := 30 })
+      })
+    }
+  }),
+
+  (insert shop::Item {
+    name := "Depron Foam",
+    supplier := "Balsa cabin",
+    supplier_url := "https://balsacabin.co.uk",
+    icon_url := "/shop/depron-foam.jpg",
+    skews := {  # TODO might be 6mm
+      (insert shop::Skew {
+        till_id := 295,
+        price := 50,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 300, height := 0 }) # Height not specified
+      }),
+      (insert shop::Skew {
+        till_id := 296,
+        price := 100,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 600, height := 0 }) # Height not specified
+      }),
+      (insert shop::Skew {
+        till_id := 297,
+        price := 150,
+        _dimensions := (insert dimensions::Cuboid { length := 900, width := 600, height := 0 }) # Height not specified
+      }),
+      (insert shop::Skew {
+        till_id := 303,
+        price := 25,
+        _dimensions := (insert dimensions::Cuboid { length := 300, width := 300, height := 0 }) # Height not specified
+      })
+    }
+  }),
+
+  (insert shop::Item {
+    name := "Garnet Sand",
+    supplier := "Aquajet",
+    supplier_url := "https://aquajet-uk.com",
+    icon_url := "/shop/garnet-sand.jpg",
+    skews := {
+      (insert shop::Skew {
+        till_id := 307,
+        price := 80,
+        _dimensions := (insert dimensions::Mass { mass := 1000 })
+      })
+    }
+  }),
+
+  (insert shop::Item {
+    name := "Carbon Fibre",
+    supplier := "Unknown",
+    supplier_url := "",
+    icon_url := "/shop/carbon-fibre.jpg",
+    skews := {
+      (insert shop::Skew {
+        till_id := 310,
+        price := 1200,
+        _dimensions := (insert dimensions::Cuboid { length := 255, width := 250, height := 1 })
+      }),
+      (insert shop::Skew {
+        till_id := 311,
+        price := 2000,
+        _dimensions := (insert dimensions::Cuboid { length := 250, width := 225, height := 2 })
+      }),
+      (insert shop::Skew {
+        till_id := 312,
+        price := 3000,
+        _dimensions := (insert dimensions::Cuboid { length := 250, width := 225, height := 3 })
+      })
+    }
+  }),
+
+  (insert shop::Item {
+    name := "Laser Rubber",
+    supplier := "Hobarts",
+    supplier_url := "https://hobarts.com",
+    icon_url := "/shop/laser-rubber.jpg",
+    skews := {
+      (insert shop::Skew {
+        till_id := 343,
+        price := 1030,
+        _dimensions := (insert dimensions::ISO216 { size := 4 })
+      }),
+      (insert shop::Skew {
+        till_id := 344,
+        price := 515,
+        _dimensions := (insert dimensions::ISO216 { size := 5 })
+      })
+    }
+  }),
+
+  (insert shop::Item {
+    name := "Plastazote Foam",
+    supplier := "Tilgear",
+    supplier_url := "https://tilgear.com",
+    icon_url := "/shop/plastazote.jpg",
+    skews := {
+      (insert shop::Skew {
+        till_id := 348,
+        price := 430,
+        _dimensions := (insert dimensions::Cuboid { length := 1000, width := 500, height := 3 })
+      }),
+      (insert shop::Skew {
+        till_id := 349,
+        price := 215,
+        _dimensions := (insert dimensions::Cuboid { length := 500, width := 500, height := 3 })
+      }),
+      (insert shop::Skew {
+        till_id := 350,
+        price := 750,
+        _dimensions := (insert dimensions::Cuboid { length := 1000, width := 500, height := 6 })
+      }),
+      (insert shop::Skew {
+        till_id := 351,
+        price := 375,
+        _dimensions := (insert dimensions::Cuboid { length := 500, width := 500, height := 6 })
+      })
+    }
+  }),
+
+  (insert shop::Item {
+    name := "Mount Board",
+    supplier := "Rapid",
+    supplier_url := "https://rapidonline.com",
+    icon_url := "/shop/card.jpg",
+    skews := {
+      (insert shop::Skew {
+        till_id := 352,
+    colour := "White",
+        price := 125,
+        _dimensions := (insert dimensions::ISO216 { size := 3, thickness := 1.25 })
+      }),
+      (insert shop::Skew {
+        till_id := 353,
+    colour := "White",
+        price := 240,
+        _dimensions := (insert dimensions::ISO216 { size := 2, thickness := 1.25 })
+      }),
+    }
+  }),
+  (insert shop::Item {
+    name := "Environmount Board",
+    supplier := "Abacus",
+    supplier_url := "https://abacusresources.co.uk",
+    icon_url := "/shop/environmount.jpg",
+    skews := {
+      (insert shop::Skew {
+        till_id := 369,
+        colour := "White",
+        price := 200,
+        _dimensions := (insert dimensions::ISO216 { size := 2, thickness := 1.2 })
+      }),
+  }}),
+  (insert shop::Item {
+    name := "Corrugated Kraft Board",
+    supplier := "Abacus",
+    supplier_url := "https://abacusresources.co.uk",
+    icon_url := "/shop/foamcore.jpg",
+    skews := {
+      (insert shop::Skew {
+        till_id := 370,
+        price := 115,
+        _dimensions := (insert dimensions::ISO216 { size := 1, thickness := 2 })
+      })
+    }
+  }),
+
+  (insert shop::Item {
+    name := "Anodised Aluminum Metal",
+    supplier := "Trotec",
+    supplier_url := "https://troteclaser.com",
+    icon_url := "/shop/sheet-metal.jpg",
+    skews := {
+      (insert shop::Skew {
+        till_id := 358,
+        price := 875,
+        colour := "Black",
+        _dimensions := (insert dimensions::Cuboid { length := 250, width := 250, height := 1 })
+      }),
+      (insert shop::Skew {
+        till_id := 358,
+        price := 875,
+        colour := "Gold",
+        _dimensions := (insert dimensions::Cuboid { length := 250, width := 250, height := 1 })
+      }),
+      (insert shop::Skew {
+        till_id := 358,
+        price := 875,
+        colour := "Red",
+        _dimensions := (insert dimensions::Cuboid { length := 250, width := 250, height := 1 })
+      }),
+    }
+  }),
+  (insert shop::Item {
+    name := "Aluminum Sheet Metal",
+    supplier := "Avus Metals",
+    supplier_url := "https://www.avusmetalsandplastics.co.uk/",
+    icon_url := "/shop/sheet-metal.jpg",
+    skews := {
+      (insert shop::Skew {
+        till_id := 361,
+        price := 165,
+        _dimensions := (insert dimensions::Cuboid { length := 300, width := 300, height := 1.2 })
+      }),
+      (insert shop::Skew {
+        till_id := 362,
+        price := 210,
+        _dimensions := (insert dimensions::Cuboid { length := 300, width := 300, height := 1.5 })
+      }),
+      (insert shop::Skew {
+        till_id := 363,
+        price := 275,
+        _dimensions := (insert dimensions::Cuboid { length := 300, width := 300, height := 2 })
+      }),
+      # (insert shop::Skew {
+      #   till_id := 364,
+      #   price := 267,
+      #   _dimensions := (insert dimensions::Cuboid { length := 300, width := 300, height := 2.5 })
+      # })
+    }
+  }),
+
+  (insert shop::Item {
+    name := "PETG",
+    supplier := "Unknown",
+    supplier_url := "",
+    icon_url := "/shop/petg.jpg",
+    skews := {
+      (insert shop::Skew {
+        till_id := 360,
+        price := 425,
+        _dimensions := (insert dimensions::Cuboid { length := 500, width := 450, height := 1 })
+      })
+    }
+  }),
+
+  (insert shop::Item {
+    name := "Cork",
+    supplier := "Kitronic",
+    supplier_url := "https://kitronik.co.uk",
+    icon_url := "/shop/cork.jpg",
+    skews := {
+      (insert shop::Skew {
+        till_id := 371,
+        price := 354,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 400, height := 1 })
+      }),
+      (insert shop::Skew {
+        till_id := 372,
+        price := 534,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 400, height := 3 })
+      }),
+      (insert shop::Skew {
+        till_id := 373,
+        price := 750,
+        _dimensions := (insert dimensions::Cuboid { length := 915, width := 610, height := 3 })
+      })
+    }
+  }),
+
+  (insert shop::Item {
+    name := "Polypropylene",
+    supplier := "Unknown",
+    supplier_url := "",
+    icon_url := "/shop/polypropylene.jpg",
+    skews := {
+    (insert shop::Skew {
+        till_id := 196,
+        price := 768,
+        _dimensions := (insert dimensions::Cuboid { length := 1100, width := 650, height := 0.8 })
+      }),
+    }
+  }),(insert shop::Item {
+    name := "Fluted Polypropylene",
+    supplier := "Unknown",
+    supplier_url := "",
+    icon_url := "/shop/fluted-polypropylene.jpg",
+    skews := {
+      (insert shop::Skew {
+        till_id := 316,
+        price := 310,
+        _dimensions := (insert dimensions::Cuboid { length := 610, width := 610, height := 3.5 })
+      })
+    }
+  }),
+
+  (insert shop::Item {
+    name := "Corriboard",
+    supplier := "Unknown",
+    supplier_url := "",
+    icon_url := "/shop/corriboard.jpg",
+    skews := {
+      (insert shop::Skew {
+        till_id := 370,
+        price := 115,
+        _dimensions := (insert dimensions::ISO216 { size := 1, thickness := 2 })
+      })
+    }
+  }),
+
+  # (insert shop::Item {
+  #   name := "Self Adhesive Vinyl",
+  #   supplier := "Unknown",
+  #   supplier_url := "",
+  #   icon_url := "/shop/self-adhesive-vinyl.jpg",
+  #   skews := {
+  #     (insert shop::Skew {
+  #       till_id := 178,
+  #       price := 13,
+  #       _dimensions := (insert dimensions::Cuboid { length := 305, width := 100, height := 1 })
+  #     }),
+  #     (insert shop::Skew {
+  #       till_id := 179,
+  #       price := 26,
+  #       _dimensions := (insert dimensions::Cuboid { length := 610, width := 100, height := 1 })
+  #     })
+  #   }
+  # }),
+  (insert shop::Item {
+    name := "Laser MDF Sheet",
+    supplier := "Hobarts",
+    supplier_url := "https://hobarts.com",
+    icon_url := "/shop/corriboard.jpg",
+    skews := {
+      (insert shop::Skew {
+        till_id := 386,
+        price := 440,
+        _dimensions := (insert dimensions::Cuboid { length := 600, width := 400, height := 3 }),
+        colour := "Black",
+      }),
+      (insert shop::Skew {
+        till_id := 387,
+        price := 990,
+        _dimensions := (insert dimensions::Cuboid { length := 900, width := 600, height := 3 }),
+        colour := "Black",
+    }),
+    },
+  }),
+}

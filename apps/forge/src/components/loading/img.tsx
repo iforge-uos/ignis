@@ -1,6 +1,6 @@
-import { cn } from "@/lib/utils";
 import { Skeleton } from "@packages/ui/components/skeleton";
 import React, { useState } from "react";
+import { cn } from "@/lib/utils/cn";
 
 interface ImageWithPlaceholderProps {
   src: string;

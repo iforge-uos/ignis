@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import type { ReactNode } from "react";
 import Markdown from "react-markdown";
 import { IForgeLogo } from "@/icons/IForge";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/cn";
 
 type AgreementViewModel = {
   name: string;

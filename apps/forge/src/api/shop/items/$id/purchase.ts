@@ -1,0 +1,1 @@
+// TODO detect when the shop is down and then add the purchase to queue to be processed on next request (when it's hopefully back online)

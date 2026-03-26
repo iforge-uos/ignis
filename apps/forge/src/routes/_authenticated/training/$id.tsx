@@ -16,7 +16,7 @@ import Title from "@/components/title";
 import { TrainingHeader } from "@/components/training/TrainingHeader";
 import { orpc } from "@/lib/orpc";
 import { ensureQueryData } from "@/lib/query-utils";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/cn";
 
 const PROGRESS_BAR_SAMPLE_MS = 50;
 type Section = Extract<InteractionResponse, { __typename: "training::Page" | "training::Question" }>; // ones we can display

@@ -84,6 +84,7 @@
     "react-hook-form": "^7.65.0",
     "react-markdown": "^10.1.0",
     "react-responsive": "^10.0.1",
+    "react-zoom-pan-pinch": "^3.7.0",
     "recharts": "^3.1.2",
     "regexp.escape": "^2.0.1",
     "rehype-raw": "^7.0.0",

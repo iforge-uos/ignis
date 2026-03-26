@@ -11,7 +11,7 @@ import {
 } from "@packages/ui/components/timeline";
 import { format } from "date-fns";
 import { Crown, Users } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/cn";
 import { Procedures } from "@/types/router";
 
 interface TeamHistoryProps {

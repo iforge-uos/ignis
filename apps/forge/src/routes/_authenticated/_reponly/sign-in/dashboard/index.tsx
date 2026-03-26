@@ -26,7 +26,7 @@ function SignInDashboard() {
   const isUserAdmin = useUserRoles().includes("admin");
 
   const {
-    data: locationList,
+    data: location,
     isLoading,
     isError,
     error,
@@ -40,14 +40,14 @@ function SignInDashboard() {
   );
 
   useEffect(() => {
-    if (locationList) {
-      setQueuedUsers(locationList.queued);
+    if (location) {
+      setQueuedUsers(location.queued);
 
       const usersSignedIn: SignInEntry[] = [];
       const repsSignedIn: SignInEntry[] = [];
       const offShiftRepsSignedIn: SignInEntry[] = [];
-      for (const entry of locationList.sign_ins) {
-        if (entry.user.teams !== undefined) {
+      for (const entry of location.sign_ins) {
+        if (entry.user.__typename === "users::Rep") {
           if (entry.reason.name === REP_ON_SHIFT) {
             repsSignedIn.push(entry);
           } else if (entry.reason.name === REP_OFF_SHIFT) {
@@ -63,7 +63,7 @@ function SignInDashboard() {
       setSignedInUsers(usersSignedIn);
       setSignedInReps(repsSignedIn);
     }
-  }, [locationList]);
+  }, [location]);
   const onShiftReps = signedInReps.map((entry) => entry.user);
   const { data: reasons } = useSignInReasons(); // FIXME
   const repOnShiftReason = reasons?.find((reason) => reason.name === REP_ON_SHIFT);

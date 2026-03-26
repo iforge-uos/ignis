@@ -12,7 +12,8 @@ import { FC, useCallback, useMemo, useState } from "react";
 import { useDrop } from "react-dnd";
 import { toast } from "sonner";
 import { activeLocationAtom } from "@/atoms/signInAppAtoms";
-import { cn, exhaustiveGuard, uCardNumberToString } from "@/lib/utils";
+import { exhaustiveGuard, uCardNumberToString } from "@/lib/utils";
+import { cn } from "@/lib/utils/cn";
 import { SignedInUserCard } from "@/routes/_authenticated/_reponly/sign-in/dashboard/-components/SignedInUserCard";
 import { orpc } from "/src/lib/orpc";
 
@@ -231,7 +232,7 @@ export const SignInDrawer: FC<SignInDrawerProps> = ({
                           id={entry.id}
                           key={entry.user.id}
                           user={entry.user as PartialUserWithTeams}
-                          tools={entry.tools}
+                          tools={entry._tools}
                           reason={entry.reason}
                           timeIn={entry.created_at}
                           onSignOut={() => onSignOut?.(entry.user.id)}
@@ -249,7 +250,7 @@ export const SignInDrawer: FC<SignInDrawerProps> = ({
                   id={entry.id}
                   key={entry.user.id}
                   user={entry.user as PartialUserWithTeams}
-                  tools={entry.tools}
+                  tools={entry._tools}
                   reason={entry.reason}
                   timeIn={entry.created_at}
                   onSignOut={() => onSignOut?.(entry.user.id)}

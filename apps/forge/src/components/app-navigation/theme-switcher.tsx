@@ -1,5 +1,3 @@
-import { themeQueryOptions, useOptimisticThemeMutation } from "@/hooks/useTheme";
-import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,6 +8,8 @@ import { SidebarMenuButton, useSidebar } from "@packages/ui/components/sidebar";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react";
+import { themeQueryOptions, useOptimisticThemeMutation } from "@/hooks/useTheme";
+import { cn } from "@/lib/utils/cn";
 
 const themes = [
   {

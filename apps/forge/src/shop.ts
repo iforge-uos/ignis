@@ -5,9 +5,10 @@ let client: PharosClient;
 try {
   // Create the client with a 3 second timeout
   const timeoutPromise = new Promise((_, reject) =>
-    setTimeout(() => reject(new Error('Pharos client creation timed out after 3s')), 3000)
+    setTimeout(() => reject(new Error('Pharos client creation timed out after 3s')), 3_000)
   );
-  const clientPromise = PharosClient.create(`${env.pharos.url}?wsdl`, env.pharos.auth);
+  const clientPromise = PharosClient.create(`http://localhost:3002/pharosedi/ediservice.asmx?wsdl`, env.pharos.auth);
+  // const clientPromise = PharosClient.create(`${env.pharos.url}?wsdl`, env.pharos.auth);
 
   client = await Promise.race([clientPromise, timeoutPromise]) as PharosClient;
 } catch (error) {

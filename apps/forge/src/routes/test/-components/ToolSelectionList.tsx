@@ -32,7 +32,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useShortcutKey } from "@/hooks/useShortcutKey";
 import { NoRepIcon } from "@/icons/NoRep";
 import { RepIcon } from "@/icons/Rep";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/cn";
 import { StepToTransmitMap } from "/src/routes/test/$name.$ucard_number";
 
 
@@ -166,6 +166,21 @@ const STATUS_MAP: Record<tools.Selectability, ToolCardInfo> = {
   NONE: SELECTABLE,
 };
 
+const LEGEND_ITEMS: ToolCardInfo[] = [
+  SELECTABLE,
+  DO_ONLINE,
+  DO_IN_PERSON,
+  DO_IN_PERSON_OR_REP_ONLINE,
+  DO_IN_PERSON_OR_REP_IN_PERSON,
+  DO_REP_ONLINE,
+  DO_REP_IN_PERSON,
+  NONE_REMAINING,
+  REPS_UNTRAINED,
+  TOOL_BROKEN,
+  REVOKED,
+  EXPIRED,
+];
+
 export const getToolCardInfo = (tool: Tool): [ToolCardInfo, ...ToolCardInfo[]] => {
   if (!tool.selectable.length) return [SELECTABLE]
   return tool.selectable.map((key) => STATUS_MAP[key] || UNREACHABLE) as [ToolCardInfo, ...ToolCardInfo[]];
@@ -176,9 +191,10 @@ interface ToolSelectionCardProps {
   index: number;
   toggleTool: (tool: Tool) => void;
   selected: boolean;
+  onlyComplete: boolean;
 }
 
-const ToolSelectionCard = ({ tool, index, toggleTool: toggleTraining, selected }: ToolSelectionCardProps) => {
+const ToolSelectionCard = ({ tool, index, toggleTool: toggleTraining, selected, onlyComplete }: ToolSelectionCardProps) => {
   const info = getToolCardInfo(tool);
   const selectable = info[0].name === "SELECTABLE";
   return (
@@ -191,20 +207,13 @@ const ToolSelectionCard = ({ tool, index, toggleTool: toggleTraining, selected }
           : "hover:text-foreground",      )}
       onClick={() => selectable && toggleTraining(tool)}
     >
-      <CardHeader className="p-2">
+      <CardHeader >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             {selectable && <Kbd className="text-xs text-muted-foreground">{index === 9 ? 0 : index + 1}</Kbd>}
             <div className="font-medium text-sm">{tool.name}</div>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="p-2">
-        <p className="text-xs text-muted-foreground line-clamp-2">{tool.description}</p>
-      </CardContent>
-      <CardFooter className="flex items-center justify-between p-2">
-        <div className="flex space-x-1">
-          {info.map((entry) => (
+            <div className="flex space-x-1">
+          {!onlyComplete && info.map((entry) => (
             <Tooltip key={entry.label}>
               <TooltipTrigger>
                 <Badge
@@ -225,7 +234,13 @@ const ToolSelectionCard = ({ tool, index, toggleTool: toggleTraining, selected }
             </Tooltip>
           ))}
         </div>
-      </CardFooter>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <p className="text-xs text-muted-foreground line-clamp-3">{tool.description}</p>
+      </CardContent>
+
     </Card>
   );
 };
@@ -233,7 +248,7 @@ const ToolSelectionCard = ({ tool, index, toggleTool: toggleTraining, selected }
 interface ToolSelectionProps {
   tools: Tool[];
   initialSelection?: Tool[];
-  onSelectionChange: (selectedTrainings: Tool[]) => void;
+  onSelectionChange?: (selectedTools: Tool[]) => void;
 }
 
 export function ToolSelection({
@@ -241,14 +256,14 @@ export function ToolSelection({
   onSelectionChange,
   initialSelection = [],
 }: ToolSelectionProps) {
-  const [selectedTrainings, setSelectedTrainings] = useState<Tool[]>(initialSelection);
+  const [selectedTools, setSelectedTools] = useState<Tool[]>(initialSelection);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [direction, setDirection] = useState(0);
   const itemsPerPage = 8;
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  const [onlyComplete, setOnlyComplete] = useState<string | boolean>(true);
+  const [onlyComplete, setOnlyComplete] = useState<string | boolean>(false);
   const tools = useMemo(
     () =>
       _tools
@@ -263,17 +278,17 @@ export function ToolSelection({
     minMatchCharLength: 2,
   }), [tools]);
 
-  const filteredTrainings = useMemo(() => {
+  const filteredTools = useMemo(() => {
     if (!searchTerm) return tools;
     return fuse.search(searchTerm).map((result) => result.item);
   }, [searchTerm, fuse, tools]);
 
-  const totalPages = Math.ceil(filteredTrainings.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredTools.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const visibleTrainings = filteredTrainings.slice(startIndex, startIndex + itemsPerPage);
+  const visibleTools = filteredTools.slice(startIndex, startIndex + itemsPerPage);
 
   const toggleTool = (tool: Tool) => {
-    setSelectedTrainings((prev) =>
+    setSelectedTools((prev) =>
       prev.some((t) => t.id === tool.id) ? prev.filter((t) => t.id !== tool.id) : [...prev, tool],
     );
   };
@@ -283,9 +298,9 @@ export function ToolSelection({
     setCurrentPage(newPage);
   };
 
-  // useEffect(() => {
-  //   onSelectionChange(selectedTrainings);
-  // }, [selectedTrainings, onSelectionChange]);
+  useEffect(() => {
+    onSelectionChange?.(selectedTools);
+  }, [selectedTools, onSelectionChange]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -295,10 +310,10 @@ export function ToolSelection({
         changePage(newPage);
       } else if (e.key >= "0" && e.key <= "9") {
         const index = e.key === "0" ? 9 : Number.parseInt(e.key) - 1;
-        if (index < visibleTrainings.length) {
-          const training = visibleTrainings[index];
-          if (!training.selectable.length) {
-            toggleTool(training);
+        if (index < visibleTools.length) {
+          const tool = visibleTools[index];
+          if (!tool.selectable.length) {
+            toggleTool(tool);
           }
         }
       } else if (e.key === "f" && (shortcut === "Ctrl" ? e.ctrlKey : e.metaKey)) {
@@ -312,7 +327,7 @@ export function ToolSelection({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [visibleTrainings, currentPage, totalPages]);
+  }, [visibleTools, currentPage, totalPages]);
 
   const pageTransition = {
     initial: (direction: number) => ({
@@ -383,6 +398,27 @@ export function ToolSelection({
           <Label className="hover:cursor-pointer" htmlFor="only-complete">
             Only complete
           </Label>
+          {!onlyComplete && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
+                  <HelpCircle className="w-4 h-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="w-56 p-2">
+                <div className="flex flex-col gap-1">
+                  {LEGEND_ITEMS.map((item) => (
+                    <div key={item.name} className="flex items-center gap-2 text-xs">
+                      <Badge variant="outline" className={cn(item.colour, "px-1 py-1 border border-white/10 shrink-0")}>
+                        <item.icon className="size-3 text-white" />
+                      </Badge>
+                      <span>{item.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          )}
         </div>
       </div>
 
@@ -396,13 +432,14 @@ export function ToolSelection({
           exit="exit"
           className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2"
         >
-          {visibleTrainings.map((training, index) => (
+          {visibleTools.map((tool, index) => (
             <ToolSelectionCard
-              key={training.id}
-              tool={training}
+              key={tool.id}
+              onlyComplete={onlyComplete}
+              tool={tool}
               index={index}
               toggleTool={toggleTool}
-              selected={selectedTrainings.some((training_) => training_.id === training.id)}
+              selected={selectedTools.some((t) => t.id === tool.id)}
             />
           ))}
         </motion.div>
@@ -442,20 +479,20 @@ export function ToolSelection({
         transition={{ duration: 0.2 }}
       >
         <AnimatePresence>
-          {selectedTrainings.map((training) => (
-            <motion.div key={training.id} variants={badgeVariants} animate="animate" exit="exit" layout>
+          {selectedTools.map((tool) => (
+            <motion.div key={tool.id} variants={badgeVariants} animate="animate" exit="exit" layout>
               <Badge
                 variant="secondary"
                 className="px-2 py-1 text-xs font-medium rounded-sm flex items-center bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100"
               >
-                {training.name}
+                {tool.name}
                 <Button
                   variant="ghost"
                   size="icon"
                   className="h-5 w-5 ml-2 p-0 hover:bg-zinc-200 dark:hover:bg-zinc-700"
                   onClick={(e) => {
                     e.stopPropagation();
-                    toggleTool(training);
+                    toggleTool(tool);
                   }}
                 >
                   <XCircle className="h-4 w-4" />

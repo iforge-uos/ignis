@@ -1,4 +1,5 @@
-import { cn, exhaustiveGuard } from "@/lib/utils";
+import { exhaustiveGuard } from "@/lib/utils";
+import { cn } from "@/lib/utils/cn";
 import type { training } from "@packages/db/interfaces";
 import { Heart, ParkingMeter, Wrench } from "lucide-react";
 import React from "react";

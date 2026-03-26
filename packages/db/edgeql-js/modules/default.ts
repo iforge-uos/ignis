@@ -25,30 +25,30 @@ const $Auditable = $.makeType<$Auditable>(_.spec, "29bd512f-f86c-11ee-bb9f-9fa1f
 
 const Auditable: $.$expr_PathNode<$.TypeSet<$Auditable, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Auditable, $.Cardinality.Many), null);
 
-export type $BaseListenable_e14341caf98d11f099a46382624120f4λShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
+export type $BaseListenable_3e8e1c0028b011f18145495fd9f6b463λShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
 }>;
-type $BaseListenable_e14341caf98d11f099a46382624120f4 = $.ObjectType<"default::_BaseListenable", $BaseListenable_e14341caf98d11f099a46382624120f4λShape, null, [
+type $BaseListenable_3e8e1c0028b011f18145495fd9f6b463 = $.ObjectType<"default::_BaseListenable", $BaseListenable_3e8e1c0028b011f18145495fd9f6b463λShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
 ], "users::User" | "default::user" | "sign_in::Agreement" | "sign_in::Location" | "sign_in::SignIn" | "users::Rep">;
-const $BaseListenable_e14341caf98d11f099a46382624120f4 = $.makeType<$BaseListenable_e14341caf98d11f099a46382624120f4>(_.spec, "e14341ca-f98d-11f0-99a4-6382624120f4", _.syntax.literal);
+const $BaseListenable_3e8e1c0028b011f18145495fd9f6b463 = $.makeType<$BaseListenable_3e8e1c0028b011f18145495fd9f6b463>(_.spec, "3e8e1c00-28b0-11f1-8145-495fd9f6b463", _.syntax.literal);
 
-const BaseListenable_e14341caf98d11f099a46382624120f4: $.$expr_PathNode<$.TypeSet<$BaseListenable_e14341caf98d11f099a46382624120f4, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($BaseListenable_e14341caf98d11f099a46382624120f4, $.Cardinality.Many), null);
+const BaseListenable_3e8e1c0028b011f18145495fd9f6b463: $.$expr_PathNode<$.TypeSet<$BaseListenable_3e8e1c0028b011f18145495fd9f6b463, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($BaseListenable_3e8e1c0028b011f18145495fd9f6b463, $.Cardinality.Many), null);
 
-export type $ListenableλShape = $.typeutil.flatten<$BaseListenable_e14341caf98d11f099a46382624120f4λShape & {
+export type $ListenableλShape = $.typeutil.flatten<$BaseListenable_3e8e1c0028b011f18145495fd9f6b463λShape & {
 }>;
 type $Listenable = $.ObjectType<"default::Listenable", $ListenableλShape, null, [
-  ...$BaseListenable_e14341caf98d11f099a46382624120f4['__exclusives__'],
+  ...$BaseListenable_3e8e1c0028b011f18145495fd9f6b463['__exclusives__'],
 ], "users::User" | "default::user" | "sign_in::SignIn" | "users::Rep">;
-const $Listenable = $.makeType<$Listenable>(_.spec, "e17824b2-f98d-11f0-b6b2-671b1afe7ac5", _.syntax.literal);
+const $Listenable = $.makeType<$Listenable>(_.spec, "3eb71556-28b0-11f1-9c86-3dc688403bd5", _.syntax.literal);
 
 const Listenable: $.$expr_PathNode<$.TypeSet<$Listenable, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Listenable, $.Cardinality.Many), null);
 
-export type $ListenableWithChangesλShape = $.typeutil.flatten<$BaseListenable_e14341caf98d11f099a46382624120f4λShape & {
+export type $ListenableWithChangesλShape = $.typeutil.flatten<$BaseListenable_3e8e1c0028b011f18145495fd9f6b463λShape & {
 }>;
 type $ListenableWithChanges = $.ObjectType<"default::ListenableWithChanges", $ListenableWithChangesλShape, null, [
-  ...$BaseListenable_e14341caf98d11f099a46382624120f4['__exclusives__'],
+  ...$BaseListenable_3e8e1c0028b011f18145495fd9f6b463['__exclusives__'],
 ], "sign_in::Agreement" | "sign_in::Location">;
-const $ListenableWithChanges = $.makeType<$ListenableWithChanges>(_.spec, "e19a6ec8-f98d-11f0-a013-7fd7312a6fec", _.syntax.literal);
+const $ListenableWithChanges = $.makeType<$ListenableWithChanges>(_.spec, "3ed78cc8-28b0-11f1-9faa-87259996f27f", _.syntax.literal);
 
 const ListenableWithChanges: $.$expr_PathNode<$.TypeSet<$ListenableWithChanges, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($ListenableWithChanges, $.Cardinality.Many), null);
 
@@ -152,12 +152,12 @@ const $default__globals: {  CDN_URL: _.syntax.$expr_Global<
 
 
 
-export { $CreatedAt, CreatedAt, $Auditable, Auditable, $BaseListenable_e14341caf98d11f099a46382624120f4, BaseListenable_e14341caf98d11f099a46382624120f4, $Listenable, Listenable, $ListenableWithChanges, ListenableWithChanges, $Timed, Timed, $user, user };
+export { $CreatedAt, CreatedAt, $Auditable, Auditable, $BaseListenable_3e8e1c0028b011f18145495fd9f6b463, BaseListenable_3e8e1c0028b011f18145495fd9f6b463, $Listenable, Listenable, $ListenableWithChanges, ListenableWithChanges, $Timed, Timed, $user, user };
 
 type __defaultExports = {
   "CreatedAt": typeof CreatedAt;
   "Auditable": typeof Auditable;
-  "_BaseListenable": typeof BaseListenable_e14341caf98d11f099a46382624120f4;
+  "_BaseListenable": typeof BaseListenable_3e8e1c0028b011f18145495fd9f6b463;
   "Listenable": typeof Listenable;
   "ListenableWithChanges": typeof ListenableWithChanges;
   "Timed": typeof Timed;
@@ -169,7 +169,7 @@ type __defaultExports = {
 const __defaultExports: __defaultExports = {
   "CreatedAt": CreatedAt,
   "Auditable": Auditable,
-  "_BaseListenable": BaseListenable_e14341caf98d11f099a46382624120f4,
+  "_BaseListenable": BaseListenable_3e8e1c0028b011f18145495fd9f6b463,
   "Listenable": Listenable,
   "ListenableWithChanges": ListenableWithChanges,
   "Timed": Timed,

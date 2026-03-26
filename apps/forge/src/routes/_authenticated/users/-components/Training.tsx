@@ -21,7 +21,8 @@ import Fuse from "fuse.js";
 import { ArrowDown, Award, CheckCircle, ChevronDown, Clock, ExternalLink, Info, MapPin, Search } from "lucide-react";
 import { Fragment, useMemo, useState } from "react";
 import { LocationIcon } from "@/icons/Locations";
-import { cn, toTitleCase } from "@/lib/utils";
+import { toTitleCase } from "@/lib/utils";
+import { cn } from "@/lib/utils/cn";
 import {
   getTrainingStatus,
   TrainingWithRep,

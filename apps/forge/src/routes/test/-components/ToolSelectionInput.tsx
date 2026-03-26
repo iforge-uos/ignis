@@ -7,18 +7,14 @@ import { useAtom } from "jotai";
 import { TriangleAlert } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import {
-  activeLocationAtom,
-  sessionNavigationBacktrackingAtom,
-  sessionTrainingAtom,
-  sessionUcardNumberAtom,
-  sessionUserAtom,
+  sessionToolsAtom,
 } from "@/atoms/signInAppAtoms";
 import { errorDisplay } from "@/components/errors/ErrorDisplay";
 import { Hammer } from "@/components/loading";
 import { SelectedTrainingPipDisplay } from "@/routes/_authenticated/_reponly/sign-in/actions/-components/SelectedTrainingPipDisplay";
-import {ToolSelection} from "./TrainingSelectionList";
 import { FlowStepComponent } from "@/types/signInActions";
 import { useSignIn } from "/src/providers/SignInSteps";
+import {ToolSelection} from "./ToolSelectionList";
 
 export const Tools: FlowStepComponent<"TOOLS"> = ({ user, data: {tools} }) => {
   const [selectedTools, setSelectedTools] = useState<typeof tools>([]);
@@ -27,10 +23,10 @@ export const Tools: FlowStepComponent<"TOOLS"> = ({ user, data: {tools} }) => {
     await transmit({ tools: selectedTools });
   });
 
-  // const handleOnTrainingSelect = (selectedTrainings: Training[]) => {
-  //   setSelectedTools(selectedTrainings);
-  //   setCanContinue(selectedTrainings.length > 0);
-  // };
+  const handleOnToolSelect = (selected: typeof tools) => {
+    setSelectedTools(selected);
+    setCanContinue(selected.length > 0);
+  };
 
 
   const missingCompulsoryTraining =
@@ -56,9 +52,8 @@ export const Tools: FlowStepComponent<"TOOLS"> = ({ user, data: {tools} }) => {
           </Alert>
         ) : (
           <ToolSelection
-            // onSelectionChange={handleOnTrainingSelect}
+            onSelectionChange={handleOnToolSelect}
             tools={tools || []}
-            // onSubmit={handlePrimaryClick}
           />
         )}
       </CardContent>

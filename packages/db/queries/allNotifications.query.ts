@@ -4,42 +4,43 @@ import type {Executor} from "gel";
 
 
 export type AllNotificationsReturns = Array<{
-  "author": {
+  "content": string;
+  "created_at": Date;
+  "id": string;
+  "priority": number;
+  "status": ("DRAFT" | "REVIEW" | "QUEUED" | "SENDING" | "SENT" | "ERRORED");
+  "title": string;
+  "type": ("ADMIN" | "ADVERT" | "ANNOUNCEMENT" | "EVENT" | "HEALTH_AND_SAFETY" | "INFRACTION" | "PRINTING" | "QUEUE_SLOT_ACTIVE" | "RECRUITMENT" | "REFERRAL" | "REMINDER" | "TRAINING");
+  "updated_at": Date;
+  "delivery_methods": [(("BANNER" | "EMAIL" | "TRAY" | "POPUP" | "DISCORD")), ...(("BANNER" | "EMAIL" | "TRAY" | "POPUP" | "DISCORD"))[]];
+  "targets": [({
+    "__typename": string;
     "id": string;
-    "pronouns": string | null;
-    "email": string;
-    "display_name": string;
-    "username": string;
-    "ucard_number": number;
-    "profile_picture": string | null;
+    "display_name": string | null;
+    "name": string | null;
+  }), ...({
+    "__typename": string;
+    "id": string;
+    "display_name": string | null;
+    "name": string | null;
+  })[]];
+  "approved_on": Date | null;
+  "dispatched_at": Date | null;
+  "attachments": Array<string>;
+  "author": {
     "created_at": Date;
+    "display_name": string;
+    "email": string;
+    "id": string;
+    "ucard_number": number;
+    "username": string;
+    "profile_picture": string | null;
+    "pronouns": string | null;
     "roles": Array<{
       "id": string;
       "name": string;
     }>;
   };
-  "targets": [({
-    "id": string;
-    "display_name": string | null;
-    "name": string | null;
-    "__typename": string;
-  }), ...({
-    "id": string;
-    "display_name": string | null;
-    "name": string | null;
-    "__typename": string;
-  })[]];
-  "type": ("ADMIN" | "ADVERT" | "ANNOUNCEMENT" | "EVENT" | "HEALTH_AND_SAFETY" | "INFRACTION" | "PRINTING" | "QUEUE_SLOT_ACTIVE" | "RECRUITMENT" | "REFERRAL" | "REMINDER" | "TRAINING");
-  "title": string;
-  "status": ("DRAFT" | "REVIEW" | "QUEUED" | "SENDING" | "SENT" | "ERRORED");
-  "priority": number;
-  "dispatched_at": Date | null;
-  "delivery_methods": [(("BANNER" | "EMAIL" | "TRAY" | "POPUP" | "DISCORD")), ...(("BANNER" | "EMAIL" | "TRAY" | "POPUP" | "DISCORD"))[]];
-  "content": string;
-  "created_at": Date;
-  "id": string;
-  "updated_at": Date;
-  "approved_on": Date | null;
 }>;
 
 export function allNotifications(client: Executor): Promise<AllNotificationsReturns> {

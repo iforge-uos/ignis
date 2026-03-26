@@ -22,6 +22,7 @@
   }
 }
 
+/* TODO use light-dark() */
 :root {
   --heartspace: oklab(69.428% -0.08995 -0.05021);
   --mainspace: oklab(61.098% 0.1309 0.07412);
@@ -273,4 +274,43 @@
     scrollbar-width: none;
     /* Firefox */
   }
+}
+
+.tool-floor-plan svg [data-tool-state] {
+  transition: filter 180ms ease, opacity 180ms ease;
+  cursor: pointer;
+}
+.tool-floor-plan svg [data-tool-state] :where(path, rect, circle, ellipse, polygon, polyline, line):not([data-tool-hitbox='true']) {
+  transition: stroke 180ms ease, fill 180ms ease, opacity 180ms ease;
+}
+.tool-floor-plan svg [data-tool-state="available"] {
+  filter: drop-shadow(0 0 0.7px rgba(22,163,74,0.9)) drop-shadow(0 0 3px rgba(74,222,128,0.45));
+}
+.tool-floor-plan svg [data-tool-state="available"] :where(path, rect, circle, ellipse, polygon, polyline, line):not([data-tool-hitbox='true']) {
+  stroke: rgba(21,128,61,1);
+}
+.tool-floor-plan svg [data-tool-state="partial"] {
+  filter: drop-shadow(0 0 0.7px rgba(217,119,6,0.95)) drop-shadow(0 0 3px rgba(251,191,36,0.45));
+}
+.tool-floor-plan svg [data-tool-state="partial"] :where(path, rect, circle, ellipse, polygon, polyline, line):not([data-tool-hitbox='true']) {
+  stroke: rgba(217,119,6,1);
+}
+.tool-floor-plan svg [data-tool-state="active"] {
+  filter: drop-shadow(0 0 0.8px rgba(194,65,12,1)) drop-shadow(0 0 4px rgba(251,146,60,0.6));
+}
+.tool-floor-plan svg [data-tool-state="active"] :where(path, rect, circle, ellipse, polygon, polyline, line):not([data-tool-hitbox='true']) {
+  stroke: rgba(194,65,12,1);
+}
+.tool-floor-plan svg [data-tool-state="restricted"] {
+  opacity: 0.92;
+  filter: drop-shadow(0 0 0.6px rgba(100,116,139,0.7));
+}
+.tool-floor-plan svg [data-tool-state="restricted"] :where(path, rect, circle, ellipse, polygon, polyline, line):not([data-tool-hitbox='true']) {
+  stroke: rgba(100,116,139,0.95);
+}
+.tool-floor-plan svg [data-tool-selected="true"] {
+  filter: drop-shadow(0 0 2px rgba(99,102,241,1)) drop-shadow(0 0 7px rgba(129,140,248,0.7)) !important;
+}
+.tool-floor-plan svg [data-tool-selected="true"] :where(path, rect, circle, ellipse, polygon, polyline, line):not([data-tool-hitbox='true']) {
+  stroke: rgba(99,102,241,1) !important;
 }
