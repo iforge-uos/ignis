@@ -1,3 +1,4 @@
+import { createFileRoute } from "@tanstack/react-router"
 import serialisers from "@/lib/serialisers";
 import { pub } from "@/orpc";
 import { OpenAPIGenerator } from "@orpc/openapi";
@@ -129,12 +130,12 @@ const awesomeMiddleware = createMiddleware({ type: "request" }).server(({ next }
   });
 });
 
-export const ServerRoute = createServerFileRoute("/api/$").middleware([awesomeMiddleware]).methods({
-  HEAD: handle,
-  GET: handle,
-  POST: handle,
-  PUT: handle,
-  PATCH: handle,
-  DELETE: handle,
-  OPTIONS: handle,
+export const Route = createFileRoute("/api/$")({
+  server: {
+    // middleware: [authMiddleware],
+    handlers: {
+      GET: handle,
+      POST: handle,
+    },
+  },
 });

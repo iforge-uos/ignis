@@ -172,6 +172,7 @@ const ClientTokenIdentity: $.$expr_PathNode<$.TypeSet<$ClientTokenIdentity, $.Ca
 export type $DiscordOAuthProviderλShape = $.typeutil.flatten<Omit<$OAuthProviderConfigλShape, "name" | "display_name"> & {
   "name": $.PropertyDesc<_std.$str, $.Cardinality.One, true, false, true, true>;
   "display_name": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, true, true>;
+  "prompt": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, true>;
 }>;
 type $DiscordOAuthProvider = $.ObjectType<"ext::auth::DiscordOAuthProvider", $DiscordOAuthProviderλShape, null, [
   ...$OAuthProviderConfig['__exclusives__'],

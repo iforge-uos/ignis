@@ -79,6 +79,7 @@ export namespace cfg {
     "auto_rebuild_query_cache"?: boolean | null;
     "auto_rebuild_query_cache_timeout"?: gel.Duration | null;
     "query_cache_mode"?: QueryCacheMode | null;
+    "query_cache_size"?: number | null;
     "http_max_connections"?: number | null;
     "shared_buffers"?: gel.ConfigMemory | null;
     "query_work_mem"?: gel.ConfigMemory | null;
@@ -332,6 +333,7 @@ export namespace ext {
     export interface DiscordOAuthProvider extends OAuthProviderConfig {
       "name": string;
       "display_name": string;
+      "prompt": string;
     }
     export interface Factor extends Auditable {
       "identity": LocalIdentity;
@@ -499,6 +501,7 @@ export namespace ext {
       "secret": string;
       "api_style": ProviderAPIStyle;
     }
+    export interface OllamaSnowflakeArcticEmbed2Model extends EmbeddingModel {}
     export interface OpenAIGPT_3_5_TurboModel extends TextGenerationModel {}
     export interface OpenAIGPT_4_Model extends TextGenerationModel {}
     export interface OpenAIGPT_4_TurboModel extends TextGenerationModel {}
@@ -1225,6 +1228,7 @@ export interface types {
       "OllamaLlama_3_3_Model": ext.ai.OllamaLlama_3_3_Model;
       "OllamaNomicEmbedTextModel": ext.ai.OllamaNomicEmbedTextModel;
       "OllamaProviderConfig": ext.ai.OllamaProviderConfig;
+      "OllamaSnowflakeArcticEmbed2Model": ext.ai.OllamaSnowflakeArcticEmbed2Model;
       "OpenAIGPT_3_5_TurboModel": ext.ai.OpenAIGPT_3_5_TurboModel;
       "OpenAIGPT_4_Model": ext.ai.OpenAIGPT_4_Model;
       "OpenAIGPT_4_TurboModel": ext.ai.OpenAIGPT_4_TurboModel;

@@ -26,7 +26,7 @@ const faqItems: FAQItem[] = [
     answer: (
       <>
         Our mantra is "learning through making." We are open for students and staff to tinker, make mistakes, and learn
-        in their free time. Everybody is welcome to work on personal projects and coursework and also allow other
+        in their free time. Everybody is welcome to work on personal projects and homework and also allow other
         student teams to prototype.
       </>
     ),

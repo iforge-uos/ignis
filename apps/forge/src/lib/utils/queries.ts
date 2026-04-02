@@ -115,7 +115,7 @@ export const TrainingSectionShape = e.shape(e.training.Training.sections, () => 
   id: true,
   index: true,
   content: true,
-  ...e.is(e.training.Page, { name: true, duration: true }),
+  ...e.is(e.training.TrainingPage, { name: true, duration: true }),  // training.Page here breaks (lol)
   ...e.is(e.training.Question, {
     type: true,
     answers: {

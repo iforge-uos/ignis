@@ -89,6 +89,7 @@ export type $AbstractConfigλShape = $.typeutil.flatten<$ConfigObjectλShape & {
   "auto_rebuild_query_cache": $.PropertyDesc<_std.$bool, $.Cardinality.AtMostOne, false, false, false, true>;
   "auto_rebuild_query_cache_timeout": $.PropertyDesc<_std.$duration, $.Cardinality.AtMostOne, false, false, false, true>;
   "query_cache_mode": $.PropertyDesc<$QueryCacheMode, $.Cardinality.AtMostOne, false, false, false, true>;
+  "query_cache_size": $.PropertyDesc<_std.$int32, $.Cardinality.AtMostOne, false, false, false, true>;
   "http_max_connections": $.PropertyDesc<_std.$int64, $.Cardinality.AtMostOne, false, false, false, true>;
   "shared_buffers": $.PropertyDesc<$memory, $.Cardinality.AtMostOne, false, false, false, false>;
   "query_work_mem": $.PropertyDesc<$memory, $.Cardinality.AtMostOne, false, false, false, false>;

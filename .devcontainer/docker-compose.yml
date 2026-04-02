@@ -37,6 +37,6 @@ services:
       - ../config/docker/valkey.conf:/usr/local/etc/valkey/valkey.conf
 
 volumes:
-  db_data:
+  # db_data:
   valkey_data:
   1p_data:
