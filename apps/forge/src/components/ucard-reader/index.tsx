@@ -40,7 +40,7 @@ export default function UCardReader() {
         keysPressed[keysPressed.length - 1].key === "Enter" &&
         keysPressed[keysPressed.length - 1].timestamp - keysPressed[0].timestamp < 10_000
       ) {
-        const matchingUser = await orpc.locations.user.call({ ucard_number, name: activeLocation });
+        const matchingUser = await orpc.locations.signIn.user.call({ ucard_number, name: activeLocation });
         if (!matchingUser) return;
 
         const PopUp = (action: string, onClick: () => Promise<any>) => {
@@ -91,12 +91,13 @@ export default function UCardReader() {
                   return (
                     <>
                       Successfully signed out{" "}
-                      <a
+                      <Link
                         className="font-bold hover:underline underline-offset-4 hover:cursor-pointer"
-                        href={`/users/${matchingUser.id}`}
+                        to="/users/$id"
+                        params={matchingUser}
                       >
                         {matchingUser.display_name}
-                      </a>
+                      </Link>
                     </>
                   );
                 },
@@ -108,7 +109,7 @@ export default function UCardReader() {
             PopUp("in", async () => {
               await navigate({
                 to: "/sign-in/$location/$ucard_number",
-                params: { location: activeLocation, ucard_number: ucard_number as any },
+                params: { name: activeLocation, ucard_number: ucard_number as any },
               });
               toast.dismiss(t);
             }),

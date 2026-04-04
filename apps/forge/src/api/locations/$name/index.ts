@@ -14,7 +14,6 @@ import { status } from "./status";
 import { supervisingReps } from "./supervising-reps";
 import { toolsRouter } from "./tools";
 import { trainingRouter } from "./training";
-import { user } from "./user";
 
 export const get = rep
   .input(z.object({ name: LocationNameSchema }))
@@ -49,5 +48,4 @@ export const nameRoutes = pub.prefix("/{name}").router({
   status,
   supervisingReps,
   training: trainingRouter,
-  user,
 });
