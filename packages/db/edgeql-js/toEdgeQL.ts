@@ -13,10 +13,32 @@ import {
 import {
   Cardinality,
   ExpressionKind,
-  OperatorKind,
+  OperatorKind,reservedKeywords,
   TypeKind,
-  util,
+  util
 } from "gel/dist/reflection/index";
+import type { $expr_Cast } from "./cast";
+import type { $expr_Detached } from "./detached";
+import type { $expr_For, $expr_ForVar } from "./for";
+import type { $expr_Function, $expr_Operator } from "./funcops";
+import { future } from "./future";
+import type { $expr_Global } from "./globals";
+import type { $expr_Group, GroupingSet } from "./group";
+import type { $expr_Insert, $expr_InsertUnlessConflict } from "./insert";
+import type { $expr_Literal } from "./literal";
+import type { $expr_Param, $expr_WithParams } from "./params";
+import type {
+  $expr_PathLeaf,
+  $expr_PathNode,
+  $expr_TypeIntersection,
+} from "./path";
+import type {
+  $expr_Delete,
+  $expr_Select,
+  LimitExpression,
+  OffsetExpression,
+} from "./select";
+import type { $expr_Set } from "./set";
 import {
   type $expr_Array,
   type $expr_NamedTuple,
@@ -33,31 +55,8 @@ import {
   type RangeType,
   type TypeSet,
 } from "./typesystem";
-import type { $expr_Literal } from "./literal";
-import type {
-  $expr_PathLeaf,
-  $expr_PathNode,
-  $expr_TypeIntersection,
-} from "./path";
-import { reservedKeywords } from "gel/dist/reflection/index";
-import type { $expr_Cast } from "./cast";
-import type { $expr_Detached } from "./detached";
-import type { $expr_For, $expr_ForVar } from "./for";
-import type { $expr_Function, $expr_Operator } from "./funcops";
-import type { $expr_Insert, $expr_InsertUnlessConflict } from "./insert";
-import type { $expr_Param, $expr_WithParams } from "./params";
-import type {
-  $expr_Delete,
-  $expr_Select,
-  LimitExpression,
-  OffsetExpression,
-} from "./select";
-import type { $expr_Set } from "./set";
 import type { $expr_Update } from "./update";
 import type { $expr_Alias, $expr_With } from "./with";
-import type { $expr_Group, GroupingSet } from "./group";
-import type { $expr_Global } from "./globals";
-import { future } from "./future";
 
 export type SomeExpression =
   | $expr_PathNode
@@ -661,11 +660,11 @@ function walkExprTree(
       break;
     }
     case ExpressionKind.WithParams: {
-      if (parentScope !== null) {
-        throw new Error(
-          `'withParams' does not support being used as a nested expression`,
-        );
-      }
+      // if (parentScope !== null) {
+      //   throw new Error(
+      //     `'withParams' does not support being used as a nested expression`,
+      //   );
+      // }
       childExprs.push(...walkExprTree(expr.__expr__, parentScope, ctx));
       break;
     }
@@ -868,6 +867,25 @@ function renderEdgeQL(
   if (expr.__kind__ === ExpressionKind.With) {
     return renderEdgeQL(expr.__expr__, ctx);
   } else if (expr.__kind__ === ExpressionKind.WithParams) {
+    if ((expr as any).__args__) {
+      const argList = Object.entries((expr as any).__args__)
+        .map(([key, value]) => {
+          if (
+            value &&
+            typeof value === "object" &&
+            (value as any).__kind__ === ExpressionKind.Param
+          ) {
+            return `  __param__${key} := ${renderEdgeQL(value as any, ctx)}`;
+          }
+          const param = expr.__params__.find(
+            (p: any) => p.__name__ === key,
+          ) as any;
+          return `  __param__${key} := ${literalToEdgeQL(param.__element__, value)}`;
+        })
+        .join(",\n");
+
+      return `(WITH\n${argList}\nSELECT ${renderEdgeQL(expr.__expr__, ctx)})`;
+    }
     return `(WITH\n${expr.__params__
       .map((param) => {
         const optional =
@@ -1380,7 +1398,7 @@ function shapeToEdgeQL(
     }
 
     if (typeof val !== "object") {
-      throw new Error(`Invalid shape element at "${key}".`);
+      throw new Error(`Invalid shape element at "${key}" ${val}.`);
     }
 
     const valIsExpression = Object.prototype.hasOwnProperty.call(
