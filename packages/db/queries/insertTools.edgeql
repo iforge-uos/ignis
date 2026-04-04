@@ -95,7 +95,7 @@ select {
     training := (select training::Training filter .name = "Sanding Machines" and exists .rep),
     tools := {
       (insert tools::Tool {
-        name := "Wood Sander",
+        name := "Wood Belt Sander",
         description := "Used for removing material from timbers and approved plastics down to dimension before fine finishing with sandpaper.",
         responsible_reps := (select users::Rep filter .email = "whpowell1"),
         training := (select training::Training filter .name = "Sanding Machines" and exists .rep),
@@ -108,7 +108,7 @@ select {
         grouped := true,
       }),
       (insert tools::Tool {
-        name := "Metal Sander",
+        name := "Metal Belt Sander",
         description := "Used for removing material from metal to dimension before fine finishing with sandpaper. Parts can become very hot to the touch so intermittent cooling with water is advised using the provided pot of water.",
         responsible_reps := (select users::Rep filter .email = "whpowell1"),
         training := (select training::Training filter .name = "Sanding Machines" and exists .rep),
