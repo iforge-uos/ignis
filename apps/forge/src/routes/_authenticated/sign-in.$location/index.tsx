@@ -1,9 +1,7 @@
 import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
-import { Button } from "@packages/ui/components/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@packages/ui/components/card";
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { Activity, Clock3, ExternalLink, ListChecks, ShieldCheck } from "lucide-react";
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { Activity, Clock3 } from "lucide-react";
 import MainspaceFloorPlanSvgMarkup from "@/../public/floorplans/mainspace-floor-plan.svg?raw";
 import ActiveLocationSelector from "@/components/sign-in/ActiveLocationSelector";
 import BusyChart from "@/components/sign-in/BusyChart";
@@ -14,6 +12,7 @@ import Title from "@/components/title";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { orpc } from "@/lib/orpc";
 import UCardInput from "../_reponly/sign-in.$location/$ucard_number/-components/UCardInput";
+import z from "zod";
 
 const SignInIndexAppComponent = () => {
   const resourceItems = [
@@ -30,7 +29,7 @@ const SignInIndexAppComponent = () => {
   ];
 
   const roles = useUserRoles();
-  const {name: activeLocation} = Route.useRouteContext();
+  const { location: activeLocation } = Route.useParams();
   const isRep = roles.some((role) => role === "rep");
   const isAdmin = roles.some((role) => role === "admin");
   const canViewDetailedUsage = isRep || isAdmin;
@@ -92,7 +91,6 @@ const SignInIndexAppComponent = () => {
             />
           </section>
 
-
           {canViewDetailedUsage && (
             <section className="space-y-4">
               <div className="flex items-center gap-2">
@@ -113,12 +111,5 @@ const SignInIndexAppComponent = () => {
 
 export const Route = createFileRoute("/_authenticated/sign-in/$location/")({
   component: SignInIndexAppComponent,
-  beforeLoad: ({ params: { location } }) => {
-    try {
-      const name = LocationNameSchema.parse(location.toUpperCase());
-      return { name };
-    } catch {
-      throw redirect({to: "/sign-in/$location", params: { location: "MAINSPACE" } });
-    }
-  },
+  params: z.object({ location: LocationNameSchema }),
 });

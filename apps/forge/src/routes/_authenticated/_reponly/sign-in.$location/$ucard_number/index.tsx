@@ -94,7 +94,7 @@ export type ReceiveReturn<T extends StepType> =
     }
   | { data: undefined; error: ErrorMap[T] };
 
-const flowQuery = ({ name, ucard_number }: z.infer<typeof InitialiseStep>) =>
+const flowQuery = ({ location: name, ucard_number }: z.infer<typeof Params>) =>
   queryOptions({
     queryKey: ["sign-in-flow", name, ucard_number],
     queryFn: async ({ signal }) => {
@@ -145,14 +145,11 @@ const flowQuery = ({ name, ucard_number }: z.infer<typeof InitialiseStep>) =>
     },
   });
 
-const RouteParams = z
-  .object({ location: LocationNameSchema, ucard_number: UCardNumber })
-  .transform(({ location, ucard_number }) => ({ name: location, ucard_number }));  // little cursed but must be done to maintain my sanity
+const Params = z.object({ location: LocationNameSchema, ucard_number: UCardNumber })
 
 export const Route = createFileRoute("/_authenticated/_reponly/sign-in/$location/$ucard_number/")({
-  params: RouteParams,
+  params: z.object({ location: LocationNameSchema, ucard_number: UCardNumber }),
   component: () => {
-    const navigate = useNavigate();
     const { data: { initialise, receive } = {} } = useQuery(flowQuery(Route.useParams()));
     const [user, setUser] = useState<SignInUser | null>(null);
 
@@ -171,7 +168,6 @@ export const Route = createFileRoute("/_authenticated/_reponly/sign-in/$location
     useEffect(() => {
       (async () => {
         if (!initialise || !receive) return;
-        console.log(currentStep, steps);
 
         const transmit = await initialise({ type: currentStep }); // fire off the request for the data when the step changes
         if (transmit.type === "INITIALISE") {
@@ -183,7 +179,7 @@ export const Route = createFileRoute("/_authenticated/_reponly/sign-in/$location
         setTransmit(transmit);
         console.log("Got transmit", currentStep, transmit);
       })();
-    }, [initialise, receive, currentStep, navigate]);
+    }, [initialise, receive, currentStep]);
 
     if (
       !initialise ||
