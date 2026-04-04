@@ -14,10 +14,10 @@ import { format, formatDuration } from "date-fns";
 import { Activity, Award, Calendar, Clock, CreditCard, InfoIcon, Plus, Users, Wallet } from "lucide-react";
 import { LocationIcon } from "@/icons/Locations";
 import { toTitleCase } from "@/lib/utils";
+import { handleTopUp } from "@/lib/utils/shop";
 import { getTrainingCompletionStatus } from "@/lib/utils/training";
 import { Procedures } from "@/types/router";
-import { SignInReason } from "../../_reponly/sign-in/actions/-components/SignInReason";
-import { handleTopUp } from "@/lib/utils/shop";
+import { SignInReason } from "../../_reponly/sign-in.$location/actions/-components/SignInReason";
 
 type User = Procedures["users"]["profile"]["get"];
 

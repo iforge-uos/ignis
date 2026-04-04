@@ -94,7 +94,7 @@ export default function TrainingTable({ training, isRep }: TrainingTableProps) {
     [training, searchTerm, fuse],
   );
 
-  const collapsedTrainings = useMemo(
+  const collapsedTrainings = useMemo(  // TODO make this make a web request
     () =>
       collapseEntries
         ? filteredTrainings.reduce((acc, training) => {

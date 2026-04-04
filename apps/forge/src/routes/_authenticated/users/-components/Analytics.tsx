@@ -7,9 +7,9 @@ import { format } from "date-fns";
 import { Area, AreaChart, Legend, Pie, PieChart, XAxis, YAxis } from "recharts";
 import { LocationIcon } from "@/icons/Locations";
 import { counter, toTitleCase } from "@/lib/utils";
-import { Procedures } from "@/types/router";
-import SignInChart from "../../_reponly/sign-in/dashboard/-components/SignInChart";
 import { formatReason } from "@/lib/utils/sign-in";
+import { Procedures } from "@/types/router";
+import SignInChart from "../../_reponly/sign-in.$location/dashboard/-components/SignInChart";
 
 type SignIns = Procedures["users"]["profile"]["get"]["grouped_sign_ins"];
 
