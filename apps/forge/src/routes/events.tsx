@@ -54,6 +54,6 @@ export const Route = createFileRoute("/events")({
       context.queryClient,
       orpc.events.upcoming.queryOptions(),
     );
-    return { events, calendarId: env.google.calendarIds[0] };
+    return { events, calendarId: import.meta.env.GOOGLE_CALENDARS?.split(",")[0] ?? "" };
   },
 });
