@@ -1,4 +1,4 @@
-import { originalUserRolesAtom, previousPathnameAtom, userAtom, userRolesAtom } from "@/atoms/authSessionAtoms";
+import { previousPathnameAtom, userAtom, userRolesAtom } from "@/atoms/authSessionAtoms";
 import { createFileRoute, Navigate, redirect } from "@tanstack/react-router";
 import { useAtomValue, useSetAtom } from "jotai";
 import { reconnectWebSocket } from "@/lib/orpc";
@@ -11,12 +11,10 @@ export const CompleteComponent = () => {
   }
   const setUser = useSetAtom(userAtom);
   const setRoles = useSetAtom(userRolesAtom);
-  const setOriginalRoles = useSetAtom(originalUserRolesAtom);
 
   setUser(user);
   const convertedRoles = user!.roles.map((role) => role.name.toLowerCase())
   setRoles(convertedRoles)
-  setOriginalRoles(convertedRoles);
   reconnectWebSocket();
   if (Route.useSearch().registered_now) {
     // TODO tutorial param for the home page?

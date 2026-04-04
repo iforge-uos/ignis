@@ -1,6 +1,5 @@
 // src/atoms/authSessionAtoms.ts
 
-import { User } from "@packages/types/users";
 import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { adminOverwriteRoles, adminOverwrittenRoles } from "@/atoms/adminAtoms";
@@ -20,15 +19,12 @@ export const userAtom = atomWithStorage<Procedures["users"]["me"] | null>(ATOM_K
 userAtom.debugLabel = "auth:user";
 
 
-export const originalUserRolesAtom = atom<string[]>([]);
-originalUserRolesAtom.debugLabel = "auth:originalRoles";
-
 export const userRolesAtom = atom(
   // Read function
   (get) => {
     const isOverwritten = get(adminOverwriteRoles);
     const overwrittenRoles = get(adminOverwrittenRoles);
-    const originalRoles = get(originalUserRolesAtom);
+    const originalRoles = get(userAtom)?.roles.map(({name}) => name.toLowerCase()) ?? []
 
     return isOverwritten ? overwrittenRoles : originalRoles;
   },
@@ -38,7 +34,7 @@ export const userRolesAtom = atom(
 
     if (!isOverwritten) {
       // Only update originalUserRolesAtom if admin overwrite is not active
-      set(originalUserRolesAtom, newRoles);
+      set(adminOverwrittenRoles, newRoles);
     }
     // If admin overwrite is active, writes to userRolesAtom will be ignored
   },

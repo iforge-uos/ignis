@@ -1,7 +1,6 @@
-import { originalUserRolesAtom } from "@/atoms/authSessionAtoms";
-import { useAtom } from "jotai";
+import { userAtom } from "@/atoms/authSessionAtoms";
+import { useAtomValue } from "jotai";
 
 export function useOriginalUserRoles() {
-  const [originalUserRoles] = useAtom(originalUserRolesAtom);
-  return originalUserRoles;
+  return useAtomValue(userAtom)?.roles.map(({name}) => name.toLowerCase()) ?? [];
 }
