@@ -1,8 +1,8 @@
 import { Temporal } from "@js-temporal/polyfill";
-import { EventPublisher } from "@orpc/client";
 import { createClient } from "@packages/db/edgeql-js";
 import { $Listenable, $ListenableWithChanges } from "@packages/db/edgeql-js/modules/default";
 import { $expr_PathNode, ObjectType, pointerToTsType, TypeSet } from "@packages/db/edgeql-js/reflection";
+import Redis from "ioredis";
 import z from "zod";
 import env from "./lib/env";
 
@@ -29,6 +29,21 @@ const client = createClient({ branch: "main", tlsSecurity: process.env.NODE_ENV 
         return Temporal.Duration.from({ microseconds: Number(data) });
       },
     },
+    "cal::local_time": {
+      toDatabase(data: Temporal.PlainTime): bigint {
+        const { hour, minute, second, millisecond, microsecond } = data;
+        return BigInt(hour * 3600_000_000 + minute * 60_000_000 + second * 1_000_000 + millisecond * 1_000 + microsecond);
+      },
+      fromDatabase(data: bigint): Temporal.PlainTime {
+        const hour = Number(data / 3600_000_000n);
+        const minute = Number((data % 3600_000_000n) / 60_000_000n);
+        const second = Number((data % 60_000_000n) / 1_000_000n);
+        const millisecond = Number((data % 1_000_000n) / 1_000n);
+        const microsecond = Number(data % 1_000n);
+
+        return Temporal.PlainTime.from({ hour, minute, second, millisecond, microsecond });
+      },
+    },
     "cal::local_date": {
       toDatabase(data: Temporal.PlainDate): [number, number, number] {
         return [data.year, data.month, data.day];
@@ -53,10 +68,6 @@ const client = createClient({ branch: "main", tlsSecurity: process.env.NODE_ENV 
     },
   });
 
-// export const auth = createExpressAuth(client, {
-//   baseUrl: "http://127.0.0.1:3000",
-//   // authCookieName: "",
-// });
 
 // listeners
 type Listenable = $Listenable["__polyTypenames__"];
@@ -77,32 +88,113 @@ export type UpdatedFields<
     }
   : never;
 
-export const DB_LISTENERS = new EventPublisher<Record<string, z.infer<typeof Listenable>>>();
 
-export function onInsert<U extends ObjectType<Listenable | ListenableWithChangesNames>>(
+type SubscriptionHandler = {
+  channel: string;
+  queue: z.infer<typeof Listenable>[];
+  resolve: ((value?: unknown) => void) | null;
+};
+
+const redisConfig = {
+  host: env.redis.host,
+  port: env.redis.port,
+  password: env.redis.password,
+  db: Number.parseInt(env.redis.db ?? "0"),
+  retryStrategy: (times: number) => Math.min(times * 50, 2000),
+};
+
+const redisPublisher = new Redis(redisConfig);
+const redisSubscriber = new Redis(redisConfig);
+
+const subscriptions = new Map<string, SubscriptionHandler>();
+
+// Setup message handler once
+redisSubscriber.on("message", (channel: string, message: string) => {
+  try {
+    const listenable = Listenable.parse(JSON.parse(message));
+    for (const [, handler] of subscriptions) {
+      if (handler.channel === channel) {
+        handler.queue.push(listenable);
+        handler.resolve?.();
+        handler.resolve = null;
+      }
+    }
+  } catch (error) {
+    console.error("Failed to process DB listener message", error);
+  }
+});
+
+export async function publishDbListenable(listenable: z.infer<typeof Listenable>) {
+  const message = JSON.stringify(listenable);
+  await Promise.all([
+    redisPublisher.publish(listenable.type, message),
+    redisPublisher.publish(`${listenable.type}$${listenable.action}`, message),
+  ]);
+}
+
+export async function* subscribeToDbListener(channel: string) {
+  const subscriptionId = `${channel}-${Math.random()}`;
+  const handler: SubscriptionHandler = {
+    channel,
+    queue: [],
+    resolve: null,
+  };
+
+  subscriptions.set(subscriptionId, handler);
+  await redisSubscriber.subscribe(channel);
+
+  try {
+    while (true) {
+      if (handler.queue.length > 0) {
+        yield handler.queue.shift()!;
+      } else {
+        await new Promise((r) => (handler.resolve = r));
+      }
+    }
+  } finally {
+    subscriptions.delete(subscriptionId);
+  }
+}
+
+export async function onInsert<U extends ObjectType<Listenable | ListenableWithChangesNames>>(
   type: $expr_PathNode<TypeSet<U>>,
   cb: (arg0: { id: string }) => Promise<void>,
 ) {
-  return DB_LISTENERS.subscribe(`${type.__element__.__name__ as Listenable}$insert`, cb as any);
+  const channel = `${type.__element__.__name__ as Listenable}$insert`;
+  for await (const event of subscribeToDbListener(channel)) {
+    if (event.type === (type.__element__.__name__ as Listenable)) {
+      await cb(event as any);
+    }
+  }
 }
 
-export function onUpdate<U extends ObjectType<Listenable>>(
+export async function onUpdate<U extends ObjectType<Listenable>>(
   type: $expr_PathNode<TypeSet<U>>,
   cb: (arg0: { id: string }) => Promise<void>,
-): () => void;
-export function onUpdate<U extends ObjectType<ListenableWithChangesNames>>(
+): Promise<void>;
+export async function onUpdate<U extends ObjectType<ListenableWithChangesNames>>(
   type: $expr_PathNode<TypeSet<U>>,
   cb: (arg0: UpdatedFields<U>) => Promise<void>,
-): () => void;
-export function onUpdate(type: $expr_PathNode, cb: (arg0: any) => Promise<void>) {
-  return DB_LISTENERS.subscribe(`${type.__element__.__name__}$update`, cb as any);
+): Promise<void>;
+export async function onUpdate(type: $expr_PathNode, cb: (arg0: any) => Promise<void>) {
+  const channel = `${type.__element__.__name__}$update`;
+  for await (const event of subscribeToDbListener(channel)) {
+    if (event.type === type.__element__.__name__) {
+      await cb(event as any);
+    }
+  }
 }
 
-export function onDelete<U extends ObjectType<Listenable | ListenableWithChangesNames>>(
+export async function onDelete<U extends ObjectType<Listenable | ListenableWithChangesNames>>(
   type: $expr_PathNode<TypeSet<U>>,
   cb: (arg0: { id: string }) => Promise<void>,
 ) {
-  return DB_LISTENERS.subscribe(`${type.__element__.__name__ as Listenable}$delete`, cb as any);
+  const channel = `${type.__element__.__name__ as Listenable}$delete`;
+  for await (const event of subscribeToDbListener(channel)) {
+    if (event.type === (type.__element__.__name__ as Listenable)) {
+      await cb(event as any);
+    }
+  }
 }
 
 const _Base = z.object({

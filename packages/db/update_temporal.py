@@ -23,12 +23,16 @@ REPLACEMENTS: list[tuple[str, str]] = [
         'export type $duration = $.ScalarType<"std::duration", Temporal.Duration>;',
     ),
     (
-        'export type $cal_local_date = $.ScalarType<"cal::local_date", _.gel.LocalDate>;',
-        'export type $cal_local_date = $.ScalarType<"cal::local_date", Temporal.PlainDate>;',
+        'export type $local_date = $.ScalarType<"std::cal::local_date", _.gel.LocalDate>;',
+        'export type $local_date = $.ScalarType<"std::cal::local_date", Temporal.PlainDate>;',
     ),
     (
-        'export type $cal_local_datetime = $.ScalarType<"cal::local_datetime", _.gel.LocalDateTime>;',
-        'export type $cal_local_datetime = $.ScalarType<"cal::local_datetime", Temporal.PlainDateTime>;',
+        'export type $local_datetime = $.ScalarType<"std::cal::local_datetime", _.gel.LocalDateTime>;',
+        'export type $local_datetime = $.ScalarType<"std::cal::local_datetime", Temporal.PlainDateTime>;',
+    ),
+    (
+        'export type $local_time = $.ScalarType<"std::cal::local_time", _.gel.LocalTime>;',
+        'export type $local_time = $.ScalarType<"std::cal::local_time", Temporal.PlainTime>;',
     ),
     (
         'export type $DimensionType = $.ScalarType<"std::json", unknown>;',
@@ -113,6 +117,7 @@ def main():
     print("Starting script to update temporal types...")
 
     apply_replacements(ROOT / "edgeql-js" / "modules" / "std.ts")
+    apply_replacements(ROOT / "edgeql-js" / "modules" / "std" / "cal.ts")
     apply_replacements(ROOT / "edgeql-js" / "modules" / "shop.ts")
     apply_replacements(ROOT / "edgeql-js" / "path.ts")
     apply_replacements(ROOT / "edgeql-js" / "group.ts")
