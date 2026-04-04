@@ -1,4 +1,5 @@
 import { commandMenuIsOpenAtom } from "@/atoms/commandMenuAtoms";
+import { activeLocationAtom } from "@/atoms/signInAppAtoms";
 import { CommandConfig, commandConfig } from "@/config/commands";
 import { useFilteredCommands } from "@/hooks/useFilteredCommands";
 import { useShortcutKey } from "@/hooks/useShortcutKey";
@@ -17,7 +18,7 @@ import {
 } from "@packages/ui/components/command";
 import { Shortcut } from "@packages/ui/components/kbd";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { X } from "lucide-react";
 import React from "react";
 import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
@@ -29,6 +30,7 @@ type ActiveContent = {
 
 export default function CommandMenu() {
   const [isOpen, setIsOpen] = useAtom(commandMenuIsOpenAtom);
+  const activeLocation = useAtomValue(activeLocationAtom);
   const isMacOs = useShortcutKey() === "⌘";
   const navigateBase = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -37,8 +39,8 @@ export default function CommandMenu() {
   const metaKey = useShortcutKey();
 
   const navigate = useCallback(
-    (to: RoutePath) => {
-      navigateBase({ to }).then(() => setIsOpen(false));
+    (to: RoutePath, params?: Record<string, string>) => {
+      navigateBase({ to, params }).then(() => setIsOpen(false));
     },
     [navigateBase, setIsOpen],
   );
@@ -47,7 +49,12 @@ export default function CommandMenu() {
     (command: CommandConfig) => {
       switch (command.action.type) {
         case "navigate":
-          navigate(command.action.to);
+          navigate(
+            command.action.to,
+            command.action.params && typeof command.action.params === "function"
+              ? command.action.params()
+              : command.action.params,
+          );
           break;
         case "component":
           setActiveContent({
@@ -124,7 +131,11 @@ export default function CommandMenu() {
                     <p className="text-sm text-muted-foreground">No results found</p>
                     <p className="text-sm font-medium">
                       Please{" "}
-                      <Link to="/sign-in" className="inline-flex items-center gap-1 text-primary hover:underline">
+                      <Link
+                        to="/sign-in/$location"
+                        params={{ location: activeLocation }}
+                        className="inline-flex items-center gap-1 text-primary hover:underline"
+                      >
                         sign in
                         <span aria-hidden="true">→</span>
                       </Link>{" "}

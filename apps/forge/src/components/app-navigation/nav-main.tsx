@@ -55,7 +55,7 @@ export function NavMain({ items }: NavMainProps) {
                     <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                   </SidebarMenuButton>
                 ) : (
-                  <Link to={item.url} onClick={handleClick} disabled={item.disabled}>
+                  <Link to={item.url} params={typeof item.params === "function" ? item.params() : item.params} onClick={handleClick} disabled={item.disabled}>
                     <SidebarMenuButton tooltip={item.title} disabled={item.disabled}>
                       {item.icon && <item.icon />}
                       <span>{item.title}</span>
@@ -69,7 +69,7 @@ export function NavMain({ items }: NavMainProps) {
                     {item.items.map((subItem) => (
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton asChild>
-                          <Link to={subItem.url} onClick={handleClick}>
+                          <Link to={subItem.url} params={typeof subItem.params === "function" ? subItem.params() : subItem.params} onClick={handleClick}>
                             {subItem.icon && <subItem.icon />}
                             <span>{subItem.title}</span>
                           </Link>

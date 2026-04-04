@@ -1,5 +1,3 @@
-import { NavSub as NavSubType } from "@/types/nav";
-import { RoutePath } from "@/types/router";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -9,6 +7,7 @@ import {
   useSidebar,
 } from "@packages/ui/components/sidebar";
 import { Link } from "@tanstack/react-router";
+import { NavSub as NavSubType } from "@/types/nav";
 
 interface NavSubProps {
   elements: NavSubType[];
@@ -36,7 +35,7 @@ export function NavSub({ elements }: NavSubProps) {
                   <span>{item.name}</span>
                 </a>
               ) : (
-                <Link to={item.url} onClick={handleClick}>
+                <Link to={item.url} params={item.params && typeof item.params === "function" ? item.params() : item.params} onClick={handleClick}>
                   <item.icon />
                   <span>{item.name}</span>
                 </Link>

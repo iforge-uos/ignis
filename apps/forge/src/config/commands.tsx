@@ -1,5 +1,3 @@
-import { RoleSelector } from "@/components/command-menu/actions/role-selector";
-import { CommandAction } from "@/types/commands";
 import {
   DramaIcon,
   LayoutDashboard,
@@ -10,6 +8,9 @@ import {
   UserRound,
   UserRoundSearch,
 } from "lucide-react";
+import { RoleSelector } from "@/components/command-menu/actions/role-selector";
+import { getActiveLocation } from "@/lib/utils/sign-in";
+import { CommandAction } from "@/types/commands";
 
 export interface CommandConfig {
   shortcutKey: string;
@@ -53,7 +54,8 @@ export const commandConfig: CommandConfig[] = [
     requiredRoles: ["rep"],
     action: {
       type: "navigate",
-      to: "/sign-in/dashboard",
+      to: "/sign-in/$location/dashboard",
+      params: () => ({ location: getActiveLocation() }),
     },
   },
   {
@@ -76,7 +78,8 @@ export const commandConfig: CommandConfig[] = [
     requiredRoles: ["rep"],
     action: {
       type: "navigate",
-      to: "/sign-in/actions/in",
+      to: "/sign-in/$location/actions/in",
+      params: () => ({ location: getActiveLocation() }),
     },
   },
   {
@@ -87,7 +90,8 @@ export const commandConfig: CommandConfig[] = [
     requiredRoles: ["rep"],
     action: {
       type: "navigate",
-      to: "/sign-in/actions/out",
+      to: "/sign-in/$location/actions/out",
+      params: () => ({ location: getActiveLocation() }),
     },
   },
   {

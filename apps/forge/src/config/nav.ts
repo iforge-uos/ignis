@@ -41,6 +41,7 @@ import {
   WrenchIcon,
   ZapIcon,
 } from "lucide-react";
+import { getActiveLocation } from "@/lib/utils/sign-in";
 import { AppConfig } from "@/types/nav";
 import { RepIcon } from "../icons/Rep";
 
@@ -96,7 +97,8 @@ export const appConfig: AppConfig[] = [
   },
   {
     name: "Sign In",
-    url: "/sign-in",
+    url: "/sign-in/$location",
+    params: () => ({ location: getActiveLocation() }),
     logo: PencilRulerIcon,
     color: "#500724",
     description: "Manage sign-ins",
@@ -104,40 +106,45 @@ export const appConfig: AppConfig[] = [
     routes: [
       {
         title: "Home",
-        url: "/sign-in",
+        url: "/sign-in/$location",
+        params: () => ({ location: getActiveLocation() }),
         icon: HouseIcon,
         isActive: true,
       },
-      {
-        title: "Actions",
-        icon: ZapIcon,
-        isActive: true,
-        requiredRoles: ["rep"],
-        items: [
-          {
-            title: "Sign In",
-            icon: ArrowRightToLineIcon,
-            url: "/sign-in/actions/in",
-          },
-          {
-            title: "Sign Out",
-            icon: ArrowLeftToLineIcon,
-            url: "/sign-in/actions/out",
-          },
-          {
-            title: "Enqueue",
-            icon: ListEndIcon,
-            url: "/sign-in/actions/enqueue",
-          },
-        ],
-      },
-      {
+            {
         title: "Dashboard",
-        url: "/sign-in/dashboard",
+        url: "/sign-in/$location/dashboard",
+        params: () => ({ location: getActiveLocation() }),
         icon: LayoutDashboardIcon,
         isActive: true,
         requiredRoles: ["rep"],
       },
+      // {
+      //   title: "Actions",
+      //   icon: ZapIcon,
+      //   isActive: true,
+      //   requiredRoles: ["rep"],
+      //   items: [
+      //     {
+      //       title: "Sign In",
+      //       icon: ArrowRightToLineIcon,
+      //       url: "/sign-in/$location/actions/in",
+      //       params: () => ({ location: getActiveLocation() }),
+      //     },
+      //     {
+      //       title: "Sign Out",
+      //       icon: ArrowLeftToLineIcon,
+      //       url: "/sign-in/$location/actions/out",
+      //       params: () => ({ location: getActiveLocation() }),
+      //     },
+      //     {
+      //       title: "Enqueue",
+      //       icon: ListEndIcon,
+      //       url: "/sign-in/$location/actions/enqueue",
+      //       params: () => ({ location: getActiveLocation() }),
+      //     },
+      //   ],
+      // },
     ],
     navSub: [{ name: "iDocs", url: "https://docs.iforge.sheffield.ac.uk", icon: BookOpenIcon, isExternal: true }],
   },

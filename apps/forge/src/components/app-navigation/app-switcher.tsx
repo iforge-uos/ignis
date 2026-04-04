@@ -1,6 +1,3 @@
-import { appConfig } from "@/config/nav";
-import useCurrentApp from "@/hooks/useCurrentApp";
-import { useUserRoles } from "@/hooks/useUserRoles";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,10 +5,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@packages/ui/components/dropdown-menu";
+import { AnimateIcon } from "@packages/ui/components/icon";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@packages/ui/components/sidebar";
 import { Link } from "@tanstack/react-router";
+import { appConfig } from "@/config/nav";
+import useCurrentApp from "@/hooks/useCurrentApp";
+import { useUserRoles } from "@/hooks/useUserRoles";
 import { ChevronUpDown } from "@/icons/ChevronUpDown";
-import { AnimateIcon } from "@packages/ui/components/icon";
 
 export function AppSwitcher() {
   const { isMobile } = useSidebar();
@@ -68,7 +68,11 @@ export function AppSwitcher() {
           >
             <DropdownMenuLabel className="text-xs text-muted-foreground">iForge Apps</DropdownMenuLabel>
             {filteredApps.map((app) => (
-              <Link key={app.name} to={app.url}>
+              <Link
+                key={app.name}
+                to={app.url}
+                params={app.params && typeof app.params === "function" ? app.params() : app.params}
+              >
                 <DropdownMenuItem className="gap-2 p-2">
                   <div
                     className="flex size-6 items-center justify-center rounded-sm border"
