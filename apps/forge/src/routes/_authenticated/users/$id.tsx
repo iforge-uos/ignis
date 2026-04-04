@@ -17,16 +17,18 @@ import DiscordIcon from "@/../public/icons/discord.svg?react";
 import GitHubIcon from "@/../public/icons/github.svg?react";
 import { UserAvatar } from "@/components/avatar";
 import Title from "@/components/title";
+import { useUserRoles } from "@/hooks/useUserRoles";
 import { orpc } from "@/lib/orpc";
 import { debounce } from "@/lib/utils";
 import { cn } from "@/lib/utils/cn";
 import Analytics from "./-components/Analytics";
+import Infractions from "./-components/Infractions";
 import Overview from "./-components/Overview";
 import Timeline from "./-components/Timeline";
 import Training from "./-components/Training";
 
 const USER_TABS = ["overview", "training", "analytics"] as const;
-const REP_TABS = ["teams"] as const;
+const REP_TABS = ["teams", "infractions"] as const;
 
 export default function Component() {
   const navigate = useNavigate({ from: Route.fullPath });
@@ -300,11 +302,12 @@ export default function Component() {
                 onValueChange={(value) => setActiveTab(value as typeof activeTab)}
                 className="space-y-6"
               >
-                <TabsList className={cn("grid w-full", isRep ? "grid-cols-4" : "grid-cols-3")}>
+                <TabsList className={cn("grid w-full", isRep ? "grid-cols-5" : "grid-cols-3")}>
                   <TabsTrigger value="overview">Overview</TabsTrigger>
                   <TabsTrigger value="training">Trainings</TabsTrigger>
                   <TabsTrigger value="analytics">Analytics</TabsTrigger>
                   {isRep && <TabsTrigger value="teams">Teams</TabsTrigger>}
+                  {isRep && <TabsTrigger value="infractions">Infractions</TabsTrigger>}
                 </TabsList>
 
                 <TabsContent value="overview" className="space-y-6">
@@ -322,6 +325,12 @@ export default function Component() {
                 {isRep && (
                   <TabsContent value="teams">
                     <Timeline user={user} />
+                  </TabsContent>
+                )}
+
+                {isRep && (
+                  <TabsContent value="infractions">
+                    <Infractions user={user} />
                   </TabsContent>
                 )}
               </Tabs>

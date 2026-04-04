@@ -72,6 +72,7 @@ export const get = auth
             })),
           },
           grouped_sign_ins: e.select(groupSignIns(user.sign_ins)),
+          infractions: InfractionShape(user.infractions),
           recent_sign_in_count: e.count(e.select(user.sign_ins, last3Months)),
           dweller: e.op(
             1,
