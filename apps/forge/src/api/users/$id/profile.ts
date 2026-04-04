@@ -2,7 +2,7 @@ import { call, isDefinedError, safe } from "@orpc/server";
 import e from "@packages/db/edgeql-js";
 import * as z from "zod";
 import { usersRouter as shopUsers } from "@/api/shop/users";
-import { TrainingShape, UserShape } from "@/lib/utils/queries";
+import { InfractionShape, TrainingShape, UserShape } from "@/lib/utils/queries";
 import { auth } from "@/orpc";
 import { IntegrationShape, resolveIntegrations } from "./integrations";
 import { groupSignIns } from "./sign-ins";
@@ -12,23 +12,24 @@ const _ALWAYS_TRUE = e.op("exists", 1);
 export const get = auth
   .route({ method: "GET", path: "/" })
   .input(z.object({ id: z.uuid() }))
-  .handler(async ({ input: { id }, context: { db, ...rest } }) => {
-    const last3Months = e.shape(
-      e.sign_in.SignIn,
-      (sign_in) => {
-        const filter = e.op(
-          // @ts-expect-error  // some weird temporal issue I'm sure
-          sign_in.created_at,
-          ">",
-          new Date(Date.now() - 1000 * 60 * 60 * 24 * 30 * 3),
-        ) as unknown as typeof _ALWAYS_TRUE;
-        return {
-          filter,
-        };
-        // should be this but there's a vite(???) issue which turns Duration into a regular object rather than a class
-        // (sign_in) => ({ filter: e.op(sign_in.created_at, ">", e.op(e.datetime_of_statement(), "-", Duration.from({months: 3}))) }),
-      },
-    );
+  .handler(async ({ input: { id }, context: { db, ...rest }, errors }) => {
+    if (id !== rest.user.id && !rest.user.roles.map(({ name }) => name.toLowerCase()).includes("rep")) {
+      throw errors.NOT_FOUND({ message: "User not found" });
+    }
+
+    const last3Months = e.shape(e.sign_in.SignIn, (sign_in) => {
+      const filter = e.op(
+        // @ts-expect-error  // some weird temporal issue I'm sure
+        sign_in.created_at,
+        ">",
+        new Date(Date.now() - 1000 * 60 * 60 * 24 * 30 * 3),
+      ) as unknown as typeof _ALWAYS_TRUE;
+      return {
+        filter,
+      };
+      // should be this but there's a vite(???) issue which turns Duration into a regular object rather than a class
+      // (sign_in) => ({ filter: e.op(sign_in.created_at, ">", e.op(e.datetime_of_statement(), "-", Duration.from({months: 3}))) }),
+    });
 
     const frequencies = e.select(e.users.User, (user) => ({
       sign_in_count: e.count(e.select(user.sign_ins, last3Months)),
@@ -55,21 +56,25 @@ export const get = auth
             status: true,
             teams: { id: true, name: true, "@created_at": true, "@ends_at": true, "@team_lead": true },
           }),
-          training: {
-            ...TrainingShape(user.training),
-            icon_url: true,
-            in_person_signed_off_by: e.select(e.users.Rep, (r) => ({
-              filter_single: e.op(
-                e.op(r.id, "=", user.training["@in_person_signed_off_by"]),
-                // I don't understand why this is, with reps not being able to sign themselves off for training but
-                // you can somehow (even though @in_person_signed_off_by is single) get yourself in a situation
-                // where this returns a multi rather than a single
-                "and",
-                e.op(r.id, "!=", user.id),
+          training: (t) => {
+            const in_person_signed_off_by = e.cast(
+              // cursed but required to get around cardinality issues
+              e.users.Rep,
+              e.assert_single(
+                e.select(user.training, (ut) => ({
+                  filter_single: { id: t.id },
+                  in_person_signed_off_by: ut["@in_person_signed_off_by"],
+                })).in_person_signed_off_by,
               ),
-              id: true,
-              display_name: true,
-            })),
+            );
+            return {
+              ...TrainingShape(t),
+              icon_url: true,
+              in_person_signed_off_by: e.select(in_person_signed_off_by, () => ({
+                id: true,
+                display_name: true,
+              })),
+            };
           },
           grouped_sign_ins: e.select(groupSignIns(user.sign_ins)),
           infractions: InfractionShape(user.infractions),
@@ -88,7 +93,13 @@ export const get = auth
               ),
             ),
           ),
-          frequent_customer: e.op(e.op(e.count(e.select(user.sign_ins, last3Months)), ">", e.math.mean(frequencies)), "if", e.op("exists", frequencies), "else", false),
+          frequent_customer: e.op(
+            e.op(e.count(e.select(user.sign_ins, last3Months)), ">", e.math.mean(frequencies)),
+            "if",
+            e.op("exists", frequencies),
+            "else",
+            false,
+          ),
           // streak: e.select(user.sign_ins),
           integrations: IntegrationShape,
           filter_single: { id },
