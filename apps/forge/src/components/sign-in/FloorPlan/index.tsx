@@ -14,14 +14,7 @@ import { applyToolStyles } from "./svg-state";
 import { ToolInfoPanel } from "./ToolInfoPanel";
 import type { FloorPlanProps, ToolGroup } from "./types";
 
-
-export default function FloorPlan({
-  svgMarkup,
-  svgWidth = 560,
-  tools,
-  canViewLiveUsage,
-  className,
-}: FloorPlanProps) {
+export default function FloorPlan({ svgMarkup, svgWidth = 560, tools, className }: FloorPlanProps) {
   const mapViewportRef = useRef<HTMLDivElement>(null);
   const svgWrapperRef = useRef<HTMLDivElement>(null);
 
@@ -44,7 +37,7 @@ export default function FloorPlan({
         displayName,
         quantity,
         state: getToolState(match?.use_count ?? null, quantity),
-        name: null,
+        name: match?.name ?? null,
       };
     });
   }, [discoveredGroups, tools]);
@@ -148,7 +141,6 @@ export default function FloorPlan({
     svg.addEventListener("mouseleave", leaveHandler, { signal: eventController.signal });
     svg.addEventListener("click", clickHandler, { signal: eventController.signal });
 
-
     return () => {
       eventController.abort();
       setHoveredId(null);
@@ -195,23 +187,13 @@ export default function FloorPlan({
   return (
     <Card className={className}>
       <CardHeader>
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              <MapPinned className="size-4" />
-              Tool Map
-            </CardTitle>
-            <CardDescription>
-              Click a tool on the map or in the list to see details. Scroll to zoom, drag to pan.
-            </CardDescription>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Badge variant={canViewLiveUsage ? "info" : "outline"}>
-              {canViewLiveUsage ? `${totalActive}/${totalQuantity} active` : `${totalQuantity} total capacity`}
-            </Badge>
-            <Badge variant="outline">{toolGroups.length} groups</Badge>
-          </div>
-        </div>
+        <CardTitle className="flex items-center gap-2">
+          <MapPinned className="size-4" />
+          Tool Map
+        </CardTitle>
+        <CardDescription>
+          Click a tool on the map or in the list to see details. Scroll to zoom, drag to pan.
+        </CardDescription>
       </CardHeader>
 
       <CardContent className="grid gap-4 xl:grid-cols-[minmax(0,1.35fr)_20rem]">
@@ -229,28 +211,28 @@ export default function FloorPlan({
               pinch={{ step: 5 }}
               doubleClick={{ step: 0.7 }}
             >
-              {({ zoomIn, zoomOut, resetTransform }) => (
+              {({ zoomIn, zoomOut, centerView }) => (
                 <>
                   {hoveredTooltip?.title && tooltipPos ? (
-                      <Tooltip open={true}>
-                        <TooltipTrigger asChild>
-                          <div
-                            className="pointer-events-none absolute size-0"
-                            style={{
-                              left: tooltipLeft,
-                              top: tooltipTop,
-                            }}
-                          />
-                        </TooltipTrigger>
-                        <TooltipContent side="right" className="max-w-56">
-                          <div className="space-y-1">
-                            <p className="font-medium">{hoveredTooltip.title}</p>
-                            {hoveredTooltip.subtitle ? (
-                              <p className="text-xs text-muted-foreground">{hoveredTooltip.subtitle}</p>
-                            ) : null}
-                          </div>
-                        </TooltipContent>
-                      </Tooltip>
+                    <Tooltip open={true}>
+                      <TooltipTrigger asChild>
+                        <div
+                          className="pointer-events-none absolute size-0"
+                          style={{
+                            left: tooltipLeft,
+                            top: tooltipTop,
+                          }}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent side="right" className="max-w-56">
+                        <div className="space-y-1">
+                          <p className="font-medium">{hoveredTooltip.title}</p>
+                          {hoveredTooltip.subtitle ? (
+                            <p className="text-xs text-muted-foreground">{hoveredTooltip.subtitle}</p>
+                          ) : null}
+                        </div>
+                      </TooltipContent>
+                    </Tooltip>
                   ) : null}
 
                   <div className="absolute left-3 top-3 z-10 flex flex-col gap-1">
@@ -260,7 +242,7 @@ export default function FloorPlan({
                     <Button variant="outline" size="icon" onClick={() => zoomOut()} title="Zoom out">
                       <ZoomOut className="size-3.5" />
                     </Button>
-                    <Button variant="outline" size="icon" onClick={() => resetTransform()} title="Reset view">
+                    <Button variant="outline" size="icon" onClick={() => centerView(1)} title="Reset view">
                       <RotateCcw className="size-3.5" />
                     </Button>
                   </div>
@@ -291,7 +273,7 @@ export default function FloorPlan({
           {selectedTool?.name ? (
             <ToolInfoPanel tool={selectedTool} onClose={() => setSelectedId(null)} />
           ) : (
-            <LegendPanel machines={toolGroups} selectedId={selectedId} onSelect={setSelectedId} />
+            <LegendPanel tools={toolGroups} selectedId={selectedId} onSelect={setSelectedId} />
           )}
         </div>
       </CardContent>

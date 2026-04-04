@@ -3,16 +3,15 @@ import { useUserRoles } from "@/hooks/useUserRoles";
 import { Button } from "@packages/ui/components/button";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useAtom, useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { orpc } from "/src/lib/orpc";
 
 export default function UCardReader() {
   const [keysPressed, setKeysPressed] = useState<{ key: string; timestamp: number }[]>([]);
-  const [activeLocation] = useAtom(activeLocationAtom);
-  const setSession = useSetAtom(sessionAtom);
+  const activeLocation = useAtomValue(activeLocationAtom);
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const rep = useUserRoles().includes("rep");
 
   useEffect(() => {
@@ -31,35 +30,31 @@ export default function UCardReader() {
 
   useEffect(() => {
     (async () => {
-      const uCardNumber = keysPressed
+      const ucard_number = keysPressed
         .slice(0, -1)
         .map(({ key }) => key)
         .join("")
         .match(/\d{9}$/)?.[0];
       if (
-        uCardNumber &&
+        ucard_number &&
         keysPressed[keysPressed.length - 1].key === "Enter" &&
         keysPressed[keysPressed.length - 1].timestamp - keysPressed[0].timestamp < 10_000
       ) {
-        const userProps = {
-          uCardNumber,
-          locationName: activeLocation,
-          signal: undefined as any,
-          params: { fast: true },
-        };
-        const matchingUser = await GetSignIn(userProps);
+        const matchingUser = await orpc.locations.user.call({ ucard_number, name: activeLocation });
+        if (!matchingUser) return;
 
         const PopUp = (action: string, onClick: () => Promise<any>) => {
           return (
             <div className="flex justify-between items-center">
               <div>
                 <div className="pr-3 text-m">
-                  <a
+                  <Link
                     className="font-bold hover:underline underline-offset-4 hover:cursor-pointer"
-                    href={`/users/${matchingUser.id}`}
+                    to="/users/$id"
+                    params={matchingUser}
                   >
                     {matchingUser.display_name}
-                  </a>{" "}
+                  </Link>{" "}
                   would like to sign {action}.
                 </div>
                 <div>Sign {action} this user?</div>
@@ -74,7 +69,7 @@ export default function UCardReader() {
         if (matchingUser.location) {
           const t = toast(
             PopUp("out", async () => {
-              toast.promise(PostSignOut(userProps), {
+              toast.promise(orpc.locations.signIns.out.call({ ucard_number, name: activeLocation }), {
                 id: t,
                 loading: "Loading...",
                 error: (e) => {
@@ -93,8 +88,6 @@ export default function UCardReader() {
                   );
                 },
                 success: async () => {
-      queryClient.invalidateQueries({queryKey: orpc.locations.get.queryKey({input:{name: activeLocation}})});
-      queryClient.invalidateQueries({queryKey:orpc.locations.statuses.queryKey()});
                   return (
                     <>
                       Successfully signed out{" "}
@@ -111,26 +104,19 @@ export default function UCardReader() {
             }),
           );
         } else {
-          // Replace Redux dispatch with Jotai setSession
-          setSession({
-            ucard_number: uCardNumber,
-            user: matchingUser,
-            training: null,
-            sign_in_reason: null,
-            session_errored: false,
-            navigation_is_backtracking: false,
-          });
-
           const t = toast(
             PopUp("in", async () => {
-              await navigate({ to: "/sign-in/actions/in-faster" });
+              await navigate({
+                to: "/sign-in/$location/$ucard_number",
+                params: { location: activeLocation, ucard_number: ucard_number as any },
+              });
               toast.dismiss(t);
             }),
           );
         }
       }
     })();
-  }, [keysPressed, activeLocation, setSession, navigate, queryClient]);
+  }, [keysPressed, activeLocation, navigate]);
 
   return undefined;
 }

@@ -2,8 +2,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import React, { createContext, use, useCallback, useEffect, useRef } from "react";
-import { activeLocationAtom } from "../atoms/signInAppAtoms";
-import { orpc } from "../lib/orpc";
+import { activeLocationAtom } from "@/atoms/signInAppAtoms";
+import { orpc } from "@/lib/orpc";
 import {
   ReceiveReturn,
   RMCommon,
@@ -11,7 +11,7 @@ import {
   StepToTransmitMap,
   StepType,
   Transmit,
-} from "../routes/test/$name.$ucard_number";
+} from "@/routes/_authenticated/_reponly/sign-in.$location/$ucard_number";
 
 export interface SignInSteps<StepT extends StepType = StepType> {
   transmit: RMCommon<StepToTransmitMap[StepT]>;
@@ -71,7 +71,7 @@ export function useSignIn<StepT extends StepType>(
         // end of graph, invalidate everything
         queryClient.invalidateQueries({ queryKey: orpc.locations.get.queryKey({ input: { name: activeLocation } }) });
         queryClient.invalidateQueries({ queryKey: orpc.locations.statuses.queryKey() });
-        await navigate({ to: "/sign-in/dashboard" });
+        await navigate({ to: "/sign-in/$location/dashboard", params: { location: activeLocation } });
       } else {
         _setTransmit(undefined);
         _setSteps((prevSteps) => [...prevSteps, nextStep!]);

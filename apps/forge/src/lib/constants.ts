@@ -8,6 +8,7 @@ export const REP_ON_SHIFT = "Rep On Shift";
 export const REP_OFF_SHIFT = "Rep Off Shift";
 export const PERSONAL = "Personal";
 export const UCARD_LENGTH = 9;
+export const ACTIVE_LOCATION_STORAGE_KEY = "signIn:activeLocation";
 export const SIGN_IN_REASONS_STORAGE_KEY = "sign_in_reasons";
 export const SIGN_IN_REASONS_LAST_UPDATED_STORAGE_KEY = "sign_in_reasons_last_updated";
 

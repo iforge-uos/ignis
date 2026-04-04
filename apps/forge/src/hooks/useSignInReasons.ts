@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useAtom } from "jotai";
 import { orpc } from "@/lib/orpc";
-import { reasonsAtom, reasonsLastUpdatedAtom } from "../atoms/signInAppAtoms";
+import { reasonsAtom, reasonsLastUpdatedAtom } from "@/atoms/signInAppAtoms";
 
 export const useSignInReasons = () => {
   const [reasons, setReasons] = useAtom(reasonsAtom);

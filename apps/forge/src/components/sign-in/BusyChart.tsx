@@ -46,7 +46,7 @@ export default function BusyChart({ data }: BusyChartProps) {
     <Card>
       <CardHeader>
         <CardTitle>Space busyness</CardTitle>
-        <CardDescription>Hourly sign-in chunks for today with prediction from last year's matching weekday.</CardDescription>
+        <CardDescription>Hourly sign-in chunks for today with prediction</CardDescription>
       </CardHeader>
       <CardContent>
         {!data || data.length === 0 ? (

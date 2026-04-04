@@ -19,3 +19,5 @@ type PickByValue<T, V> = Pick<T, { [K in keyof T]: T[K] extends V ? K : never }[
 export type Entries<T> = {
   [K in keyof T]: [keyof PickByValue<T, T[K]>, T[K]];
 }[keyof T][];
+
+export type Yielded<T extends AsyncGenerator> = T extends AsyncGenerator<infer U> ? U : never; // Awaited<T> but for AsyncGenerators

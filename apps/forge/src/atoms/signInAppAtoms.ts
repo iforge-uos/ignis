@@ -1,18 +1,20 @@
-// src/atoms/session/signInAppAtoms.ts
-
 import { sign_in } from "@packages/db/interfaces";
+import { PartialReason } from "@packages/types/sign_in";
 import { atom } from "jotai";
-import { atomWithStorage, createJSONStorage } from "jotai/utils";
+import { atomWithStorage } from "jotai/utils";
 import { atomWithQuery } from "jotai-tanstack-query";
+import { ACTIVE_LOCATION_STORAGE_KEY, SIGN_IN_REASONS_LAST_UPDATED_STORAGE_KEY, SIGN_IN_REASONS_STORAGE_KEY } from "@/lib/constants";
 import { orpc } from "@/lib/orpc";
 import { SignInSession } from "@/types/sign_in";
-import { SIGN_IN_REASONS_LAST_UPDATED_STORAGE_KEY, SIGN_IN_REASONS_STORAGE_KEY } from "../lib/constants";
-import { Temporal } from "@js-temporal/polyfill";
-import { PartialReason } from "@packages/types/sign_in";
 
 // ------ Sign in App Data Management (location data, handling selected location, etc.)
 
-export const activeLocationAtom = atom<sign_in.LocationName>("MAINSPACE");
+export const activeLocationAtom = atomWithStorage<sign_in.LocationName>(
+  ACTIVE_LOCATION_STORAGE_KEY,
+  "MAINSPACE",
+  undefined,
+  { getOnInit: true },
+);
 activeLocationAtom.debugLabel = "signIn:activeLocation";
 
 export const locationStatusesAtom = atomWithQuery(orpc.locations.statuses.experimental_liveOptions);

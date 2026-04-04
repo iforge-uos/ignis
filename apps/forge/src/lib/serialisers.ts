@@ -32,10 +32,11 @@ function createSerializer<T extends TemporalLike>(
 }
 
 function createTanstackSerializer<T extends TemporalLike>(
+  key: string,
   temporalType: TemporalConstructor<T> & Function
 ) {
   return createSerializationAdapter({
-    key: temporalType.name,
+    key,
     test: (data: any): data is T => data instanceof temporalType,
     toSerializable: (data: T) => data.toJSON(),
     fromSerializable: (value: string | Record<string, unknown>): T => temporalType.from(value),
@@ -45,13 +46,17 @@ function createTanstackSerializer<T extends TemporalLike>(
 export default [
   createSerializer(Temporal.Duration),
   createSerializer(Temporal.PlainDate),
+  createSerializer(Temporal.PlainDateTime),
+  createSerializer(Temporal.PlainTime),
   createSerializer(Temporal.Instant),
   createSerializer(Temporal.ZonedDateTime),
 ] satisfies StandardRPCCustomJsonSerializer[];
 
 export const tanstackSerialisers = [
-  createTanstackSerializer(Temporal.Duration),
-  createTanstackSerializer(Temporal.PlainDate),
-  createTanstackSerializer(Temporal.Instant),
-  createTanstackSerializer(Temporal.ZonedDateTime),
+  createTanstackSerializer("Temporal.Duration", Temporal.Duration),
+  createTanstackSerializer("Temporal.PlainDate", Temporal.PlainDate),
+  createTanstackSerializer("Temporal.PlainDateTime", Temporal.PlainDateTime),
+  createTanstackSerializer("Temporal.PlainTime", Temporal.PlainTime),
+  createTanstackSerializer("Temporal.Instant", Temporal.Instant),
+  createTanstackSerializer("Temporal.ZonedDateTime", Temporal.ZonedDateTime),
 ];

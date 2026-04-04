@@ -13,6 +13,13 @@ export function removeSuffix(str: string, suffix: string) {
   return str;
 }
 
+export function removePrefix(str: string, prefix: string) {
+  if (str.startsWith(prefix)) {
+    return str.slice(prefix.length);
+  }
+  return str;
+}
+
 export function uCardNumberToString(ucard_number: number): string {
   return ucard_number.toString().padStart(UCARD_LENGTH, "0");
 }
@@ -70,4 +77,36 @@ export async function sleep(durationMillis: number) {
   return new Promise<void>((accept) => {
     setTimeout(() => accept(), durationMillis);
   });
+}
+
+export async function* mergeAsyncIterators<T>(...sources: AsyncIterable<T>[]) {
+  type State = {
+    iterator: AsyncIterator<T>;
+    next: Promise<{ state: State; result: IteratorResult<T> }>;
+  };
+
+  const states: State[] = sources.map((source) => {
+    const iterator = source[Symbol.asyncIterator]();
+    const state = {} as State;
+    state.iterator = iterator;
+    state.next = iterator.next().then((result) => ({ state, result }));
+    return state;
+  });
+
+  try {
+    while (states.length > 0) {
+      const { state, result } = await Promise.race(states.map((s) => s.next));
+
+      if (result.done) {
+        const index = states.indexOf(state);
+        if (index !== -1) states.splice(index, 1);
+        continue;
+      }
+
+      state.next = state.iterator.next().then((nextResult) => ({ state, result: nextResult }));
+      yield result.value;
+    }
+  } finally {
+    await Promise.allSettled(states.map((state) => state.iterator.return?.()));
+  }
 }

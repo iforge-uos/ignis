@@ -43,11 +43,14 @@ export const update = auth
             filter_single: { id },
             set: {
               ...rest,
-              reason: reason
-                ? e.assert_exists(
-                    e.select(e.sign_in.Reason, () => ({
-                      filter_single: { id: reason.id },
-                    })),
+              reason: reason ? e.cast(e.sign_in.Reason, e.uuid(reason.id)) : undefined,
+              _tools: tools
+                ? e.op(
+                    "distinct",
+                    e.cast(
+                      e.op(e.tools.Tool, "|", e.tools.GroupedTool),
+                      e.cast(e.uuid, e.set(...tools.map(({ id }) => id))),
+                    ),
                   )
                 : undefined,
             },
@@ -69,8 +72,6 @@ export const out = auth
       }))
       .run(db),
   );
-
-
 
 export const idRouter = pub.prefix("/id").router({
   get,

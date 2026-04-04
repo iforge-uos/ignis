@@ -34,9 +34,6 @@ export const occupancyForecast = pub
       return [];
     }
 
-    const openingTime = Temporal.PlainTime.from(location.opening_time);
-    const closingTime = Temporal.PlainTime.from(location.closing_time);
-
     const historicalWeekdayKeys = new Set<string>();
     for (let year = todayDate.year - 1; year >= FIRST_SIGN_IN_DATE.year; year -= 1) {
       const anchor = todayDate.with({ year }, { overflow: "constrain" });
@@ -170,8 +167,8 @@ export const occupancyForecast = pub
       const bucketEnd = bucketStart.add({ hours: 1 });
 
       return (
-        Temporal.PlainTime.compare(bucketEnd, openingTime) > 0 &&
-        Temporal.PlainTime.compare(bucketStart, closingTime) < 0
+        Temporal.PlainTime.compare(bucketEnd, location.opening_time) > 0 &&
+        Temporal.PlainTime.compare(bucketStart, location.closing_time) < 0
       );
     });
   });

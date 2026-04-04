@@ -22,6 +22,7 @@ export const UCardNumber = z
   .string()
   .regex(new RegExp(`\\d{${UCARD_LENGTH},}`))
   .brand("uCardNumber");
+
 export const InitialiseStep = z.object({
   name: LocationNameSchema,
   ucard_number: UCardNumber,

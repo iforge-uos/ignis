@@ -38,15 +38,6 @@ export default async function* ({
   logger.info(logger.fmt`Signing in user ${user.ucard_number}`);
 
   const inputs = SIGN_INS[`${input.name}-${input.ucard_number}`];
-  console.log(inputs.TOOLS?.RECEIVE?.tools)
-
-  console.log(e.op("distinct",
-        e.op(e.tools.Tool, "union", e.tools.GroupedTool),
-      ).toEdgeQL())
-  console.log(e.op("distinct", e.cast(
-        e.op(e.tools.Tool, "|", e.tools.GroupedTool),
-        e.cast(e.uuid, e.set(...((inputs.TOOLS?.RECEIVE?.tools?? []).map(({ id }) => id)))),
-      )).toEdgeQL())
   const sign_in = await e
     .insert(e.sign_in.SignIn, {
       location: $location,
@@ -55,7 +46,7 @@ export default async function* ({
       tools: [],
       _tools: e.op("distinct", e.cast(
         e.op(e.tools.Tool, "|", e.tools.GroupedTool),
-        e.cast(e.uuid, e.set(...((inputs.TOOLS?.RECEIVE?.tools?? []).map(({ id }) => id)))),
+        e.cast(e.uuid, e.set(...((inputs.TOOLS?.RECEIVE?.tools ?? []).map(({ id }) => id)))),
       )),
     })
     .run(tx);

@@ -4,21 +4,21 @@ import { getToolState, stateBadgeVariant, stateLabel } from "@/lib/utils/tools";
 import type { ToolGroup } from "./types";
 
 type LegendPanelProps = {
-  machines: ToolGroup[];
+  tools: ToolGroup[];
   selectedId: string | null;
   onSelect: (svgId: string) => void;
 };
 
-export function LegendPanel({ machines, selectedId, onSelect }: LegendPanelProps) {
+export function LegendPanel({ tools, selectedId, onSelect }: LegendPanelProps) {
   return (
     <div className="flex h-full flex-col overflow-hidden rounded-xl border">
       <div className="shrink-0 border-b p-3">
-        <p className="font-semibold">Tools on this floor</p>
+        <p className="font-semibold">All tools</p>
         <p className="text-xs text-muted-foreground">Click a row or tap a group on the map</p>
       </div>
-      <ScrollArea className="flex-1">
+      <ScrollArea className="flex-1 overflow-hidden">
         <div className="space-y-1.5 p-3">
-          {machines.map((tool) => {
+          {tools.map((tool) => {
             const state = getToolState(tool.use_count, tool.quantity);
             const isSelected = selectedId === tool.svgId;
 

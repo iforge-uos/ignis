@@ -1,5 +1,6 @@
-import { sign_in } from "@packages/db/interfaces";
+import { type sign_in } from "@packages/db/interfaces";
 import { type Infraction } from "@packages/types/users";
+import { ACTIVE_LOCATION_STORAGE_KEY } from "@/lib/constants";
 import { exhaustiveGuard } from ".";
 
 /**
@@ -57,4 +58,21 @@ export function formatInfractions(infractions: Infraction[]) {
 
 export function formatReason(reason: Pick<sign_in.Reason, "category" | "name">) {
   return reason.category === "UNIVERSITY_MODULE" ? reason.name.split(" ")[0] : reason.name
+}
+
+export function getActiveLocation(): sign_in.LocationName {
+  if (typeof window === "undefined") {
+    return "MAINSPACE";
+  }
+
+  const stored = localStorage.getItem(ACTIVE_LOCATION_STORAGE_KEY);
+  if (!stored) {
+    return "MAINSPACE";
+  }
+
+  try {
+    return JSON.parse(stored) as sign_in.LocationName;
+  } catch {
+    return "MAINSPACE";
+  }
 }

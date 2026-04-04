@@ -12,14 +12,17 @@ export type PartialReason = {
   name: string;
   category: ReasonCategory;
 };
+
 export type SignInEntry = {
   id: string;
   user: users.PartialUserWithTeams;
   reason: PartialReason;
-  tools: string[];
+  tools: {id: string, name: string}[];
+  _tools: {id: string, name: string}[];
   ends_at: Temporal.ZonedDateTime | null;
   created_at: Temporal.ZonedDateTime;
 };
+
 export type QueueEntry = {
   id: string;
   user: users.PartialUser;
@@ -37,8 +40,8 @@ export type PartialLocation = {
   queue_in_use: boolean;
   out_of_hours: boolean;
   queued_count: number;
-  opening_time: LocalTime | Temporal.PlainTime;
-  closing_time: LocalTime | Temporal.PlainTime;
+  opening_time: Temporal.PlainTime;
+  closing_time: Temporal.PlainTime;
 };
 
 /** The type of the location/:location endpoint storing data on who's logged in for the dashboard  */

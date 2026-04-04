@@ -1,6 +1,6 @@
 import { ChevronsUpDown, CheckIcon } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { MessageCircleWarning } from "lucide-react";
 import { useState } from "react";
 
@@ -11,6 +11,7 @@ import { UserCount } from "@/components/sign-in/ActiveLocationSelector/UserCount
 import { toTitleCase } from "@/lib/utils";
 import { cn } from "@/lib/utils/cn";
 import { LocationName } from "@packages/types/sign_in";
+import { useNavigate } from "@tanstack/react-router";
 
 import { Button } from "@packages/ui/components/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@packages/ui/components/command";
@@ -22,8 +23,9 @@ import { Hammer } from "@/components/loading";
 
 const ActiveLocationSelector = () => {
   const [open, setOpen] = useState<boolean>(false);
+  const navigate = useNavigate();
   const [activeLocation, setActiveLocation] = useAtom(activeLocationAtom);
-  const [{ data: locationStatuses, isLoading, isError }] = useAtom(locationStatusesAtom);
+  const { data: locationStatuses, isLoading, isError } = useAtomValue(locationStatusesAtom);
 
   const borderColor = !locationStatuses || isError ? "border-destructive border-2 border-dashed" : "border-0";
 
@@ -55,25 +57,28 @@ const ActiveLocationSelector = () => {
                     <Hammer />
                   </div>
                 ) : (
-                  <>
-                    {locationStatuses &&
-                      Object.keys(locationStatuses).map((name) => (
-                        <CommandItem
-                          key={name}
-                          value={name}
-                          onSelect={(currentValue) => {
-                            const location = currentValue.toUpperCase() as LocationName;
-                            setActiveLocation(location);
-                            setOpen(false);
-                          }}
-                        >
-                          {toTitleCase(name)}
-                          <CheckIcon
-                            className={cn("ml-auto h-4 w-4", activeLocation === name ? "opacity-100" : "opacity-0")}
-                          />
-                        </CommandItem>
-                      ))}
-                  </>
+                  locationStatuses &&
+                  Object.keys(locationStatuses).map((name) => (
+                    <CommandItem
+                      key={name}
+                      value={name}
+                      onSelect={(currentValue) => {
+                        const location = currentValue.toUpperCase() as LocationName;
+                        setActiveLocation(location);
+                        navigate({
+                          to: ".",
+                          params: { location },
+                          replace: true,
+                        });
+                        setOpen(false);
+                      }}
+                    >
+                      {toTitleCase(name)}
+                      <CheckIcon
+                        className={cn("ml-auto h-4 w-4", activeLocation === name ? "opacity-100" : "opacity-0")}
+                      />
+                    </CommandItem>
+                  ))
                 )}
               </CommandGroup>
             </Command>
@@ -140,7 +145,7 @@ const ActiveLocationSelector = () => {
               <p>The Queue is only enabled when capacity is reached.</p>
               <p>
                 To view detailed queue status visit the{" "}
-                <Link className="underline" to={"/sign-in/dashboard"}>
+                <Link className="underline" to={"/sign-in/$location/dashboard"} params={{ location: activeLocation }}>
                   dashboard
                 </Link>
                 .
