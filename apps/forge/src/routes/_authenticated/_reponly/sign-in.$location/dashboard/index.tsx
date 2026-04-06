@@ -69,7 +69,7 @@ function SignInDashboard() {
 
   return (
     <>
-      <Title prompt="Signin Dashboard" />
+      <Title prompt="Sign In Dashboard" />
       <div className="p-4 mt-1">
         <ActiveLocationSelector />
         <div className="border-2 p-4">

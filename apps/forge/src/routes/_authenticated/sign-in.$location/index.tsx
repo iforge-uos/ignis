@@ -71,7 +71,7 @@ const SignInIndexAppComponent = () => {
 
   return (
     <>
-      <Title prompt="Sign In Dashboard" />
+      <Title prompt="Sign In Home" />
       <div className="p-4 mt-1">
         <ActiveLocationSelector />
         <div className="rounded-md border-2 p-4 space-y-8">
