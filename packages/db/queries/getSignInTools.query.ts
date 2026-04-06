@@ -5,7 +5,7 @@ import type {Executor} from "gel";
 export type GetSignInToolsArgs = {
   readonly "id": string;
   readonly "name": ("MAINSPACE" | "HEARTSPACE");
-  readonly "collapse"?: boolean;
+  readonly "collapse"?: boolean | null;
 };
 
 export type GetSignInToolsReturns = Array<{
