@@ -24,6 +24,9 @@ const config = defineConfig({
     sourcemap: true,
     target: "esnext",
   },
+  esbuild: {
+    target: "es2024",
+  },
   plugins: [
     tsconfigPaths(),
     tanstackStart(),
