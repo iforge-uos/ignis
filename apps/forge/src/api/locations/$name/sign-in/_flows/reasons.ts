@@ -18,7 +18,7 @@ export const Receive = createReceiveStep(StepType.enum.REASON).extend({ reason: 
 
 export const Finalise = createFinaliseStep(
   StepType.enum.REASON,
-  z.literal([StepType.enum.PERSONAL_TOOLS_AND_MATERIALS, StepType.enum.FINALISE]),
+  z.literal([StepType.enum.PERSONAL_TOOLS_AND_MATERIALS, StepType.enum.FINALISE, StepType.enum.SUPERVISABLE_TOOLS]),
 );
 
 export const Errors = createErrorMap(StepType.enum.REASON, {
@@ -168,13 +168,13 @@ export default async function* ({
     // e.select($location.queued, (place) => ({ filter: e.op("not", e.op("exists", place.notified_at)) })),
   ) {
     return {
-      next: StepType.enum.FINALISE,
+      next: StepType.enum.SUPERVISABLE_TOOLS,
     };
   }
   if (reasonName === REP_OFF_SHIFT) {
     // TODO check has queued e.select($location.queued, (place) => ({ filter: e.op("not", e.op("exists", place.notified_at)) })),
     return {
-      next: StepType.enum.FINALISE,
+      next: StepType.enum.SUPERVISABLE_TOOLS,
     };
   }
 

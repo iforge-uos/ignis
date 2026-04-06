@@ -14,6 +14,7 @@ export const StepType = z.enum([
   "PERSONAL_TOOLS_AND_MATERIALS",
   "QUEUE",
   "REASON",
+  "SUPERVISABLE_TOOLS",
   "SIGN_OUT",
   "TOOLS",
 ]);

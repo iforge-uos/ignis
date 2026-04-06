@@ -2,7 +2,8 @@ import { ORPCError } from "@orpc/server";
 import e from "@packages/db/edgeql-js";
 import { sign_in } from "@packages/db/interfaces";
 import { logger } from "@sentry/tanstackstart-react";
-import { Executor } from "gel";
+import { Client, Executor, SimpleConfig } from "gel";
+import { Transaction } from "gel/dist/transaction";
 import ldap from "@/ldap";
 import { ldapLibraryToUcardNumber } from "./sign-in";
 
@@ -303,3 +304,32 @@ export const ensureUser = async ({
 
   return new_user;
 };
+
+
+export const createTransaction = async (db: Client, {config}: {config?: SimpleConfig} = {}) => {
+    let resolveTx!: (x: Transaction) => void;
+    let cleanupTx!: (x: undefined) => void;
+    const getTx = new Promise<Transaction>((resolve) => (resolveTx = resolve));
+    const blocker = new Promise<undefined>((resolve) => (cleanupTx = resolve));
+
+    const rollback = async () => {
+        throw new Error("Rolling back transaction");
+    };
+
+    db.withConfig(config ?? {}).transaction(async (tx) => {
+        resolveTx(tx);
+        await blocker;
+    });
+
+    return new Proxy(await getTx, {
+        get(target, prop) {
+            if (prop === Symbol.asyncDispose) {
+                return cleanupTx;
+            }
+            if (prop === "rollback") {
+                return rollback;
+            }
+            return (target as any)[prop];
+        }
+    }) as Transaction & {[Symbol.asyncDispose]:  () => Promise<void>, rollback: () => Promise<void>};
+}

@@ -1,9 +1,9 @@
-import { CardFooter } from "@packages/ui/components/card";
 import { Button } from "@packages/ui/components/button";
+import { CardFooter } from "@packages/ui/components/card";
+import { redirect } from "@tanstack/react-router";
 import { toTitleCase } from "@/lib/utils";
 import { useSignIn } from "@/providers/SignInSteps";
 import { StepType } from "../$name.$ucard_number";
-import { redirect } from "@tanstack/react-router";
 
 interface SignInNavProps {
   steps: StepType[]

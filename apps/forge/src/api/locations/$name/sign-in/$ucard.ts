@@ -7,7 +7,7 @@ import { Client, Duration, Executor } from "gel";
 import { Transaction } from "gel/dist/transaction";
 import * as z from "zod";
 import { exhaustiveGuard } from "@/lib/utils";
-import { ensureUser } from "@/lib/utils/queries";
+import { createTransaction, ensureUser } from "@/lib/utils/queries";
 import { deskOrAdmin, transaction } from "@/orpc";
 import { InitialiseStep, SIGN_INS, StepType } from "./_flows/_steps";
 import { Errors, Finalise, Initialise, Receive, Return, Transmit } from "./_flows/_types";
@@ -32,6 +32,7 @@ import personalToolsAndMaterials from "./_flows/personal-tools-and-materials";
 import queue from "./_flows/queue";
 import reasons from "./_flows/reasons";
 import signOut from "./_flows/sign-out";
+import supervisableTools from "./_flows/supervisable-tools";
 import tools from "./_flows/tools";
 
 const HANDLERS: { [K in z.infer<typeof StepType>]: (...args: any) => FnReturn } = {
@@ -40,6 +41,7 @@ const HANDLERS: { [K in z.infer<typeof StepType>]: (...args: any) => FnReturn } 
   // REGISTER: register,  // TODO you might need this IDK, it'd be another noop
   AGREEMENTS: agreements,
   REASON: reasons,
+  SUPERVISABLE_TOOLS: supervisableTools,
   TOOLS: tools,
   PERSONAL_TOOLS_AND_MATERIALS: personalToolsAndMaterials,
   MAILING_LISTS: mailingLists,
@@ -61,7 +63,7 @@ export const flow = deskOrAdmin
     z.infer<typeof Transmit> | z.infer<typeof Finalise>,
     { id: string } | undefined
   > {
-    console.log("Flow API called!!!")
+    console.log("Flow API called!!!");
     const {
       input,
       context: { db },
@@ -74,64 +76,54 @@ export const flow = deskOrAdmin
     const rx = PUBLISHER.subscribe(`${key}-RECEIVE`, { signal });
 
     // manually setup the transaction
-    const { txn, cleanupTx } = await getTx(db);
+    await using txn = await createTransaction(db as Client, {
+      config: { session_idle_transaction_timeout: Duration.from({ hours: 24 }) },
+    });
     arg.context.tx = txn;
 
-    try {
-      const user = await ensureUser({ ...input, tx: arg.context.tx });
-      const $user = e.assert_exists(e.select(e.users.User, () => ({ filter_single: { id: user.id } })));
-      const $location = e.assert_exists(e.select(e.sign_in.Location, () => ({ filter_single: { name: input.name } })));
+    const user = await ensureUser({ ...input, tx: arg.context.tx });
+    const $user = e.assert_exists(e.select(e.users.User, () => ({ filter_single: { id: user.id } })));
+    const $location = e.assert_exists(e.select(e.sign_in.Location, () => ({ filter_single: { name: input.name } })));
 
-      signal?.addEventListener("abort", async () => {
-        try {
-          await cancel({ ...arg, user, input: { ...input, type: "CANCEL" }, $user, $location }).next();
-        } catch {
-          cleanupTx(undefined);
+    signal?.addEventListener("abort", async () => {
+      await cancel({ ...arg, user, input: { ...input, type: "CANCEL" }, $user, $location }).next();
+    });
+
+    for await (const message of initialise) {
+      // lifecycle is:
+      // 1. INITIALISE (client) - tells us which function to call and any relevant data (there isn't normally any but future proofing lol)
+      // 2. TRANSMIT (server) - send the client the info to display on the frontend
+      // 3. RECEIVE (client) - client sends back any data for validation
+      // 4. FINALISE (server) - tells the client what the next step is and any relevant data (same statement applies as INITIALISE)
+      const handler = HANDLERS[message.type];
+      const store = SIGN_INS[key][message.type];
+      const tx: FnReturn = handler({ ...arg, user, $user, $location, input: message });
+
+      // store the values for use in `finalise`. Has added benefit of the client being able to replay previous values and updates appropriately (refetches things)
+      store.INITIALISE = message;
+
+      const { value: transmit } = (await tx.next()) as { value: z.infer<typeof Transmit> };
+      transmit.type = message.type; // this isn't set in the yield directly for convenience
+      yield transmit;
+
+      const { value: receive } = await rx.next();
+      store.RECEIVE = receive; // cache for the same reason
+
+      const { value: fin, done } = (await tx.next(receive)) as { value: z.infer<typeof Finalise>; done: true };
+      // fin.type = message.type;  // probably won't ever be used but oh well
+      if (!done) exhaustiveGuard(message.type as never);
+      if (fin.next === undefined) {
+        delete SIGN_INS[key]; // avoid leaking memory :)
+        if (fin.type === "FINALISE") {
+          return fin.sign_in; // close the stream
         }
-      });
-
-      for await (const message of initialise) {
-        // lifecycle is:
-        // 1. INITIALISE (client) - tells us which function to call and any relevant data (there isn't normally any but future proofing lol)
-        // 2. TRANSMIT (server) - send the client the info to display on the frontend
-        // 3. RECEIVE (client) - client sends back any data for validation
-        // 4. FINALISE (server) - tells the client what the next step is and any relevant data (same statement applies as INITIALISE)
-        const handler = HANDLERS[message.type];
-        const store = SIGN_INS[key][message.type];
-        const tx: FnReturn = handler({ ...arg, user, $user, $location, input: message });
-
-        // store the values for use in `finalise`. Has added benefit of the client being able to replay previous values and updates appropriately (refetches things)
-        store.INITIALISE = message;
-
-        const { value: transmit } = (await tx.next()) as { value: z.infer<typeof Transmit> };
-        transmit.type = message.type; // this isn't set in the yield directly for convenience
-        yield transmit;
-
-        const { value: receive } = await rx.next();
-        store.RECEIVE = receive; // cache for the same reason
-
-        const { value: fin, done } = (await tx.next(receive)) as { value: z.infer<typeof Finalise>; done: true };
-        // fin.type = message.type;  // probably won't ever be used but oh well
-        if (!done) exhaustiveGuard(message.type as never);
-        if (fin.next === undefined) {
-          delete SIGN_INS[key]; // avoid leaking memory :)
-          if (fin.type === "FINALISE") {
-            return fin.sign_in; // close the stream
-          }
-          return;
-        }
-
-        yield fin;
+        return;
       }
 
-      throw new Error("unreachable, PUBLISHER should always yield");
-    } catch (e) {
-      console.error(e);
-      Sentry.captureException(e);
-      throw e;
-    } finally {
-      cleanupTx(undefined);
+      yield fin;
     }
+
+    throw new Error("unreachable, PUBLISHER should always yield");
   });
 
 export const initialise = deskOrAdmin
@@ -154,25 +146,25 @@ export const receive = deskOrAdmin
     }
   });
 
-async function getTx(db: Executor) {
-  let resolveTx: (x: Transaction) => void;
-  let cleanupTx: (x: undefined) => void;
-  // biome-ignore lint/suspicious/noAssignInExpressions: it's cool
-  const getTx = new Promise<Transaction>((resolve) => (resolveTx = resolve));
-  // biome-ignore lint/suspicious/noAssignInExpressions: it's also cool
-  const blocker = new Promise<undefined>((resolve) => (cleanupTx = resolve));
-  (db as Client)
-    .withConfig({ session_idle_transaction_timeout: Duration.from({ hours: 24 }) }) // otherwise we get an IdleTransactionTimeoutError nearly instantly
-    .transaction(async (tx) => {
-      resolveTx(tx);
-      await blocker;
-    });
-  return {
-    txn: await getTx,
-    // @ts-ignore
-    cleanupTx,
-  };
-}
+// async function getTx(db: Executor) {
+//   let resolveTx: (x: Transaction) => void;
+//   let cleanupTx: (x: undefined) => void;
+//   // biome-ignore lint/suspicious/noAssignInExpressions: it's cool
+//   const getTx = new Promise<Transaction>((resolve) => (resolveTx = resolve));
+//   // biome-ignore lint/suspicious/noAssignInExpressions: it's also cool
+//   const blocker = new Promise<undefined>((resolve) => (cleanupTx = resolve));
+//   (db as Client)
+//     .withConfig({ session_idle_transaction_timeout: Duration.from({ hours: 24 }) }) // otherwise we get an IdleTransactionTimeoutError nearly instantly
+//     .transaction(async (tx) => {
+//       resolveTx(tx);
+//       await blocker;
+//     });
+//   return {
+//     txn: await getTx,
+//     // @ts-ignore
+//     cleanupTx,
+//   };
+// }
 // I don't think this is required
 // export const backtrack = deskOrAdmin
 //   .route({ method: "GET", path: "/{ucard_number}/backtrack", tags: ["hidden"] })

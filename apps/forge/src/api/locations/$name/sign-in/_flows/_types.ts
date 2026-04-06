@@ -1,4 +1,4 @@
-import type { SignInUser } from "@/lib/utils/queries";
+import type { SignInUser, createTransaction } from "@/lib/utils/queries";
 import type { ORPCErrorConstructorMap } from "@orpc/server";
 import type { ORPCErrorFromErrorMap } from "@orpc/contract";
 import e from "@packages/db/edgeql-js";
@@ -71,6 +71,13 @@ import {
   Transmit as SignOutTransmit,
 } from "./sign-out";
 import {
+  Errors as SupervisableToolsErrors,
+  Finalise as SupervisableToolsFinalise,
+  Initialise as SupervisableToolsInitialise,
+  Receive as SupervisableToolsReceive,
+  Transmit as SupervisableToolsTransmit,
+} from "./supervisable-tools";
+import {
   Errors as ToolsErrors,
   Finalise as ToolsFinalise,
   Initialise as ToolsInitialise,
@@ -90,6 +97,7 @@ const _Errors = [
   PersonalToolsAndMaterialsErrors,
   QueueErrors,
   ReasonErrors,
+  SupervisableToolsErrors,
   ToolsErrors,
   SignOutErrors,
 ] as const;
@@ -106,6 +114,7 @@ export const Initialise = z.discriminatedUnion("type", [
   FinaliseInitialise,
   CancelInitialise,
   InitialiseInitialise,
+  SupervisableToolsInitialise,
   SignOutInitialise,
 ]);
 
@@ -119,6 +128,7 @@ export const Receive = z.discriminatedUnion("type", [
   FinaliseReceive,
   CancelReceive,
   InitialiseReceive,
+  SupervisableToolsReceive,
   SignOutReceive,
 ]);
 
@@ -132,6 +142,7 @@ export const Transmit = z.discriminatedUnion("type", [
   FinaliseTransmit,
   CancelTransmit,
   InitialiseTransmit,
+  SupervisableToolsTransmit,
   SignOutTransmit,
 ]);
 
@@ -145,6 +156,7 @@ export const Finalise = z.union([
   FinaliseFinalise,
   CancelFinalise,
   InitialiseFinalise,
+  SupervisableToolsFinalise,
   SignOutFinalise,
 ]);
 
@@ -165,7 +177,7 @@ export type Params<T extends z.infer<typeof Initialise>> = Omit<
   $user: typeof _USER_QUERY | typeof _LOGGED_IN_USER_QUERY;
   $location: typeof _LOCATION_QUERY;
   errors: ORPCErrorConstructorMap<UnionToIntersection<typeof _Errors[number]["map"]>>;
-  context: Omit<_SignInParams["context"], "tx"> & { tx: Executor };
+  context: Omit<_SignInParams["context"], "tx"> & { tx: Awaited<ReturnType<typeof createTransaction>> };
 };
 
 export type Return<
