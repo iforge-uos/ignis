@@ -72,7 +72,7 @@ const SignInIndexAppComponent = () => {
   return (
     <>
       <Title prompt="Sign In Home" />
-      <div className="p-4 mt-1">
+        <div className="m-4 space-y-5 mb-10">
         <ActiveLocationSelector />
         <div className="rounded-md border-2 p-4 space-y-8">
           <section className="space-y-4">

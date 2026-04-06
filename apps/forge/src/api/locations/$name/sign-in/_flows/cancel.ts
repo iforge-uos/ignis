@@ -1,5 +1,3 @@
-import { RollbackTransaction } from "@/orpc";
-import { ErrorMap } from "@orpc/server";
 import * as z from "zod";
 import {
   StepType,
@@ -28,7 +26,6 @@ export default async function* ({
   z.infer<typeof Finalise>,
   z.infer<typeof Receive>
 > {
-  console.log("Exiting");
   await tx.rollback();
   yield { type: "CANCEL" };
 }

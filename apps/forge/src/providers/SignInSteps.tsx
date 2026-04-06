@@ -68,9 +68,6 @@ export function useSignIn<StepT extends StepType>(
       });
 
       if (nextStep === undefined) {
-        // end of graph, invalidate everything
-        queryClient.invalidateQueries({ queryKey: orpc.locations.get.queryKey({ input: { name: activeLocation } }) });
-        queryClient.invalidateQueries({ queryKey: orpc.locations.statuses.queryKey() });
         await navigate({ to: "/sign-in/$location/dashboard", params: { location: activeLocation } });
       } else {
         _setTransmit(undefined);

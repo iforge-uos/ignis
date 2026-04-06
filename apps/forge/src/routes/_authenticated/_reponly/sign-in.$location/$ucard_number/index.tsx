@@ -30,6 +30,8 @@ import { SignOut } from "./-components/SignOutDispatcher";
 import { SupervisableTools } from "./-components/SupervisableTools";
 import { Tools } from "./-components/ToolSelectionInput";
 import { toast } from "sonner";
+import Title from "/src/components/title";
+import ActiveLocationSelector from "/src/components/sign-in/ActiveLocationSelector";
 
 export type Initialise = z.infer<typeof _Initialise>;
 export type Receive = z.infer<typeof _Receive>;
@@ -150,12 +152,12 @@ const flowQuery = ({ location: name, ucard_number }: z.infer<typeof Params>) =>
     },
   });
 
-const Params = z.object({ location: LocationNameSchema, ucard_number: UCardNumber })
+const Params = z.object({ location: LocationNameSchema, ucard_number: UCardNumber });
 
 export const Route = createFileRoute("/_authenticated/_reponly/sign-in/$location/$ucard_number/")({
   params: z.object({ location: LocationNameSchema, ucard_number: UCardNumber }),
   component: () => {
-    const params = Route.useParams()
+    const params = Route.useParams();
     const { data: { initialise, receive } = {} } = useQuery(flowQuery(params));
     const [user, setUser] = useState<SignInUser | null>(null);
 
@@ -164,7 +166,6 @@ export const Route = createFileRoute("/_authenticated/_reponly/sign-in/$location
     const [finalise, setFinalise] = useState<() => Promise<void>>();
     const [canContinue, setCanContinue] = useState<boolean>(false);
     const currentStep = steps.at(-1)!;
-
 
     const nextStepRef = useRef<HTMLButtonElement | undefined>(undefined);
 
@@ -179,10 +180,10 @@ export const Route = createFileRoute("/_authenticated/_reponly/sign-in/$location
         const transmit = await initialise({ type: currentStep }).catch((err) => {
           if (isDefinedError(err) && err.code === "NOT_FOUND") {
             toast.error(err.message);
-            throw redirect({to: "/sign-in/$location", params: params})
+            throw redirect({ to: "/sign-in/$location", params: params });
           }
-          throw err
-        }) // fire off the request for the data when the step changes
+          throw err;
+        }); // fire off the request for the data when the step changes
         if (transmit.type === "INITIALISE") {
           setUser(transmit.user);
           const { data: finalise } = await receive("INITIALISE", {});
@@ -192,7 +193,7 @@ export const Route = createFileRoute("/_authenticated/_reponly/sign-in/$location
         setTransmit(transmit);
         console.log("Got transmit", currentStep, transmit);
       })();
-    }, [initialise, receive, currentStep]);
+    }, [initialise, receive, params, currentStep]);
 
     if (
       !initialise ||
@@ -201,37 +202,49 @@ export const Route = createFileRoute("/_authenticated/_reponly/sign-in/$location
       LOADER_STEPS.has(currentStep) || // don't show the initialising state
       transmit === undefined // don't show until the data is ready
     ) {
-      return <Hammer />;
+      return (
+        <>
+          <Title prompt="Sign In Flow" />
+          <div className="m-4 space-y-5 mb-10">
+            <ActiveLocationSelector disabled />
+            <Hammer />{" "}
+          </div>
+        </>
+      );
     }
 
     const Step = STEP_COMPONENTS[currentStep];
     console.log("Rendering step:", currentStep);
 
     return (
-      <div className="m-4 space-y-5 my-10">
-        <SigningInUserCard user={user} className="w-full " />
+      <>
+        <Title prompt="Sign In Flow" />
+        <div className="m-4 space-y-5 mb-10">
+          <ActiveLocationSelector disabled />
+          <SigningInUserCard user={user} className="w-full " />
 
-        <Card className="rounded-sm">
-          <SignInStepsProvider
-            transmit={transmit}
-            _setTransmit={setTransmit}
-            _continue={receive.bind(undefined, currentStep)}
-            setCanContinue={setCanContinue}
-            canContinue={canContinue}
-            focusNextStep={focusNextStep}
-            _setSteps={setSteps}
-            finalise={finalise}
-            _setFinalise={setFinalise as any}
-          >
-            <Step data={transmit} user={user} />
+          <Card className="rounded-sm">
+            <SignInStepsProvider
+              transmit={transmit}
+              _setTransmit={setTransmit}
+              _continue={receive.bind(undefined, currentStep)}
+              setCanContinue={setCanContinue}
+              canContinue={canContinue}
+              focusNextStep={focusNextStep}
+              _setSteps={setSteps}
+              finalise={finalise}
+              _setFinalise={setFinalise as any}
+            >
+              <Step data={transmit} user={user} />
 
-            <SignInNav steps={steps} setSteps={setSteps} ref={nextStepRef} />
-          </SignInStepsProvider>
-        </Card>
-      </div>
+              <SignInNav steps={steps} setSteps={setSteps} ref={nextStepRef} />
+            </SignInStepsProvider>
+          </Card>
+        </div>
+      </>
     );
   },
   onLeave: ({ params, context: { queryClient } }) => {
-    // queryClient.invalidateQueries(flowQuery(params));
+    queryClient.invalidateQueries(flowQuery(params));
   },
 });

@@ -59,7 +59,7 @@ export const AgreementShape = e.shape(e.sign_in.Agreement, () => ({
 export const LocationStatusShape = e.shape(e.sign_in.Location, (location) => ({
   on_shift_rep_count: e.count(location.on_shift_reps),
   off_shift_rep_count: e.count(location.off_shift_reps),
-  user_count: e.count(e.select(location.sign_ins.user, (u) => ({filter: e.op(u.__type__.name, "=", "users::User")}))),
+  user_count: e.count(e.select(location.sign_ins.user, (u) => ({ filter: e.op(u.__type__.name, "=", "users::User") }))),
   max_count: true,
   queued_count: e.count(location.queued),
   out_of_hours: true,
@@ -285,7 +285,11 @@ export const ensureUser = async ({
             }))
           : e.insert(e.users.User, {
               ...ldap.toInsert(ldap_user),
-              identity: e.insert(e.ext.auth.Identity, { issuer: "ignis", subject: "", modified_at: e.datetime_of_statement() }),
+              identity: e.insert(e.ext.auth.Identity, {
+                issuer: "ignis",
+                subject: "",
+                modified_at: e.datetime_of_statement(),
+              }),
             }),
       }).user,
       (user) => ({
@@ -305,31 +309,83 @@ export const ensureUser = async ({
   return new_user;
 };
 
+export const createTransaction = async (db: Client, { config }: { config?: SimpleConfig } = {}) => {
+  const txClient = config ? db.withConfig(config) : db;
 
-export const createTransaction = async (db: Client, {config}: {config?: SimpleConfig} = {}) => {
-    let resolveTx!: (x: Transaction) => void;
-    let cleanupTx!: (x: undefined) => void;
-    const getTx = new Promise<Transaction>((resolve) => (resolveTx = resolve));
-    const blocker = new Promise<undefined>((resolve) => (cleanupTx = resolve));
+  class RollbackSignal extends Error {
+    constructor() {
+      super("rollback");
+    }
+  }
 
-    const rollback = async () => {
-        throw new Error("Rolling back transaction");
-    };
+  let resolveTx!: (x: Transaction) => void;
+  let resolveGate!: () => void;
+  let rejectGate!: (reason?: unknown) => void;
 
-    db.withConfig(config ?? {}).transaction(async (tx) => {
-        resolveTx(tx);
-        await blocker;
+  const txReady = new Promise<Transaction>((resolve) => {
+    resolveTx = resolve;
+  });
+
+  const gate = new Promise<void>((resolve, reject) => {
+    resolveGate = resolve;
+    rejectGate = reject;
+  });
+
+  const completed = txClient
+    .transaction(async (tx) => {
+      resolveTx(tx);
+      await gate;
+    })
+    .catch((err) => {
+      if (err instanceof RollbackSignal) {
+        return;
+      }
+      throw err;
     });
 
-    return new Proxy(await getTx, {
-        get(target, prop) {
-            if (prop === Symbol.asyncDispose) {
-                return cleanupTx;
-            }
-            if (prop === "rollback") {
-                return rollback;
-            }
-            return (target as any)[prop];
-        }
-    }) as Transaction & {[Symbol.asyncDispose]:  () => Promise<void>, rollback: () => Promise<void>};
-}
+  const tx = await txReady;
+  let closed = false;
+  let rollbackPromise: Promise<void> | undefined;
+
+  const close = async () => {
+    if (closed) {
+      await completed;
+      return;
+    }
+    closed = true;
+    resolveGate();
+    await completed;
+  };
+
+  const rollback = async () => {
+    if (rollbackPromise) {
+      await rollbackPromise;
+      return;
+    }
+
+    rollbackPromise = (async () => {
+      if (closed) {
+        await completed;
+        return;
+      }
+
+      closed = true;
+      rejectGate(new RollbackSignal());
+      await completed;
+    })();
+
+    await rollbackPromise;
+  };
+
+  return new Proxy(tx, {
+    get(target, prop) {
+      if (prop === Symbol.asyncDispose) {
+        return close;
+      }
+      if (prop === "rollback") {
+        return rollback;
+      }
+      return (target as any)[prop];
+    },
+  }) as Transaction & { [Symbol.asyncDispose]: () => Promise<void>; rollback: () => Promise<void> };
+};

@@ -92,8 +92,6 @@ export const SignedInUserCard: React.FunctionComponent<SignInUserCardProps> = ({
           </>,
         );
         onSignOut?.();
-        queryClient.invalidateQueries({ queryKey: orpc.locations.get.queryKey({ input: { name: activeLocation } }) });
-        queryClient.invalidateQueries({ queryKey: orpc.locations.statuses.queryKey() });
       },
     }),
   );

@@ -15,7 +15,6 @@ import { useShortcutKey } from "@/hooks/useShortcutKey";
 import { cn } from "@/lib/utils/cn";
 import { getToolCardInfo, ToolLegend } from "./ToolLegend";
 
-
 type Tool = GetSignInToolsReturns[number];
 
 interface ToolSelectionCardProps {
@@ -26,7 +25,13 @@ interface ToolSelectionCardProps {
   onlyComplete: boolean;
 }
 
-const ToolSelectionCard = ({ tool, index, toggleTool: toggleTraining, selected, onlyComplete }: ToolSelectionCardProps) => {
+const ToolSelectionCard = ({
+  tool,
+  index,
+  toggleTool: toggleTraining,
+  selected,
+  onlyComplete,
+}: ToolSelectionCardProps) => {
   const info = getToolCardInfo(tool);
   const selectable = info[0].name === "SELECTABLE";
   return (
@@ -34,45 +39,42 @@ const ToolSelectionCard = ({ tool, index, toggleTool: toggleTraining, selected, 
       className={cn(
         "transition-all relative overflow-hidden h-full hover:bg-accent/40",
         selectable ? "cursor-pointer" : "opacity-70",
-        selected
-          ? "ring-2 ring-primary"
-          : "hover:text-foreground",      )}
+        selected ? "ring-2 ring-primary" : "hover:text-foreground",
+      )}
       onClick={() => selectable && toggleTraining(tool)}
     >
-      <CardHeader >
+      <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             {selectable && <Kbd className="text-xs text-muted-foreground">{index === 9 ? 0 : index + 1}</Kbd>}
             <div className="font-medium text-sm">{tool.name}</div>
             <div className="flex space-x-1">
-          {!onlyComplete && info.map((entry) => (
-            <Tooltip key={entry.label}>
-              <TooltipTrigger>
-                <Badge
-                  variant="outline"
-                  className={cn(
-                    entry.colour,
-                    "px-1 py-1 text-[10px] text-white font-medium rounded-sm border border-white/10 backdrop-blur-sm hover:cursor-pointer leading-none",
-                  )}
-                >
-                  <entry.icon
-                    className="size-3.5! shrink-0 text-white transition-colors"
-                  />
-                </Badge>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{entry.tooltip}</p>
-              </TooltipContent>
-            </Tooltip>
-          ))}
-        </div>
+              {!onlyComplete &&
+                info.map((entry) => (
+                  <Tooltip key={entry.label}>
+                    <TooltipTrigger>
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                          entry.colour,
+                          "px-1 py-1 text-[10px] text-white font-medium rounded-sm border border-white/10 backdrop-blur-sm hover:cursor-pointer leading-none",
+                        )}
+                      >
+                        <entry.icon className="size-3.5! shrink-0 text-white transition-colors" />
+                      </Badge>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{entry.tooltip}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                ))}
+            </div>
           </div>
         </div>
       </CardHeader>
       <CardContent>
         <p className="text-xs text-muted-foreground line-clamp-3">{tool.description}</p>
       </CardContent>
-
     </Card>
   );
 };
@@ -83,11 +85,7 @@ interface ToolSelectionProps {
   onSelectionChange?: (selectedTools: Tool[]) => void;
 }
 
-export function ToolSelection({
-  tools: _tools,
-  onSelectionChange,
-  initialSelection = [],
-}: ToolSelectionProps) {
+export function ToolSelection({ tools: _tools, onSelectionChange, initialSelection = [] }: ToolSelectionProps) {
   const [selectedTools, setSelectedTools] = useState<Tool[]>(initialSelection);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -103,12 +101,16 @@ export function ToolSelection({
         .sort((a, b) => a.name.localeCompare(b.name)),
     [_tools, onlyComplete],
   );
-  const fuse = useMemo(() => new Fuse(tools, {
-    keys: ["name", "description"],
-    threshold: 0.3,
-    distance: 100,
-    minMatchCharLength: 2,
-  }), [tools]);
+  const fuse = useMemo(
+    () =>
+      new Fuse(tools, {
+        keys: ["name", "description"],
+        threshold: 0.3,
+        distance: 100,
+        minMatchCharLength: 2,
+      }),
+    [tools],
+  );
 
   const filteredTools = useMemo(() => {
     if (!searchTerm) return tools;
@@ -226,11 +228,11 @@ export function ToolSelection({
           </InputGroupAddon>
         </InputGroup>
         <div className="flex items-center gap-2">
+          {!onlyComplete && <ToolLegend />}
           <Checkbox id="only-complete" checked={Boolean(onlyComplete)} onCheckedChange={setOnlyComplete} />
           <Label className="hover:cursor-pointer" htmlFor="only-complete">
             Only complete
           </Label>
-          {!onlyComplete && <ToolLegend />}
         </div>
       </div>
 

@@ -21,7 +21,7 @@ import { Skeleton } from "@packages/ui/components/skeleton";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@packages/ui/components/tooltip";
 import { Hammer } from "@/components/loading";
 
-const ActiveLocationSelector = () => {
+const ActiveLocationSelector = ({ disabled = false }: { disabled?: boolean }) => {
   const [open, setOpen] = useState<boolean>(false);
   const navigate = useNavigate();
   const [activeLocation, setActiveLocation] = useAtom(activeLocationAtom);
@@ -36,17 +36,23 @@ const ActiveLocationSelector = () => {
       <div className="w-full md:w-auto">
         <span className="font-medium block mb-2 md:inline md:mb-0 md:mr-2">Select Location</span>
         <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              role="combobox"
-              aria-expanded={open}
-              className={`w-full md:w-[200px] justify-between border-2 ${borderColor} h-10`}
-            >
-              {activeLocation ? toTitleCase(activeLocation) : "No active location selected"}
-              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
-          </PopoverTrigger>
+          <Tooltip>
+            <PopoverTrigger asChild>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={open}
+                  className={`w-full md:w-[200px] justify-between border-2 ${borderColor} h-10`}
+                  disabled={disabled}
+                >
+                  {activeLocation ? toTitleCase(activeLocation) : "No active location selected"}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </TooltipTrigger>
+            </PopoverTrigger>
+            {disabled && <TooltipContent>Cannot change location mid sign-in</TooltipContent>}
+          </Tooltip>
           <PopoverContent className="w-full p-0">
             <Command>
               <CommandInput placeholder="Search locations..." className="h-9" />
