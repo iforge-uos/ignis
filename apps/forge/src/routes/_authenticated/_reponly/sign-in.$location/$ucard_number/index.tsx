@@ -1,12 +1,12 @@
-import { EventPublisher } from "@orpc/client";
+import { EventPublisher, isDefinedError } from "@orpc/client";
 import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
 import { Entries } from "@packages/types";
-import { Card, CardFooter } from "@packages/ui/components/card";
-import { queryOptions, useMutation, useQuery } from "@tanstack/react-query";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Card } from "@packages/ui/components/card";
+import { queryOptions, useQuery } from "@tanstack/react-query";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import z from "zod";
-import { StepType as _StepType, InitialiseStep, UCardNumber } from "@/api/locations/$name/sign-in/_flows/_steps"; // TODO double check if this actually problematically not shaken
+import { StepType as _StepType, UCardNumber } from "@/api/locations/$name/sign-in/_flows/_steps"; // TODO double check if this actually problematically not shaken
 import type {
   Finalise as _Finalise,
   Initialise as _Initialise,
@@ -20,14 +20,16 @@ import { Hammer } from "@/components/loading";
 import { client } from "@/lib/orpc";
 import type { SignInUser } from "@/lib/utils/queries";
 import { FlowStepComponent } from "@/types/signInActions";
-import SignInStepsProvider, { SignInSteps } from "@/providers/SignInSteps";
+import SignInStepsProvider from "@/providers/SignInSteps";
 import { Finalise as FinaliseComponent } from "./-components/Finalise";
 import { PersonalToolsAndMaterials } from "./-components/PersonalToolsAndMaterials";
 import SignInNav from "./-components/SignInNav";
 import { ReasonInput } from "./-components/SignInReasonInput";
 import SigningInUserCard from "./-components/SigningInUserCard";
 import { SignOut } from "./-components/SignOutDispatcher";
+import { SupervisableTools } from "./-components/SupervisableTools";
 import { Tools } from "./-components/ToolSelectionInput";
+import { toast } from "sonner";
 
 export type Initialise = z.infer<typeof _Initialise>;
 export type Receive = z.infer<typeof _Receive>;
@@ -38,6 +40,7 @@ export type StepType = z.infer<typeof _StepType>;
 export const PUBLISHER: typeof SERVER_PUBLISHER = new EventPublisher();
 const STEP_COMPONENTS = {
   REASON: ReasonInput,
+  SUPERVISABLE_TOOLS: SupervisableTools,
   PERSONAL_TOOLS_AND_MATERIALS: PersonalToolsAndMaterials,
   SIGN_OUT: SignOut,
   TOOLS: Tools,
@@ -59,7 +62,8 @@ const GRAPH = {
   MAILING_LISTS: ["REASON"],
   PERSONAL_TOOLS_AND_MATERIALS: ["TOOLS"],
   QUEUE: [undefined],
-  REASON: ["FINALISE", "PERSONAL_TOOLS_AND_MATERIALS"],
+  REASON: ["FINALISE", "PERSONAL_TOOLS_AND_MATERIALS", "SUPERVISABLE_TOOLS"],
+  SUPERVISABLE_TOOLS: ["FINALISE"],
   TOOLS: ["FINALISE"],
   FINALISE: [undefined],
   SIGN_OUT: [undefined],
@@ -68,6 +72,7 @@ const GRAPH = {
 const MAIN_LINE = [
   "QUEUE",
   "REASON",
+  "SUPERVISABLE_TOOLS",
   "TOOLS",
   "PERSONAL_TOOLS_AND_MATERIALS",
   "FINALISE",
@@ -150,7 +155,8 @@ const Params = z.object({ location: LocationNameSchema, ucard_number: UCardNumbe
 export const Route = createFileRoute("/_authenticated/_reponly/sign-in/$location/$ucard_number/")({
   params: z.object({ location: LocationNameSchema, ucard_number: UCardNumber }),
   component: () => {
-    const { data: { initialise, receive } = {} } = useQuery(flowQuery(Route.useParams()));
+    const params = Route.useParams()
+    const { data: { initialise, receive } = {} } = useQuery(flowQuery(params));
     const [user, setUser] = useState<SignInUser | null>(null);
 
     const [steps, setSteps] = useState<StepType[]>(["INITIALISE"]);
@@ -158,6 +164,7 @@ export const Route = createFileRoute("/_authenticated/_reponly/sign-in/$location
     const [finalise, setFinalise] = useState<() => Promise<void>>();
     const [canContinue, setCanContinue] = useState<boolean>(false);
     const currentStep = steps.at(-1)!;
+
 
     const nextStepRef = useRef<HTMLButtonElement | undefined>(undefined);
 
@@ -169,7 +176,13 @@ export const Route = createFileRoute("/_authenticated/_reponly/sign-in/$location
       (async () => {
         if (!initialise || !receive) return;
 
-        const transmit = await initialise({ type: currentStep }); // fire off the request for the data when the step changes
+        const transmit = await initialise({ type: currentStep }).catch((err) => {
+          if (isDefinedError(err) && err.code === "NOT_FOUND") {
+            toast.error(err.message);
+            throw redirect({to: "/sign-in/$location", params: params})
+          }
+          throw err
+        }) // fire off the request for the data when the step changes
         if (transmit.type === "INITIALISE") {
           setUser(transmit.user);
           const { data: finalise } = await receive("INITIALISE", {});
