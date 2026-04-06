@@ -12,7 +12,7 @@ select (tools union groups) {
     compulsory := any(.training.compulsory),
     selectable := (
       with
-        next_step := training::get_status(.training, user).next_step
+        next_step := training::get_status(.training, user, collapse := <optional bool>$collapse).next_step
       select {
         # TODO in future not booked
         tools::Selectability.NONE_REMAINING if [is tools::Tool].quantity = 0 else <tools::Selectability>{},  # inventoried tools cannot be grouped
@@ -28,6 +28,9 @@ select (tools union groups) {
             <tools::Selectability>{},
         <tools::Selectability><str>next_step if next_step != training::NextStep.NONE else <tools::Selectability>{},
         # if they're a rep they can sign in to use the machines they want even if the reps aren't trained
-        tools::Selectability.REPS_UNTRAINED if .training not in location.supervisable_training else <tools::Selectability>{},
+        if .training not in location.supervisable_training and user is not users::Rep then
+          tools::Selectability.REPS_UNTRAINED
+        else
+          <tools::Selectability>{},
     })
 }

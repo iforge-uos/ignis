@@ -129,18 +129,18 @@ module training {
         with
             module default,
         select
-                                    (care := bin("01000"), value := bin("00000"),
+            (care := bin("01000"), value := bin("00000"),
                 status := training::Status.UNTRAINED, next_step := training::NextStep.DO_ONLINE)
-                                union (care := bin("01001"), value := bin("01001"),
-                    status := training::Status.REVOKED, next_step := training::NextStep.DO_ONLINE)
-                                union (care := bin("01011"), value := bin("01010"),
-                    status := training::Status.EXPIRED, next_step := training::NextStep.DO_ONLINE)
-                union (care := bin("11011"), value := bin("01000"),
-                    status := training::Status.FULLY_COMPLETE, next_step := training::NextStep.NONE)
-                union (care := bin("11111"), value := bin("11000"),
-                    status := training::Status.ONLINE_COMPLETE, next_step := training::NextStep.DO_IN_PERSON)
-                union (care := bin("11111"), value := bin("11100"),
-                    status := training::Status.FULLY_COMPLETE, next_step := training::NextStep.NONE)
+            union (care := bin("01001"), value := bin("01001"),
+                status := training::Status.REVOKED, next_step := training::NextStep.DO_ONLINE)
+            union (care := bin("01011"), value := bin("01010"),
+                status := training::Status.EXPIRED, next_step := training::NextStep.DO_ONLINE)
+            union (care := bin("11011"), value := bin("01000"),
+                status := training::Status.FULLY_COMPLETE, next_step := training::NextStep.NONE)
+            union (care := bin("11111"), value := bin("11000"),
+                status := training::Status.ONLINE_COMPLETE, next_step := training::NextStep.DO_IN_PERSON)
+            union (care := bin("11111"), value := bin("11100"),
+                status := training::Status.FULLY_COMPLETE, next_step := training::NextStep.NONE)
     );
 
     # slight more complicated cases for reps and if collapsed
@@ -174,7 +174,6 @@ module training {
     # | 1 | 0 | 1 | 1 | 1 | X | 0 | 0 | 0 | 0 | FULLY_COMPLETE                   | NONE                          |
     # | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 0 | 0 | 0 | FULLY_COMPLETE                   | NONE                          |
     # +===+===+===+===+===+===+===+===+===+===+==================================+===============================+
-    #
     # Note: Online (rep) training is a pre-requisite for (rep) in-person training.
     #       User online training is a pre-requisite for user in-person training.
     #       User online training is a pre-requisite for online rep training.
@@ -184,7 +183,7 @@ module training {
         with
             module default,
         select
-                  (care := bin("00_1000_0000"), value := bin("00_0000_0000"),
+            (care := bin("00_1000_0000"), value := bin("00_0000_0000"),
                 status := training::Status.UNTRAINED, next_step := training::NextStep.DO_ONLINE)
             union (care := bin("00_1000_0010"), value := bin("00_1000_0010"),
                 status := training::Status.REVOKED, next_step := training::NextStep.DO_ONLINE)
@@ -268,7 +267,7 @@ module training {
                 lookups := global COLLAPSED_LOOKUPS if collapse_ else global LOOKUPS,
                 select (
                      if not collapse_ or is_user_training then
-                        assert_exists(
+                        (  # assert_exists(  # TODO add this back at some point once I've fixed people's invalid training records
                             select lookups
                             filter bit_and(key, .care) = .value
                             order by .value desc  # more specific ones first

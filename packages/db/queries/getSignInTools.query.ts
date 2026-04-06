@@ -5,6 +5,7 @@ import type {Executor} from "gel";
 export type GetSignInToolsArgs = {
   readonly "id": string;
   readonly "name": ("MAINSPACE" | "HEARTSPACE");
+  readonly "collapse"?: boolean;
 };
 
 export type GetSignInToolsReturns = Array<{
@@ -31,7 +32,7 @@ select (tools union groups) {
     compulsory := any(.training.compulsory),
     selectable := (
       with
-        collapse := false,
+        collapse := <optional bool>$collapse,
         training := .training,
         next_step := select (
             with
@@ -43,6 +44,7 @@ select (tools union groups) {
                 is_user_training := exists training.rep,
                 u := user{training filter .id = training.id},  # stupid but you can't do training@created_at directly for some reason
                 training_in_person_needed := training.in_person,
+                training_online_done := exists u.training@created_at,
                 training_in_person_done := exists u.training@in_person_created_at,
                 # the presence of any revocation means they can't use it.
                 training_revoked := exists u.training@infraction,
@@ -58,8 +60,8 @@ select (tools union groups) {
                  key := (
                     select default::bin(
                         ("1" if training_in_person_needed else "0") ++
-
                         ("1" if rep_in_person_needed else "0") ++
+                        ("1" if training_online_done else "0") ++
                         ("1" if training_in_person_done else "0") ++
                         ("1" if rep_online else "0") ++
                         ("1" if rep_in_person_done else "0") ++
@@ -71,6 +73,7 @@ select (tools union groups) {
                     ) if collapse_
                     else default::bin(
                         ("1" if training_in_person_needed else "0") ++
+                        ("1" if training_online_done else "0") ++
                         ("1" if training_in_person_done else "0") ++
                         ("1" if training_expired else "0") ++
                         ("1" if training_revoked else "0")
@@ -78,8 +81,8 @@ select (tools union groups) {
                 ),
                 lookups := global COLLAPSED_LOOKUPS if collapse_ else global LOOKUPS,
                 select (
-                    if not collapse_ or is_user_training then
-                        assert_exists(
+                     if not collapse_ or is_user_training then
+                        (# assert_exists(  # TODO add this back at some point once I've fixed people's invalid training records
                             select lookups
                             filter bit_and(key, .care) = .value
                             order by .value desc  # more specific ones first
@@ -104,7 +107,10 @@ select (tools union groups) {
             <tools::Selectability>{},
         <tools::Selectability><str>next_step if next_step != training::NextStep.NONE else <tools::Selectability>{},
         # if they're a rep they can sign in to use the machines they want even if the reps aren't trained
-        tools::Selectability.REPS_UNTRAINED if .training not in location.supervisable_training else <tools::Selectability>{},
+        if .training not in location.supervisable_training and user is not users::Rep then
+          tools::Selectability.REPS_UNTRAINED
+        else
+          <tools::Selectability>{},
     })
 }`, args);
 
