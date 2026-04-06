@@ -17,7 +17,7 @@ import { toTitleCase } from "@/lib/utils";
 import { handleTopUp } from "@/lib/utils/shop";
 import { getTrainingCompletionStatus } from "@/lib/utils/training";
 import { Procedures } from "@/types/router";
-import { SignInReason } from "../../_reponly/sign-in.$location/actions/-components/SignInReason";
+import { SignInReason } from "../../_reponly/sign-in.$location/$ucard_number/-components/SignInReason";
 
 type User = Procedures["users"]["profile"]["get"];
 

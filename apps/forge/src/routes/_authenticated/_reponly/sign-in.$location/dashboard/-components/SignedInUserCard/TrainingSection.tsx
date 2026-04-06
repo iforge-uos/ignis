@@ -22,8 +22,8 @@ import { activeLocationAtom } from "@/atoms/signInAppAtoms";
 import { iForgeEpoch } from "@/lib/constants";
 import { orpc } from "@/lib/orpc";
 import { cn } from "@/lib/utils/cn";
-import { getToolCardInfo } from "../../../actions/-components/TrainingSelectionList";
 import { ManageUserWidgetProps } from "./ManageUserWidget";
+import { getToolCardInfo } from "../../../$ucard_number/-components/ToolLegend";
 
 export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locationName: location }) => {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
@@ -58,7 +58,7 @@ export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locatio
                         key={training.id}
                         value={training.id}
                         disabled={
-                          !(training.selectable.length === 1 && training.selectable.includes("IN_PERSON_MISSING"))
+                          !(training.selectable.length === 1 && training.selectable.includes("DO_IN_PERSON"))
                         }
                         className="w-full"
                       >
@@ -66,7 +66,7 @@ export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locatio
                           <p className="min-w-[175px] flex-1">{training.name}</p>
                           <div className="flex shrink-0 space-x-2 ml-auto">
                             {info.map((entry) =>
-                              entry.name !== "IN_PERSON_MISSING" ? (
+                              entry.name !== "DO_IN_PERSON" ? (
                                 <Badge
                                   key={entry.label}
                                   className={cn(

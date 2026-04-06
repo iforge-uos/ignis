@@ -20,8 +20,8 @@ import { activeLocationAtom } from "@/atoms/signInAppAtoms";
 import { Hammer } from "@/components/loading";
 import { uCardNumberToString } from "@/lib/utils";
 import { orpc } from "/src/lib/orpc";
-import { SignInReason } from "../../../actions/-components/SignInReason";
-import TrainingSelection from "../../../actions/-components/TrainingSelectionList";
+import { SignInReason } from "../../../$ucard_number/-components/SignInReason";
+import {ToolSelection} from "../../../$ucard_number/-components/ToolSelectionList";
 
 interface SignInReasonWithToolsDisplayProps {
   id: string;
@@ -108,7 +108,7 @@ export const SignInReasonWithToolsDisplay: React.FC<SignInReasonWithToolsDisplay
         ) : (
           availableTools && (
             <>
-              <TrainingSelection
+              <ToolSelection
                 tools={availableTools || []}
                 onSelectionChange={(newTools) => setNewTools(newTools)}
                 onSubmit={() => {

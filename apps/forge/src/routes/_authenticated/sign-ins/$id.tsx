@@ -11,7 +11,7 @@ import { LocationIcon } from "@/icons/Locations";
 import { orpc } from "@/lib/orpc";
 import { ensureQueryData } from "@/lib/query-utils";
 import { toTitleCase } from "@/lib/utils";
-import { SignInReason } from "../_reponly/sign-in.$location/actions/-components/SignInReason";
+import { SignInReason } from "../_reponly/sign-in.$location/$ucard_number/-components/SignInReason";
 import { AddUserAttributes } from "../_reponly/sign-in.$location/dashboard/-components/SignedInUserCard";
 
 export default function Component() {
