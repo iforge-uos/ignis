@@ -10,7 +10,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@packages/ui/components/form";
-import { MultiSelect } from "@packages/ui/components/multi-select";
+import MultiSelect from "@packages/ui/components/multi-select";
 import { useQuery } from "@tanstack/react-query";
 import * as React from "react";
 import { useForm } from "react-hook-form";
@@ -86,14 +86,14 @@ export const TeamManagementSection: React.FC<ManageUserWidgetProps> = ({ user })
               <FormItem className="space-y-4">
                 <FormLabel>Teams</FormLabel>
                 <FormControl>
-                  {/* <MultiSelectFormField
+                  <MultiSelect
                       options={teamsList}
                       defaultValue={field.value}
                       onValueChange={field.onChange}
                       className="rounded-sm bg-accent dark:bg-neutral-800 m-0.5 w-full pt-1.5 pb-1.5 text-black dark:text-white"
                       placeholder="Select options"
                       variant="inverted"
-                    /> */}
+                    />
                 </FormControl>
                 <FormDescription>Choose the teams you want the place the person in.</FormDescription>
                 <FormMessage className="bg-info text-info-foreground p-2 text-balance">

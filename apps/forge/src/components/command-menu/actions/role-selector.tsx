@@ -2,7 +2,7 @@ import { adminOverwriteRoles, adminOverwrittenRoles } from "@/atoms/adminAtoms";
 import { AVAILABLE_ROLES } from "@/lib/constants";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@packages/ui/components/card";
 import { Label } from "@packages/ui/components/label";
-import { MultiSelect } from "@packages/ui/components/multi-select";
+import MultiSelect from "@packages/ui/components/multi-select";
 import { Switch } from "@packages/ui/components/switch";
 import { useAtom } from "jotai";
 import { UserIcon } from "lucide-react";
@@ -49,7 +49,7 @@ export function RoleSelector() {
           <Label htmlFor="role-select" className="text-sm font-medium">
             Select Roles
           </Label>
-          <MultiSelectFormField
+          <MultiSelect
             id="role-select"
             options={roleOptions}
             defaultValue={selectedRoles}
