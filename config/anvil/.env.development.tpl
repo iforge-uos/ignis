@@ -20,8 +20,8 @@ DISCORD_CLIENT_SECRET="op://IT/Anvil OAuth2 Discord/client secret"
 DISCORD_CLIENT_CALLBACK_URL="http://127.0.0.1:3000/v1/authentication/discord/callback"
 
 # AUTH
-JWT_SECRET="op://Employee/JWT Secret Key/password"
-CSRF_SECRET="op://Employee/CSRF Secret Key/password"
+JWT_SECRET="op://Ignis/JWT Secret Key/password"
+# CSRF_SECRET="op://Employee/CSRF Secret Key/password"
 CSRF_EXCLUDE_ROUTES="v1/authentication/login,POST;v1/authentication/refresh,POST"
 ACCESS_TOKEN_EXPIRES_IN="1h"
 REFRESH_TOKEN_EXPIRES_IN="7d"
