@@ -35,17 +35,17 @@ export async function getUserProfile(providerToken: string): Promise<GoogleUser>
 }
 
 
-export function verifyJWT(token: string) {
-  try {
-    return jwt.verify(
-      token,
-      "1VW82vA409iXrlCFU1R4Y0tGtn3kQWMLD/Cr87JrKIMqXZY5qFW5KTxe8Ot+We9K2Lgcp90PPqrmprGyn73gS+YDzqKR0h9x+pRIsSo4W9a+3tyDtllGTRCz778gL6z9qz1KJfFuqMXhBXdU4cz+sexaIB+vJzP/nkupvlUD1wSWIG/8acJweU24tieihzA4foSPH7PSjeALpBy8a3fls+6uQgbqi3080mVDDQvxHbHeMmE3ZhVq+tgDeNlFcq/DgULerAWjQ5F2RiVckON+y2a38G5r1VGdFK3sCCO0abCdSOtk7U3bQb7qjR29Pt4l/5n8sfFWXzT4H9P0y8SxBw",
-      { complete: true, ignoreExpiration: false },
-    );
-  } catch (_) {
-    return undefined;
-  }
-}
+// export function verifyJWT(token: string) {
+//   try {
+//     return jwt.verify(
+//       token,
+//       JWT_KEY,
+//       { complete: true, ignoreExpiration: false },
+//     );
+//   } catch (_) {
+//     return undefined;
+//   }
+// }
 
 export interface TanStackAuthOptions {
   baseUrl: string;
