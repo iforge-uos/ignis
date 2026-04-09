@@ -37,9 +37,9 @@ export default function HistoricSignInsPanel({ location }: HistoricSignInsPanelP
                       </div>
                       <Badge variant="outline">{format(entry.created_at.epochMilliseconds, "dd MMM, HH:mm")}</Badge>
                     </div>
-                    {entry._tools.length > 0 && (
+                    {entry.tools.length > 0 && (
                       <div className="mt-2 flex flex-wrap gap-2">
-                        {entry._tools.map((tool) => (
+                        {entry.tools.map((tool) => (
                           <Badge key={`${entry.id}-${tool.name}`} variant="secondary">
                             {tool.name}
                           </Badge>

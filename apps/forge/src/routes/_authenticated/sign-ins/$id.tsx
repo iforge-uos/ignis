@@ -73,7 +73,7 @@ function Component() {
           </div>
 
           <Separator />
-          {data._tools.length !== 0 && (
+          {data.tools.length !== 0 && (
             <div className="flex flex-row justify-between">
               <div className="space-y-2">
                 <h3 className="text-lg font-semibold flex items-center gap-2">
@@ -81,7 +81,7 @@ function Component() {
                   Tools Used
                 </h3>
                 <ul className="list-disc list-inside space-y-1">
-                  {data._tools.map((tool) => (
+                  {data.tools.map((tool) => (
                     <li key={tool.id} className="text-muted-foreground">
                       {tool.name}
                     </li>

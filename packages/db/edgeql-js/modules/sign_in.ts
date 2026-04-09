@@ -132,10 +132,9 @@ const Reason: $.$expr_PathNode<$.TypeSet<$Reason, $.Cardinality.Many>, null> = _
 export type $SignInλShape = $.typeutil.flatten<_default.$TimedλShape & _default.$ListenableλShape & {
   "location": $.LinkDesc<$Location, $.Cardinality.One, {}, false, false,  false, false>;
   "reason": $.LinkDesc<$Reason, $.Cardinality.One, {}, false, false,  false, false>;
-  "tools": $.PropertyDesc<$.ArrayType<_std.$str>, $.Cardinality.One, false, false, false, false>;
   "user": $.LinkDesc<_users.$User, $.Cardinality.One, {}, false, false,  false, false>;
   "signed_out": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, true, false, false>;
-  "_tools": $.LinkDesc<_tools.$Tool | _tools.$GroupedTool, $.Cardinality.Many, {}, false, false,  false, false>;
+  "tools": $.LinkDesc<_tools.$Tool | _tools.$GroupedTool, $.Cardinality.Many, {}, false, false,  false, false>;
   "<sign_ins[is sign_in::Location]": $.LinkDesc<$Location, $.Cardinality.Many, {}, false, false,  false, false>;
   "<sign_ins[is user]": $.LinkDesc<_default.$user, $.Cardinality.Many, {}, false, false,  false, false>;
   "<sign_ins[is users::User]": $.LinkDesc<_users.$User, $.Cardinality.Many, {}, false, false,  false, false>;
