@@ -76,12 +76,3 @@ const config = defineConfig({
 });
 
 export default config;
-// export default wrapVinxiConfigWithSentry(config, {
-//   org: "iforge-uos",
-//   project: "forge",
-//   authToken: process.env.SENTRY_AUTH_TOKEN,
-//   // Only print logs for uploading source maps in CI
-//   // Set to `true` to suppress logs
-//   silent: !process.env.CI,
-//   telemetry: false
-// });

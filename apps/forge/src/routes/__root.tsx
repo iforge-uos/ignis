@@ -29,7 +29,8 @@ const RootDocument = () => {
   return (
     <html lang="en" className={theme}>
       <head>
-        <ClientHintCheck /> {/* https://tanstack.com/router/latest/docs/guide/document-head-management#inline-scripts-with-scriptonce */}
+        <ClientHintCheck />{" "}
+        {/* https://tanstack.com/router/latest/docs/guide/document-head-management#inline-scripts-with-scriptonce */}
         <HeadContent />
       </head>
       <body>
@@ -58,7 +59,7 @@ const RootDocument = () => {
   );
 };
 
-export const Route = wrapCreateRootRouteWithSentry(createRootRouteWithContext<RouterAppContext>)()({
+export const Route = createRootRouteWithContext<RouterAppContext>()({
   head: () => ({
     meta: [
       {
@@ -151,7 +152,7 @@ export const Route = wrapCreateRootRouteWithSentry(createRootRouteWithContext<Ro
     ],
   }),
   beforeLoad: async ({ context }) => {
-    const user = await ensureQueryData(context.queryClient, orpc.users.me.queryOptions(), { catchErrors: true, } );
+    const user = await ensureQueryData(context.queryClient, orpc.users.me.queryOptions(), { catchErrors: true });
     return { user };
   },
   loader: async ({ context }) => {

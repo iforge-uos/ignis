@@ -5,7 +5,5 @@ Sentry.init({
   environment: process.env.NODE_ENV ? process.env.NODE_ENV : "development",
   tracesSampleRate: (process.env.NODE_ENV || "development") === "development" ? 1 : 0.1,
   sendDefaultPii: false,
-  _experiments: {
-    enableLogs: true,
-  },
+  enableLogs: true,
 });
