@@ -7,7 +7,6 @@ import { createLogger, defineConfig } from "vite-plus";
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
 import lqip from "vite-plugin-lqip";
 import svgr from "vite-plugin-svgr";
-import tsconfigPaths from "vite-tsconfig-paths";
 import ws from "./ws";
 
 const logger = createLogger();
@@ -24,11 +23,14 @@ const config = defineConfig({
     sourcemap: true,
     target: "esnext",
   },
-  esbuild: {
+  oxc: {
     target: "es2024",
   },
+  resolve: {
+    // This enables built-in support for path aliases defined in tsconfig.json
+    tsconfigPaths: true,
+  },
   plugins: [
-    tsconfigPaths(),
     tanstackStart(),
     react({
       babel: {
