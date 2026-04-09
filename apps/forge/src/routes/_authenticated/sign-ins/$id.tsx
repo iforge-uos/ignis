@@ -14,7 +14,7 @@ import { toTitleCase } from "@/lib/utils";
 import { SignInReason } from "../_reponly/sign-in.$location/$ucard_number/-components/SignInReason";
 import { AddUserAttributes } from "../_reponly/sign-in.$location/dashboard/-components/SignedInUserCard";
 
-export default function Component() {
+function Component() {
   const data = Route.useLoaderData();
   const user = useUser();
 

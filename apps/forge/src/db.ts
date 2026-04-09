@@ -8,7 +8,7 @@ import env from "./lib/env";
 
 const MICROSECONDS_SINCE_2000 = 946684800000000n;
 
-const client = createClient({ branch: "main", tlsSecurity: process.env.NODE_ENV === "development" ? "insecure" : "default"})
+const client = createClient({ branch: "main", tlsSecurity: "insecure", host: env.db.host, port: env.db.port, user: env.db.user, password: env.db.password })
   .withGlobals(env.db.globals)
   .withConfig({ apply_access_policies: false })
   .withCodecs({

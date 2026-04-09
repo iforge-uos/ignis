@@ -6,7 +6,7 @@ import {} from "@tanstack/react-router";
 import { AgreementCard } from "./-components/AgreementCard";
 
 
-export default function Component() {
+function Component() {
  const agreements = Route.useLoaderData();
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">

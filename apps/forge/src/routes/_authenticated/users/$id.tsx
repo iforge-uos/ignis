@@ -30,7 +30,7 @@ import Training from "./-components/Training";
 const USER_TABS = ["overview", "training", "analytics"] as const;
 const REP_TABS = ["teams", "infractions"] as const;
 
-export default function Component() {
+function Component() {
   const navigate = useNavigate({ from: Route.fullPath });
   const queryClient = useQueryClient();
   const { tab } = Route.useSearch();

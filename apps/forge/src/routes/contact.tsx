@@ -80,7 +80,7 @@ const teamContacts = [
   reason: string;
 }[];
 
-export function Component() {
+function Component() {
   return (
     <>
       <Title prompt="Contact Us" />

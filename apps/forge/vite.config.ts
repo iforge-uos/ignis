@@ -3,11 +3,10 @@ import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import react from "@vitejs/plugin-react";
 import { visualizer } from "rollup-plugin-visualizer";
-import { createLogger, defineConfig } from "vite";
+import { createLogger, defineConfig } from "vite-plus";
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
 import lqip from "vite-plugin-lqip";
 import svgr from "vite-plugin-svgr";
-import tsconfigPaths from "vite-tsconfig-paths";
 import ws from "./ws";
 
 const logger = createLogger();
@@ -24,11 +23,14 @@ const config = defineConfig({
     sourcemap: true,
     target: "esnext",
   },
-  esbuild: {
+  oxc: {
     target: "es2024",
   },
+  resolve: {
+    // This enables built-in support for path aliases defined in tsconfig.json
+    tsconfigPaths: true,
+  },
   plugins: [
-    tsconfigPaths(),
     tanstackStart(),
     react({
       babel: {
@@ -41,10 +43,12 @@ const config = defineConfig({
     {
       name: "orpc-websocket-dev",
       configureServer() {
-        Bun.serve({
-          port: 3001,
-          ...ws,
-        });
+        if (process.env.NODE_ENV === "development") {
+          Bun.serve({
+            port: 3001,
+            ...ws,
+          });
+        }
       },
     },
     lqip(),
@@ -74,12 +78,3 @@ const config = defineConfig({
 });
 
 export default config;
-// export default wrapVinxiConfigWithSentry(config, {
-//   org: "iforge-uos",
-//   project: "forge",
-//   authToken: process.env.SENTRY_AUTH_TOKEN,
-//   // Only print logs for uploading source maps in CI
-//   // Set to `true` to suppress logs
-//   silent: !process.env.CI,
-//   telemetry: false
-// });
