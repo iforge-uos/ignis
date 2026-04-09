@@ -120,7 +120,7 @@ function SignInDashboard() {
               <AlertDescription>
                 There was an error fetching the sign-in data. Please try again later...
                 <br />
-                {extractError(error!)}
+                {error.toString()}
               </AlertDescription>
             </Alert>
           )}
