@@ -19,7 +19,7 @@ function Component() {
   return (
       <iframe
         title="iForge Database UI"
-        src={isLocalhost ? `https://localhost:10705/ui?authToken=${authToken}` : `https://db.iforge.sheffield.ac.uk/ui?authToken=${authToken}`}
+        src={isLocalhost ? `http://localhost:10705/ui?authToken=${authToken}` : `https://db.iforge.sheffield.ac.uk/ui?authToken=${authToken}`}
         className="w-full h-full border-0"
         referrerPolicy="no-referrer"
       />

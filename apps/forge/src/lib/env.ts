@@ -4,6 +4,10 @@ import * as z from "zod";
 export default createEnv({
   server: {
     // Auth Configuration
+    GEL_HOST: z.string().min(1),
+    GEL_PORT: z.union([z.coerce.number().int().positive(), z.literal("").transform(() => undefined)]),
+    GEL_USERNAME: z.string().min(1),
+    GEL_PASSWORD: z.string().min(1),
     // CSRF_SECRET: z.string().min(1),
     // CSRF_EXCLUDE_ROUTES: z
     //   .string()
@@ -174,6 +178,10 @@ export default createEnv({
         },
       },
       db: {
+        host: env.GEL_HOST,
+        port: env.GEL_PORT,
+        user: env.GEL_USERNAME,
+        password: env.GEL_PASSWORD,
         globals: {
           INFRACTIONS_WEBHOOK_URL: env.INFRACTIONS_WEBHOOK_URL,
           PUB_SUB_SECRET: env.JWT_SECRET,
