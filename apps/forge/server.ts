@@ -3,7 +3,7 @@ import "./src/polyfill";
 import path from "node:path";
 import * as Sentry from "@sentry/tanstackstart-react";
 import { CronJob } from "cron";
-import ws from "./ws";
+import ws, { handleWebSocketUpgrade } from "./ws";
 
 const CronJobWithCheckIn = Sentry.cron.instrumentCron(CronJob, "my-cron-job");
 
@@ -41,7 +41,7 @@ const log = {
 };
 
 // Preloading configuration from environment variables
-const MAX_PRELOAD_BYTES = 5 * 1024 * 1024; // 5MiB default
+const MAX_PRELOAD_BYTES = 15 * 1024 * 1024; // 15MiB default
 
 // Parse comma-separated include patterns (no defaults)
 const INCLUDE_PATTERNS = (process.env.ASSET_PRELOAD_INCLUDE_PATTERNS ?? "")
@@ -422,20 +422,23 @@ async function initializeServer() {
   // Create Bun server
   const server = Bun.serve({
     port: 3000,
-    ...ws,
-    routes: {
-      // Serve static assets (preloaded or on-demand)
-      ...routes,
+    websocket: ws.websocket,
+    routes,
+    fetch(req, server) {
+      const url = new URL(req.url);
 
+      // Handle websocket upgrades before any HTTP route fallback.
+      if (url.pathname === "/ws") {
+        return handleWebSocketUpgrade(req, server);  // FIXME self signed certs on https redirect to db
+      }
+      
       // Fallback to TanStack Start handler for all other routes
-      "/*": (req: Request) => {
-        try {
-          return handler.fetch(req);
-        } catch (error) {
-          log.error(`Server handler error: ${String(error)}`);
-          return new Response("Internal Server Error", { status: 500 });
-        }
-      },
+      try {
+        return handler.fetch(req);
+      } catch (error) {
+        log.error(`Server handler error: ${String(error)}`);
+        return new Response("Internal Server Error", { status: 500 });
+      }
     },
     // Global error handler
     error(error) {

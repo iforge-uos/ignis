@@ -1,7 +1,3 @@
-import dbClient from "@/db";
-import { DEFAULT_AUTH_COOKIE } from "@/lib/constants";
-import serialisers from "@/lib/serialisers";
-import { type Router, router } from "@/routes/api/$";
 import { createORPCClient, onError } from "@orpc/client";
 import { RPCLink } from "@orpc/client/websocket";
 import { createRouterClient, type RouterClient } from "@orpc/server";
@@ -10,6 +6,10 @@ import { redirect, useLocation } from "@tanstack/react-router";
 import { createIsomorphicFn } from "@tanstack/react-start";
 import { getCookie } from "@tanstack/react-start/server";
 import { WebSocket } from "partysocket";
+import dbClient from "@/db";
+import { DEFAULT_AUTH_COOKIE } from "@/lib/constants";
+import serialisers from "@/lib/serialisers";
+import { type Router, router } from "@/routes/api/$";
 
 export type ORPCReactUtils = RouterUtils<RouterClient<Router>>;
 
@@ -17,9 +17,19 @@ let websocketInstance: WebSocket | null = null;
 let clientInstance: RouterClient<typeof router> | null = null;
 
 function createWebSocketClient(): RouterClient<typeof router> {
-  const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+  const secure = window.location.protocol === "https:";
+  const protocol = secure ? "wss:" : "ws:";
+  const hostname = window.location.host.split(":")[0];
+  let port: string;
+  if (secure) {
+    port = ""; // prod
+  } else if (process.env.NODE_ENV === "production") {
+    port = ":3000"; // local preview
+  } else {
+    port = ":3001"; // local dev
+  }
   // Cookies are automatically sent in the WebSocket handshake
-  websocketInstance = new WebSocket(`${protocol}//${window.location.host.split(":")[0]}:3001`);
+  websocketInstance = new WebSocket(`${protocol}//${hostname}${port}/ws`);
   const link = new RPCLink({
     websocket: websocketInstance as any,
     customJsonSerializers: serialisers,

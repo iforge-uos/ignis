@@ -17,8 +17,9 @@ type WSContext = { authToken?: string };
 // Store the auth token from the WebSocket handshake
 const wsAuthTokens = new WeakMap<Bun.ServerWebSocket<WSContext>, string | undefined>();
 
-export default {
-  fetch(req, server) {
+export function handleWebSocketUpgrade(req: Request, server: Bun.Server<WSContext>) {
+  const url = new URL(req.url);
+  if (url.pathname === "/ws") {
     // Read session cookie from the upgrade request
     const authToken = getCookie(req.headers, DEFAULT_AUTH_COOKIE);
 
@@ -26,7 +27,15 @@ export default {
       return;
     }
 
-    return new Response("Upgrade failed", { status: 500 });
+    return new Response("Upgrade failed", { status: 400 });
+  }
+
+  return new Response("Not found", { status: 404 });
+}
+
+export default {
+  fetch(req, server) {
+    return handleWebSocketUpgrade(req, server);
   },
 
   websocket: {
