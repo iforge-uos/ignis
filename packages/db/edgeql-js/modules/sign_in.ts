@@ -111,7 +111,7 @@ const $QueuePlace = $.makeType<$QueuePlace>(_.spec, "624db45a-3624-11ef-9662-3fb
 
 const QueuePlace: $.$expr_PathNode<$.TypeSet<$QueuePlace, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($QueuePlace, $.Cardinality.Many), null);
 
-export type $ReasonλShape = $.typeutil.flatten<_default.$AuditableλShape & {
+export type $ReasonλShape = $.typeutil.flatten<_default.$AuditableλShape & _default.$ListenableλShape & {
   "name": $.PropertyDesc<_std.$str, $.Cardinality.One, true, false, false, false>;
   "agreement": $.LinkDesc<$Agreement, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
   "category": $.PropertyDesc<$ReasonCategory, $.Cardinality.One, false, false, false, false>;
@@ -123,6 +123,7 @@ export type $ReasonλShape = $.typeutil.flatten<_default.$AuditableλShape & {
 }>;
 type $Reason = $.ObjectType<"sign_in::Reason", $ReasonλShape, null, [
   ..._default.$Auditable['__exclusives__'],
+  ..._default.$Listenable['__exclusives__'],
   {name: {__element__: _std.$str, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
 ], "sign_in::Reason">;
 const $Reason = $.makeType<$Reason>(_.spec, "62316732-3624-11ef-93b3-9d0e27cb2778", _.syntax.literal);

@@ -159,8 +159,8 @@ export type $RepλShape = $.typeutil.flatten<$UserλShape & {
   "<members[is team::Team]": $.LinkDesc<_team.$Team, $.Cardinality.Many, {}, false, false,  false, false>;
   "<off_shift_reps[is sign_in::Location]": $.LinkDesc<_sign_in.$Location, $.Cardinality.Many, {}, false, false,  false, false>;
   "<on_shift_reps[is sign_in::Location]": $.LinkDesc<_sign_in.$Location, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<supervising_reps[is sign_in::Location]": $.LinkDesc<_sign_in.$Location, $.Cardinality.Many, {}, false, false,  false, false>;
   "<responsible_reps[is tools::Tool]": $.LinkDesc<_tools.$Tool, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<supervising_reps[is sign_in::Location]": $.LinkDesc<_sign_in.$Location, $.Cardinality.Many, {}, false, false,  false, false>;
   "<all_members": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<approved_by": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<members": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;

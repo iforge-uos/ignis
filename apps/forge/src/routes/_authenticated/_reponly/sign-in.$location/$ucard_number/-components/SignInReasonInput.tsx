@@ -19,7 +19,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import { sessionSignInReasonAtom } from "@/atoms/signInAppAtoms";
 import { AgreementViewer } from "@/components/sign-in/AgreementViewer";
 import { usePromiseDialog } from "@/hooks/usePromiseDialog";
-import { useSignInReasons } from "@/hooks/useSignInReasons";
 import { Category } from "@/icons/SignInReason";
 import { orpc } from "@/lib/orpc";
 import { useSignIn } from "@/providers/SignInSteps";
@@ -82,8 +81,8 @@ export const ReasonInput: FlowStepComponent<"REASON"> = ({ data: { common_reason
     }
   });
 
-  const { data: signInReasons } = useSignInReasons();
-  // const { data: signInReasons } = useQuery({ ...orpc.signIns.reasons.all.queryOptions(), staleTime: Infinity });
+  const { data: signInReasons } = useQuery(orpc.signIns.reasons.all.experimental_liveOptions());
+
   const fuse = useMemo(
     () =>
       new Fuse<PartialReason>([], {

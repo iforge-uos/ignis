@@ -4,8 +4,7 @@ module sign_in {
             on target delete delete source;
         }
         required location: Location;
-        required tools: array<str>;
-        multi _tools: tools::Tool | tools::GroupedTool;
+        multi tools: tools::Tool | tools::GroupedTool;
 
         required reason: Reason;
         required signed_out := exists .ends_at;
@@ -198,7 +197,7 @@ module sign_in {
         EVENT,
     >;
 
-    type Reason extending default::Auditable {
+    type Reason extending default::Auditable, default::Listenable {
         required name: str {
             constraint exclusive;
         }

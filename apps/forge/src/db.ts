@@ -132,7 +132,7 @@ export async function publishDbListenable(listenable: z.infer<typeof Listenable>
   ]);
 }
 
-export async function* subscribeToDbListener(channel: string) {
+export async function* subscribeToDbListener(channel: Listenable | `${Listenable}$${"insert" | "update" | "delete"}`) {
   const subscriptionId = `${channel}-${Math.random()}`;
   const handler: SubscriptionHandler = {
     channel,
@@ -160,7 +160,7 @@ export async function onInsert<U extends ObjectType<Listenable | ListenableWithC
   type: $expr_PathNode<TypeSet<U>>,
   cb: (arg0: { id: string }) => Promise<void>,
 ) {
-  const channel = `${type.__element__.__name__ as Listenable}$insert`;
+  const channel = `${type.__element__.__name__ as Listenable}$insert` as const;
   for await (const event of subscribeToDbListener(channel)) {
     if (event.type === (type.__element__.__name__ as Listenable)) {
       await cb(event as any);
@@ -177,7 +177,7 @@ export async function onUpdate<U extends ObjectType<ListenableWithChangesNames>>
   cb: (arg0: UpdatedFields<U>) => Promise<void>,
 ): Promise<void>;
 export async function onUpdate(type: $expr_PathNode, cb: (arg0: any) => Promise<void>) {
-  const channel = `${type.__element__.__name__}$update`;
+  const channel = `${type.__element__.__name__ as Listenable}$update` as const;
   for await (const event of subscribeToDbListener(channel)) {
     if (event.type === type.__element__.__name__) {
       await cb(event as any);
@@ -189,7 +189,7 @@ export async function onDelete<U extends ObjectType<Listenable | ListenableWithC
   type: $expr_PathNode<TypeSet<U>>,
   cb: (arg0: { id: string }) => Promise<void>,
 ) {
-  const channel = `${type.__element__.__name__ as Listenable}$delete`;
+  const channel = `${type.__element__.__name__ as Listenable}$delete` as const;
   for await (const event of subscribeToDbListener(channel)) {
     if (event.type === (type.__element__.__name__ as Listenable)) {
       await cb(event as any);

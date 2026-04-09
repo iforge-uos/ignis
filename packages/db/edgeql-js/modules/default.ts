@@ -29,7 +29,7 @@ export type $BaseListenable_3e8e1c0028b011f18145495fd9f6b463λShape = $.typeutil
 }>;
 type $BaseListenable_3e8e1c0028b011f18145495fd9f6b463 = $.ObjectType<"default::_BaseListenable", $BaseListenable_3e8e1c0028b011f18145495fd9f6b463λShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
-], "users::User" | "default::user" | "sign_in::Agreement" | "sign_in::Location" | "sign_in::SignIn" | "users::Rep">;
+], "users::User" | "default::user" | "sign_in::Agreement" | "sign_in::Location" | "sign_in::Reason" | "sign_in::SignIn" | "users::Rep">;
 const $BaseListenable_3e8e1c0028b011f18145495fd9f6b463 = $.makeType<$BaseListenable_3e8e1c0028b011f18145495fd9f6b463>(_.spec, "3e8e1c00-28b0-11f1-8145-495fd9f6b463", _.syntax.literal);
 
 const BaseListenable_3e8e1c0028b011f18145495fd9f6b463: $.$expr_PathNode<$.TypeSet<$BaseListenable_3e8e1c0028b011f18145495fd9f6b463, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($BaseListenable_3e8e1c0028b011f18145495fd9f6b463, $.Cardinality.Many), null);
@@ -38,7 +38,7 @@ export type $ListenableλShape = $.typeutil.flatten<$BaseListenable_3e8e1c0028b0
 }>;
 type $Listenable = $.ObjectType<"default::Listenable", $ListenableλShape, null, [
   ...$BaseListenable_3e8e1c0028b011f18145495fd9f6b463['__exclusives__'],
-], "users::User" | "default::user" | "sign_in::SignIn" | "users::Rep">;
+], "users::User" | "default::user" | "sign_in::Reason" | "sign_in::SignIn" | "users::Rep">;
 const $Listenable = $.makeType<$Listenable>(_.spec, "3eb71556-28b0-11f1-9c86-3dc688403bd5", _.syntax.literal);
 
 const Listenable: $.$expr_PathNode<$.TypeSet<$Listenable, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Listenable, $.Cardinality.Many), null);
