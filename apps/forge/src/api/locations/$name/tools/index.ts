@@ -28,7 +28,7 @@ export const all = pub
           },
           use_count: e.count(
             e.select(tool.location.sign_ins, (sign_in) => ({
-              filter: e.op(tool, "in", sign_in._tools),
+              filter: e.op(tool, "in", sign_in.tools),
             })),
           ),
         })),

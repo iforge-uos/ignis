@@ -6,9 +6,9 @@ import type * as _std from "./std";
 import type * as _default from "./default";
 import type * as _users from "./users";
 import type * as _stdcal from "./std/cal";
-import type * as _sign_in from "./sign_in";
 import type * as _event from "./event";
 import type * as _tools from "./tools";
+import type * as _sign_in from "./sign_in";
 export type $AnswerType = {
   "SINGLE": $.$expr_Literal<$AnswerType>;
   "MULTI": $.$expr_Literal<$AnswerType>;
@@ -149,11 +149,11 @@ export type $TrainingλShape = $.typeutil.flatten<_default.$AuditableλShape & {
   "<training[is training::Session]": $.LinkDesc<$Session, $.Cardinality.Many, {}, false, false,  false, false>;
   "<training[is users::Rep]": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, false,  false, false>;
   "<training[is user]": $.LinkDesc<_default.$user, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<supervisable_training[is sign_in::Location]": $.LinkDesc<_sign_in.$Location, $.Cardinality.Many, {}, false, false,  false, false>;
   "<required_training[is event::Event]": $.LinkDesc<_event.$Event, $.Cardinality.Many, {}, false, false,  false, false>;
   "<training[is tools::Tool]": $.LinkDesc<_tools.$Tool, $.Cardinality.Many, {}, false, false,  false, false>;
   "<rep[is tools::Tool]": $.LinkDesc<_tools.$Tool, $.Cardinality.Many, {}, false, false,  false, false>;
   "<training[is tools::GroupedTool]": $.LinkDesc<_tools.$GroupedTool, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<supervisable_training[is sign_in::Location]": $.LinkDesc<_sign_in.$Location, $.Cardinality.Many, {}, false, false,  false, false>;
   "<parent": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<rep": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<required_training": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;

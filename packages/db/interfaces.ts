@@ -617,7 +617,7 @@ export namespace sign_in {
     "ends_at"?: Date | null;
     "user": users.User;
   }
-  export interface Reason extends $default.Auditable {
+  export interface Reason extends $default.Auditable, $default.Listenable {
     "name": string;
     "agreement"?: Agreement | null;
     "category": ReasonCategory;
@@ -627,10 +627,9 @@ export namespace sign_in {
   export interface SignIn extends $default.Timed, $default.Listenable {
     "location": Location;
     "reason": Reason;
-    "tools": string[];
     "user": users.User;
     "signed_out": boolean;
-    "_tools": tools.Tool | tools.GroupedTool[];
+    "tools": tools.Tool | tools.GroupedTool[];
   }
   export interface UserRegistration extends $default.CreatedAt {
     "location": Location;

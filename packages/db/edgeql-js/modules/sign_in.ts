@@ -111,7 +111,7 @@ const $QueuePlace = $.makeType<$QueuePlace>(_.spec, "624db45a-3624-11ef-9662-3fb
 
 const QueuePlace: $.$expr_PathNode<$.TypeSet<$QueuePlace, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($QueuePlace, $.Cardinality.Many), null);
 
-export type $ReasonλShape = $.typeutil.flatten<_default.$AuditableλShape & {
+export type $ReasonλShape = $.typeutil.flatten<_default.$AuditableλShape & _default.$ListenableλShape & {
   "name": $.PropertyDesc<_std.$str, $.Cardinality.One, true, false, false, false>;
   "agreement": $.LinkDesc<$Agreement, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
   "category": $.PropertyDesc<$ReasonCategory, $.Cardinality.One, false, false, false, false>;
@@ -123,6 +123,7 @@ export type $ReasonλShape = $.typeutil.flatten<_default.$AuditableλShape & {
 }>;
 type $Reason = $.ObjectType<"sign_in::Reason", $ReasonλShape, null, [
   ..._default.$Auditable['__exclusives__'],
+  ..._default.$Listenable['__exclusives__'],
   {name: {__element__: _std.$str, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
 ], "sign_in::Reason">;
 const $Reason = $.makeType<$Reason>(_.spec, "62316732-3624-11ef-93b3-9d0e27cb2778", _.syntax.literal);
@@ -132,10 +133,9 @@ const Reason: $.$expr_PathNode<$.TypeSet<$Reason, $.Cardinality.Many>, null> = _
 export type $SignInλShape = $.typeutil.flatten<_default.$TimedλShape & _default.$ListenableλShape & {
   "location": $.LinkDesc<$Location, $.Cardinality.One, {}, false, false,  false, false>;
   "reason": $.LinkDesc<$Reason, $.Cardinality.One, {}, false, false,  false, false>;
-  "tools": $.PropertyDesc<$.ArrayType<_std.$str>, $.Cardinality.One, false, false, false, false>;
   "user": $.LinkDesc<_users.$User, $.Cardinality.One, {}, false, false,  false, false>;
   "signed_out": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, true, false, false>;
-  "_tools": $.LinkDesc<_tools.$Tool | _tools.$GroupedTool, $.Cardinality.Many, {}, false, false,  false, false>;
+  "tools": $.LinkDesc<_tools.$Tool | _tools.$GroupedTool, $.Cardinality.Many, {}, false, false,  false, false>;
   "<sign_ins[is sign_in::Location]": $.LinkDesc<$Location, $.Cardinality.Many, {}, false, false,  false, false>;
   "<sign_ins[is user]": $.LinkDesc<_default.$user, $.Cardinality.Many, {}, false, false,  false, false>;
   "<sign_ins[is users::User]": $.LinkDesc<_users.$User, $.Cardinality.Many, {}, false, false,  false, false>;

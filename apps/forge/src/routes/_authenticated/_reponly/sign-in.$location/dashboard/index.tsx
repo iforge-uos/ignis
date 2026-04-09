@@ -9,7 +9,6 @@ import { activeLocationAtom } from "@/atoms/signInAppAtoms";
 import { Hammer } from "@/components/loading";
 import ActiveLocationSelector from "@/components/sign-in/ActiveLocationSelector";
 import Title from "@/components/title";
-import { useSignInReasons } from "@/hooks/useSignInReasons";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { REP_OFF_SHIFT, REP_ON_SHIFT } from "@/lib/constants";
 import { orpc } from "@/lib/orpc";
@@ -63,7 +62,7 @@ function SignInDashboard() {
     }
   }, [location]);
   const onShiftReps = signedInReps.map((entry) => entry.user);
-  const { data: reasons } = useSignInReasons(); // FIXME
+  const { data: reasons } = useQuery(orpc.signIns.reasons.all.experimental_liveOptions());
   const repOnShiftReason = reasons?.find((reason) => reason.name === REP_ON_SHIFT);
   const repOffShiftReason = reasons?.find((reason) => reason.name === REP_OFF_SHIFT);
 

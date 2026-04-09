@@ -118,8 +118,12 @@ export const CreateReasonSchema = z.
   object({ // default::Auditable
     updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
+  .extend({ // default::Listenable
+  })
   .extend({ // default::CreatedAt
     created_at: zt.zonedDateTime().optional(), // std::datetime
+  })
+  .extend({ // default::_BaseListenable
   })
   .extend({ // sign_in::Reason
     name: z.string(), // std::str
@@ -131,7 +135,11 @@ export const UpdateReasonSchema = z.
   object({ // default::Auditable
     updated_at: zt.zonedDateTime().optional(), // std::datetime
   })
+  .extend({ // default::Listenable
+  })
   .extend({ // default::CreatedAt
+  })
+  .extend({ // default::_BaseListenable
   })
   .extend({ // sign_in::Reason
     name: z.string(), // std::str
@@ -153,7 +161,6 @@ export const CreateSignInSchema = z.
   .extend({ // default::_BaseListenable
   })
   .extend({ // sign_in::SignIn
-    tools: z.string().array(), // array<std::str>
   });
 
 export const UpdateSignInSchema = z.
@@ -167,7 +174,6 @@ export const UpdateSignInSchema = z.
   .extend({ // default::_BaseListenable
   })
   .extend({ // sign_in::SignIn
-    tools: z.string().array(), // array<std::str>
   });
 // #endregion
 

@@ -93,7 +93,7 @@ export const SignInDrawer: FC<SignInDrawerProps> = ({
       };
       switch (groupBy) {
         case "Tools":
-          entry._tools.length > 0 ? entry._tools.map((t) => add(t.name)) : add("No Tools");
+          entry.tool.length > 0 ? entry.tool.map((t) => add(t.name)) : add("No Tools");
           break;
         case "Reason":
           add(entry.reason.name);
@@ -229,7 +229,7 @@ export const SignInDrawer: FC<SignInDrawerProps> = ({
                           id={entry.id}
                           key={entry.user.id}
                           user={entry.user as PartialUserWithTeams}
-                          tools={entry._tools}
+                          tools={entry.tools}
                           reason={entry.reason}
                           timeIn={entry.created_at}
                           onSignOut={() => onSignOut?.(entry.user.id)}
@@ -247,7 +247,7 @@ export const SignInDrawer: FC<SignInDrawerProps> = ({
                   id={entry.id}
                   key={entry.user.id}
                   user={entry.user as PartialUserWithTeams}
-                  tools={entry._tools}
+                  tools={entry.tools}
                   reason={entry.reason}
                   timeIn={entry.created_at}
                   onSignOut={() => onSignOut?.(entry.user.id)}
