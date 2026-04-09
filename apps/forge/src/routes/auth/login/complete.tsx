@@ -3,7 +3,7 @@ import { createFileRoute, Navigate, redirect } from "@tanstack/react-router";
 import { useAtomValue, useSetAtom } from "jotai";
 import { reconnectWebSocket } from "@/lib/orpc";
 
-export const CompleteComponent = () => {
+function CompleteComponent() {
   const { user } = Route.useRouteContext();
   let previousPathname = useAtomValue(previousPathnameAtom);
   if (previousPathname === "/auth/login") {

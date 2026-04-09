@@ -10,7 +10,7 @@ import Title from "@/components/title";
 import { orpc } from "@/lib/orpc";
 import { ensureQueryData } from "@/lib/query-utils";
 
-export default function Component() {
+function Component() {
   const { id } = Route.useParams();
   const agreement = Route.useLoaderData()!;
 

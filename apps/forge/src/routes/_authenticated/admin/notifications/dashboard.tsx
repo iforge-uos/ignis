@@ -27,7 +27,7 @@ import { Procedures } from "@/types/router";
 
 type MailingList = Procedures["notifications"]["mailingLists"]["get"]
 
-export default function AdminDashboardPage() {
+function AdminDashboardPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);

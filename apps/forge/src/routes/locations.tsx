@@ -3,7 +3,7 @@ import LocationCard from "@/components/LocationCard";
 import Title from "@/components/title";
 import { IForgeLogo } from "@/icons/IForge";
 
-export function Component() {
+function Component() {
   return (
     <>
       <Title prompt="Home" />

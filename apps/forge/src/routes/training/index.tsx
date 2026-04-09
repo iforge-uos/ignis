@@ -18,7 +18,7 @@ import { ensureQueryData } from "@/lib/query-utils";
 import IndexCard from "@/routes/training/-components/IndexCard";
 import { TrainingContent } from "../_authenticated/training/$id";
 
-export default function TrainingIndexPage() {
+function TrainingIndexPage() {
   const trainings = Route.useLoaderData();
   const user = useUser();
   const [hidden, setHidden] = useState(true);
