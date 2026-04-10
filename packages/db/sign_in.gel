@@ -161,7 +161,7 @@ module sign_in {
             };
     }
 
-    type QueuePlace extending default::CreatedAt {
+    type QueuePlace extending default::CreatedAt, default::Listenable {
         required user: users::User {
             constraint exclusive;
             on target delete delete source;

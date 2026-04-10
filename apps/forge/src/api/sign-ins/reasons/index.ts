@@ -7,8 +7,16 @@ import { subscribeToDbListener } from "/src/db";
 export const all = auth
   .route({ path: "/" })
   .handler(async function *({ context: { db } }) {
+    console.log("Calling reasons API");
     const getter = async() => e.select(e.sign_in.Reason, (r) => ({...e.sign_in.Reason["*"], filter: r.active})).run(db)
-    yield await getter()
+    try {
+
+      yield await getter()
+    } catch (error) {
+      console.error(error)
+      throw error
+    }
+    console.log("This fails")
     for await (const reason of subscribeToDbListener("sign_in::Reason")) {
       yield await getter()
     }

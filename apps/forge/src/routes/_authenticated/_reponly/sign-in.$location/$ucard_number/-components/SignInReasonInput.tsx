@@ -11,7 +11,7 @@ import {
 } from "@packages/ui/components/alert-dialog";
 import { CardContent, CardDescription, CardHeader, CardTitle } from "@packages/ui/components/card";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@packages/ui/components/input-group";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import Fuse from "fuse.js";
 import { useAtom } from "jotai";
 import { Search } from "lucide-react";
