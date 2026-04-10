@@ -62,7 +62,9 @@ function SignInDashboard() {
     }
   }, [location]);
   const onShiftReps = signedInReps.map((entry) => entry.user);
+  console.log("Hi console")
   const { data: reasons } = useQuery(orpc.signIns.reasons.all.experimental_liveOptions());
+  console.log("This is fucked?")
   const repOnShiftReason = reasons?.find((reason) => reason.name === REP_ON_SHIFT);
   const repOffShiftReason = reasons?.find((reason) => reason.name === REP_OFF_SHIFT);
 
