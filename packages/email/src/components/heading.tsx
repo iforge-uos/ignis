@@ -36,7 +36,7 @@ export function Email({
           {`
           @font-face {
             font-family: Futura-Heavy;
-            src: url(${process.env.CDN_URL}/fonts/FuturaPTHeavy.otf);
+            src: url(${process.env.CDN_URL}/fonts/FuturaPTHeavy.woff2);
           }
 
           body {

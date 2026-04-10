@@ -7,7 +7,7 @@
 
 @font-face {
   font-family: Futura;
-  src: url("/fonts/FuturaPTDemi.otf") format("opentype");
+  src: url("/fonts/FuturaPTDemi.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: optional;
