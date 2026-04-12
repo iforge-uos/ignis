@@ -41,7 +41,7 @@ function RouteComponent() {
           .
         </p>
         <br />
-        <p className="font-bold text-lg">See if you recognise any of our reps.</p>
+        <p className="font-bold text-lg">See if you recognise any of our reps!</p>
         <br />
         <h3 className="text-3xl mb-2 font-futura">Reps 2024-2025</h3>
         <img
