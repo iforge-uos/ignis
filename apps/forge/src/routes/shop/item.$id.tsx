@@ -120,7 +120,7 @@ function RouteComponent() {
       <div className="grid lg:grid-cols-2 gap-8 mb-8">
         {/* Image Section */}
         <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100">
-          <img src={item.icon_url} alt={item.name} className="w-full h-full object-cover" />
+          <img src={`/shop/${item.icon_url}`} alt={item.name} className="w-full h-full object-cover" />
         </div>
 
         {/* Info Section */}
