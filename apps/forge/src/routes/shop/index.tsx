@@ -254,7 +254,7 @@ function RouteComponent() {
                 <CardHeader className="pb-4">
                   <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100 mb-4 relative">
                     <img
-                      src={material.icon_url}
+                      src={`/shop/${material.icon_url}`}
                       alt={material.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                     />

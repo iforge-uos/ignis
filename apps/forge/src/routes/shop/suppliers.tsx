@@ -76,7 +76,7 @@ function RouteComponent() {
                       <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors cursor-pointer">
                         <div className="w-12 h-12 rounded bg-gray-100 flex-shrink-0 overflow-hidden">
                           <img
-                            src={item.icon_url}
+                            src={`/shop/${item.icon_url}`}
                             alt={item.name}
                             className="w-full h-full object-cover"
                           />
