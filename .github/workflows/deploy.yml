@@ -65,7 +65,7 @@ jobs:
           fi
 
           echo "Starting forge..."
-          "$PM2_COMMAND" start bun --name forge -- run start
+          "$PM2_COMMAND" start bun --name forge -- run start:raw
 
           "$PM2_COMMAND" save
 
@@ -85,7 +85,7 @@ jobs:
           fi
 
           echo "Starting mine..."
-          "$PM2_COMMAND" start bun --name mine -- run start
+          "$PM2_COMMAND" start bun --name mine -- run start:raw
 
           "$PM2_COMMAND" save
 
