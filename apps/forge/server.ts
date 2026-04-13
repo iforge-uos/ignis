@@ -431,7 +431,7 @@ async function initializeServer() {
       if (url.pathname === "/ws") {
         return handleWebSocketUpgrade(req, server);  // FIXME self signed certs on https redirect to db
       }
-      
+
       // Fallback to TanStack Start handler for all other routes
       try {
         return handler.fetch(req);
