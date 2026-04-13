@@ -2,7 +2,9 @@ import { onError } from "@orpc/server";
 import { RPCHandler } from "@orpc/server/bun-ws";
 import { getCookie } from "@orpc/server/helpers";
 import { Serve } from "bun";
-import { DEFAULT_AUTH_COOKIE } from "@/lib/constants";
+
+// use relative for this as path aliases don't work at this stage
+import { DEFAULT_AUTH_COOKIE } from "./src/lib/constants";
 import db from "./src/db";
 import serialisers from "./src/lib/serialisers";
 import { router } from "./src/routes/api/$";

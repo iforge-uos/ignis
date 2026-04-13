@@ -3,11 +3,10 @@ import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import react from "@vitejs/plugin-react";
 import { visualizer } from "rollup-plugin-visualizer";
-import { createLogger, defineConfig } from "vite-plus";
+import { createLogger, defineConfig } from "vite";
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
 import lqip from "vite-plugin-lqip";
 import svgr from "vite-plugin-svgr";
-import ws from "./ws";
 
 const logger = createLogger();
 const loggerWarn = logger.warn;
@@ -20,8 +19,14 @@ logger.warn = (msg, options) => {
 
 const config = defineConfig({
   build: {
+    rollupOptions: {
+      external: ["bun"],
+    },
     sourcemap: true,
     target: "esnext",
+  },
+  ssr: {
+    external: ["bun"],
   },
   oxc: {
     target: "es2024",
@@ -42,11 +47,14 @@ const config = defineConfig({
     tailwindcss(),
     {
       name: "orpc-websocket-dev",
-      configureServer() {
+      async configureServer() {
         if (process.env.NODE_ENV === "development") {
+          // dynamic so vite config bundling does not try to resolve ws.ts imports during build.
+          const wsModuleUrl = new URL("./ws", import.meta.url).href;
+          const wsModule = await import(wsModuleUrl);
           Bun.serve({
             port: 3001,
-            ...ws,
+            ...wsModule.default,
           });
         }
       },

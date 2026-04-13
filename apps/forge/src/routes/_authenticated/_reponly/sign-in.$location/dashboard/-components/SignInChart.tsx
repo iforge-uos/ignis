@@ -79,8 +79,8 @@ function SignInTable({ datum }: { datum: SignInDatum | null }) {
                 <TableCell className="flex justify-center">
                   <LocationIcon location={sign_in.location.name} tooltip={false} />
                 </TableCell>
-                <TableCell className="text-center">{sign_in.created_at.toLocaleTimeString()}</TableCell>
-                <TableCell className="text-center">{sign_in.ends_at?.toLocaleTimeString() || "-"}</TableCell>
+                <TableCell className="text-center">{sign_in.created_at.toPlainTime().toString()}</TableCell>
+                <TableCell className="text-center">{sign_in.ends_at?.toPlainTime().toString() || "-"}</TableCell>
                 <TableCell className="text-center">
                   {formatDuration(Temporal.Duration.from(sign_in.duration))}
                 </TableCell>
