@@ -7,8 +7,8 @@
   "license": "GPL-3.0-or-later",
   "type": "module",
   "scripts": {
-    "build": "op run --no-masking --env-file=.env.prod -- bunx --bun vite build",
-    "start": "op run --no-masking --env-file=.env.prod -- bun run server.ts",
+    "build": "OP_ACCOUNT=iforge.1password.com op run --no-masking --env-file=.env.prod -- bunx --bun vite build",
+    "start": "OP_ACCOUNT=iforge.1password.com op run --no-masking --env-file=.env.prod -- bun run server.ts",
     "serve": "OP_ACCOUNT=iforge.1password.com op run --no-masking --env-file=.env.prod -- bunx --bun vite preview --port=3000",
     "dev": "OP_ACCOUNT=iforge.1password.com op run --no-masking --env-file=.env.dev -- bunx --bun vite dev --port=3000",
     "email": "OP_ACCOUNT=iforge.1password.com op run --no-masking --env-file=.env.dev -- bunx email preview src/email/templates",

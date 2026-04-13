@@ -44,7 +44,6 @@ jobs:
         working-directory: /home/iforge/ignis/apps/forge
         env:
           NODE_ENV: production
-          NODE_EXTRA_CA_CERTS: /home/iforge/gel-docker/ignis_cert.pem
           OP_CONNECT_TOKEN: ${{ secrets.OP_CONNECT_TOKEN }}
           OP_CONNECT_HOST: ${{ secrets.OP_CONNECT_HOST }}
           PM2_COMMAND: /home/iforge/.local/share/pnpm/pm2
