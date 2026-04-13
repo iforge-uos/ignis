@@ -38,7 +38,7 @@ jobs:
         env:
           OP_CONNECT_TOKEN: ${{ secrets.OP_CONNECT_TOKEN }}
           OP_CONNECT_HOST: ${{ secrets.OP_CONNECT_HOST }}
-        run: turbo build
+        run: bun run turbo build
 
       - name: Restart forge
         working-directory: /home/iforge/ignis/apps/forge
