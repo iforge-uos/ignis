@@ -3,7 +3,7 @@ import { z } from "zod";
 import { auth, pub, rep } from "@/orpc";
 import { SkewShape } from "@/lib/utils/queries";
 
-export const get = rep
+export const get = pub
   .route({ method: "GET", path: "/" })
   .input(z.object({ id: z.uuid() }))
   .handler(async ({ input: { id }, context: { db } }) =>
@@ -45,7 +45,7 @@ export const update = rep
       .run(db),
   );
 
-export const idRouter = auth.prefix("/{id}").router({
+export const idRouter = pub.prefix("/{id}").router({
   get,
   update,
   // purchasse
