@@ -5,6 +5,19 @@ import * as Sentry from "@sentry/tanstackstart-react";
 import { CronJob } from "cron";
 import ws, { handleWebSocketUpgrade } from "./ws";
 
+async function toNativeResponse(response: Response): Promise<Response> {
+  if (!response || typeof response._toNodeResponse !== 'function') {
+    return response;
+  }
+  const body = response.body ? await response.arrayBuffer() : null;
+  const headers = new Headers(response.headers);
+  return new Response(body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
 const CronJobWithCheckIn = Sentry.cron.instrumentCron(CronJob, "my-cron-job");
 
 // const job = CronJobWithCheckIn.from({
@@ -424,7 +437,7 @@ async function initializeServer() {
     port: 3000,
     websocket: ws.websocket,
     routes,
-    fetch(req, server) {
+    async fetch(req, server) {
       const url = new URL(req.url);
 
       // Handle websocket upgrades before any HTTP route fallback.
@@ -434,7 +447,7 @@ async function initializeServer() {
 
       // Fallback to TanStack Start handler for all other routes
       try {
-        return handler.fetch(req);
+        return toNativeResponse(await handler.fetch(req));
       } catch (error) {
         log.error(`Server handler error: ${String(error)}`);
         return new Response("Internal Server Error", { status: 500 });
