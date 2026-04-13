@@ -40,7 +40,7 @@ struct Claims {
 }
 
 fn validate_jwt(access_token: Text<String>) -> Result<String, actix_web::Error> {
-    match jsonwebtoken::decode::<Claims>(&access_token, &KEY, &Validation::default()) {
+    match jsonwebtoken::decode::<Claims>(&*access_token, &KEY, &Validation::default()) {
         Ok(data) => {
             if data.claims.exp < get_current_timestamp() as usize {
                 return Err(error::ErrorUnauthorized("access_token is expired"));
