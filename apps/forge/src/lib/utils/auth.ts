@@ -170,7 +170,7 @@ export const startOAuth = authedServerFn()
     const pkceSession = await auth.core.then((core: Auth) => core.createPKCESession());
     createVerifierCookie(auth, pkceSession.verifier);
     const url = getUrl(auth);
-    return pkceSession.getOAuthUrl(providerName, url, `${url}?isSignUp=true`);
+    return pkceSession.getOAuthUrl(providerName, url, `${url}?isSignUp=true`).replace(":5656", "") // the port needs to be removed
     // return Response.redirect(ret);  // doesn't work here cause of CORS
   });
 
