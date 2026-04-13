@@ -73,81 +73,88 @@ struct PrintUpload {
 async fn upload_print(
     MultipartForm(multipart): MultipartForm<PrintUpload>,
 ) -> actix_web::Result<impl Responder> {
-    let user_id = validate_jwt(multipart.access_token)?;
+    // let user_id = validate_jwt(multipart.access_token)?;
 
-    let file = multipart.threemf;
+    // let file = multipart.threemf;
     // let filename = format!(
     //     Uuid::new_v4(),
     //     file.file_name.unwrap_or("untitled".to_string())
     // );
-    sentry::logger_info!(
-        "User {} attempting to update file {}",
-        user_id.as_str(),
-        filename.as_str()
-    );
+    // sentry::logger_info!(
+    //     "User {} attempting to update file {}",
+    //     user_id.as_str(),
+    //     filename.as_str()
+    // );
 
-    match file.file.persist(format!("prints/{filename}")) {
-        Ok(_) => {
-            sentry::logger_info!(
-                "User {} successfully uploaded file: {}",
-                user_id.as_str(),
-                filename.as_str()
-            );
-            Ok(filename)
-        }
-        Err(e) => {
-            sentry::logger_error!(
-                "User {} failed to upload file: {}",
-                user_id.as_str(),
-                e.to_string()
-            );
-            Err(error::ErrorInternalServerError(format!(
-                "Failed to upload file: {}",
-                e
-            )))
-        }
-    }
+    // match file.file.persist(format!("prints/{filename}")) {
+    //     Ok(_) => {
+    //         sentry::logger_info!(
+    //             "User {} successfully uploaded file: {}",
+    //             user_id.as_str(),
+    //             filename.as_str()
+    //         );
+    //         Ok(filename)
+    //     }
+    //     Err(e) => {
+    //         sentry::logger_error!(
+    //             "User {} failed to upload file: {}",
+    //             user_id.as_str(),
+    //             e.to_string()
+    //         );
+    //         Err(error::ErrorInternalServerError(format!(
+    //             "Failed to upload file: {}",
+    //             e
+    //         )))
+    //     }
+    // }
+    return Ok("")
+}
+
+#[derive(MultipartForm)]
+struct FileUpload {
+    access_token: Text<String>,
 }
 
 #[actix_web::post("/upload/notification-attachments")]
-async fn upload_print(
+async fn upload_notification_attachments(
     MultipartForm(multipart): MultipartForm<FileUpload>,
 ) -> actix_web::Result<impl Responder> {
-    let maybe_user_id = validate_jwt(multipart.access_token)?;
+    // let maybe_user_id = validate_jwt(multipart.access_token)?;
 
-    let file = multipart.file;
-    let filename = format!(
-        "{}-{}",
-        Uuid::new_v4(),
-        file.file_name.unwrap_or("untitled".to_string())
-    );
-    sentry::logger_info!(
-        "User {} attempting to update file {}",
-        user_id.as_str(),
-        filename.as_str()
-    );
+    // let file = multipart.file;
+    // let filename = format!(
+    //     "{}-{}",
+    //     Uuid::new_v4(),
+    //     file.file_name.unwrap_or("untitled".to_string())
+    // );
+    // sentry::logger_info!(
+    //     "User {} attempting to update file {}",
+    //     user_id.as_str(),
+    //     filename.as_str()
+    // );
 
-    match file.file.persist(format!("files/{filename}")) {
-        Ok(_) => {
-            sentry::logger_info!(
-                "User {} successfully uploaded file: {}",
-                user_id.as_str(),
-                filename.as_str()
-            );
-            Ok(filename)
-        }
-        Err(e) => {
-            sentry::logger_error!(
-                "User {} failed to upload file: {}",
-                user_id.as_str(),
-                e.to_string()
-            );
-            Err(error::ErrorInternalServerError(format!(
-                "Failed to upload file: {}",
-                e
-            )))
-        }
-    }
+    // match file.file.persist(format!("files/{filename}")) {
+    //     Ok(_) => {
+    //         sentry::logger_info!(
+    //             "User {} successfully uploaded file: {}",
+    //             user_id.as_str(),
+    //             filename.as_str()
+    //         );
+    //         Ok(filename)
+    //     }
+    //     Err(e) => {
+    //         sentry::logger_error!(
+    //             "User {} failed to upload file: {}",
+    //             user_id.as_str(),
+    //             e.to_string()
+    //         );
+    //         Err(error::ErrorInternalServerError(format!(
+    //             "Failed to upload file: {}",
+    //             e
+    //         )))
+    //     }
+    // }
+    return Ok("")
 }
 
 
@@ -185,7 +192,8 @@ fn main() -> std::io::Result<()> {
                         .finish(),
                 )
                 .service(Files::new("/files", CONTENT_BASE_DIR.join("files")))
-                .service(files_upload)
+                .service(upload_print)
+                .service(upload_notification_attachments)
                 .service(health_check)
                 .wrap(Logger::default())
                 .wrap(Cors::permissive())
