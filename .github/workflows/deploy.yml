@@ -35,15 +35,64 @@ jobs:
 
       - name: Build the project
         working-directory: /home/iforge/ignis/
+        env:
+          OP_CONNECT_TOKEN: ${{ secrets.OP_CONNECT_TOKEN }}
+          OP_CONNECT_HOST: ${{ secrets.OP_CONNECT_HOST }}
         run: turbo build
 
-      - name: Restart systemd service
-        run: /home/iforge/ignis-config/scripts/start_or_restart.sh
+      - name: Restart forge
+        working-directory: /home/iforge/ignis/apps/forge
+        env:
+          NODE_ENV: production
+          NODE_EXTRA_CA_CERTS: /home/iforge/gel-docker/ignis_cert.pem
+          OP_CONNECT_TOKEN: ${{ secrets.OP_CONNECT_TOKEN }}
+          OP_CONNECT_HOST: ${{ secrets.OP_CONNECT_HOST }}
+          PM2_COMMAND: /home/iforge/.local/share/pnpm/pm2
+        run: |
+          set -euo pipefail
+
+          export PATH="$PATH:/home/iforge/.local/bin"
+
+          if [ ! -x "$PM2_COMMAND" ]; then
+            echo "Error: pm2 command not found."
+            exit 1
+          fi
+
+          # Always delete and recreate so pm2 stores the fresh OP_CONNECT_TOKEN.
+          if "$PM2_COMMAND" describe forge >/dev/null 2>&1; then
+            echo "Removing existing forge process..."
+            "$PM2_COMMAND" delete forge
+          fi
+
+          echo "Starting forge..."
+          "$PM2_COMMAND" start bun --name forge -- run start
+
+          "$PM2_COMMAND" save
+
+      - name: Restart mine
+        working-directory: /home/iforge/ignis/apps/mine
+        env:
+          OP_CONNECT_TOKEN: ${{ secrets.OP_CONNECT_TOKEN }}
+          OP_CONNECT_HOST: ${{ secrets.OP_CONNECT_HOST }}
+          PM2_COMMAND: /home/iforge/.local/share/pnpm/pm2
+        run: |
+          set -euo pipefail
+          export PATH="$PATH:/home/iforge/.local/bin"
+
+          if "$PM2_COMMAND" describe mine >/dev/null 2>&1; then
+            echo "Removing existing mine process..."
+            "$PM2_COMMAND" delete mine
+          fi
+
+          echo "Starting mine..."
+          "$PM2_COMMAND" start bun --name mine -- run start
+
+          "$PM2_COMMAND" save
 
       - name: Remove maintenance page
         run: rm /home/iforge/ignis-config/file_flags/maintenance_mode/enabled
 
-      - name: Notify Discord Maintenance Start
+      - name: Notify Discord Maintenance End
         uses: tsickert/discord-webhook@v6.0.0
         with:
           webhook-url: ${{ secrets.DISCORD_CICD_WEBHOOK_NOTI_URL}}
