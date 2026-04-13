@@ -28,6 +28,7 @@ jobs:
         run: |
           echo "/home/iforge/.nvm/versions/node/v20.11.0/bin" >> $GITHUB_PATH
           echo "/home/iforge/.bun/bin" >> $GITHUB_PATH
+          echo "/home/iforge/.cargo/bin" >> $GITHUB_PATH
 
       - name: Install Packages
         working-directory: /home/iforge/ignis
