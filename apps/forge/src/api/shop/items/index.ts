@@ -34,7 +34,7 @@ export const create = rep
       .run(db),
   );
 
-export const itemsRouter = auth.prefix("/items").router({
+export const itemsRouter = pub.prefix("/items").router({
     all,
     create,
     ...idRouter,
