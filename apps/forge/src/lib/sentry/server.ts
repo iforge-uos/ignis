@@ -37,6 +37,9 @@ export default (options: Options = {}) =>
               cause: error.cause,
             });
           }
+          if (error instanceof ORPCError && error.code === "UNAUTHORIZED") {
+            throw error  // don't log this at all it's also way too noisy
+          }
           if (error instanceof InvalidArgumentError) {
             throw new ORPCError("NOT_FOUND", {
               message: `${path} with id ${path[-1]} not found`,

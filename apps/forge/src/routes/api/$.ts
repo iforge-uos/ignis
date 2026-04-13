@@ -1,3 +1,11 @@
+import { SmartCoercionPlugin } from '@orpc/json-schema'
+import { OpenAPIGenerator } from "@orpc/openapi";
+import { OpenAPIHandler } from "@orpc/openapi/fetch";
+import { onError } from "@orpc/server";
+import { CompressionPlugin } from "@orpc/server/fetch";
+import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
+import { createFileRoute } from "@tanstack/react-router";
+import { Executor } from "gel";
 import { adminRouter } from "@/api/admin";
 import { agreementsRouter } from "@/api/agreements";
 import { authRouter } from "@/api/auth";
@@ -14,14 +22,6 @@ import { usersRouter } from "@/api/users";
 import serialisers from "@/lib/serialisers";
 import { withSession } from "@/lib/utils/auth";
 import { pub } from "@/orpc";
-import { OpenAPIGenerator } from "@orpc/openapi";
-import { OpenAPIHandler } from "@orpc/openapi/fetch";
-import { onError } from "@orpc/server";
-import { CompressionPlugin } from "@orpc/server/fetch";
-import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
-import { createFileRoute } from "@tanstack/react-router";
-import { Executor } from "gel";
-import { SmartCoercionPlugin } from '@orpc/json-schema'
 
 export const router = pub.router({
   admin: adminRouter,
@@ -76,7 +76,8 @@ export const Route = createFileRoute("/api/$")({
     middleware: [withSession],
     handlers: {
       ANY: async ({ request, context }) => {
-        const { pathname } = new URL(request.url);
+        const url = new URL(request.url)
+        const { pathname } = url;
 
         switch (pathname) {
           case "/api/spec.json": {
@@ -103,7 +104,7 @@ export const Route = createFileRoute("/api/$")({
                       Scalar.createApiReference('#app', {
                           url: '/api/spec.json',
                           servers: [{
-                              url: "http://localhost:3000/api",
+                              url: "/api",
                               description: "Server for testing override"
                           }],
                       })
