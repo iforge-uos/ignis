@@ -10,7 +10,7 @@ const MICROSECONDS_SINCE_2000 = 946684800000000n;
 
 const client = createClient({ branch: "main", tlsSecurity: "insecure", host: env.db.host, port: env.db.port, user: env.db.user, password: env.db.password })
   .withGlobals(env.db.globals)
-  .withConfig({ apply_access_policies: false })
+  .withConfig({ apply_access_policies: true })
   .withCodecs({
     // if you're ever wondering why data seems truncated blame the discrepancy below
     "std::datetime": {
