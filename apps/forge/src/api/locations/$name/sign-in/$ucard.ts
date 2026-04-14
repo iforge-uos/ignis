@@ -145,37 +145,3 @@ export const receive = deskOrAdmin
       yield;
     }
   });
-
-// async function getTx(db: Executor) {
-//   let resolveTx: (x: Transaction) => void;
-//   let cleanupTx: (x: undefined) => void;
-//   // biome-ignore lint/suspicious/noAssignInExpressions: it's cool
-//   const getTx = new Promise<Transaction>((resolve) => (resolveTx = resolve));
-//   // biome-ignore lint/suspicious/noAssignInExpressions: it's also cool
-//   const blocker = new Promise<undefined>((resolve) => (cleanupTx = resolve));
-//   (db as Client)
-//     .withConfig({ session_idle_transaction_timeout: Duration.from({ hours: 24 }) }) // otherwise we get an IdleTransactionTimeoutError nearly instantly
-//     .transaction(async (tx) => {
-//       resolveTx(tx);
-//       await blocker;
-//     });
-//   return {
-//     txn: await getTx,
-//     // @ts-ignore
-//     cleanupTx,
-//   };
-// }
-// I don't think this is required
-// export const backtrack = deskOrAdmin
-//   .route({ method: "GET", path: "/{ucard_number}/backtrack", tags: ["hidden"] })
-//   .input(eventIterator(InitialiseStep.extend({type: StepType})))
-//   .handler(async function* ({ input }) {
-//     for await (const message of input) {
-//     const flow = SIGN_INS[`${message.name}-${message.ucard_number}`]
-//     const maybePrevious = flow[message.type]
-//     if (Object.keys(maybePrevious).length === 1) { // they INITIALISE
-//       yield maybePrevious;
-//     }
-//     yield
-//     }
-//   });

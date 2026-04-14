@@ -18,7 +18,7 @@ export const Receive = createReceiveStep(StepType.enum.REASON).extend({ reason: 
 
 export const Finalise = createFinaliseStep(
   StepType.enum.REASON,
-  z.literal([StepType.enum.PERSONAL_TOOLS_AND_MATERIALS, StepType.enum.FINALISE, StepType.enum.SUPERVISABLE_TOOLS]),
+  z.literal([StepType.enum.TOOLS, StepType.enum.FINALISE, StepType.enum.SUPERVISABLE_TOOLS]),
 );
 
 export const Errors = createErrorMap(StepType.enum.REASON, {
@@ -54,6 +54,7 @@ export default async function* ({
   z.infer<typeof Finalise>,
   z.infer<typeof Receive>
 > {
+  console.log("In Reason step!!!");
   const userAgreement = e.assert_exists(
     e.select(e.sign_in.Reason, (reason) => ({
       filter_single: e.op(reason.category, "=", e.sign_in.ReasonCategory.PERSONAL_PROJECT),
@@ -87,36 +88,6 @@ export default async function* ({
       data: { reason: { id, name: reasonName } },
     });
   }
-
-  console.log(await e
-    .select($user, () => ({
-      // check for the user agreement
-      signed_user_agreement: e.op(
-        "exists",
-        e.select($user.agreements_signed, (a) => ({
-          filter_single:
-            // path factoring to a["@version_signed"] breaks
-            e.op(
-              e.op(a.id, "=", userAgreement.id),
-              "and",
-              e.op($user.agreements_signed["@version_signed"], "=", userAgreement.version),
-            ),
-        })),
-      ),
-      // check for the rest of their agreements
-      signed_reasons_agreement: agreement
-        ? e.op(
-            "exists",
-            e.select($user.agreements_signed, (a) => ({
-              filter_single: e.op(
-                e.op(a.id, "=", e.uuid(agreement.id)),
-                "and",
-                e.op($user.agreements_signed["@version_signed"], "=", agreement.version),
-              ),
-            })),
-          )
-        : e.bool(true),
-    })).toEdgeQL())
 
   const { signed_user_agreement, signed_reasons_agreement } = await e
     .select($user, () => ({

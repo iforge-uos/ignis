@@ -1,18 +1,18 @@
-import { QueuePlaceShape } from "@/lib/utils/queries";
 import e from "@packages/db/edgeql-js";
 import { logger } from "@sentry/tanstackstart-react";
 import { CardinalityViolationError } from "gel";
 import * as z from "zod";
+import email from "@/email";
+import { QueuePlaceShape } from "@/lib/utils/queries";
 import {
-  StepType,
   createErrorMap,
   createFinaliseStep,
   createInitialiseStep,
   createReceiveStep,
   createTransmitStep,
+  StepType,
 } from "./_steps";
 import type { Params, Return } from "./_types";
-import email from "@/email";
 
 export const Initialise = createInitialiseStep(StepType.enum.SIGN_OUT);
 
@@ -64,6 +64,7 @@ export default async function* ({
     }
     throw error;
   }
+  // TODO yield tools that need quantity increasing and make sure they have been returned
 
   const { can_sign_in, available_capacity } = await e
     .select($location, () => ({ can_sign_in: true, available_capacity: true }))
