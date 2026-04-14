@@ -34,6 +34,7 @@ type AgreementToSign = {
 };
 
 export const ReasonInput: FlowStepComponent<"REASON"> = ({ data: { common_reasons }, user }) => {
+  console.log("In ReasonInput")
   const [inputValue, setInputValue] = useState("");
   const [signInReason, setSignInReason] = useAtom(sessionSignInReasonAtom);
 
@@ -45,6 +46,7 @@ export const ReasonInput: FlowStepComponent<"REASON"> = ({ data: { common_reason
     close: closeAgreementConfirmation,
   } = usePromiseDialog<AgreementToSign>(false);
 
+  console.log("Prior to scary hooks")
   const { mutateAsync: signAgreement } = useMutation(orpc.users.signAgreement.mutationOptions());
   const [reasonName, setReasonName] = useState<string>("");
 
@@ -80,9 +82,9 @@ export const ReasonInput: FlowStepComponent<"REASON"> = ({ data: { common_reason
       continue;
     }
   });
-
+  console.log("Stage 1 scary hooks")
   const { data: signInReasons } = useQuery(orpc.signIns.reasons.all.experimental_liveOptions());
-
+  console.log("Stage 2 scary")
   const fuse = useMemo(
     () =>
       new Fuse<PartialReason>([], {
