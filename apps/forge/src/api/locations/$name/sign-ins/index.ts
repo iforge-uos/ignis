@@ -48,7 +48,7 @@ export const HistoricSignInsShape = e.shape(e.sign_in.SignIn, () => ({
   user: PartialUserShape,
   created_at: true,
   ends_at: true,
-  _tools: { id: true, name: true },
+  tools: { id: true, name: true },
   reason: { name: true },
 }));
 
