@@ -18,7 +18,6 @@ export type SignInEntry = {
   user: users.PartialUserWithTeams;
   reason: PartialReason;
   tools: {id: string, name: string}[];
-  _tools: {id: string, name: string}[];
   ends_at: Temporal.ZonedDateTime | null;
   created_at: Temporal.ZonedDateTime;
 };

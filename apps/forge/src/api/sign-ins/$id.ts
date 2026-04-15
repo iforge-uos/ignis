@@ -44,7 +44,7 @@ export const update = auth
             set: {
               ...rest,
               reason: reason ? e.cast(e.sign_in.Reason, e.uuid(reason.id)) : undefined,
-              _tools: tools
+              tools: tools
                 ? e.op(
                     "distinct",
                     e.cast(

@@ -81,7 +81,7 @@ export const FullLocation = e.shape(e.sign_in.Location, () => ({
         teams: { name: true, description: true, id: true },
       }),
     }),
-    _tools: { id: true, name: true },
+    tools: { id: true, name: true },
   },
   queued: {
     ...e.sign_in.QueuePlace["*"],

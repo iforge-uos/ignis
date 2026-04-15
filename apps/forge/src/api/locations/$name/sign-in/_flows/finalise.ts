@@ -43,8 +43,7 @@ export default async function* ({
       location: $location,
       user: $user,
       reason: e.select(e.sign_in.Reason, () => ({ filter_single: inputs.REASON.RECEIVE.reason })),
-      tools: [],
-      _tools: e.op("distinct", e.cast(
+      tools: e.op("distinct", e.cast(
         e.op(e.tools.Tool, "|", e.tools.GroupedTool),
         e.cast(e.uuid, e.set(...((inputs.TOOLS?.RECEIVE?.tools ?? []).map(({ id }) => id)))),
       )),
