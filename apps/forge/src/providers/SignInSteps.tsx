@@ -54,6 +54,12 @@ export function useSignIn<StepT extends StepType>(
   const callbackRef = useRef(callback);
   callbackRef.current = callback;
 
+  // Keep latest _continue in a ref so the effect below never needs it as a dep.
+  // _continue is bound inline in the parent (receive.bind(...)) and is a new reference
+  // on every render, so adding it to the effect deps would cause an infinite loop.
+  const continueRef = useRef(_continue);
+  continueRef.current = _continue;
+
   // cheeky bit of dependency injection
   useEffect(() => {
     if (!callbackRef.current) return; // SignInNav passes undefined — skip
@@ -62,7 +68,7 @@ export function useSignIn<StepT extends StepType>(
       let nextStep: StepType | undefined;
 
       await callbackRef.current(async (data: Parameters<TransmitFn<StepT>>[0]) => {
-        const ret = await _continue(data);
+        const ret = await continueRef.current(data);
         nextStep = ret.data?.next;
         return ret as ReceiveReturn<StepT>;
       });
@@ -81,7 +87,7 @@ export function useSignIn<StepT extends StepType>(
         _arg0, // wrap the function to avoid react thinking the function is meant to be called creating a Promise
       ) => inner,
     );
-  }, [_continue, _setSteps, _setFinalise]);
+  }, [_setSteps, _setFinalise]);
 
   return ctx as unknown as SignInSteps<StepT>;
 }
