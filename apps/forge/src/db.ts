@@ -133,16 +133,18 @@ export async function publishDbListenable(listenable: z.infer<typeof Listenable>
 }
 
 export async function* subscribeToDbListener(channel: Listenable | `${Listenable}$${"insert" | "update" | "delete"}`) {
+  console.log("WTF is happening i dont get how it could error before here")
   const subscriptionId = `${channel}-${Math.random()}`;
   const handler: SubscriptionHandler = {
     channel,
     queue: [],
     resolve: null,
   };
+  console.log("In subscribeToDbListener")
 
   subscriptions.set(subscriptionId, handler);
   await redisSubscriber.subscribe(channel);
-
+  console.log("Subscribed to channel:", channel);
   try {
     while (true) {
       if (handler.queue.length > 0) {
