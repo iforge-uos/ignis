@@ -410,7 +410,7 @@ module training {
                 errmessage := "Only self/admins can view sessions"
             };
         access policy allow_reps
-            allow insert
+            allow all
             using (
                 with user := global default::user,
                 select not exists .training.rep or exists ({"Rep"} intersect user.roles.name)
