@@ -160,7 +160,10 @@ export const ReasonInput: FlowStepComponent<"REASON"> = ({ data: { common_reason
     }
   };
 
-  const filteredReasons = inputValue ? fuse.search(inputValue, { limit: 20 }) : [];
+  const filteredReasons = useMemo(
+    () => (inputValue ? fuse.search(inputValue, { limit: 20 }) : []),
+    [inputValue, fuse],
+  );
 
   useEffect(() => {
     if (inputValue && filteredReasons.length > 0 && highlightedIndex === -1) {
