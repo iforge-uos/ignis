@@ -83,6 +83,9 @@ module users {
             using (exists ({"Rep", "Desk", "Admin"} intersect global default::user.roles.name)) {
                 errmessage := "Only reps can see everyone's profile"
             };
+        access policy allow_inserts
+            allow insert
+            using (true);
         access policy view_self
             allow all
             using (global default::user ?= __subject__) {

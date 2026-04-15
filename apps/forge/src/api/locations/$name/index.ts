@@ -28,7 +28,15 @@ export const get = rep
         }))
       .run(db);
 
+    console.log("Trying to get")
+    try{
     yield await getter();
+
+    } catch(error) {
+      console.error("Failed to get location data", error);
+      throw error
+    }
+
     for await (const _ of mergeAsyncIterators(
       subscribeToDbListener("sign_in::SignIn"),
       subscribeToDbListener("sign_in::QueuePlace"),
