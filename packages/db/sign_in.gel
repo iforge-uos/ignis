@@ -15,7 +15,7 @@ module sign_in {
 
         access policy desk_or_higher
             allow all
-            using (exists ({"Desk", "Admin"} intersect global default::user.roles.name)) {
+            using (global default::is_desk_or_higher) {
                 errmessage := "Only the desk account or admins can operate on all sign-ins"
             };
         access policy view_self
@@ -142,7 +142,7 @@ module sign_in {
 
         access policy desk_or_higher  # TODO this probably breaks when you do
             allow all
-            using (exists ({"Desk", "Admin"} intersect global default::user.roles.name)) {
+            using (global default::is_desk_or_higher) {
                 errmessage := "Only the desk account or admins can update location info"
             };
     }
@@ -156,7 +156,7 @@ module sign_in {
 
         access policy desk_or_higher
             allow all
-            using (exists ({"Desk", "Admin"} intersect global default::user.roles.name)) {
+            using (global default::is_desk_or_higher) {
                 errmessage := "Only the desk account or admins can update registrations"
             };
     }
@@ -178,7 +178,7 @@ module sign_in {
 
         access policy desk_or_higher
             allow all
-            using (exists ({"Desk", "Admin"} intersect global default::user.roles.name)) {
+            using (global default::is_desk_or_higher) {
                 errmessage := "Only the desk account or admins can update registrations"
             };
         access policy edit_self
@@ -209,7 +209,7 @@ module sign_in {
 
         access policy desk_or_higher
             allow all
-            using (exists ({"Desk", "Admin"} intersect global default::user.roles.name)) {
+            using (global default::is_desk_or_higher) {
                 errmessage := "Only the desk account or admins can update reasons"
             };
     }
@@ -240,7 +240,7 @@ module sign_in {
 
         access policy admin_only
             allow all
-            using (exists ({"Desk", "Admin"} intersect global default::user.roles.name)) {
+            using (global default::is_desk_or_higher) {
                 errmessage := "Only the desk account or admins can update agreements"
             };
 

@@ -242,8 +242,8 @@ export namespace users {
     "profile_picture"?: string | null;
     "pronouns"?: string | null;
     "username": string;
-    "infractions": Infraction[];
     "mailing_list_subscriptions": notification.MailingList[];
+    "infractions": Infraction[];
     "sign_ins": sign_in.SignIn[];
     "agreements_signed": sign_in.Agreement[];
     "bookings": tools.Booking[];
@@ -507,7 +507,6 @@ export namespace ext {
       "secret": string;
       "api_style": ProviderAPIStyle;
     }
-    export interface OllamaSnowflakeArcticEmbed2Model extends EmbeddingModel {}
     export interface OpenAIGPT_3_5_TurboModel extends TextGenerationModel {}
     export interface OpenAIGPT_4_Model extends TextGenerationModel {}
     export interface OpenAIGPT_4_TurboModel extends TextGenerationModel {}
@@ -611,7 +610,7 @@ export namespace sign_in {
   }
   export type LocationName = "MAINSPACE" | "HEARTSPACE";
   export type LocationStatus = "OPEN" | "SOON" | "CLOSED";
-  export interface QueuePlace extends $default.CreatedAt {
+  export interface QueuePlace extends $default.CreatedAt, $default.Listenable {
     "location": Location;
     "notified_at"?: Date | null;
     "ends_at"?: Date | null;
@@ -735,8 +734,8 @@ export namespace training {
     "type": AnswerType;
   }
   export interface Session extends $default.Auditable {
-    "index": number;
     "training": Training;
+    "index": number;
     "user": users.User;
     "next_section"?: TrainingPage | Question | null;
   }
@@ -1031,8 +1030,8 @@ export namespace event {
 export namespace team {
   export type Name = "IT" | "3DP" | "Hardware" | "Publicity" | "Events" | "Relations" | "Operations" | "Recruitment & Development" | "Health & Safety" | "Inclusions" | "Sustainability" | "Unsorted Reps" | "Future Reps" | "Staff";
   export interface Team extends std.$Object {
-    "description": string;
     "name": string;
+    "description": string;
     "all_members": users.Rep[];
     "members": users.Rep[];
   }
@@ -1263,7 +1262,6 @@ export interface types {
       "OllamaLlama_3_3_Model": ext.ai.OllamaLlama_3_3_Model;
       "OllamaNomicEmbedTextModel": ext.ai.OllamaNomicEmbedTextModel;
       "OllamaProviderConfig": ext.ai.OllamaProviderConfig;
-      "OllamaSnowflakeArcticEmbed2Model": ext.ai.OllamaSnowflakeArcticEmbed2Model;
       "OpenAIGPT_3_5_TurboModel": ext.ai.OpenAIGPT_3_5_TurboModel;
       "OpenAIGPT_4_Model": ext.ai.OpenAIGPT_4_Model;
       "OpenAIGPT_4_TurboModel": ext.ai.OpenAIGPT_4_TurboModel;

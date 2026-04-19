@@ -78,19 +78,19 @@ module users {
         #     };
         # }
 
+        access policy allow_self
+            allow all
+            using (.identity ?= global ext::auth::ClientTokenIdentity) {
+                errmessage := 'Can only view or modify your own profile'
+            };
         access policy rep_or_higher
             allow all
-            using (exists ({"Rep", "Desk", "Admin"} intersect global default::user.roles.name)) {
+            using (global default::is_rep_or_higher) {
                 errmessage := "Only reps can see everyone's profile"
             };
         access policy allow_inserts
             allow insert
             using (true);
-        access policy view_self
-            allow all
-            using (global default::user ?= __subject__) {
-                errmessage := 'Can only view your own profile'
-            };
     }
 
     scalar type RepStatus extending enum<
@@ -166,7 +166,7 @@ module users {
 
         access policy desk_or_higher
             allow all
-            using (exists ({"Desk", "Admin"} intersect global default::user.roles.name)) {
+            using (global default::is_desk_or_higher) {
                 errmessage := "Only the desk account or admins can update infractions"
             };
 

@@ -330,15 +330,6 @@ const $OllamaProviderConfig = $.makeType<$OllamaProviderConfig>(_.spec, "f5e0e8f
 
 const OllamaProviderConfig: $.$expr_PathNode<$.TypeSet<$OllamaProviderConfig, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($OllamaProviderConfig, $.Cardinality.Many), null);
 
-export type $OllamaSnowflakeArcticEmbed2ModelλShape = $.typeutil.flatten<$EmbeddingModelλShape & {
-}>;
-type $OllamaSnowflakeArcticEmbed2Model = $.ObjectType<"ext::ai::OllamaSnowflakeArcticEmbed2Model", $OllamaSnowflakeArcticEmbed2ModelλShape, null, [
-  ...$EmbeddingModel['__exclusives__'],
-], never>;
-const $OllamaSnowflakeArcticEmbed2Model = $.makeType<$OllamaSnowflakeArcticEmbed2Model>(_.spec, "fd91d804-0df7-5551-bb64-6b4a9c12f114", _.syntax.literal);
-
-const OllamaSnowflakeArcticEmbed2Model: $.$expr_PathNode<$.TypeSet<$OllamaSnowflakeArcticEmbed2Model, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($OllamaSnowflakeArcticEmbed2Model, $.Cardinality.Many), null);
-
 export type $OpenAIGPT_3_5_TurboModelλShape = $.typeutil.flatten<$TextGenerationModelλShape & {
 }>;
 type $OpenAIGPT_3_5_TurboModel = $.ObjectType<"ext::ai::OpenAIGPT_3_5_TurboModel", $OpenAIGPT_3_5_TurboModelλShape, null, [
@@ -555,7 +546,7 @@ function search(...args: any[]) {
 
 
 
-export { ChatParticipantRole, DistanceFunction, IndexType, ProviderAPIStyle, $Model, Model, $TextGenerationModel, TextGenerationModel, $AnthropicClaude3HaikuModel, AnthropicClaude3HaikuModel, $AnthropicClaude3OpusModel, AnthropicClaude3OpusModel, $AnthropicClaude3SonnetModel, AnthropicClaude3SonnetModel, $AnthropicClaude_3_5_HaikuModel, AnthropicClaude_3_5_HaikuModel, $AnthropicClaude_3_5_SonnetModel, AnthropicClaude_3_5_SonnetModel, $ProviderConfig, ProviderConfig, $AnthropicProviderConfig, AnthropicProviderConfig, $ChatPrompt, ChatPrompt, $ChatPromptMessage, ChatPromptMessage, $CodestralMamba, CodestralMamba, $CodestralModel, CodestralModel, $Config, Config, $CustomProviderConfig, CustomProviderConfig, $EmbeddingModel, EmbeddingModel, $Ministral_3B_Model, Ministral_3B_Model, $Ministral_8B_Model, Ministral_8B_Model, $MistralEmbedModel, MistralEmbedModel, $MistralLargeModel, MistralLargeModel, $MistralMediumModel, MistralMediumModel, $MistralNemo, MistralNemo, $MistralProviderConfig, MistralProviderConfig, $MistralSmallModel, MistralSmallModel, $OllamaBgeM3Model, OllamaBgeM3Model, $OllamaLlama_3_2_Model, OllamaLlama_3_2_Model, $OllamaLlama_3_3_Model, OllamaLlama_3_3_Model, $OllamaNomicEmbedTextModel, OllamaNomicEmbedTextModel, $OllamaProviderConfig, OllamaProviderConfig, $OllamaSnowflakeArcticEmbed2Model, OllamaSnowflakeArcticEmbed2Model, $OpenAIGPT_3_5_TurboModel, OpenAIGPT_3_5_TurboModel, $OpenAIGPT_4_Model, OpenAIGPT_4_Model, $OpenAIGPT_4_TurboModel, OpenAIGPT_4_TurboModel, $OpenAIGPT_4_TurboPreviewModel, OpenAIGPT_4_TurboPreviewModel, $OpenAIGPT_4o_MiniModel, OpenAIGPT_4o_MiniModel, $OpenAIGPT_4o_Model, OpenAIGPT_4o_Model, $OpenAIProviderConfig, OpenAIProviderConfig, $OpenAITextEmbedding3LargeModel, OpenAITextEmbedding3LargeModel, $OpenAITextEmbedding3SmallModel, OpenAITextEmbedding3SmallModel, $OpenAITextEmbeddingAda002Model, OpenAITextEmbeddingAda002Model, $OpenAI_O1_MiniModel, OpenAI_O1_MiniModel, $OpenAI_O1_PreviewModel, OpenAI_O1_PreviewModel, $PixtralLargeModel, PixtralLargeModel, $PixtralModel, PixtralModel };
+export { ChatParticipantRole, DistanceFunction, IndexType, ProviderAPIStyle, $Model, Model, $TextGenerationModel, TextGenerationModel, $AnthropicClaude3HaikuModel, AnthropicClaude3HaikuModel, $AnthropicClaude3OpusModel, AnthropicClaude3OpusModel, $AnthropicClaude3SonnetModel, AnthropicClaude3SonnetModel, $AnthropicClaude_3_5_HaikuModel, AnthropicClaude_3_5_HaikuModel, $AnthropicClaude_3_5_SonnetModel, AnthropicClaude_3_5_SonnetModel, $ProviderConfig, ProviderConfig, $AnthropicProviderConfig, AnthropicProviderConfig, $ChatPrompt, ChatPrompt, $ChatPromptMessage, ChatPromptMessage, $CodestralMamba, CodestralMamba, $CodestralModel, CodestralModel, $Config, Config, $CustomProviderConfig, CustomProviderConfig, $EmbeddingModel, EmbeddingModel, $Ministral_3B_Model, Ministral_3B_Model, $Ministral_8B_Model, Ministral_8B_Model, $MistralEmbedModel, MistralEmbedModel, $MistralLargeModel, MistralLargeModel, $MistralMediumModel, MistralMediumModel, $MistralNemo, MistralNemo, $MistralProviderConfig, MistralProviderConfig, $MistralSmallModel, MistralSmallModel, $OllamaBgeM3Model, OllamaBgeM3Model, $OllamaLlama_3_2_Model, OllamaLlama_3_2_Model, $OllamaLlama_3_3_Model, OllamaLlama_3_3_Model, $OllamaNomicEmbedTextModel, OllamaNomicEmbedTextModel, $OllamaProviderConfig, OllamaProviderConfig, $OpenAIGPT_3_5_TurboModel, OpenAIGPT_3_5_TurboModel, $OpenAIGPT_4_Model, OpenAIGPT_4_Model, $OpenAIGPT_4_TurboModel, OpenAIGPT_4_TurboModel, $OpenAIGPT_4_TurboPreviewModel, OpenAIGPT_4_TurboPreviewModel, $OpenAIGPT_4o_MiniModel, OpenAIGPT_4o_MiniModel, $OpenAIGPT_4o_Model, OpenAIGPT_4o_Model, $OpenAIProviderConfig, OpenAIProviderConfig, $OpenAITextEmbedding3LargeModel, OpenAITextEmbedding3LargeModel, $OpenAITextEmbedding3SmallModel, OpenAITextEmbedding3SmallModel, $OpenAITextEmbeddingAda002Model, OpenAITextEmbeddingAda002Model, $OpenAI_O1_MiniModel, OpenAI_O1_MiniModel, $OpenAI_O1_PreviewModel, OpenAI_O1_PreviewModel, $PixtralLargeModel, PixtralLargeModel, $PixtralModel, PixtralModel };
 
 type __defaultExports = {
   "ChatParticipantRole": typeof ChatParticipantRole;
@@ -591,7 +582,6 @@ type __defaultExports = {
   "OllamaLlama_3_3_Model": typeof OllamaLlama_3_3_Model;
   "OllamaNomicEmbedTextModel": typeof OllamaNomicEmbedTextModel;
   "OllamaProviderConfig": typeof OllamaProviderConfig;
-  "OllamaSnowflakeArcticEmbed2Model": typeof OllamaSnowflakeArcticEmbed2Model;
   "OpenAIGPT_3_5_TurboModel": typeof OpenAIGPT_3_5_TurboModel;
   "OpenAIGPT_4_Model": typeof OpenAIGPT_4_Model;
   "OpenAIGPT_4_TurboModel": typeof OpenAIGPT_4_TurboModel;
@@ -643,7 +633,6 @@ const __defaultExports: __defaultExports = {
   "OllamaLlama_3_3_Model": OllamaLlama_3_3_Model,
   "OllamaNomicEmbedTextModel": OllamaNomicEmbedTextModel,
   "OllamaProviderConfig": OllamaProviderConfig,
-  "OllamaSnowflakeArcticEmbed2Model": OllamaSnowflakeArcticEmbed2Model,
   "OpenAIGPT_3_5_TurboModel": OpenAIGPT_3_5_TurboModel,
   "OpenAIGPT_4_Model": OpenAIGPT_4_Model,
   "OpenAIGPT_4_TurboModel": OpenAIGPT_4_TurboModel,

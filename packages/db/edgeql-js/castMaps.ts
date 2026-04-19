@@ -26,6 +26,7 @@ import type * as _extpgvector from "./modules/ext/pgvector";
 import type * as _extauth from "./modules/ext/auth";
 import type * as _extai from "./modules/ext/ai";
 import type * as _event from "./modules/event";
+import type * as _default from "./modules/default";
 import type * as _cfg from "./modules/cfg";
 export type scalarAssignableBy<T extends $.ScalarType> =
   T extends _std.$number ? _std.$number : 
@@ -46,7 +47,6 @@ export type scalarAssignableBy<T extends $.ScalarType> =
   T extends _sys.$TransactionAccessMode ? _sys.$TransactionAccessMode : 
   T extends _sys.$QueryType ? _sys.$QueryType : 
   T extends _sys.$OutputFormat ? _sys.$OutputFormat : 
-  T extends _std.$str ? _std.$str : 
   T extends _stdpg.$timestamptz ? _stdpg.$timestamptz : 
   T extends _stdpg.$timestamp ? _stdpg.$timestamp : 
   T extends _stdpg.$json ? _stdpg.$json : 
@@ -76,7 +76,6 @@ export type scalarAssignableBy<T extends $.ScalarType> =
   T extends _stdcal.$local_date ? _stdcal.$local_date : 
   T extends _stdcal.$date_duration ? _stdcal.$date_duration : 
   T extends _std.$bytes ? _std.$bytes : 
-  T extends _std.$bool ? _std.$bool : 
   T extends _std.$bigint ? _std.$bigint : 
   T extends _std.$JsonEmpty ? _std.$JsonEmpty : 
   T extends _std.$Endian ? _std.$Endian : 
@@ -122,6 +121,12 @@ export type scalarAssignableBy<T extends $.ScalarType> =
   T extends _extai.$DistanceFunction ? _extai.$DistanceFunction : 
   T extends _extai.$ChatParticipantRole ? _extai.$ChatParticipantRole : 
   T extends _event.$Type ? _event.$Type : 
+  T extends _default.$is_rep_or_higher ? _default.$is_rep_or_higher : 
+  T extends _default.$is_desk_or_higher ? _default.$is_desk_or_higher : 
+  T extends _default.$is_admin ? _default.$is_admin : 
+  T extends _std.$bool ? _std.$bool : 
+  T extends _default.$current_user_role_names ? _default.$current_user_role_names : 
+  T extends _std.$str ? _std.$str : 
   T extends _cfg.$memory ? _cfg.$memory : 
   T extends _cfg.$StoreMigrationSDL ? _cfg.$StoreMigrationSDL : 
   T extends _cfg.$SMTPSecurity ? _cfg.$SMTPSecurity : 
@@ -150,7 +155,6 @@ export type scalarCastableFrom<T extends $.ScalarType> =
   T extends _sys.$TransactionAccessMode ? _sys.$TransactionAccessMode : 
   T extends _sys.$QueryType ? _sys.$QueryType : 
   T extends _sys.$OutputFormat ? _sys.$OutputFormat : 
-  T extends _std.$str ? _std.$str : 
   T extends _stdpg.$timestamptz ? _stdpg.$timestamptz : 
   T extends _stdpg.$timestamp ? _stdpg.$timestamp : 
   T extends _stdpg.$json ? _stdpg.$json : 
@@ -180,7 +184,6 @@ export type scalarCastableFrom<T extends $.ScalarType> =
   T extends _stdcal.$local_date ? _stdcal.$local_date : 
   T extends _stdcal.$date_duration ? _stdcal.$date_duration : 
   T extends _std.$bytes ? _std.$bytes : 
-  T extends _std.$bool ? _std.$bool : 
   T extends _std.$bigint ? _std.$bigint : 
   T extends _std.$JsonEmpty ? _std.$JsonEmpty : 
   T extends _std.$Endian ? _std.$Endian : 
@@ -226,6 +229,12 @@ export type scalarCastableFrom<T extends $.ScalarType> =
   T extends _extai.$DistanceFunction ? _extai.$DistanceFunction : 
   T extends _extai.$ChatParticipantRole ? _extai.$ChatParticipantRole : 
   T extends _event.$Type ? _event.$Type : 
+  T extends _default.$is_rep_or_higher ? _default.$is_rep_or_higher : 
+  T extends _default.$is_desk_or_higher ? _default.$is_desk_or_higher : 
+  T extends _default.$is_admin ? _default.$is_admin : 
+  T extends _std.$bool ? _std.$bool : 
+  T extends _default.$current_user_role_names ? _default.$current_user_role_names : 
+  T extends _std.$str ? _std.$str : 
   T extends _cfg.$memory ? _cfg.$memory : 
   T extends _cfg.$StoreMigrationSDL ? _cfg.$StoreMigrationSDL : 
   T extends _cfg.$SMTPSecurity ? _cfg.$SMTPSecurity : 
@@ -340,12 +349,6 @@ type getSharedParentScalar<A, B> =
   :
   A extends _sys.$OutputFormat ?
     B extends _sys.$OutputFormat ?
-    B
-    :
-    never
-  :
-  A extends _std.$str ?
-    B extends _std.$str ?
     B
     :
     never
@@ -535,12 +538,6 @@ type getSharedParentScalar<A, B> =
   :
   A extends _std.$bytes ?
     B extends _std.$bytes ?
-    B
-    :
-    never
-  :
-  A extends _std.$bool ?
-    B extends _std.$bool ?
     B
     :
     never
@@ -824,6 +821,42 @@ type getSharedParentScalar<A, B> =
     :
     never
   :
+  A extends _default.$is_rep_or_higher ?
+    B extends _default.$is_rep_or_higher ?
+    B
+    :
+    never
+  :
+  A extends _default.$is_desk_or_higher ?
+    B extends _default.$is_desk_or_higher ?
+    B
+    :
+    never
+  :
+  A extends _default.$is_admin ?
+    B extends _default.$is_admin ?
+    B
+    :
+    never
+  :
+  A extends _std.$bool ?
+    B extends _std.$bool ?
+    B
+    :
+    never
+  :
+  A extends _default.$current_user_role_names ?
+    B extends _default.$current_user_role_names ?
+    B
+    :
+    never
+  :
+  A extends _std.$str ?
+    B extends _std.$str ?
+    B
+    :
+    never
+  :
   A extends _cfg.$memory ?
     B extends _cfg.$memory ?
     B
@@ -975,12 +1008,6 @@ function getSharedParentScalar<A extends $.ScalarType, B extends $.ScalarType>(a
     }
   if (a.__name__ === "sys::OutputFormat") {
     if(b.__name__ === "sys::OutputFormat") {
-      return b;
-    }
-    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
-    }
-  if (a.__name__ === "std::str") {
-    if(b.__name__ === "std::str") {
       return b;
     }
     throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
@@ -1170,12 +1197,6 @@ function getSharedParentScalar<A extends $.ScalarType, B extends $.ScalarType>(a
     }
   if (a.__name__ === "std::bytes") {
     if(b.__name__ === "std::bytes") {
-      return b;
-    }
-    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
-    }
-  if (a.__name__ === "std::bool") {
-    if(b.__name__ === "std::bool") {
       return b;
     }
     throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
@@ -1455,6 +1476,42 @@ function getSharedParentScalar<A extends $.ScalarType, B extends $.ScalarType>(a
     }
   if (a.__name__ === "event::Type") {
     if(b.__name__ === "event::Type") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
+  if (a.__name__ === "default::is_rep_or_higher") {
+    if(b.__name__ === "default::is_rep_or_higher") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
+  if (a.__name__ === "default::is_desk_or_higher") {
+    if(b.__name__ === "default::is_desk_or_higher") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
+  if (a.__name__ === "default::is_admin") {
+    if(b.__name__ === "default::is_admin") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
+  if (a.__name__ === "std::bool") {
+    if(b.__name__ === "std::bool") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
+  if (a.__name__ === "default::current_user_role_names") {
+    if(b.__name__ === "default::current_user_role_names") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
+  if (a.__name__ === "std::str") {
+    if(b.__name__ === "std::str") {
       return b;
     }
     throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);

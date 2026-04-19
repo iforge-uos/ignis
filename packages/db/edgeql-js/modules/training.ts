@@ -13,17 +13,17 @@ export type $AnswerType = {
   "SINGLE": $.$expr_Literal<$AnswerType>;
   "MULTI": $.$expr_Literal<$AnswerType>;
 } & $.EnumType<"training::AnswerType", ["SINGLE", "MULTI"]>;
-const AnswerType: $AnswerType = $.makeType<$AnswerType>(_.spec, "2a661b84-f86c-11ee-b8b7-7f68abb2382d", _.syntax.literal);
+const AnswerType: $AnswerType = $.makeType<$AnswerType>(_.spec, "e4ef2fea-3c37-11f1-809a-4faf90bdfd50", _.syntax.literal);
 
 export type $ExpiresReturn = $.ScalarType<"std::json", unknown>;
-const ExpiresReturn: $.scalarTypeWithConstructor<_std.$json, never> = $.makeType<$.scalarTypeWithConstructor<_std.$json, never>>(_.spec, "3e6ff96e-28b0-11f1-9560-63c86ad3464a", _.syntax.literal);
+const ExpiresReturn: $.scalarTypeWithConstructor<_std.$json, never> = $.makeType<$.scalarTypeWithConstructor<_std.$json, never>>(_.spec, "37181976-3c38-11f1-981d-695a5236700a", _.syntax.literal);
 
 export type $LocationName = {
   "MAINSPACE": $.$expr_Literal<$LocationName>;
   "HEARTSPACE": $.$expr_Literal<$LocationName>;
   "GEORGE_PORTER": $.$expr_Literal<$LocationName>;
 } & $.EnumType<"training::LocationName", ["MAINSPACE", "HEARTSPACE", "GEORGE_PORTER"]>;
-const LocationName: $LocationName = $.makeType<$LocationName>(_.spec, "29f700df-f86c-11ee-b1b6-fbc5c14c912b", _.syntax.literal);
+const LocationName: $LocationName = $.makeType<$LocationName>(_.spec, "e4ef439a-3c37-11f1-9cbb-9df9de97269e", _.syntax.literal);
 
 export type $NextStep = {
   "DO_ONLINE": $.$expr_Literal<$NextStep>;
@@ -34,7 +34,7 @@ export type $NextStep = {
   "DO_REP_IN_PERSON": $.$expr_Literal<$NextStep>;
   "NONE": $.$expr_Literal<$NextStep>;
 } & $.EnumType<"training::NextStep", ["DO_ONLINE", "DO_IN_PERSON", "DO_IN_PERSON_OR_REP_ONLINE", "DO_REP_ONLINE", "DO_IN_PERSON_OR_REP_IN_PERSON", "DO_REP_IN_PERSON", "NONE"]>;
-const NextStep: $NextStep = $.makeType<$NextStep>(_.spec, "3e7007c4-28b0-11f1-ac9c-f796c973cb48", _.syntax.literal);
+const NextStep: $NextStep = $.makeType<$NextStep>(_.spec, "371827fe-3c38-11f1-8690-cb811a611bd6", _.syntax.literal);
 
 export type $Status = {
   "UNTRAINED": $.$expr_Literal<$Status>;
@@ -46,7 +46,7 @@ export type $Status = {
   "USER_TRAINING_COMPLETE": $.$expr_Literal<$Status>;
   "REP_ONLINE_COMPLETE": $.$expr_Literal<$Status>;
 } & $.EnumType<"training::Status", ["UNTRAINED", "REVOKED", "EXPIRED", "ONLINE_COMPLETE", "FULLY_COMPLETE", "REP_ONLINE_COMPLETE_NO_IN_PERSON", "USER_TRAINING_COMPLETE", "REP_ONLINE_COMPLETE"]>;
-const Status: $Status = $.makeType<$Status>(_.spec, "3e701390-28b0-11f1-ba16-615b5f9cd829", _.syntax.literal);
+const Status: $Status = $.makeType<$Status>(_.spec, "37183708-3c38-11f1-9c04-05554e37a287", _.syntax.literal);
 
 export type $AnswerλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
   "content": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
@@ -58,7 +58,7 @@ export type $AnswerλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840
 type $Answer = $.ObjectType<"training::Answer", $AnswerλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
 ], "training::Answer">;
-const $Answer = $.makeType<$Answer>(_.spec, "29f45fc7-f86c-11ee-b831-551013d6700f", _.syntax.literal);
+const $Answer = $.makeType<$Answer>(_.spec, "e5badd52-3c37-11f1-8236-2170e9387a63", _.syntax.literal);
 
 const Answer: $.$expr_PathNode<$.TypeSet<$Answer, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Answer, $.Cardinality.Many), null);
 
@@ -72,7 +72,7 @@ type $Interactable = $.ObjectType<"training::Interactable", $InteractableλShape
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
   {parent: {__element__: $Training, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },index: {__element__: _std.$int16, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
 ], "training::TrainingPage" | "training::Page" | "training::Question">;
-const $Interactable = $.makeType<$Interactable>(_.spec, "2a60f083-f86c-11ee-88b8-f3b0b108dc13", _.syntax.literal);
+const $Interactable = $.makeType<$Interactable>(_.spec, "e4dde3f2-3c37-11f1-a2d5-d14c327e0f6a", _.syntax.literal);
 
 const Interactable: $.$expr_PathNode<$.TypeSet<$Interactable, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Interactable, $.Cardinality.Many), null);
 
@@ -85,7 +85,7 @@ export type $TrainingPageλShape = $.typeutil.flatten<$InteractableλShape & {
 type $TrainingPage = $.ObjectType<"training::TrainingPage", $TrainingPageλShape, null, [
   ...$Interactable['__exclusives__'],
 ], "training::TrainingPage" | "training::Page">;
-const $TrainingPage = $.makeType<$TrainingPage>(_.spec, "2a6b88eb-f86c-11ee-8efd-c37cef07e098", _.syntax.literal);
+const $TrainingPage = $.makeType<$TrainingPage>(_.spec, "e4df50e8-3c37-11f1-b377-535d4ee6b7e9", _.syntax.literal);
 
 const TrainingPage: $.$expr_PathNode<$.TypeSet<$TrainingPage, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($TrainingPage, $.Cardinality.Many), null);
 
@@ -94,7 +94,7 @@ export type $PageλShape = $.typeutil.flatten<$TrainingPageλShape & {
 type $Page = $.ObjectType<"training::Page", $PageλShape, null, [
   ...$TrainingPage['__exclusives__'],
 ], "training::Page">;
-const $Page = $.makeType<$Page>(_.spec, "77779cc3-c275-11ef-a0bd-67996ce251ba", _.syntax.literal);
+const $Page = $.makeType<$Page>(_.spec, "e4ee5304-3c37-11f1-be87-91277a5289a1", _.syntax.literal);
 
 const Page: $.$expr_PathNode<$.TypeSet<$Page, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Page, $.Cardinality.Many), null);
 
@@ -107,13 +107,13 @@ export type $QuestionλShape = $.typeutil.flatten<$InteractableλShape & {
 type $Question = $.ObjectType<"training::Question", $QuestionλShape, null, [
   ...$Interactable['__exclusives__'],
 ], "training::Question">;
-const $Question = $.makeType<$Question>(_.spec, "2a663a2a-f86c-11ee-a8ce-19967c85d321", _.syntax.literal);
+const $Question = $.makeType<$Question>(_.spec, "e6714362-3c37-11f1-b43f-a14c9526a3e7", _.syntax.literal);
 
 const Question: $.$expr_PathNode<$.TypeSet<$Question, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Question, $.Cardinality.Many), null);
 
 export type $SessionλShape = $.typeutil.flatten<_default.$AuditableλShape & {
-  "index": $.PropertyDesc<_std.$int16, $.Cardinality.One, false, false, false, true>;
   "training": $.LinkDesc<$Training, $.Cardinality.One, {}, false, false,  false, false>;
+  "index": $.PropertyDesc<_std.$int16, $.Cardinality.One, false, false, false, true>;
   "user": $.LinkDesc<_users.$User, $.Cardinality.One, {}, false, false,  false, false>;
   "next_section": $.LinkDesc<$TrainingPage | $Question, $.Cardinality.AtMostOne, {}, false, true,  false, false>;
 }>;
@@ -121,7 +121,7 @@ type $Session = $.ObjectType<"training::Session", $SessionλShape, null, [
   ..._default.$Auditable['__exclusives__'],
   {user: {__element__: _users.$User, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },training: {__element__: $Training, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
 ], "training::Session">;
-const $Session = $.makeType<$Session>(_.spec, "29ff9cb7-f86c-11ee-9653-fdc4b5973fb3", _.syntax.literal);
+const $Session = $.makeType<$Session>(_.spec, "e6107122-3c37-11f1-a644-0f554431724e", _.syntax.literal);
 
 const Session: $.$expr_PathNode<$.TypeSet<$Session, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Session, $.Cardinality.Many), null);
 
@@ -140,15 +140,15 @@ export type $TrainingλShape = $.typeutil.flatten<_default.$AuditableλShape & {
   "sections": $.LinkDesc<$TrainingPage | $Question, $.Cardinality.Many, {}, false, true,  false, false>;
   "expires_after": $.PropertyDesc<_stdcal.$relative_duration, $.Cardinality.One, false, false, false, true>;
   "<rep[is training::Training]": $.LinkDesc<$Training, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<training[is users::User]": $.LinkDesc<_users.$User, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<supervisable_training[is users::Rep]": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<training[is training::Session]": $.LinkDesc<$Session, $.Cardinality.Many, {}, false, false,  false, false>;
   "<parent[is training::Interactable]": $.LinkDesc<$Interactable, $.Cardinality.Many, {}, false, false,  false, false>;
   "<parent[is training::TrainingPage]": $.LinkDesc<$TrainingPage, $.Cardinality.Many, {}, false, false,  false, false>;
   "<parent[is training::Page]": $.LinkDesc<$Page, $.Cardinality.Many, {}, false, false,  false, false>;
   "<parent[is training::Question]": $.LinkDesc<$Question, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<training[is training::Session]": $.LinkDesc<$Session, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<training[is users::Rep]": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<training[is users::User]": $.LinkDesc<_users.$User, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<supervisable_training[is users::Rep]": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, false,  false, false>;
   "<training[is user]": $.LinkDesc<_default.$user, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<training[is users::Rep]": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, false,  false, false>;
   "<required_training[is event::Event]": $.LinkDesc<_event.$Event, $.Cardinality.Many, {}, false, false,  false, false>;
   "<training[is tools::Tool]": $.LinkDesc<_tools.$Tool, $.Cardinality.Many, {}, false, false,  false, false>;
   "<rep[is tools::Tool]": $.LinkDesc<_tools.$Tool, $.Cardinality.Many, {}, false, false,  false, false>;
@@ -163,33 +163,9 @@ export type $TrainingλShape = $.typeutil.flatten<_default.$AuditableλShape & {
 type $Training = $.ObjectType<"training::Training", $TrainingλShape, null, [
   ..._default.$Auditable['__exclusives__'],
 ], "training::Training">;
-const $Training = $.makeType<$Training>(_.spec, "29f7181e-f86c-11ee-b1f9-2f77f7e7a3fd", _.syntax.literal);
+const $Training = $.makeType<$Training>(_.spec, "e5d86b1a-3c37-11f1-bffc-b37d835ed14b", _.syntax.literal);
 
 const Training: $.$expr_PathNode<$.TypeSet<$Training, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Training, $.Cardinality.Many), null);
-
-type get_expiry_datesλFuncExpr<
-  P1 extends $.TypeSet<_users.$User>,
-> = $.$expr_Function<
-  $ExpiresReturn, $.cardutil.paramCardinality<P1>
->;
-function get_expiry_dates<
-  P1 extends $.TypeSet<_users.$User>,
->(
-  user: P1,
-): get_expiry_datesλFuncExpr<P1>;
-function get_expiry_dates(...args: any[]) {
-  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('training::get_expiry_dates', args, _.spec, [
-    {args: [{typeId: "29c43a34-f86c-11ee-a6b1-c1a89f83e7fe", optional: false, setoftype: false, variadic: false}], returnTypeId: "3e6ff96e-28b0-11f1-9560-63c86ad3464a"},
-  ]);
-  return _.syntax.$expressionify({
-    __kind__: $.ExpressionKind.Function,
-    __element__: returnType,
-    __cardinality__: cardinality,
-    __name__: "training::get_expiry_dates",
-    __args__: positionalArgs,
-    __namedargs__: namedArgs,
-  }) as any;
-};
 
 type get_statusλFuncExpr<
   NamedArgs extends {
@@ -226,13 +202,37 @@ function get_status<
 ): get_statusλFuncExpr2<P1, P2>;
 function get_status(...args: any[]) {
   const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('training::get_status', args, _.spec, [
-    {args: [{typeId: "29f7181e-f86c-11ee-b1f9-2f77f7e7a3fd", optional: false, setoftype: false, variadic: false}, {typeId: "29c43a34-f86c-11ee-a6b1-c1a89f83e7fe", optional: false, setoftype: false, variadic: false}], namedArgs: {"collapse": {typeId: "00000000-0000-0000-0000-000000000109", optional: true, setoftype: false, variadic: false}}, returnTypeId: "ba4f8a7c-28b0-11f1-9d8d-e582d5123749", returnTypemod: "OptionalType"},
+    {args: [{typeId: "e5d86b1a-3c37-11f1-bffc-b37d835ed14b", optional: false, setoftype: false, variadic: false}, {typeId: "e4c4d1be-3c37-11f1-b324-85b5d57e4f40", optional: false, setoftype: false, variadic: false}], namedArgs: {"collapse": {typeId: "00000000-0000-0000-0000-000000000109", optional: true, setoftype: false, variadic: false}}, returnTypeId: "857ba4a2-3c38-11f1-a2c5-c7beaca8d0ea", returnTypemod: "OptionalType"},
   ]);
   return _.syntax.$expressionify({
     __kind__: $.ExpressionKind.Function,
     __element__: returnType,
     __cardinality__: cardinality,
     __name__: "training::get_status",
+    __args__: positionalArgs,
+    __namedargs__: namedArgs,
+  }) as any;
+};
+
+type get_expiry_datesλFuncExpr<
+  P1 extends $.TypeSet<_users.$User>,
+> = $.$expr_Function<
+  $ExpiresReturn, $.cardutil.paramCardinality<P1>
+>;
+function get_expiry_dates<
+  P1 extends $.TypeSet<_users.$User>,
+>(
+  user: P1,
+): get_expiry_datesλFuncExpr<P1>;
+function get_expiry_dates(...args: any[]) {
+  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('training::get_expiry_dates', args, _.spec, [
+    {args: [{typeId: "e4c4d1be-3c37-11f1-b324-85b5d57e4f40", optional: false, setoftype: false, variadic: false}], returnTypeId: "37181976-3c38-11f1-981d-695a5236700a"},
+  ]);
+  return _.syntax.$expressionify({
+    __kind__: $.ExpressionKind.Function,
+    __element__: returnType,
+    __cardinality__: cardinality,
+    __name__: "training::get_expiry_dates",
     __args__: positionalArgs,
     __namedargs__: namedArgs,
   }) as any;
@@ -248,10 +248,10 @@ const $training__globals: {  COLLAPSED_LOOKUPS: _.syntax.$expr_Global<
               $.Cardinality.AtLeastOne
               >} = {  COLLAPSED_LOOKUPS: _.syntax.makeGlobal(
               "training::COLLAPSED_LOOKUPS",
-              $.makeType(_.spec, "ba4f908a-28b0-11f1-94ec-235ec4c0fa14", _.syntax.literal),
+              $.makeType(_.spec, "857ba7f4-3c38-11f1-9f9a-3b711dd4db19", _.syntax.literal),
               $.Cardinality.AtLeastOne) as any,  LOOKUPS: _.syntax.makeGlobal(
               "training::LOOKUPS",
-              $.makeType(_.spec, "ba5624b8-28b0-11f1-a50f-612f14752790", _.syntax.literal),
+              $.makeType(_.spec, "8580b280-3c38-11f1-b4b3-9b2996cae4f6", _.syntax.literal),
               $.Cardinality.AtLeastOne) as any};
 
 
@@ -271,8 +271,8 @@ type __defaultExports = {
   "Question": typeof Question;
   "Session": typeof Session;
   "Training": typeof Training;
-  "get_expiry_dates": typeof get_expiry_dates;
   "get_status": typeof get_status;
+  "get_expiry_dates": typeof get_expiry_dates;
   "global": typeof $training__globals
 };
 const __defaultExports: __defaultExports = {
@@ -288,8 +288,8 @@ const __defaultExports: __defaultExports = {
   "Question": Question,
   "Session": Session,
   "Training": Training,
-  "get_expiry_dates": get_expiry_dates,
   "get_status": get_status,
+  "get_expiry_dates": get_expiry_dates,
   "global": $training__globals
 };
 export default __defaultExports;
