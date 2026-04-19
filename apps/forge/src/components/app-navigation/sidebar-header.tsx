@@ -5,20 +5,17 @@ import { clamp } from "@/lib/utils";
 import { cn } from "@/lib/utils/cn";
 import { orpc } from "@/lib/orpc";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { userAtom } from "@/atoms/authSessionAtoms";
-import { useAtom } from "jotai";
+import { useUser } from "@/hooks/useUser";
 
 export const SidebarHeader = () => {
-  const [user, setUser] = useAtom(userAtom);
+  const user = useUser();
   const queryClient = useQueryClient();
   const announcements = (user?.notifications ?? []).filter(n => !n["@acknowledged_at"] && n.delivery_methods.includes("BANNER"));
-  const setNotifications = (notifications: (typeof primaryNotification)[]) => setUser({ ...user, notifications });
 
   const primaryNotification = announcements[0];
   const { mutate: acknowledge } = useMutation(
     orpc.notifications.acknowledge.mutationOptions({
-      onSuccess: (notification) => {
-        setNotifications(announcements.filter((current) => current.id !== notification.id));
+      onSuccess: () => {
         queryClient.invalidateQueries( {queryKey: orpc.users.me.queryKey()} )
       },
     }),
