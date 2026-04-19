@@ -6,6 +6,7 @@ import { Client, Executor, SimpleConfig } from "gel";
 import { Transaction } from "gel/dist/transaction";
 import ldap from "@/ldap";
 import { ldapLibraryToUcardNumber } from "./sign-in";
+import { truncateByDomain } from "recharts/types/util/ChartUtils";
 
 export const PartialUserShape = e.shape(e.users.User, () => ({
   // Fairly minimal, useful for templating
@@ -32,7 +33,15 @@ export const UserShape = e.shape(e.users.User, () => ({
   },
   roles: { id: true, name: true },
   mailing_list_subscriptions: true,
-  notifications: true,
+  notifications: {
+    id: true,
+    title: true,
+    content: true,
+    delivery_methods: true,
+    created_at: true,
+    type: true,
+    "@acknowledged_at": true,
+  },
   // TODO figure out how to get RepShape inside of here
 }));
 
