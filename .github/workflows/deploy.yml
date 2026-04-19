@@ -47,7 +47,7 @@ jobs:
           NODE_ENV: production
           OP_CONNECT_TOKEN: ${{ secrets.OP_CONNECT_TOKEN }}
           OP_CONNECT_HOST: ${{ secrets.OP_CONNECT_HOST }}
-          PM2_COMMAND: /home/iforge/.local/share/pnpm/pm2
+          PM2_COMMAND: /home/iforge/.nvm/versions/node/v24.15.0/bin/pm2
         run: |
           set -euo pipefail
 
@@ -74,7 +74,7 @@ jobs:
         env:
           OP_CONNECT_TOKEN: ${{ secrets.OP_CONNECT_TOKEN }}
           OP_CONNECT_HOST: ${{ secrets.OP_CONNECT_HOST }}
-          PM2_COMMAND: /home/iforge/.local/share/pnpm/pm2
+          PM2_COMMAND: /home/iforge/.nvm/versions/node/v24.15.0/bin/pm2
         run: |
           set -euo pipefail
           export PATH="$PATH:/home/iforge/.local/bin"
