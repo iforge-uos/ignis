@@ -273,8 +273,8 @@ export default function UserOverview({ user }: UserAnalyticsProps) {
                         <div className="flex flex-wrap items-center gap-1">
                           <span className="text-sm text-muted-foreground mr-1">Tools:</span>
                           {signIn.tools.slice(0, 4).map((tool) => (
-                            <Badge key={tool} variant="secondary" className="text-sm py-0">
-                              {tool}
+                            <Badge key={tool.id} variant="secondary" className="text-sm py-0">
+                              {tool.name}
                             </Badge>
                           ))}
                           {signIn.tools.length > 4 && (

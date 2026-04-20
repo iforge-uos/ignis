@@ -20,7 +20,7 @@ export const groupSignIns = (signIns: typeof _signIns) =>
           ends_at: true,
           created_at: true,
           duration: true,
-          tools: true,
+          tools: { id: true, name: true },
           reason: { name: true, category: true },
         })),
       }),
