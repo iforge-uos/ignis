@@ -97,6 +97,18 @@ const Entry = ({ day }: { day: string }) => {
   return <div className="bg-card p-1.5 rounded-md h-fit">{new Date(day).toLocaleDateString()}</div>;
 };
 
+function formatLegendInterval(interval: number): string {
+  if (!Number.isFinite(interval) || interval <= 0) {
+    return "0m";
+  }
+
+  const hours = Math.floor(interval / 3600);
+  const minutes = Math.floor((interval % 3600) / 60);
+  const seconds = Math.floor(interval % 60);
+
+  return formatDuration({ hours, minutes, seconds }) || "0m";
+}
+
 const CustomLegend = ({ data }: { data: SignInStat[] }) => {
   const {colorScale, intervals} = createRoundedColorScale(data);
 
@@ -109,7 +121,7 @@ const CustomLegend = ({ data }: { data: SignInStat[] }) => {
               style={{ backgroundColor: colorScale(interval) }}
             />
             <span className="text-xs text-muted-foreground">
-              {formatDuration(Temporal.Duration.from({hours: Math.floor(interval / 3600), minutes: Math.floor((interval % 3600) / 60), seconds:Math.floor(interval % 60)})) || "0m"}
+              {formatLegendInterval(interval)}
             </span>
           </div>
         ))}
