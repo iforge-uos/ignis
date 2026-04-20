@@ -93,7 +93,7 @@ export const SignInDrawer: FC<SignInDrawerProps> = ({
       };
       switch (groupBy) {
         case "Tools":
-          entry.tool.length > 0 ? entry.tool.map((t) => add(t.name)) : add("No Tools");
+          entry.tools.length > 0 ? entry.tools.map((t) => add(t.name)) : add("No Tools");
           break;
         case "Reason":
           add(entry.reason.name);
