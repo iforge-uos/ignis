@@ -79,26 +79,23 @@ export const remove = eventsOrDeskOrAdmin
   );
 
 export const acknowledge = auth
-.route({ method: "POST", path: "/acknowledge" })
-.input(z.object({ id: z.uuid() }))
-.handler(async ({ input: { id }, context: { db, $user } }) =>
-  e
-    .assert_exists(
-      e.update($user, () => ({
-        set: {
-          notifications: {
-            "+=": e.assert_exists(
-              e.select(e.notification.Notification, () => ({
-                filter_single: { id },
+  .route({ method: "POST", path: "/acknowledge" })
+  .input(z.object({ id: z.uuid() }))
+  .handler(async ({ input: { id }, context: { db, $user } }) =>
+    e
+      .assert_exists(
+        e.update($user, () => ({
+          set: {
+            notifications: {
+              "+=": e.select(e.cast(e.notification.Notification, e.uuid(id)), () => ({
                 "@acknowledged_at": e.datetime_of_statement(),
               })),
-            ),
+            },
           },
-        },
-      })),
-    )
-    .run(db),
-);
+        })),
+      )
+      .run(db),
+  );
 
 export const idRouter = auth.prefix("/{id}").router({
   get,
