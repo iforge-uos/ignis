@@ -116,9 +116,7 @@ export const SignInDrawer: FC<SignInDrawerProps> = ({
     drop: ({ id, reason: oldReason }: { id: string; reason: PartialReason }) => {
       // from SignedInUserCard's item
       if (reason!.id === oldReason.id) return;
-      console.log("Dropping", { id, oldReason, newReason: reason });
       updateShiftType({ id, reason: reason! });
-      console.log("Done");
     },
   }));
 
