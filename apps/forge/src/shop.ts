@@ -12,7 +12,7 @@ try {
 
   client = await Promise.race([clientPromise, timeoutPromise]) as PharosClient;
 } catch (error) {
-  console.error("Failed to setup the Pharos client, shop API will not work")
+  console.error("Failed to setup the Pharos client, shop API will not work", error)
   // @ts-ignore
   client = {};
 }
