@@ -1,7 +1,7 @@
-import { TrainingSectionShape } from "@/lib/utils/queries";
-import { auth } from "@/orpc";
 import e from "@packages/db/edgeql-js";
 import * as z from "zod";
+import { TrainingSectionShape } from "@/lib/utils/queries";
+import { auth } from "@/orpc";
 
 export const start = auth
   .route({ path: "/start" })
@@ -10,8 +10,8 @@ export const start = auth
       id: z.uuid(),
     }),
   )
-  .handler(async ({ input: { id }, context: { db, $user } }) => {
-    const session = await e
+  .handler(async ({ input: { id }, context: { db, $user } }) =>
+    e
       .select(
         e
           .insert(e.training.Session, {
@@ -23,15 +23,23 @@ export const start = auth
           .unlessConflict((session) => ({ on: e.tuple([session.training, session.user]), else: session })),
         (session) => ({
           id: true,
-          sections: e.select(session.training.sections, (section) => ({
-            ...TrainingSectionShape(section),
-            filter: e.op(section.enabled, "and", e.op(section.index, "<=", section.index)),
-            order_by: section.index,
-          })),
+          training: {
+            id: true,
+            name: true,
+            locations: true,
+            description: true,
+            compulsory: true,
+            rep: true,
+            created_at: true,
+            updated_at: true,
+            in_person: true,
+            sections: e.select(session.training.sections, (section) => ({
+              ...TrainingSectionShape(section),
+              filter: e.op(section.enabled, "and", e.op(section.index, "<=", session.index)),
+              order_by: section.index,
+            })),
+          },
         }),
       )
-      .run(db);
-    return session as Omit<typeof session, "sections"> & {
-      sections: Extract<(typeof session.sections)[number], { __typename: "training::Page" | "training::Question" }>[];
-    };
-  });
+      .run(db),
+  );

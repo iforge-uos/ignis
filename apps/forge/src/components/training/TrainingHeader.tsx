@@ -1,14 +1,15 @@
 import { LocationIcon } from "@/icons/Locations";
-import { LOCATIONS, TRAINING_LOCATIONS } from "@/lib/constants";
+import { TRAINING_LOCATIONS } from "@/lib/constants";
 import { toTitleCase } from "@/lib/utils";
 import { ALL_TAGS, TrainingForTags, serializeTrainingTags, trainingTags } from "@/lib/utils/training";
-import { LocationName, Training } from "@packages/types/training";
 import { Badge } from "@packages/ui/components/badge";
 // import { MultiSelect } from "@packages/ui/components/multi-select";
-import { Separator } from "@packages/ui/components/separator";
+import { Procedures } from "@/types/router";
+import type { training } from "@packages/db/interfaces";
 import { format } from "date-fns";
 import React from "react";
 
+type Training = Procedures["training"]["start"]["training"];
 interface BaseTrainingHeaderProps {
   data: Training;
 }
@@ -25,8 +26,8 @@ interface TrainingHeaderPropsEditing extends BaseTrainingHeaderProps {
   editing: true;
   tags: TrainingForTags;
   setTags: React.Dispatch<React.SetStateAction<TrainingForTags>>;
-  locations: LocationName[];
-  setLocations: React.Dispatch<React.SetStateAction<LocationName[]>>;
+  locations: training.LocationName[];
+  setLocations: React.Dispatch<React.SetStateAction<training.LocationName[]>>;
 }
 
 type TrainingHeaderProps = TrainingHeaderPropsEditing | TrainingHeaderPropsNonEditing;
@@ -46,7 +47,7 @@ export function TrainingHeader({ data, editing, tags, setTags, locations, setLoc
                 label: <LocationIcon location={value} className="-m-1.5 w-4 mx-0.5" />,
                 value,
               }))}
-              onChange={(options) => setLocations(options.map((option) => option.value) as LocationName[])} // TODO option for Rep training link and callback for the value changing to add last section for in-person
+              onChange={(options) => setLocations(options.map((option) => option.value) as training.LocationName[])} // TODO option for Rep training link and callback for the value changing to add last section for in-person
               selectFirstItem={false}
               defaultOptions={TRAINING_LOCATIONS.map((value) => ({
                 label: (
