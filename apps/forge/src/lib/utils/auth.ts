@@ -25,7 +25,7 @@ interface GoogleUser {
 }
 
 export async function getUserProfile(providerToken: string): Promise<GoogleUser> {
-  const response = await fetch(" https://openidconnect.googleapis.com/v1/userinfo", {
+  const response = await fetch("https://openidconnect.googleapis.com/v1/userinfo", {
     headers: {
       Authorization: `Bearer ${providerToken}`,
       Accept: "application/json",
