@@ -6,17 +6,21 @@ import { Progress } from "@packages/ui/components/progress";
 import { RadioGroup, RadioGroupItem } from "@packages/ui/components/radio-group";
 import { Separator } from "@packages/ui/components/separator";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ArrowDown } from "lucide-react";
+import { ArrowDown, ArrowUp } from "lucide-react";
 import React from "react";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
+
 import type { InteractionResponse } from "@/api/training/interact.$interaction_id";
 import Title from "@/components/title";
 import { TrainingHeader } from "@/components/training/TrainingHeader";
 import { orpc } from "@/lib/orpc";
 import { ensureQueryData } from "@/lib/query-utils";
 import { cn } from "@/lib/utils/cn";
+
+
+import { Badge } from "@packages/ui/components/badge";
 
 const PROGRESS_BAR_SAMPLE_MS = 50;
 type Section = Extract<InteractionResponse, { __typename: "training::Page" | "training::Question" }>; // ones we can display
@@ -134,6 +138,7 @@ const Component: React.FC = () => {
                   {section.__typename === "training::Question" &&
                     (section.type === "SINGLE" ? (
                       <RadioGroup>
+                         <Badge variant="secondary"  className="ml-0.5">Select one</Badge>
                         {section.answers.map((answer) => (
                           <div className="flex items-center space-x-2" key={answer.id}>
                             <RadioGroupItem
@@ -154,9 +159,9 @@ const Component: React.FC = () => {
                             )}
                           </div>
                         ))}
-                      </RadioGroup>
+                      </RadioGroup> 
                     ) : (
-                      section.answers.map((answer) => (
+                      section.answers.map((answer) => ( 
                         <div className="flex items-center space-x-2" key={answer.id}>
                           <Checkbox
                             value={answer.id}
@@ -187,6 +192,15 @@ const Component: React.FC = () => {
               <ArrowDown className="pr-2" />
               To bottom of page
             </Button>
+
+            <Button
+              className="d-flex gap-2 mb-2"
+              onClick={() => window.scrollTo({top:0, behavior: "smooth" })}
+            >
+              <ArrowUp className="pr-2" />
+              To top of page
+            </Button>
+
           </div>
           <Separator />
         </div>
