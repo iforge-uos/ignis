@@ -1,13 +1,12 @@
-import { TrainingSectionShape } from "@/lib/utils/queries";
-import { auth, transaction } from "@/orpc";
 import e from "@packages/db/edgeql-js";
 import type { training } from "@packages/db/interfaces";
-import { Duration } from "gel";
 import * as z from "zod";
+import { TrainingSectionShape } from "@/lib/utils/queries";
+import { auth, transaction } from "@/orpc";
 
 export interface PageInteraction extends Omit<training.Page, "duration" | "enabled" | "parent"> {
-  __typename: "training::Page";
-  duration: Duration | null;
+  __typename: "training::TrainingPage";
+  duration: Temporal.Duration | null;
 }
 export interface QuestionInteraction extends Omit<training.Question, "answers" | "enabled" | "parent"> {
   __typename: "training::Question";
@@ -34,7 +33,7 @@ export const interact = auth
     async ({
       input: { session_id, interaction_id, answers },
       context: { tx, $user },
-    }): Promise<InteractionResponse> => {
+    }) => {
       // TODO per-session locks to prevent funny things happening
       const session = e.assert_exists(e.select(e.training.Session, () => ({ filter_single: { id: session_id } })));
 
@@ -70,39 +69,32 @@ export const interact = auth
 
       if (next_section === null) {
         await e
-          .update($user, (user) => ({
-            set: {
-              training: e.op(
-                e.op(
-                  "distinct",
-                  e.for(user.training, (t) =>
-                    // filter out the previous training if they had it
-                    e.op(t, "if", e.op(t, "!=", session.training), "else", e.cast(e.training.Training, e.set())),
-                  ),
-                ),
-                "union",
-                e.select(user.training, (t) => ({
-                  "@created_at": e.datetime_of_transaction(),
-                  "@in_person_created_at": t["@in_person_created_at"],
-                  "@in_person_signed_off_by": t["@in_person_signed_off_by"],
-                  "@infraction": t["@infraction"],
-                  filter_single: {
-                    // add it back in while atomically deleting the session
-                    id: e.delete(e.training.Session, () => ({
-                      filter_single: { id: session_id },
-                    })).training.id,
+          .select(
+            e.tuple([
+              e.delete(session),
+              e.update($user, (user) => ({
+                set: {
+                  training: {
+                    "+=": e.select(user.training, (t) => ({
+                      "@created_at": e.datetime_of_transaction(),
+                      "@in_person_created_at": t["@in_person_created_at"],
+                      "@in_person_signed_off_by": t["@in_person_signed_off_by"],
+                      "@infraction": t["@infraction"],
+                      filter_single: {
+                        id: session.training.id,
+                      },
+                    })),
                   },
-                })),
-              ),
-            },
-          }))
+                },
+              })),
+            ]),
+          )
           .run(tx);
-
         return;
       }
 
       await e.update(session, () => ({ set: { index: next_section.index } })).run(tx);
 
-      return next_section as Extract<typeof next_section, { __typename: "training::Page" | "training::Question" }>; // lol this is so bugged, will be fixed by the issue in the schema when I can rename
+      return next_section;
     },
   );
