@@ -277,7 +277,7 @@ function _tryOverload(
       positionalArgs[0]!.__cardinality__,
       "One",
     );
-  } else if (funcName === "union" || funcName === "|") {
+  } else if (funcName === "union") {
     cardinality = cardutil.mergeCardinalities(
       positionalArgs[0]!.__cardinality__,
       positionalArgs[1]!.__cardinality__,

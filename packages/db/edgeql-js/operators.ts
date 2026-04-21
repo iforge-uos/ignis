@@ -297,9 +297,6 @@ const overloadDefs: {
     "union": [
       {kind: "Infix", args: [{typeId: "00000000-0000-0000-0000-000000000001", optional: false, setoftype: true, variadic: false}, {typeId: "00000000-0000-0000-0000-000000000001", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000001", returnTypemod: "SetOfType"},
     ],
-    "|": [
-      {kind: "Infix", args: [{typeId: "00000000-0000-0000-0000-000000000001", optional: false, setoftype: true, variadic: false}, {typeId: "00000000-0000-0000-0000-000000000001", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000001", returnTypemod: "SetOfType"},
-    ],
     "except": [
       {kind: "Infix", args: [{typeId: "00000000-0000-0000-0000-000000000001", optional: false, setoftype: true, variadic: false}, {typeId: "00000000-0000-0000-0000-000000000001", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000001", returnTypemod: "SetOfType"},
     ],
@@ -381,32 +378,32 @@ interface infixOperandsArrayTypeNonArray<LHS extends $.TypeSet<$.ArrayType<$.Non
 }
 
 interface PrefixBooleanOperators {
-  "not":
+  "not": 
     | { operand: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bool>>}
 }
 
 interface PrefixBooleanOneOperators {
-  "exists":
+  "exists": 
     | { operand: _.castMaps.orScalarLiteral<$.TypeSet<$.BaseType>>}
 }
 
 interface PrefixHomogeneousOperators {
-  "+":
+  "+": 
     | { operand: _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>> }
     | { operand: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bigint>> }
     | { operand: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>> }
-  "-":
+  "-": 
     | { operand: _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>> }
     | { operand: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bigint>> }
     | { operand: _.castMaps.orScalarLiteral<$.TypeSet<_std.$duration>> }
     | { operand: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>> }
     | { operand: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$relative_durationλICastableTo>> }
-  "distinct":
+  "distinct": 
     | { operand: _.castMaps.orScalarLiteral<$.TypeSet<$.BaseType>> }
 }
 
 interface InfixBooleanMultiplyOperators {
-  "=":
+  "=": 
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$anyscalar>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$anyscalar>> }
     | { lhs: $.TypeSet<$.AnyTupleType>; rhs: $.TypeSet<$.AnyTupleType> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bool>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bool>> }
@@ -436,7 +433,7 @@ interface InfixBooleanMultiplyOperators {
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_datetimeλICastableTo>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_datetimeλICastableTo>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$relative_durationλICastableTo>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$relative_durationλICastableTo>> }
-  "!=":
+  "!=": 
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$anyscalar>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$anyscalar>> }
     | { lhs: $.TypeSet<$.AnyTupleType>; rhs: $.TypeSet<$.AnyTupleType> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bool>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bool>> }
@@ -466,7 +463,7 @@ interface InfixBooleanMultiplyOperators {
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_datetimeλICastableTo>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_datetimeλICastableTo>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$relative_durationλICastableTo>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$relative_durationλICastableTo>> }
-  ">=":
+  ">=": 
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$anyscalar>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$anyscalar>> }
     | { lhs: $.TypeSet<$.AnyTupleType>; rhs: $.TypeSet<$.AnyTupleType> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bool>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bool>> }
@@ -496,7 +493,7 @@ interface InfixBooleanMultiplyOperators {
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_datetimeλICastableTo>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_datetimeλICastableTo>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$relative_durationλICastableTo>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$relative_durationλICastableTo>> }
-  ">":
+  ">": 
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$anyscalar>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$anyscalar>> }
     | { lhs: $.TypeSet<$.AnyTupleType>; rhs: $.TypeSet<$.AnyTupleType> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bool>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bool>> }
@@ -526,7 +523,7 @@ interface InfixBooleanMultiplyOperators {
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_datetimeλICastableTo>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_datetimeλICastableTo>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$relative_durationλICastableTo>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$relative_durationλICastableTo>> }
-  "<=":
+  "<=": 
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$anyscalar>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$anyscalar>> }
     | { lhs: $.TypeSet<$.AnyTupleType>; rhs: $.TypeSet<$.AnyTupleType> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bool>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bool>> }
@@ -556,7 +553,7 @@ interface InfixBooleanMultiplyOperators {
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_datetimeλICastableTo>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_datetimeλICastableTo>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$relative_durationλICastableTo>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$relative_durationλICastableTo>> }
-  "<":
+  "<": 
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$anyscalar>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$anyscalar>> }
     | { lhs: $.TypeSet<$.AnyTupleType>; rhs: $.TypeSet<$.AnyTupleType> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bool>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bool>> }
@@ -586,22 +583,22 @@ interface InfixBooleanMultiplyOperators {
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_datetimeλICastableTo>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_datetimeλICastableTo>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$relative_durationλICastableTo>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$relative_durationλICastableTo>> }
-  "or":
+  "or": 
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bool>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bool>> }
-  "and":
+  "and": 
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bool>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bool>> }
-  "like":
+  "like": 
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$str>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$str>> }
-  "ilike":
+  "ilike": 
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$str>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$str>> }
-  "not like":
+  "not like": 
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$str>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$str>> }
-  "not ilike":
+  "not ilike": 
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$str>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$str>> }
 }
 
 interface InfixBooleanMultiplyOptionalOperators {
-  "?=":
+  "?=": 
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$anyscalar>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$anyscalar>> }
     | { lhs: $.TypeSet<$.AnyTupleType>; rhs: $.TypeSet<$.AnyTupleType> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bool>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bool>> }
@@ -631,7 +628,7 @@ interface InfixBooleanMultiplyOptionalOperators {
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_datetimeλICastableTo>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_datetimeλICastableTo>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$relative_durationλICastableTo>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$relative_durationλICastableTo>> }
-  "?!=":
+  "?!=": 
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$anyscalar>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$anyscalar>> }
     | { lhs: $.TypeSet<$.AnyTupleType>; rhs: $.TypeSet<$.AnyTupleType> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bool>>, rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bool>> }
@@ -664,7 +661,7 @@ interface InfixBooleanMultiplyOptionalOperators {
 }
 
 interface InfixBooleanMultiplyOneOperators {
-  "in":
+  "in": 
     | { lhs: $.TypeSet<_extpgvector.$vectorλICastableTo>; rhs: $.TypeSet<_extpgvector.$vectorλICastableTo> }
     | { lhs: $.TypeSet<_stdcal.$relative_durationλICastableTo>; rhs: $.TypeSet<_stdcal.$relative_durationλICastableTo> }
     | { lhs: $.TypeSet<_stdcal.$local_datetimeλICastableTo>; rhs: $.TypeSet<_stdcal.$local_datetimeλICastableTo> }
@@ -676,7 +673,7 @@ interface InfixBooleanMultiplyOneOperators {
     | { lhs: $.TypeSet<$.ObjectType>; rhs: $.TypeSet<$.ObjectType> }
     | { lhs: $.TypeSet<$.AnyTupleType>; rhs: $.TypeSet<$.AnyTupleType> }
     | infixOperandsBaseType<_.castMaps.orScalarLiteral<$.TypeSet<$.BaseType>>>
-  "not in":
+  "not in": 
     | { lhs: $.TypeSet<_extpgvector.$vectorλICastableTo>; rhs: $.TypeSet<_extpgvector.$vectorλICastableTo> }
     | { lhs: $.TypeSet<_stdcal.$relative_durationλICastableTo>; rhs: $.TypeSet<_stdcal.$relative_durationλICastableTo> }
     | { lhs: $.TypeSet<_stdcal.$local_datetimeλICastableTo>; rhs: $.TypeSet<_stdcal.$local_datetimeλICastableTo> }
@@ -691,7 +688,7 @@ interface InfixBooleanMultiplyOneOperators {
 }
 
 interface InfixScalarMultiplyOperators {
-  "+":
+  "+": 
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bigint>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bigint>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$datetime>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$duration>> }
@@ -708,7 +705,7 @@ interface InfixScalarMultiplyOperators {
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_datetimeλICastableTo>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$relative_durationλICastableTo>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$relative_durationλICastableTo>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$relative_durationλICastableTo>> }
-  "-":
+  "-": 
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bigint>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bigint>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$datetime>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$duration>> }
@@ -729,33 +726,33 @@ interface InfixScalarMultiplyOperators {
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_datetimeλICastableTo>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$relative_durationλICastableTo>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_datetimeλICastableTo>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$local_datetimeλICastableTo>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$relative_durationλICastableTo>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$relative_durationλICastableTo>> }
-  "*":
+  "*": 
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bigint>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bigint>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>> }
-  "/":
+  "/": 
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>> }
-  "//":
-    | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>> }
-    | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bigint>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bigint>> }
-    | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>> }
-  "%":
+  "//": 
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bigint>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bigint>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>> }
-  "^":
+  "%": 
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bigint>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bigint>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>> }
-  "++":
+  "^": 
+    | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$number>> }
+    | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bigint>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bigint>> }
+    | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$decimalλICastableTo>> }
+  "++": 
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bytes>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bytes>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$str>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$str>> }
     | { lhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$json>>; rhs: _.castMaps.orScalarLiteral<$.TypeSet<_std.$json>> }
 }
 
 interface InfixContainerMultiplyOperators {
-  "union":
+  "union": 
     | { lhs: $.TypeSet<_extpgvector.$vectorλICastableTo>; rhs: $.TypeSet<_extpgvector.$vectorλICastableTo> }
     | { lhs: $.TypeSet<_stdcal.$relative_durationλICastableTo>; rhs: $.TypeSet<_stdcal.$relative_durationλICastableTo> }
     | { lhs: $.TypeSet<_stdcal.$local_datetimeλICastableTo>; rhs: $.TypeSet<_stdcal.$local_datetimeλICastableTo> }
@@ -765,7 +762,7 @@ interface InfixContainerMultiplyOperators {
     | { lhs: $.TypeSet<$.ArrayType<_stdcal.$local_datetimeλICastableTo>>; rhs: $.TypeSet<$.ArrayType<_stdcal.$local_datetimeλICastableTo>> }
     | { lhs: $.TypeSet<$.ArrayType<_std.$decimalλICastableTo>>; rhs: $.TypeSet<$.ArrayType<_std.$decimalλICastableTo>> }
     | { lhs: $.TypeSet<$.AnyTupleType>; rhs: $.TypeSet<$.AnyTupleType> }
-  "except":
+  "except": 
     | { lhs: $.TypeSet<_extpgvector.$vectorλICastableTo>; rhs: $.TypeSet<_extpgvector.$vectorλICastableTo> }
     | { lhs: $.TypeSet<_stdcal.$relative_durationλICastableTo>; rhs: $.TypeSet<_stdcal.$relative_durationλICastableTo> }
     | { lhs: $.TypeSet<_stdcal.$local_datetimeλICastableTo>; rhs: $.TypeSet<_stdcal.$local_datetimeλICastableTo> }
@@ -775,7 +772,7 @@ interface InfixContainerMultiplyOperators {
     | { lhs: $.TypeSet<$.ArrayType<_stdcal.$local_datetimeλICastableTo>>; rhs: $.TypeSet<$.ArrayType<_stdcal.$local_datetimeλICastableTo>> }
     | { lhs: $.TypeSet<$.ArrayType<_std.$decimalλICastableTo>>; rhs: $.TypeSet<$.ArrayType<_std.$decimalλICastableTo>> }
     | { lhs: $.TypeSet<$.AnyTupleType>; rhs: $.TypeSet<$.AnyTupleType> }
-  "intersect":
+  "intersect": 
     | { lhs: $.TypeSet<_extpgvector.$vectorλICastableTo>; rhs: $.TypeSet<_extpgvector.$vectorλICastableTo> }
     | { lhs: $.TypeSet<_stdcal.$relative_durationλICastableTo>; rhs: $.TypeSet<_stdcal.$relative_durationλICastableTo> }
     | { lhs: $.TypeSet<_stdcal.$local_datetimeλICastableTo>; rhs: $.TypeSet<_stdcal.$local_datetimeλICastableTo> }
@@ -788,25 +785,25 @@ interface InfixContainerMultiplyOperators {
 }
 
 interface InfixRangeTypeMultiplyOperators {
-  "+":
+  "+": 
     | infixOperandsRangeType<$.TypeSet<$.RangeType<_std.$anypoint>>>
-  "-":
+  "-": 
     | infixOperandsRangeType<$.TypeSet<$.RangeType<_std.$anypoint>>>
-  "*":
+  "*": 
     | infixOperandsRangeType<$.TypeSet<$.RangeType<_std.$anypoint>>>
 }
 
 interface InfixMultiRangeTypeMultiplyOperators {
-  "+":
+  "+": 
     | infixOperandsMultiRangeType<$.TypeSet<$.MultiRangeType<_std.$anypoint>>>
-  "-":
+  "-": 
     | infixOperandsMultiRangeType<$.TypeSet<$.MultiRangeType<_std.$anypoint>>>
-  "*":
+  "*": 
     | infixOperandsMultiRangeType<$.TypeSet<$.MultiRangeType<_std.$anypoint>>>
 }
 
 interface InfixArrayTypeMultiplyOperators {
-  "++":
+  "++": 
     | { lhs: $.TypeSet<$.ArrayType<_extpgvector.$vectorλICastableTo>>; rhs: $.TypeSet<$.ArrayType<_extpgvector.$vectorλICastableTo>> }
     | { lhs: $.TypeSet<$.ArrayType<_stdcal.$relative_durationλICastableTo>>; rhs: $.TypeSet<$.ArrayType<_stdcal.$relative_durationλICastableTo>> }
     | { lhs: $.TypeSet<$.ArrayType<_stdcal.$local_datetimeλICastableTo>>; rhs: $.TypeSet<$.ArrayType<_stdcal.$local_datetimeλICastableTo>> }
@@ -816,40 +813,36 @@ interface InfixArrayTypeMultiplyOperators {
 }
 
 interface InfixObjectArrayTypeMultiplyOperators {
-  "++":
+  "++": 
     | { lhs: $.TypeSet<$.ArrayType<$.ObjectType>>; rhs: $.TypeSet<$.ArrayType<$.ObjectType>> }
 }
 
 interface InfixBaseTypeMultiplyOneOperators {
-  "except":
+  "except": 
     | infixOperandsBaseType<_.castMaps.orScalarLiteral<$.TypeSet<$.BaseType>>>
-  "intersect":
+  "intersect": 
     | infixOperandsBaseType<_.castMaps.orScalarLiteral<$.TypeSet<$.BaseType>>>
 }
 
 interface InfixBaseTypeMergeOperators {
-  "union":
-    | infixOperandsBaseType<_.castMaps.orScalarLiteral<$.TypeSet<$.BaseType>>>
-  "|":
+  "union": 
     | infixOperandsBaseType<_.castMaps.orScalarLiteral<$.TypeSet<$.BaseType>>>
 }
 
 interface InfixMergeOperators {
-  "union":
-    | { lhs: $.TypeSet<$.ObjectType>; rhs: $.TypeSet<$.ObjectType> }
-  "|":
+  "union": 
     | { lhs: $.TypeSet<$.ObjectType>; rhs: $.TypeSet<$.ObjectType> }
 }
 
 interface InfixMergeManyOperators {
-  "except":
+  "except": 
     | { lhs: $.TypeSet<$.ObjectType>; rhs: $.TypeSet<$.ObjectType> }
-  "intersect":
+  "intersect": 
     | { lhs: $.TypeSet<$.ObjectType>; rhs: $.TypeSet<$.ObjectType> }
 }
 
 interface InfixCoalesceContainerOperators {
-  "??":
+  "??": 
     | { lhs: $.TypeSet<_extpgvector.$vectorλICastableTo>, rhs: $.TypeSet<_extpgvector.$vectorλICastableTo> }
     | { lhs: $.TypeSet<_stdcal.$relative_durationλICastableTo>, rhs: $.TypeSet<_stdcal.$relative_durationλICastableTo> }
     | { lhs: $.TypeSet<_stdcal.$local_datetimeλICastableTo>, rhs: $.TypeSet<_stdcal.$local_datetimeλICastableTo> }
@@ -862,17 +855,17 @@ interface InfixCoalesceContainerOperators {
 }
 
 interface InfixCoalesceBaseTypeOperators {
-  "??":
+  "??": 
     | infixOperandsBaseType<_.castMaps.orScalarLiteral<$.TypeSet<$.BaseType>>>
 }
 
 interface InfixCoalesceObjectOperators {
-  "??":
+  "??": 
     | { lhs: $.TypeSet<$.ObjectType>, rhs: $.TypeSet<$.ObjectType> }
 }
 
 interface TernaryContainerOperators {
-  "if_else":
+  "if_else": 
     | { lhs: $.TypeSet<_extpgvector.$vectorλICastableTo>, rhs: $.TypeSet<_extpgvector.$vectorλICastableTo> }
     | { lhs: $.TypeSet<_stdcal.$relative_durationλICastableTo>, rhs: $.TypeSet<_stdcal.$relative_durationλICastableTo> }
     | { lhs: $.TypeSet<_stdcal.$local_datetimeλICastableTo>, rhs: $.TypeSet<_stdcal.$local_datetimeλICastableTo> }
@@ -885,12 +878,12 @@ interface TernaryContainerOperators {
 }
 
 interface TernaryBaseTypeOperators {
-  "if_else":
+  "if_else": 
     | infixOperandsBaseType<_.castMaps.orScalarLiteral<$.TypeSet<$.BaseType>>>
 }
 
 interface TernaryMergeOperators {
-  "if_else":
+  "if_else": 
     | { lhs: $.TypeSet<$.ObjectType>, rhs: $.TypeSet<$.ObjectType> }
 }
 
@@ -1129,51 +1122,10 @@ function op(...args: any[]) {
         defs = overloadDefs.Ternary[op];
       }
     }
-
-    if (!defs && op === "|") {
-      defs = overloadDefs.Infix.union;
-    }
-
+  
     if (!defs) {
       throw new Error(`No operator exists with signature: ${args.map(arg => `${arg}`).join(", ")}`);
     }
-
-  if (op === "|" && params.length === 2) {
-    const leftType = params[0]?.__element__ ?? params[0];
-    const rightType = params[1]?.__element__ ?? params[1];
-
-    if (
-      leftType?.__kind__ === $.TypeKind.object &&
-      rightType?.__kind__ === $.TypeKind.object
-    ) {
-      const leftName = leftType.__name__;
-      const rightName = rightType.__name__;
-    const unionType = Array.from(_.spec.values()).find((type: any) => {
-      if (type.kind !== "object" || !type.union_of?.length) return false;
-      const unionNames = type.union_of.map(({ id }: { id: string }) => _.spec.get(id)?.name);
-      return unionNames.length === 2 && unionNames.includes(leftName) && unionNames.includes(rightName);
-    });
-
-      if (unionType) {
-        return _.syntax.$expressionify({
-          __kind__: $.ExpressionKind.Operator,
-          __element__: $.makeType(_.spec, unionType.id, _.syntax.literal),
-          __cardinality__: params[0].__cardinality__ === $.Cardinality.Many || params[1].__cardinality__ === $.Cardinality.Many
-            ? $.Cardinality.Many
-            : params[0].__cardinality__ === $.Cardinality.AtLeastOne || params[1].__cardinality__ === $.Cardinality.AtLeastOne
-              ? $.Cardinality.AtLeastOne
-              : params[0].__cardinality__ === $.Cardinality.One || params[1].__cardinality__ === $.Cardinality.One
-                ? $.Cardinality.One
-                : params[0].__cardinality__ === $.Cardinality.AtMostOne || params[1].__cardinality__ === $.Cardinality.AtMostOne
-                  ? $.Cardinality.AtMostOne
-                  : $.Cardinality.Empty,
-          __name__: op,
-          __opkind__: "Infix",
-          __args__: params,
-        }) as any;
-      }
-    }
-  }
 
   const {kind, returnType, cardinality, args: resolvedArgs} = _.syntax.$resolveOverload(op, params, _.spec, defs);
 

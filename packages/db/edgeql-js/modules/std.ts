@@ -8,13 +8,19 @@ import _module__fts from "./std/fts";
 import _module__net from "./std/net";
 import _module__pg from "./std/pg";
 import _module__math from "./std/math";
-import type * as _extpgvector from "./ext/pgvector";
 import type * as _cfg from "./cfg";
 import type * as _stdcal from "./std/cal";
 import type * as _stdpg from "./std/pg";
+import type * as _extpgvector from "./ext/pgvector";
 import type * as _schema from "./schema";
 import { Temporal } from "@js-temporal/polyfill";
-type $anyscalar = $anypoint | $anyreal | $.EnumType | _extpgvector.$vector | _extpgvector.$halfvec | _extpgvector.$sparsevec | $bool | $bytes | $uuid | $str | $json | _cfg.$memory | _stdcal.$local_time | _stdcal.$relative_duration | _stdcal.$date_duration | _stdpg.$json;
+type $anyscalar = $anypoint | $anyreal | $.EnumType | $bool | $bytes | $uuid | $str | $json | _cfg.$memory | _stdcal.$local_time | _stdcal.$relative_duration | _stdcal.$date_duration | _stdpg.$json | _extpgvector.$vector | _extpgvector.$halfvec | _extpgvector.$sparsevec;
+
+export type $str = $.ScalarType<"std::str", string>;
+const str: $.scalarTypeWithConstructor<$str, never> = $.makeType<$.scalarTypeWithConstructor<$str, never>>(_.spec, "00000000-0000-0000-0000-000000000101", _.syntax.literal);
+
+export type $bool = $.ScalarType<"std::bool", boolean>;
+const bool: $.scalarTypeWithConstructor<$bool, never> = $.makeType<$.scalarTypeWithConstructor<$bool, never>>(_.spec, "00000000-0000-0000-0000-000000000109", _.syntax.literal);
 
 export type $uuid = $.ScalarType<"std::uuid", string>;
 const uuid: $.scalarTypeWithConstructor<$uuid, never> = $.makeType<$.scalarTypeWithConstructor<$uuid, never>>(_.spec, "00000000-0000-0000-0000-000000000100", _.syntax.literal);
@@ -54,9 +60,6 @@ type $anynumeric = $decimal | $bigint;
 export type $bigint = $.ScalarType<"std::bigint", bigint>;
 const bigint: $.scalarTypeWithConstructor<$bigint, never> = $.makeType<$.scalarTypeWithConstructor<$bigint, never>>(_.spec, "00000000-0000-0000-0000-000000000110", _.syntax.literal);
 
-export type $bool = $.ScalarType<"std::bool", boolean>;
-const bool: $.scalarTypeWithConstructor<$bool, never> = $.makeType<$.scalarTypeWithConstructor<$bool, never>>(_.spec, "00000000-0000-0000-0000-000000000109", _.syntax.literal);
-
 export type $bytes = $.ScalarType<"std::bytes", Uint8Array>;
 const bytes: $.scalarTypeWithConstructor<$bytes, never> = $.makeType<$.scalarTypeWithConstructor<$bytes, never>>(_.spec, "00000000-0000-0000-0000-000000000102", _.syntax.literal);
 
@@ -88,9 +91,6 @@ const int64: $.scalarTypeWithConstructor<$number, string> = $.makeType<$.scalarT
 
 interface $sequence extends $int64 {}
 const $sequence: $sequence = $.makeType<$sequence>(_.spec, "fd1c52ea-74a9-541b-88e2-378d1edb02fd", _.syntax.literal);
-
-export type $str = $.ScalarType<"std::str", string>;
-const str: $.scalarTypeWithConstructor<$str, never> = $.makeType<$.scalarTypeWithConstructor<$str, never>>(_.spec, "00000000-0000-0000-0000-000000000101", _.syntax.literal);
 
 export type $number = $.ScalarType<"std::number", number>;
 const number: $.scalarTypeWithConstructor<$number, string> = $.makeType<$.scalarTypeWithConstructor<$number, string>>(_.spec, "00000000-0000-0000-0000-0000000001ff", _.syntax.literal);
@@ -411,27 +411,12 @@ type sumλFuncExpr2<
   $number, $.Cardinality.One
 >;
 type sumλFuncExpr3<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$duration>>,
-> = $.$expr_Function<
-  $duration, $.Cardinality.One
->;
-type sumλFuncExpr4<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$date_duration>>,
-> = $.$expr_Function<
-  _stdcal.$date_duration, $.Cardinality.One
->;
-type sumλFuncExpr5<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$decimalλICastableTo>>,
 > = $.$expr_Function<
   $decimal, $.Cardinality.One
 >;
-type sumλFuncExpr6<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$relative_durationλICastableTo>>,
-> = $.$expr_Function<
-  _stdcal.$relative_duration, $.Cardinality.One
->;
 /**
- * Return the arithmetic sum of values in a set.
+ * Return the sum of the set of numbers.
  */
 function sum<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$bigint>>,
@@ -439,7 +424,7 @@ function sum<
   s: P1,
 ): sumλFuncExpr<P1>;
 /**
- * Return the arithmetic sum of values in a set.
+ * Return the sum of the set of numbers.
  */
 function sum<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$number>>,
@@ -447,45 +432,18 @@ function sum<
   s: P1,
 ): sumλFuncExpr2<P1>;
 /**
- * Return the arithmetic sum of values in a set.
- */
-function sum<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$duration>>,
->(
-  s: P1,
-): sumλFuncExpr3<P1>;
-/**
- * Return the arithmetic sum of values in a set.
- */
-function sum<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$date_duration>>,
->(
-  s: P1,
-): sumλFuncExpr4<P1>;
-/**
- * Return the arithmetic sum of values in a set.
+ * Return the sum of the set of numbers.
  */
 function sum<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$decimalλICastableTo>>,
 >(
   s: P1,
-): sumλFuncExpr5<P1>;
-/**
- * Return the arithmetic sum of values in a set.
- */
-function sum<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_stdcal.$relative_durationλICastableTo>>,
->(
-  s: P1,
-): sumλFuncExpr6<P1>;
+): sumλFuncExpr3<P1>;
 function sum(...args: any[]) {
   const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('std::sum', args, _.spec, [
     {args: [{typeId: "00000000-0000-0000-0000-000000000110", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000110"},
     {args: [{typeId: "00000000-0000-0000-0000-0000000001ff", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-0000000001ff"},
-    {args: [{typeId: "00000000-0000-0000-0000-00000000010e", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-00000000010e"},
-    {args: [{typeId: "00000000-0000-0000-0000-000000000112", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000112"},
     {args: [{typeId: "00000000-0000-0000-0000-000000000108", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000108"},
-    {args: [{typeId: "00000000-0000-0000-0000-000000000111", optional: false, setoftype: true, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000111"},
   ]);
   return _.syntax.$expressionify({
     __kind__: $.ExpressionKind.Function,
@@ -1930,33 +1888,6 @@ function array_unpack(...args: any[]) {
   }) as any;
 };
 
-type str_upperλFuncExpr<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>>,
-> = $.$expr_Function<
-  $str, $.cardutil.paramCardinality<P1>
->;
-/**
- * Return an uppercase copy of the input *string*.
- */
-function str_upper<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>>,
->(
-  s: P1,
-): str_upperλFuncExpr<P1>;
-function str_upper(...args: any[]) {
-  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('std::str_upper', args, _.spec, [
-    {args: [{typeId: "00000000-0000-0000-0000-000000000101", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000101"},
-  ]);
-  return _.syntax.$expressionify({
-    __kind__: $.ExpressionKind.Function,
-    __element__: returnType,
-    __cardinality__: cardinality,
-    __name__: "std::str_upper",
-    __args__: positionalArgs,
-    __namedargs__: namedArgs,
-  }) as any;
-};
-
 type array_replaceλFuncExpr<
   P1 extends $.TypeSet<$.ArrayType<_extpgvector.$vectorλICastableTo>>,
   P2 extends $.TypeSet<_extpgvector.$vectorλICastableTo>,
@@ -2902,33 +2833,6 @@ function datetime_truncate(...args: any[]) {
   }) as any;
 };
 
-type str_titleλFuncExpr<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>>,
-> = $.$expr_Function<
-  $str, $.cardutil.paramCardinality<P1>
->;
-/**
- * Return a titlecase copy of the input *string*.
- */
-function str_title<
-  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>>,
->(
-  s: P1,
-): str_titleλFuncExpr<P1>;
-function str_title(...args: any[]) {
-  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('std::str_title', args, _.spec, [
-    {args: [{typeId: "00000000-0000-0000-0000-000000000101", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000101"},
-  ]);
-  return _.syntax.$expressionify({
-    __kind__: $.ExpressionKind.Function,
-    __element__: returnType,
-    __cardinality__: cardinality,
-    __name__: "std::str_title",
-    __args__: positionalArgs,
-    __namedargs__: namedArgs,
-  }) as any;
-};
-
 type str_pad_startλFuncExpr<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>>,
   P2 extends _.castMaps.orScalarLiteral<$.TypeSet<$number>>,
@@ -2957,6 +2861,39 @@ function str_pad_start(...args: any[]) {
     __element__: returnType,
     __cardinality__: cardinality,
     __name__: "std::str_pad_start",
+    __args__: positionalArgs,
+    __namedargs__: namedArgs,
+  }) as any;
+};
+
+type str_lpadλFuncExpr<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>>,
+  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<$number>>,
+  P3 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>> | undefined,
+> = $.$expr_Function<
+  $str, $.cardutil.multiplyCardinalities<$.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.paramCardinality<P2>>, $.cardutil.optionalParamCardinality<P3>>
+>;
+/**
+ * Return the input string left-padded to the length *n*.
+ */
+function str_lpad<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>>,
+  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<$number>>,
+  P3 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>> | undefined,
+>(
+  s: P1,
+  n: P2,
+  fill?: P3,
+): str_lpadλFuncExpr<P1, P2, P3>;
+function str_lpad(...args: any[]) {
+  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('std::str_lpad', args, _.spec, [
+    {args: [{typeId: "00000000-0000-0000-0000-000000000101", optional: false, setoftype: false, variadic: false}, {typeId: "00000000-0000-0000-0000-0000000001ff", optional: false, setoftype: false, variadic: false}, {typeId: "00000000-0000-0000-0000-000000000101", optional: true, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000101"},
+  ]);
+  return _.syntax.$expressionify({
+    __kind__: $.ExpressionKind.Function,
+    __element__: returnType,
+    __cardinality__: cardinality,
+    __name__: "std::str_lpad",
     __args__: positionalArgs,
     __namedargs__: namedArgs,
   }) as any;
@@ -3541,34 +3478,55 @@ function str_lower(...args: any[]) {
   }) as any;
 };
 
-type str_lpadλFuncExpr<
+type str_upperλFuncExpr<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>>,
-  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<$number>>,
-  P3 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>> | undefined,
 > = $.$expr_Function<
-  $str, $.cardutil.multiplyCardinalities<$.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.paramCardinality<P2>>, $.cardutil.optionalParamCardinality<P3>>
+  $str, $.cardutil.paramCardinality<P1>
 >;
 /**
- * Return the input string left-padded to the length *n*.
+ * Return an uppercase copy of the input *string*.
  */
-function str_lpad<
+function str_upper<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>>,
-  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<$number>>,
-  P3 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>> | undefined,
 >(
   s: P1,
-  n: P2,
-  fill?: P3,
-): str_lpadλFuncExpr<P1, P2, P3>;
-function str_lpad(...args: any[]) {
-  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('std::str_lpad', args, _.spec, [
-    {args: [{typeId: "00000000-0000-0000-0000-000000000101", optional: false, setoftype: false, variadic: false}, {typeId: "00000000-0000-0000-0000-0000000001ff", optional: false, setoftype: false, variadic: false}, {typeId: "00000000-0000-0000-0000-000000000101", optional: true, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000101"},
+): str_upperλFuncExpr<P1>;
+function str_upper(...args: any[]) {
+  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('std::str_upper', args, _.spec, [
+    {args: [{typeId: "00000000-0000-0000-0000-000000000101", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000101"},
   ]);
   return _.syntax.$expressionify({
     __kind__: $.ExpressionKind.Function,
     __element__: returnType,
     __cardinality__: cardinality,
-    __name__: "std::str_lpad",
+    __name__: "std::str_upper",
+    __args__: positionalArgs,
+    __namedargs__: namedArgs,
+  }) as any;
+};
+
+type str_titleλFuncExpr<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>>,
+> = $.$expr_Function<
+  $str, $.cardutil.paramCardinality<P1>
+>;
+/**
+ * Return a titlecase copy of the input *string*.
+ */
+function str_title<
+  P1 extends _.castMaps.orScalarLiteral<$.TypeSet<$str>>,
+>(
+  s: P1,
+): str_titleλFuncExpr<P1>;
+function str_title(...args: any[]) {
+  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('std::str_title', args, _.spec, [
+    {args: [{typeId: "00000000-0000-0000-0000-000000000101", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000101"},
+  ]);
+  return _.syntax.$expressionify({
+    __kind__: $.ExpressionKind.Function,
+    __element__: returnType,
+    __cardinality__: cardinality,
+    __name__: "std::str_title",
     __args__: positionalArgs,
     __namedargs__: namedArgs,
   }) as any;
@@ -5464,17 +5422,18 @@ function sequence_reset(...args: any[]) {
 
 
 
-export { uuid, json, Endian, JsonEmpty, bigint, bool, bytes, datetime, decimal, duration, float32, float64, int16, int32, int64, $sequence, str, number, $BaseObject, BaseObject, $Object_8ce8c71ee4fa5f73840c22d7eaa58588, Object_8ce8c71ee4fa5f73840c22d7eaa58588, $FreeObject, FreeObject };
+export { str, bool, uuid, json, Endian, JsonEmpty, bigint, bytes, datetime, decimal, duration, float32, float64, int16, int32, int64, $sequence, number, $BaseObject, BaseObject, $Object_8ce8c71ee4fa5f73840c22d7eaa58588, Object_8ce8c71ee4fa5f73840c22d7eaa58588, $FreeObject, FreeObject };
 
 export type { $anyscalar, $anypoint, $anycontiguous, $anydiscrete, $anyreal, $anyfloat, $anyint, $anynumeric };
 
 type __defaultExports = {
+  "str": typeof str;
+  "bool": typeof bool;
   "uuid": typeof uuid;
   "json": typeof json;
   "Endian": typeof Endian;
   "JsonEmpty": typeof JsonEmpty;
   "bigint": typeof bigint;
-  "bool": typeof bool;
   "bytes": typeof bytes;
   "datetime": typeof datetime;
   "decimal": typeof decimal;
@@ -5484,7 +5443,6 @@ type __defaultExports = {
   "int16": typeof int16;
   "int32": typeof int32;
   "int64": typeof int64;
-  "str": typeof str;
   "BaseObject": typeof BaseObject;
   "Object": typeof Object_8ce8c71ee4fa5f73840c22d7eaa58588;
   "FreeObject": typeof FreeObject;
@@ -5515,7 +5473,6 @@ type __defaultExports = {
   "bit_count": typeof bit_count;
   "array_agg": typeof array_agg;
   "array_unpack": typeof array_unpack;
-  "str_upper": typeof str_upper;
   "array_replace": typeof array_replace;
   "array_get": typeof array_get;
   "array_set": typeof array_set;
@@ -5527,8 +5484,8 @@ type __defaultExports = {
   "datetime_of_statement": typeof datetime_of_statement;
   "datetime_get": typeof datetime_get;
   "datetime_truncate": typeof datetime_truncate;
-  "str_title": typeof str_title;
   "str_pad_start": typeof str_pad_start;
+  "str_lpad": typeof str_lpad;
   "duration_get": typeof duration_get;
   "duration_truncate": typeof duration_truncate;
   "duration_to_seconds": typeof duration_to_seconds;
@@ -5544,7 +5501,8 @@ type __defaultExports = {
   "re_replace": typeof re_replace;
   "str_repeat": typeof str_repeat;
   "str_lower": typeof str_lower;
-  "str_lpad": typeof str_lpad;
+  "str_upper": typeof str_upper;
+  "str_title": typeof str_title;
   "str_pad_end": typeof str_pad_end;
   "str_rpad": typeof str_rpad;
   "str_trim_start": typeof str_trim_start;
@@ -5596,12 +5554,13 @@ type __defaultExports = {
   "math": typeof _module__math
 };
 const __defaultExports: __defaultExports = {
+  "str": str,
+  "bool": bool,
   "uuid": uuid,
   "json": json,
   "Endian": Endian,
   "JsonEmpty": JsonEmpty,
   "bigint": bigint,
-  "bool": bool,
   "bytes": bytes,
   "datetime": datetime,
   "decimal": decimal,
@@ -5611,7 +5570,6 @@ const __defaultExports: __defaultExports = {
   "int16": int16,
   "int32": int32,
   "int64": int64,
-  "str": str,
   "BaseObject": BaseObject,
   "Object": Object_8ce8c71ee4fa5f73840c22d7eaa58588,
   "FreeObject": FreeObject,
@@ -5642,7 +5600,6 @@ const __defaultExports: __defaultExports = {
   "bit_count": bit_count,
   "array_agg": array_agg,
   "array_unpack": array_unpack,
-  "str_upper": str_upper,
   "array_replace": array_replace,
   "array_get": array_get,
   "array_set": array_set,
@@ -5654,8 +5611,8 @@ const __defaultExports: __defaultExports = {
   "datetime_of_statement": datetime_of_statement,
   "datetime_get": datetime_get,
   "datetime_truncate": datetime_truncate,
-  "str_title": str_title,
   "str_pad_start": str_pad_start,
+  "str_lpad": str_lpad,
   "duration_get": duration_get,
   "duration_truncate": duration_truncate,
   "duration_to_seconds": duration_to_seconds,
@@ -5671,7 +5628,8 @@ const __defaultExports: __defaultExports = {
   "re_replace": re_replace,
   "str_repeat": str_repeat,
   "str_lower": str_lower,
-  "str_lpad": str_lpad,
+  "str_upper": str_upper,
+  "str_title": str_title,
   "str_pad_end": str_pad_end,
   "str_rpad": str_rpad,
   "str_trim_start": str_trim_start,

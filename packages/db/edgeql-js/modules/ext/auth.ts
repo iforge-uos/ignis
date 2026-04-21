@@ -148,8 +148,8 @@ export type $IdentityλShape = $.typeutil.flatten<$AuditableλShape & {
   "subject": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "<identity[is ext::auth::PKCEChallenge]": $.LinkDesc<$PKCEChallenge, $.Cardinality.Many, {}, false, false,  false, false>;
   "<identity[is users::User]": $.LinkDesc<_users.$User, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<identity[is users::Rep]": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, false,  false, false>;
   "<identity[is user]": $.LinkDesc<_default.$user, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<identity[is users::Rep]": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, false,  false, false>;
   "<identity": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
 type $Identity = $.ObjectType<"ext::auth::Identity", $IdentityλShape, null, [
@@ -441,24 +441,6 @@ const $WebhookConfig = $.makeType<$WebhookConfig>(_.spec, "e7891c5d-ac77-5e4b-bf
 
 const WebhookConfig: $.$expr_PathNode<$.TypeSet<$WebhookConfig, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($WebhookConfig, $.Cardinality.Many), null);
 
-type signing_key_existsλFuncExpr = $.$expr_Function<
-  _std.$bool, $.Cardinality.One
->;
-function signing_key_exists(): signing_key_existsλFuncExpr;
-function signing_key_exists(...args: any[]) {
-  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('ext::auth::signing_key_exists', args, _.spec, [
-    {args: [], returnTypeId: "00000000-0000-0000-0000-000000000109"},
-  ]);
-  return _.syntax.$expressionify({
-    __kind__: $.ExpressionKind.Function,
-    __element__: returnType,
-    __cardinality__: cardinality,
-    __name__: "ext::auth::signing_key_exists",
-    __args__: positionalArgs,
-    __namedargs__: namedArgs,
-  }) as any;
-};
-
 type webhook_signing_key_existsλFuncExpr<
   P1 extends $.TypeSet<$WebhookConfig>,
 > = $.$expr_Function<
@@ -567,6 +549,24 @@ function jwt_verify_75faa5ad758d5502bb04da9b92b99f58(...args: any[]) {
   }) as any;
 };
 
+type signing_key_existsλFuncExpr = $.$expr_Function<
+  _std.$bool, $.Cardinality.One
+>;
+function signing_key_exists(): signing_key_existsλFuncExpr;
+function signing_key_exists(...args: any[]) {
+  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('ext::auth::signing_key_exists', args, _.spec, [
+    {args: [], returnTypeId: "00000000-0000-0000-0000-000000000109"},
+  ]);
+  return _.syntax.$expressionify({
+    __kind__: $.ExpressionKind.Function,
+    __element__: returnType,
+    __cardinality__: cardinality,
+    __name__: "ext::auth::signing_key_exists",
+    __args__: positionalArgs,
+    __namedargs__: namedArgs,
+  }) as any;
+};
+
 const $ext_auth__globals: {  ClientTokenIdentity: _.syntax.$expr_Global<
               // "ext::auth::ClientTokenIdentity",
               $ClientTokenIdentity,
@@ -630,11 +630,11 @@ type __defaultExports = {
   "WebAuthnProviderConfig": typeof WebAuthnProviderConfig;
   "WebAuthnRegistrationChallenge": typeof WebAuthnRegistrationChallenge;
   "WebhookConfig": typeof WebhookConfig;
-  "signing_key_exists": typeof signing_key_exists;
   "webhook_signing_key_exists": typeof webhook_signing_key_exists;
   "_jwt_check_signature": typeof jwt_check_signature_afb44ddf133051a39d0871812371dd10;
   "_jwt_parse": typeof jwt_parse_08a86a788cea56a9b555b4a881b5e569;
   "_jwt_verify": typeof jwt_verify_75faa5ad758d5502bb04da9b92b99f58;
+  "signing_key_exists": typeof signing_key_exists;
   "global": typeof $ext_auth__globals
 };
 const __defaultExports: __defaultExports = {
@@ -673,11 +673,11 @@ const __defaultExports: __defaultExports = {
   "WebAuthnProviderConfig": WebAuthnProviderConfig,
   "WebAuthnRegistrationChallenge": WebAuthnRegistrationChallenge,
   "WebhookConfig": WebhookConfig,
-  "signing_key_exists": signing_key_exists,
   "webhook_signing_key_exists": webhook_signing_key_exists,
   "_jwt_check_signature": jwt_check_signature_afb44ddf133051a39d0871812371dd10,
   "_jwt_parse": jwt_parse_08a86a788cea56a9b555b4a881b5e569,
   "_jwt_verify": jwt_verify_75faa5ad758d5502bb04da9b92b99f58,
+  "signing_key_exists": signing_key_exists,
   "global": $ext_auth__globals
 };
 export default __defaultExports;

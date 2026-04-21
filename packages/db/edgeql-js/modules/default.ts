@@ -5,13 +5,25 @@ import * as _ from "../imports";
 import type * as _std from "./std";
 import type * as _users from "./users";
 import type * as _stdnethttp from "./std/net/http";
+export type $current_user_role_names = $.ScalarType<"std::str", string>;
+const current_user_role_names: $.scalarTypeWithConstructor<_std.$str, never> = $.makeType<$.scalarTypeWithConstructor<_std.$str, never>>(_.spec, "e841099c-3c38-11f1-9aba-5932ed7b3493", _.syntax.literal);
+
+export type $is_admin = $.ScalarType<"std::bool", boolean>;
+const is_admin: $.scalarTypeWithConstructor<_std.$bool, never> = $.makeType<$.scalarTypeWithConstructor<_std.$bool, never>>(_.spec, "e95709b2-3c38-11f1-a343-7dd9d232be78", _.syntax.literal);
+
+export type $is_desk_or_higher = $.ScalarType<"std::bool", boolean>;
+const is_desk_or_higher: $.scalarTypeWithConstructor<_std.$bool, never> = $.makeType<$.scalarTypeWithConstructor<_std.$bool, never>>(_.spec, "e84fa8da-3c38-11f1-9f19-0902f0a8c3f8", _.syntax.literal);
+
+export type $is_rep_or_higher = $.ScalarType<"std::bool", boolean>;
+const is_rep_or_higher: $.scalarTypeWithConstructor<_std.$bool, never> = $.makeType<$.scalarTypeWithConstructor<_std.$bool, never>>(_.spec, "eb030734-3c38-11f1-bea0-6919ba4cacbd", _.syntax.literal);
+
 export type $CreatedAtλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
   "created_at": $.PropertyDesc<_std.$datetime, $.Cardinality.One, false, false, true, true>;
 }>;
 type $CreatedAt = $.ObjectType<"default::CreatedAt", $CreatedAtλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
 ], "users::User" | "default::user" | "event::Event" | "notification::Notification" | "notification::AuthoredNotification" | "notification::MailingList" | "notification::SystemNotification" | "printing::PrintAuditEntry" | "printing::PrintHistory" | "printing::PrinterAuditEntry" | "shop::Purchase" | "shop::Skew" | "sign_in::Agreement" | "sign_in::Location" | "sign_in::QueuePlace" | "sign_in::Reason" | "sign_in::SignIn" | "sign_in::UserRegistration" | "tools::Booking" | "training::Session" | "training::Training" | "users::Infraction" | "users::Integration" | "users::Rep">;
-const $CreatedAt = $.makeType<$CreatedAt>(_.spec, "29bb1669-f86c-11ee-822f-63593ae3e634", _.syntax.literal);
+const $CreatedAt = $.makeType<$CreatedAt>(_.spec, "e4bdd210-3c37-11f1-a20b-6f99b82663cc", _.syntax.literal);
 
 const CreatedAt: $.$expr_PathNode<$.TypeSet<$CreatedAt, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($CreatedAt, $.Cardinality.Many), null);
 
@@ -21,34 +33,34 @@ export type $AuditableλShape = $.typeutil.flatten<$CreatedAtλShape & {
 type $Auditable = $.ObjectType<"default::Auditable", $AuditableλShape, null, [
   ...$CreatedAt['__exclusives__'],
 ], "users::User" | "default::user" | "notification::Notification" | "notification::AuthoredNotification" | "notification::MailingList" | "notification::SystemNotification" | "shop::Purchase" | "shop::Skew" | "sign_in::Agreement" | "sign_in::Location" | "sign_in::Reason" | "tools::Booking" | "training::Session" | "training::Training" | "users::Integration" | "users::Rep">;
-const $Auditable = $.makeType<$Auditable>(_.spec, "29bd512f-f86c-11ee-bb9f-9fa1f6cbb17a", _.syntax.literal);
+const $Auditable = $.makeType<$Auditable>(_.spec, "e4bf6440-3c37-11f1-8a3f-752f326103e6", _.syntax.literal);
 
 const Auditable: $.$expr_PathNode<$.TypeSet<$Auditable, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Auditable, $.Cardinality.Many), null);
 
-export type $BaseListenable_3e8e1c0028b011f18145495fd9f6b463λShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
+export type $BaseListenable_37391b3a3c3811f1a20f194c51c168d1λShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
 }>;
-type $BaseListenable_3e8e1c0028b011f18145495fd9f6b463 = $.ObjectType<"default::_BaseListenable", $BaseListenable_3e8e1c0028b011f18145495fd9f6b463λShape, null, [
+type $BaseListenable_37391b3a3c3811f1a20f194c51c168d1 = $.ObjectType<"default::_BaseListenable", $BaseListenable_37391b3a3c3811f1a20f194c51c168d1λShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
-], "users::User" | "default::user" | "sign_in::Agreement" | "sign_in::Location" | "sign_in::Reason" | "sign_in::SignIn" | "users::Rep">;
-const $BaseListenable_3e8e1c0028b011f18145495fd9f6b463 = $.makeType<$BaseListenable_3e8e1c0028b011f18145495fd9f6b463>(_.spec, "3e8e1c00-28b0-11f1-8145-495fd9f6b463", _.syntax.literal);
+], "users::User" | "default::user" | "sign_in::Agreement" | "sign_in::Location" | "sign_in::QueuePlace" | "sign_in::Reason" | "sign_in::SignIn" | "users::Rep">;
+const $BaseListenable_37391b3a3c3811f1a20f194c51c168d1 = $.makeType<$BaseListenable_37391b3a3c3811f1a20f194c51c168d1>(_.spec, "37391b3a-3c38-11f1-a20f-194c51c168d1", _.syntax.literal);
 
-const BaseListenable_3e8e1c0028b011f18145495fd9f6b463: $.$expr_PathNode<$.TypeSet<$BaseListenable_3e8e1c0028b011f18145495fd9f6b463, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($BaseListenable_3e8e1c0028b011f18145495fd9f6b463, $.Cardinality.Many), null);
+const BaseListenable_37391b3a3c3811f1a20f194c51c168d1: $.$expr_PathNode<$.TypeSet<$BaseListenable_37391b3a3c3811f1a20f194c51c168d1, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($BaseListenable_37391b3a3c3811f1a20f194c51c168d1, $.Cardinality.Many), null);
 
-export type $ListenableλShape = $.typeutil.flatten<$BaseListenable_3e8e1c0028b011f18145495fd9f6b463λShape & {
+export type $ListenableλShape = $.typeutil.flatten<$BaseListenable_37391b3a3c3811f1a20f194c51c168d1λShape & {
 }>;
 type $Listenable = $.ObjectType<"default::Listenable", $ListenableλShape, null, [
-  ...$BaseListenable_3e8e1c0028b011f18145495fd9f6b463['__exclusives__'],
-], "users::User" | "default::user" | "sign_in::Reason" | "sign_in::SignIn" | "users::Rep">;
-const $Listenable = $.makeType<$Listenable>(_.spec, "3eb71556-28b0-11f1-9c86-3dc688403bd5", _.syntax.literal);
+  ...$BaseListenable_37391b3a3c3811f1a20f194c51c168d1['__exclusives__'],
+], "users::User" | "default::user" | "sign_in::QueuePlace" | "sign_in::Reason" | "sign_in::SignIn" | "users::Rep">;
+const $Listenable = $.makeType<$Listenable>(_.spec, "375e3b36-3c38-11f1-9170-2ddf08b4d672", _.syntax.literal);
 
 const Listenable: $.$expr_PathNode<$.TypeSet<$Listenable, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Listenable, $.Cardinality.Many), null);
 
-export type $ListenableWithChangesλShape = $.typeutil.flatten<$BaseListenable_3e8e1c0028b011f18145495fd9f6b463λShape & {
+export type $ListenableWithChangesλShape = $.typeutil.flatten<$BaseListenable_37391b3a3c3811f1a20f194c51c168d1λShape & {
 }>;
 type $ListenableWithChanges = $.ObjectType<"default::ListenableWithChanges", $ListenableWithChangesλShape, null, [
-  ...$BaseListenable_3e8e1c0028b011f18145495fd9f6b463['__exclusives__'],
+  ...$BaseListenable_37391b3a3c3811f1a20f194c51c168d1['__exclusives__'],
 ], "sign_in::Agreement" | "sign_in::Location">;
-const $ListenableWithChanges = $.makeType<$ListenableWithChanges>(_.spec, "3ed78cc8-28b0-11f1-9faa-87259996f27f", _.syntax.literal);
+const $ListenableWithChanges = $.makeType<$ListenableWithChanges>(_.spec, "37a68ea4-3c38-11f1-8ce4-5571fd576a52", _.syntax.literal);
 
 const ListenableWithChanges: $.$expr_PathNode<$.TypeSet<$ListenableWithChanges, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($ListenableWithChanges, $.Cardinality.Many), null);
 
@@ -59,7 +71,7 @@ export type $TimedλShape = $.typeutil.flatten<$CreatedAtλShape & {
 type $Timed = $.ObjectType<"default::Timed", $TimedλShape, null, [
   ...$CreatedAt['__exclusives__'],
 ], "sign_in::SignIn">;
-const $Timed = $.makeType<$Timed>(_.spec, "2a0ef0e5-f86c-11ee-b392-bb6d91c9ab55", _.syntax.literal);
+const $Timed = $.makeType<$Timed>(_.spec, "e57551ec-3c37-11f1-8d9e-c594ff381f73", _.syntax.literal);
 
 const Timed: $.$expr_PathNode<$.TypeSet<$Timed, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Timed, $.Cardinality.Many), null);
 
@@ -68,7 +80,7 @@ export type $userλShape = $.typeutil.flatten<_users.$UserλShape & {
 type $user = $.ObjectType<"default::user", $userλShape, null, [
   ..._users.$User['__exclusives__'],
 ], "default::user">;
-const $user = $.makeType<$user>(_.spec, "f872e3be-e827-11ef-8e98-513f26e778c2", _.syntax.literal);
+const $user = $.makeType<$user>(_.spec, "e4db7f54-3c37-11f1-bbac-09b94092963b", _.syntax.literal);
 
 const user: $.$expr_PathNode<$.TypeSet<$user, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($user, $.Cardinality.Many), null);
 
@@ -132,6 +144,22 @@ const $default__globals: {  CDN_URL: _.syntax.$expr_Global<
               // "default::PUB_SUB_SECRET",
               _std.$str,
               $.Cardinality.AtMostOne
+              >,  current_user_role_names: _.syntax.$expr_Global<
+              // "default::current_user_role_names",
+              $current_user_role_names,
+              $.Cardinality.Many
+              >,  is_admin: _.syntax.$expr_Global<
+              // "default::is_admin",
+              $is_admin,
+              $.Cardinality.One
+              >,  is_desk_or_higher: _.syntax.$expr_Global<
+              // "default::is_desk_or_higher",
+              $is_desk_or_higher,
+              $.Cardinality.One
+              >,  is_rep_or_higher: _.syntax.$expr_Global<
+              // "default::is_rep_or_higher",
+              $is_rep_or_higher,
+              $.Cardinality.One
               >,  user: _.syntax.$expr_Global<
               // "default::user",
               $user,
@@ -145,19 +173,35 @@ const $default__globals: {  CDN_URL: _.syntax.$expr_Global<
               $.Cardinality.AtMostOne) as any,  PUB_SUB_SECRET: _.syntax.makeGlobal(
               "default::PUB_SUB_SECRET",
               $.makeType(_.spec, "00000000-0000-0000-0000-000000000101", _.syntax.literal),
-              $.Cardinality.AtMostOne) as any,  user: _.syntax.makeGlobal(
+              $.Cardinality.AtMostOne) as any,  current_user_role_names: _.syntax.makeGlobal(
+              "default::current_user_role_names",
+              $.makeType(_.spec, "e841099c-3c38-11f1-9aba-5932ed7b3493", _.syntax.literal),
+              $.Cardinality.Many) as any,  is_admin: _.syntax.makeGlobal(
+              "default::is_admin",
+              $.makeType(_.spec, "e95709b2-3c38-11f1-a343-7dd9d232be78", _.syntax.literal),
+              $.Cardinality.One) as any,  is_desk_or_higher: _.syntax.makeGlobal(
+              "default::is_desk_or_higher",
+              $.makeType(_.spec, "e84fa8da-3c38-11f1-9f19-0902f0a8c3f8", _.syntax.literal),
+              $.Cardinality.One) as any,  is_rep_or_higher: _.syntax.makeGlobal(
+              "default::is_rep_or_higher",
+              $.makeType(_.spec, "eb030734-3c38-11f1-bea0-6919ba4cacbd", _.syntax.literal),
+              $.Cardinality.One) as any,  user: _.syntax.makeGlobal(
               "default::user",
-              $.makeType(_.spec, "f872e3be-e827-11ef-8e98-513f26e778c2", _.syntax.literal),
+              $.makeType(_.spec, "e4db7f54-3c37-11f1-bbac-09b94092963b", _.syntax.literal),
               $.Cardinality.AtMostOne) as any};
 
 
 
-export { $CreatedAt, CreatedAt, $Auditable, Auditable, $BaseListenable_3e8e1c0028b011f18145495fd9f6b463, BaseListenable_3e8e1c0028b011f18145495fd9f6b463, $Listenable, Listenable, $ListenableWithChanges, ListenableWithChanges, $Timed, Timed, $user, user };
+export { current_user_role_names, is_admin, is_desk_or_higher, is_rep_or_higher, $CreatedAt, CreatedAt, $Auditable, Auditable, $BaseListenable_37391b3a3c3811f1a20f194c51c168d1, BaseListenable_37391b3a3c3811f1a20f194c51c168d1, $Listenable, Listenable, $ListenableWithChanges, ListenableWithChanges, $Timed, Timed, $user, user };
 
 type __defaultExports = {
+  "current_user_role_names": typeof current_user_role_names;
+  "is_admin": typeof is_admin;
+  "is_desk_or_higher": typeof is_desk_or_higher;
+  "is_rep_or_higher": typeof is_rep_or_higher;
   "CreatedAt": typeof CreatedAt;
   "Auditable": typeof Auditable;
-  "_BaseListenable": typeof BaseListenable_3e8e1c0028b011f18145495fd9f6b463;
+  "_BaseListenable": typeof BaseListenable_37391b3a3c3811f1a20f194c51c168d1;
   "Listenable": typeof Listenable;
   "ListenableWithChanges": typeof ListenableWithChanges;
   "Timed": typeof Timed;
@@ -167,9 +211,13 @@ type __defaultExports = {
   "global": typeof $default__globals
 };
 const __defaultExports: __defaultExports = {
+  "current_user_role_names": current_user_role_names,
+  "is_admin": is_admin,
+  "is_desk_or_higher": is_desk_or_higher,
+  "is_rep_or_higher": is_rep_or_higher,
   "CreatedAt": CreatedAt,
   "Auditable": Auditable,
-  "_BaseListenable": BaseListenable_3e8e1c0028b011f18145495fd9f6b463,
+  "_BaseListenable": BaseListenable_37391b3a3c3811f1a20f194c51c168d1,
   "Listenable": Listenable,
   "ListenableWithChanges": ListenableWithChanges,
   "Timed": Timed,

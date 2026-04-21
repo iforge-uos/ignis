@@ -7,6 +7,7 @@ import * as $syntax from "./syntax";
 import * as $op from "./operators";
 import _std from "./modules/std";
 import _cfg from "./modules/cfg";
+import _default from "./modules/default";
 import _event from "./modules/event";
 import _ext from "./modules/ext";
 import _notification from "./modules/notification";
@@ -20,7 +21,6 @@ import _tools from "./modules/tools";
 import _training from "./modules/training";
 import _users from "./modules/users";
 import _ai_rep from "./modules/ai_rep";
-import _default from "./modules/default";
 import _dimensions from "./modules/dimensions";
 
 const ExportDefault: typeof _std & 
@@ -29,6 +29,7 @@ const ExportDefault: typeof _std &
   typeof $op & {
   "std": typeof _std;
   "cfg": typeof _cfg;
+  "default": typeof _default;
   "event": typeof _event;
   "ext": typeof _ext;
   "notification": typeof _notification;
@@ -42,7 +43,6 @@ const ExportDefault: typeof _std &
   "training": typeof _training;
   "users": typeof _users;
   "ai_rep": typeof _ai_rep;
-  "default": typeof _default;
   "dimensions": typeof _dimensions;
 } = {
   ..._std,
@@ -51,6 +51,7 @@ const ExportDefault: typeof _std &
   ...$op,
   "std": _std,
   "cfg": _cfg,
+  "default": _default,
   "event": _event,
   "ext": _ext,
   "notification": _notification,
@@ -64,7 +65,6 @@ const ExportDefault: typeof _std &
   "training": _training,
   "users": _users,
   "ai_rep": _ai_rep,
-  "default": _default,
   "dimensions": _dimensions,
 };
 const Cardinality = $.Cardinality;

@@ -23,11 +23,11 @@ import { spec } from "./__spec__";
 import { literal } from "./literal";
 import { resolveShapeElement } from "./select";
 import type {
+import { Temporal } from "@js-temporal/polyfill";
   normaliseShape,
   // normaliseElement,
   objectTypeToSelectShape,
 } from "./select";
-import { Temporal } from "@js-temporal/polyfill";
 
 type SingletonSet = Expression<
   TypeSet<BaseType, Cardinality.One | Cardinality.AtMostOne>

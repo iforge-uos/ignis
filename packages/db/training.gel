@@ -53,7 +53,7 @@ module training {
             using (
                 with user := global default::user,
                 select (
-                    exists ({"Admin"} intersect user.roles.name)
+                    global default::is_admin
                     or (user is users::Rep and exists ({"H&S"} intersect user[is users::Rep].teams.name))
                 ) ?? false
             ) {
@@ -373,7 +373,7 @@ module training {
             using (
                 with user := global default::user,
                 select (
-                    exists ({"Admin"} intersect user.roles.name)
+                    global default::is_admin
                     or user is users::Rep and exists ({"H&S"} intersect user[is users::Rep].teams.name)
                 ) ?? false
             ) {
@@ -405,15 +405,14 @@ module training {
             allow all
             using (
                 with user := global default::user,
-                select exists ({"Admin"} intersect user.roles.name) or user ?= .user
+                select global default::is_admin or user ?= .user
             ) {
                 errmessage := "Only self/admins can view sessions"
             };
         access policy allow_reps
             allow all
             using (
-                with user := global default::user,
-                select not exists .training.rep or exists ({"Rep"} intersect user.roles.name)
+                select not exists .training.rep or exists ({"Rep"} intersect global default::current_user_role_names)
             ) {
                 errmessage := "Only reps can complete rep training"
             }

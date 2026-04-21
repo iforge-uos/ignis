@@ -10,6 +10,16 @@ module default {
         select users::User
         filter .identity = global ext::auth::ClientTokenIdentity
     ));
+
+    # Scalar-valued globals evaluated once per session. Policies reference
+    # these instead of re-dereferencing `global user.roles.name`, keeping the
+    # compiled plan small. Cheap to evaluate because users::User.allow_self
+    # short-circuits on the ClientTokenIdentity comparison.
+    global current_user_role_names := (global user).roles.name;
+    global is_rep_or_higher := exists ({"Rep", "Desk", "Admin"} intersect global current_user_role_names);
+    global is_desk_or_higher := exists ({"Desk", "Admin"} intersect global current_user_role_names);
+    global is_admin := "Admin" in global current_user_role_names;
+
     global INFRACTIONS_WEBHOOK_URL: str;
     global CDN_URL: str;
     global PUB_SUB_SECRET: str;
