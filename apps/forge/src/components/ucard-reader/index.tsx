@@ -109,7 +109,7 @@ export default function UCardReader() {
             PopUp("in", async () => {
               await navigate({
                 to: "/sign-in/$location/$ucard_number",
-                params: { name: activeLocation, ucard_number: ucard_number as any },
+                params: { location: activeLocation, ucard_number: ucard_number as any },
               });
               toast.dismiss(t);
             }),
