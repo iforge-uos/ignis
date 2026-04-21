@@ -247,4 +247,5 @@ export const Route = createFileRoute("/_authenticated/_reponly/sign-in/$location
   onLeave: ({ params, context: { queryClient } }) => {
     queryClient.invalidateQueries(flowQuery(params));
   },
+  ssr: false,
 });
