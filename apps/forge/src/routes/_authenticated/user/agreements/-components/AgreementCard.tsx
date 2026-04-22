@@ -20,7 +20,7 @@ export function AgreementCard({ agreement }: AgreementCardProps) {
   const user = useUser()!;
 
   const handleViewAgreement = () => {
-    navigate({ to: "/sign-in/agreements/$id", params: agreement });
+    navigate({ to: "/user/agreements/$id", params: agreement });
   };
 
   const getAgreementStatus = (agreement: Agreement) => {
