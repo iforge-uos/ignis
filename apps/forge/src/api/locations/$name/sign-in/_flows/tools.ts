@@ -26,9 +26,7 @@ export default async function* ({
   z.infer<typeof Finalise>,
   z.infer<typeof Receive>
 > {
-  console.log("Calling tools")
-  const tools = await getSignInTools(tx, { id, name });
-  console.log("Got tools", tools)
+  const tools = await getSignInTools(tx, { id, name, collapse: false });
 
   const selected = yield { tools };
 
