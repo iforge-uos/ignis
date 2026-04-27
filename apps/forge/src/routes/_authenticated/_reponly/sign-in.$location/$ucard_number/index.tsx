@@ -3,7 +3,7 @@ import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
 import { Entries } from "@packages/types";
 import { Card } from "@packages/ui/components/card";
 import { queryOptions, useQuery } from "@tanstack/react-query";
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, Navigate, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import z from "zod";
 import { StepType as _StepType, UCardNumber } from "@/api/locations/$name/sign-in/_flows/_steps"; // TODO double check if this actually problematically not shaken
