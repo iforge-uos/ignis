@@ -158,6 +158,7 @@ export const Route = createFileRoute("/_authenticated/_reponly/sign-in/$location
   params: z.object({ location: LocationNameSchema, ucard_number: UCardNumber }),
   component: () => {
     const params = Route.useParams();
+    const navigate = useNavigate()
     const { data: { initialise, receive } = {} } = useQuery(flowQuery(params));
     const [user, setUser] = useState<SignInUser | null>(null);
 
@@ -178,15 +179,22 @@ export const Route = createFileRoute("/_authenticated/_reponly/sign-in/$location
         if (!initialise || !receive) return;
 
         const transmit = await initialise({ type: currentStep }).catch((err) => {
+          console.log("Got err", err)
           if (isDefinedError(err) && err.code === "NOT_FOUND") {
             toast.error(err.message);
-            throw redirect({ to: "/sign-in/$location", params: params });
+            return navigate({ to: "/sign-in/$location", params: params });
           }
           throw err;
         }); // fire off the request for the data when the step changes
+        if (!transmit) return
         if (transmit.type === "INITIALISE") {
           setUser(transmit.user);
-          const { data: finalise } = await receive("INITIALISE", {});
+          const { data: finalise, error } = await receive("INITIALISE", {});
+          if (error) {
+            toast.error(error.message);  // kinda shit UX but I just need something temporary (famous last words)
+            return await navigate({ to: "/sign-in/$location", params: params });
+          }
+
           return setSteps((steps) => [...steps, finalise!.next]);
         }
 
@@ -207,13 +215,17 @@ export const Route = createFileRoute("/_authenticated/_reponly/sign-in/$location
           <Title prompt="Sign In Flow" />
           <div className="m-4 space-y-5 mb-10">
             <ActiveLocationSelector disabled />
-            <Hammer />{" "}
+            <Hammer />
           </div>
         </>
       );
     }
 
     const Step = STEP_COMPONENTS[currentStep];
+    if (Step === undefined) {
+      toast.error(`Cannot proceed with step ${currentStep}. Not yet implemented`);
+      return <Navigate to="/sign-in/$location" params={{location: params.location}}></Navigate>
+    }
     console.log("Rendering step:", currentStep);
 
     return (

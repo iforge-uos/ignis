@@ -4,8 +4,11 @@ import { useEffect } from "react";
 import { toast } from "sonner";
 import { useSignIn } from "@/providers/SignInSteps";
 import { FlowStepComponent } from "@/types/signInActions";
+import { useSetAtom } from "jotai";
+import { sessionAtom } from "/src/atoms/signInAppAtoms";
 
 export const Finalise: FlowStepComponent<"FINALISE"> = ({ user }) => {
+  const setSession = useSetAtom(sessionAtom)
   const { finalise } = useSignIn<"FINALISE">(async (transmit) => {
     const t = toast.loading("Loading...");
     const { error } = await transmit({});
@@ -26,6 +29,7 @@ export const Finalise: FlowStepComponent<"FINALISE"> = ({ user }) => {
       );
       return;
     } else {
+      setSession(null)
       toast.success(
         <>
           Successfully signed in{" "}
