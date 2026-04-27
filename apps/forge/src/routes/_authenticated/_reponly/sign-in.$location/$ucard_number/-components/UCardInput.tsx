@@ -1,4 +1,9 @@
-import { activeLocationAtom, initializeSessionAtom, sessionUcardNumberAtom, sessionUserAtom } from "@/atoms/signInAppAtoms";
+import {
+  activeLocationAtom,
+  initializeSessionAtom,
+  sessionUcardNumberAtom,
+  sessionUserAtom,
+} from "@/atoms/signInAppAtoms";
 import { UCARD_LENGTH } from "@/lib/constants";
 import { FlowStepComponent } from "@/types/signInActions";
 import { Button } from "@packages/ui/components/button";
@@ -6,16 +11,14 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@packages/ui/components/input-otp";
 import { useNavigate } from "@tanstack/react-router";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 const UCardInput = () => {
-  const [uCardNumber, setUcardNumber] = useAtom(sessionUcardNumberAtom);
-  const [, setUser] = useAtom(sessionUserAtom);
-  const initializeSession = useSetAtom(initializeSessionAtom);
-  const [otp, setOtp] = useState(uCardNumber ?? "");
+  const [otp, setOtp] = useState("");
   const [isOtpValid, setIsOtpValid] = useState(otp.length === UCARD_LENGTH);
-  const navigate = useNavigate()
-  const location = useAtomValue(activeLocationAtom)
+  const navigate = useNavigate();
+  const location = useAtomValue(activeLocationAtom);
+  const ref = useRef<HTMLButtonElement | null>(null);
 
   const handleOtpChange = (value: string) => {
     setOtp(value);
@@ -26,14 +29,11 @@ const UCardInput = () => {
     console.log("Clearing OTP");
     setOtp("");
     // Update individual atoms instead of session
-    setUcardNumber("");
-    setUser(null);
   };
 
-  const handleOnSubmit = () => {
+  const handleOnSubmit = async () => {
     if (isOtpValid) {
-      initializeSession(otp);
-      navigate({to: "/sign-in/$location/$ucard_number", params: {location, ucard_number: uCardNumber as any}})
+      await navigate({ to: "/sign-in/$location/$ucard_number", params: { location, ucard_number: otp as any } });
     }
   };
 
@@ -71,7 +71,7 @@ const UCardInput = () => {
         </InputOTP>
       </CardContent>
       <CardFooter className="flex justify-between flex-row-reverse">
-        <Button onClick={() => handleOnSubmit()} disabled={!isOtpValid} aria-disabled={!isOtpValid}>
+        <Button onClick={() => handleOnSubmit()} disabled={!isOtpValid} aria-disabled={!isOtpValid} ref={ref}>
           Submit
         </Button>
         <Button variant="outline" onClick={handleClear}>
