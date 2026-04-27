@@ -2,9 +2,10 @@ with
     location := (
         select assert_exists(sign_in::Location filter .name = <sign_in::LocationName>$name)
     ),
-    user := assert_exists(<users::User><uuid>$id),
+    user := <users::User><uuid>$id,
     tools := (select tools::Tool filter location = .location and not .grouped),
-    groups := (select tools::GroupedTool filter location = .location)
+    groups := (select tools::GroupedTool filter location = .location),
+    supervisable_training := location.supervisable_training,
 select (tools union groups) {
     id,
     name,
@@ -28,7 +29,7 @@ select (tools union groups) {
             <tools::Selectability>{},
         <tools::Selectability><str>next_step if next_step != training::NextStep.NONE else <tools::Selectability>{},
         # if they're a rep they can sign in to use the machines they want even if the reps aren't trained
-        if .training not in location.supervisable_training and user is not users::Rep then
+        if .training not in supervisable_training and user is not users::Rep then
           tools::Selectability.REPS_UNTRAINED
         else
           <tools::Selectability>{},
