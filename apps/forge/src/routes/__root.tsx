@@ -32,6 +32,7 @@ const RootDocument = () => {
         <ClientHintCheck />{" "}
         {/* https://tanstack.com/router/latest/docs/guide/document-head-management#inline-scripts-with-scriptonce */}
         <HeadContent />
+        <link rel="preload" href="/fonts/FuturaPTDemi.woff2" as="font" type="font/woff2" crossOrigin="anonymous"/>
       </head>
       <body>
         <CommandMenu />
