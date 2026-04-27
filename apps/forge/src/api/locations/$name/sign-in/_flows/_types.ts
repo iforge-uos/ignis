@@ -167,7 +167,7 @@ const _USER_QUERY = e.assert_exists(e.select(e.users.User, () => ({ filter_singl
 const _LOGGED_IN_USER_QUERY = e.assert_exists(e.global.user); // you don't ever get this but it makes types nice
 
 // the types used in a sign in step
-type _SignInParams = Parameters<(typeof flow)["~orpc"]["handler"]>[0];
+export type _SignInParams = Parameters<(typeof flow)["~orpc"]["handler"]>[0] & { context: { tx: Transaction } };
 export type Params<T extends z.infer<typeof Initialise>> = Omit<
   _SignInParams,
   "input" | "errors" | "path" | "procedure" | "lastEventId" | "context" // lastEventId is handled implicitly by the system
