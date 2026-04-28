@@ -1,6 +1,5 @@
 import type { JsxEmailComponent, LinkProps } from "jsx-email";
 import * as React from "react";
-import 
 
 // TODO type check href
 export const Link: JsxEmailComponent<Omit<LinkProps, "href"> & {href: string}> = ({
