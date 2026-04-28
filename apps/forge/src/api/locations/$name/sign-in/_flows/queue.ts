@@ -6,6 +6,8 @@ import { AccessError, ConstraintViolationError } from "gel";
 import * as z from "zod";
 import { StepType, createErrorMap, createFinaliseStep, createInitialiseStep, createReceiveStep, createTransmitStep } from "./_steps";
 import type { Params, Return } from "./_types";
+import email from "@/email";
+
 type Place = $infer<typeof QueuePlaceShape>[number];
 
 export const Initialise = createInitialiseStep(StepType.enum.QUEUE);

@@ -1,4 +1,3 @@
-import { toTemporalInstant } from "@js-temporal/polyfill";
 import { QueueEntry } from "@packages/types/sign_in";
 import { format } from "date-fns";
 import { Container, Hr, Section, Text } from "jsx-email";
@@ -9,7 +8,7 @@ import { Link } from "../components/link";
 export function Template({
   id = "0000-0000-0000-0000",
   location = "{location}",
-  ends_at = new Date(Date() + 5 * 60 * 1000),
+  ends_at = Temporal.Now.zonedDateTimeISO("Europe/London").add({minutes: 20}),
 }: QueueEntry & { location: string }) {
   // const duration = ends_at.toTemporalInstant().subtract(duration);
   const expirationTime = format(ends_at.toTemporalInstant().subtract({ minutes: 5 }).epochMilliseconds, "p");

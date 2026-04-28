@@ -11,9 +11,9 @@ import { render } from "jsx-email";
 import * as nodemailer from "nodemailer";
 import { SentMessageInfo } from "nodemailer/lib/smtp-transport";
 import React from "react";
-// import { Template as QueuedTemplate } from "@packages/email/queued";
-// import { Template as UnqueuedTemplate } from "./unqueued";
-// import { Template as WelcomeTemplate } from "./welcome";
+import { Template as QueuedTemplate } from "./email/templates/queued";
+import { Template as UnqueuedTemplate } from "./email/templates/unqueued";
+import { Template as WelcomeTemplate } from "./email/templates/welcome";
 import { toTitleCase } from "@/lib/utils";
 
 interface Email {

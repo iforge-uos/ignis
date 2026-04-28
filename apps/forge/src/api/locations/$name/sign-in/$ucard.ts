@@ -1,16 +1,14 @@
 import { EventPublisher, eventIterator } from "@orpc/server";
 import e from "@packages/db/edgeql-js";
 import { sign_in } from "@packages/db/interfaces";
-import * as Sentry from "@sentry/tanstackstart-react";
 import { logger } from "@sentry/tanstackstart-react";
 import { Client, Duration, Executor } from "gel";
-import { Transaction } from "gel/dist/transaction";
 import * as z from "zod";
 import { exhaustiveGuard } from "@/lib/utils";
 import { createTransaction, ensureUser } from "@/lib/utils/queries";
 import { deskOrAdmin, transaction } from "@/orpc";
 import { InitialiseStep, SIGN_INS, StepType } from "./_flows/_steps";
-import { Errors, Finalise, Initialise, Receive, Return, Transmit } from "./_flows/_types";
+import { _SignInParams, Errors, Finalise, Initialise, Receive, Return, Transmit } from "./_flows/_types";
 
 type UCardNumber = z.infer<typeof Initialise>["ucard_number"];
 export type BaseKey = `${sign_in.LocationName}-${UCardNumber}`;
@@ -34,6 +32,7 @@ import reasons from "./_flows/reasons";
 import signOut from "./_flows/sign-out";
 import supervisableTools from "./_flows/supervisable-tools";
 import tools from "./_flows/tools";
+import { Transaction } from "gel/dist/transaction";
 
 const HANDLERS: { [K in z.infer<typeof StepType>]: (...args: any) => FnReturn } = {
   INITIALISE: initialiseFlow,
@@ -56,7 +55,6 @@ const HANDLERS: { [K in z.infer<typeof StepType>]: (...args: any) => FnReturn } 
  */
 export const flow = deskOrAdmin
   .route({ method: "GET", path: "/{ucard_number}", tags: ["hidden"] })
-  .use(transaction)
   .input(InitialiseStep)
   .errors(Errors)
   .handler(async function* (arg): AsyncGenerator<
@@ -79,14 +77,14 @@ export const flow = deskOrAdmin
     await using txn = await createTransaction(db as Client, {
       config: { session_idle_transaction_timeout: Duration.from({ hours: 24 }) },
     });
-    arg.context.tx = txn;
+    (arg as _SignInParams).context.tx = txn;
 
-    const user = await ensureUser({ ...input, tx: arg.context.tx });
+    const user = await ensureUser({ ...input, tx: txn });
     const $user = e.assert_exists(e.select(e.users.User, () => ({ filter_single: { id: user.id } })));
     const $location = e.assert_exists(e.select(e.sign_in.Location, () => ({ filter_single: { name: input.name } })));
 
     signal?.addEventListener("abort", async () => {
-      await cancel({ ...arg, user, input: { ...input, type: "CANCEL" }, $user, $location }).next();
+      await cancel({ ...(arg as _SignInParams), user, input: { ...input, type: "CANCEL" }, $user, $location }).next();
     });
 
     for await (const message of initialise) {

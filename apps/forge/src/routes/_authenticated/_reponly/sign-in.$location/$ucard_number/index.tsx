@@ -23,6 +23,7 @@ import { FlowStepComponent } from "@/types/signInActions";
 import SignInStepsProvider from "@/providers/SignInSteps";
 import { Finalise as FinaliseComponent } from "./-components/Finalise";
 import { PersonalToolsAndMaterials } from "./-components/PersonalToolsAndMaterials";
+import {Queue} from "./-components/QueueDispatcher";
 import SignInNav from "./-components/SignInNav";
 import { ReasonInput } from "./-components/SignInReasonInput";
 import SigningInUserCard from "./-components/SigningInUserCard";
@@ -41,13 +42,16 @@ export type StepType = z.infer<typeof _StepType>;
 
 export const PUBLISHER: typeof SERVER_PUBLISHER = new EventPublisher();
 const STEP_COMPONENTS = {
+  QUEUE: Queue,
   REASON: ReasonInput,
   SUPERVISABLE_TOOLS: SupervisableTools,
   PERSONAL_TOOLS_AND_MATERIALS: PersonalToolsAndMaterials,
   SIGN_OUT: SignOut,
   TOOLS: Tools,
   FINALISE: FinaliseComponent,
-} as const satisfies { [K in StepType]: FlowStepComponent<K> };
+  CANCEL: undefined,
+  INITIALISE: undefined,
+} as const satisfies Omit<{ [K in StepType]: FlowStepComponent<K> }, "INITIALISE" | "CANCEL">;
 
 export type CommonKeys = "ucard_number" | "name";
 export type RMCommon<T, RMType extends boolean = true> = Omit<
@@ -224,7 +228,7 @@ export const Route = createFileRoute("/_authenticated/_reponly/sign-in/$location
     const Step = STEP_COMPONENTS[currentStep];
     if (Step === undefined) {
       toast.error(`Cannot proceed with step ${currentStep}. Not yet implemented`);
-      return <Navigate to="/sign-in/$location" params={{location: params.location}}></Navigate>
+      return <Navigate to="/sign-in/$location" params={{location: params.location}} />
     }
     console.log("Rendering step:", currentStep);
 
@@ -247,7 +251,7 @@ export const Route = createFileRoute("/_authenticated/_reponly/sign-in/$location
               finalise={finalise}
               _setFinalise={setFinalise as any}
             >
-              <Step data={transmit} user={user} />
+              <Step data={transmit as any} user={user} />
 
               <SignInNav steps={steps} setSteps={setSteps} ref={nextStepRef} />
             </SignInStepsProvider>

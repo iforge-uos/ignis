@@ -6,7 +6,7 @@ import type { Params, Return } from "./_types";
 export const Initialise = createInitialiseStep(StepType.enum.TOOLS);
 
 export const Transmit = createTransmitStep(StepType.enum.TOOLS).extend({
-  tools: z.custom<GetSignInToolsReturns >(),
+  tools: z.custom<GetSignInToolsReturns>(),
 });
 
 export const Receive = createReceiveStep(StepType.enum.TOOLS).extend({
