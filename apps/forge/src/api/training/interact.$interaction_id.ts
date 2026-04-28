@@ -73,9 +73,9 @@ export const interact = auth
       })).run(tx);
       const temp = {
         "@created_at": e.datetime_of_statement(),
-        "@in_person_created_at": pre_existing["@in_person_created_at"],
-        "@in_person_signed_off_by": pre_existing["@in_person_signed_off_by"],
-        "@infraction": pre_existing["@infraction"],
+        "@in_person_created_at": pre_existing?.["@in_person_created_at"],
+        "@in_person_signed_off_by": pre_existing?.["@in_person_signed_off_by"],
+        "@infraction": pre_existing?.["@infraction"],
         filter_single: {
           id: session.training.id,
         },
