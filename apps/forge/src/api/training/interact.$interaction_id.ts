@@ -61,35 +61,37 @@ export const interact = auth
     const next_section = await e.assert_single(e.select(session.next_section, TrainingSectionShape)).run(tx);
 
     if (next_section === null) {
-      const pre_existing = e.select($user.training, (t) => ({
-        "@created_at": e.datetime_of_transaction(),
-        "@in_person_created_at": t["@in_person_created_at"],
-        "@in_person_signed_off_by": t["@in_person_signed_off_by"],
-        "@infraction": t["@infraction"],
+      const { training: pre_existing } = e.select($user, () => ({
+        training:{
+          "@in_person_created_at": true,
+          "@in_person_signed_off_by": true,
+          "@infraction": true,
+          filter_single: {
+            id: session.training.id,
+          },
+        }
+      }));
+      const temp = {
+        "@created_at": e.datetime_of_statement(),
+        "@in_person_created_at": pre_existing['@in_person_created_at'],
+        "@in_person_signed_off_by": pre_existing['@in_person_signed_off_by'],
+        "@infraction": pre_existing['@infraction'],
         filter_single: {
           id: session.training.id,
         },
-      }));
-      await e
-        .tuple([
-          e.delete(session),
-          e.update($user, () => ({
-            set: {
-              training: {
-                "+=": e.op(
-                  pre_existing,
-                  "if",
-                  e.op("exists", pre_existing),
-                  "else",
-                  e.select(session.training, () => ({
-                    "@created_at": e.datetime_of_transaction(),
-                  })),
-                ),
-              },
-            },
-          })),
-        ])
-        .run(tx);
+      }
+
+      await e.update($user, () => ({
+        set: {
+          training: {
+            "+=": e.select(
+              e.training.Training, () => Object.keys(temp).forEach(key => (temp as any)[key] === undefined && delete (temp as any)[key])
+            )
+          },
+        },
+      }))
+      .run(tx);
+      await e.delete(session).run(tx);
       return;
     }
 
