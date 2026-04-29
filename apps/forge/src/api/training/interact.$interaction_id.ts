@@ -61,16 +61,18 @@ export const interact = auth
     const next_section = await e.assert_single(e.select(session.next_section, TrainingSectionShape)).run(tx);
 
     if (next_section === null) {
-      const { training: pre_existing } = e.select($user, () => ({
-        training: {
-          "@in_person_created_at": true,
-          "@in_person_signed_off_by": true,
-          "@infraction": true,
-          filter_single: {
-            id: session.training.id,
+      const { training: pre_existing } = e
+        .select($user, () => ({
+          training: {
+            "@in_person_created_at": true,
+            "@in_person_signed_off_by": true,
+            "@infraction": true,
+            filter_single: {
+              id: session.training.id,
+            },
           },
-        },
-      })).run(tx);
+        }))
+        .run(tx);
       const temp = {
         "@created_at": e.datetime_of_statement(),
         "@in_person_created_at": pre_existing?.["@in_person_created_at"],
@@ -80,14 +82,13 @@ export const interact = auth
           id: session.training.id,
         },
       };
+      Object.keys(temp).forEach((key) => (temp as any)[key] === undefined && delete (temp as any)[key]);
 
       await e
         .update($user, () => ({
           set: {
             training: {
-              "+=": e.select(e.training.Training, () =>
-                Object.keys(temp).forEach((key) => (temp as any)[key] === undefined && delete (temp as any)[key]),
-              ),
+              "+=": e.select(e.training.Training, () => temp),
             },
           },
         }))
