@@ -3,7 +3,13 @@ import { getSignInTools, GetSignInToolsReturns } from "@packages/db/queries/getS
 import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
 import * as z from "zod";
 
-const IN_PERSON = new Set( ["DO_IN_PERSON", "DO_IN_PERSON_OR_REP_IN_PERSON", "DO_IN_PERSON_OR_REP_ONLINE", "DO_REP_IN_PERSON"] as const as GetSignInToolsReturns[number]["selectable"]);
+const IN_PERSON = new Set([
+  "DO_IN_PERSON",
+  "DO_IN_PERSON_OR_REP_IN_PERSON",
+  "DO_IN_PERSON_OR_REP_ONLINE",
+  "DO_REP_IN_PERSON",
+] as const as GetSignInToolsReturns[number]["selectable"]);
+
 
 export const inPersonRemaining = auth
   .route({ path: "/in-person/{location}" })
@@ -17,5 +23,6 @@ export const inPersonRemaining = auth
     getSignInTools(db, {
       id,
       name: location,
-    }).then((tools) => tools.filter((t) => IN_PERSON.isSubsetOf(new Set(t.selectable)))),
+      collapse: true,
+    }).then((tools) => tools.filter((t) => t.selectable.length && new Set(t.selectable).isSubsetOf(IN_PERSON))),
   );
