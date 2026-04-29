@@ -61,34 +61,27 @@ export const interact = auth
     const next_section = await e.assert_single(e.select(session.next_section, TrainingSectionShape)).run(tx);
 
     if (next_section === null) {
-      const { training: pre_existing } = e
-        .select($user, () => ({
-          training: {
-            "@in_person_created_at": true,
-            "@in_person_signed_off_by": true,
-            "@infraction": true,
-            filter_single: {
-              id: session.training.id,
-            },
+      const pre_existing = e.select($user, () => ({
+        training: {
+          filter_single: {
+            id: session.training.id,
           },
-        }))
-        .run(tx);
-      const temp = {
-        "@created_at": e.datetime_of_statement(),
-        "@in_person_created_at": pre_existing?.["@in_person_created_at"],
-        "@in_person_signed_off_by": pre_existing?.["@in_person_signed_off_by"],
-        "@infraction": pre_existing?.["@infraction"],
-        filter_single: {
-          id: session.training.id,
         },
-      };
-      Object.keys(temp).forEach((key) => (temp as any)[key] === undefined && delete (temp as any)[key]);
+      })).training;
 
       await e
         .update($user, () => ({
           set: {
             training: {
-              "+=": e.select(e.training.Training, () => temp),
+              "+=": e.select(e.training.Training, () => ({
+                "@created_at": e.datetime_of_statement(),
+                "@in_person_created_at": e.assert_single(pre_existing["@in_person_created_at"]),
+                "@in_person_signed_off_by": e.assert_single(pre_existing["@in_person_signed_off_by"]),
+                "@infraction": e.assert_single(pre_existing["@infraction"]),
+                filter_single: {
+                  id: session.training.id,
+                },
+              })),
             },
           },
         }))

@@ -57,9 +57,7 @@ export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locatio
                       <SelectItem
                         key={training.id}
                         value={training.id}
-                        disabled={
-                          !(training.selectable.length === 1 && training.selectable.includes("DO_IN_PERSON"))
-                        }
+                        disabled={!(training.selectable.length === 1 && training.selectable.includes("DO_IN_PERSON"))}
                         className="w-full"
                       >
                         <div className="flex items-center justify-between w-full gap-4">
@@ -112,7 +110,7 @@ export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locatio
               mode="single"
               selected={date}
               onSelect={setDate}
-              disabled={(date) => date > new Date() || date < iForgeEpoch}
+              disabled={(date) => date > new Date() || date < new Date(iForgeEpoch.epochMilliseconds)}
               initialFocus
             />
           </PopoverContent>
