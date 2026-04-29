@@ -70,23 +70,25 @@ export const interact = auth
       })).training;
 
       await e
-        .update($user, () => ({
-          set: {
-            training: {
-              "+=": e.select(e.training.Training, () => ({
-                "@created_at": e.datetime_of_statement(),
-                "@in_person_created_at": e.assert_single(pre_existing["@in_person_created_at"]),
-                "@in_person_signed_off_by": e.assert_single(pre_existing["@in_person_signed_off_by"]),
-                "@infraction": e.assert_single(pre_existing["@infraction"]),
-                filter_single: {
-                  id: session.training.id,
-                },
-              })),
+        .tuple([
+          e.update($user, () => ({
+            set: {
+              training: {
+                "+=": e.select(e.training.Training, () => ({
+                  "@created_at": e.datetime_of_statement(),
+                  "@in_person_created_at": e.assert_single(pre_existing["@in_person_created_at"]),
+                  "@in_person_signed_off_by": e.assert_single(pre_existing["@in_person_signed_off_by"]),
+                  "@infraction": e.assert_single(pre_existing["@infraction"]),
+                  filter_single: {
+                    id: session.training.id,
+                  },
+                })),
+              },
             },
-          },
-        }))
+          })),
+          e.delete(session),
+        ])
         .run(tx);
-      await e.delete(session).run(tx);
       return;
     }
 
