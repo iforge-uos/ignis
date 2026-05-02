@@ -10,6 +10,7 @@ import dbClient from "@/db";
 import { DEFAULT_AUTH_COOKIE } from "@/lib/constants";
 import serialisers from "@/lib/serialisers";
 import { type Router, router } from "@/routes/api/$";
+import { toast } from "sonner";
 
 export type ORPCReactUtils = RouterUtils<RouterClient<Router>>;
 
@@ -33,8 +34,12 @@ function createWebSocketClient(): RouterClient<typeof router> {
   const link = new RPCLink({
     websocket: websocketInstance as any,
     customJsonSerializers: serialisers,
-    plugins: [],
-    interceptors: [onError(console.error)],
+    interceptors: [
+      onError((error) => {
+        console.error(error);
+        toast.error(error.message);
+      }),
+    ],
     clientInterceptors: [
       async ({ next, request }) => {
         const response = await next();
