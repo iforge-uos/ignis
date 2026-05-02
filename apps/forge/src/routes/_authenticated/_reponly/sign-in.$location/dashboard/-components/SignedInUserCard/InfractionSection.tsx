@@ -63,9 +63,10 @@ export const InfractionSection: React.FC<InfractionSectionProps> = ({ user, loca
       type,
       resolved,
       reason,
-      created_at: date?.from || new Date(),
       duration:
-        type === "TEMP_BAN" ? Math.round((date!.to!.getTime() - date!.from!.getTime()) / 1000 / 60 / 60) : undefined,
+        type === "TEMP_BAN"
+          ? Temporal.Duration.from({ milliseconds: date!.to!.getTime() - date!.from!.getTime() })
+          : null,
     });
 
   switch (type) {

@@ -2,7 +2,14 @@ import { signAgreementParams } from "@/api/users/$id/agreements.$agreement_id";
 import e from "@packages/db/edgeql-js";
 import { CreateAgreementSchema } from "@packages/db/zod/modules/sign_in";
 import * as z from "zod";
-import { StepType, createErrorMap, createFinaliseStep, createInitialiseStep, createReceiveStep, createTransmitStep } from "./_steps";
+import {
+  StepType,
+  createErrorMap,
+  createFinaliseStep,
+  createInitialiseStep,
+  createReceiveStep,
+  createTransmitStep,
+} from "./_steps";
 import { type Params, Return } from "./_types";
 
 export const Initialise = createInitialiseStep(StepType.enum.AGREEMENTS);
@@ -15,17 +22,22 @@ export const Receive = createReceiveStep(StepType.enum.AGREEMENTS);
 
 export const Finalise = createFinaliseStep(StepType.enum.AGREEMENTS, StepType.enum.MAILING_LISTS);
 
-export const Errors = createErrorMap(StepType.enum.AGREEMENTS, {} as const);
+export const Errors = createErrorMap(StepType.enum.AGREEMENTS, {
+  NEW_USER_BUT_WERE_SLAMMED: {},
+} as const);
 
 export default async function* ({
   user,
   context: { tx },
+  errors,
 }: Params<z.infer<typeof Initialise>>): Return<
   z.infer<typeof Transmit>,
   z.infer<typeof Finalise>,
   z.infer<typeof Receive>
 > {
-  const data = {  // FIXME only get expired ones, remember to dedupe the logic between init and this
+  throw errors.NEW_USER_BUT_WERE_SLAMMED();
+  const data = {
+    // FIXME only get expired ones, remember to dedupe the logic between init and this
     agreements: await e
       .assert_exists(
         e.select(e.sign_in.Agreement, (agreement) => ({

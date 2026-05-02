@@ -21,6 +21,7 @@ export const PUBLISHER = new EventPublisher<{
 
 type FnReturn = Return<z.infer<typeof Transmit>, z.infer<typeof Finalise>, z.infer<typeof Receive>>;
 
+import { Transaction } from "gel/dist/transaction";
 import agreements from "./_flows/agreements";
 import cancel from "./_flows/cancel";
 import finalise from "./_flows/finalise";
@@ -32,7 +33,6 @@ import reasons from "./_flows/reasons";
 import signOut from "./_flows/sign-out";
 import supervisableTools from "./_flows/supervisable-tools";
 import tools from "./_flows/tools";
-import { Transaction } from "gel/dist/transaction";
 
 const HANDLERS: { [K in z.infer<typeof StepType>]: (...args: any) => FnReturn } = {
   INITIALISE: initialiseFlow,

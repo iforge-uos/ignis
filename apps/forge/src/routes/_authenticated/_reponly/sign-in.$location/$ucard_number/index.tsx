@@ -162,7 +162,7 @@ export const Route = createFileRoute("/_authenticated/_reponly/sign-in/$location
   params: z.object({ location: LocationNameSchema, ucard_number: UCardNumber }),
   component: () => {
     const params = Route.useParams();
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const { data: { initialise, receive } = {} } = useQuery(flowQuery(params));
     const [user, setUser] = useState<SignInUser | null>(null);
 
@@ -183,19 +183,19 @@ export const Route = createFileRoute("/_authenticated/_reponly/sign-in/$location
         if (!initialise || !receive) return;
 
         const transmit = await initialise({ type: currentStep }).catch((err) => {
-          console.log("Got err", err)
-          if (isDefinedError(err) && err.code === "NOT_FOUND") {
-            toast.error(err.message);
-            return navigate({ to: "/sign-in/$location", params: params });
-          }
-          throw err;
+          console.log("Got err", err);
+          toast.error(err.message);
+          console.error(err.message)
+          return navigate({ to: "/sign-in/$location", params: params });
+
         }); // fire off the request for the data when the step changes
-        if (!transmit) return
+        if (!transmit) return;
         if (transmit.type === "INITIALISE") {
           setUser(transmit.user);
           const { data: finalise, error } = await receive("INITIALISE", {});
+          console.log(finalise, isDefinedError(error));
           if (error) {
-            toast.error(error.message);  // kinda shit UX but I just need something temporary (famous last words)
+            toast.error(error.message); // kinda shit UX but I just need something temporary (famous last words)
             return await navigate({ to: "/sign-in/$location", params: params });
           }
 
@@ -228,7 +228,7 @@ export const Route = createFileRoute("/_authenticated/_reponly/sign-in/$location
     const Step = STEP_COMPONENTS[currentStep];
     if (Step === undefined) {
       toast.error(`Cannot proceed with step ${currentStep}. Not yet implemented`);
-      return <Navigate to="/sign-in/$location" params={{location: params.location}} />
+      return <Navigate to="/sign-in/$location" params={{ location: params.location }} />;
     }
     console.log("Rendering step:", currentStep);
 
