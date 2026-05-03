@@ -202,7 +202,7 @@ const faqItems: FAQItem[] = [
 
 import boba from "@/../public/homepage/boba.webp?lqip";
 import inspectingMaterials from "@/../public/homepage/inspecting-materials.webp?lqip";
-import reps from "@/../public/reps/25.webp?lqip";
+import reps from "@/../public/reps/26.webp?lqip";
 import repsInspectingBadges from "@/../public/homepage/reps-inspecting-badges.webp?lqip";
 import usersAtTheSocialSpace from "@/../public/homepage/users-at-the-social-space.webp?lqip";
 import usingTheDremel from "@/../public/homepage/using-the-dremel.webp?lqip";

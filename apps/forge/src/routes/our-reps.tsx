@@ -5,6 +5,7 @@ import reps22Image from "@/../public/reps/22.webp?lqip";
 import reps23Image from "@/../public/reps/23.webp?lqip";
 import reps24Image from "@/../public/reps/24.webp?lqip";
 import reps25Image from "@/../public/reps/25.webp?lqip";
+import reps26Image from "@/../public/reps/26.webp?lqip";
 import Title from "@/components/title";
 
 function RouteComponent() {
@@ -43,6 +44,16 @@ function RouteComponent() {
         <br />
         <p className="font-bold text-lg">See if you recognise any of our reps!</p>
         <br />
+        <h3 className="text-3xl mb-2 font-futura">Reps 2025-2026</h3>
+        <img
+          src={reps26Image.src}
+          width={reps26Image.width}
+          height={reps26Image.height}
+          style={{ backgroundImage: `url("${reps26Image.lqip}")`, backgroundSize: "cover" }}
+          alt="Reps from 2024-2025"
+          className="h-84 object-cover rounded-md mb-4 max-w-[75rem]"
+        />
+        <Separator className="my-4" />
         <h3 className="text-3xl mb-2 font-futura">Reps 2024-2025</h3>
         <img
           src={reps25Image.src}
