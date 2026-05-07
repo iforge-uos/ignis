@@ -21,6 +21,6 @@ export const signAgreement = auth
   .route({ method: "POST", path: "/agreements/{agreement_id}" })
   .input(z.object({ id: z.uuid(), agreement_id: z.uuid() }))
   .handler(async ({ input, context: { db, user } }) => {
-    if (user.id !== id) throw new Error("Trying to sign an agreement for somebody else");
+    if (user.id !== input.id) throw new Error("Trying to sign an agreement for somebody else");
     return await signAgreementParams.run(db, input)
   });
