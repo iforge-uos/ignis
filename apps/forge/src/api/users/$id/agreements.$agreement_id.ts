@@ -1,4 +1,4 @@
-import { rep } from "@/orpc";
+import { rep, auth } from "@/orpc";
 import e from "@packages/db/edgeql-js";
 import * as z from "zod";
 
