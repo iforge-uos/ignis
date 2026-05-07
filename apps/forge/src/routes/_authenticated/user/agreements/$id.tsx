@@ -9,9 +9,11 @@ import { AgreementViewer } from "@/components/sign-in/AgreementViewer";
 import Title from "@/components/title";
 import { orpc } from "@/lib/orpc";
 import { ensureQueryData } from "@/lib/query-utils";
+import { useUser } from "@/hooks/useUser";
 
 function Component() {
   const { id } = Route.useParams();
+  const user = useUser();
   const agreement = Route.useLoaderData()!;
 
   const [isChecked, setIsChecked] = useState<string | boolean>(false);
@@ -49,7 +51,7 @@ function Component() {
             <Button
               className="my-4 w-full"
               disabled={!isChecked}
-              onClick={() => mutate({ id, agreement_id: agreement.id })}
+              onClick={() => mutate({ id: user.id, agreement_id: agreement.id })}
             >
               Confirm
             </Button>
