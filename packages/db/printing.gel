@@ -1,20 +1,44 @@
 module printing {
-    scalar type Type extending enum<
+    scalar type Material extending enum<
         PLA,
         TPU,
         PETG,
-        RESIN,
     >;
 
-    abstract type PrinterStatus;  # discriminated union
+    scalar type Colour extending enum<
+        WHITE,
+        BLACK,
+        BLUE,
+        GREEN,
+        RED,
+        YELLOW,
+        ORANGE,
+        # Add more based on filament colours
+        ANY,
+    >;
+
+    scalar type QueueType extending enum<
+        PLA,
+        PETG,
+        TPU,
+        AMS
+    >;
+
+    abstract type PrinterStatus;  # Discriminated union
     module printer_status {
-        type Disabled extending printing::PrinterStatus;
+        type Disabled extending printing::PrinterStatus; # Connected but usable, e.g. under maintenace
 
         type Disconnected extending printing::PrinterStatus;
 
         type Idle extending printing::PrinterStatus;
 
+        type Paused extending printing::PrinterStatus;
+
         type Printing extending printing::PrinterStatus {
+            required print: printing::Print;
+        }
+
+        type Finished extending printing::PrinterStatus {
             required print: printing::Print;
         }
 
@@ -80,6 +104,8 @@ module printing {
             SMOOTH_RODS,
             ENCLOSURE_PANELS,
             FILAMENT_FEEDING,
+
+            OTHER,
         >;
 
         type Failed extending printing::PrinterStatus {
@@ -88,16 +114,28 @@ module printing {
         }
     }
 
+    type Filament {
+        required material: Material;
+        required colour: Colour;
+        required nozzle_temp_min: int16;
+        required nozzle_temp_max: int16;
+        required bed_temp: int16;
+    }
 
     type Printer {
         required name: str;
-        required remote_ip: str;
+        required manufacturer: str;
+        required model: str;
+        required has_camera: bool;
         required status: PrinterStatus;
-        required multi type: Type;  # multi as printers print exotics (TPU and PETG and this is the easiest way to represent this)
+        required multi filament_slots: Filament;
+        required nozzle_number: int16;
         required location: sign_in::Location;
+        required total_print_mass: float32; #2dp like print job
+        required total_print_time: duration;
         multi prints := (
             select Print filter __source__ in .`on`.printer
-        )
+        );
     }
 
     function cdn_url(id: uuid) -> str {
@@ -108,21 +146,30 @@ module printing {
         )
     }
 
+    type SOP {
+        required name: str;
+        required file_path := "\(cdn_url(.id))/.pdf";
+    }
+
     type Print {
         required name: str;
-        required type: Type;
+        required multi filament: Filament;
         required duration: duration;
         required mass: float32;  # only 2dps
         required author: users::User;
         required approved_by: users::Rep;
+        required uploadedAt: datetime;
+        reason: str;
         multi `on`: PrintHistory;
         required gcode_path := "\(cdn_url(.id))/.gcode";
         required stl_path :=  "\(cdn_url(.id))/.stl";
     }
 
     type PrintHistory extending default::CreatedAt {
-        required printer: Printer;
+        required queue: QueueType; # Defines which general queue
+        printer: Printer; # Not required as it may be on the general queue for any colour, define when sent to printer
         required status: PrintStatus;
+        timelapse_path := "\(cdn_url(.id))/.mp4";
 
         index on (.printer);
 
@@ -145,9 +192,11 @@ module printing {
         );
     }
 
-    abstract type PrintStatus;  # another discriminated union
+    abstract type PrintStatus;  # Another discriminated union
     module print_status {
         type Queued extending printing::PrintStatus;
+
+        type UnderReview extending printing::PrintStatus;
 
         type Printing extending printing::PrintStatus {
             required print: printing::Print;
@@ -188,6 +237,7 @@ module printing {
             FILAMENT_FEEDING,
             FILAMENT_RAN_OUT,
             NOT_A_CLUE,
+            OTHER,
         >;
 
         type Failed extending printing::PrintStatus {
@@ -200,7 +250,7 @@ module printing {
         required printer: Printer;
         required status: PrinterStatus | PrintStatus;
 
-        index on ((.printer, .status))
+        index on ((.printer, .status));
     }
 
     type PrinterAuditEntry extending AuditEntry {

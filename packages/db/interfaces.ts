@@ -238,21 +238,21 @@ export namespace users {
     "last_name"?: string | null;
     "display_name": string;
     "email": string;
+    "funds": number;
     "organisational_unit": string;
     "profile_picture"?: string | null;
     "pronouns"?: string | null;
+    "ucard_number": number;
     "username": string;
+    "integrations": Integration[];
+    "training": training.Training[];
+    "sign_ins": sign_in.SignIn[];
     "infractions": Infraction[];
     "mailing_list_subscriptions": notification.MailingList[];
-    "sign_ins": sign_in.SignIn[];
     "agreements_signed": sign_in.Agreement[];
     "bookings": tools.Booking[];
-    "integrations": Integration[];
     "notifications": notification.Notification[];
     "purchases": shop.Purchase[];
-    "training": training.Training[];
-    "funds": number;
-    "ucard_number": number;
   }
   export interface Infraction extends $default.CreatedAt {
     "user": User;
@@ -264,16 +264,16 @@ export namespace users {
   }
   export type InfractionType = "WARNING" | "TEMP_BAN" | "PERM_BAN" | "RESTRICTION" | "TRAINING_ISSUE";
   export interface Integration extends $default.Auditable {
+    "user": User;
     "external_id": string;
     "platform": Platform;
-    "user": User;
     "external_email": string;
   }
   export type Platform = "DISCORD" | "GITHUB";
   export interface Rep extends User {
+    "teams": team.Team[];
     "status": RepStatus;
     "supervisable_training": training.Training[];
-    "teams": team.Team[];
   }
   export type RepStatus = "ACTIVE" | "BREAK" | "ALUMNI" | "FUTURE" | "REMOVED";
   export interface Role extends std.$Object {
@@ -543,173 +543,6 @@ export namespace ext {
     }
   }
 }
-export namespace notification {
-  export interface AllReps extends std.$Object {
-    "MAGIC": number;
-  }
-  export interface AllUsers extends std.$Object {
-    "MAGIC": number;
-  }
-  export interface Notification extends $default.Auditable {
-    "content": string;
-    "status": Status;
-    "title": string;
-    "type": Type;
-    "targets": users.User | team.Team | event.Event | MailingList | AllReps | AllUsers[];
-    "attachments": string[];
-    "delivery_methods": DeliveryMethod[];
-    "dispatched_at"?: Date | null;
-    "priority": number;
-  }
-  export interface AuthoredNotification extends Notification {
-    "approved_by"?: users.Rep | null;
-    "author": users.User;
-    "approved_on"?: Date | null;
-  }
-  export type DeliveryMethod = "BANNER" | "EMAIL" | "TRAY" | "POPUP" | "DISCORD";
-  export interface MailingList extends $default.Auditable {
-    "description": string;
-    "name": string;
-    "subscribers": users.User[];
-  }
-  export type Status = "DRAFT" | "REVIEW" | "QUEUED" | "SENDING" | "SENT" | "ERRORED";
-  export interface SystemNotification extends Notification {
-    "source": string;
-  }
-  export type Type = "ADMIN" | "ADVERT" | "ANNOUNCEMENT" | "EVENT" | "HEALTH_AND_SAFETY" | "INFRACTION" | "PRINTING" | "QUEUE_SLOT_ACTIVE" | "RECRUITMENT" | "REFERRAL" | "REMINDER" | "TRAINING";
-}
-export namespace sign_in {
-  export interface Agreement extends $default.Auditable, $default.ListenableWithChanges {
-    "content": string;
-    "_content_hash": Uint8Array;
-    "version": number;
-    "name": string;
-    "reasons": Reason[];
-  }
-  export interface Location extends $default.Auditable, $default.ListenableWithChanges {
-    "closing_time": gel.LocalTime;
-    "opening_days": number[];
-    "opening_time": gel.LocalTime;
-    "out_of_hours": boolean;
-    "name": LocationName;
-    "max_users": number;
-    "out_of_hours_rep_multiplier": number;
-    "queue_enabled": boolean;
-    "sign_ins": SignIn[];
-    "supervising_reps": users.Rep[];
-    "supervisable_training": training.Training[];
-    "queue_in_use": boolean;
-    "status": LocationStatus;
-    "queued_users_that_can_sign_in": users.User[];
-    "in_hours_rep_multiplier": number;
-    "off_shift_reps": users.Rep[];
-    "on_shift_reps": users.Rep[];
-    "queued": QueuePlace[];
-    "max_count": number;
-    "available_capacity": number;
-    "can_sign_in": boolean;
-  }
-  export type LocationName = "MAINSPACE" | "HEARTSPACE";
-  export type LocationStatus = "OPEN" | "SOON" | "CLOSED";
-  export interface QueuePlace extends $default.CreatedAt {
-    "location": Location;
-    "notified_at"?: Date | null;
-    "ends_at"?: Date | null;
-    "user": users.User;
-  }
-  export interface Reason extends $default.Auditable, $default.Listenable {
-    "name": string;
-    "agreement"?: Agreement | null;
-    "category": ReasonCategory;
-    "active": boolean;
-  }
-  export type ReasonCategory = "UNIVERSITY_MODULE" | "CO_CURRICULAR_GROUP" | "PERSONAL_PROJECT" | "SOCIETY" | "REP_SIGN_IN" | "EVENT";
-  export interface SignIn extends $default.Timed, $default.Listenable {
-    "location": Location;
-    "reason": Reason;
-    "user": users.User;
-    "signed_out": boolean;
-    "tools": tools.Tool | tools.GroupedTool[];
-  }
-  export interface UserRegistration extends $default.CreatedAt {
-    "location": Location;
-    "user": users.User;
-  }
-}
-export namespace tools {
-  export interface Booking extends $default.Auditable {
-    "user": users.User;
-    "ends_at": Date;
-    "starts_at": Date;
-    "duration": gel.Duration;
-    "cancelled"?: boolean | null;
-    "tool": Tool;
-  }
-  export interface GroupedTool extends std.$Object {
-    "location": sign_in.Location;
-    "tools": Tool[];
-    "training": training.Training[];
-    "name": string;
-  }
-  export type Selectability = "DO_ONLINE" | "REVOKED" | "EXPIRED" | "DO_IN_PERSON" | "NONE_REMAINING" | "DO_IN_PERSON_OR_REP_ONLINE" | "DO_REP_ONLINE" | "DO_IN_PERSON_OR_REP_IN_PERSON" | "DO_REP_IN_PERSON" | "REPS_UNTRAINED" | "TOOL_BROKEN" | "NONE";
-  export type Status = "NOMINAL" | "IN_USE" | "PARTIALLY_FUNCTIONAL" | "OUT_OF_ORDER";
-  export interface Tool extends std.$Object {
-    "is_bookable": boolean;
-    "status": {code: Status, reason: string};
-    "min_booking_time"?: gel.Duration | null;
-    "grouped": boolean;
-    "location": sign_in.Location;
-    "training": training.Training[];
-    "rep": training.Training[];
-    "responsible_reps": users.Rep[];
-    "bookable_hours": gel.LocalTime[];
-    "borrowable": boolean;
-    "description": string;
-    "max_booking_daily"?: gel.Duration | null;
-    "max_booking_weekly"?: gel.Duration | null;
-    "name": string;
-    "quantity": number;
-    "bookings": Booking[];
-  }
-}
-export namespace shop {
-  export interface Item extends std.$Object {
-    "skews": Skew[];
-    "icon_url": string;
-    "name": string;
-    "supplier": string;
-    "supplier_url": string;
-    "tools": tools.Tool[];
-  }
-  export interface LineItem extends std.$Object {
-    "wraps": Item;
-    "skew": Skew;
-    "price": number;
-  }
-  export interface Module extends std.$Object {
-    "users": users.User[];
-    "name": string;
-    "purchases": Purchase[];
-    "total": number;
-  }
-  export interface Purchase extends $default.Auditable {
-    "user": users.User;
-    "collected_at"?: Date | null;
-    "reverted": boolean;
-    "items": LineItem[];
-    "module"?: Module | null;
-  }
-  export interface Skew extends $default.Auditable {
-    "_dimensions": dimensions.Dimension;
-    "dimensions": unknown;
-    "colour"?: string | null;
-    "count"?: number | null;
-    "icon_url"?: string | null;
-    "price": number;
-    "till_id": number;
-    "item": Item;
-  }
-}
 export namespace training {
   export interface Answer extends std.$Object {
     "content": string;
@@ -735,9 +568,9 @@ export namespace training {
     "type": AnswerType;
   }
   export interface Session extends $default.Auditable {
-    "index": number;
     "training": Training;
     "user": users.User;
+    "index": number;
     "next_section"?: TrainingPage | Question | null;
   }
   export type Status = "UNTRAINED" | "REVOKED" | "EXPIRED" | "ONLINE_COMPLETE" | "FULLY_COMPLETE" | "REP_ONLINE_COMPLETE_NO_IN_PERSON" | "USER_TRAINING_COMPLETE" | "REP_ONLINE_COMPLETE";
@@ -746,15 +579,182 @@ export namespace training {
     "in_person": boolean;
     "locations": LocationName[];
     "pages": TrainingPage[];
-    "name": string;
     "compulsory": boolean;
     "description": string;
     "enabled": boolean;
+    "expires_after": gel.RelativeDuration;
     "icon_url"?: string | null;
+    "name": string;
     "training_lockout"?: gel.Duration | null;
     "questions": Question[];
     "sections": TrainingPage | Question[];
-    "expires_after": gel.RelativeDuration;
+  }
+}
+export namespace sign_in {
+  export interface Agreement extends $default.Auditable, $default.ListenableWithChanges {
+    "content": string;
+    "_content_hash": Uint8Array;
+    "version": number;
+    "name": string;
+    "reasons": Reason[];
+  }
+  export interface Location extends $default.Auditable, $default.ListenableWithChanges {
+    "closing_time": gel.LocalTime;
+    "opening_days": number[];
+    "opening_time": gel.LocalTime;
+    "out_of_hours": boolean;
+    "name": LocationName;
+    "in_hours_rep_multiplier": number;
+    "max_users": number;
+    "out_of_hours_rep_multiplier": number;
+    "queue_enabled": boolean;
+    "sign_ins": SignIn[];
+    "off_shift_reps": users.Rep[];
+    "on_shift_reps": users.Rep[];
+    "supervising_reps": users.Rep[];
+    "queued": QueuePlace[];
+    "queued_users_that_can_sign_in": users.User[];
+    "supervisable_training": training.Training[];
+    "max_count": number;
+    "available_capacity": number;
+    "can_sign_in": boolean;
+    "queue_in_use": boolean;
+    "status": LocationStatus;
+  }
+  export type LocationName = "MAINSPACE" | "HEARTSPACE";
+  export type LocationStatus = "OPEN" | "SOON" | "CLOSED";
+  export interface QueuePlace extends $default.CreatedAt, $default.Listenable {
+    "user": users.User;
+    "location": Location;
+    "notified_at"?: Date | null;
+    "ends_at"?: Date | null;
+  }
+  export interface Reason extends $default.Auditable, $default.Listenable {
+    "name": string;
+    "agreement"?: Agreement | null;
+    "category": ReasonCategory;
+    "active": boolean;
+  }
+  export type ReasonCategory = "UNIVERSITY_MODULE" | "CO_CURRICULAR_GROUP" | "PERSONAL_PROJECT" | "SOCIETY" | "REP_SIGN_IN" | "EVENT";
+  export interface SignIn extends $default.Timed, $default.Listenable {
+    "location": Location;
+    "user": users.User;
+    "signed_out": boolean;
+    "reason": Reason;
+    "tools": tools.GroupedTool | tools.Tool[];
+  }
+  export interface UserRegistration extends $default.CreatedAt {
+    "location": Location;
+    "user": users.User;
+  }
+}
+export namespace notification {
+  export interface AllReps extends std.$Object {
+    "MAGIC": number;
+  }
+  export interface AllUsers extends std.$Object {
+    "MAGIC": number;
+  }
+  export interface Notification extends $default.Auditable {
+    "targets": team.Team | users.User | MailingList | event.Event | AllReps | AllUsers[];
+    "attachments": string[];
+    "content": string;
+    "delivery_methods": DeliveryMethod[];
+    "dispatched_at"?: Date | null;
+    "status": Status;
+    "title": string;
+    "type": Type;
+    "priority": number;
+  }
+  export interface AuthoredNotification extends Notification {
+    "approved_by"?: users.Rep | null;
+    "author": users.User;
+    "approved_on"?: Date | null;
+  }
+  export type DeliveryMethod = "BANNER" | "EMAIL" | "TRAY" | "POPUP" | "DISCORD";
+  export interface MailingList extends $default.Auditable {
+    "description": string;
+    "name": string;
+    "subscribers": users.User[];
+  }
+  export type Status = "DRAFT" | "REVIEW" | "QUEUED" | "SENDING" | "SENT" | "ERRORED";
+  export interface SystemNotification extends Notification {
+    "source": string;
+  }
+  export type Type = "ADMIN" | "ADVERT" | "ANNOUNCEMENT" | "EVENT" | "HEALTH_AND_SAFETY" | "INFRACTION" | "PRINTING" | "QUEUE_SLOT_ACTIVE" | "RECRUITMENT" | "REFERRAL" | "REMINDER" | "TRAINING";
+}
+export namespace tools {
+  export interface Booking extends $default.Auditable {
+    "user": users.User;
+    "tool": Tool;
+    "ends_at": Date;
+    "starts_at": Date;
+    "duration": gel.Duration;
+    "cancelled"?: boolean | null;
+  }
+  export interface GroupedTool extends std.$Object {
+    "location": sign_in.Location;
+    "training": training.Training[];
+    "name": string;
+    "tools": Tool[];
+  }
+  export type Selectability = "DO_ONLINE" | "REVOKED" | "EXPIRED" | "DO_IN_PERSON" | "NONE_REMAINING" | "DO_IN_PERSON_OR_REP_ONLINE" | "DO_REP_ONLINE" | "DO_IN_PERSON_OR_REP_IN_PERSON" | "DO_REP_IN_PERSON" | "REPS_UNTRAINED" | "TOOL_BROKEN" | "NONE";
+  export type Status = "NOMINAL" | "IN_USE" | "PARTIALLY_FUNCTIONAL" | "OUT_OF_ORDER";
+  export interface Tool extends std.$Object {
+    "location": sign_in.Location;
+    "rep": training.Training[];
+    "training": training.Training[];
+    "name": string;
+    "is_bookable": boolean;
+    "status": {code: Status, reason: string};
+    "min_booking_time"?: gel.Duration | null;
+    "responsible_reps": users.Rep[];
+    "borrowable": boolean;
+    "description": string;
+    "max_booking_daily"?: gel.Duration | null;
+    "max_booking_weekly"?: gel.Duration | null;
+    "quantity": number;
+    "bookings": Booking[];
+    "bookable_hours": gel.LocalTime[];
+    "grouped": boolean;
+  }
+}
+export namespace shop {
+  export interface Item extends std.$Object {
+    "skews": Skew[];
+    "tools": tools.Tool[];
+    "icon_url": string;
+    "name": string;
+    "supplier": string;
+    "supplier_url": string;
+  }
+  export interface LineItem extends std.$Object {
+    "wraps": Item;
+    "skew": Skew;
+    "price": number;
+  }
+  export interface Module extends std.$Object {
+    "users": users.User[];
+    "name": string;
+    "purchases": Purchase[];
+    "total": number;
+  }
+  export interface Purchase extends $default.Auditable {
+    "user": users.User;
+    "collected_at"?: Date | null;
+    "reverted": boolean;
+    "items": LineItem[];
+    "module"?: Module | null;
+  }
+  export interface Skew extends $default.Auditable {
+    "colour"?: string | null;
+    "count"?: number | null;
+    "icon_url"?: string | null;
+    "price": number;
+    "till_id": number;
+    "_dimensions": dimensions.Dimension;
+    "dimensions": unknown;
+    "item": Item;
   }
 }
 export namespace dimensions {
@@ -1015,24 +1015,24 @@ export namespace schema {
 }
 export namespace event {
   export interface Event extends $default.CreatedAt {
-    "ends_at"?: Date | null;
-    "starts_at": Date;
-    "type": Type;
-    "description": string;
-    "name": string;
     "attendees": users.User[];
     "interested": users.User[];
+    "description": string;
+    "name": string;
     "location": sign_in.Location;
     "organiser": users.User[];
     "required_training": training.Training[];
+    "ends_at"?: Date | null;
+    "starts_at": Date;
+    "type": Type;
   }
   export type Type = "WORKSHOP" | "LECTURE" | "MEETUP" | "HACKATHON" | "EXHIBITION" | "WEBINAR";
 }
 export namespace team {
   export type Name = "IT" | "3DP" | "Hardware" | "Publicity" | "Events" | "Relations" | "Operations" | "Recruitment & Development" | "Health & Safety" | "Inclusions" | "Sustainability" | "Unsorted Reps" | "Future Reps" | "Staff";
   export interface Team extends std.$Object {
-    "description": string;
     "name": string;
+    "description": string;
     "all_members": users.Rep[];
     "members": users.Rep[];
   }
@@ -1042,6 +1042,15 @@ export namespace printing {
     "status": PrintStatus | PrinterStatus;
     "printer": Printer;
   }
+  export type Colour = "WHITE" | "BLACK" | "BLUE" | "GREEN" | "RED" | "YELLOW" | "ORANGE" | "ANY";
+  export interface Filament extends std.$Object {
+    "bed_temp": number;
+    "colour": Colour;
+    "material": Material;
+    "nozzle_temp_max": number;
+    "nozzle_temp_min": number;
+  }
+  export type Material = "PLA" | "TPU" | "PETG";
   export interface Print extends std.$Object {
     "gcode_path": string;
     "stl_path": string;
@@ -1050,31 +1059,42 @@ export namespace printing {
     "duration": gel.Duration;
     "mass": number;
     "name": string;
-    "type": Type;
     "on": PrintHistory[];
+    "filament": Filament[];
+    "reason"?: string | null;
+    "uploadedAt": Date;
   }
   export interface PrintAuditEntry extends AuditEntry {
     "status": PrintStatus;
     "print": Print;
   }
   export interface PrintHistory extends $default.CreatedAt {
-    "printer": Printer;
     "status": PrintStatus;
+    "printer"?: Printer | null;
+    "queue": QueueType;
+    "timelapse_path": string;
   }
   export interface PrintStatus extends std.$Object {}
   export interface Printer extends std.$Object {
     "location": sign_in.Location;
     "status": PrinterStatus;
     "name": string;
-    "remote_ip": string;
-    "type": Type[];
     "prints": Print[];
+    "filament_slots": Filament[];
+    "model": string;
+    "manufacturer": string;
+    "total_print_mass": number;
+    "total_print_time": gel.Duration;
   }
   export interface PrinterAuditEntry extends AuditEntry {
     "status": PrinterStatus;
   }
   export interface PrinterStatus extends std.$Object {}
-  export type Type = "PLA" | "TPU" | "PETG" | "RESIN";
+  export type QueueType = "PLA" | "PETG" | "TPU" | "AMS";
+  export interface SOP extends std.$Object {
+    "file_path": string;
+    "name": string;
+  }
   export namespace print_status {
     export interface Cancelled extends printing.PrintStatus {}
     export interface Complete extends printing.PrintStatus {}
@@ -1082,11 +1102,12 @@ export namespace printing {
       "note"?: string | null;
       "reason": FailureReason;
     }
-    export type FailureReason = "NO_EXTRUSION_AT_PRINT_START" | "POOR_BED_ADHESION" | "UNDER_EXTRUSION" | "OVER_EXTRUSION" | "GAPS_IN_TOP_LAYERS" | "STRINGING_AND_OOZING" | "OVERHEATING" | "LAYER_SHIFTING" | "LAYER_SEPARATION_AND_SPLITTING" | "FILAMENT_GRINDING" | "EXTRUDER_CLOG" | "EXTRUSION_STOPS_MID_PRINT" | "WEAK_INFILL" | "BLOBS_AND_ZITS" | "GAPS_BETWEEN_INFILL_AND_PERIMETER" | "CORNER_CURLING_AND_ROUGHNESS" | "TOP_SURFACE_SCARRING" | "CORNER_GAPS_IN_BOTTOM_LAYER" | "LAYER_LINES_ON_SIDES" | "VIBRATION_AND_RINGING" | "THIN_WALL_GAPS" | "SMALL_FEATURE_LOSS" | "INCONSISTENT_EXTRUSION" | "WARPING" | "POOR_OVERHANG_QUALITY" | "DIMENSIONAL_INACCURACY" | "POOR_BRIDGING" | "FILAMENT_FEEDING" | "FILAMENT_RAN_OUT" | "NOT_A_CLUE";
+    export type FailureReason = "NO_EXTRUSION_AT_PRINT_START" | "POOR_BED_ADHESION" | "UNDER_EXTRUSION" | "OVER_EXTRUSION" | "GAPS_IN_TOP_LAYERS" | "STRINGING_AND_OOZING" | "OVERHEATING" | "LAYER_SHIFTING" | "LAYER_SEPARATION_AND_SPLITTING" | "FILAMENT_GRINDING" | "EXTRUDER_CLOG" | "EXTRUSION_STOPS_MID_PRINT" | "WEAK_INFILL" | "BLOBS_AND_ZITS" | "GAPS_BETWEEN_INFILL_AND_PERIMETER" | "CORNER_CURLING_AND_ROUGHNESS" | "TOP_SURFACE_SCARRING" | "CORNER_GAPS_IN_BOTTOM_LAYER" | "LAYER_LINES_ON_SIDES" | "VIBRATION_AND_RINGING" | "THIN_WALL_GAPS" | "SMALL_FEATURE_LOSS" | "INCONSISTENT_EXTRUSION" | "WARPING" | "POOR_OVERHANG_QUALITY" | "DIMENSIONAL_INACCURACY" | "POOR_BRIDGING" | "FILAMENT_FEEDING" | "FILAMENT_RAN_OUT" | "NOT_A_CLUE" | "OTHER";
     export interface Printing extends printing.PrintStatus {
       "print": printing.Print;
     }
     export interface Queued extends printing.PrintStatus {}
+    export interface UnderReview extends printing.PrintStatus {}
   }
   export namespace printer_status {
     export interface Disabled extends printing.PrinterStatus {}
@@ -1095,8 +1116,12 @@ export namespace printing {
       "note": string;
       "reason": FailureReason;
     }
-    export type FailureReason = "MAIN_CONTROLLER_BOARD" | "POWER_SUPPLY" | "DISPLAY_BOARD" | "WIFI_MODULE" | "HOTEND_THERMISTOR" | "HEATBED_THERMISTOR" | "HOTEND_HEATER_CARTRIDGE" | "HEATBED_HEATING_ELEMENT" | "HEATER_BLOCK" | "EXTRUDER_MOTOR" | "X_AXIS_MOTOR" | "Y_AXIS_MOTOR" | "Z_AXIS_MOTOR" | "LINEAR_RAILS" | "LINEAR_BEARINGS" | "BELT_SYSTEM" | "PULLEYS" | "LEAD_SCREW_NUT" | "HOTEND_FAN" | "PART_COOLING_FAN" | "CHAMBER_FAN" | "POWER_SUPPLY_FAN" | "NOZZLE" | "HEAT_BREAK" | "HEAT_SINK" | "EXTRUDER_GEARS" | "BOWDEN_TUBE" | "FILAMENT_SENSOR" | "BED_LEVELING_SENSOR" | "DOOR_SENSOR" | "CRASH_DETECTION_SENSOR" | "POWER_PANIC_SENSOR" | "PRINT_BED_SURFACE" | "BED_LEVELLING_SPRINGS" | "BED_MOUNTING_HARDWARE" | "HOTEND_WIRING" | "HEATBED_WIRING" | "MOTOR_WIRING" | "MAIN_POWER_CABLE" | "USB_CONNECTION" | "FRAME_COMPONENTS" | "SMOOTH_RODS" | "ENCLOSURE_PANELS" | "FILAMENT_FEEDING";
+    export type FailureReason = "MAIN_CONTROLLER_BOARD" | "POWER_SUPPLY" | "DISPLAY_BOARD" | "WIFI_MODULE" | "HOTEND_THERMISTOR" | "HEATBED_THERMISTOR" | "HOTEND_HEATER_CARTRIDGE" | "HEATBED_HEATING_ELEMENT" | "HEATER_BLOCK" | "EXTRUDER_MOTOR" | "X_AXIS_MOTOR" | "Y_AXIS_MOTOR" | "Z_AXIS_MOTOR" | "LINEAR_RAILS" | "LINEAR_BEARINGS" | "BELT_SYSTEM" | "PULLEYS" | "LEAD_SCREW_NUT" | "HOTEND_FAN" | "PART_COOLING_FAN" | "CHAMBER_FAN" | "POWER_SUPPLY_FAN" | "NOZZLE" | "HEAT_BREAK" | "HEAT_SINK" | "EXTRUDER_GEARS" | "BOWDEN_TUBE" | "FILAMENT_SENSOR" | "BED_LEVELING_SENSOR" | "DOOR_SENSOR" | "CRASH_DETECTION_SENSOR" | "POWER_PANIC_SENSOR" | "PRINT_BED_SURFACE" | "BED_LEVELLING_SPRINGS" | "BED_MOUNTING_HARDWARE" | "HOTEND_WIRING" | "HEATBED_WIRING" | "MOTOR_WIRING" | "MAIN_POWER_CABLE" | "USB_CONNECTION" | "FRAME_COMPONENTS" | "SMOOTH_RODS" | "ENCLOSURE_PANELS" | "FILAMENT_FEEDING" | "OTHER";
+    export interface Finished extends printing.PrinterStatus {
+      "print": printing.Print;
+    }
     export interface Idle extends printing.PrinterStatus {}
+    export interface Paused extends printing.PrinterStatus {}
     export interface Printing extends printing.PrinterStatus {
       "print": printing.Print;
     }
@@ -1287,16 +1312,18 @@ export interface types {
       "Config": ext.pgvector.Config;
     };
   };
-  "notification": {
-    "AllReps": notification.AllReps;
-    "AllUsers": notification.AllUsers;
-    "Notification": notification.Notification;
-    "AuthoredNotification": notification.AuthoredNotification;
-    "DeliveryMethod": notification.DeliveryMethod;
-    "MailingList": notification.MailingList;
-    "Status": notification.Status;
-    "SystemNotification": notification.SystemNotification;
-    "Type": notification.Type;
+  "training": {
+    "Answer": training.Answer;
+    "AnswerType": training.AnswerType;
+    "Interactable": training.Interactable;
+    "LocationName": training.LocationName;
+    "NextStep": training.NextStep;
+    "TrainingPage": training.TrainingPage;
+    "Page": training.Page;
+    "Question": training.Question;
+    "Session": training.Session;
+    "Status": training.Status;
+    "Training": training.Training;
   };
   "sign_in": {
     "Agreement": sign_in.Agreement;
@@ -1308,6 +1335,17 @@ export interface types {
     "ReasonCategory": sign_in.ReasonCategory;
     "SignIn": sign_in.SignIn;
     "UserRegistration": sign_in.UserRegistration;
+  };
+  "notification": {
+    "AllReps": notification.AllReps;
+    "AllUsers": notification.AllUsers;
+    "Notification": notification.Notification;
+    "AuthoredNotification": notification.AuthoredNotification;
+    "DeliveryMethod": notification.DeliveryMethod;
+    "MailingList": notification.MailingList;
+    "Status": notification.Status;
+    "SystemNotification": notification.SystemNotification;
+    "Type": notification.Type;
   };
   "tools": {
     "Booking": tools.Booking;
@@ -1322,19 +1360,6 @@ export interface types {
     "Module": shop.Module;
     "Purchase": shop.Purchase;
     "Skew": shop.Skew;
-  };
-  "training": {
-    "Answer": training.Answer;
-    "AnswerType": training.AnswerType;
-    "Interactable": training.Interactable;
-    "LocationName": training.LocationName;
-    "NextStep": training.NextStep;
-    "TrainingPage": training.TrainingPage;
-    "Page": training.Page;
-    "Question": training.Question;
-    "Session": training.Session;
-    "Status": training.Status;
-    "Training": training.Training;
   };
   "dimensions": {
     "Dimension": dimensions.Dimension;
@@ -1417,6 +1442,9 @@ export interface types {
   };
   "printing": {
     "AuditEntry": printing.AuditEntry;
+    "Colour": printing.Colour;
+    "Filament": printing.Filament;
+    "Material": printing.Material;
     "Print": printing.Print;
     "PrintAuditEntry": printing.PrintAuditEntry;
     "PrintHistory": printing.PrintHistory;
@@ -1424,7 +1452,8 @@ export interface types {
     "Printer": printing.Printer;
     "PrinterAuditEntry": printing.PrinterAuditEntry;
     "PrinterStatus": printing.PrinterStatus;
-    "Type": printing.Type;
+    "QueueType": printing.QueueType;
+    "SOP": printing.SOP;
     "print_status": {
       "Cancelled": printing.print_status.Cancelled;
       "Complete": printing.print_status.Complete;
@@ -1432,13 +1461,16 @@ export interface types {
       "FailureReason": printing.print_status.FailureReason;
       "Printing": printing.print_status.Printing;
       "Queued": printing.print_status.Queued;
+      "UnderReview": printing.print_status.UnderReview;
     };
     "printer_status": {
       "Disabled": printing.printer_status.Disabled;
       "Disconnected": printing.printer_status.Disconnected;
       "Failed": printing.printer_status.Failed;
       "FailureReason": printing.printer_status.FailureReason;
+      "Finished": printing.printer_status.Finished;
       "Idle": printing.printer_status.Idle;
+      "Paused": printing.printer_status.Paused;
       "Printing": printing.printer_status.Printing;
     };
   };
