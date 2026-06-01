@@ -1,0 +1,13 @@
+- [x] Sort out library files
+- [x] Make library file test -> mock and integration
+- [ ] Test backend libraries
+- [ ] Add interval for updating db printer status (downtime)
+- [ ] Add startup for driver manager
+- [ ] Get configs for printers
+- [ ] Request static IPs for printers
+- [ ] Incorperate timelapse and livestream <br>
+<t>-> potentially into a new app like forge and mine, name: smithy?
+- [ ] Sort out docs/comments
+- [ ] Sort out api/routes
+- [ ] Integrate frontend with franklin
+- [ ] Sort out confirmation emails
