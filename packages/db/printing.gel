@@ -24,6 +24,12 @@ module printing {
         AMS
     >;
 
+    scalar type Priority extending enum<
+        LOW,
+        MEDIUM,
+        HIGH,
+    >;
+
     abstract type PrinterStatus;  # Discriminated union
     module printer_status {
         type Disabled extending printing::PrinterStatus {
@@ -223,11 +229,11 @@ module printing {
         required duration := (.end_time ?? datetime_of_transaction()) - .start_time;
         required is_active := (
             .start_time <= datetime_of_transaction()
-            and (not exists .end_time or datetime_of_transaction() < .end_time)
+            and ((datetime_of_transaction() < .end_time) ?? true)
         );
 
         constraint expression on (
-            not exists .end_time or .end_time > .start_time
+            (.end_time > .start_time) ?? true
         ) {
             errmessage := "Downtime end_time must be after start_time";
         };
@@ -251,7 +257,7 @@ module printing {
         required author: users::User;
         required approved_by: users::Rep;
         required uploadedAt: datetime;
-        required priority: enum<LOW, MEDIUM, HIGH>;
+        required priority: Priority;
         reason: str;
         multi `on`: PrintHistory;
         required gcode_path := "\(cdn_url(.id))/.gcode";
