@@ -347,16 +347,16 @@ export class BambuDriver implements PrinterDriver{
         }
     }
 
-    private async startPrint(filename: string, name: string, timelapse: boolean): Promise<void> {
+    private async startPrint(filename: string, name: string, timelapse: boolean = false): Promise<void> {
+        // Change this to start a print, allways no as retrieval no setup
+        timelapse = false;
+
         if (!this.config) throw new Error('Ftp client requires printer config');        
-        // One slot => external spool (no AMS); >1 => AMS. See bambu-ams.example.ts.
         const useAms = (this.config.slots?.length ?? 0) > 1;
         this.publishCommand({
         print: {
             sequence_id: this.nextSequenceId(),
             command: "project_file",
-            // For a raw .gcode at the SD root, point param/url at the file itself.
-            // For a sliced .3mf project, param is usually 'Metadata/plate_1.gcode'.
             param: filename,
             url: `file:///sdcard/${filename}`,
             subtask_name: name,

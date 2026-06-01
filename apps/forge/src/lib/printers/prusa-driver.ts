@@ -4,6 +4,7 @@ export interface PrusaConfig extends PrinterConfig {
     apiKey: string;
 }
 
+// API call responses
 type PrusaState = 'IDLE' | 'BUSY' | 'PRINTING' | 'PAUSED' | 'FINISHED' | 'STOPPED' | 'ERROR' | 'ATTENTION' | 'READY';
 
 interface PrusaStatusResponse {
@@ -40,6 +41,7 @@ interface PrusaFolderResponse {
     }>;
 }
 
+// Convert Prusa reposne state to local state
 const PRUSA_STATE_MAP: Record<PrusaState, PrinterStatus['state']> = {
     IDLE: 'idle',
     READY: 'idle',
@@ -52,7 +54,15 @@ const PRUSA_STATE_MAP: Record<PrusaState, PrinterStatus['state']> = {
     ATTENTION: 'error',
 }
 
+/*
+Main prusa Driver class structure:
+-Private variables
+-Key function
+-Main export function, based on PrinterDriver
+-Private helper function
+*/ 
 export class PrusaDriver implements PrinterDriver {
+    // Private variables
     private config?: PrusaConfig;
     private connected = false;
     private isDisabled = false;
@@ -64,6 +74,7 @@ export class PrusaDriver implements PrinterDriver {
     private pollInterval: ReturnType<typeof setInterval> | null = null;
     private statusListener = new Set<(status: PrinterStatus) => void>();
 
+    //Key functions
     private get baseUrl(): string {
         if (!this.config) throw new Error('Prusa printer config not set');
         return `http://${this.config.ip}/api/v1`;
@@ -85,6 +96,7 @@ export class PrusaDriver implements PrinterDriver {
         return (text ? JSON.parse(text) : undefined) as T;
     }
 
+    // Main driver functions
     async connect(config: PrusaConfig): Promise<void> {
         this.config = config;
         try {
@@ -205,6 +217,7 @@ export class PrusaDriver implements PrinterDriver {
         }
     }
 
+    // Private helper functions
     private async waitForJob(attempts = 5, delayMs = 500): Promise<PrusaJobResponse> {
         for (let i = 0; i< attempts; i++ ){
             await new Promise(resolve => setTimeout(resolve, delayMs));
