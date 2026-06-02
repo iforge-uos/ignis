@@ -2,6 +2,8 @@
 - [x] Make library file test -> mock and integration
 - [ ] Test backend libraries
 - [ ] Add interval for updating db printer status (downtime)
+- [ ] Sort out downtime
+- [ ] Setup queue functions
 - [ ] Add startup for driver manager
 - [ ] Get configs for printers
 - [ ] Request static IPs for printers

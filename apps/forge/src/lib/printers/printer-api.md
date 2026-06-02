@@ -117,12 +117,18 @@ parameters: printer
 response: boolean
 ```
 
-## Enable/disable printer
-- Ends downtime early, needs to affect db and driver status
+## Disable printer
 ```
-method: POST/DELETE
+method: DELETE
 parameters: printer_id
-body: reason (enum/note)
+body: reason (enum/note), end_time
+```
+
+## Enable Printer
+- Can stop a scheduled early
+```
+method: POST
+parameters: printerid
 ```
 
 ## Schedule down time

@@ -33,9 +33,7 @@ module printing {
     abstract type PrinterStatus;  # Discriminated union
     module printer_status {
         type Disabled extending printing::PrinterStatus {
-            downtime: printing::Downtime {
-                on target delete allow;
-            }
+            end_time: datetime;
         }
 
         type Disconnected extending printing::PrinterStatus;
@@ -160,35 +158,23 @@ module printing {
             select Print filter __source__ in .`on`.printer
         );
         multi downtimes := .<printer[is Downtime];
-        multi active_downtimes := (
-            select .downtimes filter .is_active
-        );
-        is_down := exists .active_downtimes;
-        down_since := min(.active_downtimes.start_time);
-        down_until := (
-            max(.active_downtimes.end_time)
-            if not exists (select .active_downtimes filter not exists .end_time)
-            else <datetime>{}
-        );
-        total_downtime := sum((
-            select .downtimes filter .start_time <= datetime_of_transaction()
-        ).duration);
+    }
 
-        trigger log_status_insert after insert for each do (
-            insert PrinterAuditEntry {
-                printer := __new__,
-                status := __new__.status,
-            }
-        );
+    type Downtime extending default::CreatedAt {
+        required printer: Printer {
+            on target delete delete source;
+        }
+        required start_time: datetime;
+        end_time: datetime;
+        required has_started: bool {
+            default := false;
+        }
+        required has_finished: bool {
+            default := false;
+        }
+        reason: str;
 
-        trigger log_status_update after update for each
-            when (__old__.status != __new__.status)
-            do (
-                insert PrinterAuditEntry {
-                    printer := __new__,
-                    status := __new__.status,
-                }
-            );
+        constraint expression on (.end_time > .start_time);
     }
 
     function cdn_url(id: uuid) -> str {
@@ -203,50 +189,6 @@ module printing {
         required name: str;#
         required description: str;
         required file_path := "\(cdn_url(.id))/.pdf";
-    }
-
-    scalar type DowntimeReason extending enum<
-        SCHEDULED_MAINTENANCE,
-        REPAIR,
-        CALIBRATION,
-        AWAITING_PARTS,
-        RELOCATION,
-        OTHER,
-    >;
-
-    type Downtime extending default::CreatedAt {
-        required printer: Printer {
-            on target delete delete source;
-        }
-        required reason: DowntimeReason;
-        note: str;
-
-        required start_time: datetime {
-            default := datetime_of_statement();
-        }
-        end_time: datetime;
-
-        required duration := (.end_time ?? datetime_of_transaction()) - .start_time;
-        required is_active := (
-            .start_time <= datetime_of_transaction()
-            and ((datetime_of_transaction() < .end_time) ?? true)
-        );
-
-        constraint expression on (
-            (.end_time > .start_time) ?? true
-        ) {
-            errmessage := "Downtime end_time must be after start_time";
-        };
-
-        access policy manage
-            allow select, insert, update;
-        access policy remove_before_start
-            allow delete
-            using (.start_time > datetime_of_transaction()) {
-                errmessage := "Downtime can only be removed before it starts — stop it early by setting end_time instead"
-            };
-
-        index on (.printer);
     }
 
     type Print {
