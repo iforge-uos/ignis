@@ -1,5 +1,5 @@
 import type { FilamentSlot, PrinterConfig, PrinterDriver, PrinterFile, PrinterStatus, PrintJob } from '@/lib/printers/types';
-import { Colour, Material } from '@/lib/printers/types';
+import { Material } from '@/lib/printers/types';
 import { Readable } from "node:stream";
 import { Client as FtpClient } from "basic-ftp";
 import mqtt, { type MqttClient } from "mqtt";
@@ -16,7 +16,7 @@ type BambuState = 'IDLE' | 'PREPARE' | 'RUNNING' | 'PAUSE' | 'FINISH' | 'FAILED'
 interface BambuAmsTray {
     id: string;
     tray_type?: string;
-    tray_colour?: string;
+    tray_color?: string;
     nozzle_temp_min?: string;
     nozzle_temp_max?: string;
     bed_temp?: string;
@@ -35,30 +35,15 @@ interface BambuAms {
     tray_tar?: string;
 }
 
-export const BAMBU_EXTERNAL_SPOOL = { ams_id: 255, tray_id: 254 } as const;
-
 export const BAMBU_TRAY_TYPE: Record<Material, string> = {
   [Material.PLA]: "PLA",
   [Material.TPU]: "TPU",
   [Material.PETG]: "PETG",
 };
 
-export const BAMBU_TRAY_INFO_IDX: Record<Material, string> = {
-  [Material.PLA]: "GFL99",
-  [Material.TPU]: "GFU99",
-  [Material.PETG]: "GFG99",
-};
-
-export const BAMBU_TRAY_colour: Record<Colour, string> = {
-  [Colour.WHITE]: "FFFFFFFF",
-  [Colour.BLACK]: "000000FF",
-  [Colour.BLUE]: "0000FFFF",
-  [Colour.GREEN]: "00FF00FF",
-  [Colour.RED]: "FF0000FF",
-  [Colour.YELLOW]: "FFFF00FF",
-  [Colour.ORANGE]: "FF8000FF",
-  [Colour.ANY]: "FFFFFFFF",
-};
+const BAMBU_TRAY_TYPE_TO_MATERIAL: Record<string, Material> = Object.fromEntries(
+  Object.entries(BAMBU_TRAY_TYPE).map(([material, tray]) => [tray, Number(material) as Material]),
+);
 
 interface BambuPrintReport {
     command?: string;
@@ -153,12 +138,10 @@ export class BambuDriver implements PrinterDriver{
         this.client.on("connect", () => {
             this.connected = true;
             this.requestFullStatus();
-            this.syncSlots();
         });
         await this.client.subscribeAsync(this.reportTopic);
         this.connected = true;
         this.requestFullStatus();
-        this.syncSlots();
     }
 
     async disconnect(): Promise<void> {
@@ -262,11 +245,37 @@ export class BambuDriver implements PrinterDriver{
 
     async updateSlot(slotId: number, filamentSlot: FilamentSlot): Promise<void> {
         if (!this.config) throw new Error('Printer config required to change slot');
+        if (this.config.queue === 'MULTI') throw new Error('Multi filament printers requires filament to be editited on printer');
         const idx = this.config.slots.findIndex((s) => s.slotId === slotId);
         if (idx === -1) return;
         this.config.slots[idx] = filamentSlot;
-        this.config.queue = this.config.slots.length === 1 ? this.config.slots[0].filamentType : 'AMS';
-        if (this.client?.connected) this.publishSlotSetting({ ...filamentSlot, slotId });
+        this.config.queue = this.config.slots.length === 1 ? this.config.slots[0].filamentType : 'MULTI';
+    }
+
+    async syncSlots(): Promise<FilamentSlot[]> {
+        if (!this.config) throw new Error('Printer config required to change slot');
+        if (this.config.queue !== 'MULTI') throw new Error('syncSlots is only for AMS printers; the external spool is set with updateSlot');
+        if (this.client?.connected) {
+            this.requestFullStatus();
+            await new Promise((resolve) => setTimeout(resolve, 500));
+        }
+        const slots: FilamentSlot[] = [];
+        for (const unit of this.latestReport.ams?.ams ?? []) {
+            for (const tray of unit.tray ?? []) {
+                if (!tray.tray_type) continue;
+                const filamentType = BAMBU_TRAY_TYPE_TO_MATERIAL[tray.tray_type];
+                if (filamentType === undefined) continue;
+                slots.push({
+                    slotId: Number(unit.id) * 4 + Number(tray.id),
+                    filamentType,
+                    colour: (tray.tray_color ?? '').toUpperCase(),
+                    nozzleTempMin: Number(tray.nozzle_temp_min ?? 0),
+                    nozzleTempMax: Number(tray.nozzle_temp_max ?? 0),
+                    bedTemp: Number(tray.bed_temp ?? 0),
+                });
+            }
+        }
+        return slots.sort((a, b) => a.slotId - b.slotId);
     }
 
     // Private helper functions
@@ -312,33 +321,6 @@ export class BambuDriver implements PrinterDriver{
 
     private requestFullStatus(): void {
         this.publishCommand({ pushing: {sequence_id: this.nextSequenceId(), command: "pushall"} });
-    }
-
-    private slotAddress(slotId: number): { ams_id: number; tray_id: number } {
-        const count = this.config?.slots?.length ?? 0;
-        if (count <= 1) return { ...BAMBU_EXTERNAL_SPOOL };
-        return { ams_id: Math.floor(slotId / 4), tray_id: slotId % 4 };
-    }
-
-    private publishSlotSetting(slot: FilamentSlot): void {
-        const { ams_id, tray_id } = this.slotAddress(slot.slotId);
-        this.publishCommand({
-            print: {
-                sequence_id: this.nextSequenceId(),
-                command: "ams_filament_setting",
-                ams_id,
-                tray_id,
-                tray_info_idx: BAMBU_TRAY_INFO_IDX[slot.filamentType],
-                tray_type: BAMBU_TRAY_TYPE[slot.filamentType],
-                tray_colour: BAMBU_TRAY_colour[slot.colour],
-                nozzle_temp_min: slot.nozzleTempMin,
-                nozzle_temp_max: slot.nozzleTempMax,
-            },
-        });
-    }
-
-    private syncSlots(): void {
-        for (const slot of this.config?.slots ?? []) this.publishSlotSetting(slot);
     }
 
     private async withFtp<T>(fn: (client: FtpClient) => Promise<T>): Promise<T> {

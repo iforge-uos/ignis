@@ -1,23 +1,10 @@
-export enum Colour { // Based of printing.Gel
-    WHITE,
-    BLACK,
-    BLUE,
-    GREEN,
-    RED,
-    YELLOW,
-    ORANGE,
-    // Add more based on filament colours
-    ANY,
-}
-
 export enum Material { // Based of printing.Gel
     PLA,
     TPU,
     PETG,
 }
 
-export type QueueType = Material | 'AMS'; // Additional AMS queue as it is multi material/colour
-
+export type QueueType = Material | 'MULTI'; // Multi filaments work differently
 export interface PrinterDriver { // General interface, inherited by specific printer drivers
     connect(config: PrinterConfig): Promise<void>;
     disconnect(): Promise<void>;
@@ -53,10 +40,12 @@ export interface PrinterDriver { // General interface, inherited by specific pri
     deleteFile(filename: string): Promise<void>;
 
     /*
-    Allows dynamically updating slot config
+    Allows dynamically updating slot config, only for single slot printers
     When called through API, db updated and queue also updated to reflect changes in frontend as well
     */
     updateSlot(slotId: number, filamentSlot: FilamentSlot): Promise<void>;
+
+    syncSlots(): Promise<FilamentSlot[]>;
 }
 
 export interface PrinterConfig {
@@ -73,7 +62,7 @@ export interface PrinterConfig {
 export interface FilamentSlot { // For AMS slot config, only 1 used for non AMS printers
     slotId: number; // 0-based index, for AMS, when extracted from db, the array order defines slots, ie index 0 is slot 1 etc
     filamentType: Material;
-    colour: Colour;
+    colour: string;
     nozzleTempMin: number;
     nozzleTempMax: number;
     bedTemp: number;

@@ -104,10 +104,17 @@ response: printers (id, name, manafacture, model)
 ```
 
 ## Edit printer filament slot
+- only for sible filament printer
 ```
 method: PUT
 parameters: printer
 body: filament slot (slot_id, material, colour, max/min temp, bed temp)
+```
+
+## Sync filament slots on multi printers
+```
+method: PUT
+parameters: printer
 ```
 
 ## Check printer connection status

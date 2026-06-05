@@ -20,8 +20,8 @@
 - Bambu is mopre closed off and uses a MQTT and FTP based messaging system, found [here](https://github.com/Doridian/OpenBambuAPI/blob/main/mqtt.md)
 - Bambu hides their API/MQTT and SDK behind a request form. However the above link is for a community based access, so may be incorrect or subject to change.
 - More info on the SDK can be found [here](https://wiki.bambulab.com/en/software/third-party-integration)
-- Also you can daisy chain up AMS systems to get 16 different spools, it is currently setup so only have eeither an external spool, like the Bambu A1 or the inbuilt AMS like the H2D.
-- To change the above, somethings need changing with the trays, ams ids and filament slots.
+- Also you can daisy chain up AMS systems to get 16 different spools.
+- Filament slots should be edited locally on the printer then call sync slots. As it is a pain to edit in code.
 
 ## manager.ts
 - Manager to add and use printer instances

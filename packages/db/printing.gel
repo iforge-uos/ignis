@@ -5,23 +5,11 @@ module printing {
         PETG,
     >;
 
-    scalar type Colour extending enum<
-        WHITE,
-        BLACK,
-        BLUE,
-        GREEN,
-        RED,
-        YELLOW,
-        ORANGE,
-        # Add more based on filament colours
-        ANY,
-    >;
-
     scalar type QueueType extending enum<
         PLA,
         PETG,
         TPU,
-        AMS
+        `MULTI`
     >;
 
     scalar type Priority extending enum<
@@ -124,7 +112,7 @@ module printing {
 
     type Filament {
         required material: Material;
-        required colour: Colour;
+        required colour: str;
         required nozzle_temp_min: int16;
         required nozzle_temp_max: int16;
         required bed_temp: int16;

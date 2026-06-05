@@ -132,4 +132,12 @@ export class PrinterManager {
     updateSlot(name: string, slotId: number, slot: FilamentSlot): Promise<void> {
         return this.require(name).updateSlot(slotId, slot);
     }
+
+    syncSlots(name: string): Promise<FilamentSlot[]> {
+        const driver = this.require(name);
+        const config = driver.getConfig();
+        if (!config) throw new Error(`Failed to retrieve config of printer: ${name}`);
+        if (config.queue !== 'MULTI') throw new Error('Can only sync slots of ams printers');
+        return driver.syncSlots();
+    }
 }

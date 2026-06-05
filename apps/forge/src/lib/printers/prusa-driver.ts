@@ -217,6 +217,10 @@ export class PrusaDriver implements PrinterDriver {
         }
     }
 
+    async syncSlots(): Promise<FilamentSlot[]> {
+        throw new Error('Prusa printers have no AMS to sync');
+    }
+
     // Private helper functions
     private async waitForJob(attempts = 5, delayMs = 500): Promise<PrusaJobResponse> {
         for (let i = 0; i< attempts; i++ ){
