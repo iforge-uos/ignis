@@ -55,7 +55,7 @@ const PRUSA_STATE_MAP: Record<PrusaState, PrinterStatus['state']> = {
 }
 
 /*
-Main prusa Driver class structure:
+Main Prusa Driver class structure:
 -Private variables
 -Key function
 -Main export function, based on PrinterDriver
@@ -74,7 +74,7 @@ export class PrusaDriver implements PrinterDriver {
     private pollInterval: ReturnType<typeof setInterval> | null = null;
     private statusListener = new Set<(status: PrinterStatus) => void>();
 
-    //Key functions
+    // Key functions
     private get baseUrl(): string {
         if (!this.config) throw new Error('Prusa printer config not set');
         return `http://${this.config.ip}/api/v1`;

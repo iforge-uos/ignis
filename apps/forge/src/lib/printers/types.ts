@@ -73,7 +73,7 @@ export interface PrinterConfig {
 export interface FilamentSlot { // For AMS slot config, only 1 used for non AMS printers
     slotId: number; // 0-based index, for AMS, when extracted from db, the array order defines slots, ie index 0 is slot 1 etc
     filamentType: Material;
-    color: Colour;
+    colour: Colour;
     nozzleTempMin: number;
     nozzleTempMax: number;
     bedTemp: number;

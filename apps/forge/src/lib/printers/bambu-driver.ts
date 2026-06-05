@@ -10,12 +10,13 @@ export interface BambuConfig extends PrinterConfig {
     password: string;
 }
 
+// BAMBU MQTT topics and record keys
 type BambuState = 'IDLE' | 'PREPARE' | 'RUNNING' | 'PAUSE' | 'FINISH' | 'FAILED';
 
 interface BambuAmsTray {
     id: string;
     tray_type?: string;
-    tray_color?: string;
+    tray_colour?: string;
     nozzle_temp_min?: string;
     nozzle_temp_max?: string;
     bed_temp?: string;
@@ -48,7 +49,7 @@ export const BAMBU_TRAY_INFO_IDX: Record<Material, string> = {
   [Material.PETG]: "GFG99",
 };
 
-export const BAMBU_TRAY_COLOR: Record<Colour, string> = {
+export const BAMBU_TRAY_colour: Record<Colour, string> = {
   [Colour.WHITE]: "FFFFFFFF",
   [Colour.BLACK]: "000000FF",
   [Colour.BLUE]: "0000FFFF",
@@ -89,7 +90,15 @@ const BAMBU_STATE_MAP: Record<BambuState, PrinterStatus['state']> = {
     FAILED: 'error',
 }
 
+/*
+Main BAMBU Driver class structure:
+-Private variables
+-Key function
+-Main export function, based on PrinterDriver
+-Private helper function
+*/ 
 export class BambuDriver implements PrinterDriver{
+    // Private variables
     private config?: BambuConfig;
     private client?: MqttClient;
     private connected = false;
@@ -102,6 +111,7 @@ export class BambuDriver implements PrinterDriver{
     private sequenceId = 0;
     private statusListener = new Set<(status: PrinterStatus) => void>();
 
+    // Key functions - MQTT/BAMBU command handeling, see docs
     private get reportTopic(): string {
         return `device/${this.config?.serial}/report`
     }
@@ -114,6 +124,7 @@ export class BambuDriver implements PrinterDriver{
         return String(this.sequenceId++);
     }
 
+    // Main driver functions
     async connect(config: BambuConfig): Promise<void> {
         if (!config) throw new Error('Config required when connecting a printer');
         this.config = config;
@@ -208,6 +219,10 @@ export class BambuDriver implements PrinterDriver{
         for (const listener of this.statusListener) listener(this.currentStatus);
     }
 
+    getConfig(): BambuConfig | null {
+        return this.config ?? null;
+    }
+
     async getStatus(fresh?: boolean): Promise<PrinterStatus> {
         if (fresh && this.connected) {
             this.requestFullStatus();
@@ -254,10 +269,7 @@ export class BambuDriver implements PrinterDriver{
         if (this.client?.connected) this.publishSlotSetting({ ...filamentSlot, slotId });
     }
 
-    getConfig(): BambuConfig | null {
-        return this.config ?? null;
-    }
-
+    // Private helper functions
     private publishCommand(payload: Record<string,unknown>): void {
         if (!this.client?.connected) throw new Error(`Bambu printer ${this.config?.name} is not connected`);
         this.client.publish(this.requestTopic, JSON.stringify(payload));
@@ -318,7 +330,7 @@ export class BambuDriver implements PrinterDriver{
                 tray_id,
                 tray_info_idx: BAMBU_TRAY_INFO_IDX[slot.filamentType],
                 tray_type: BAMBU_TRAY_TYPE[slot.filamentType],
-                tray_color: BAMBU_TRAY_COLOR[slot.color],
+                tray_colour: BAMBU_TRAY_colour[slot.colour],
                 nozzle_temp_min: slot.nozzleTempMin,
                 nozzle_temp_max: slot.nozzleTempMax,
             },

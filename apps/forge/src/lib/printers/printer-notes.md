@@ -1,5 +1,7 @@
 # Printer libary overview:
+- **This is purely a functional bridge to the printers, provides no db queries etc, api handlers will deal with the that, and setup function to be implemented for config and initial connection**
 - types.ts contains a base driver/types which specific drivers implement
+- types.ts is a basis to understanding, the drivers just implement it
 - This ensures all drivers share the same base set of functions
 - manager.ts then encapsulates those drivers allowing all the printers to be managed through 1 class without exposing too much making using it more managable
 - **Timelapse hasn't fully been setup yet, bool setup, but in prusa it doesn't do anything and but bambu it does, but not retrieved yet.**

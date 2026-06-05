@@ -4,6 +4,14 @@ import type { FilamentSlot, PrinterConfig, PrinterDriver, PrinterFile, PrinterSt
 
 type ManagedConfig = PrusaConfig | BambuConfig;
 
+/* 
+Singleton manager for multiple printers
+Add protection ontop of drivers, e.g. duplicate name protection
+Early catch if printer name doesn't exist
+Hides connection management behind adding and removing printers, to ensure proper cleanup of connections
+Functions are otherwise abstracted from the drivers, so as long as you know the name, you can call the same functions regardless of printer type
+Additional functions to retrieve printer/s by all or name
+*/
 export class PrinterManager {
     private drivers = new Map<string, PrinterDriver>();
     private unsubscribes = new Map<string, () => void>();
@@ -44,10 +52,6 @@ export class PrinterManager {
         this.drivers.delete(name);
     }
 
-    getPrinter(name: string): PrinterDriver | undefined {
-        return this.drivers.get(name);
-    }
-
     listPrinters(): string[] {
         return [...this.drivers.keys()];
     }
@@ -57,6 +61,7 @@ export class PrinterManager {
         return () => { this.statusListeners.delete(callback); };
     }
 
+    // Early error catch if printer name doesn't exist
     private require(name: string): PrinterDriver {
         const driver = this.drivers.get(name);
         if (!driver) throw new Error(`Printer "${name}" not found`);
@@ -95,8 +100,13 @@ export class PrinterManager {
         return this.require(name).finishJob(jobId);
     }
 
-    getConfig(name: string): PrinterConfig | null {
-        return this.require(name).getConfig();
+    getConfig(printerName: string): PrinterConfig | null {
+        const config = this.require(printerName).getConfig();
+        if (config) {
+            const { ip, name, manufacturer, slots, queue, hasCamera } = config;
+            return { ip, name, manufacturer, slots, queue, hasCamera };
+        }
+        return null;
     }
 
     getStatus(name: string, fresh?: boolean): Promise<PrinterStatus> {
