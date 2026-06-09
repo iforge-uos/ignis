@@ -173,12 +173,6 @@ module printing {
         )
     }
 
-    type SOP {
-        required name: str;#
-        required description: str;
-        required file_path := "\(cdn_url(.id))/.pdf";
-    }
-
     type Print {
         required name: str;
         required multi filament: Filament;
