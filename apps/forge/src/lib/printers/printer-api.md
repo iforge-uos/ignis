@@ -2,6 +2,7 @@
 - Can't add new printer, as apikeys needed through .env and 1password
 - all path roots are /api/print/
 - if no response, assume a standard success/failure response
+- Where paramter for printer is passes, it is the printer name
 
 ## Disconnect printer
 ```

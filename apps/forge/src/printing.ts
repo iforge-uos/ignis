@@ -4,12 +4,7 @@ import type { PrusaConfig } from "@/lib/printers/prusa-driver";
 import { type FilamentSlot, Material, type QueueType } from "@/lib/printers/types";
 import e from "@packages/db/edgeql-js";
 import db from '@/db'
-
-function requireEnv(key: string): string {
-    const value = process.env[key];
-    if (!value) throw new Error(`Missing required env var "${key}"`);
-    return value;
-}
+import { getEnvVariable } from "@/lib/utils/config";
 
 type PrinterRecord = { id: string; connected: boolean };
 
@@ -61,26 +56,28 @@ function buildConfig(printer: PrinterRow): PrusaConfig | BambuConfig {
     };
 
     return base.manufacturer === "PRUSA"
-        ? { ...base, ip: requireEnv(`${key}_IP`), apiKey: requireEnv(`${key}_APIKEY`) }
-        : { ...base, ip: requireEnv(`${key}_IP`), serial: requireEnv(`${key}_SERIAL`), password: requireEnv(`${key}_PASSWORD`) };
+        ? { ...base, ip: getEnvVariable(`${key}_IP`), apiKey: getEnvVariable(`${key}_APIKEY`) }
+        : { ...base, ip: getEnvVariable(`${key}_IP`), serial: getEnvVariable(`${key}_SERIAL`), password: getEnvVariable(`${key}_PASSWORD`) };
 }
 
+const PrinterConfigShape = e.shape(e.printing.Printer, () => ({
+    id: true,
+    name: true,
+    manufacturer: true,
+    has_camera: true,
+    filament_slots: (slot) => ({
+        "@position": true,
+        material: true,
+        colour: true,
+        nozzle_temp_min: true,
+        nozzle_temp_max: true,
+        bed_temp: true,
+        order_by: slot["@position"],
+    }),
+}));
+
 async function runSetup(): Promise<Map<string, PrinterRecord>> {
-    const rows = await e.select(e.printing.Printer, () => ({
-        id: true,
-        name: true,
-        manufacturer: true,
-        has_camera: true,
-        filament_slots: (slot) => ({
-            "@position": true,
-            material: true,
-            colour: true,
-            nozzle_temp_min: true,
-            nozzle_temp_max: true,
-            bed_temp: true,
-            order_by: slot["@position"],
-        }),
-    })).run(db);
+    const rows = await e.select(e.printing.Printer, PrinterConfigShape).run(db);
     for (const printer of rows) {
         const name = await printManager.addPrinter(buildConfig(printer));
         printers.set(name, { id: printer.id, connected: printManager.isConnected(name) });
@@ -89,22 +86,9 @@ async function runSetup(): Promise<Map<string, PrinterRecord>> {
 }
 
 export async function connectPrinter(id: string): Promise<boolean> {
-    const printer = await e.select(e.printing.Printer, () => ({
-        id: true,
-        name: true,
-        manufacturer: true,
-        has_camera: true,
-        filament_slots: (slot) => ({
-            "@position": true,
-            material: true,
-            colour: true,
-            nozzle_temp_min: true,
-            nozzle_temp_max: true,
-            bed_temp: true,
-            order_by: slot["@position"],
-        }),
-        filter_single: { id },
-    })).run(db);
+    const printer = await e
+        .select(e.printing.Printer, (p) => ({ ...PrinterConfigShape(p), filter_single: { id } }))
+        .run(db);
     if (!printer) return false;
     const name = await printManager.addPrinter(buildConfig(printer));
     printers.set(name, { id: printer.id, connected: printManager.isConnected(name) });
