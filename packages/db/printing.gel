@@ -118,26 +118,18 @@ module printing {
         required bed_temp: int16;
     }
 
-    type FilamentSlot {
-        required printer: Printer {
-            on target delete delete source;
-        }
-        required position: int16 {
-            constraint min_value(0);
-        }
-        filament: Filament {
-            on target delete allow;
-        }
-        constraint exclusive on ((.printer, .position));
-    }
-
     type Printer {
         required name: str;
         required manufacturer: str;
         required model: str;
         required has_camera: bool;
         required status: PrinterStatus;
-        multi filament_slots := .<printer[is FilamentSlot];
+        required multi filament_slots: Filament {
+            position: int16 {
+                constraint min_value(0);
+            }
+            constraint exclusive on (@position);
+        }
         required nozzle_number: int16;
         required location: sign_in::Location;
         required total_print_mass: float32; #2dp like print job

@@ -4,6 +4,7 @@ import { team } from "@packages/db/interfaces";
 import { Client, Executor } from "gel";
 import z from "zod";
 import dbClient from "@/db";
+import { setupPrinters } from "@/printing";
 import sentryMiddleware from "@/lib/sentry/server"
 import { RepShape, UserShape } from "@/lib/utils/queries";
 import { InitialContext } from "@/routes/api/$";
@@ -136,6 +137,54 @@ const teamGated = (...names: team.Name[]) => {
 
 export const events = auth.use(teamGated("Events"));
 export const eventsOrDeskOrAdmin = auth.use(teamGated("Events"));
+
+const PRINTING_ERRORS = {
+  PRINTER_NOT_FOUND: {
+    status: 404,
+    message: "Printer not found",
+    data: z.object({ id: z.uuid() }),
+  },
+  PRINTER_DISCONNECTED: {
+    status: 409,
+    message: "Printer is not connected",
+  },
+  CONNECTION_FAILED: {
+    status: 502,
+    message: "Failed to connect to printer",
+  },
+  PRINTER_DISABLED: {
+    status: 409,
+    message: "Printer is disabled",
+  },
+  NOT_AN_AMS_PRINTER: {
+    status: 400,
+    message: "This action is only valid for multi-filament (AMS) printers",
+  },
+  SINGLE_SLOT_ONLY: {
+    status: 400,
+    message: "This action is only valid for single-filament printers",
+  },
+  PRINT_JOB_NOT_FOUND: {
+    status: 404,
+    message: "Print job not found",
+    data: z.object({ id: z.string() }),
+  },
+  DOWNTIME_NOT_FOUND: {
+    status: 404,
+    message: "Downtime not found",
+    data: z.object({ id: z.string() }),
+  },
+} as const satisfies ErrorMap;
+
+const ensurePrinters = os
+  .$context<{ user: NonNullable<Context["user"]> }>()
+  .errors(PRINTING_ERRORS)
+  .middleware(async ({ next }) => {
+    await setupPrinters();
+    return next();
+  });
+
+export const printing = auth.use(teamGated("3DP")).use(ensurePrinters);
 
 export class RollbackTransaction extends Error {
   readonly data: any;

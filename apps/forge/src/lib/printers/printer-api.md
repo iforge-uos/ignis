@@ -12,6 +12,7 @@ auth: 3dp
 ```
 
 ## Connect Printer
+- Uses connect printer in /src/printing.ts
 ```
 method: POST
 path: printer/{id}
@@ -144,7 +145,7 @@ body: requeue? success, message?
 method: GET
 path: printer
 auth: 3dp
-response: printers (id, name, manafacture, model)
+response: returns printers from forge/src/printing.ts
 ```
 
 ## Edit printer filament slot

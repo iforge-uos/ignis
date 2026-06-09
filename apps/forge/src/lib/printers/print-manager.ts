@@ -20,18 +20,16 @@ export class PrinterManager {
     async addPrinter(config: ManagedConfig): Promise<string> {
         const { name } = config;
         if (this.drivers.has(name)) {
-            throw new Error(`Printer "${name}" already added`);
+            return name;
         }
 
-        let driver: PrinterDriver;
-        if ('apiKey' in config) {
-            driver = new PrusaDriver();
+        const driver: PrinterDriver = 'apiKey' in config ? new PrusaDriver() : new BambuDriver();
+
+        try {
             await driver.connect(config);
-        } else if ('password' in config && 'serial' in config) {
-            driver = new BambuDriver();
-            await driver.connect(config);
-        } else {
-            throw new Error(`Printer config for "${name}" did not match a known driver shape`);
+        } catch (error) {
+            console.error(`Printer "${name}" failed to connect:`, error);
+            return name;
         }
 
         const unsub = driver.subscribeToStatus((status) => {
@@ -69,7 +67,7 @@ export class PrinterManager {
     }
 
     isConnected(name: string): boolean {
-        return this.require(name).isConnected();
+        return this.drivers.get(name)?.isConnected() ?? false;
     }
 
     disable(name: string): void {
