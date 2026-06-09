@@ -1,5 +1,5 @@
 - [x] Sort out library files
-- [x] Make library file test -> mock and integration
+- [x] Make library file test -> integration
 - [ ] Test backend libraries
 - [ ] Add interval for updating db printer status (downtime)
 - [ ] Sort out downtime
