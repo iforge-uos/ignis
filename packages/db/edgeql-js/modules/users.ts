@@ -5,11 +5,11 @@ import * as _ from "../imports";
 import type * as _default from "./default";
 import type * as _extauth from "./ext/auth";
 import type * as _std from "./std";
-import type * as _notification from "./notification";
+import type * as _training from "./training";
 import type * as _sign_in from "./sign_in";
+import type * as _notification from "./notification";
 import type * as _tools from "./tools";
 import type * as _shop from "./shop";
-import type * as _training from "./training";
 import type * as _printing from "./printing";
 import type * as _event from "./event";
 import type * as _team from "./team";
@@ -45,48 +45,48 @@ export type $UserλShape = $.typeutil.flatten<_default.$AuditableλShape & _defa
   "last_name": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "display_name": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, true>;
   "email": $.PropertyDesc<_std.$str, $.Cardinality.One, true, false, false, false>;
+  "funds": $.PropertyDesc<_std.$int32, $.Cardinality.One, false, false, false, true>;
   "organisational_unit": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "profile_picture": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "pronouns": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
+  "ucard_number": $.PropertyDesc<_std.$int32, $.Cardinality.One, true, false, false, false>;
   "username": $.PropertyDesc<_std.$str, $.Cardinality.One, true, false, false, false>;
-  "infractions": $.LinkDesc<$Infraction, $.Cardinality.Many, {}, false, true,  false, false>;
-  "mailing_list_subscriptions": $.LinkDesc<_notification.$MailingList, $.Cardinality.Many, {}, false, false,  false, false>;
-  "sign_ins": $.LinkDesc<_sign_in.$SignIn, $.Cardinality.Many, {}, false, true,  false, false>;
-  "agreements_signed": $.LinkDesc<_sign_in.$Agreement, $.Cardinality.Many, {
-    "@created_at": $.PropertyDesc<_std.$datetime, $.Cardinality.One>;
-    "@version_signed": $.PropertyDesc<_std.$int16, $.Cardinality.One>;
-  }, false, false, false, false>;
-  "bookings": $.LinkDesc<_tools.$Booking, $.Cardinality.Many, {}, false, true,  false, false>;
   "integrations": $.LinkDesc<$Integration, $.Cardinality.Many, {}, false, true,  false, false>;
-  "notifications": $.LinkDesc<_notification.$Notification, $.Cardinality.Many, {
-    "@acknowledged_at": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne>;
-  }, false, false, false, false>;
-  "purchases": $.LinkDesc<_shop.$Purchase, $.Cardinality.Many, {}, false, true,  false, false>;
   "training": $.LinkDesc<_training.$Training, $.Cardinality.Many, {
     "@created_at": $.PropertyDesc<_std.$datetime, $.Cardinality.One>;
     "@in_person_created_at": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne>;
     "@in_person_signed_off_by": $.PropertyDesc<_std.$uuid, $.Cardinality.AtMostOne>;
     "@infraction": $.PropertyDesc<_std.$uuid, $.Cardinality.AtMostOne>;
   }, false, false, false, false>;
-  "funds": $.PropertyDesc<_std.$int32, $.Cardinality.One, false, false, false, true>;
-  "ucard_number": $.PropertyDesc<_std.$int32, $.Cardinality.One, true, false, false, false>;
-  "<author[is printing::Print]": $.LinkDesc<_printing.$Print, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<author[is notification::AuthoredNotification]": $.LinkDesc<_notification.$AuthoredNotification, $.Cardinality.Many, {}, false, false,  false, false>;
+  "sign_ins": $.LinkDesc<_sign_in.$SignIn, $.Cardinality.Many, {}, false, true,  false, false>;
+  "infractions": $.LinkDesc<$Infraction, $.Cardinality.Many, {}, false, true,  false, false>;
+  "mailing_list_subscriptions": $.LinkDesc<_notification.$MailingList, $.Cardinality.Many, {}, false, false,  false, false>;
+  "agreements_signed": $.LinkDesc<_sign_in.$Agreement, $.Cardinality.Many, {
+    "@created_at": $.PropertyDesc<_std.$datetime, $.Cardinality.One>;
+    "@version_signed": $.PropertyDesc<_std.$int16, $.Cardinality.One>;
+  }, false, false, false, false>;
+  "bookings": $.LinkDesc<_tools.$Booking, $.Cardinality.Many, {}, false, true,  false, false>;
+  "notifications": $.LinkDesc<_notification.$Notification, $.Cardinality.Many, {
+    "@acknowledged_at": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne>;
+  }, false, false, false, false>;
+  "purchases": $.LinkDesc<_shop.$Purchase, $.Cardinality.Many, {}, false, true,  false, false>;
   "<user[is users::Integration]": $.LinkDesc<$Integration, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<user[is sign_in::QueuePlace]": $.LinkDesc<_sign_in.$QueuePlace, $.Cardinality.AtMostOne, {}, true, false,  false, false>;
   "<user[is sign_in::SignIn]": $.LinkDesc<_sign_in.$SignIn, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<user[is users::Infraction]": $.LinkDesc<$Infraction, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<subscribers[is notification::MailingList]": $.LinkDesc<_notification.$MailingList, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<author[is printing::Print]": $.LinkDesc<_printing.$Print, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<user[is training::Session]": $.LinkDesc<_training.$Session, $.Cardinality.Many, {}, false, false,  false, false>;
   "<queued_users_that_can_sign_in[is sign_in::Location]": $.LinkDesc<_sign_in.$Location, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<user[is users::UserSettingValue]": $.LinkDesc<$UserSettingValue, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<user[is users::Infraction]": $.LinkDesc<$Infraction, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<user[is sign_in::UserRegistration]": $.LinkDesc<_sign_in.$UserRegistration, $.Cardinality.AtMostOne, {}, true, false,  false, false>;
+  "<subscribers[is notification::MailingList]": $.LinkDesc<_notification.$MailingList, $.Cardinality.Many, {}, false, false,  false, false>;
   "<user[is tools::Booking]": $.LinkDesc<_tools.$Booking, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<user[is shop::Purchase]": $.LinkDesc<_shop.$Purchase, $.Cardinality.Many, {}, false, false,  false, false>;
   "<attendees[is event::Event]": $.LinkDesc<_event.$Event, $.Cardinality.Many, {}, false, false,  false, false>;
   "<interested[is event::Event]": $.LinkDesc<_event.$Event, $.Cardinality.Many, {}, false, false,  false, false>;
   "<organiser[is event::Event]": $.LinkDesc<_event.$Event, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<author[is notification::AuthoredNotification]": $.LinkDesc<_notification.$AuthoredNotification, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<user[is shop::Purchase]": $.LinkDesc<_shop.$Purchase, $.Cardinality.Many, {}, false, false,  false, false>;
   "<users[is shop::Module]": $.LinkDesc<_shop.$Module, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<user[is sign_in::QueuePlace]": $.LinkDesc<_sign_in.$QueuePlace, $.Cardinality.AtMostOne, {}, true, false,  false, false>;
-  "<user[is sign_in::UserRegistration]": $.LinkDesc<_sign_in.$UserRegistration, $.Cardinality.AtMostOne, {}, true, false,  false, false>;
-  "<user[is training::Session]": $.LinkDesc<_training.$Session, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<user[is users::UserSettingValue]": $.LinkDesc<$UserSettingValue, $.Cardinality.Many, {}, false, false,  false, false>;
   "<attendees": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<author": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<interested": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
@@ -127,9 +127,9 @@ const $Infraction = $.makeType<$Infraction>(_.spec, "2a303486-f86c-11ee-bf41-731
 const Infraction: $.$expr_PathNode<$.TypeSet<$Infraction, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Infraction, $.Cardinality.Many), null);
 
 export type $IntegrationλShape = $.typeutil.flatten<_default.$AuditableλShape & {
+  "user": $.LinkDesc<$User, $.Cardinality.One, {}, false, false,  false, false>;
   "external_id": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "platform": $.PropertyDesc<$Platform, $.Cardinality.One, false, false, false, false>;
-  "user": $.LinkDesc<$User, $.Cardinality.One, {}, false, false,  false, false>;
   "external_email": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "<integrations[is users::User]": $.LinkDesc<$User, $.Cardinality.Many, {}, false, false,  false, false>;
   "<integrations[is users::Rep]": $.LinkDesc<$Rep, $.Cardinality.Many, {}, false, false,  false, false>;
@@ -146,21 +146,21 @@ const $Integration = $.makeType<$Integration>(_.spec, "2a067f60-f86c-11ee-a027-6
 const Integration: $.$expr_PathNode<$.TypeSet<$Integration, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Integration, $.Cardinality.Many), null);
 
 export type $RepλShape = $.typeutil.flatten<$UserλShape & {
-  "status": $.PropertyDesc<$RepStatus, $.Cardinality.One, false, false, false, true>;
-  "supervisable_training": $.LinkDesc<_training.$Training, $.Cardinality.Many, {}, false, true,  false, false>;
   "teams": $.LinkDesc<_team.$Team, $.Cardinality.AtLeastOne, {
     "@ends_at": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne>;
     "@created_at": $.PropertyDesc<_std.$datetime, $.Cardinality.One>;
     "@team_lead": $.PropertyDesc<$.ArrayType<$.NamedTupleType<{created_at: _std.$datetime, ends_at: _std.$datetime}>>, $.Cardinality.AtMostOne>;
   }, false, false, false, false>;
+  "status": $.PropertyDesc<$RepStatus, $.Cardinality.One, false, false, false, true>;
+  "supervisable_training": $.LinkDesc<_training.$Training, $.Cardinality.Many, {}, false, true,  false, false>;
   "<approved_by[is printing::Print]": $.LinkDesc<_printing.$Print, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<approved_by[is notification::AuthoredNotification]": $.LinkDesc<_notification.$AuthoredNotification, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<all_members[is team::Team]": $.LinkDesc<_team.$Team, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<members[is team::Team]": $.LinkDesc<_team.$Team, $.Cardinality.Many, {}, false, false,  false, false>;
   "<off_shift_reps[is sign_in::Location]": $.LinkDesc<_sign_in.$Location, $.Cardinality.Many, {}, false, false,  false, false>;
   "<on_shift_reps[is sign_in::Location]": $.LinkDesc<_sign_in.$Location, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<responsible_reps[is tools::Tool]": $.LinkDesc<_tools.$Tool, $.Cardinality.Many, {}, false, false,  false, false>;
   "<supervising_reps[is sign_in::Location]": $.LinkDesc<_sign_in.$Location, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<all_members[is team::Team]": $.LinkDesc<_team.$Team, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<members[is team::Team]": $.LinkDesc<_team.$Team, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<responsible_reps[is tools::Tool]": $.LinkDesc<_tools.$Tool, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<approved_by[is notification::AuthoredNotification]": $.LinkDesc<_notification.$AuthoredNotification, $.Cardinality.Many, {}, false, false,  false, false>;
   "<all_members": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<approved_by": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<members": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;

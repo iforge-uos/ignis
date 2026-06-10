@@ -25,3 +25,10 @@ config/**/*.conf
 !config/**/*.json.tpl
 !config/**/*.pem.tpl
 !config/**/*.conf.tpl
+packages/db/edgeql-js/funcops.ts
+packages/db/edgeql-js/group.ts
+packages/db/edgeql-js/hydrate.ts
+packages/db/edgeql-js/operators.ts
+packages/db/edgeql-js/params.ts
+packages/db/edgeql-js/toEdgeQL.ts
+packages/db/queries/getSignInTools.query.ts

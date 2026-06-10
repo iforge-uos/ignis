@@ -20,11 +20,11 @@ export type $Name = {
   "Future Reps": $.$expr_Literal<$Name>;
   "Staff": $.$expr_Literal<$Name>;
 } & $.EnumType<"team::Name", ["IT", "3DP", "Hardware", "Publicity", "Events", "Relations", "Operations", "Recruitment & Development", "Health & Safety", "Inclusions", "Sustainability", "Unsorted Reps", "Future Reps", "Staff"]>;
-const Name: $Name = $.makeType<$Name>(_.spec, "3e6fd344-28b0-11f1-bdec-8311c6b11787", _.syntax.literal);
+const Name: $Name = $.makeType<$Name>(_.spec, "d2f25dfb-328b-11f1-a53f-3f5023ab0e11", _.syntax.literal);
 
 export type $TeamλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
-  "description": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "name": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
+  "description": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "all_members": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, true,  false, false>;
   "members": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, true,  false, false>;
   "<teams[is users::Rep]": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, false,  false, false>;

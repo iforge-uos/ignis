@@ -92,12 +92,12 @@ export const CreateuserSchema = z.
     last_name: z.string().nullable(), // std::str
     display_name: z.string().optional(), // std::str
     email: z.string().regex(/[\w\-\.]+/), // std::str
+    funds: z.int().min(-2147483648).max(2147483647).optional(), // std::int32
     organisational_unit: z.string(), // std::str
     profile_picture: z.string().nullable(), // std::str
     pronouns: z.string().nullable(), // std::str
-    username: z.string(), // std::str
-    funds: z.int().min(-2147483648).max(2147483647).optional(), // std::int32
     ucard_number: z.int().min(-2147483648).max(2147483647), // std::int32
+    username: z.string(), // std::str
   })
   .extend({ // default::Auditable
     updated_at: zt.zonedDateTime().optional(), // std::datetime
@@ -118,12 +118,12 @@ export const UpdateuserSchema = z.
     last_name: z.string().nullable(), // std::str
     display_name: z.string().optional(), // std::str
     email: z.string().regex(/[\w\-\.]+/), // std::str
+    funds: z.int().min(-2147483648).max(2147483647).optional(), // std::int32
     organisational_unit: z.string(), // std::str
     profile_picture: z.string().nullable(), // std::str
     pronouns: z.string().nullable(), // std::str
-    username: z.string(), // std::str
-    funds: z.int().min(-2147483648).max(2147483647).optional(), // std::int32
     ucard_number: z.int().min(-2147483648).max(2147483647), // std::int32
+    username: z.string(), // std::str
   })
   .extend({ // default::Auditable
     updated_at: zt.zonedDateTime().optional(), // std::datetime

@@ -120,6 +120,8 @@ module printing {
 
     type Printer {
         required name: str;
+        required ip: str;
+        required keys: array<str>;
         required manufacturer: str;
         required model: str;
         required has_camera: bool;

@@ -11,11 +11,11 @@ export const bytesSchema = z.never();
 // #endregion
 
 // #region std::cal::local_time
-export const calSchema = z.never();
+export const cal_local_timeSchema = z.never();
 // #endregion
 
 // #region std::cal::relative_duration
-export const calSchema = z.never();
+export const cal_relative_durationSchema = z.never();
 // #endregion
 
 // #region std::datetime

@@ -9,7 +9,7 @@ sealed_dimensions: list[str] = [
     f"${name}"
     for name in re.findall(
         r"type \$([A-Za-z]+) = ",
-        (ROOT / "edgeql-js" / "modules" / "dimensions.ts").read_text(),
+        (ROOT / "edgeql-js" / "modules" / "dimensions.ts").read_text(encoding="utf-8"),
     )
 ]
 
@@ -89,7 +89,7 @@ export type $DimensionType = $.ScalarType<"std::json", SealedDimensions & {{ fie
 
 
 def apply_replacements(path: Path):
-    content = orig = path.read_text()
+    content = orig = path.read_text(encoding="utf-8")
 
     for old, new in REPLACEMENTS:
         content = content.replace(old, new)

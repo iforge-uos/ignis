@@ -68,10 +68,10 @@ export const CreateLocationSchema = z.
     opening_days: z.int().min(-32768).max(32767), // std::int16
     opening_time: z.never(), // std::cal::local_time
     name: z.enum(["MAINSPACE", "HEARTSPACE"]), // sign_in::LocationName
+    in_hours_rep_multiplier: z.int().min(-32768).max(32767), // std::int16
     max_users: z.int().min(-32768).max(32767), // std::int16
     out_of_hours_rep_multiplier: z.int().min(-32768).max(32767), // std::int16
     queue_enabled: z.boolean().optional(), // std::bool
-    in_hours_rep_multiplier: z.int().min(-32768).max(32767), // std::int16
   });
 
 export const UpdateLocationSchema = z.
@@ -89,10 +89,10 @@ export const UpdateLocationSchema = z.
     opening_days: z.int().min(-32768).max(32767), // std::int16
     opening_time: z.never(), // std::cal::local_time
     name: z.enum(["MAINSPACE", "HEARTSPACE"]), // sign_in::LocationName
+    in_hours_rep_multiplier: z.int().min(-32768).max(32767), // std::int16
     max_users: z.int().min(-32768).max(32767), // std::int16
     out_of_hours_rep_multiplier: z.int().min(-32768).max(32767), // std::int16
     queue_enabled: z.boolean().optional(), // std::bool
-    in_hours_rep_multiplier: z.int().min(-32768).max(32767), // std::int16
   });
 // #endregion
 
@@ -101,12 +101,20 @@ export const CreateQueuePlaceSchema = z.
   object({ // default::CreatedAt
     created_at: zt.zonedDateTime().optional(), // std::datetime
   })
+  .extend({ // default::Listenable
+  })
+  .extend({ // default::_BaseListenable
+  })
   .extend({ // sign_in::QueuePlace
     notified_at: zt.zonedDateTime().nullable(), // std::datetime
   });
 
 export const UpdateQueuePlaceSchema = z.
   object({ // default::CreatedAt
+  })
+  .extend({ // default::Listenable
+  })
+  .extend({ // default::_BaseListenable
   })
   .extend({ // sign_in::QueuePlace
     notified_at: zt.zonedDateTime().nullable(), // std::datetime

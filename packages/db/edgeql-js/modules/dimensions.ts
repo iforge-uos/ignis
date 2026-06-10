@@ -13,7 +13,7 @@ export type $DimensionλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73
 type $Dimension = $.ObjectType<"dimensions::Dimension", $DimensionλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
 ], "dimensions::Cuboid" | "dimensions::Cylindrical" | "dimensions::ISO216" | "dimensions::LiquidVolume" | "dimensions::Mass" | "dimensions::Thread">;
-const $Dimension = $.makeType<$Dimension>(_.spec, "622ddc18-28b0-11f1-bd8a-d1468817eabf", _.syntax.literal);
+const $Dimension = $.makeType<$Dimension>(_.spec, "1383c7df-328c-11f1-b63e-8f0d8be9aeec", _.syntax.literal);
 
 const Dimension: $.$expr_PathNode<$.TypeSet<$Dimension, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Dimension, $.Cardinality.Many), null);
 
@@ -27,7 +27,7 @@ export type $CuboidλShape = $.typeutil.flatten<$DimensionλShape & {
 type $Cuboid = $.ObjectType<"dimensions::Cuboid", $CuboidλShape, null, [
   ...$Dimension['__exclusives__'],
 ], "dimensions::Cuboid">;
-const $Cuboid = $.makeType<$Cuboid>(_.spec, "62310ee2-28b0-11f1-af77-99b050edd711", _.syntax.literal);
+const $Cuboid = $.makeType<$Cuboid>(_.spec, "138ad814-328c-11f1-b403-81a6be9857de", _.syntax.literal);
 
 const Cuboid: $.$expr_PathNode<$.TypeSet<$Cuboid, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Cuboid, $.Cardinality.Many), null);
 
@@ -40,7 +40,7 @@ export type $CylindricalλShape = $.typeutil.flatten<$DimensionλShape & {
 type $Cylindrical = $.ObjectType<"dimensions::Cylindrical", $CylindricalλShape, null, [
   ...$Dimension['__exclusives__'],
 ], "dimensions::Cylindrical">;
-const $Cylindrical = $.makeType<$Cylindrical>(_.spec, "6235cacc-28b0-11f1-bbba-59fa066aa235", _.syntax.literal);
+const $Cylindrical = $.makeType<$Cylindrical>(_.spec, "139499ae-328c-11f1-870d-099b2ee6ec29", _.syntax.literal);
 
 const Cylindrical: $.$expr_PathNode<$.TypeSet<$Cylindrical, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Cylindrical, $.Cardinality.Many), null);
 
@@ -53,7 +53,7 @@ export type $ISO216λShape = $.typeutil.flatten<$DimensionλShape & {
 type $ISO216 = $.ObjectType<"dimensions::ISO216", $ISO216λShape, null, [
   ...$Dimension['__exclusives__'],
 ], "dimensions::ISO216">;
-const $ISO216 = $.makeType<$ISO216>(_.spec, "623a3742-28b0-11f1-a5a0-c7a3548b8bb0", _.syntax.literal);
+const $ISO216 = $.makeType<$ISO216>(_.spec, "139e0941-328c-11f1-a685-894f431dd723", _.syntax.literal);
 
 const ISO216: $.$expr_PathNode<$.TypeSet<$ISO216, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($ISO216, $.Cardinality.Many), null);
 
@@ -65,7 +65,7 @@ export type $LiquidVolumeλShape = $.typeutil.flatten<$DimensionλShape & {
 type $LiquidVolume = $.ObjectType<"dimensions::LiquidVolume", $LiquidVolumeλShape, null, [
   ...$Dimension['__exclusives__'],
 ], "dimensions::LiquidVolume">;
-const $LiquidVolume = $.makeType<$LiquidVolume>(_.spec, "623fb5c8-28b0-11f1-8729-8f62d1ff1bb3", _.syntax.literal);
+const $LiquidVolume = $.makeType<$LiquidVolume>(_.spec, "13aa6c2a-328c-11f1-8641-8b32f2c5a948", _.syntax.literal);
 
 const LiquidVolume: $.$expr_PathNode<$.TypeSet<$LiquidVolume, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($LiquidVolume, $.Cardinality.Many), null);
 
@@ -77,7 +77,7 @@ export type $MassλShape = $.typeutil.flatten<$DimensionλShape & {
 type $Mass = $.ObjectType<"dimensions::Mass", $MassλShape, null, [
   ...$Dimension['__exclusives__'],
 ], "dimensions::Mass">;
-const $Mass = $.makeType<$Mass>(_.spec, "6243d9b4-28b0-11f1-921d-112441726022", _.syntax.literal);
+const $Mass = $.makeType<$Mass>(_.spec, "13b31f37-328c-11f1-ae5d-438035c0ee33", _.syntax.literal);
 
 const Mass: $.$expr_PathNode<$.TypeSet<$Mass, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Mass, $.Cardinality.Many), null);
 
@@ -90,7 +90,7 @@ export type $ThreadλShape = $.typeutil.flatten<$DimensionλShape & {
 type $Thread = $.ObjectType<"dimensions::Thread", $ThreadλShape, null, [
   ...$Dimension['__exclusives__'],
 ], "dimensions::Thread">;
-const $Thread = $.makeType<$Thread>(_.spec, "6248020a-28b0-11f1-9808-a94e292d51ff", _.syntax.literal);
+const $Thread = $.makeType<$Thread>(_.spec, "13bc2ab8-328c-11f1-9611-6f7bdbe90563", _.syntax.literal);
 
 const Thread: $.$expr_PathNode<$.TypeSet<$Thread, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Thread, $.Cardinality.Many), null);
 

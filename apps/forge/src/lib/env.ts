@@ -93,6 +93,10 @@ export default createEnv({
     // Pharos
     PHAROS_URL: z.url(),
     PHAROS_AUTH: z.string(),
+    
+    // Printing
+    BELL_APIKEY: z.string().min(1),
+
   },
   clientPrefix: "VITE_",
   client: {
@@ -198,5 +202,9 @@ export default createEnv({
       //     sentryOrg: env.VITE_SENTRY_ORG,
       //     sentryProject: env.VITE_SENTRY_PROJECT,
       //   },
+
+      printing: {
+        bell_apikey: env.BELL_APIKEY,
+      }
     })),
 });

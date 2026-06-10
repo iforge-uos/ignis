@@ -1042,10 +1042,17 @@ export namespace printing {
     "status": PrintStatus | PrinterStatus;
     "printer": Printer;
   }
-  export type Colour = "WHITE" | "BLACK" | "BLUE" | "GREEN" | "RED" | "YELLOW" | "ORANGE" | "ANY";
+  export interface Downtime extends $default.CreatedAt {
+    "end_time"?: Date | null;
+    "start_time": Date;
+    "printer": Printer;
+    "has_finished": boolean;
+    "has_started": boolean;
+    "reason"?: string | null;
+  }
   export interface Filament extends std.$Object {
     "bed_temp": number;
-    "colour": Colour;
+    "colour": string;
     "material": Material;
     "nozzle_temp_max": number;
     "nozzle_temp_min": number;
@@ -1061,6 +1068,7 @@ export namespace printing {
     "name": string;
     "on": PrintHistory[];
     "filament": Filament[];
+    "priority": Priority;
     "reason"?: string | null;
     "uploadedAt": Date;
   }
@@ -1073,6 +1081,7 @@ export namespace printing {
     "printer"?: Printer | null;
     "queue": QueueType;
     "timelapse_path": string;
+    "attempts": number;
   }
   export interface PrintStatus extends std.$Object {}
   export interface Printer extends std.$Object {
@@ -1080,21 +1089,21 @@ export namespace printing {
     "status": PrinterStatus;
     "name": string;
     "prints": Print[];
-    "filament_slots": Filament[];
+    "downtimes": Downtime[];
+    "has_camera": boolean;
     "model": string;
+    "nozzle_number": number;
     "manufacturer": string;
     "total_print_mass": number;
     "total_print_time": gel.Duration;
+    "filament_slots": Filament[];
   }
   export interface PrinterAuditEntry extends AuditEntry {
     "status": PrinterStatus;
   }
   export interface PrinterStatus extends std.$Object {}
-  export type QueueType = "PLA" | "PETG" | "TPU" | "AMS";
-  export interface SOP extends std.$Object {
-    "file_path": string;
-    "name": string;
-  }
+  export type Priority = "LOW" | "MEDIUM" | "HIGH";
+  export type QueueType = "PLA" | "PETG" | "TPU" | "MULTI";
   export namespace print_status {
     export interface Cancelled extends printing.PrintStatus {}
     export interface Complete extends printing.PrintStatus {}
@@ -1110,7 +1119,9 @@ export namespace printing {
     export interface UnderReview extends printing.PrintStatus {}
   }
   export namespace printer_status {
-    export interface Disabled extends printing.PrinterStatus {}
+    export interface Disabled extends printing.PrinterStatus {
+      "end_time"?: Date | null;
+    }
     export interface Disconnected extends printing.PrinterStatus {}
     export interface Failed extends printing.PrinterStatus {
       "note": string;
@@ -1442,7 +1453,7 @@ export interface types {
   };
   "printing": {
     "AuditEntry": printing.AuditEntry;
-    "Colour": printing.Colour;
+    "Downtime": printing.Downtime;
     "Filament": printing.Filament;
     "Material": printing.Material;
     "Print": printing.Print;
@@ -1452,8 +1463,8 @@ export interface types {
     "Printer": printing.Printer;
     "PrinterAuditEntry": printing.PrinterAuditEntry;
     "PrinterStatus": printing.PrinterStatus;
+    "Priority": printing.Priority;
     "QueueType": printing.QueueType;
-    "SOP": printing.SOP;
     "print_status": {
       "Cancelled": printing.print_status.Cancelled;
       "Complete": printing.print_status.Complete;
