@@ -4,28 +4,31 @@
 - if no response, assume a standard success/failure response
 - Where paramter for printer is passes, it is the printer name
 
-## Disconnect printer
+## Disconnect printer 
+**Complete**
 ```
 method: DELETE
-path: printer/{id}
+path: {name}
 parameters: printer
 auth: 3dp
 ```
 
 ## Connect Printer
+**Complete**
 - Uses connect printer in /src/printing.ts
 ```
 method: POST
-path: printer/{id}
+path: {name}
 parameters: printer
 auth: 3dp
 ```
 
 ## Reconnect printer
-disconnect and reconnect
+**Complete**
+- disconnect and reconnect
 ```
 method: PATCH
-path: printer/{id}
+path: {name}
 parameters: printer
 auth: 3dp
 ```
@@ -85,7 +88,7 @@ response: gcode/stl file
 ## Edit printjob status
 ```
 method: PATCH
-method: queue/{id}/status
+path: queue/{id}/status
 parameters: printjob
 auth: 3dp
 body: new status (rejected, accepeted, under review)
@@ -109,6 +112,7 @@ parameters: printer, printjob
 ```
 
 ## Pause print
+**Complete**
 ```
 method: PATCH
 path: printer/{id}/pause
@@ -125,6 +129,7 @@ parameters: printer
 ```
 
 ## Cancel print
+**Complete**
 ```
 method: PATCH
 path: printer/{id}/cancel
@@ -133,6 +138,7 @@ parameters: printer
 ```
 
 ## Finish print
+**Complete**
 ```
 method: DELETE
 path: printer/{id}/finish

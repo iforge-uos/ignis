@@ -137,20 +137,17 @@ const teamGated = (...names: team.Name[]) => {
 
 export const events = auth.use(teamGated("Events"));
 export const eventsOrDeskOrAdmin = auth.use(teamGated("Events"));
+export const threeDP = auth.use(teamGated("3DP"));
 
 const PRINTING_ERRORS = {
   PRINTER_NOT_FOUND: {
     status: 404,
     message: "Printer not found",
-    data: z.object({ id: z.uuid() }),
+    data: z.object({ name: z.string() }),
   },
   PRINTER_DISCONNECTED: {
     status: 409,
     message: "Printer is not connected",
-  },
-  CONNECTION_FAILED: {
-    status: 502,
-    message: "Failed to connect to printer",
   },
   PRINTER_DISABLED: {
     status: 409,
@@ -167,13 +164,17 @@ const PRINTING_ERRORS = {
   PRINT_JOB_NOT_FOUND: {
     status: 404,
     message: "Print job not found",
-    data: z.object({ id: z.string() }),
+    data: z.object({ id: z.string() }).optional(),
   },
   DOWNTIME_NOT_FOUND: {
     status: 404,
     message: "Downtime not found",
     data: z.object({ id: z.string() }),
   },
+  COMMAND_FAILED: {
+    status: 409,
+    message: "Failed to execute command",
+  }
 } as const satisfies ErrorMap;
 
 const ensurePrinters = os
@@ -184,7 +185,10 @@ const ensurePrinters = os
     return next();
   });
 
-export const printing = auth.use(teamGated("3DP")).use(ensurePrinters);
+export const printing = auth
+  .errors(PRINTING_ERRORS)
+  .use(teamGated("3DP"))
+  .use(ensurePrinters);
 
 export class RollbackTransaction extends Error {
   readonly data: any;

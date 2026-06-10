@@ -184,6 +184,10 @@ module printing {
         required queue: QueueType; # Defines which general queue
         printer: Printer; # Not required as it may be on the general queue for any colour, define when sent to printer
         required status: PrintStatus;
+        required attempts: int16 {
+            default := 0;
+            constraint min_value(0);
+        }
         timelapse_path := "\(cdn_url(.id))/.mp4";
 
         index on (.printer);

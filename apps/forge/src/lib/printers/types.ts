@@ -25,6 +25,7 @@ export interface PrinterDriver { // General interface, inherited by specific pri
     finishJob(id: string): Promise<void>;
 
     getConfig(): PrinterConfig | null;
+    getActiveJob(): PrintJob | null;
     getStatus(fresh?: boolean ): Promise<PrinterStatus>; // gets current status;
     subscribeToStatus(callback: (status: PrinterStatus) => void): () => void; // updates status every time interval
 

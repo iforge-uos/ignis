@@ -206,6 +206,10 @@ export class BambuDriver implements PrinterDriver{
         return this.config ?? null;
     }
 
+    getActiveJob(): PrintJob | null {
+        return this.activeJob ?? null;
+    }
+
     async getStatus(fresh?: boolean): Promise<PrinterStatus> {
         if (fresh && this.connected) {
             this.requestFullStatus();

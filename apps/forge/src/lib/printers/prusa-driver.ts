@@ -163,6 +163,10 @@ export class PrusaDriver implements PrinterDriver {
         return this.config ?? null;
     }
 
+    getActiveJob(): PrintJob | null {
+        return this.activeJob ?? null;
+    }
+
     async getStatus(fresh?: boolean): Promise<PrinterStatus> {
         if (fresh) return this.fetchStatus();
         return this.currentStatus;

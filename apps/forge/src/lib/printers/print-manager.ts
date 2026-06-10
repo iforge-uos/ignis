@@ -82,20 +82,32 @@ export class PrinterManager {
         return this.require(name).sendJob(job, timelapse);
     }
 
-    cancelJob(name: string, jobId: string): Promise<void> {
-        return this.require(name).cancelJob(jobId);
+    private async activeJob(name: string): Promise<{ driver: PrinterDriver; jobId: string }> {
+        const driver = this.require(name);
+        const { currentJob } = await driver.getStatus();
+        if (!currentJob) throw new Error(`Printer "${name}" has no active job`);
+        return { driver, jobId: currentJob.printJob.jobid };
     }
 
-    pauseJob(name: string, jobId: string): Promise<void> {
-        return this.require(name).pauseJob(jobId);
+    async cancelJob(name: string): Promise<void> {
+        const { driver, jobId } = await this.activeJob(name);
+        return driver.cancelJob(jobId);
     }
 
-    resumeJob(name: string, jobId: string): Promise<void> {
-        return this.require(name).resumeJob(jobId);
+    async pauseJob(name: string): Promise<void> {
+        const { driver, jobId } = await this.activeJob(name);
+        return driver.pauseJob(jobId);
     }
 
-    finishJob(name: string, jobId: string): Promise<void> {
-        return this.require(name).finishJob(jobId);
+    async resumeJob(name: string): Promise<void> {
+        const { driver, jobId } = await this.activeJob(name);
+        return driver.resumeJob(jobId);
+    }
+
+    async finishJob(name: string): Promise<void> {
+        const driver = this.require(name);
+        const { currentJob } = await driver.getStatus();
+        return driver.finishJob(currentJob?.printJob.jobid ?? "");
     }
 
     getConfig(printerName: string): PrinterConfig | null {
@@ -105,6 +117,10 @@ export class PrinterManager {
             return { ip, name, manufacturer, slots, queue, hasCamera };
         }
         return null;
+    }
+
+    getActiveJob(name: string): PrintJob | null {
+        return this.require(name).getActiveJob();
     }
 
     getStatus(name: string, fresh?: boolean): Promise<PrinterStatus> {
