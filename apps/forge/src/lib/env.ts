@@ -203,8 +203,5 @@ export default createEnv({
       //     sentryProject: env.VITE_SENTRY_PROJECT,
       //   },
 
-      printing: {
-        bell_apikey: env.BELL_APIKEY,
-      }
     })),
 });

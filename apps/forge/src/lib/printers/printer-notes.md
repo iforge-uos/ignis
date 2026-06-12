@@ -6,9 +6,10 @@
 - manager.ts then encapsulates those drivers allowing all the printers to be managed through 1 class without exposing too much making using it more managable
 - **Timelapse hasn't fully been setup yet, bool setup, but in prusa it doesn't do anything and but bambu it does, but not retrieved yet.**
 - *Recommend not printing timelapse till implemented*
+- Currently the only thing hard coded is the drivers/ manafacturer enum, so adding a new driver needs changing other bits
 
 ## types.ts
-- Contains enums for colours and materials based of the printing.gel in ignis/packages/db
+- Contains enums for materials and queue based of the printing.gel in ignis/packages/db
 - Also includes PrinterDriver interface, as well as interfaces for printer status, print jobs, filament slots etc
 
 ## prusa-driver.ts
