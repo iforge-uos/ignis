@@ -1050,13 +1050,6 @@ export namespace printing {
     "has_started": boolean;
     "reason"?: string | null;
   }
-  export interface Filament extends std.$Object {
-    "bed_temp": number;
-    "colour": string;
-    "material": Material;
-    "nozzle_temp_max": number;
-    "nozzle_temp_min": number;
-  }
   export type Material = "PLA" | "TPU" | "PETG";
   export interface Print extends std.$Object {
     "gcode_path": string;
@@ -1067,10 +1060,10 @@ export namespace printing {
     "mass": number;
     "name": string;
     "on": PrintHistory[];
-    "filament": Filament[];
     "priority": Priority;
     "reason"?: string | null;
     "uploadedAt": Date;
+    "filament": {material: Material, colour: string, nozzle_temp_min: number, nozzle_temp_max: number, bed_temp: number}[];
   }
   export interface PrintAuditEntry extends AuditEntry {
     "status": PrintStatus;
@@ -1082,6 +1075,7 @@ export namespace printing {
     "queue": QueueType;
     "timelapse_path": string;
     "attempts": number;
+    "has_timelapse": boolean;
   }
   export interface PrintStatus extends std.$Object {}
   export interface Printer extends std.$Object {
@@ -1092,11 +1086,12 @@ export namespace printing {
     "downtimes": Downtime[];
     "has_camera": boolean;
     "model": string;
-    "nozzle_number": number;
     "manufacturer": string;
     "total_print_mass": number;
     "total_print_time": gel.Duration;
-    "filament_slots": Filament[];
+    "filament_slots": {material: Material, colour: string, nozzle_temp_min: number, nozzle_temp_max: number, bed_temp: number}[];
+    "ip": string;
+    "keys": string[];
   }
   export interface PrinterAuditEntry extends AuditEntry {
     "status": PrinterStatus;
@@ -1454,7 +1449,6 @@ export interface types {
   "printing": {
     "AuditEntry": printing.AuditEntry;
     "Downtime": printing.Downtime;
-    "Filament": printing.Filament;
     "Material": printing.Material;
     "Print": printing.Print;
     "PrintAuditEntry": printing.PrintAuditEntry;

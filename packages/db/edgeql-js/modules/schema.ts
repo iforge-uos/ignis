@@ -901,7 +901,6 @@ export type $ObjectTypeλShape = $.typeutil.flatten<$SourceλShape & Omit<$Consi
   "<__type__[is users::SettingTemplate]": $.LinkDesc<_users.$SettingTemplate, $.Cardinality.Many, {}, false, false,  false, false>;
   "<__type__[is users::UserSettingValue]": $.LinkDesc<_users.$UserSettingValue, $.Cardinality.Many, {}, false, false,  false, false>;
   "<__type__[is printing::Downtime]": $.LinkDesc<_printing.$Downtime, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<__type__[is printing::Filament]": $.LinkDesc<_printing.$Filament, $.Cardinality.Many, {}, false, false,  false, false>;
   "<__type__[is printing::print_status::UnderReview]": $.LinkDesc<_printingprint_status.$UnderReview, $.Cardinality.Many, {}, false, false,  false, false>;
   "<__type__[is printing::printer_status::Finished]": $.LinkDesc<_printingprinter_status.$Finished, $.Cardinality.Many, {}, false, false,  false, false>;
   "<__type__[is printing::printer_status::Paused]": $.LinkDesc<_printingprinter_status.$Paused, $.Cardinality.Many, {}, false, false,  false, false>;

@@ -1,5 +1,4 @@
-import type { FilamentSlot, PrinterConfig, PrinterDriver, PrinterFile, PrinterStatus, PrintJob } from '@/lib/printers/types';
-import { Material } from '@/lib/printers/types';
+import type { FilamentSlot, Material, PrinterConfig, PrinterDriver, PrinterFile, PrinterStatus, PrintJob } from '@/lib/printers/types';
 import { Readable } from "node:stream";
 import { Client as FtpClient } from "basic-ftp";
 import mqtt, { type MqttClient } from "mqtt";
@@ -36,13 +35,13 @@ interface BambuAms {
 }
 
 export const BAMBU_TRAY_TYPE: Record<Material, string> = {
-  [Material.PLA]: "PLA",
-  [Material.TPU]: "TPU",
-  [Material.PETG]: "PETG",
+  PLA: "PLA",
+  TPU: "TPU",
+  PETG: "PETG",
 };
 
 const BAMBU_TRAY_TYPE_TO_MATERIAL: Record<string, Material> = Object.fromEntries(
-  Object.entries(BAMBU_TRAY_TYPE).map(([material, tray]) => [tray, Number(material) as Material]),
+  Object.entries(BAMBU_TRAY_TYPE).map(([material, tray]) => [tray, material as Material]),
 );
 
 interface BambuPrintReport {
@@ -91,7 +90,7 @@ export class BambuDriver implements PrinterDriver{
     private currentStatus: PrinterStatus = { state: "disconnected" };
     private activeJob?: PrintJob;
     private activeFilename?: string;
-    private finishHandled = false;
+    private finishHandled = true;
     private latestReport: BambuPrintReport = {};
     private sequenceId = 0;
     private statusListener = new Set<(status: PrinterStatus) => void>();
@@ -168,6 +167,8 @@ export class BambuDriver implements PrinterDriver{
             console.warn(`Bambu printer ${this.config?.name} has no camera, skipping timelapse`);
             recordTimelapse = false;
         }
+        // Later implement
+        timelapse = false;
         const filename = `${job.name}.gcode`;
         const gcodeResponse = await fetch(job.gcodeUrl);
         if (!gcodeResponse.ok) throw new Error(`Failed to fetch gcode at ${job.gcodeUrl}: ${gcodeResponse.status}`);
@@ -279,7 +280,8 @@ export class BambuDriver implements PrinterDriver{
                 });
             }
         }
-        return slots.sort((a, b) => a.slotId - b.slotId);
+        this.config.slots = slots.sort((a, b) => a.slotId - b.slotId);
+        return this.config.slots;
     }
 
     // Private helper functions

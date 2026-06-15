@@ -153,15 +153,12 @@ const mixGated = (teams: team.Name[], roles: string[]) => {
     .errors(ROLE_GATED_ERRORS)
     .middleware(async ({ context, next, errors }) => {
       const { user } = context;
-      if (user.__typename !== "users::Rep") {
-        throw errors.NOT_A_REP();
-      }
-      const inTeam = user.teams.some((t) => teams.includes(t.name as team.Name));
+      const inTeam = user.__typename === "users::Rep" && user.teams.some((t) => teams.includes(t.name as team.Name));
       const hasRole = user.roles.some((r) => roles.includes(r.name));
       if (!(inTeam || hasRole)) {
         throw errors.MIX_GATED({
           data: {
-            current: [...user.teams, ...user.roles],
+            current: [...(user.__typename === "users::Rep" ? user.teams : []), ...user.roles],
             required: {
               teams: teams.map((name) => ({ name })),
               roles: roles.map((name) => ({ name })),
@@ -204,7 +201,7 @@ const PRINTING_ERRORS = {
   }
 } as const satisfies ErrorMap;
 
-const ensurePrinters = os
+export const ensurePrinters = os
   .$context<{ user: NonNullable<Context["user"]> }>()
   .errors(PRINTING_ERRORS)
   .middleware(async ({ next }) => {
@@ -216,6 +213,7 @@ export const printing = auth
   .errors(PRINTING_ERRORS)
   .use(mixGated(["3DP"],["Admin"]))
   .use(ensurePrinters);
+export const ableToQueuePrint = auth.use(mixGated(["3DP"],["Admin","Printa"]))
 
 export class RollbackTransaction extends Error {
   readonly data: any;

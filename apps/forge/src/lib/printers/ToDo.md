@@ -1,15 +1,16 @@
 - [x] Sort out library files
-- [x] Make library file test -> integration
-- [ ] Test backend libraries
-- [ ] Add interval for updating db printer status (downtime)
-- [ ] Sort out downtime
+- [x] Add interval for updating db printer status (downtime)
+- [x] Sort out downtime
 - [ ] Setup queue functions
-- [ ] Add startup for driver manager
+- [x] Sort out api auth by adding admin
+- [x] Add startup for driver manager
 - [ ] Get configs for printers
 - [ ] Request static IPs for printers
 - [ ] Incorperate timelapse and livestream <br>
 <t>-> potentially into a new app like forge and mine, name: smithy?
 - [ ] Sort out docs/comments
-- [ ] Sort out api/routes
+- [ ] Sort out api
 - [ ] Integrate frontend with franklin
 - [ ] Sort out confirmation emails
+- [ ] Sort out cdn
+- [x] fix Prusa Driver

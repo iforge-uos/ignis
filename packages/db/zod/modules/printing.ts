@@ -62,26 +62,6 @@ export const UpdateDowntimeSchema = z.
   });
 // #endregion
 
-// #region printing::Filament
-export const CreateFilamentSchema = z.
-  object({
-    bed_temp: z.int().min(-32768).max(32767), // std::int16
-    colour: z.string(), // std::str
-    material: z.enum(["PLA", "TPU", "PETG"]), // printing::Material
-    nozzle_temp_max: z.int().min(-32768).max(32767), // std::int16
-    nozzle_temp_min: z.int().min(-32768).max(32767), // std::int16
-  });
-
-export const UpdateFilamentSchema = z.
-  object({
-    bed_temp: z.int().min(-32768).max(32767), // std::int16
-    colour: z.string(), // std::str
-    material: z.enum(["PLA", "TPU", "PETG"]), // printing::Material
-    nozzle_temp_max: z.int().min(-32768).max(32767), // std::int16
-    nozzle_temp_min: z.int().min(-32768).max(32767), // std::int16
-  });
-// #endregion
-
 // #region printing::Print
 export const CreatePrintSchema = z.
   object({
@@ -91,6 +71,13 @@ export const CreatePrintSchema = z.
     priority: z.enum(["LOW", "MEDIUM", "HIGH"]), // printing::Priority
     reason: z.string().nullable(), // std::str
     uploadedAt: zt.zonedDateTime(), // std::datetime
+    filament: z.tuple([
+      z.enum(["PLA", "TPU", "PETG"]),
+      z.string(),
+      z.int().min(-32768).max(32767),
+      z.int().min(-32768).max(32767),
+      z.int().min(-32768).max(32767),
+    ]).array(), // array<tuple<material:printing::Material, colour:std::str, nozzle_temp_min:std::int16, nozzle_temp_max:std::int16, bed_temp:std::int16>>
   });
 
 export const UpdatePrintSchema = z.
@@ -101,6 +88,13 @@ export const UpdatePrintSchema = z.
     priority: z.enum(["LOW", "MEDIUM", "HIGH"]), // printing::Priority
     reason: z.string().nullable(), // std::str
     uploadedAt: zt.zonedDateTime(), // std::datetime
+    filament: z.tuple([
+      z.enum(["PLA", "TPU", "PETG"]),
+      z.string(),
+      z.int().min(-32768).max(32767),
+      z.int().min(-32768).max(32767),
+      z.int().min(-32768).max(32767),
+    ]).array(), // array<tuple<material:printing::Material, colour:std::str, nozzle_temp_min:std::int16, nozzle_temp_max:std::int16, bed_temp:std::int16>>
   });
 // #endregion
 
@@ -217,10 +211,18 @@ export const CreatePrinterSchema = z.
     name: z.string(), // std::str
     has_camera: z.boolean(), // std::bool
     model: z.string(), // std::str
-    nozzle_number: z.int().min(-32768).max(32767), // std::int16
     manufacturer: z.string(), // std::str
     total_print_mass: z.number().min(-3.40282347e+38).max(3.40282347e+38), // std::float32
     total_print_time: zt.duration(), // std::duration
+    filament_slots: z.tuple([
+      z.enum(["PLA", "TPU", "PETG"]),
+      z.string(),
+      z.int().min(-32768).max(32767),
+      z.int().min(-32768).max(32767),
+      z.int().min(-32768).max(32767),
+    ]).array(), // array<tuple<material:printing::Material, colour:std::str, nozzle_temp_min:std::int16, nozzle_temp_max:std::int16, bed_temp:std::int16>>
+    ip: z.string(), // std::str
+    keys: z.string().array(), // array<std::str>
   });
 
 export const UpdatePrinterSchema = z.
@@ -228,10 +230,18 @@ export const UpdatePrinterSchema = z.
     name: z.string(), // std::str
     has_camera: z.boolean(), // std::bool
     model: z.string(), // std::str
-    nozzle_number: z.int().min(-32768).max(32767), // std::int16
     manufacturer: z.string(), // std::str
     total_print_mass: z.number().min(-3.40282347e+38).max(3.40282347e+38), // std::float32
     total_print_time: zt.duration(), // std::duration
+    filament_slots: z.tuple([
+      z.enum(["PLA", "TPU", "PETG"]),
+      z.string(),
+      z.int().min(-32768).max(32767),
+      z.int().min(-32768).max(32767),
+      z.int().min(-32768).max(32767),
+    ]).array(), // array<tuple<material:printing::Material, colour:std::str, nozzle_temp_min:std::int16, nozzle_temp_max:std::int16, bed_temp:std::int16>>
+    ip: z.string(), // std::str
+    keys: z.string().array(), // array<std::str>
   });
 // #endregion
 
@@ -376,6 +386,7 @@ export const CreatePrintHistorySchema = z.
   .extend({ // printing::PrintHistory
     queue: z.enum(["PLA", "PETG", "TPU", "MULTI"]), // printing::QueueType
     attempts: z.int().min(-32768).max(32767).optional(), // std::int16
+    has_timelapse: z.boolean(), // std::bool
   });
 
 export const UpdatePrintHistorySchema = z.
@@ -384,6 +395,7 @@ export const UpdatePrintHistorySchema = z.
   .extend({ // printing::PrintHistory
     queue: z.enum(["PLA", "PETG", "TPU", "MULTI"]), // printing::QueueType
     attempts: z.int().min(-32768).max(32767).optional(), // std::int16
+    has_timelapse: z.boolean(), // std::bool
   });
 // #endregion
 

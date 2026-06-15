@@ -110,14 +110,6 @@ module printing {
         }
     }
 
-    type Filament {
-        required material: Material;
-        required colour: str;
-        required nozzle_temp_min: int16;
-        required nozzle_temp_max: int16;
-        required bed_temp: int16;
-    }
-
     type Printer {
         required name: str;
         required ip: str;
@@ -126,13 +118,13 @@ module printing {
         required model: str;
         required has_camera: bool;
         required status: PrinterStatus;
-        required multi filament_slots: Filament {
-            position: int16 {
-                constraint min_value(0);
-            }
-            constraint exclusive on (@position);
-        }
-        required nozzle_number: int16;
+        required filament_slots: array<tuple<
+            material: Material,
+            colour: str,
+            nozzle_temp_min: int16,
+            nozzle_temp_max: int16,
+            bed_temp: int16,
+        >>;
         required location: sign_in::Location;
         required total_print_mass: float32; #2dp like print job
         required total_print_time: duration;
@@ -169,7 +161,13 @@ module printing {
 
     type Print {
         required name: str;
-        required multi filament: Filament;
+        required filament: array<tuple<
+            material: Material,
+            colour: str,
+            nozzle_temp_min: int16,
+            nozzle_temp_max: int16,
+            bed_temp: int16,
+        >>;
         required duration: duration;
         required mass: float32;  # only 2dps
         required author: users::User;
@@ -190,6 +188,7 @@ module printing {
             default := 0;
             constraint min_value(0);
         }
+        required has_timelapse: bool;
         timelapse_path := "\(cdn_url(.id))/.mp4";
 
         index on (.printer);

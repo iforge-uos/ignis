@@ -1,7 +1,16 @@
 import type { FilamentSlot, PrinterConfig, PrinterDriver, PrinterFile, PrinterStatus, PrintJob } from '@/lib/printers/types';
 
 export interface PrusaConfig extends PrinterConfig {
-    apiKey: string;
+    username: string;
+    password: string;
+}
+
+interface DigestChallenge {
+    realm: string;
+    nonce: string;
+    qop?: string;
+    opaque?: string;
+    algorithm?: string;
 }
 
 // API call responses
@@ -69,10 +78,11 @@ export class PrusaDriver implements PrinterDriver {
     private currentStatus: PrinterStatus = {state: 'disconnected'};
     private activeJob?: PrintJob;
     private activeFilename?: string;
-    private finishHandled = false; // true once finishJob has cleaned up a FINISHED print, until the next job
+    private finishHandled = true; // true once finishJob has cleaned up a FINISHED print, until the next job
 
     private pollInterval: ReturnType<typeof setInterval> | null = null;
     private statusListener = new Set<(status: PrinterStatus) => void>();
+    private digestSession?: { challenge: DigestChallenge; nc: number };
 
     // Key functions
     private get baseUrl(): string {
@@ -80,12 +90,79 @@ export class PrusaDriver implements PrinterDriver {
         return `http://${this.config.ip}/api/v1`;
     }
 
+    private digestHash(algorithm: string | undefined, data: string): string {
+        const name = algorithm?.toUpperCase().startsWith('SHA-256') ? 'sha256' : 'md5';
+        return new Bun.CryptoHasher(name).update(data).digest('hex');
+    }
+
+    private parseDigestChallenge(header: string): DigestChallenge {
+        const params: Record<string, string> = {};
+        for (const match of header.replace(/^Digest\s+/i, '').matchAll(/(\w+)=(?:"([^"]*)"|([^,]+))/g)) {
+            params[match[1].toLowerCase()] = match[2] ?? match[3];
+        }
+        return {
+            realm: params.realm ?? '',
+            nonce: params.nonce ?? '',
+            qop: params.qop,
+            opaque: params.opaque,
+            algorithm: params.algorithm,
+        };
+    }
+
+    private buildAuthHeader(method: string, uri: string, challenge: DigestChallenge, nc: number): string {
+        if (!this.config) throw new Error('Prusa printer config not set');
+        const { username, password } = this.config;
+        const { realm, nonce, qop, opaque, algorithm } = challenge;
+        const ha1 = this.digestHash(algorithm, `${username}:${realm}:${password}`);
+        const ha2 = this.digestHash(algorithm, `${method}:${uri}`);
+        const ncValue = nc.toString(16).padStart(8, '0');
+        const cnonce = crypto.randomUUID().replace(/-/g, '');
+        const response = qop
+            ? this.digestHash(algorithm, `${ha1}:${nonce}:${ncValue}:${cnonce}:${qop}:${ha2}`)
+            : this.digestHash(algorithm, `${ha1}:${nonce}:${ha2}`);
+
+        const parts = [
+            `username="${username}"`,
+            `realm="${realm}"`,
+            `nonce="${nonce}"`,
+            `uri="${uri}"`,
+            `response="${response}"`,
+        ];
+        if (qop) parts.push(`qop=${qop}`, `nc=${ncValue}`, `cnonce="${cnonce}"`);
+        if (opaque) parts.push(`opaque="${opaque}"`);
+        if (algorithm) parts.push(`algorithm=${algorithm}`);
+        return `Digest ${parts.join(', ')}`;
+    }
+
+    private async digestFetch(url: string, init: RequestInit = {}): Promise<Response> {
+        const method = (init.method ?? 'GET').toUpperCase();
+        const { pathname, search } = new URL(url);
+        const uri = pathname + search;
+
+        const send = (session: { challenge: DigestChallenge; nc: number }) => {
+            session.nc += 1;
+            const headers = new Headers(init.headers);
+            headers.set('Authorization', this.buildAuthHeader(method, uri, session.challenge, session.nc));
+            return fetch(url, { ...init, method, headers });
+        };
+
+        if (this.digestSession) {
+            const response = await send(this.digestSession);
+            if (response.status !== 401) return response;
+        }
+
+        const probe = await fetch(url, { method: 'GET' });
+        const wwwAuth = probe.headers.get('www-authenticate');
+        if (probe.status !== 401 || !wwwAuth || !/digest/i.test(wwwAuth)) return probe;
+        this.digestSession = { challenge: this.parseDigestChallenge(wwwAuth), nc: 0 };
+        return send(this.digestSession);
+    }
+
     private async request<T>(method: string, path: string, body?: unknown): Promise<T> {
         if (!this.config) throw new Error('Prusa printer config not set');
-        const response = await fetch(`${this.baseUrl}${path}`, {
+        const response = await this.digestFetch(`${this.baseUrl}${path}`, {
             method,
             headers: {
-                'X-Api-Key': this.config.apiKey,
                 'Content-Type': 'application/json',
             },
             body: body !== undefined ? JSON.stringify(body) : undefined,
@@ -180,10 +257,9 @@ export class PrusaDriver implements PrinterDriver {
 
     async uploadFile(file: Buffer, filename: string, print?: boolean): Promise<string> {
         if (!this.config) throw new Error('Prusa printer config not set');
-        const response = await fetch(`${this.baseUrl}/files/local/${encodeURIComponent(filename)}`, {
+        const response = await this.digestFetch(`${this.baseUrl}/files/local/${encodeURIComponent(filename)}`, {
             method: 'PUT',
             headers: {
-                'X-Api-Key': this.config.apiKey,
                 'Content-Type': 'application/octet-stream',
                 'Content-Length': String(file.length),
                 'Print-After-Upload': print ? '?1' : '?0',
@@ -253,7 +329,7 @@ export class PrusaDriver implements PrinterDriver {
                     name: this.activeJob?.name ?? '',
                     gcodeUrl: this.activeJob?.gcodeUrl ?? '',
                     filament: this.config?.slots ?? [],
-                    queue: this.config?.queue ?? 0,
+                    queue: this.config?.queue ?? "PLA",
                 },
                 name: this.activeJob?.name ?? '',
                 progress: rawStatus.job.progress,

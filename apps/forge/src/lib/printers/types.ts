@@ -1,10 +1,9 @@
-export enum Material { // Based of printing.Gel
-    PLA,
-    TPU,
-    PETG,
-}
+import type { z } from "zod";
+import type { MaterialSchema, QueueTypeSchema } from "@packages/db/zod/modules/printing";
 
-export type QueueType = Material | 'MULTI'; // Multi filaments work differently
+export type Material = z.infer<typeof MaterialSchema>;
+
+export type QueueType = z.infer<typeof QueueTypeSchema>;
 export interface PrinterDriver { // General interface, inherited by specific printer drivers
     connect(config: PrinterConfig): Promise<void>;
     disconnect(): Promise<void>;

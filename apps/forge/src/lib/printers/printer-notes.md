@@ -14,7 +14,7 @@
 
 ## prusa-driver.ts
 - Prusa uses an inbuilt webapp (prusa link), whose openapi.yaml can be found [here](https://github.com/prusa3d/Prusa-Link-Web/blob/master/spec/openapi.yaml)
-- The current setup uses set api keys. however, this may of changed to digest auth (passwords and username etc), so testing needs to be done.
+- The current setup uses set api keys. however, this may of changed to digest auth (passwords and username etc), so testing needs to be done. (Been changed to digest, but still needs tetsing)
 - **Setup for printers with only 1 filament slot**
 
 ## bambu-driver.ts

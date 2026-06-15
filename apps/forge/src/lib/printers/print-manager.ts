@@ -23,7 +23,7 @@ export class PrinterManager {
             return name;
         }
 
-        const driver: PrinterDriver = 'apiKey' in config ? new PrusaDriver() : new BambuDriver();
+        const driver: PrinterDriver = config.manufacturer === 'PRUSA' ? new PrusaDriver() : new BambuDriver();
 
         try {
             await driver.connect(config);

@@ -60,24 +60,6 @@ const $Downtime = $.makeType<$Downtime>(_.spec, "93775100-640b-11f1-95f3-d39c816
 
 const Downtime: $.$expr_PathNode<$.TypeSet<$Downtime, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Downtime, $.Cardinality.Many), null);
 
-export type $FilamentλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
-  "bed_temp": $.PropertyDesc<_std.$int16, $.Cardinality.One, false, false, false, false>;
-  "colour": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
-  "material": $.PropertyDesc<$Material, $.Cardinality.One, false, false, false, false>;
-  "nozzle_temp_max": $.PropertyDesc<_std.$int16, $.Cardinality.One, false, false, false, false>;
-  "nozzle_temp_min": $.PropertyDesc<_std.$int16, $.Cardinality.One, false, false, false, false>;
-  "<filament_slots[is printing::Printer]": $.LinkDesc<$Printer, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
-  "<filament[is printing::Print]": $.LinkDesc<$Print, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<filament": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<filament_slots": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
-}>;
-type $Filament = $.ObjectType<"printing::Filament", $FilamentλShape, null, [
-  ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
-], "printing::Filament">;
-const $Filament = $.makeType<$Filament>(_.spec, "93997c4d-640b-11f1-8d4b-edd10b8d3fbc", _.syntax.literal);
-
-const Filament: $.$expr_PathNode<$.TypeSet<$Filament, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Filament, $.Cardinality.Many), null);
-
 export type $PrintλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
   "gcode_path": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
   "stl_path": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
@@ -87,10 +69,10 @@ export type $PrintλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c
   "mass": $.PropertyDesc<_std.$float32, $.Cardinality.One, false, false, false, false>;
   "name": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "on": $.LinkDesc<$PrintHistory, $.Cardinality.Many, {}, false, false,  false, false>;
-  "filament": $.LinkDesc<$Filament, $.Cardinality.AtLeastOne, {}, false, false,  false, false>;
   "priority": $.PropertyDesc<$Priority, $.Cardinality.One, false, false, false, false>;
   "reason": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "uploadedAt": $.PropertyDesc<_std.$datetime, $.Cardinality.One, false, false, false, false>;
+  "filament": $.PropertyDesc<$.ArrayType<$.NamedTupleType<{material: $Material, colour: _std.$str, nozzle_temp_min: _std.$int16, nozzle_temp_max: _std.$int16, bed_temp: _std.$int16}>>, $.Cardinality.One, false, false, false, false>;
   "<print[is printing::PrintAuditEntry]": $.LinkDesc<$PrintAuditEntry, $.Cardinality.Many, {}, false, false,  false, false>;
   "<print[is printing::print_status::Printing]": $.LinkDesc<_printingprint_status.$Printing, $.Cardinality.Many, {}, false, false,  false, false>;
   "<print[is printing::printer_status::Printing]": $.LinkDesc<_printingprinter_status.$Printing, $.Cardinality.Many, {}, false, false,  false, false>;
@@ -123,6 +105,7 @@ export type $PrintHistoryλShape = $.typeutil.flatten<_default.$CreatedAtλShape
   "queue": $.PropertyDesc<$QueueType, $.Cardinality.One, false, false, false, false>;
   "timelapse_path": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
   "attempts": $.PropertyDesc<_std.$int16, $.Cardinality.One, false, false, false, true>;
+  "has_timelapse": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, false>;
   "<on[is printing::Print]": $.LinkDesc<$Print, $.Cardinality.Many, {}, false, false,  false, false>;
   "<on": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
@@ -153,13 +136,12 @@ export type $PrinterλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f7384
   "downtimes": $.LinkDesc<$Downtime, $.Cardinality.Many, {}, false, true,  false, false>;
   "has_camera": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, false>;
   "model": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
-  "nozzle_number": $.PropertyDesc<_std.$int16, $.Cardinality.One, false, false, false, false>;
   "manufacturer": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "total_print_mass": $.PropertyDesc<_std.$float32, $.Cardinality.One, false, false, false, false>;
   "total_print_time": $.PropertyDesc<_std.$duration, $.Cardinality.One, false, false, false, false>;
-  "filament_slots": $.LinkDesc<$Filament, $.Cardinality.AtLeastOne, {
-    "@position": $.PropertyDesc<_std.$int16, $.Cardinality.AtMostOne>;
-  }, true, false, false, false>;
+  "filament_slots": $.PropertyDesc<$.ArrayType<$.NamedTupleType<{material: $Material, colour: _std.$str, nozzle_temp_min: _std.$int16, nozzle_temp_max: _std.$int16, bed_temp: _std.$int16}>>, $.Cardinality.One, false, false, false, false>;
+  "ip": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
+  "keys": $.PropertyDesc<$.ArrayType<_std.$str>, $.Cardinality.One, false, false, false, false>;
   "<printer[is printing::AuditEntry]": $.LinkDesc<$AuditEntry, $.Cardinality.Many, {}, false, false,  false, false>;
   "<printer[is printing::PrintAuditEntry]": $.LinkDesc<$PrintAuditEntry, $.Cardinality.Many, {}, false, false,  false, false>;
   "<printer[is printing::PrinterAuditEntry]": $.LinkDesc<$PrinterAuditEntry, $.Cardinality.Many, {}, false, false,  false, false>;
@@ -169,7 +151,6 @@ export type $PrinterλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f7384
 }>;
 type $Printer = $.ObjectType<"printing::Printer", $PrinterλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
-  {filament_slots: {__element__: $Filament, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
 ], "printing::Printer">;
 const $Printer = $.makeType<$Printer>(_.spec, "14af7e90-328c-11f1-9bbc-13e80ed3e143", _.syntax.literal);
 
@@ -223,7 +204,7 @@ function cdn_url(...args: any[]) {
 
 
 
-export { Material, Priority, QueueType, $AuditEntry, AuditEntry, $Downtime, Downtime, $Filament, Filament, $Print, Print, $PrintAuditEntry, PrintAuditEntry, $PrintHistory, PrintHistory, $PrintStatus, PrintStatus, $Printer, Printer, $PrinterAuditEntry, PrinterAuditEntry, $PrinterStatus, PrinterStatus };
+export { Material, Priority, QueueType, $AuditEntry, AuditEntry, $Downtime, Downtime, $Print, Print, $PrintAuditEntry, PrintAuditEntry, $PrintHistory, PrintHistory, $PrintStatus, PrintStatus, $Printer, Printer, $PrinterAuditEntry, PrinterAuditEntry, $PrinterStatus, PrinterStatus };
 
 type __defaultExports = {
   "Material": typeof Material;
@@ -231,7 +212,6 @@ type __defaultExports = {
   "QueueType": typeof QueueType;
   "AuditEntry": typeof AuditEntry;
   "Downtime": typeof Downtime;
-  "Filament": typeof Filament;
   "Print": typeof Print;
   "PrintAuditEntry": typeof PrintAuditEntry;
   "PrintHistory": typeof PrintHistory;
@@ -249,7 +229,6 @@ const __defaultExports: __defaultExports = {
   "QueueType": QueueType,
   "AuditEntry": AuditEntry,
   "Downtime": Downtime,
-  "Filament": Filament,
   "Print": Print,
   "PrintAuditEntry": PrintAuditEntry,
   "PrintHistory": PrintHistory,

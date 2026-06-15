@@ -20,7 +20,6 @@ export const finish = printing
 
         const status = await printManager.getStatus(name);
         if (status.state === "disconnected") throw errors.PRINTER_DISCONNECTED();
-        if (status.state === "disabled") throw errors.PRINTER_DISABLED();
 
         const job = printManager.getActiveJob(name);
         if (!job) throw errors.PRINT_JOB_NOT_FOUND();
