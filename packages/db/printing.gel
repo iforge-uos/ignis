@@ -151,11 +151,11 @@ module printing {
         constraint expression on (.end_time > .start_time);
     }
 
-    function cdn_url(id: uuid) -> str {
+    function cdn_url(id: uuid, path: str) -> str {
         using (
             with
                 root := assert_exists(global default::CDN_URL, message := "CDN_URL is not set"),
-            select "\(root)/prints/\(id)/"
+            select "\(root)/\(path)/\(id)"
         )
     }
 
@@ -176,8 +176,8 @@ module printing {
         required priority: Priority;
         reason: str;
         multi `on`: PrintHistory;
-        required gcode_path := "\(cdn_url(.id))/.gcode";
-        required stl_path :=  "\(cdn_url(.id))/.stl";
+        required gcode_path := "\(cdn_url(.id,'prints')).gcode";
+        required threemf_path :=  "\(cdn_url(.id,'prints')).3mf";
     }
 
     type PrintHistory extending default::CreatedAt {
@@ -189,7 +189,7 @@ module printing {
             constraint min_value(0);
         }
         required has_timelapse: bool;
-        timelapse_path := "\(cdn_url(.id))/.mp4";
+        timelapse_path := "\(cdn_url(.id,'timelapse')).mp4";
 
         index on (.printer);
 

@@ -189,6 +189,7 @@ export default createEnv({
         globals: {
           INFRACTIONS_WEBHOOK_URL: env.INFRACTIONS_WEBHOOK_URL,
           PUB_SUB_SECRET: env.JWT_SECRET,
+          CDN_URL: env.CDN_URL,
         },
       },
       pharos: {
