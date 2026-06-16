@@ -111,12 +111,7 @@ export class PrinterManager {
     }
 
     getConfig(printerName: string): PrinterConfig | null {
-        const config = this.require(printerName).getConfig();
-        if (config) {
-            const { ip, name, manufacturer, slots, queue, hasCamera } = config;
-            return { ip, name, manufacturer, slots, queue, hasCamera };
-        }
-        return null;
+        return this.require(printerName).getConfig();
     }
 
     getActiveJob(name: string): PrintJob | null {
