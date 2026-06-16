@@ -12,13 +12,11 @@ export const enable = printing
         if (!record) throw errors.PRINTER_NOT_FOUND({ data: { name } });
         await e
             .update(e.printing.Downtime, (downtime) => ({
-                filter: e.op(
-                    e.op(downtime.printer.name, "=", name),
-                    "and",
-                    e.op(
-                        e.op(downtime.has_started, "=", true),
-                        "and",
-                        e.op(downtime.has_finished, "=", false),
+                filter: e.all(
+                    e.set(
+                        e.op(downtime.printer.name, "=", name),
+                        downtime.has_started,
+                        e.op("not", downtime.has_finished),
                     ),
                 ),
                 set: {
