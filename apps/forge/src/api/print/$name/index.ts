@@ -1,45 +1,60 @@
+import e from "@packages/db/edgeql-js";
+import * as z from "zod";
+import { printerSchema, toFilamentSlots } from "@/lib/printers/utils";
 import { printing, threeDP } from "@/orpc";
+import { printers } from "@/printing";
 import { add } from "./add";
-import { remove } from "./remove";
 import { connect } from "./connect";
 import { disconnect } from "./disconnect";
 import { reconnect } from "./reconnect";
-import * as z from "zod";
-import e from "@packages/db/edgeql-js";
-import { printers } from "@/printing";
-import { printerSchema, toFilamentSlots } from "@/lib/printers/utils";
+import { remove } from "./remove";
 
+export const PRINTER_CONNECTION_ERRORS = {
+  PRINTER_NOT_FOUND: {
+    status: 404,
+    message: "Printer not found",
+    data: z.object({ name: z.string() }),
+  },
+  DISCONNECT_FAILURE: {
+    status: 502,
+    message: "Failed to disconnect",
+  },
+  CONNECTION_FAILED: {
+    status: 502,
+    message: "Failed to connect to printer",
+  },
+} as const;
 
 export const get = printing
-    .route({ method: "GET", path: "/" })
-    .input(z.object({ name: z.string().min(1) }))
-    .output(printerSchema.nullable())
-    .handler(async ({ input: { name }, errors, context: { db } }) => {
-        const uuid = printers.get(name)?.id;
-        if (!uuid) throw errors.PRINTER_NOT_FOUND({ data: { name } });
-        const printer = await e
-            .select(e.printing.Printer, (p) => ({
-                id: true,
-                name: true,
-                manufacturer: true,
-                model: true,
-                has_camera: true,
-                filament_slots: true,
-                location: p.location.name,
-                total_print_mass: true,
-                total_print_time: true,
-                filter_single: { id: uuid },
-            }))
-            .run(db);
-        if (!printer) return null;
-        return { ...printer, filament_slots: toFilamentSlots(printer.filament_slots) };
-    });
+  .route({ method: "GET", path: "/" })
+  .input(z.object({ name: z.string().min(1) }))
+  .output(printerSchema.nullable())
+  .handler(async ({ input: { name }, errors, context: { db } }) => {
+    const uuid = printers.get(name)?.id;
+    if (!uuid) throw errors.PRINTER_NOT_FOUND({ data: { name } });
+    const printer = await e
+      .select(e.printing.Printer, (p) => ({
+        id: true,
+        name: true,
+        manufacturer: true,
+        model: true,
+        has_camera: true,
+        filament_slots: true,
+        location: p.location.name,
+        total_print_mass: true,
+        total_print_time: true,
+        filter_single: { id: uuid },
+      }))
+      .run(db);
+    if (!printer) return null;
+    return { ...printer, filament_slots: toFilamentSlots(printer.filament_slots) };
+  });
 
 export const nameRoutes = threeDP.prefix("/{name}").router({
-    get,
-    add,
-    remove,
-    connect,
-    disconnect,
-    reconnect,
+  get,
+  add,
+  remove,
+  connect,
+  disconnect,
+  reconnect,
 });

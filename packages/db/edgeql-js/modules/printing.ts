@@ -10,6 +10,12 @@ import type * as _users from "./users";
 import type * as _printingprint_status from "./printing/print_status";
 import type * as _printingprinter_status from "./printing/printer_status";
 import type * as _sign_in from "./sign_in";
+export type $Manafacturers = {
+  "PRUSA": $.$expr_Literal<$Manafacturers>;
+  "BAMBU": $.$expr_Literal<$Manafacturers>;
+} & $.EnumType<"printing::Manafacturers", ["PRUSA", "BAMBU"]>;
+const Manafacturers: $Manafacturers = $.makeType<$Manafacturers>(_.spec, "09d890df-6973-11f1-bfc8-1f57aa424684", _.syntax.literal);
+
 export type $Material = {
   "PLA": $.$expr_Literal<$Material>;
   "TPU": $.$expr_Literal<$Material>;
@@ -61,8 +67,6 @@ const $Downtime = $.makeType<$Downtime>(_.spec, "93775100-640b-11f1-95f3-d39c816
 const Downtime: $.$expr_PathNode<$.TypeSet<$Downtime, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Downtime, $.Cardinality.Many), null);
 
 export type $PrintλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
-  "gcode_path": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
-  "stl_path": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
   "approved_by": $.LinkDesc<_users.$Rep, $.Cardinality.One, {}, false, false,  false, false>;
   "author": $.LinkDesc<_users.$User, $.Cardinality.One, {}, false, false,  false, false>;
   "duration": $.PropertyDesc<_std.$duration, $.Cardinality.One, false, false, false, false>;
@@ -71,8 +75,9 @@ export type $PrintλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c
   "on": $.LinkDesc<$PrintHistory, $.Cardinality.Many, {}, false, false,  false, false>;
   "priority": $.PropertyDesc<$Priority, $.Cardinality.One, false, false, false, false>;
   "reason": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
-  "uploadedAt": $.PropertyDesc<_std.$datetime, $.Cardinality.One, false, false, false, false>;
   "filament": $.PropertyDesc<$.ArrayType<$.NamedTupleType<{material: $Material, colour: _std.$str, nozzle_temp_min: _std.$int16, nozzle_temp_max: _std.$int16, bed_temp: _std.$int16}>>, $.Cardinality.One, false, false, false, false>;
+  "gcode_path": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
+  "threemf_path": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
   "<print[is printing::PrintAuditEntry]": $.LinkDesc<$PrintAuditEntry, $.Cardinality.Many, {}, false, false,  false, false>;
   "<print[is printing::print_status::Printing]": $.LinkDesc<_printingprint_status.$Printing, $.Cardinality.Many, {}, false, false,  false, false>;
   "<print[is printing::printer_status::Printing]": $.LinkDesc<_printingprinter_status.$Printing, $.Cardinality.Many, {}, false, false,  false, false>;
@@ -103,9 +108,9 @@ export type $PrintHistoryλShape = $.typeutil.flatten<_default.$CreatedAtλShape
   "status": $.LinkDesc<$PrintStatus, $.Cardinality.One, {}, false, false,  false, false>;
   "printer": $.LinkDesc<$Printer, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
   "queue": $.PropertyDesc<$QueueType, $.Cardinality.One, false, false, false, false>;
-  "timelapse_path": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
   "attempts": $.PropertyDesc<_std.$int16, $.Cardinality.One, false, false, false, true>;
   "has_timelapse": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, false>;
+  "timelapse_path": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
   "<on[is printing::Print]": $.LinkDesc<$Print, $.Cardinality.Many, {}, false, false,  false, false>;
   "<on": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
@@ -180,17 +185,20 @@ const PrinterStatus: $.$expr_PathNode<$.TypeSet<$PrinterStatus, $.Cardinality.Ma
 
 type cdn_urlλFuncExpr<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$uuid>>,
+  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$str>>,
 > = $.$expr_Function<
-  _std.$str, $.cardutil.paramCardinality<P1>
+  _std.$str, $.cardutil.multiplyCardinalities<$.cardutil.paramCardinality<P1>, $.cardutil.paramCardinality<P2>>
 >;
 function cdn_url<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$uuid>>,
+  P2 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$str>>,
 >(
   id: P1,
-): cdn_urlλFuncExpr<P1>;
+  path: P2,
+): cdn_urlλFuncExpr<P1, P2>;
 function cdn_url(...args: any[]) {
   const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('printing::cdn_url', args, _.spec, [
-    {args: [{typeId: "00000000-0000-0000-0000-000000000100", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000101"},
+    {args: [{typeId: "00000000-0000-0000-0000-000000000100", optional: false, setoftype: false, variadic: false}, {typeId: "00000000-0000-0000-0000-000000000101", optional: false, setoftype: false, variadic: false}], returnTypeId: "00000000-0000-0000-0000-000000000101"},
   ]);
   return _.syntax.$expressionify({
     __kind__: $.ExpressionKind.Function,
@@ -204,9 +212,10 @@ function cdn_url(...args: any[]) {
 
 
 
-export { Material, Priority, QueueType, $AuditEntry, AuditEntry, $Downtime, Downtime, $Print, Print, $PrintAuditEntry, PrintAuditEntry, $PrintHistory, PrintHistory, $PrintStatus, PrintStatus, $Printer, Printer, $PrinterAuditEntry, PrinterAuditEntry, $PrinterStatus, PrinterStatus };
+export { Manafacturers, Material, Priority, QueueType, $AuditEntry, AuditEntry, $Downtime, Downtime, $Print, Print, $PrintAuditEntry, PrintAuditEntry, $PrintHistory, PrintHistory, $PrintStatus, PrintStatus, $Printer, Printer, $PrinterAuditEntry, PrinterAuditEntry, $PrinterStatus, PrinterStatus };
 
 type __defaultExports = {
+  "Manafacturers": typeof Manafacturers;
   "Material": typeof Material;
   "Priority": typeof Priority;
   "QueueType": typeof QueueType;
@@ -224,6 +233,7 @@ type __defaultExports = {
   "printer_status": typeof _module__printer_status
 };
 const __defaultExports: __defaultExports = {
+  "Manafacturers": Manafacturers,
   "Material": Material,
   "Priority": Priority,
   "QueueType": QueueType,

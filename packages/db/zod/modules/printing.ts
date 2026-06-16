@@ -70,7 +70,6 @@ export const CreatePrintSchema = z.
     name: z.string(), // std::str
     priority: z.enum(["LOW", "MEDIUM", "HIGH"]), // printing::Priority
     reason: z.string().nullable(), // std::str
-    uploadedAt: zt.zonedDateTime(), // std::datetime
     filament: z.tuple([
       z.enum(["PLA", "TPU", "PETG"]),
       z.string(),
@@ -87,7 +86,6 @@ export const UpdatePrintSchema = z.
     name: z.string(), // std::str
     priority: z.enum(["LOW", "MEDIUM", "HIGH"]), // printing::Priority
     reason: z.string().nullable(), // std::str
-    uploadedAt: zt.zonedDateTime(), // std::datetime
     filament: z.tuple([
       z.enum(["PLA", "TPU", "PETG"]),
       z.string(),

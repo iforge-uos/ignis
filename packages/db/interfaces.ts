@@ -1050,10 +1050,9 @@ export namespace printing {
     "has_started": boolean;
     "reason"?: string | null;
   }
+  export type Manafacturers = "PRUSA" | "BAMBU";
   export type Material = "PLA" | "TPU" | "PETG";
   export interface Print extends std.$Object {
-    "gcode_path": string;
-    "stl_path": string;
     "approved_by": users.Rep;
     "author": users.User;
     "duration": gel.Duration;
@@ -1062,8 +1061,9 @@ export namespace printing {
     "on": PrintHistory[];
     "priority": Priority;
     "reason"?: string | null;
-    "uploadedAt": Date;
     "filament": {material: Material, colour: string, nozzle_temp_min: number, nozzle_temp_max: number, bed_temp: number}[];
+    "gcode_path": string;
+    "threemf_path": string;
   }
   export interface PrintAuditEntry extends AuditEntry {
     "status": PrintStatus;
@@ -1073,9 +1073,9 @@ export namespace printing {
     "status": PrintStatus;
     "printer"?: Printer | null;
     "queue": QueueType;
-    "timelapse_path": string;
     "attempts": number;
     "has_timelapse": boolean;
+    "timelapse_path": string;
   }
   export interface PrintStatus extends std.$Object {}
   export interface Printer extends std.$Object {
@@ -1449,6 +1449,7 @@ export interface types {
   "printing": {
     "AuditEntry": printing.AuditEntry;
     "Downtime": printing.Downtime;
+    "Manafacturers": printing.Manafacturers;
     "Material": printing.Material;
     "Print": printing.Print;
     "PrintAuditEntry": printing.PrintAuditEntry;

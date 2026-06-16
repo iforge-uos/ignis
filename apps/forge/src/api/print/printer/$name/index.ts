@@ -1,19 +1,19 @@
 import { printing } from "@/orpc";
+import { cancel } from "./cancel";
+import { disable, enable } from "./enabled";
+import { filament } from "./filament";
+import { finish } from "./finish";
 import { pause } from "./pause";
 import { resume } from "./resume";
-import { cancel } from "./cancel";
-import { finish } from "./finish";
-import { enable, disable } from "./enabled";
-import { filament } from "./filament";
-import { statusRouter } from "./status"
+import { statusRouter } from "./status";
 
 export const nameRoutes = printing.prefix("/{name}").router({
-    pause,
-    resume,
-    cancel,
-    finish,
-    enable,
-    disable,
-    filament,
-    statusRouter,
+  pause,
+  resume,
+  cancel,
+  finish,
+  enable,
+  disable,
+  filament,
+  statusRouter,
 });

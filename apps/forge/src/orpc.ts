@@ -4,9 +4,9 @@ import { team } from "@packages/db/interfaces";
 import { Client, Executor } from "gel";
 import z from "zod";
 import dbClient from "@/db";
-import { setupPrinters } from "@/printing";
-import sentryMiddleware from "@/lib/sentry/server"
+import sentryMiddleware from "@/lib/sentry/server";
 import { RepShape, UserShape } from "@/lib/utils/queries";
+import { setupPrinters } from "@/printing";
 import { InitialContext } from "@/routes/api/$";
 
 export type Context = Awaited<ReturnType<typeof createContext>>;
@@ -171,10 +171,8 @@ const mixGated = (teams: team.Name[], roles: string[]) => {
     });
 };
 
-
-
-export const eventsOrDeskOrAdmin = auth.use(mixGated(["Events"],["Desk","Admin"]));
-export const threeDP = auth.use(mixGated(["3DP"],["Admin"]));
+export const eventsOrDeskOrAdmin = auth.use(mixGated(["Events"], ["Desk", "Admin"]));
+export const threeDP = auth.use(mixGated(["3DP"], ["Admin"]));
 
 const PRINTING_ERRORS = {
   PRINTER_NOT_FOUND: {
@@ -198,7 +196,7 @@ const PRINTING_ERRORS = {
   COMMAND_FAILED: {
     status: 409,
     message: "Failed to execute command",
-  }
+  },
 } as const satisfies ErrorMap;
 
 export const ensurePrinters = os
@@ -211,9 +209,9 @@ export const ensurePrinters = os
 
 export const printing = auth
   .errors(PRINTING_ERRORS)
-  .use(mixGated(["3DP"],["Admin"]))
+  .use(mixGated(["3DP"], ["Admin"]))
   .use(ensurePrinters);
-export const ableToQueuePrint = auth.use(mixGated(["3DP"],["Admin","Printa"]))
+export const ableToQueuePrint = auth.use(mixGated(["3DP"], ["Admin", "Printa"]));
 
 export class RollbackTransaction extends Error {
   readonly data: any;

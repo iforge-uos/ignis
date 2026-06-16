@@ -18,6 +18,11 @@ module printing {
         HIGH,
     >;
 
+    scalar type Manafacturers extending enum<
+        PRUSA,
+        BAMBU,
+    >;
+
     abstract type PrinterStatus;  # Discriminated union
     module printer_status {
         type Disabled extending printing::PrinterStatus {
@@ -172,7 +177,6 @@ module printing {
         required mass: float32;  # only 2dps
         required author: users::User;
         required approved_by: users::Rep;
-        required uploadedAt: datetime;
         required priority: Priority;
         reason: str;
         multi `on`: PrintHistory;
