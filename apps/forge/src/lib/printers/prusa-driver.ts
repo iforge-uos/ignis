@@ -193,7 +193,7 @@ export class PrusaDriver implements PrinterDriver {
         this.currentStatus = disconnected;
     }
 
-    isConnected(): boolean {return this.connected;}
+    isConnected(): boolean => this.connected
 
     disable(): void {this.isDisabled = true;}
     enable(): void {this.isDisabled = false;}
