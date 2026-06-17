@@ -3,10 +3,10 @@ import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
 import * as z from "zod";
 import { printerSchema, toFilamentSlots } from "@/lib/printers/utils";
 import { auth, printing } from "@/orpc";
-//import { queueRouter } from "./queue";
 import { nameRoutes } from "./$name";
 import { historyRouter } from "./history";
 import { printerRouter } from "./printer";
+import { queueRouter } from "./queue";
 
 export const list = printing
   .route({ method: "GET", path: "/" })
@@ -31,9 +31,9 @@ export const list = printing
   });
 
 export const printRouter = auth.prefix("/print").router({
-  ...historyRouter,
-  ...printerRouter,
-  //    ...queueRouter
-  ...nameRoutes,
+  history: historyRouter,
+  printer: printerRouter,
+  queue: queueRouter,
+  name: nameRoutes,
   list,
 });

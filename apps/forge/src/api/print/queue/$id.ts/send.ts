@@ -1,0 +1,72 @@
+import e from "@packages/db/edgeql-js";
+import * as z from "zod";
+import { PrintJob } from "@/lib/printers/types";
+import { toFilamentSlots } from "@/lib/printers/utils";
+import { printing } from "@/orpc";
+import { printers, printManager } from "@/printing";
+import { queueErrors } from "@/lib/printers/utils";
+
+export const send = printing
+  .errors(queueErrors)
+  .route({ method: "POST", path: "/send" })
+  .input(z.object({ id: z.uuid(), printer: z.string().min(1) }))
+  .output(z.object({ id: z.uuid() }))
+  .handler(async ({ input: { id, printer }, context: { db }, errors }) => {
+    const record = printers.get(printer);
+    if (!record) throw errors.PRINTER_NOT_FOUND({ data: { name: printer } });
+    if (!printManager.Printers.includes(printer)) throw errors.PRINTER_DISCONNECTED();
+
+    const state = await printManager.getStatus(printer);
+    if (state.state === "disconnected") throw errors.PRINTER_DISCONNECTED();
+    if (state.state === "disabled") throw errors.PRINTER_DISABLED();
+
+    const print = await e
+      .select(e.printing.Print, (p) => ({
+        id: true,
+        name: true,
+        gcode_path: true,
+        filament: true,
+        history: e.assert_single(
+          e.select(p.on, (h) => ({
+            id: true,
+            queue: true,
+            status_name: h.status.__type__.name,
+          })),
+        ),
+        filter_single: { id: e.uuid(id) },
+      }))
+      .run(db);
+    if (!print?.history) throw errors.PRINT_JOB_NOT_FOUND({ data: { id } });
+    if (print.history.status_name === "printing::print_status::Printing") throw errors.PRINT_STARTED();
+    const history_id = print.history.id;
+
+    const job: PrintJob = {
+      job_id: "0",
+      uuid: print.id,
+      name: print.name,
+      gcode_url: print.gcode_path,
+      filament: toFilamentSlots(print.filament),
+      queue: print.history.queue,
+    };
+
+    // Hard-coded no timelapse until setup
+    try {
+      await printManager.sendJob(printer, job, false);
+    } catch {
+      throw errors.COMMAND_FAILED();
+    }
+
+    await e
+      .update(e.printing.PrintHistory, () => ({
+        filter_single: { id: e.uuid(history_id) },
+        set: {
+          printer: e.select(e.printing.Printer, () => ({ filter_single: { id: record.id } })),
+          status: e.insert(e.printing.print_status.Printing, {
+            print: e.assert_exists(e.select(e.printing.Print, () => ({ filter_single: { id: e.uuid(id) } }))),
+          }),
+        },
+      }))
+      .run(db);
+
+    return { id };
+  });

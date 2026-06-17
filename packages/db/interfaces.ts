@@ -1040,7 +1040,7 @@ export namespace team {
 export namespace printing {
   export interface AuditEntry extends $default.CreatedAt {
     "status": PrintStatus | PrinterStatus;
-    "printer": Printer;
+    "printer"?: Printer | null;
   }
   export interface Downtime extends $default.CreatedAt {
     "end_time"?: Date | null;
@@ -1096,6 +1096,7 @@ export namespace printing {
   }
   export interface PrinterAuditEntry extends AuditEntry {
     "status": PrinterStatus;
+    "printer": Printer;
   }
   export interface PrinterStatus extends std.$Object {}
   export type Priority = "LOW" | "MEDIUM" | "HIGH";

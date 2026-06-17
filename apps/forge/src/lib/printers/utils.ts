@@ -12,6 +12,8 @@ import * as z from "zod";
 import { printing } from "@packages/db/interfaces";
 import type { Filament } from "@/lib/printers/types";
 
+export const THREEDP_LAPTOP_ACCOUNT = "uuid-8438";
+
 export const PRINTER_CONNECTION_ERRORS = {
   PRINTER_NOT_FOUND: {
     status: 404,
@@ -37,7 +39,7 @@ export const downtimeError = {
 } as const;
 
 export const downtimeSchema = CreateDowntimeSchema.omit({ created_at: true }).extend({
-  id: z.uuid,
+  id: z.uuid(),
   printer: z.object({ id: z.uuid(), name: z.string() }),
 });
 
@@ -137,3 +139,19 @@ export function toHistoryOutput(history: printHistoryRow[]) {
     timelapse: h.has_timelapse,
   }));
 }
+
+export const queueErrors = {
+  FILE_NOT_FOUND: {
+    status: 404,
+    message: "Print file not found",
+    data: z.object({ id: z.uuid(), file_type: z.string() }),
+  },
+  DOWNLOAD_FAILED: {
+    status: 502,
+    message: "Failed to fetch print file from the CDN",
+  },
+  PRINT_STARTED: {
+    status: 409,
+    message: "Print started, cancel/finish print to change print status",
+  },
+} as const;

@@ -40,7 +40,7 @@ const QueueType: $QueueType = $.makeType<$QueueType>(_.spec, "9376e62e-640b-11f1
 
 export type $AuditEntryλShape = $.typeutil.flatten<_default.$CreatedAtλShape & {
   "status": $.LinkDesc<$PrintStatus | $PrinterStatus, $.Cardinality.One, {}, false, false,  false, false>;
-  "printer": $.LinkDesc<$Printer, $.Cardinality.One, {}, false, false,  false, false>;
+  "printer": $.LinkDesc<$Printer, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
 }>;
 type $AuditEntry = $.ObjectType<"printing::AuditEntry", $AuditEntryλShape, null, [
   ..._default.$CreatedAt['__exclusives__'],
@@ -149,10 +149,10 @@ export type $PrinterλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f7384
   "filament": $.PropertyDesc<$.ArrayType<$.NamedTupleType<{material: $Material, colour: _std.$str, nozzle_temp_min: _std.$int16, nozzle_temp_max: _std.$int16, bed_temp: _std.$int16}>>, $.Cardinality.One, false, false, false, false>;
   "queue": $.PropertyDesc<$QueueType, $.Cardinality.One, false, true, false, false>;
   "<printer[is printing::AuditEntry]": $.LinkDesc<$AuditEntry, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<printer[is printing::PrintAuditEntry]": $.LinkDesc<$PrintAuditEntry, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<printer[is printing::PrinterAuditEntry]": $.LinkDesc<$PrinterAuditEntry, $.Cardinality.Many, {}, false, false,  false, false>;
   "<printer[is printing::Downtime]": $.LinkDesc<$Downtime, $.Cardinality.Many, {}, false, false,  false, false>;
   "<printer[is printing::PrintHistory]": $.LinkDesc<$PrintHistory, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<printer[is printing::PrintAuditEntry]": $.LinkDesc<$PrintAuditEntry, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<printer[is printing::PrinterAuditEntry]": $.LinkDesc<$PrinterAuditEntry, $.Cardinality.Many, {}, false, false,  false, false>;
   "<printer": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
 type $Printer = $.ObjectType<"printing::Printer", $PrinterλShape, null, [
@@ -162,8 +162,9 @@ const $Printer = $.makeType<$Printer>(_.spec, "14af7e90-328c-11f1-9bbc-13e80ed3e
 
 const Printer: $.$expr_PathNode<$.TypeSet<$Printer, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Printer, $.Cardinality.Many), null);
 
-export type $PrinterAuditEntryλShape = $.typeutil.flatten<Omit<$AuditEntryλShape, "status"> & {
+export type $PrinterAuditEntryλShape = $.typeutil.flatten<Omit<$AuditEntryλShape, "status" | "printer"> & {
   "status": $.LinkDesc<$PrinterStatus, $.Cardinality.One, {}, false, false,  false, false>;
+  "printer": $.LinkDesc<$Printer, $.Cardinality.One, {}, false, false,  false, false>;
 }>;
 type $PrinterAuditEntry = $.ObjectType<"printing::PrinterAuditEntry", $PrinterAuditEntryλShape, null, [
   ...$AuditEntry['__exclusives__'],
