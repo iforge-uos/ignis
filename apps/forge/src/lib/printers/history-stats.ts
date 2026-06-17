@@ -9,6 +9,7 @@ const statFields = {
   total_print_jobs: z.number(),
   total_successful_jobs: z.number(),
   total_failed_jobs: z.number(),
+  total_average_attempts: z.number(),
   total_downtime: z.number(),
   period_start: z.date(),
   period_end: z.date(),
@@ -19,9 +20,9 @@ const statFields = {
   period_print_jobs: z.number(),
   period_successful_jobs: z.number(),
   period_failed_jobs: z.number(),
+  period_average_attempts: z.number(),
   period_downtime: z.number(),
   period_downtime_percent: z.number(),
-  average_attempts: z.number(),
 };
 
 const totalStatsSchema = z.object(statFields);
@@ -80,6 +81,7 @@ export async function getHistoryStats(start_date: Date, end_date: Date = new Dat
     const complete_in_period = period_histories.filter((h) => h.status_name === COMPLETE);
     const total_print_jobs = r.histories.length;
     const total_attempts = r.histories.reduce((acc, h) => acc + h.attempts, 0);
+    const period_attempts = period_histories.reduce((acc, h) => acc + h.attempts, 0);
     const period_print_time = complete_in_period.reduce(
       (acc, h) => acc + h.prints.reduce((a, p) => a + seconds(p.duration), 0),
       0,
@@ -98,6 +100,7 @@ export async function getHistoryStats(start_date: Date, end_date: Date = new Dat
       total_print_jobs,
       total_successful_jobs: r.histories.filter((h) => h.status_name === COMPLETE).length,
       total_failed_jobs: r.histories.filter((h) => h.status_name === FAILED).length,
+      total_average_attempts: total_print_jobs > 0 ? total_attempts / total_print_jobs : 0,
       total_downtime,
       period_start: start_date,
       period_end: end_date,
@@ -108,16 +111,18 @@ export async function getHistoryStats(start_date: Date, end_date: Date = new Dat
       period_print_jobs: period_histories.length,
       period_successful_jobs: complete_in_period.length,
       period_failed_jobs: period_histories.filter((h) => h.status_name === FAILED).length,
+      period_average_attempts: period_histories.length > 0 ? period_attempts / period_histories.length : 0,
       period_downtime,
       period_downtime_percent: pct(period_downtime, period_time),
-      average_attempts: total_print_jobs > 0 ? total_attempts / total_print_jobs : 0,
     };
   });
 
   const sum = (key: keyof totalHistoryStats) => printers.reduce((acc, p) => acc + (p[key] as number), 0);
   const fleet_span = period_time * printers.length;
   const total_print_jobs = sum("total_print_jobs");
-  const total_attempts = printers.reduce((acc, p) => acc + p.average_attempts * p.total_print_jobs, 0);
+  const period_print_jobs = sum("period_print_jobs");
+  const total_attempts = printers.reduce((acc, p) => acc + p.total_average_attempts * p.total_print_jobs, 0);
+  const period_attempts = printers.reduce((acc, p) => acc + p.period_average_attempts * p.period_print_jobs, 0);
   const period_print_time = sum("period_print_time");
   const period_downtime = sum("period_downtime");
 
@@ -127,6 +132,7 @@ export async function getHistoryStats(start_date: Date, end_date: Date = new Dat
     total_print_jobs,
     total_successful_jobs: sum("total_successful_jobs"),
     total_failed_jobs: sum("total_failed_jobs"),
+    total_average_attempts: total_print_jobs > 0 ? total_attempts / total_print_jobs : 0,
     total_downtime: sum("total_downtime"),
     period_start: start_date,
     period_end: end_date,
@@ -134,12 +140,12 @@ export async function getHistoryStats(start_date: Date, end_date: Date = new Dat
     period_print_time,
     period_print_time_percent: pct(period_print_time, fleet_span),
     period_print_mass: sum("period_print_mass"),
-    period_print_jobs: sum("period_print_jobs"),
+    period_print_jobs,
     period_successful_jobs: sum("period_successful_jobs"),
     period_failed_jobs: sum("period_failed_jobs"),
+    period_average_attempts: period_print_jobs > 0 ? period_attempts / period_print_jobs : 0,
     period_downtime,
     period_downtime_percent: pct(period_downtime, fleet_span),
-    average_attempts: total_print_jobs > 0 ? total_attempts / total_print_jobs : 0,
   };
 
   return { total, printers };
