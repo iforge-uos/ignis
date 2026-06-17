@@ -98,7 +98,13 @@ def apply_replacements(path: Path):
         lines = content.splitlines()
         import_insertion_point = -1
         for i, line in enumerate(lines):
-            if line.strip().startswith("import "):
+            stripped = line.strip()
+            ends_import = (
+                (stripped.startswith("import ") and ' from "' in stripped)
+                or stripped.startswith('import "')
+                or stripped.startswith("} from ")
+            )
+            if ends_import:
                 import_insertion_point = i
 
         if import_insertion_point != -1:
