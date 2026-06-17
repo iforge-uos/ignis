@@ -1,14 +1,14 @@
-import e from "@packages/db/edgeql-js";
+import e, { $infer } from "@packages/db/edgeql-js";
 import db from "@/db";
 import type { BambuConfig } from "@/lib/printers/bambu-driver";
 import { PrinterManager } from "@/lib/printers/print-manager";
 import type { PrusaConfig } from "@/lib/printers/prusa-driver";
-import type { printing } from "@packages/db/interfaces";
-import { type FilamentSlot, type PrinterConfig, type PrinterStatus } from "@/lib/printers/types";
+import type { printing, sign_in } from "@packages/db/interfaces";
+import { type PrinterConfig, type PrinterStatus } from "@/lib/printers/types";
 
 // This file just kept growing `\_(*-*)_/`
 
-type PrinterRecord = { id: string; connected: boolean };
+type PrinterRecord = { id: string; connected: boolean; queue: printing.QueueType };
 
 export class PrinterConflictError extends Error {
   constructor(
@@ -29,57 +29,17 @@ export class PrinterNotFoundError extends Error {
 
 export const printManager = new PrinterManager();
 export const printers = new Map<string, PrinterRecord>();
+
 let checkDTInterval: NodeJS.Timeout;
 let unsubscribeStatus: (() => void) | null = null;
 const lastSyncedState = new Map<string, PrinterStatus["state"]>();
 
 let setupPromise: Promise<Map<string, PrinterRecord>> | null = null;
 
+// Middleware for print api calls
 export function setupPrinters(): Promise<Map<string, PrinterRecord>> {
   setupPromise ??= runSetup();
   return setupPromise;
-}
-
-type PrinterRow = {
-  id: string;
-  name: string;
-  ip: string;
-  keys: string[];
-  manufacturer: string;
-  has_camera: boolean;
-  filament_slots: {
-    material: string;
-    colour: string;
-    nozzle_temp_min: number;
-    nozzle_temp_max: number;
-    bed_temp: number;
-  }[];
-};
-
-function buildConfig(printer: PrinterRow): PrusaConfig | BambuConfig {
-  const slots: FilamentSlot[] = printer.filament_slots.map((slot, index) => ({
-    slotId: index,
-    filamentType: slot.material as printing.Material,
-    colour: slot.colour,
-    nozzleTempMin: slot.nozzle_temp_min,
-    nozzleTempMax: slot.nozzle_temp_max,
-    bedTemp: slot.bed_temp,
-  }));
-
-  const queue: printing.QueueType = slots.length > 1 ? "MULTI" : slots[0].filamentType;
-
-  const base = {
-    name: printer.name,
-    manufacturer: printer.manufacturer as "PRUSA" | "BAMBU",
-    hasCamera: printer.has_camera,
-    ip: printer.ip,
-    slots,
-    queue,
-  };
-
-  return base.manufacturer === "PRUSA"
-    ? { ...base, username: printer.keys[0], password: printer.keys[1] }
-    : { ...base, serial: printer.keys[0], password: printer.keys[1] };
 }
 
 const PrinterConfigShape = e.shape(e.printing.Printer, () => ({
@@ -89,38 +49,37 @@ const PrinterConfigShape = e.shape(e.printing.Printer, () => ({
   keys: true,
   manufacturer: true,
   has_camera: true,
-  filament_slots: true,
+  filament: true,
+  queue: true,
 }));
+
+type PrinterRow = $infer<typeof PrinterConfigShape>[number];
+
+// No nice way to convert
+function buildConfig(printer: PrinterRow): PrusaConfig | BambuConfig {
+  const base = {
+    name: printer.name,
+    ip: printer.ip,
+    manufacturer: printer.manufacturer as printing.Manafacturers,
+    has_camera: printer.has_camera,
+    queue: printer.queue,
+    filament: printer.filament.map((f, i) => ({ ...f, slot_id: i })),
+  };
+
+  switch (printer.manufacturer) {
+    case "PRUSA":
+      return { ...base, username: printer.keys[0], password: printer.keys[1] };
+    case "BAMBU":
+      return { ...base, serial: printer.keys[0], password: printer.keys[1] };
+    default:
+      throw new Error(`Unknown manufacturer "${printer.manufacturer}"`);
+  }
+}
 
 function beginDTCheck(): NodeJS.Timeout {
   return setInterval(async () => {
     for (const [name, record] of printers) {
       const uuid = record.id;
-      const finished = await e
-        .update(e.printing.Downtime, (d) => ({
-          filter: e.all(
-            e.set(
-              e.op(d.printer.id, "=", e.uuid(uuid)),
-              e.op("not", d.has_finished),
-              e.op(e.op(d.end_time, "<=", e.datetime_current()), "??", false),
-            ),
-          ),
-          set: { has_finished: true },
-        }))
-        .run(db);
-      const started = await e
-        .update(e.printing.Downtime, (d) => ({
-          filter: e.all(
-            e.set(
-              e.op(d.printer.id, "=", e.uuid(uuid)),
-              e.op("not", d.has_started),
-              e.op(d.start_time, "<=", e.datetime_current()),
-              e.op(e.op(d.end_time, ">", e.datetime_current()), "??", true),
-            ),
-          ),
-          set: { has_started: true },
-        }))
-        .run(db);
       const active = e.select(e.printing.Downtime, (d) => ({
         filter: e.all(e.set(e.op(d.printer.id, "=", e.uuid(uuid)), d.has_started, e.op("not", d.has_finished))),
       }));
@@ -144,42 +103,53 @@ function beginDTCheck(): NodeJS.Timeout {
               ),
             })),
           ),
+          disabled: e.op(
+            "exists",
+            e.select(e.printing.Printer, (p) => ({
+              filter: e.op(
+                e.op(p.id, "=", e.uuid(uuid)),
+                "and",
+                e.op("exists", p.status.is(e.printing.printer_status.Disabled)),
+              ),
+            })),
+          ),
         })
         .run(db);
-      if (started.length > 0 && state.down && !state.failed) {
-        const status =
-          state.openEnded || !state.latestEnd
-            ? e.insert(e.printing.printer_status.Disabled, {})
-            : e.insert(e.printing.printer_status.Disabled, { end_time: state.latestEnd });
-        await e
-          .select({
-            printer: e.update(e.printing.Printer, () => ({
-              filter_single: { id: uuid },
-              set: { status },
-            })),
-            audit: e.insert(e.printing.PrinterAuditEntry, {
-              printer: e.assert_exists(e.select(e.printing.Printer, () => ({ filter_single: { id: uuid } }))),
-              status,
-            }),
-          })
-          .run(db);
-      }
-      if (finished.length > 0 && !state.down && !state.failed) {
-        const status = printManager.isConnected(name)
-          ? e.insert(e.printing.printer_status.Idle, {})
-          : e.insert(e.printing.printer_status.Disconnected, {});
-        await e
-          .select({
-            printer: e.update(e.printing.Printer, () => ({
-              filter_single: { id: uuid },
-              set: { status },
-            })),
-            audit: e.insert(e.printing.PrinterAuditEntry, {
-              printer: e.assert_exists(e.select(e.printing.Printer, () => ({ filter_single: { id: uuid } }))),
-              status,
-            }),
-          })
-          .run(db);
+      if (!state.failed) {
+        if (state.down && !state.disabled) {
+          const status =
+            state.openEnded || !state.latestEnd
+              ? e.insert(e.printing.printer_status.Disabled, {})
+              : e.insert(e.printing.printer_status.Disabled, { end_time: state.latestEnd });
+          await e
+            .select({
+              printer: e.update(e.printing.Printer, () => ({
+                filter_single: { id: uuid },
+                set: { status },
+              })),
+              audit: e.insert(e.printing.PrinterAuditEntry, {
+                printer: e.assert_exists(e.select(e.printing.Printer, () => ({ filter_single: { id: uuid } }))),
+                status,
+              }),
+            })
+            .run(db);
+        } else if (!state.down && state.disabled) {
+          const status = printManager.isConnected(name)
+            ? e.insert(e.printing.printer_status.Idle, {})
+            : e.insert(e.printing.printer_status.Disconnected, {});
+          await e
+            .select({
+              printer: e.update(e.printing.Printer, () => ({
+                filter_single: { id: uuid },
+                set: { status },
+              })),
+              audit: e.insert(e.printing.PrinterAuditEntry, {
+                printer: e.assert_exists(e.select(e.printing.Printer, () => ({ filter_single: { id: uuid } }))),
+                status,
+              }),
+            })
+            .run(db);
+        }
       }
       if (printManager.isConnected(name)) {
         if (state.down) printManager.disable(name);
@@ -211,7 +181,7 @@ function statusToDb(status: PrinterStatus) {
       });
     case "printing":
     case "finished": {
-      const uuid = status.currentJob?.printJob.uuid;
+      const uuid = status.current_job?.print_job.uuid;
       if (!uuid) return null;
       const print = e.assert_exists(e.select(e.printing.Print, () => ({ filter_single: { id: uuid } })));
       return status.state === "printing"
@@ -274,7 +244,7 @@ async function runSetup(): Promise<Map<string, PrinterRecord>> {
   const rows = await e.select(e.printing.Printer, PrinterConfigShape).run(db);
   for (const printer of rows) {
     const name = await printManager.addPrinter(buildConfig(printer));
-    printers.set(name, { id: printer.id, connected: printManager.isConnected(name) });
+    printers.set(name, { id: printer.id, connected: printManager.isConnected(name), queue: printer.queue });
   }
   unsubscribeStatus = syncStatusWithDb();
   checkDTInterval = beginDTCheck();
@@ -287,13 +257,13 @@ export async function connectPrinter(id: string): Promise<boolean> {
     .run(db);
   if (!printer) return false;
   const name = await printManager.addPrinter(buildConfig(printer));
-  printers.set(name, { id: printer.id, connected: printManager.isConnected(name) });
+  printers.set(name, { id: printer.id, connected: printManager.isConnected(name), queue: printer.queue });
   return printManager.isConnected(name);
 }
 
 type PrinterDetails = {
   model: string;
-  location: string;
+  location: sign_in.LocationName;
 };
 
 export async function addPrinter(config: PrinterConfig, details: PrinterDetails, connect = true): Promise<boolean> {
@@ -310,34 +280,35 @@ export async function addPrinter(config: PrinterConfig, details: PrinterDetails,
   if (clash.some((printer) => printer.ip === config.ip)) {
     throw new PrinterConflictError("ip", config.ip);
   }
-  const keys = config.manufacturer === "PRUSA" ? [config.username, config.password] : [config.serial, config.password];
-  const filament_slots = config.slots.map((slot) => ({
-    material: slot.filamentType,
-    colour: slot.colour,
-    nozzle_temp_min: slot.nozzleTempMin,
-    nozzle_temp_max: slot.nozzleTempMax,
-    bed_temp: slot.bedTemp,
-  }));
+  const { username, serial, password, queue: _queue, filament, ...rest } = config;
+
+  let keys: string[];
+  switch (config.manufacturer) {
+    case "PRUSA":
+      keys = [username, password];
+      break;
+    case "BAMBU":
+      keys = [serial, password];
+      break;
+    default:
+      throw new Error(`Unknown manufacturer "${config.manufacturer}"`);
+  }
   const inserted = await e
-    .insert(e.printing.Printer, {
-      name: config.name,
-      ip: config.ip,
-      keys,
-      manufacturer: config.manufacturer,
-      model: details.model,
-      has_camera: config.hasCamera,
-      status: e.insert(e.printing.printer_status.Disconnected, {}),
-      filament_slots,
-      location: e.assert_exists(
-        e.select(e.sign_in.Location, (location) => ({
-          filter_single: e.op(location.name, "=", e.cast(e.sign_in.LocationName, details.location)),
-        })),
-      ),
-      total_print_mass: e.float32(0),
-      total_print_time: e.cast(e.duration, e.str("PT0S")),
-    })
+    .select(
+      e.insert(e.printing.Printer, {
+        ...rest,
+        keys,
+        filament: filament.map(({ slot_id, ...slot }) => slot),
+        model: details.model,
+        status: e.insert(e.printing.printer_status.Disconnected, {}),
+        location: e.select(e.sign_in.Location, () => ({ filter_single: { name: details.location } })),
+        total_print_mass: e.float32(0),
+        total_print_time: e.cast(e.duration, e.str("PT0S")),
+      }),
+      () => ({ id: true, queue: true }),
+    )
     .run(db);
-  printers.set(config.name, { id: inserted.id, connected: false });
+  printers.set(config.name, { id: inserted.id, connected: false, queue: inserted.queue });
   if (!connect) return false;
   return connectPrinter(inserted.id);
 }

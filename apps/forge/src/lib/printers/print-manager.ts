@@ -1,6 +1,6 @@
 import { type BambuConfig, BambuDriver } from "@/lib/printers/bambu-driver";
 import { type PrusaConfig, PrusaDriver } from "@/lib/printers/prusa-driver";
-import type { FilamentSlot, PrinterConfig, PrinterDriver, PrinterFile, PrinterStatus, PrintJob } from "./types";
+import type { Filament, PrinterConfig, PrinterDriver, PrinterFile, PrinterStatus, PrintJob } from "./types";
 
 type ManagedConfig = PrusaConfig | BambuConfig;
 
@@ -15,7 +15,7 @@ Additional functions to retrieve printer/s by all or name
 export class PrinterManager {
   private drivers = new Map<string, PrinterDriver>();
   private unsubscribes = new Map<string, () => void>();
-  private statusListeners = new Set<(name: string, status: PrinterStatus) => void>();
+  private status_listeners = new Set<(name: string, status: PrinterStatus) => void>();
 
   async addPrinter(config: ManagedConfig): Promise<string> {
     const { name } = config;
@@ -23,8 +23,17 @@ export class PrinterManager {
       return name;
     }
 
-    const driver: PrinterDriver =
-      config.manufacturer === "PRUSA" ? new PrusaDriver(config as PrusaConfig) : new BambuDriver(config as BambuConfig);
+    let driver: PrinterDriver;
+    switch (config.manufacturer) {
+      case "PRUSA":
+        driver = new PrusaDriver(config as PrusaConfig);
+        break;
+      case "BAMBU":
+        driver = new BambuDriver(config as BambuConfig);
+        break;
+      default:
+        throw new Error(`No matching manafacturer driver for ${config.manufacturer}`);
+    }
 
     try {
       await driver.connect();
@@ -34,7 +43,7 @@ export class PrinterManager {
     }
 
     const unsub = driver.subscribeToStatus((status) => {
-      for (const listener of this.statusListeners) listener(name, status);
+      for (const listener of this.status_listeners) listener(name, status);
     });
 
     this.drivers.set(name, driver);
@@ -56,9 +65,9 @@ export class PrinterManager {
   }
 
   subscribeToStatus(callback: (name: string, status: PrinterStatus) => void): () => void {
-    this.statusListeners.add(callback);
+    this.status_listeners.add(callback);
     return () => {
-      this.statusListeners.delete(callback);
+      this.status_listeners.delete(callback);
     };
   }
 
@@ -87,9 +96,9 @@ export class PrinterManager {
 
   private async activeJob(name: string): Promise<{ driver: PrinterDriver; jobId: string }> {
     const driver = this.require(name);
-    const { currentJob } = await driver.getStatus();
-    if (!currentJob) throw new Error(`Printer "${name}" has no active job`);
-    return { driver, jobId: currentJob.printJob.jobid };
+    const { current_job } = await driver.getStatus();
+    if (!current_job) throw new Error(`Printer "${name}" has no active job`);
+    return { driver, jobId: current_job.print_job.job_id };
   }
 
   async cancelJob(name: string): Promise<void> {
@@ -109,8 +118,8 @@ export class PrinterManager {
 
   async finishJob(name: string): Promise<void> {
     const driver = this.require(name);
-    const { currentJob } = await driver.getStatus();
-    return driver.finishJob(currentJob?.printJob.jobid ?? "");
+    const { current_job } = await driver.getStatus();
+    return driver.finishJob(current_job?.print_job.job_id ?? "");
   }
 
   getConfig(printerName: string): PrinterConfig | null {
@@ -141,11 +150,11 @@ export class PrinterManager {
     return this.require(name).deleteFile(filename);
   }
 
-  updateSlot(name: string, slotId: number, slot: FilamentSlot): Promise<void> {
+  updateSlot(name: string, slotId: number, slot: Filament): Promise<void> {
     return this.require(name).updateSlot(slotId, slot);
   }
 
-  syncSlots(name: string): Promise<FilamentSlot[]> {
+  syncSlots(name: string): Promise<Filament[]> {
     const driver = this.require(name);
     const config = driver.Config;
     if (!config) throw new Error(`Failed to retrieve config of printer: ${name}`);

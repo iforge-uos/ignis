@@ -1,6 +1,8 @@
 import e from "@packages/db/edgeql-js";
 import {
   CreateDowntimeSchema,
+  CreatePrinterSchema,
+  CreatePrintSchema,
   MaterialSchema,
   PrioritySchema,
   QueueTypeSchema,
@@ -8,6 +10,7 @@ import {
 import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
 import { durationSchema } from "@packages/db/zod/modules/std";
 import * as z from "zod";
+import { printer } from "/src/api/print/history/$name";
 
 export const downtimeError = {
   DOWNTIME_NOT_FOUND: {
@@ -17,13 +20,8 @@ export const downtimeError = {
   },
 } as const;
 
-export const downtimeSchema = z.object({
-  id: z.uuid(),
-  start_time: CreateDowntimeSchema.shape.start_time,
-  end_time: CreateDowntimeSchema.shape.end_time,
-  has_started: z.boolean(),
-  has_finished: z.boolean(),
-  reason: z.string().nullable(),
+export const downtimeSchema = CreateDowntimeSchema.omit({ created_at: true }).extend({
+  id: z.uuid,
   printer: z.object({ id: z.uuid(), name: z.string() }),
 });
 
@@ -37,39 +35,9 @@ export const downtimeShape = e.shape(e.printing.Downtime, () => ({
   printer: { id: true, name: true },
 }));
 
-export const filamentSlotSchema = z.object({
-  slotId: z.number(),
-  filamentType: MaterialSchema,
-  colour: z.string(),
-  nozzleTempMin: z.number(),
-  nozzleTempMax: z.number(),
-  bedTemp: z.number(),
-});
+export const filamentSchema = CreatePrintSchema.shape.filament;
 
-export const printerSchema = z.object({
-  id: z.uuid(),
-  name: z.string(),
-  manufacturer: z.string(),
-  model: z.string(),
-  has_camera: z.boolean(),
-  filament_slots: z.array(filamentSlotSchema),
-  location: LocationNameSchema,
-  total_print_mass: z.number(),
-  total_print_time: durationSchema,
-});
-
-// for db -> standard
-export const toFilamentSlots = (
-  slots: { material: string; colour: string; nozzle_temp_min: number; nozzle_temp_max: number; bed_temp: number }[],
-): z.infer<typeof filamentSlotSchema>[] =>
-  slots.map((s, i) => ({
-    slotId: i,
-    filamentType: s.material as z.infer<typeof MaterialSchema>,
-    colour: s.colour,
-    nozzleTempMin: s.nozzle_temp_min,
-    nozzleTempMax: s.nozzle_temp_max,
-    bedTemp: s.bed_temp,
-  }));
+export const printerSchema = CreatePrinterSchema.omit({ ip: true, keys: true });
 
 export const historyErrors = {
   HISTORY_NOT_FOUND: {
@@ -77,7 +45,7 @@ export const historyErrors = {
     message: "History not found",
     data: z.object({ msg: z.string() }),
   },
-};
+} as const;
 
 export const historyOutput = z.array(
   z.object({
@@ -89,7 +57,7 @@ export const historyOutput = z.array(
       mass: z.number(),
       duration: durationSchema,
       priority: PrioritySchema,
-      filament: z.array(filamentSlotSchema),
+      filament: z.array(filamentSchema),
       author: z.object({ id: z.uuid(), display_name: z.string() }),
       approved_by: z.object({ id: z.uuid(), display_name: z.string() }),
     }),

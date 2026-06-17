@@ -1,7 +1,7 @@
 import e from "@packages/db/edgeql-js";
 import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
 import * as z from "zod";
-import { printerSchema, toFilamentSlots } from "@/lib/printers/utils";
+import { printerSchema } from "@/lib/printers/utils";
 import { auth, printing } from "@/orpc";
 //import { queueRouter } from "./queue";
 import { nameRoutes } from "./$name";

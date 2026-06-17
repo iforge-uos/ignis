@@ -1,5 +1,5 @@
 import type {
-  FilamentSlot,
+  Filament,
   PrinterConfig,
   PrinterDriver,
   PrinterFile,
@@ -84,15 +84,15 @@ export class PrusaDriver implements PrinterDriver {
   // Private variables
   private config?: PrusaConfig;
   private connected = false;
-  private isDisabled = false;
-  private currentStatus: PrinterStatus = { state: "disconnected" };
-  private activeJob?: PrintJob;
-  private activeFilename?: string;
-  private finishHandled = true; // true once finishJob has cleaned up a FINISHED print, until the next job
+  private is_disabled = false;
+  private current_status: PrinterStatus = { state: "disconnected" };
+  private active_job?: PrintJob;
+  private active_filename?: string;
+  private finish_handled = true; // true once finishJob has cleaned up a FINISHED print, until the next job
 
-  private pollInterval: ReturnType<typeof setInterval> | null = null;
-  private statusListener = new Set<(status: PrinterStatus) => void>();
-  private digestSession?: { challenge: DigestChallenge; nc: number };
+  private poll_interval: ReturnType<typeof setInterval> | null = null;
+  private status_listener = new Set<(status: PrinterStatus) => void>();
+  private digest_session?: { challenge: DigestChallenge; nc: number };
 
   // Key functions
   private get baseUrl(): string {
@@ -156,16 +156,16 @@ export class PrusaDriver implements PrinterDriver {
       return fetch(url, { ...init, method, headers });
     };
 
-    if (this.digestSession) {
-      const response = await send(this.digestSession);
+    if (this.digest_session) {
+      const response = await send(this.digest_session);
       if (response.status !== 401) return response;
     }
 
     const probe = await fetch(url, { method: "GET" });
     const wwwAuth = probe.headers.get("www-authenticate");
     if (probe.status !== 401 || !wwwAuth || !/digest/i.test(wwwAuth)) return probe;
-    this.digestSession = { challenge: this.parseDigestChallenge(wwwAuth), nc: 0 };
-    return send(this.digestSession);
+    this.digest_session = { challenge: this.parseDigestChallenge(wwwAuth), nc: 0 };
+    return send(this.digest_session);
   }
 
   private async request<T>(method: string, path: string, body?: unknown): Promise<T> {
@@ -186,7 +186,7 @@ export class PrusaDriver implements PrinterDriver {
   // Main driver functions
   async connect(): Promise<void> {
     try {
-      this.currentStatus = await this.fetchStatus();
+      this.current_status = await this.fetchStatus();
     } catch (error) {
       this.connected = false;
       throw new Error(
@@ -201,54 +201,54 @@ export class PrusaDriver implements PrinterDriver {
     this.stopPolling();
     this.connected = false;
     const disconnected: PrinterStatus = { state: "disconnected" };
-    this.currentStatus = disconnected;
+    this.current_status = disconnected;
   }
 
   isConnected = (): boolean => this.connected;
 
   disable(): void {
-    this.isDisabled = true;
+    this.is_disabled = true;
   }
   enable(): void {
-    this.isDisabled = false;
+    this.is_disabled = false;
   }
 
   async sendJob(job: PrintJob, _timelapse?: boolean): Promise<string> {
-    if (this.isDisabled) throw new Error(`Prusa printer ${this.config?.name} is disabled`);
+    if (this.is_disabled) throw new Error(`Prusa printer ${this.config?.name} is disabled`);
     const filename = `${job.name}.gcode`;
-    const gcodeResponse = await fetch(job.gcodeUrl);
-    if (!gcodeResponse.ok) throw new Error(`Failed to fetch gcode at ${job.gcodeUrl}: ${gcodeResponse.status}`);
+    const gcodeResponse = await fetch(job.gcode_url);
+    if (!gcodeResponse.ok) throw new Error(`Failed to fetch gcode at ${job.gcode_url}: ${gcodeResponse.status}`);
     const buffer = Buffer.from(await gcodeResponse.arrayBuffer());
     await this.uploadFile(buffer, filename, true);
     const prusaJob = await this.waitForJob();
-    this.finishHandled = false;
-    this.activeJob = job;
-    this.activeJob.jobid = String(prusaJob.id);
-    this.activeFilename = filename;
-    return this.activeJob.jobid;
+    this.finish_handled = false;
+    this.active_job = job;
+    this.active_job.job_id = String(prusaJob.id);
+    this.active_filename = filename;
+    return this.active_job.job_id;
   }
 
-  async cancelJob(jobId: string): Promise<void> {
-    await this.request("DELETE", `/job/${jobId}`);
+  async cancelJob(job_id: string): Promise<void> {
+    await this.request("DELETE", `/job/${job_id}`);
   }
 
-  async pauseJob(jobId: string): Promise<void> {
-    await this.request("PUT", `/job/${jobId}/pause`);
+  async pauseJob(job_id: string): Promise<void> {
+    await this.request("PUT", `/job/${job_id}/pause`);
   }
 
-  async resumeJob(jobId: string): Promise<void> {
-    await this.request("PUT", `/job/${jobId}/resume`);
+  async resumeJob(job_id: string): Promise<void> {
+    await this.request("PUT", `/job/${job_id}/resume`);
   }
 
   async finishJob(_id: string): Promise<void> {
-    const filename = this.activeFilename ?? (this.activeJob ? `${this.activeJob.name}.gcode` : undefined);
+    const filename = this.active_filename ?? (this.active_job ? `${this.active_job.name}.gcode` : undefined);
     if (!filename) throw new Error("No active filename found");
     await this.deleteFile(filename);
-    this.activeFilename = undefined;
-    this.activeJob = undefined;
-    this.finishHandled = true;
-    this.currentStatus = { ...this.currentStatus, state: "idle" };
-    for (const listener of this.statusListener) listener(this.currentStatus);
+    this.active_filename = undefined;
+    this.active_job = undefined;
+    this.finish_handled = true;
+    this.current_status = { ...this.current_status, state: "idle" };
+    for (const listener of this.status_listener) listener(this.current_status);
   }
 
   get Config(): PrusaConfig | null {
@@ -256,19 +256,19 @@ export class PrusaDriver implements PrinterDriver {
   }
 
   get ActiveJob(): PrintJob | null {
-    return this.activeJob ?? null;
+    return this.active_job ?? null;
   }
 
   async getStatus(fresh?: boolean): Promise<PrinterStatus> {
     if (fresh) return this.fetchStatus();
-    return this.currentStatus;
+    return this.current_status;
   }
 
   subscribeToStatus(callback: (status: PrinterStatus) => void): () => void {
-    this.statusListener.add(callback);
-    if (this.currentStatus) callback(this.currentStatus);
+    this.status_listener.add(callback);
+    if (this.current_status) callback(this.current_status);
     return () => {
-      this.statusListener.delete(callback);
+      this.status_listener.delete(callback);
     };
   }
 
@@ -297,7 +297,7 @@ export class PrusaDriver implements PrinterDriver {
       .map((c) => ({
         filename: c.name,
         size: c.size ?? 0,
-        uploadedAt: new Date(c.m_timestamp * 1000),
+        uploaded_at: new Date(c.m_timestamp * 1000),
       }));
   }
 
@@ -305,17 +305,17 @@ export class PrusaDriver implements PrinterDriver {
     await this.request("DELETE", `/files/local/${encodeURIComponent(filename)}`);
   }
 
-  async updateSlot(slotId: number, filamentSlot: FilamentSlot): Promise<void> {
+  async updateSlot(slotId: number, filament: Filament): Promise<void> {
     if (!this.config) throw new Error("Updating a printer filament slot requires a config");
-    const idx = this.config.slots.findIndex((s) => s.slotId === slotId);
+    const idx = this.config.filament.findIndex((s) => s.slot_id === slotId);
     if (idx === -1) return;
-    this.config.slots[idx] = filamentSlot;
+    this.config.slots[idx] = filament;
     if (this.config.slots.length === 1) {
       this.config.queue = this.config.slots[0].filamentType;
     }
   }
 
-  async syncSlots(): Promise<FilamentSlot[]> {
+  async syncSlots(): Promise<Filament[]> {
     throw new Error("Prusa printers have no AMS to sync");
   }
 
@@ -330,55 +330,55 @@ export class PrusaDriver implements PrinterDriver {
   }
 
   private async fetchStatus(): Promise<PrinterStatus> {
-    const rawStatus = await this.request<PrusaStatusResponse>("GET", "/status");
-    this.currentStatus = this.mapStatus(rawStatus);
-    return this.currentStatus;
+    const raw_status = await this.request<PrusaStatusResponse>("GET", "/status");
+    this.current_status = this.mapStatus(raw_status);
+    return this.current_status;
   }
 
-  private mapStatus(rawStatus: PrusaStatusResponse): PrinterStatus {
-    const mapped = PRUSA_STATE_MAP[rawStatus.printer.state] ?? "error";
-    const state = this.isDisabled ? "disabled" : mapped === "finished" && this.finishHandled ? "idle" : mapped;
+  private mapStatus(raw_status: PrusaStatusResponse): PrinterStatus {
+    const mapped = PRUSA_STATE_MAP[raw_status.printer.state] ?? "error";
+    const state = this.is_disabled ? "disabled" : mapped === "finished" && this.finish_handled ? "idle" : mapped;
     return {
       state,
-      currentJob: rawStatus.job
+      current_job: raw_status.job
         ? {
-            printJob: {
-              jobid: String(rawStatus.job.id),
-              uuid: this.activeJob?.uuid ?? "",
-              name: this.activeJob?.name ?? "",
-              gcodeUrl: this.activeJob?.gcodeUrl ?? "",
+            print_job: {
+              job_id: String(raw_status.job.id),
+              uuid: this.active_job?.uuid ?? "",
+              name: this.active_job?.name ?? "",
+              gcode_url: this.active_job?.gcode_url ?? "",
               filament: this.config?.slots ?? [],
               queue: this.config?.queue ?? "PLA",
             },
-            name: this.activeJob?.name ?? "",
-            progress: rawStatus.job.progress,
-            timeRemaining: rawStatus.job.time_remaining ?? 0,
+            name: this.active_job?.name ?? "",
+            progress: raw_status.job.progress,
+            time_remaining: raw_status.job.time_remaining ?? 0,
           }
         : undefined,
       temperature: {
-        nozzle: { current: rawStatus.printer.temp_nozzle, target: rawStatus.printer.target_nozzle },
-        bed: { current: rawStatus.printer.temp_bed, target: rawStatus.printer.target_bed },
+        nozzle: { current: raw_status.printer.temp_nozzle, target: raw_status.printer.target_nozzle },
+        bed: { current: raw_status.printer.temp_bed, target: raw_status.printer.target_bed },
       },
     };
   }
 
   private startPolling(): void {
-    this.pollInterval = setInterval(async () => {
+    this.poll_interval = setInterval(async () => {
       try {
         const status = await this.fetchStatus();
-        for (const listener of this.statusListener) listener(status);
+        for (const listener of this.status_listener) listener(status);
       } catch {
         const disconnected: PrinterStatus = { state: "disconnected", errors: ["Connection lost"] };
-        this.currentStatus = disconnected;
-        for (const listener of this.statusListener) listener(disconnected);
+        this.current_status = disconnected;
+        for (const listener of this.status_listener) listener(disconnected);
       }
     }, 5000);
   }
 
   private stopPolling(): void {
-    if (this.pollInterval) {
-      clearInterval(this.pollInterval);
-      this.pollInterval = null;
+    if (this.poll_interval) {
+      clearInterval(this.poll_interval);
+      this.poll_interval = null;
     }
   }
 }

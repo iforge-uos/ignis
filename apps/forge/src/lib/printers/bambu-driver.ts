@@ -3,7 +3,7 @@ import type { printing } from "@packages/db/interfaces";
 import { Client as FtpClient } from "basic-ftp";
 import mqtt, { type MqttClient } from "mqtt";
 import type {
-  FilamentSlot,
+  Filament,
   PrinterConfig,
   PrinterDriver,
   PrinterFile,
@@ -96,14 +96,14 @@ export class BambuDriver implements PrinterDriver {
   private config?: BambuConfig;
   private client?: MqttClient;
   private connected = false;
-  private isDisabled = false;
-  private currentStatus: PrinterStatus = { state: "disconnected" };
-  private activeJob?: PrintJob;
-  private activeFilename?: string;
-  private finishHandled = true;
-  private latestReport: BambuPrintReport = {};
-  private sequenceId = 0;
-  private statusListener = new Set<(status: PrinterStatus) => void>();
+  private is_disabled = false;
+  private current_status: PrinterStatus = { state: "disconnected" };
+  private active_job?: PrintJob;
+  private active_filename?: string;
+  private finish_handled = true;
+  private latest_report: BambuPrintReport = {};
+  private sequence_id = 0;
+  private status_listener = new Set<(status: PrinterStatus) => void>();
 
   // Key functions - MQTT/BAMBU command handeling, see docs
   private get reportTopic(): string {
@@ -115,7 +115,7 @@ export class BambuDriver implements PrinterDriver {
   }
 
   private nextSequenceId(): string {
-    return String(this.sequenceId++);
+    return String(this.sequence_id++);
   }
 
   // Main driver functions
@@ -136,13 +136,13 @@ export class BambuDriver implements PrinterDriver {
     }
     this.client.on("message", (_topic, payload) => this.handleReport(payload));
     this.client.on("error", (error) => {
-      this.currentStatus = { state: "error", errors: [error.message] };
-      for (const listener of this.statusListener) listener(this.currentStatus);
+      this.current_status = { state: "error", errors: [error.message] };
+      for (const listener of this.status_listener) listener(this.current_status);
     });
     this.client.on("close", () => {
       this.connected = false;
-      this.currentStatus = { state: "disconnected", errors: ["Connection lost"] };
-      for (const listener of this.statusListener) listener(this.currentStatus);
+      this.current_status = { state: "disconnected", errors: ["Connection lost"] };
+      for (const listener of this.status_listener) listener(this.current_status);
     });
     this.client.on("connect", () => {
       this.connected = true;
@@ -157,64 +157,64 @@ export class BambuDriver implements PrinterDriver {
     await this.client?.endAsync();
     this.client = undefined;
     this.connected = false;
-    this.latestReport = {};
-    this.activeJob = undefined;
-    this.activeFilename = undefined;
-    this.finishHandled = false;
-    this.currentStatus = { state: "disconnected" };
+    this.latest_report = {};
+    this.active_job = undefined;
+    this.active_filename = undefined;
+    this.finish_handled = false;
+    this.current_status = { state: "disconnected" };
   }
 
   isConnected = (): boolean => this.connected;
 
   disable(): void {
-    this.isDisabled = true;
+    this.is_disabled = true;
   }
 
   enable(): void {
-    this.isDisabled = false;
+    this.is_disabled = false;
   }
 
   async sendJob(job: PrintJob, timelapse?: boolean): Promise<string> {
-    if (this.isDisabled) throw new Error(`Bambu printer ${this.config?.name} is disabled`);
-    let recordTimelapse = timelapse ?? false;
-    if (recordTimelapse && !this.config?.hasCamera) {
+    if (this.is_disabled) throw new Error(`Bambu printer ${this.config?.name} is disabled`);
+    let record_timelapse = timelapse ?? false;
+    if (record_timelapse && !this.config?.hasCamera) {
       console.warn(`Bambu printer ${this.config?.name} has no camera, skipping timelapse`);
-      recordTimelapse = false;
+      record_timelapse = false;
     }
     // Later implement
     timelapse = false;
     const filename = `${job.name}.gcode`;
-    const gcodeResponse = await fetch(job.gcodeUrl);
-    if (!gcodeResponse.ok) throw new Error(`Failed to fetch gcode at ${job.gcodeUrl}: ${gcodeResponse.status}`);
+    const gcodeResponse = await fetch(job.gcode_url);
+    if (!gcodeResponse.ok) throw new Error(`Failed to fetch gcode at ${job.gcode_url}: ${gcodeResponse.status}`);
     const buffer = Buffer.from(await gcodeResponse.arrayBuffer());
-    await this.uploadFile(buffer, filename, true, recordTimelapse);
-    this.finishHandled = false;
-    this.activeJob = { ...job, jobid: filename };
-    this.activeFilename = filename;
+    await this.uploadFile(buffer, filename, true, record_timelapse);
+    this.finish_handled = false;
+    this.active_job = { ...job, job_id: filename };
+    this.active_filename = filename;
     return filename;
   }
 
-  async cancelJob(_jobId: string): Promise<void> {
+  async cancelJob(_job_id: string): Promise<void> {
     this.publishCommand({ print: { sequence_id: this.nextSequenceId(), command: "stop" } });
   }
 
-  async pauseJob(_jobId: string): Promise<void> {
+  async pauseJob(_job_id: string): Promise<void> {
     this.publishCommand({ print: { sequence_id: this.nextSequenceId(), command: "pause" } });
   }
 
-  async resumeJob(_jobId: string): Promise<void> {
+  async resumeJob(_job_id: string): Promise<void> {
     this.publishCommand({ print: { sequence_id: this.nextSequenceId(), command: "resume" } });
   }
 
   async finishJob(_id: string): Promise<void> {
-    const filename = this.activeFilename ?? (this.activeJob ? `${this.activeJob?.name}.gcode` : undefined);
+    const filename = this.active_filename ?? (this.active_job ? `${this.active_job?.name}.gcode` : undefined);
     if (!filename) throw new Error("No active filename found");
     await this.deleteFile(filename);
-    this.activeFilename = undefined;
-    this.activeJob = undefined;
-    this.finishHandled = true;
-    this.currentStatus = { ...this.currentStatus, state: "idle" };
-    for (const listener of this.statusListener) listener(this.currentStatus);
+    this.active_filename = undefined;
+    this.active_job = undefined;
+    this.finish_handled = true;
+    this.current_status = { ...this.current_status, state: "idle" };
+    for (const listener of this.status_listener) listener(this.current_status);
   }
 
   get Config(): BambuConfig | null {
@@ -222,7 +222,7 @@ export class BambuDriver implements PrinterDriver {
   }
 
   get ActiveJob(): PrintJob | null {
-    return this.activeJob ?? null;
+    return this.active_job ?? null;
   }
 
   async getStatus(fresh?: boolean): Promise<PrinterStatus> {
@@ -230,14 +230,14 @@ export class BambuDriver implements PrinterDriver {
       this.requestFullStatus();
       await new Promise((resolve) => setTimeout(resolve, 500));
     }
-    return this.currentStatus;
+    return this.current_status;
   }
 
   subscribeToStatus(callback: (status: PrinterStatus) => void): () => void {
-    this.statusListener.add(callback);
-    if (this.currentStatus) callback(this.currentStatus);
+    this.status_listener.add(callback);
+    if (this.current_status) callback(this.current_status);
     return () => {
-      this.statusListener.delete(callback);
+      this.status_listener.delete(callback);
     };
   }
 
@@ -254,7 +254,7 @@ export class BambuDriver implements PrinterDriver {
       .map((f) => ({
         filename: f.name,
         size: f.size,
-        uploadedAt: f.modifiedAt ?? new Date(),
+        uploaded_at: f.modifiedAt ?? new Date(),
       }));
   }
 
@@ -262,17 +262,17 @@ export class BambuDriver implements PrinterDriver {
     await this.withFtp((client) => client.remove(filename));
   }
 
-  async updateSlot(slotId: number, filamentSlot: FilamentSlot): Promise<void> {
+  async updateSlot(slotId: number, filament: Filament): Promise<void> {
     if (!this.config) throw new Error("Printer config required to change slot");
     if (this.config.queue === "MULTI")
       throw new Error("Multi filament printers requires filament to be editited on printer");
-    const idx = this.config.slots.findIndex((s) => s.slotId === slotId);
+    const idx = this.config.filament.findIndex((s) => s.slot_id === slotId);
     if (idx === -1) return;
-    this.config.slots[idx] = filamentSlot;
+    this.config.slots[idx] = filament;
     this.config.queue = this.config.slots.length === 1 ? this.config.slots[0].filamentType : "MULTI";
   }
 
-  async syncSlots(): Promise<FilamentSlot[]> {
+  async syncSlots(): Promise<Filament[]> {
     if (!this.config) throw new Error("Printer config required to change slot");
     if (this.config.queue !== "MULTI")
       throw new Error("syncSlots is only for AMS printers; the external spool is set with updateSlot");
@@ -280,24 +280,24 @@ export class BambuDriver implements PrinterDriver {
       this.requestFullStatus();
       await new Promise((resolve) => setTimeout(resolve, 500));
     }
-    const slots: FilamentSlot[] = [];
-    for (const unit of this.latestReport.ams?.ams ?? []) {
+    const slots: Filament[] = [];
+    for (const unit of this.latest_report.ams?.ams ?? []) {
       for (const tray of unit.tray ?? []) {
         if (!tray.tray_type) continue;
         const filamentType = BAMBU_TRAY_TYPE_TO_MATERIAL[tray.tray_type];
         if (filamentType === undefined) continue;
         slots.push({
-          slotId: Number(unit.id) * 4 + Number(tray.id),
-          filamentType,
+          slot_id: Number(unit.id) * 4 + Number(tray.id),
+          material: filamentType,
           colour: (tray.tray_color ?? "").toUpperCase(),
-          nozzleTempMin: Number(tray.nozzle_temp_min ?? 0),
-          nozzleTempMax: Number(tray.nozzle_temp_max ?? 0),
-          bedTemp: Number(tray.bed_temp ?? 0),
+          nozzle_temp_min: Number(tray.nozzle_temp_min ?? 0),
+          nozzle_temp_max: Number(tray.nozzle_temp_max ?? 0),
+          bed_temp: Number(tray.bed_temp ?? 0),
         });
       }
     }
-    this.config.slots = slots.sort((a, b) => a.slotId - b.slotId);
-    return this.config.slots;
+    this.config.filament = slots.sort((a, b) => a.slot_id - b.slot_id);
+    return this.config.filament;
   }
 
   // Private helper functions
@@ -314,24 +314,24 @@ export class BambuDriver implements PrinterDriver {
       return;
     }
     if (!message.print) return;
-    this.latestReport = { ...this.latestReport, ...message.print };
-    this.currentStatus = this.mapStatus(this.latestReport);
-    for (const listener of this.statusListener) listener(this.currentStatus);
+    this.latest_report = { ...this.latest_report, ...message.print };
+    this.current_status = this.mapStatus(this.latest_report);
+    for (const listener of this.status_listener) listener(this.current_status);
   }
 
   private mapStatus(report: BambuPrintReport): PrinterStatus {
     const mapped = report.gcode_state ? (BAMBU_STATE_MAP[report.gcode_state] ?? "error") : "idle";
-    const state = this.isDisabled ? "disabled" : mapped === "finished" && this.finishHandled ? "idle" : mapped;
+    const state = this.is_disabled ? "disabled" : mapped === "finished" && this.finish_handled ? "idle" : mapped;
     const hasJob = mapped === "printing" || mapped === "paused" || mapped === "finished";
     return {
       state,
-      currentJob:
-        hasJob && this.activeJob
+      current_job:
+        hasJob && this.active_job
           ? {
-              printJob: this.activeJob,
-              name: report.subtask_name ?? this.activeJob.name,
+              print_job: this.active_job,
+              name: report.subtask_name ?? this.active_job.name,
               progress: report.mc_percent ?? 0,
-              timeRemaining: (report.mc_remaining_time ?? 0) * 60, // minutes -> seconds
+              time_remaining: (report.mc_remaining_time ?? 0) * 60, // minutes -> seconds
             }
           : undefined,
       temperature: {

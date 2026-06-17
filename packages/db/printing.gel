@@ -123,7 +123,7 @@ module printing {
         required model: str;
         required has_camera: bool;
         required status: PrinterStatus;
-        required filament_slots: array<tuple<
+        required filament: array<tuple<
             material: Material,
             colour: str,
             nozzle_temp_min: int16,
@@ -137,6 +137,12 @@ module printing {
             select Print filter __source__ in .`on`.printer
         );
         multi downtimes := .<printer[is Downtime];
+        required queue := (
+            <QueueType>(
+                "MULTI" if len(.filament) > 1
+                else (<str>(array_get(.filament, 0).material)) ?? "PLA"
+            )
+        );
     }
 
     type Downtime extending default::CreatedAt {
@@ -145,12 +151,8 @@ module printing {
         }
         required start_time: datetime;
         end_time: datetime;
-        required has_started: bool {
-            default := false;
-        }
-        required has_finished: bool {
-            default := false;
-        }
+        required has_started := datetime_of_statement() >= .start_time;
+        required has_finished := (datetime_of_statement() >= .end_time) ?? false;
         reason: str;
 
         constraint expression on (.end_time > .start_time);
@@ -185,7 +187,13 @@ module printing {
     }
 
     type PrintHistory extending default::CreatedAt {
-        required queue: QueueType; # Defines which general queue
+        required queue := (
+            with print := assert_exists(assert_single(.<`on`[is Print])),
+            select <QueueType>(
+                "MULTI" if len(print.filament) > 1
+                else (<str>(array_get(print.filament, 0).material)) ?? "PLA"
+            )
+        );
         printer: Printer; # Not required as it may be on the general queue for any colour, define when sent to printer
         required status: PrintStatus;
         required attempts: int16 {

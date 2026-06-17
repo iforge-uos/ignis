@@ -45,8 +45,6 @@ export const CreateDowntimeSchema = z.
   .extend({ // printing::Downtime
     end_time: zt.zonedDateTime().nullable(), // std::datetime
     start_time: zt.zonedDateTime(), // std::datetime
-    has_finished: z.boolean().optional(), // std::bool
-    has_started: z.boolean().optional(), // std::bool
     reason: z.string().nullable(), // std::str
   });
 
@@ -56,8 +54,6 @@ export const UpdateDowntimeSchema = z.
   .extend({ // printing::Downtime
     end_time: zt.zonedDateTime().nullable(), // std::datetime
     start_time: zt.zonedDateTime(), // std::datetime
-    has_finished: z.boolean().optional(), // std::bool
-    has_started: z.boolean().optional(), // std::bool
     reason: z.string().nullable(), // std::str
   });
 // #endregion
@@ -212,15 +208,15 @@ export const CreatePrinterSchema = z.
     manufacturer: z.string(), // std::str
     total_print_mass: z.number().min(-3.40282347e+38).max(3.40282347e+38), // std::float32
     total_print_time: zt.duration(), // std::duration
-    filament_slots: z.tuple([
+    ip: z.string(), // std::str
+    keys: z.string().array(), // array<std::str>
+    filament: z.tuple([
       z.enum(["PLA", "TPU", "PETG"]),
       z.string(),
       z.int().min(-32768).max(32767),
       z.int().min(-32768).max(32767),
       z.int().min(-32768).max(32767),
     ]).array(), // array<tuple<material:printing::Material, colour:std::str, nozzle_temp_min:std::int16, nozzle_temp_max:std::int16, bed_temp:std::int16>>
-    ip: z.string(), // std::str
-    keys: z.string().array(), // array<std::str>
   });
 
 export const UpdatePrinterSchema = z.
@@ -231,15 +227,15 @@ export const UpdatePrinterSchema = z.
     manufacturer: z.string(), // std::str
     total_print_mass: z.number().min(-3.40282347e+38).max(3.40282347e+38), // std::float32
     total_print_time: zt.duration(), // std::duration
-    filament_slots: z.tuple([
+    ip: z.string(), // std::str
+    keys: z.string().array(), // array<std::str>
+    filament: z.tuple([
       z.enum(["PLA", "TPU", "PETG"]),
       z.string(),
       z.int().min(-32768).max(32767),
       z.int().min(-32768).max(32767),
       z.int().min(-32768).max(32767),
     ]).array(), // array<tuple<material:printing::Material, colour:std::str, nozzle_temp_min:std::int16, nozzle_temp_max:std::int16, bed_temp:std::int16>>
-    ip: z.string(), // std::str
-    keys: z.string().array(), // array<std::str>
   });
 // #endregion
 
@@ -382,7 +378,6 @@ export const CreatePrintHistorySchema = z.
     created_at: zt.zonedDateTime().optional(), // std::datetime
   })
   .extend({ // printing::PrintHistory
-    queue: z.enum(["PLA", "PETG", "TPU", "MULTI"]), // printing::QueueType
     attempts: z.int().min(-32768).max(32767).optional(), // std::int16
     has_timelapse: z.boolean(), // std::bool
   });
@@ -391,7 +386,6 @@ export const UpdatePrintHistorySchema = z.
   object({ // default::CreatedAt
   })
   .extend({ // printing::PrintHistory
-    queue: z.enum(["PLA", "PETG", "TPU", "MULTI"]), // printing::QueueType
     attempts: z.int().min(-32768).max(32767).optional(), // std::int16
     has_timelapse: z.boolean(), // std::bool
   });

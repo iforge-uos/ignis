@@ -1046,9 +1046,9 @@ export namespace printing {
     "end_time"?: Date | null;
     "start_time": Date;
     "printer": Printer;
+    "reason"?: string | null;
     "has_finished": boolean;
     "has_started": boolean;
-    "reason"?: string | null;
   }
   export type Manafacturers = "PRUSA" | "BAMBU";
   export type Material = "PLA" | "TPU" | "PETG";
@@ -1072,10 +1072,10 @@ export namespace printing {
   export interface PrintHistory extends $default.CreatedAt {
     "status": PrintStatus;
     "printer"?: Printer | null;
-    "queue": QueueType;
     "attempts": number;
     "has_timelapse": boolean;
     "timelapse_path": string;
+    "queue": QueueType;
   }
   export interface PrintStatus extends std.$Object {}
   export interface Printer extends std.$Object {
@@ -1089,9 +1089,10 @@ export namespace printing {
     "manufacturer": string;
     "total_print_mass": number;
     "total_print_time": gel.Duration;
-    "filament_slots": {material: Material, colour: string, nozzle_temp_min: number, nozzle_temp_max: number, bed_temp: number}[];
     "ip": string;
     "keys": string[];
+    "filament": {material: Material, colour: string, nozzle_temp_min: number, nozzle_temp_max: number, bed_temp: number}[];
+    "queue": QueueType;
   }
   export interface PrinterAuditEntry extends AuditEntry {
     "status": PrinterStatus;
