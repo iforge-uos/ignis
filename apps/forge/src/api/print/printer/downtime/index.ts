@@ -12,7 +12,7 @@ export const all = printing
     const all = await e
       .select(e.printing.Downtime, (downtime) => ({
         ...downtimeShape(downtime),
-        filter: e.op(downtime.has_finished, "=", false),
+        filter: e.op("not", downtime.has_finished),
       }))
       .run(db);
     if (all.length < 1) throw errors.DOWNTIME_NOT_FOUND({ data: { msg: "No downtimes found for all printers" } });

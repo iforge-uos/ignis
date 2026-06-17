@@ -9,19 +9,19 @@ import { connection } from "./connection";
 
 const printerStatusSchema = z.object({
   state: z.enum(["idle", "printing", "paused", "finished", "disconnected", "disabled", "error"]),
-  currentJob: z
+  current_job: z
     .object({
-      printJob: z.object({
-        jobid: z.string(),
+      print_job: z.object({
+        job_id: z.string(),
         uuid: z.string(),
         name: z.string(),
-        gcodeUrl: z.string(),
+        gcode_url: z.string(),
         filament: z.array(filamentSlotSchema),
         queue: QueueTypeSchema,
       }),
       name: z.string(),
       progress: z.number(),
-      timeRemaining: z.number(),
+      time_remaining: z.number(),
     })
     .optional(),
   temperature: z

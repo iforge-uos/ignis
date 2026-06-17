@@ -12,7 +12,7 @@ export const pause = printing
     const status = await printManager.getStatus(name);
     if (status.state === "disconnected") throw errors.PRINTER_DISCONNECTED();
     if (status.state === "disabled") throw errors.PRINTER_DISABLED();
-    if (!status.currentJob) throw errors.PRINT_JOB_NOT_FOUND();
+    if (!status.current_job) throw errors.PRINT_JOB_NOT_FOUND();
 
     try {
       await printManager.pauseJob(name);

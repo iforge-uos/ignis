@@ -86,13 +86,13 @@ function beginDTCheck(): NodeJS.Timeout {
       const state = await e
         .select({
           down: e.op("exists", active),
-          openEnded: e.op(
+          open_ended: e.op(
             "exists",
             e.select(active, (a) => ({
               filter: e.op("not", e.op("exists", a.end_time)),
             })),
           ),
-          latestEnd: e.max(active.end_time),
+          latest_end: e.max(active.end_time),
           failed: e.op(
             "exists",
             e.select(e.printing.Printer, (p) => ({
@@ -118,9 +118,9 @@ function beginDTCheck(): NodeJS.Timeout {
       if (!state.failed) {
         if (state.down && !state.disabled) {
           const status =
-            state.openEnded || !state.latestEnd
+            state.open_ended || !state.latest_end
               ? e.insert(e.printing.printer_status.Disabled, {})
-              : e.insert(e.printing.printer_status.Disabled, { end_time: state.latestEnd });
+              : e.insert(e.printing.printer_status.Disabled, { end_time: state.latest_end });
           await e
             .select({
               printer: e.update(e.printing.Printer, () => ({

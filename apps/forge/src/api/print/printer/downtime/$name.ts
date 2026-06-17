@@ -48,10 +48,12 @@ export const remove = printing
     if (!printer) throw errors.PRINTER_NOT_FOUND({ data: { name } });
     const deleted = await e
       .delete(e.printing.Downtime, (downtime) => ({
-        filter: e.op(
-          e.op(downtime.id, "=", e.uuid(id)),
-          "and",
-          e.op(e.op(downtime.printer.id, "=", e.uuid(printer.id)), "and", e.op(downtime.has_started, "=", false)),
+        filter: e.all(
+          e.set(
+            e.op(downtime.id, "=", e.uuid(id)),
+            e.op(downtime.printer.id, "=", e.uuid(printer.id)),
+            e.op("not", downtime.has_started),
+          ),
         ),
       }))
       .run(db);
@@ -63,15 +65,22 @@ export const remove = printing
     return { success: true };
   });
 
+const HISTORY_LIMIT = 50;
+
 export const list = printing
-  .errors(downtimeError)
   .route({ method: "GET", path: "/" })
-  .input(z.object({ name: z.string().min(1), history: z.boolean().default(false) }))
+  .input(
+    z.object({
+      name: z.string().min(1),
+      history: z.boolean().default(false),
+      offset: z.int().nonnegative().default(0),
+    }),
+  )
   .output(z.array(downtimeSchema))
-  .handler(async ({ input: { name, history }, errors, context: { db } }) => {
+  .handler(async ({ input: { name, history, offset }, errors, context: { db } }) => {
     const printer = printers.get(name);
     if (!printer) throw errors.PRINTER_NOT_FOUND({ data: { name: name } });
-    const all = await e
+    return e
       .select(e.printing.Downtime, (downtime) => ({
         ...downtimeShape(downtime),
         filter: e.op(
@@ -79,10 +88,11 @@ export const list = printing
           "and",
           e.op(downtime.printer.id, "=", e.uuid(printer.id)),
         ),
+        ...(history
+          ? { order_by: { expression: downtime.start_time, direction: e.DESC }, limit: HISTORY_LIMIT, offset }
+          : {}),
       }))
       .run(db);
-    if (all.length < 1) throw errors.DOWNTIME_NOT_FOUND({ data: { msg: `No downtimes found for printer "${name}"` } });
-    return all;
   });
 
 export const nameRoutes = printing.prefix("/{name}").router({

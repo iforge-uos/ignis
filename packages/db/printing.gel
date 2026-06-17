@@ -170,7 +170,7 @@ module printing {
         required name: str;
         required filament: array<tuple<
             material: Material,
-            colour: str,
+            colour: str 
             nozzle_temp_min: int16,
             nozzle_temp_max: int16,
             bed_temp: int16,

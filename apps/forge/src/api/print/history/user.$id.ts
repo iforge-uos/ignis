@@ -1,6 +1,6 @@
 import e from "@packages/db/edgeql-js";
 import * as z from "zod";
-import { historyOutput, printHistoryShape, toFilamentSlots } from "@/lib/printers/utils";
+import { historyOutput, printHistoryShape, toHistoryOutput } from "@/lib/printers/utils";
 import { auth, ensurePrinters } from "@/orpc";
 
 export const user = auth
@@ -22,12 +22,5 @@ export const user = auth
         filter: e.op(p["<on[is printing::Print]"].author.id, "=", e.uuid(id)),
       }))
       .run(db);
-    return history.map((h) => ({
-      id: h.id,
-      queue: h.queue,
-      print: { ...h.print, filament: toFilamentSlots(h.print.filament) },
-      printer: h.printer ?? undefined,
-      attempts: h.attempts,
-      timelapse: h.has_timelapse,
-    }));
+    return toHistoryOutput(history);
   });

@@ -9,22 +9,6 @@ import { disconnect } from "./disconnect";
 import { reconnect } from "./reconnect";
 import { remove } from "./remove";
 
-export const PRINTER_CONNECTION_ERRORS = {
-  PRINTER_NOT_FOUND: {
-    status: 404,
-    message: "Printer not found",
-    data: z.object({ name: z.string() }),
-  },
-  DISCONNECT_FAILURE: {
-    status: 502,
-    message: "Failed to disconnect",
-  },
-  CONNECTION_FAILED: {
-    status: 502,
-    message: "Failed to connect to printer",
-  },
-} as const;
-
 export const get = printing
   .route({ method: "GET", path: "/" })
   .input(z.object({ name: z.string().min(1) }))
@@ -39,7 +23,7 @@ export const get = printing
         manufacturer: true,
         model: true,
         has_camera: true,
-        filament_slots: true,
+        filament: true,
         location: p.location.name,
         total_print_mass: true,
         total_print_time: true,
@@ -47,7 +31,7 @@ export const get = printing
       }))
       .run(db);
     if (!printer) return null;
-    return { ...printer, filament_slots: toFilamentSlots(printer.filament_slots) };
+    return { ...printer, filament: toFilamentSlots(printer.filament) };
   });
 
 export const nameRoutes = threeDP.prefix("/{name}").router({

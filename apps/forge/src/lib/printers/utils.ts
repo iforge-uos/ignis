@@ -1,8 +1,7 @@
-import e from "@packages/db/edgeql-js";
+import e, { $infer } from "@packages/db/edgeql-js";
 import {
   CreateDowntimeSchema,
   CreatePrinterSchema,
-  CreatePrintSchema,
   MaterialSchema,
   PrioritySchema,
   QueueTypeSchema,
@@ -10,7 +9,24 @@ import {
 import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
 import { durationSchema } from "@packages/db/zod/modules/std";
 import * as z from "zod";
-import { printer } from "/src/api/print/history/$name";
+import { printing } from "@packages/db/interfaces";
+import type { Filament } from "@/lib/printers/types";
+
+export const PRINTER_CONNECTION_ERRORS = {
+  PRINTER_NOT_FOUND: {
+    status: 404,
+    message: "Printer not found",
+    data: z.object({ name: z.string() }),
+  },
+  DISCONNECT_FAILURE: {
+    status: 502,
+    message: "Failed to disconnect",
+  },
+  CONNECTION_FAILED: {
+    status: 502,
+    message: "Failed to connect to printer",
+  },
+} as const;
 
 export const downtimeError = {
   DOWNTIME_NOT_FOUND: {
@@ -35,9 +51,26 @@ export const downtimeShape = e.shape(e.printing.Downtime, () => ({
   printer: { id: true, name: true },
 }));
 
-export const filamentSchema = CreatePrintSchema.shape.filament;
+type filamentDB = printing.Printer["filament"][number];
 
-export const printerSchema = CreatePrinterSchema.omit({ ip: true, keys: true });
+export function toFilamentSlots(filament: filamentDB[]): Filament[] {
+  return filament.map((slot, i) => ({ ...slot, slot_id: i }));
+}
+
+export const filamentSlotSchema = z.object({
+  slot_id: z.number(),
+  material: MaterialSchema,
+  colour: z.string().length(8),
+  nozzle_temp_min: z.int().positive(),
+  nozzle_temp_max: z.int().positive(),
+  bed_temp: z.int().positive(),
+});
+
+export const printerSchema = CreatePrinterSchema.omit({ ip: true, keys: true, filament: true }).extend({
+  id: z.uuid(),
+  location: LocationNameSchema,
+  filament: z.array(filamentSlotSchema),
+});
 
 export const historyErrors = {
   HISTORY_NOT_FOUND: {
@@ -57,7 +90,7 @@ export const historyOutput = z.array(
       mass: z.number(),
       duration: durationSchema,
       priority: PrioritySchema,
-      filament: z.array(filamentSchema),
+      filament: z.array(filamentSlotSchema),
       author: z.object({ id: z.uuid(), display_name: z.string() }),
       approved_by: z.object({ id: z.uuid(), display_name: z.string() }),
     }),
@@ -93,3 +126,14 @@ export const printHistoryShape = e.shape(e.printing.PrintHistory, (h) => ({
     ),
   ),
 }));
+
+type printHistoryRow = $infer<typeof printHistoryShape>[number];
+
+export function toHistoryOutput(history: printHistoryRow[]) {
+  return history.map((h) => ({
+    ...h,
+    print: { ...h.print, filament: toFilamentSlots(h.print.filament) },
+    printer: h.printer ?? undefined,
+    timelapse: h.has_timelapse,
+  }));
+}

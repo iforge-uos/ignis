@@ -1,7 +1,7 @@
 import * as z from "zod";
 import { threeDP } from "@/orpc";
 import { printers, printManager } from "@/printing";
-import { PRINTER_CONNECTION_ERRORS } from ".";
+import { PRINTER_CONNECTION_ERRORS } from "@/lib/printers/utils";
 
 export const disconnect = threeDP
   .errors(PRINTER_CONNECTION_ERRORS)
@@ -12,7 +12,7 @@ export const disconnect = threeDP
     if (!printer) throw errors.PRINTER_NOT_FOUND({ data: { name } });
     try {
       await printManager.removePrinter(name);
-      printers.set(name, { id: printer.id, connected: false });
+      printers.set(name, { id: printer.id, connected: false, queue: printer.queue });
     } catch {
       throw errors.DISCONNECT_FAILURE();
     }

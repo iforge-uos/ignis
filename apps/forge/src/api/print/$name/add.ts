@@ -1,8 +1,8 @@
 import type { printing } from "@packages/db/interfaces";
-import { MaterialSchema } from "@packages/db/zod/modules/printing";
-import { LocationNameSchema } from "@packages/db/zod/modules/training";
+import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
 import * as z from "zod";
 import type { PrinterConfig } from "@/lib/printers/types";
+import { filamentSlotSchema } from "@/lib/printers/utils";
 import { threeDP } from "@/orpc";
 import { addPrinter, PrinterConflictError } from "@/printing";
 
@@ -12,21 +12,13 @@ const setupConfig = z.object({
   manufacturer: z.enum(["PRUSA", "BAMBU"]),
   slots: z
     .array(
-      z
-        .object({
-          material: MaterialSchema,
-          colour: z.string().min(1),
-          nozzle_temp_min: z.int().positive(),
-          nozzle_temp_max: z.int().positive(),
-          bed_temp: z.int().positive(),
-        })
-        .refine((slot) => slot.nozzle_temp_max > slot.nozzle_temp_min, {
-          message: "nozzle_temp_max must be greater than nozzle_temp_min",
-          path: ["nozzle_temp_max"],
-        }),
+      filamentSlotSchema.omit({ slot_id: true }).refine((slot) => slot.nozzle_temp_max > slot.nozzle_temp_min, {
+        message: "nozzle_temp_max must be greater than nozzle_temp_min",
+        path: ["nozzle_temp_max"],
+      }),
     )
     .min(1),
-  hasCamera: z.boolean(),
+  has_camera: z.boolean(),
   keys: z.array(z.string().min(1)).min(2),
 });
 
@@ -53,27 +45,30 @@ export const add = threeDP
     }),
   )
   .handler(async ({ input: { name, setup, detail, connect }, errors }) => {
-    const slots = setup.slots.map((slot, index) => ({
-      slotId: index,
-      filamentType: slot.material,
-      colour: slot.colour,
-      nozzleTempMin: slot.nozzle_temp_min,
-      nozzleTempMax: slot.nozzle_temp_max,
-      bedTemp: slot.bed_temp,
-    }));
+    const filament = setup.slots.map((slot, index) => ({ slot_id: index, ...slot }));
 
-    const queue: printing.QueueType = slots.length > 1 ? "MULTI" : slots[0].filamentType;
+    const queue: printing.QueueType = filament.length > 1 ? "MULTI" : filament[0].material;
+
+    let credentials: Record<string, string>;
+    switch (setup.manufacturer) {
+      case "PRUSA":
+        credentials = { username: setup.keys[0], password: setup.keys[1] };
+        break;
+      case "BAMBU":
+        credentials = { serial: setup.keys[0], password: setup.keys[1] };
+        break;
+      default:
+        throw new Error(`Unknown manufacturer "${setup.manufacturer}"`);
+    }
 
     const config: PrinterConfig = {
       ip: setup.ip,
-      name: name,
+      name,
       manufacturer: setup.manufacturer,
-      slots,
+      filament,
       queue,
-      hasCamera: setup.hasCamera,
-      ...(setup.manufacturer === "PRUSA"
-        ? { username: setup.keys[0], password: setup.keys[1] }
-        : { serial: setup.keys[0], password: setup.keys[1] }),
+      has_camera: setup.has_camera,
+      ...credentials,
     };
 
     try {
