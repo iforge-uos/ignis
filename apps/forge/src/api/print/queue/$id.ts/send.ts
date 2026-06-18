@@ -37,7 +37,20 @@ export const send = printing
       }))
       .run(db);
     if (!print?.history) throw errors.PRINT_JOB_NOT_FOUND({ data: { id } });
-    if (print.history.status_name === "printing::print_status::Printing") throw errors.PRINT_STARTED();
+    switch (print.history.status_name) {
+      case "printing::print_status::UnderReview":
+        throw errors.PRINT_UNDER_REVIEW();
+      case "printing::print_status::Printing":
+        throw errors.PRINT_STARTED();
+      case "printing::print_status::Cancelled":
+      case "printing::print_status::Failed":
+        throw errors.PRINT_CANCELLED_OR_FAILED();
+      case "printing::print_status::Complete":
+      case "printing::print_status::Queued":
+        break;
+      default:
+        throw errors.INPUT_VALIDATION_FAILED();
+    }
     const history_id = print.history.id;
 
     const job: PrintJob = {

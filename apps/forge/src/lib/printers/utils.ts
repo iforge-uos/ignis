@@ -107,6 +107,13 @@ export const historyOutput = z.array(
   }),
 );
 
+export const queueHistoryOutput = z.array(
+  historyOutput.element.extend({
+    position: z.int().positive(),
+    lead_time: durationSchema,
+  }),
+);
+
 export const printHistoryShape = e.shape(e.printing.PrintHistory, (h) => ({
   id: true,
   queue: true,
@@ -140,6 +147,25 @@ export function toHistoryOutput(history: printHistoryRow[]) {
   }));
 }
 
+export function printsAhead(queue: any, created_at: any, priority: any, status: any) {
+  return e.select(e.printing.PrintHistory, (q) => {
+    const print = e.assert_exists(e.assert_single(q["<on[is printing::Print]"]));
+    return {
+      filter: e.all(
+        e.set(
+          e.op("exists", q.status.is(status)),
+          e.op(q.queue, "=", queue),
+          e.op(
+            e.op(print.priority, ">", priority),
+            "or",
+            e.op(e.op(print.priority, "=", priority), "and", e.op(q.created_at, "<", created_at)),
+          ),
+        ),
+      ),
+    };
+  });
+}
+
 export const queueErrors = {
   FILE_NOT_FOUND: {
     status: 404,
@@ -153,5 +179,13 @@ export const queueErrors = {
   PRINT_STARTED: {
     status: 409,
     message: "Print started, cancel/finish print to change print status",
+  },
+  PRINT_UNDER_REVIEW: {
+    status: 409,
+    message: "Print under review, unable to send print",
+  },
+  PRINT_CANCELLED_OR_FAILED: {
+    status: 409,
+    message: "Print failed or has been cancelled, unable to send print",
   },
 } as const;
