@@ -2,15 +2,16 @@ import e from "@packages/db/edgeql-js";
 import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
 import * as z from "zod";
 import { printerSchema, toFilamentSlots } from "@/lib/printers/utils";
-import { auth, printing } from "@/orpc";
+import { auth, ensurePrinters } from "@/orpc";
 import { nameRoutes } from "./$name";
 import { historyRouter } from "./history";
 import { printerRouter } from "./printer";
 import { queueRouter } from "./queue";
 import { admin } from "./admin";
 
-export const list = printing
+export const list = auth
   .route({ method: "GET", path: "/" })
+  .use(ensurePrinters)
   .input(z.object({ location: z.union([LocationNameSchema, z.literal("All")]) }))
   .output(z.array(printerSchema))
   .handler(async ({ input: { location }, context: { db } }) => {

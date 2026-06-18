@@ -1,10 +1,9 @@
 import e from "@packages/db/edgeql-js";
 import * as z from "zod";
 import { PrintJob } from "@/lib/printers/types";
-import { toFilamentSlots } from "@/lib/printers/utils";
+import { filamentMatches, queueErrors, toFilamentSlots } from "@/lib/printers/utils";
 import { printing } from "@/orpc";
 import { printers, printManager } from "@/printing";
-import { queueErrors } from "@/lib/printers/utils";
 
 export const send = printing
   .errors(queueErrors)
@@ -52,6 +51,14 @@ export const send = printing
         throw errors.INPUT_VALIDATION_FAILED();
     }
     const history_id = print.history.id;
+
+    if (print.filament.length <= 1) {
+      const printerRow = await e
+        .select(e.printing.Printer, () => ({ filament: true, filter_single: { id: record.id } }))
+        .run(db);
+      const matches = !!printerRow && filamentMatches(print.filament, printerRow.filament);
+      if (!matches) throw errors.PRINTER_FILAMENT_MISMATCH({ data: { name: printer } });
+    }
 
     const job: PrintJob = {
       job_id: "0",

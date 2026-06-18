@@ -5,16 +5,18 @@ import jwt from "jsonwebtoken";
 import * as z from "zod";
 import env from "@/lib/env";
 import {
-  filamentSlotSchema,
+  ANY_COLOUR,
+  filamentMatches,
+  printFilamentSlotSchema,
   printHistoryShape,
   printsAhead,
   queueHistoryOutput,
+  THREEDP_LAPTOP_ACCOUNT,
   toHistoryOutput,
 } from "@/lib/printers/utils";
 import { ableToQueuePrint, auth, printing, transaction } from "@/orpc";
 import { printers } from "@/printing.ts";
 import { idRouter } from "./$id.ts";
-import { THREEDP_LAPTOP_ACCOUNT } from "@/lib/printers/utils";
 
 const uploadErrors = {
   UPLOAD_FAILED: {
@@ -25,10 +27,28 @@ const uploadErrors = {
     status: 403,
     message: "Incorrect upload password",
   },
+  PRINTER_NOT_FOUND: {
+    status: 404,
+    message: "Printer not found",
+    data: z.object({ name: z.string() }),
+  },
+  PRINTER_FILAMENT_MISMATCH: {
+    status: 422,
+    message: "Selected printer's filament does not match the print",
+    data: z.object({ name: z.string() }),
+  },
+  PRINTER_REQUIRED_FOR_MULTI: {
+    status: 409,
+    message: "Printer selection required for a multi filament print",
+  },
+  NO_MATCHING_PRINTER: {
+    status: 502,
+    message: "No matching printer for print filament",
+  },
 } as const;
 
 const uploadSchema = CreatePrintSchema.extend({
-  filament: z.array(filamentSlotSchema.omit({ slot_id: true })),
+  filament: z.array(printFilamentSlotSchema.omit({ slot_id: true })),
   author: z.uuid(),
   approved_by: z.uuid(),
   gcode: z.file().mime(["text/plain", "application/octet-stream"]),
@@ -42,6 +62,7 @@ export const add = ableToQueuePrint
   .input(
     z.object({
       print: uploadSchema,
+      printer: z.string().optional(),
       password: z.string().min(1),
     }),
   )
@@ -55,8 +76,33 @@ export const add = ableToQueuePrint
     }),
   )
   .use(transaction)
-  .handler(async ({ input: { print, password }, context: { tx, user }, errors }) => {
+  .handler(async ({ input: { print, printer, password }, context: { db, tx, user }, errors }) => {
     if (password !== env.printing.threeDpSubmitPassword) throw errors.INCORRECT_PASSWORD();
+
+    const is_multi = print.filament.length > 1;
+    if (is_multi && !printer) throw errors.PRINTER_REQUIRED_FOR_MULTI();
+
+    const any_colour = !is_multi && print.filament[0].colour === ANY_COLOUR;
+
+    let required_printer_id: string | undefined;
+    if (printer) {
+      const record = printers.get(printer);
+      if (!record) throw errors.PRINTER_NOT_FOUND({ data: { name: printer } });
+      if (!is_multi) {
+        const target = await e
+          .select(e.printing.Printer, () => ({ filament: true, filter_single: { id: record.id } }))
+          .run(db);
+        const matches = !!target && filamentMatches(print.filament, target.filament);
+        if (!matches) throw errors.PRINTER_FILAMENT_MISMATCH({ data: { name: printer } });
+      }
+      required_printer_id = record.id;
+    } else if (!any_colour) {
+      const candidates = await e.select(e.printing.Printer, () => ({ id: true, filament: true })).run(db);
+      const match = candidates.find((c) => filamentMatches(print.filament, c.filament));
+      if (!match) throw errors.NO_MATCHING_PRINTER();
+      required_printer_id = match.id;
+    }
+
     let { name, duration, mass, priority, reason, filament, author, approved_by, gcode, threemf, timelapse } = print;
     let priority_decrease = false;
     // This is if 3dp laptop has specific account
@@ -94,6 +140,13 @@ export const add = ableToQueuePrint
         on: e.insert(e.printing.PrintHistory, {
           status: e.insert(e.printing.print_status.Queued, {}),
           has_timelapse: timelapse,
+          ...(required_printer_id
+            ? {
+                printer: e.assert_exists(
+                  e.select(e.printing.Printer, () => ({ filter_single: { id: required_printer_id! } })),
+                ),
+              }
+            : {}),
         }),
       })
       .run(tx);
@@ -142,35 +195,63 @@ export const add = ableToQueuePrint
 
 const QUEUE_RETURN_ITEMS = 20;
 
+const queueFilterBase = z.object({ offset: z.int().nonnegative().default(0) });
+
 export const get = printing
   .route({ method: "GET", path: "/" })
   .input(
-    z.object({
-      printer_name: z.string().min(1).optional(),
-      queue: QueueTypeSchema.optional(),
-      review: z.boolean().default(false),
-      user: z.uuid().optional(),
-      offset: z.int().nonnegative().default(0),
-    }),
+    z.discriminatedUnion("by", [
+      queueFilterBase.extend({ by: z.literal("all") }),
+      queueFilterBase.extend({ by: z.literal("review") }),
+      queueFilterBase.extend({ by: z.literal("printer"), value: z.string().min(1) }),
+      queueFilterBase.extend({ by: z.literal("queue"), value: QueueTypeSchema }),
+      queueFilterBase.extend({ by: z.literal("user"), value: z.uuid() }),
+    ]),
   )
   .output(queueHistoryOutput)
-  .handler(async ({ input: { printer_name, queue, review, user, offset }, errors, context: { db } }) => {
+  .handler(async ({ input, errors, context: { db } }) => {
+    const offset = input.offset;
     let printer_id: string | undefined;
-    if (printer_name) {
-      printer_id = printers.get(printer_name)?.id;
-      if (!printer_id) throw errors.PRINTER_NOT_FOUND({ data: { name: printer_name } });
+    let printer_queue: string | undefined;
+    let queue: string | undefined;
+    let user: string | undefined;
+    if (input.by === "printer") {
+      const record = printers.get(input.value);
+      if (!record) throw errors.PRINTER_NOT_FOUND({ data: { name: input.value } });
+      printer_id = record.id;
+      printer_queue = record.queue;
+    } else if (input.by === "queue") {
+      queue = input.value;
+    } else if (input.by === "user") {
+      user = input.value;
     }
 
-    const status = review ? e.printing.print_status.UnderReview : e.printing.print_status.Queued;
+    const status = input.by === "review" ? e.printing.print_status.UnderReview : e.printing.print_status.Queued;
 
     const history = await e
       .select(e.printing.PrintHistory, (p) => {
-        const conditions = [
-          e.op("exists", p.status.is(status)),
-          ...(printer_id ? [e.op(p.printer.id, "=", e.uuid(printer_id))] : []),
-          ...(queue ? [e.op(p.queue, "=", e.cast(e.printing.QueueType, queue))] : []),
-          ...(user ? [e.op(p["<on[is printing::Print]"].author.id, "=", e.uuid(user))] : []),
-        ];
+        const queued = e.op("exists", p.status.is(status));
+
+        const printerScope =
+          printer_id && printer_queue
+            ? e.op(
+                e.op(p.printer.id, "=", e.uuid(printer_id)),
+                "or",
+                e.op(
+                  e.op("not", e.op("exists", p.printer)),
+                  "and",
+                  e.op(p.queue, "=", e.cast(e.printing.QueueType, printer_queue)),
+                ),
+              )
+            : undefined;
+
+        const scope = printerScope
+          ? e.op(queued, "and", printerScope)
+          : queue
+            ? e.op(queued, "and", e.op(p.queue, "=", e.cast(e.printing.QueueType, queue)))
+            : user
+              ? e.op(queued, "and", e.op(p["<on[is printing::Print]"].author.id, "=", e.uuid(user)))
+              : queued;
 
         const print = e.assert_exists(e.assert_single(p["<on[is printing::Print]"]));
         const ahead = printsAhead(p.queue, p.created_at, print.priority, status);
@@ -179,7 +260,7 @@ export const get = printing
           ...printHistoryShape(p),
           position: e.op(e.count(ahead), "+", e.int64(1)),
           lead_time: e.sum(ahead["<on[is printing::Print]"].duration),
-          filter: e.all(e.set(...conditions)),
+          filter: scope,
           order_by: [
             { expression: e.assert_single(print.priority), direction: e.DESC },
             { expression: p.created_at, direction: e.ASC },

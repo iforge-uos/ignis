@@ -59,6 +59,8 @@ export function toFilamentSlots(filament: filamentDB[]): Filament[] {
   return filament.map((slot, i) => ({ ...slot, slot_id: i }));
 }
 
+export const ANY_COLOUR = "ANY";
+
 export const filamentSlotSchema = z.object({
   slot_id: z.number(),
   material: MaterialSchema,
@@ -66,6 +68,10 @@ export const filamentSlotSchema = z.object({
   nozzle_temp_min: z.int().positive(),
   nozzle_temp_max: z.int().positive(),
   bed_temp: z.int().positive(),
+});
+
+export const printFilamentSlotSchema = filamentSlotSchema.extend({
+  colour: z.union([z.string().length(8), z.literal(ANY_COLOUR)]),
 });
 
 export const printerSchema = CreatePrinterSchema.omit({ ip: true, keys: true, filament: true }).extend({
@@ -92,7 +98,7 @@ export const historyOutput = z.array(
       mass: z.number(),
       duration: durationSchema,
       priority: PrioritySchema,
-      filament: z.array(filamentSlotSchema),
+      filament: z.array(printFilamentSlotSchema),
       author: z.object({ id: z.uuid(), display_name: z.string() }),
       approved_by: z.object({ id: z.uuid(), display_name: z.string() }),
     }),
@@ -166,11 +172,25 @@ export function printsAhead(queue: any, created_at: any, priority: any, status: 
   });
 }
 
+export function filamentMatches(
+  print: { colour: string; material: string }[],
+  slots: { colour: string; material: string }[],
+) {
+  return print.every((f) =>
+    slots.some((s) => s.material === f.material && (f.colour === ANY_COLOUR || s.colour === f.colour)),
+  );
+}
+
 export const queueErrors = {
   FILE_NOT_FOUND: {
     status: 404,
     message: "Print file not found",
     data: z.object({ id: z.uuid(), file_type: z.string() }),
+  },
+  PRINTER_FILAMENT_MISMATCH: {
+    status: 422,
+    message: "Selected printer's filament does not match the print",
+    data: z.object({ name: z.string() }),
   },
   DOWNLOAD_FAILED: {
     status: 502,

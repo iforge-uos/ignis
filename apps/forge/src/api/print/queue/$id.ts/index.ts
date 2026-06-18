@@ -3,7 +3,7 @@ import { PrioritySchema } from "@packages/db/zod/modules/printing";
 import jwt from "jsonwebtoken";
 import * as z from "zod";
 import env from "@/lib/env";
-import { filamentSlotSchema, queueErrors } from "@/lib/printers/utils";
+import { printFilamentSlotSchema, queueErrors } from "@/lib/printers/utils";
 import { printing } from "@/orpc";
 import { status } from "./status";
 import { send } from "./send";
@@ -36,7 +36,7 @@ const printUpdateSchema = z.object({
   mass: z.float32().optional(),
   duration: z.iso.duration().optional(),
   priority: PrioritySchema.optional(),
-  filament: z.array(filamentSlotSchema.omit({ slot_id: true })).optional(),
+  filament: z.array(printFilamentSlotSchema.omit({ slot_id: true })).optional(),
   gcode: z.file().mime(["text/plain", "application/octet-stream"]).optional(),
   threemf: z.file().mime(["model/3mf", "application/octet-stream"]).optional(),
 });
