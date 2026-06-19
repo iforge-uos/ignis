@@ -1,7 +1,10 @@
+import { Temporal } from "@js-temporal/polyfill";
 import * as z from "zod";
 import e from "@packages/db/edgeql-js";
 import { auth } from "@/orpc";
 import {
+  adjustLeadTime,
+  leadTimeFields,
   queueHistoryOutput,
   printsAhead,
   printHistoryShape,
@@ -34,14 +37,16 @@ export const prints = auth
           : e.op("exists", p.status.is(aheadStatus));
 
         const print = e.assert_exists(e.assert_single(p["<on[is printing::Print]"]));
-        const ahead = printsAhead(p.queue, p.created_at, print.priority, aheadStatus);
+        const ahead = printsAhead(p.queue, p.created_at, print.priority, aheadStatus, p.printer);
+        const aheadPinned = printsAhead(p.queue, p.created_at, print.priority, aheadStatus, p.printer, true);
+        const aheadShared = printsAhead(p.queue, p.created_at, print.priority, aheadStatus, p.printer, false);
 
         const scope = e.op(statusFilter, "and", e.op(p["<on[is printing::Print]"].author.id, "=", e.uuid(user.id)));
 
         return {
           ...printHistoryShape(p),
           position: isHistory ? e.int64(1) : e.op(e.count(ahead), "+", e.int64(1)),
-          lead_time: isHistory ? e.cast(e.duration, e.str("PT0S")) : e.sum(ahead["<on[is printing::Print]"].duration),
+          ...leadTimeFields(aheadPinned, aheadShared, p.queue),
           filter: scope,
           order_by: isHistory
             ? [{ expression: p.created_at, direction: e.DESC }]
@@ -58,6 +63,8 @@ export const prints = auth
     return toHistoryOutput(history).map((row, i) => ({
       ...row,
       position: history[i]!.position,
-      lead_time: history[i]!.lead_time,
+      lead_time: isHistory
+        ? new Temporal.Duration()
+        : adjustLeadTime(history[i]!.lead_pinned, history[i]!.lead_shared, history[i]!.hosts),
     }));
   });

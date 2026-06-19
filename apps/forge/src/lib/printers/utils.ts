@@ -1,3 +1,4 @@
+import { Temporal } from "@js-temporal/polyfill";
 import e, { $infer } from "@packages/db/edgeql-js";
 import {
   CreateDowntimeSchema,
@@ -194,23 +195,61 @@ export function toHistoryOutput(history: printHistoryRow[]) {
   }));
 }
 
-export function printsAhead(queue: any, created_at: any, priority: any, status: any) {
+export function printsAhead(queue: any, created_at: any, priority: any, status: any, printer: any, pinned?: boolean) {
   return e.select(e.printing.PrintHistory, (q) => {
     const print = e.assert_exists(e.assert_single(q["<on[is printing::Print]"]));
-    return {
-      filter: e.all(
-        e.set(
-          e.op("exists", q.status.is(status)),
-          e.op(q.queue, "=", queue),
-          e.op(
-            e.op(print.priority, ">", priority),
-            "or",
-            e.op(e.op(print.priority, "=", priority), "and", e.op(q.created_at, "<", created_at)),
-          ),
-        ),
-      ),
-    };
+    const sameMaterial = e.op(q.queue, "=", queue);
+    const assignedLane = e.op(
+      e.op(q.printer.id, "?=", printer.id),
+      "or",
+      e.op(e.op("not", e.op("exists", q.printer)), "and", sameMaterial),
+    );
+    const lane = e.op(assignedLane, "if", e.op("exists", printer), "else", sameMaterial);
+    const aheadOf = e.op(
+      e.op(print.priority, ">", priority),
+      "or",
+      e.op(e.op(print.priority, "=", priority), "and", e.op(q.created_at, "<", created_at)),
+    );
+    let filter = e.op(e.op("exists", q.status.is(status)), "and", e.op(lane, "and", aheadOf));
+    if (pinned === true) filter = e.op(filter, "and", e.op("exists", q.printer));
+    if (pinned === false) filter = e.op(filter, "and", e.op("not", e.op("exists", q.printer)));
+    return { filter };
   });
+}
+
+export const LEAD_TIME_BUFFER = 1.5;
+
+export function queueHostCount(queue: any) {
+  return e.op(
+    e.int64(1),
+    "if",
+    e.op(queue, "=", e.cast(e.printing.QueueType, "MULTI")),
+    "else",
+    e.count(e.select(e.printing.Printer, (pr) => ({ filter: e.op(pr.queue, "=", queue) }))),
+  );
+}
+
+export function leadTimeFields(
+  aheadPinned: ReturnType<typeof printsAhead>,
+  aheadShared: ReturnType<typeof printsAhead>,
+  queue: any,
+) {
+  return {
+    lead_pinned: e.sum(aheadPinned["<on[is printing::Print]"].duration),
+    lead_shared: e.sum(aheadShared["<on[is printing::Print]"].duration),
+    hosts: queueHostCount(queue),
+  };
+}
+
+export function adjustLeadTime(
+  pinned: Temporal.Duration,
+  shared: Temporal.Duration,
+  hosts: number | bigint,
+): Temporal.Duration {
+  const seconds =
+    (pinned.total({ unit: "seconds" }) + shared.total({ unit: "seconds" }) / Math.max(Number(hosts), 1)) *
+    LEAD_TIME_BUFFER;
+  return Temporal.Duration.from({ seconds: Math.round(seconds) });
 }
 
 export function filamentMatches(

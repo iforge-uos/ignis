@@ -5,8 +5,10 @@ import jwt from "jsonwebtoken";
 import * as z from "zod";
 import env from "@/lib/env";
 import {
+  adjustLeadTime,
   ANY_COLOUR,
   filamentMatches,
+  leadTimeFields,
   printFilamentSlotSchema,
   printHistoryShape,
   printsAhead,
@@ -173,25 +175,30 @@ export const add = ableToQueuePrint
       .assert_exists(
         e.select(e.printing.Print, (pr) => {
           const h = e.assert_exists(e.assert_single(pr.on));
-          const ahead = printsAhead(h.queue, h.created_at, pr.priority, e.printing.print_status.Queued);
+          const status = e.printing.print_status.Queued;
+          const ahead = printsAhead(h.queue, h.created_at, pr.priority, status, h.printer);
+          const aheadPinned = printsAhead(h.queue, h.created_at, pr.priority, status, h.printer, true);
+          const aheadShared = printsAhead(h.queue, h.created_at, pr.priority, status, h.printer, false);
           return {
             position: e.op(e.count(ahead), "+", e.int64(1)),
-            lead_time: e.sum(ahead["<on[is printing::Print]"].duration),
+            ...leadTimeFields(aheadPinned, aheadShared, h.queue),
             filter_single: { id: e.uuid(id) },
           };
         }),
       )
       .run(tx);
 
+    const lead_time = adjustLeadTime(stats.lead_pinned, stats.lead_shared, stats.hosts);
+
     if (priority_decrease)
       return {
         id,
         reset_priority: priority_decrease,
         position: stats.position,
-        lead_time: stats.lead_time,
+        lead_time,
         msg: "Priority reset to LOW as admin or 3DP permission required, and not on 3DP laptop account",
       };
-    return { id, reset_priority: priority_decrease, position: stats.position, lead_time: stats.lead_time };
+    return { id, reset_priority: priority_decrease, position: stats.position, lead_time };
   });
 
 const queueFilterBase = z.object({ offset: z.int().nonnegative().default(0) });
@@ -253,12 +260,14 @@ export const get = printing
               : queued;
 
         const print = e.assert_exists(e.assert_single(p["<on[is printing::Print]"]));
-        const ahead = printsAhead(p.queue, p.created_at, print.priority, status);
+        const ahead = printsAhead(p.queue, p.created_at, print.priority, status, p.printer);
+        const aheadPinned = printsAhead(p.queue, p.created_at, print.priority, status, p.printer, true);
+        const aheadShared = printsAhead(p.queue, p.created_at, print.priority, status, p.printer, false);
 
         return {
           ...printHistoryShape(p),
           position: e.op(e.count(ahead), "+", e.int64(1)),
-          lead_time: e.sum(ahead["<on[is printing::Print]"].duration),
+          ...leadTimeFields(aheadPinned, aheadShared, p.queue),
           filter: scope,
           order_by: [
             { expression: e.assert_single(print.priority), direction: e.DESC },
@@ -273,7 +282,7 @@ export const get = printing
     return toHistoryOutput(history).map((row, i) => ({
       ...row,
       position: history[i]!.position,
-      lead_time: history[i]!.lead_time,
+      lead_time: adjustLeadTime(history[i]!.lead_pinned, history[i]!.lead_shared, history[i]!.hosts),
     }));
   });
 
