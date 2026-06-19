@@ -7,6 +7,7 @@ import { nameRoutes } from "./$name";
 import { historyRouter } from "./history";
 import { printerRouter } from "./printer";
 import { queueRouter } from "./queue";
+import { publicPrintRouter } from "./public";
 import { admin } from "./admin";
 
 export const list = auth
@@ -37,6 +38,7 @@ export const printRouter = auth.prefix("/print").router({
   printer: printerRouter,
   queue: queueRouter,
   name: nameRoutes,
+  publicPrint: publicPrintRouter,
   list,
   admin,
 });

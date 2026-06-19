@@ -194,7 +194,7 @@ export async function getRepStats(start_date: Date, end_date: Date = new Date())
       id: true,
       first_name: true,
       last_name: true,
-      histories: e.select(rep["<author[is printing::Print]"].on, (h) => ({
+      histories: e.select(rep["<approved_by[is printing::Print]"].on, (h) => ({
         created_at: true,
         status_name: h.status.__type__.name,
       })),
@@ -245,5 +245,86 @@ export async function getRepStats(start_date: Date, end_date: Date = new Date())
     period_most_prints: rank_by((s) => s.period_prints),
     period_most_successful_prints: rank_by((s) => s.period_successful_prints),
     period_most_failed_prints: rank_by((s) => s.period_failed_prints),
+  };
+}
+
+export const userStatsSchema = repStatsSchema.extend({
+  total_average_attempts: z.number().nonnegative(),
+  period_average_attempts: z.number().nonnegative(),
+  total_print_mass: z.number().nonnegative(),
+  period_print_mass: z.number().nonnegative(),
+  total_print_duration: z.iso.duration(),
+  period_print_time: z.iso.duration(),
+});
+
+type userStats = z.infer<typeof userStatsSchema>;
+
+export async function getUserStats(
+  user_id: string,
+  start_date: Date = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+  end_date: Date = new Date(),
+): Promise<userStats> {
+  const start_ms = start_date.getTime();
+  const end_ms = end_date.getTime();
+
+  const u = await e
+    .assert_exists(
+      e.select(e.users.User, (user) => ({
+        id: true,
+        first_name: true,
+        last_name: true,
+        histories: e.select(user["<author[is printing::Print]"].on, (h) => ({
+          created_at: true,
+          attempts: true,
+          status_name: h.status.__type__.name,
+          prints: e.select(h["<on[is printing::Print]"], () => ({
+            duration: true,
+            mass: true,
+          })),
+        })),
+        filter_single: { id: e.uuid(user_id) },
+      })),
+    )
+    .run(db);
+
+  const in_window = (t: Temporal.ZonedDateTime) => t.epochMilliseconds >= start_ms && t.epochMilliseconds <= end_ms;
+  const rate = (success: number, total: number) => (total > 0 ? (success / total) * 100 : 0);
+  const seconds = (d: Temporal.Duration) => d.total({ unit: "seconds" });
+  const iso = (secs: number) => Temporal.Duration.from({ seconds: Math.round(secs) }).toString();
+  const mass = (hs: typeof u.histories) => hs.reduce((acc, h) => acc + h.prints.reduce((a, p) => a + p.mass, 0), 0);
+  const duration = (hs: typeof u.histories) =>
+    hs.reduce((acc, h) => acc + h.prints.reduce((a, p) => a + seconds(p.duration), 0), 0);
+
+  const period_histories = u.histories.filter((h) => in_window(h.created_at));
+  const total_complete = u.histories.filter((h) => h.status_name === COMPLETE);
+  const period_complete = period_histories.filter((h) => h.status_name === COMPLETE);
+
+  const total_prints = u.histories.length;
+  const period_prints = period_histories.length;
+  const total_successful = total_complete.length;
+  const period_successful = period_complete.length;
+  const total_attempts = u.histories.reduce((acc, h) => acc + h.attempts, 0);
+  const period_attempts = period_histories.reduce((acc, h) => acc + h.attempts, 0);
+
+  return {
+    id: u.id,
+    firstname: u.first_name,
+    lastname: u.last_name ?? "",
+    total_prints,
+    total_successful_prints: total_successful,
+    total_failed_prints: u.histories.filter((h) => h.status_name === FAILED).length,
+    total_success_rate: rate(total_successful, total_prints),
+    total_average_attempts: total_prints > 0 ? total_attempts / total_prints : 0,
+    total_print_mass: mass(total_complete),
+    total_print_duration: iso(duration(total_complete)),
+    period_start: start_date,
+    period_end: end_date,
+    period_prints,
+    period_successful_prints: period_successful,
+    period_failed_prints: period_histories.filter((h) => h.status_name === FAILED).length,
+    period_success_rate: rate(period_successful, period_prints),
+    period_average_attempts: period_prints > 0 ? period_attempts / period_prints : 0,
+    period_print_mass: mass(period_complete),
+    period_print_time: iso(duration(period_complete)),
   };
 }

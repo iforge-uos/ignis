@@ -13,6 +13,7 @@ import {
   queueHistoryOutput,
   THREEDP_LAPTOP_ACCOUNT,
   toHistoryOutput,
+  QUEUE_RETURN_ITEMS,
 } from "@/lib/printers/utils";
 import { ableToQueuePrint, auth, printing, transaction } from "@/orpc";
 import { printers } from "@/printing.ts";
@@ -192,8 +193,6 @@ export const add = ableToQueuePrint
       };
     return { id, reset_priority: priority_decrease, position: stats.position, lead_time: stats.lead_time };
   });
-
-const QUEUE_RETURN_ITEMS = 20;
 
 const queueFilterBase = z.object({ offset: z.int().nonnegative().default(0) });
 

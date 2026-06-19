@@ -10,8 +10,9 @@ import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
 import { durationSchema } from "@packages/db/zod/modules/std";
 import * as z from "zod";
 import { printing } from "@packages/db/interfaces";
-import type { Filament } from "@/lib/printers/types";
+import type { Filament, PrinterStatus } from "@/lib/printers/types";
 
+export const QUEUE_RETURN_ITEMS = 20;
 export const THREEDP_LAPTOP_ACCOUNT = "uuid-8438";
 
 export const PRINTER_CONNECTION_ERRORS = {
@@ -80,6 +81,47 @@ export const printerSchema = CreatePrinterSchema.omit({ ip: true, keys: true, fi
   filament: z.array(filamentSlotSchema),
 });
 
+export const printerStatusSchema = z.object({
+  state: z.enum(["idle", "printing", "paused", "finished", "disconnected", "disabled", "error"]),
+  current_job: z
+    .object({
+      print_job: z.object({
+        job_id: z.string(),
+        uuid: z.string(),
+        name: z.string(),
+        gcode_url: z.string(),
+        filament: z.array(filamentSlotSchema),
+        queue: QueueTypeSchema,
+      }),
+      name: z.string(),
+      progress: z.number(),
+      time_remaining: z.number(),
+    })
+    .optional(),
+  temperature: z
+    .object({
+      nozzle: z.object({ current: z.number(), target: z.number() }),
+      bed: z.object({ current: z.number(), target: z.number() }),
+    })
+    .optional(),
+  errors: z.array(z.string()).optional(),
+});
+
+export const publicStatusSchema = printerStatusSchema.omit({ errors: true }).extend({
+  current_job: printerStatusSchema.shape.current_job.unwrap().omit({ print_job: true, name: true }).optional(),
+});
+
+export function toPublicStatus(status: PrinterStatus): z.infer<typeof publicStatusSchema> {
+  return {
+    state: status.state,
+    temperature: status.temperature,
+    current_job: status.current_job && {
+      progress: status.current_job.progress,
+      time_remaining: status.current_job.time_remaining,
+    },
+  };
+}
+
 export const historyErrors = {
   HISTORY_NOT_FOUND: {
     status: 404,
@@ -109,7 +151,7 @@ export const historyOutput = z.array(
       })
       .optional(),
     attempts: z.int().nonnegative(),
-    timelapse: z.boolean(),
+    has_timelapse: z.boolean(),
   }),
 );
 
@@ -149,7 +191,6 @@ export function toHistoryOutput(history: printHistoryRow[]) {
     ...h,
     print: { ...h.print, filament: toFilamentSlots(h.print.filament) },
     printer: h.printer ?? undefined,
-    timelapse: h.has_timelapse,
   }));
 }
 

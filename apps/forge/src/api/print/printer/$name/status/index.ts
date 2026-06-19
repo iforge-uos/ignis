@@ -1,37 +1,11 @@
 import e from "@packages/db/edgeql-js";
-import { CreateDowntimeSchema, QueueTypeSchema } from "@packages/db/zod/modules/printing";
+import { CreateDowntimeSchema } from "@packages/db/zod/modules/printing";
 import * as z from "zod";
-import { filamentSlotSchema } from "@/lib/printers/utils";
 import { printing } from "@/orpc";
 import { printers, printManager } from "@/printing";
 import { config } from "./config";
 import { connection } from "./connection";
-
-const printerStatusSchema = z.object({
-  state: z.enum(["idle", "printing", "paused", "finished", "disconnected", "disabled", "error"]),
-  current_job: z
-    .object({
-      print_job: z.object({
-        job_id: z.string(),
-        uuid: z.string(),
-        name: z.string(),
-        gcode_url: z.string(),
-        filament: z.array(filamentSlotSchema),
-        queue: QueueTypeSchema,
-      }),
-      name: z.string(),
-      progress: z.number(),
-      time_remaining: z.number(),
-    })
-    .optional(),
-  temperature: z
-    .object({
-      nozzle: z.object({ current: z.number(), target: z.number() }),
-      bed: z.object({ current: z.number(), target: z.number() }),
-    })
-    .optional(),
-  errors: z.array(z.string()).optional(),
-});
+import { printerStatusSchema } from "@/lib/printers/utils";
 
 const statusOutput = z.object({
   status: printerStatusSchema,
