@@ -211,7 +211,7 @@ export const printing = auth
   .errors(PRINTING_ERRORS)
   .use(mixGated(["3DP"], ["Admin"]))
   .use(ensurePrinters);
-export const ableToQueuePrint = auth.use(mixGated(["3DP"], ["Admin", "Printa"]));
+export const ableToQueuePrint = auth.use(orRoleGated("Rep", "Admin", "Printa")).use(ensurePrinters);
 
 export class RollbackTransaction extends Error {
   readonly data: any;
