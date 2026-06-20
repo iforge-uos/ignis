@@ -1,11 +1,17 @@
+import { Temporal } from "@js-temporal/polyfill";
 import { format } from "date-fns";
 import { Container, Hr, Text } from "jsx-email";
 import { Email } from "../components/heading";
 import { Link } from "../components/link";
-import { EmailPrintUploadDetails } from "@/lib/printers/email";
+import type { EmailPrintUploadDetails } from "@/lib/printers/email";
 
-export function Template(print: EmailPrintUploadDetails) {
-  const { days, hours, minutes } = print.lead_time.round({ largestUnit: "days", smallestUnit: "minutes" });
+export function Template({
+  created_at = new Date(),
+  print_name = "{print_name}",
+  position = 1,
+  lead_time = new Temporal.Duration(),
+}: EmailPrintUploadDetails) {
+  const { days, hours, minutes } = lead_time.round({ largestUnit: "days", smallestUnit: "minutes" });
   const leadTime =
     [
       days && `${days} day${days === 1 ? "" : "s"}`,
@@ -15,20 +21,20 @@ export function Template(print: EmailPrintUploadDetails) {
       .filter(Boolean)
       .join(", ") || "less than a minute";
 
-  const queuedAt = format(print.created_at, "p 'on' PP");
+  const queuedAt = format(created_at, "p 'on' PP");
 
   return (
     <Email
-      preview={`Your print: ${print.print_name}, has been queued`}
+      preview={`Your print: ${print_name}, has been queued`}
       title="Your print has been queued"
-      heading={`Your print: ${print.print_name}, has been queued`}
+      heading={`Your print: ${print_name}, has been queued`}
     >
       <Hr />
       <Container>
         <Text>
           Hey there! <br />
-          Your print: {print.print_name}, has been added to the print queue at {queuedAt}. <br />
-          Position: {print.position} <br />
+          Your print: {print_name}, has been added to the print queue at {queuedAt}. <br />
+          Position: {position} <br />
           Estimated lead time: {leadTime} <br />
           Get live updates on your queued items{" "}
           <Link href="https://iforge.sheffield.ac.uk/printing/user/queue">here</Link>
