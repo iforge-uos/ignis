@@ -205,7 +205,7 @@ export const appConfig: AppConfig[] = [
   },
   {
     name: "Printing",
-    url: "/printing",
+    url: "/printing/home",
     color: "#1e1b4b",
     logo: PrinterIcon,
     description: "Manage your 3D print jobs",
@@ -213,7 +213,7 @@ export const appConfig: AppConfig[] = [
     routes: [
       {
         title: "Home",
-        url: "/printing",
+        url: "/printing/home",
         icon: HouseIcon,
         isActive: true,
       },
@@ -224,7 +224,7 @@ export const appConfig: AppConfig[] = [
         isActive: true,
       },
       {
-        title: "Your queue",
+        title: "Your prints",
         url: "/printing/user/queue",
         icon: ListTodoIcon,
         isActive: true,

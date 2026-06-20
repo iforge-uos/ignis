@@ -8,8 +8,9 @@ import DotIndicator from "@/components/dot-indicator";
 import Title from "@/components/title";
 import { IForgeLogo } from "@/icons/IForge";
 import { CircleCheckBig, Info } from "lucide-react";
+import { Card, CardContent, CardHeader } from "@packages/ui/components/card";
 
-export const Route = createFileRoute("/_authenticated/printing/")({
+export const Route = createFileRoute("/printing/home")({
   component: indexComponent,
 });
 
@@ -23,7 +24,6 @@ import usingTheElectronicsBench from "@/../public/homepage/using-the-electronics
 import usingTheLaserCutter from "@/../public/homepage/using-the-laser-cutter.webp?lqip";
 import usingTheSewingMachine from "@/../public/homepage/using-the-sewing-machine.webp?lqip";
 import usingTheWaterJet from "@/../public/homepage/using-the-water-jet.webp?lqip";
-import { Card, CardContent, CardDescription, CardHeader } from "@packages/ui/components/card";
 
 const imagesForCarousel = [
   { ...boba, alt: "3D printed Boba Fett cosplay" },
@@ -109,22 +109,27 @@ function indexComponent() {
       <div className="relative flex h-fit w-full flex-col items-center justify-center rounded-md mb-4">
         <ImageCarousel />
       </div>
-      <div className="relative flex justify-center w-full mb-8">
-        <Button asChild className="h-auto px-8 py-3 text-lg">
-          <Link to="/printing/public/dashboard">Click here to see our available printers</Link>
-        </Button>
-      </div>
       <div className="relative flex gap-8 mb-8 px-8">
         <Card className="flex-1 p-6">
           <CardHeader className="flex flex-row items-left justify-left gap-2 font-bold text-left text-3xl font-futura -mb-4 -px-8">
             <CircleCheckBig />
-            Capabilities:
+            Capabilities and Restrictions:
           </CardHeader>
           <CardContent>
             <ul className="list-[circle] list-inside">
-              <li>PLA, PETG and TPU only</li>
+              <li>PLA, PETG and TPU</li>
               <li>Max printing time of 7 hours for PLA or 10 hours for PETG/TPU</li>
               <li>Max print volume of WxDxH</li>
+              <li>
+                8 PLA printers: Prusa Core Ones, 2 PETG printers: Prusa MK4s, 1 TPU printer: Prusa MK4, 1 mixed: Bambu
+                H2D with AMS
+              </li>
+              <li>No Weapons, knives or inappropraite items</li>
+              <li>3D printed items aren't food safe</li>
+              <li>
+                No flat or rectangular objects, these can normally be bought in stock material (PS. We stock sheet
+                acylic)
+              </li>
             </ul>
           </CardContent>
         </Card>
@@ -133,6 +138,26 @@ function indexComponent() {
             <Info />
             Design Tips:
           </CardHeader>
+          <CardContent>
+            <ul className="list-[circle] list-inside mb-4">
+              <li>
+                Design around pre-existing hardware like dowels or bolts, rather than printing your own, as they may be
+                rejected
+              </li>
+              <li>Avoid overhangs, or make them 45 degrees to the build plate to reduce the need for supports</li>
+              <li>Aim to have 1 large flat face for the bottom layer, for higher print success rates</li>
+              <li>Prints are stronger when the force is parallel to the build plate, with layer lines</li>
+              <li>
+                If holes are present, aim to make them parallel with the build plate, or apply a teardrop shape to avoid
+                the need for supports inside the hole
+              </li>
+            </ul>
+            <div className="flex justify-center">
+              <Button asChild className="h-auto px-8 py-1 text-lg">
+                <Link to="/printing/tips">More information and tips here</Link>
+              </Button>
+            </div>
+          </CardContent>
         </Card>
       </div>
     </>
