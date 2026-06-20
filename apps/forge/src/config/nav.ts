@@ -40,6 +40,10 @@ import {
   UsersIcon,
   WrenchIcon,
   ZapIcon,
+  ListIcon,
+  ListTodoIcon,
+  CircleCheckBigIcon,
+  InfoIcon,
 } from "lucide-react";
 import { getActiveLocation } from "@/lib/utils/sign-in";
 import { AppConfig } from "@/types/nav";
@@ -79,13 +83,13 @@ export const appConfig: AppConfig[] = [
       },
       {
         title: "Our Reps",
-        url:"/our-reps",
+        url: "/our-reps",
         icon: RepIcon,
         isActive: true,
       },
       {
         title: "Events",
-        url:"/events",
+        url: "/events",
         icon: PartyPopperIcon,
         isActive: true,
       },
@@ -111,7 +115,7 @@ export const appConfig: AppConfig[] = [
         icon: HouseIcon,
         isActive: true,
       },
-            {
+      {
         title: "Dashboard",
         url: "/sign-in/$location/dashboard",
         params: () => ({ location: getActiveLocation() }),
@@ -204,13 +208,31 @@ export const appConfig: AppConfig[] = [
     url: "/printing",
     color: "#1e1b4b",
     logo: PrinterIcon,
-    description: "Manage your 3D print jobs (coming soon)",
-    mainMenuNavigable: false,
+    description: "Manage your 3D print jobs",
+    mainMenuNavigable: true,
     routes: [
       {
         title: "Home",
         url: "/printing",
         icon: HouseIcon,
+        isActive: true,
+      },
+      {
+        title: "Printers",
+        url: "/printing/public/dashboard",
+        icon: PrinterIcon,
+        isActive: true,
+      },
+      {
+        title: "Your queue",
+        url: "/printing/user/queue",
+        icon: ListTodoIcon,
+        isActive: true,
+      },
+      {
+        title: "Design Tips",
+        url: "/printing/tips",
+        icon: InfoIcon,
         isActive: true,
       },
     ],
@@ -270,7 +292,7 @@ export const appConfig: AppConfig[] = [
         icon: UserIcon,
         isActive: true,
       },
-       {
+      {
         title: "Agreements",
         url: "/user/agreements",
         icon: ClipboardPenIcon,
@@ -281,7 +303,8 @@ export const appConfig: AppConfig[] = [
         url: "/user/settings",
         icon: SettingsIcon,
         isActive: false,
-      },      {
+      },
+      {
         title: "Mailing lists",
         url: "/user/mailing-lists",
         icon: MailboxIcon,
