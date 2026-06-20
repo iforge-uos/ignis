@@ -10,10 +10,12 @@ import { queueRouter } from "./queue";
 import { publicPrintRouter } from "./public";
 import { admin } from "./admin";
 
+const locationOptions = z.enum([...LocationNameSchema.options, "ALL"]);
+
 export const list = auth
   .route({ method: "GET", path: "/" })
   .use(ensurePrinters)
-  .input(z.object({ location: z.union([LocationNameSchema, z.literal("All")]) }))
+  .input(z.object({ location: locationOptions }))
   .output(z.array(printerSchema))
   .handler(async ({ input: { location }, context: { db } }) => {
     const printers = await e
@@ -27,7 +29,9 @@ export const list = auth
         location: p.location.name,
         total_print_mass: true,
         total_print_time: true,
-        ...(location === "All" ? {} : { filter: e.op(p.location.name, "=", e.cast(e.sign_in.LocationName, location)) }),
+        ...(location === locationOptions.enum.ALL
+          ? {}
+          : { filter: e.op(p.location.name, "=", e.cast(e.sign_in.LocationName, location)) }),
       }))
       .run(db);
     return printers.map((p) => ({ ...p, filament: toFilamentSlots(p.filament) }));
