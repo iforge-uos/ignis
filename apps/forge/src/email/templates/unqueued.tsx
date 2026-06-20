@@ -4,14 +4,16 @@ import { Container, Hr, Section, Text } from "jsx-email";
 import * as React from "react";
 import { Email } from "../components/heading";
 import { Link } from "../components/link";
+import { Temporal } from "@js-temporal/polyfill";
 
 export function Template({
   id = "0000-0000-0000-0000",
   location = "{location}",
-  ends_at = Temporal.Now.zonedDateTimeISO("Europe/London").add({minutes: 20}),
+  ends_at,
 }: QueueEntry & { location: string }) {
   // const duration = ends_at.toTemporalInstant().subtract(duration);
-  const expirationTime = format(ends_at.toTemporalInstant().subtract({ minutes: 5 }).epochMilliseconds, "p");
+  if (!ends_at) ends_at = Temporal.Now.zonedDateTimeISO("Europe/London").add({ minutes: 20 });
+  const expirationTime = format(ends_at.subtract({ minutes: 5 }).epochMilliseconds, "p");
 
   return (
     <Email
