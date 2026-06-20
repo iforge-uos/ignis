@@ -245,11 +245,12 @@ export function adjustLeadTime(
   pinned: Temporal.Duration,
   shared: Temporal.Duration,
   hosts: number | bigint,
+  own: Temporal.Duration,
 ): Temporal.Duration {
   const seconds =
     (pinned.total({ unit: "seconds" }) + shared.total({ unit: "seconds" }) / Math.max(Number(hosts), 1)) *
     LEAD_TIME_BUFFER;
-  return Temporal.Duration.from({ seconds: Math.round(seconds) });
+  return Temporal.Duration.from({ seconds: Math.round(seconds + own.total({ unit: "seconds" })) });
 }
 
 export function filamentMatches(

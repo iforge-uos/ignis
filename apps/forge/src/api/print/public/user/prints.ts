@@ -65,6 +65,6 @@ export const prints = auth
       position: history[i]!.position,
       lead_time: isHistory
         ? new Temporal.Duration()
-        : adjustLeadTime(history[i]!.lead_pinned, history[i]!.lead_shared, history[i]!.hosts),
+        : adjustLeadTime(history[i]!.lead_pinned, history[i]!.lead_shared, history[i]!.hosts, history[i]!.print.duration),
     }));
   });

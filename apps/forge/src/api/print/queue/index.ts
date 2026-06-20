@@ -181,6 +181,7 @@ export const add = ableToQueuePrint
           const aheadShared = printsAhead(h.queue, h.created_at, pr.priority, status, h.printer, false);
           return {
             position: e.op(e.count(ahead), "+", e.int64(1)),
+            duration: true,
             ...leadTimeFields(aheadPinned, aheadShared, h.queue),
             filter_single: { id: e.uuid(id) },
           };
@@ -188,7 +189,7 @@ export const add = ableToQueuePrint
       )
       .run(tx);
 
-    const lead_time = adjustLeadTime(stats.lead_pinned, stats.lead_shared, stats.hosts);
+    const lead_time = adjustLeadTime(stats.lead_pinned, stats.lead_shared, stats.hosts, stats.duration);
 
     if (priority_decrease)
       return {
@@ -282,7 +283,7 @@ export const get = printing
     return toHistoryOutput(history).map((row, i) => ({
       ...row,
       position: history[i]!.position,
-      lead_time: adjustLeadTime(history[i]!.lead_pinned, history[i]!.lead_shared, history[i]!.hosts),
+      lead_time: adjustLeadTime(history[i]!.lead_pinned, history[i]!.lead_shared, history[i]!.hosts, history[i]!.print.duration),
     }));
   });
 
