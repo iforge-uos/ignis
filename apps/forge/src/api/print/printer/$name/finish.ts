@@ -51,13 +51,13 @@ export const finish = printing
     const attempts = record.attempts + 1;
     const new_status = (() => {
       if (success) return e.insert(e.printing.print_status.Complete, {});
+      if (!reason) throw errors.INPUT_VALIDATION_FAILED();
       if (review) return e.insert(e.printing.print_status.UnderReview, {});
       if (requeue) {
         return attempts >= 3
           ? e.insert(e.printing.print_status.UnderReview, {})
           : e.insert(e.printing.print_status.Queued, {});
       }
-      if (!reason) throw errors.INPUT_VALIDATION_FAILED();
       return e.insert(e.printing.print_status.Failed, { reason, note: message });
     })();
 
