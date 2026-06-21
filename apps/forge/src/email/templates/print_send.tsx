@@ -4,6 +4,7 @@ import { Container, Hr, Text } from "jsx-email";
 import { Email } from "../components/heading";
 import { Link } from "../components/link";
 import type { EmailPrintSendDetails } from "@/lib/printers/email";
+import { toTitleCase } from "@/lib/utils";
 import * as React from "react";
 
 export function Template({
@@ -31,7 +32,7 @@ export function Template({
       <Container>
         <Text>
           Hey there! <br />
-          Your print: {print_name}, started printing at {sent_at_str} in the {location.toLowerCase()} on {printer}.{" "}
+          Your print: {print_name}, started printing at {sent_at_str} in the {toTitleCase(location)} on {printer}.{" "}
           <br />
           It will be complete in roughly {print_time_str} <br />
           Get live updates on your print{" "}

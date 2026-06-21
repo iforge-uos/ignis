@@ -3,6 +3,7 @@ import { Container, Hr, Text } from "jsx-email";
 import { Email } from "../components/heading";
 import { Link } from "../components/link";
 import type { EmailPrintFinishDetails } from "@/lib/printers/email";
+import { toTitleCase } from "@/lib/utils";
 import * as React from "react";
 
 export function Template({
@@ -30,7 +31,7 @@ export function Template({
           <br />
           {success && (
             <>
-              Please come collect your print from the {location} <br />
+              Please come collect your print from the {toTitleCase(location)} <br />
             </>
           )}
           {!success && (
