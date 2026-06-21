@@ -1,6 +1,3 @@
-import client from "@/db";
-import env from "@/lib/env";
-import { PartialUserShape } from "@/lib/utils/queries";
 import e from "@packages/db/edgeql-js";
 import { LocationName, QueueEntry } from "@packages/types/sign_in";
 import { PartialUser } from "@packages/types/users";
@@ -11,10 +8,17 @@ import { render } from "jsx-email";
 import * as nodemailer from "nodemailer";
 import { SentMessageInfo } from "nodemailer/lib/smtp-transport";
 import React from "react";
+import client from "@/db";
+import env from "@/lib/env";
+import { toTitleCase } from "@/lib/utils";
+import { PartialUserShape } from "@/lib/utils/queries";
+import { EmailPrintUploadDetails, EmailPrintSendDetails, EmailPrintFinishDetails } from "./lib/printers/email";
 import { Template as QueuedTemplate } from "./email/templates/queued";
 import { Template as UnqueuedTemplate } from "./email/templates/unqueued";
 import { Template as WelcomeTemplate } from "./email/templates/welcome";
-import { toTitleCase } from "@/lib/utils";
+import { Template as UploadPrintTemplate } from "./email/templates/print_upload";
+import { Template as SendPrintTemplate } from "./email/templates/print_send";
+import { Template as FinishPrintTemplate } from "./email/templates/print_finish";
 
 interface Email {
   recipients: string[];
@@ -253,6 +257,33 @@ class Emailer {
       Sentry.captureException(error);
       throw error;
     }
+  }
+
+  async sendPrintUploadEmail({ email, display_name }: PartialUser, details: EmailPrintUploadDetails) {
+    await this.sendJSX(UploadPrintTemplate({ ...details }), {
+      recipients: [`${email}@sheffield.ac.uk`],
+      subject: `Your 3D print has been uploaded to the iForge print queue`,
+    });
+
+    logger.info(logger.fmt`PrintUpload email sent successfully to ${display_name} (${email})`);
+  }
+
+  async sendPrintSendEmail({ email, display_name }: PartialUser, details: EmailPrintSendDetails) {
+    await this.sendJSX(SendPrintTemplate({ ...details }), {
+      recipients: [`${email}@sheffield.ac.uk`],
+      subject: `Your 3D print has been started in the ${toTitleCase(details.location)}`,
+    });
+
+    logger.info(logger.fmt`PrintSend email sent successfully to ${display_name} (${email})`);
+  }
+
+  async sendPrintFinishEmail({ email, display_name }: PartialUser, details: EmailPrintFinishDetails) {
+    await this.sendJSX(FinishPrintTemplate({ ...details }), {
+      recipients: [`${email}@sheffield.ac.uk`],
+      subject: `Your 3D print has finished in the ${toTitleCase(details.location)}`,
+    });
+
+    logger.info(logger.fmt`PrintFinish email sent successfully to ${display_name} (${email})`);
   }
 }
 
