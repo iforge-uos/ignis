@@ -5,6 +5,8 @@ import * as z from "zod";
 import env from "@/lib/env";
 import { printing } from "@/orpc";
 import { printers, printManager } from "@/printing";
+import { PartialUserShape } from "@/lib/utils/queries";
+import email from "@/email";
 
 export const finish = printing
   .route({ method: "DELETE", path: "/finish" })
@@ -34,17 +36,20 @@ export const finish = printing
       throw errors.COMMAND_FAILED();
     }
 
-    const print = await e
-      .select(e.printing.Print, (p) => ({
-        history: e.assert_single(e.select(p.on, () => ({ id: true, attempts: true, has_timelapse: true }))),
+    const record = await e
+      .select(e.printing.PrintHistory, (h) => ({
+        id: true,
+        attempts: true,
+        has_timelapse: true,
+        author: e.assert_exists(e.assert_single(e.select(h["<on[is printing::Print]"].author, PartialUserShape))),
         filter_single: { id: e.uuid(job.uuid) },
       }))
       .run(db);
-    if (!print?.history) throw errors.PRINT_JOB_NOT_FOUND({ data: { id: job.uuid } });
+    if (!record) throw errors.PRINT_JOB_NOT_FOUND({ data: { id: job.uuid } });
 
-    const history_id = print.history.id;
-    const attempts = print.history.attempts + 1;
-    const newStatus = (() => {
+    const history_id = record.id;
+    const attempts = record.attempts + 1;
+    const new_status = (() => {
       if (success) return e.insert(e.printing.print_status.Complete, {});
       if (review) return e.insert(e.printing.print_status.UnderReview, {});
       if (requeue) {
@@ -59,11 +64,11 @@ export const finish = printing
     await e
       .update(e.printing.PrintHistory, () => ({
         filter_single: { id: e.uuid(history_id) },
-        set: { status: newStatus, ...(requeue ? { attempts } : {}) },
+        set: { status: new_status, ...(requeue ? { attempts } : {}) },
       }))
       .run(db);
 
-    if (print.history.has_timelapse) {
+    if (record.has_timelapse) {
       void (async () => {
         try {
           const timelapse = await printManager.retrieveTimelapse(name, job.name);
@@ -88,4 +93,23 @@ export const finish = printing
         }
       })();
     }
+
+    const printer_location = await e
+      .assert_exists(
+        e.select(e.printing.Printer, () => ({
+          location: { name: true },
+          filter_single: { id: printers.get(name)!.id },
+        })),
+      )
+      .run(db);
+
+    await email.sendPrintFinishEmail(record.author, {
+      finished_at: new Date(),
+      print_name: job.name,
+      success,
+      requeue,
+      reason,
+      attempt: attempts,
+      location: printer_location.location.name,
+    });
   });

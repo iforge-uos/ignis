@@ -4,6 +4,8 @@ import { PrintJob } from "@/lib/printers/types";
 import { filamentMatches, queueErrors, toFilamentSlots } from "@/lib/printers/utils";
 import { printing } from "@/orpc";
 import { printers, printManager } from "@/printing";
+import { PartialUserShape } from "@/lib/utils/queries";
+import email from "@/email";
 
 export const send = printing
   .errors(queueErrors)
@@ -25,6 +27,8 @@ export const send = printing
         name: true,
         gcode_path: true,
         filament: true,
+        duration: true,
+        author: PartialUserShape,
         history: e.assert_single(
           e.select(p.on, (h) => ({
             id: true,
@@ -54,10 +58,10 @@ export const send = printing
     const history_id = print.history.id;
 
     if (print.filament.length <= 1) {
-      const printerRow = await e
+      const printer_row = await e
         .select(e.printing.Printer, () => ({ filament: true, filter_single: { id: record.id } }))
         .run(db);
-      const matches = !!printerRow && filamentMatches(print.filament, printerRow.filament);
+      const matches = !!printer_row && filamentMatches(print.filament, printer_row.filament);
       if (!matches) throw errors.PRINTER_FILAMENT_MISMATCH({ data: { name: printer } });
     }
 
@@ -87,6 +91,23 @@ export const send = printing
         },
       }))
       .run(db);
+
+    const printer_location = await e
+      .assert_exists(
+        e.select(e.printing.Printer, () => ({
+          location: { name: true },
+          filter_single: { id: record.id },
+        })),
+      )
+      .run(db);
+
+    await email.sendPrintSendEmail(print.author, {
+      sent_at: new Date(),
+      print_name: print.name,
+      print_time: print.duration,
+      printer,
+      location: printer_location.location.name,
+    });
 
     return { id };
   });

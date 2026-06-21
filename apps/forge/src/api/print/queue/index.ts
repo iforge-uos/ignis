@@ -20,6 +20,8 @@ import {
 import { ableToQueuePrint, auth, printing, transaction } from "@/orpc";
 import { printers } from "@/printing.ts";
 import { idRouter } from "./$id.ts";
+import email from "@/email";
+import { PartialUserShape } from "@/lib/utils/queries";
 
 const uploadErrors = {
   UPLOAD_FAILED: {
@@ -192,6 +194,22 @@ export const add = ableToQueuePrint
 
     const lead_time = adjustLeadTime(stats.lead_pinned, stats.lead_shared, stats.hosts, stats.duration);
 
+    const recipient = await e
+      .assert_exists(
+        e.select(e.users.User, (u) => ({
+          filter_single: { id: e.uuid(author) },
+          ...PartialUserShape(u),
+        })),
+      )
+      .run(tx);
+
+    await email.sendPrintUploadEmail(recipient, {
+      created_at: new Date(),
+      print_name: name,
+      position: stats.position,
+      lead_time,
+    });
+
     if (priority_decrease)
       return {
         id,
@@ -284,7 +302,12 @@ export const get = printing
     return toHistoryOutput(history).map((row, i) => ({
       ...row,
       position: history[i]!.position,
-      lead_time: adjustLeadTime(history[i]!.lead_pinned, history[i]!.lead_shared, history[i]!.hosts, history[i]!.print.duration),
+      lead_time: adjustLeadTime(
+        history[i]!.lead_pinned,
+        history[i]!.lead_shared,
+        history[i]!.hosts,
+        history[i]!.print.duration,
+      ),
     }));
   });
 
