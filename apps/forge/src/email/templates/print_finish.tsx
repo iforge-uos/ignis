@@ -8,7 +8,7 @@ import * as React from "react";
 export function Template({
   finished_at = new Date(),
   print_name = "{print_name}",
-  success = true,
+  success = false,
   requeue = false,
   reason = "{reason}",
   attempt = 1,
@@ -35,14 +35,14 @@ export function Template({
           )}
           {!success && (
             <>
-              {requeue ? "It has been requeued" : "It has not been requeued"} <br />
-              it failed because: {reason} <br />
+              {requeue ? "It has been requeued and will be attempted again" : "It has not been requeued"} <br />
+              It failed because: {reason} <br />
             </>
           )}
-          {success ? `It took ${attempt} attempts` : `It is on attempt ${attempt}`} <br />
+          {success ? `It took ${attempt} attempt/s` : `It is on attempt ${attempt}`} <br />
           {!success && requeue && attempt >= 3 && (
             <>
-              As it has taken more than 3 attempts, it has been put under review <br />
+              As it has taken more than 3 attempt/s, it has been put under review <br />
             </>
           )}
           View your other {!success && requeue ? "and requeued " : ""}prints{" "}

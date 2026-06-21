@@ -31,9 +31,10 @@ export function Template({
       <Container>
         <Text>
           Hey there! <br />
-          Your print: {print_name}, started printing at {sent_at_str} in the {location.toLowerCase()}. <br />
+          Your print: {print_name}, started printing at {sent_at_str} in the {location.toLowerCase()} on {printer}.{" "}
+          <br />
           It will be complete in roughly {print_time_str} <br />
-          Get live updates on your print items{" "}
+          Get live updates on your print{" "}
           <Link href={`https://iforge.sheffield.ac.uk/printing/public/${printer}`}>here</Link>
         </Text>
       </Container>

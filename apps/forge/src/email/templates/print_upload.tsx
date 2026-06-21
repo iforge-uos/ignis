@@ -10,10 +10,10 @@ export function Template({
   created_at = new Date(),
   print_name = "{print_name}",
   position = 1,
-  lead_time = new Temporal.Duration(),
+  lead_time = Temporal.Duration.from({ days: 1, hours: 3, minutes: 20 }),
 }: EmailPrintUploadDetails) {
   const { days, hours, minutes } = lead_time.round({ largestUnit: "days", smallestUnit: "minutes" });
-  const lead_time_str =
+  const leadTime =
     [
       days && `${days} day${days === 1 ? "" : "s"}`,
       hours && `${hours} hour${hours === 1 ? "" : "s"}`,
@@ -22,7 +22,7 @@ export function Template({
       .filter(Boolean)
       .join(", ") || "less than a minute";
 
-  const queued_at = format(created_at, "p 'on' PP");
+  const queuedAt = format(created_at, "p 'on' PP");
 
   return (
     <Email
@@ -34,9 +34,9 @@ export function Template({
       <Container>
         <Text>
           Hey there! <br />
-          Your print: {print_name}, has been added to the print queue at {queued_at}. <br />
+          Your print: {print_name}, has been added to the print queue at {queuedAt}. <br />
           Position: {position} <br />
-          Estimated lead time: {lead_time_str} <br />
+          Estimated lead time: {leadTime} <br />
           Get live updates on your queued items{" "}
           <Link href="https://iforge.sheffield.ac.uk/printing/user/queue">here</Link>
         </Text>
