@@ -106,6 +106,7 @@ export const finish = printing
     await email.sendPrintFinishEmail(record.author, {
       finished_at: new Date(),
       print_name: job.name,
+      review,
       success,
       requeue,
       reason,

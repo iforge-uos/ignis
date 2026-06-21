@@ -10,12 +10,15 @@ export function Template({
   finished_at = new Date(),
   print_name = "{print_name}",
   success = false,
+  review = false,
   requeue = false,
-  reason = "{reason}",
+  reason = "unknown",
   attempt = 1,
   location = "MAINSPACE",
 }: EmailPrintFinishDetails) {
   const finished_at_str = format(finished_at, "p 'on' PP");
+  const under_review = !success && (review || (requeue && attempt >= 3));
+  const requeued = !success && (requeue || review);
 
   return (
     <Email
@@ -36,17 +39,24 @@ export function Template({
           )}
           {!success && (
             <>
-              {requeue ? "It has been requeued and will be attempted again" : "It has not been requeued"} <br />
               It failed because: {reason} <br />
+              {under_review ? (
+                <>
+                  It has been put under review to be checked by a 3DP rep and will be attempted again. <br />
+                </>
+              ) : requeued ? (
+                <>
+                  It has been requeued and will be attempted again. <br />
+                </>
+              ) : (
+                <>
+                  It has not been requeued. <br />
+                </>
+              )}
             </>
           )}
           {success ? `It took ${attempt} attempt/s` : `It is on attempt ${attempt}`} <br />
-          {!success && requeue && attempt >= 3 && (
-            <>
-              As it has taken more than 3 attempt/s, it has been put under review <br />
-            </>
-          )}
-          View your other {!success && requeue ? "and requeued " : ""}prints{" "}
+          View your other {requeued ? "and requeued " : ""}prints{" "}
           <Link href="https://iforge.sheffield.ac.uk/printing/user/queue">here</Link>
         </Text>
       </Container>

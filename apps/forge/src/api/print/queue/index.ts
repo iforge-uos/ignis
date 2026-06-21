@@ -203,12 +203,14 @@ export const add = ableToQueuePrint
       )
       .run(tx);
 
-    await email.sendPrintUploadEmail(recipient, {
-      created_at: new Date(),
-      print_name: name,
-      position: stats.position,
-      lead_time,
-    });
+    await email
+      .sendPrintUploadEmail(recipient, {
+        created_at: new Date(),
+        print_name: name,
+        position: stats.position,
+        lead_time,
+      })
+      .catch(() => {});
 
     if (priority_decrease)
       return {

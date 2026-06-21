@@ -20,6 +20,7 @@ export interface EmailPrintFinishDetails {
   finished_at: Date;
   print_name: string;
   success: boolean;
+  review: boolean;
   requeue: boolean;
   reason: string;
   attempt: number;
