@@ -90,6 +90,15 @@ export const update = printing
         throw errors.UPLOAD_FAILED();
       }
       if (!response.ok) throw errors.UPLOAD_FAILED();
+
+      await e
+        .update(e.printing.PrintHistory, (p) => ({
+          filter: e.op(p["<on[is printing::Print]"].id, "=", e.uuid(id)),
+          set: {
+            attempts: 0,
+          },
+        }))
+        .run(db);
     }
 
     return { id };

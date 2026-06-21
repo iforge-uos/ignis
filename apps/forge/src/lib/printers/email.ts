@@ -18,9 +18,10 @@ export interface EmailPrintSendDetails {
 
 export interface EmailPrintFinishDetails {
   finished_at: Date;
+  print_name: string;
   success: boolean;
   requeue: boolean;
-  reason?: string;
+  reason: string;
   attempt: number;
   location: sign_in.LocationName;
 }
