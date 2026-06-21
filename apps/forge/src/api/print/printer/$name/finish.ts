@@ -32,15 +32,16 @@ export const finish = printing
       throw errors.COMMAND_FAILED();
     }
 
-    const record = await e
-      .select(e.printing.PrintHistory, () => ({
-        attempts: true,
+    const print = await e
+      .select(e.printing.Print, (p) => ({
+        history: e.assert_single(e.select(p.on, () => ({ id: true, attempts: true }))),
         filter_single: { id: e.uuid(job.uuid) },
       }))
       .run(db);
-    if (!record) throw errors.PRINT_JOB_NOT_FOUND({ data: { id: job.uuid } });
+    if (!print?.history) throw errors.PRINT_JOB_NOT_FOUND({ data: { id: job.uuid } });
 
-    const attempts = record.attempts + 1;
+    const history_id = print.history.id;
+    const attempts = print.history.attempts + 1;
     const newStatus = (() => {
       if (success) return e.insert(e.printing.print_status.Complete, {});
       if (review) return e.insert(e.printing.print_status.UnderReview, {});
@@ -55,7 +56,7 @@ export const finish = printing
 
     await e
       .update(e.printing.PrintHistory, () => ({
-        filter_single: { id: e.uuid(job.uuid) },
+        filter_single: { id: e.uuid(history_id) },
         set: { status: newStatus, ...(requeue ? { attempts } : {}) },
       }))
       .run(db);
