@@ -1,7 +1,7 @@
 import e from "@packages/db/edgeql-js";
 import * as z from "zod";
+import { downtimeError, downtimeSchema, downtimeShape } from "@/lib/printers/utils";
 import { printing } from "@/orpc";
-import { downtimeError, downtimeSchema, downtimeShape } from "/src/lib/printers/utils";
 import { nameRoutes } from "./$name";
 
 export const all = printing

@@ -160,7 +160,7 @@ export class BambuDriver implements PrinterDriver {
     this.latest_report = {};
     this.active_job = undefined;
     this.active_filename = undefined;
-    this.finish_handled = false;
+    this.finish_handled = true;
     this.current_status = { state: "disconnected" };
   }
 
@@ -177,7 +177,7 @@ export class BambuDriver implements PrinterDriver {
   async sendJob(job: PrintJob, timelapse?: boolean): Promise<string> {
     if (this.is_disabled) throw new Error(`Bambu printer ${this.config?.name} is disabled`);
     let record_timelapse = timelapse ?? false;
-    if (record_timelapse && !this.config?.hasCamera) {
+    if (record_timelapse && !this.config?.has_camera) {
       console.warn(`Bambu printer ${this.config?.name} has no camera, skipping timelapse`);
       record_timelapse = false;
     }
@@ -215,6 +215,12 @@ export class BambuDriver implements PrinterDriver {
     this.finish_handled = true;
     this.current_status = { ...this.current_status, state: "idle" };
     for (const listener of this.status_listener) listener(this.current_status);
+  }
+
+  restoreJob(job: PrintJob): void {
+    this.active_job = { ...job, job_id: `${job.name}.gcode` };
+    this.active_filename = `${job.name}.gcode`;
+    this.finish_handled = false;
   }
 
   get Config(): BambuConfig | null {
@@ -268,8 +274,8 @@ export class BambuDriver implements PrinterDriver {
       throw new Error("Multi filament printers requires filament to be editited on printer");
     const idx = this.config.filament.findIndex((s) => s.slot_id === slotId);
     if (idx === -1) return;
-    this.config.slots[idx] = filament;
-    this.config.queue = this.config.slots.length === 1 ? this.config.slots[0].filamentType : "MULTI";
+    this.config.filament[idx] = filament;
+    this.config.queue = this.config.filament.length === 1 ? this.config.filament[0].material : "MULTI";
   }
 
   async syncSlots(): Promise<Filament[]> {
@@ -286,13 +292,18 @@ export class BambuDriver implements PrinterDriver {
         if (!tray.tray_type) continue;
         const filamentType = BAMBU_TRAY_TYPE_TO_MATERIAL[tray.tray_type];
         if (filamentType === undefined) continue;
+        const colour = (tray.tray_color ?? "").toUpperCase();
+        const nozzle_temp_min = Number(tray.nozzle_temp_min ?? 0);
+        const nozzle_temp_max = Number(tray.nozzle_temp_max ?? 0);
+        const bed_temp = Number(tray.bed_temp ?? 0);
+        if (colour.length !== 8 || nozzle_temp_min <= 0 || nozzle_temp_max <= 0 || bed_temp <= 0) continue;
         slots.push({
           slot_id: Number(unit.id) * 4 + Number(tray.id),
           material: filamentType,
-          colour: (tray.tray_color ?? "").toUpperCase(),
-          nozzle_temp_min: Number(tray.nozzle_temp_min ?? 0),
-          nozzle_temp_max: Number(tray.nozzle_temp_max ?? 0),
-          bed_temp: Number(tray.bed_temp ?? 0),
+          colour,
+          nozzle_temp_min,
+          nozzle_temp_max,
+          bed_temp,
         });
       }
     }
@@ -322,11 +333,11 @@ export class BambuDriver implements PrinterDriver {
   private mapStatus(report: BambuPrintReport): PrinterStatus {
     const mapped = report.gcode_state ? (BAMBU_STATE_MAP[report.gcode_state] ?? "error") : "idle";
     const state = this.is_disabled ? "disabled" : mapped === "finished" && this.finish_handled ? "idle" : mapped;
-    const hasJob = mapped === "printing" || mapped === "paused" || mapped === "finished";
+    const has_job = mapped === "printing" || mapped === "paused" || mapped === "finished";
     return {
       state,
       current_job:
-        hasJob && this.active_job
+        has_job && this.active_job
           ? {
               print_job: this.active_job,
               name: report.subtask_name ?? this.active_job.name,
@@ -368,7 +379,6 @@ export class BambuDriver implements PrinterDriver {
     timelapse = false;
 
     if (!this.config) throw new Error("Ftp client requires printer config");
-    const useAms = (this.config.slots?.length ?? 0) > 1;
     this.publishCommand({
       print: {
         sequence_id: this.nextSequenceId(),
@@ -376,7 +386,7 @@ export class BambuDriver implements PrinterDriver {
         param: filename,
         url: `file:///sdcard/${filename}`,
         subtask_name: name,
-        use_ams: useAms,
+        use_ams: this.config.queue === "MULTI",
         timelapse,
         bed_leveling: true,
         flow_cali: false,

@@ -251,6 +251,12 @@ export class PrusaDriver implements PrinterDriver {
     for (const listener of this.status_listener) listener(this.current_status);
   }
 
+  restoreJob(job: PrintJob): void {
+    this.active_job = job;
+    this.active_filename = `${job.name}.gcode`;
+    this.finish_handled = false;
+  }
+
   get Config(): PrusaConfig | null {
     return this.config ?? null;
   }
@@ -309,9 +315,9 @@ export class PrusaDriver implements PrinterDriver {
     if (!this.config) throw new Error("Updating a printer filament slot requires a config");
     const idx = this.config.filament.findIndex((s) => s.slot_id === slotId);
     if (idx === -1) return;
-    this.config.slots[idx] = filament;
-    if (this.config.slots.length === 1) {
-      this.config.queue = this.config.slots[0].filamentType;
+    this.config.filament[idx] = filament;
+    if (this.config.filament.length === 1) {
+      this.config.queue = this.config.filament[0].material;
     }
   }
 
@@ -347,7 +353,7 @@ export class PrusaDriver implements PrinterDriver {
               uuid: this.active_job?.uuid ?? "",
               name: this.active_job?.name ?? "",
               gcode_url: this.active_job?.gcode_url ?? "",
-              filament: this.config?.slots ?? [],
+              filament: this.config?.filament ?? [],
               queue: this.config?.queue ?? "PLA",
             },
             name: this.active_job?.name ?? "",

@@ -12,6 +12,8 @@
 - [ ] Sort out docs/comments
 - [x] Sort out api
 - [ ] Integrate frontend with franklin
-- [ ] Sort out confirmation emails on upload, send and finish
+- [x] Sort out confirmation emails on upload, send and finish
+- [ ] Merge printing-emails
 - [x] Sort out cdn
 - [x] fix Prusa Driver
+- [ ] Update THREEDP_LAPTOP_ACCOUNT uuid in lib/printer/utils

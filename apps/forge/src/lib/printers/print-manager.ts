@@ -122,6 +122,10 @@ export class PrinterManager {
     return driver.finishJob(current_job?.print_job.job_id ?? "");
   }
 
+  restoreJob(name: string, job: PrintJob): void {
+    this.require(name).restoreJob(job);
+  }
+
   getConfig(printerName: string): PrinterConfig | null {
     return this.require(printerName).Config;
   }

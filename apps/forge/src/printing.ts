@@ -1,10 +1,11 @@
 import e, { $infer } from "@packages/db/edgeql-js";
+import type { printing, sign_in } from "@packages/db/interfaces";
 import db from "@/db";
 import type { BambuConfig } from "@/lib/printers/bambu-driver";
 import { PrinterManager } from "@/lib/printers/print-manager";
 import type { PrusaConfig } from "@/lib/printers/prusa-driver";
-import type { printing, sign_in } from "@packages/db/interfaces";
-import { type PrinterConfig, type PrinterStatus } from "@/lib/printers/types";
+import { type PrinterConfig, type PrinterStatus, type PrintJob } from "@/lib/printers/types";
+import { toFilamentSlots } from "@/lib/printers/utils";
 
 // This file just kept growing `\_(*-*)_/`
 
@@ -240,11 +241,48 @@ function syncStatusWithDb(): () => void {
   });
 }
 
+async function restoreActiveJob(name: string, printerId: string): Promise<void> {
+  if (!printManager.isConnected(name)) return;
+  const active = await e
+    .select(e.printing.PrintHistory, (h) => ({
+      queue: true,
+      print: e.assert_exists(
+        e.assert_single(
+          e.select(h["<on[is printing::Print]"], () => ({
+            id: true,
+            name: true,
+            gcode_path: true,
+            filament: true,
+          })),
+        ),
+      ),
+      filter: e.op(
+        e.op(h.printer.id, "=", e.uuid(printerId)),
+        "and",
+        e.op("exists", h.status.is(e.printing.print_status.Printing)),
+      ),
+    }))
+    .run(db);
+  const current = active[0];
+  if (!current) return;
+  const job: PrintJob = {
+    job_id: "0",
+    uuid: current.print.id,
+    name: current.print.name,
+    gcode_url: current.print.gcode_path,
+    filament: toFilamentSlots(current.print.filament),
+    queue: current.queue,
+  };
+  printManager.restoreJob(name, job);
+  await printManager.getStatus(name, true);
+}
+
 async function runSetup(): Promise<Map<string, PrinterRecord>> {
   const rows = await e.select(e.printing.Printer, PrinterConfigShape).run(db);
   for (const printer of rows) {
     const name = await printManager.addPrinter(buildConfig(printer));
     printers.set(name, { id: printer.id, connected: printManager.isConnected(name), queue: printer.queue });
+    await restoreActiveJob(name, printer.id);
   }
   unsubscribeStatus = syncStatusWithDb();
   checkDTInterval = beginDTCheck();
@@ -258,6 +296,7 @@ export async function connectPrinter(id: string): Promise<boolean> {
   if (!printer) return false;
   const name = await printManager.addPrinter(buildConfig(printer));
   printers.set(name, { id: printer.id, connected: printManager.isConnected(name), queue: printer.queue });
+  await restoreActiveJob(name, printer.id);
   return printManager.isConnected(name);
 }
 
@@ -280,15 +319,15 @@ export async function addPrinter(config: PrinterConfig, details: PrinterDetails,
   if (clash.some((printer) => printer.ip === config.ip)) {
     throw new PrinterConflictError("ip", config.ip);
   }
-  const { username, serial, password, queue: _queue, filament, ...rest } = config;
+  const { ip, name, manufacturer, has_camera, filament } = config;
 
   let keys: string[];
   switch (config.manufacturer) {
     case "PRUSA":
-      keys = [username, password];
+      keys = [(config as PrusaConfig).username, (config as PrusaConfig).password];
       break;
     case "BAMBU":
-      keys = [serial, password];
+      keys = [(config as BambuConfig).serial, (config as BambuConfig).password];
       break;
     default:
       throw new Error(`Unknown manufacturer "${config.manufacturer}"`);
@@ -296,7 +335,10 @@ export async function addPrinter(config: PrinterConfig, details: PrinterDetails,
   const inserted = await e
     .select(
       e.insert(e.printing.Printer, {
-        ...rest,
+        ip,
+        name,
+        manufacturer,
+        has_camera,
         keys,
         filament: filament.map(({ slot_id, ...slot }) => slot),
         model: details.model,

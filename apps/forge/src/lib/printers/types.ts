@@ -18,6 +18,7 @@ export interface PrinterDriver {
   pauseJob(jobId: string): Promise<void>;
   resumeJob(jobId: string): Promise<void>;
   finishJob(id: string): Promise<void>;
+  restoreJob(job: PrintJob): void; // Restore active job after removal of dirver during reconnect/disconnect by manager
 
   get Config(): PrinterConfig | null;
   get ActiveJob(): PrintJob | null;
@@ -50,7 +51,6 @@ export interface PrinterConfig {
   filament: Filament[]; // Colour and material, as AMS has various materials and colours in each slot
   queue: printing.QueueType;
   has_camera: boolean;
-  [key: string]: any;
 }
 
 export interface Filament {
