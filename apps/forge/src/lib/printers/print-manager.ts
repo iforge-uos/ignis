@@ -1,5 +1,6 @@
 import { type BambuConfig, BambuDriver } from "@/lib/printers/bambu-driver";
-import { type PrusaConfig, PrusaDriver } from "@/lib/printers/prusa-driver";
+import { type OctoprintConfig, OctoprintDriver } from "@/lib/printers/octoprint-driver";
+import type { PrusaConfig } from "@/lib/printers/prusa-driver";
 import type { Filament, PrinterConfig, PrinterDriver, PrinterFile, PrinterStatus, PrintJob } from "./types";
 
 type ManagedConfig = PrusaConfig | BambuConfig;
@@ -26,7 +27,7 @@ export class PrinterManager {
     let driver: PrinterDriver;
     switch (config.manufacturer) {
       case "PRUSA":
-        driver = new PrusaDriver(config as PrusaConfig);
+        driver = new OctoprintDriver(config as OctoprintConfig);
         break;
       case "BAMBU":
         driver = new BambuDriver(config as BambuConfig);

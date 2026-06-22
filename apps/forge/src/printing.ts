@@ -2,8 +2,8 @@ import e, { $infer } from "@packages/db/edgeql-js";
 import type { printing, sign_in } from "@packages/db/interfaces";
 import db from "@/db";
 import type { BambuConfig } from "@/lib/printers/bambu-driver";
+import type { OctoprintConfig } from "@/lib/printers/octoprint-driver";
 import { PrinterManager } from "@/lib/printers/print-manager";
-import type { PrusaConfig } from "@/lib/printers/prusa-driver";
 import { type PrinterConfig, type PrinterStatus, type PrintJob } from "@/lib/printers/types";
 import { toFilamentSlots } from "@/lib/printers/utils";
 
@@ -57,7 +57,7 @@ const PrinterConfigShape = e.shape(e.printing.Printer, () => ({
 type PrinterRow = $infer<typeof PrinterConfigShape>[number];
 
 // No nice way to convert
-function buildConfig(printer: PrinterRow): PrusaConfig | BambuConfig {
+function buildConfig(printer: PrinterRow): OctoprintConfig | BambuConfig {
   const base = {
     name: printer.name,
     ip: printer.ip,
@@ -324,7 +324,7 @@ export async function addPrinter(config: PrinterConfig, details: PrinterDetails,
   let keys: string[];
   switch (config.manufacturer) {
     case "PRUSA":
-      keys = [(config as PrusaConfig).username, (config as PrusaConfig).password];
+      keys = [(config as OctoprintConfig).username, (config as OctoprintConfig).password];
       break;
     case "BAMBU":
       keys = [(config as BambuConfig).serial, (config as BambuConfig).password];

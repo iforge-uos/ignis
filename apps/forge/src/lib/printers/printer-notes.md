@@ -15,6 +15,12 @@
 - Prusa uses an inbuilt webapp (prusa link), whose openapi.yaml can be found [here](https://github.com/prusa3d/Prusa-Link-Web/blob/master/spec/openapi.yaml)
 - The current setup uses set api keys. however, this may of changed to digest auth (passwords and username etc), so testing needs to be done. (Been changed to digest, but still needs tetsing)
 - **Setup for printers with only 1 filament slot**
+- Redundant now use octoprint-driver.ts for easier streaming and webcam
+
+## octoprint-driver.ts
+- Uses octoprint for camera and everything else
+- Just needs octoprint apikey
+- Has timelapses and video stream as well
 
 ## bambu-driver.ts
 - Bambu is mopre closed off and uses a MQTT and FTP based messaging system, found [here](https://github.com/Doridian/OpenBambuAPI/blob/main/mqtt.md)
