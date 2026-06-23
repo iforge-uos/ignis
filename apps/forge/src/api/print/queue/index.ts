@@ -107,6 +107,7 @@ export const add = ableToQueuePrint
     }
 
     let { name, duration, mass, priority, reason, filament, author, approved_by, gcode, threemf, timelapse } = print;
+    name = name.trim().replace(/[^A-Za-z0-9\-_.()[\] ]/g, "").replace(/\s+/g, "_");
     let priority_decrease = false;
     // This is if 3dp laptop has specific account
     if (user.id === THREEDP_LAPTOP_ACCOUNT && priority !== "LOW") {

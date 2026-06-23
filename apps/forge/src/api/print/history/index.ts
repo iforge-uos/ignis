@@ -4,6 +4,7 @@ import { auth, printing } from "@/orpc";
 import { printer } from "./$name";
 import { print } from "./print.$id";
 import { competition } from "./reps";
+import { timelapseRouter } from "./timelapse";
 import { user } from "./user.$id";
 
 export const stats = printing
@@ -25,4 +26,5 @@ export const historyRouter = auth.prefix("/history").router({
   stats,
   printer,
   print,
+  ...timelapseRouter,
 });

@@ -133,7 +133,7 @@ async fn upload_timelapse(
         id.as_str()
     );
 
-    let timelapse_path = CONTENT_BASE_DIR.join(format!("timelapse/{id}.mp4"));
+    let timelapse_path = CONTENT_BASE_DIR.join(format!("timelapse/{id}.mpg"));
 
 
     match multipart
@@ -211,6 +211,63 @@ async fn upload_notification_attachments(
 }
 
 
+#[derive(Deserialize)]
+struct ZipRequest {
+    ids: Vec<Uuid>,
+    access_token: String,
+}
+
+#[actix_web::patch("/zip/timelapse")]
+async fn zip_timelapse(
+    request: actix_web::web::Json<ZipRequest>,
+) -> actix_web::Result<impl Responder> {
+    let user_id = validate_jwt(Text(request.access_token.clone()))?;
+
+    let mut buffer = std::io::Cursor::new(Vec::new());
+    let mut added = 0;
+    {
+        use std::io::Write;
+        let mut zip = zip::ZipWriter::new(&mut buffer);
+        let options = zip::write::SimpleFileOptions::default()
+            .compression_method(zip::CompressionMethod::Stored);
+
+        for id in &request.ids {
+            let path = CONTENT_BASE_DIR.join(format!("timelapse/{id}.mpg"));
+            let bytes = match std::fs::read(&path) {
+                Ok(bytes) => bytes,
+                Err(_) => continue,
+            };
+            zip.start_file(format!("{id}.mpg"), options)
+                .and_then(|_| zip.write_all(&bytes).map_err(zip::result::ZipError::from))
+                .map_err(|e| {
+                    error::ErrorInternalServerError(format!("Failed to add file to zip: {e}"))
+                })?;
+            added += 1;
+        }
+
+        if added == 0 {
+            return Err(error::ErrorNotFound("No timelapses found for the given ids"));
+        }
+
+        zip.finish()
+            .map_err(|e| error::ErrorInternalServerError(format!("Failed to finalise zip: {e}")))?;
+    }
+
+    sentry::logger_info!(
+        "User {} downloaded {} timelapse(s) as zip",
+        user_id.as_str(),
+        added
+    );
+
+    Ok(HttpResponse::Ok()
+        .content_type("application/zip")
+        .insert_header((
+            "Content-Disposition",
+            "attachment; filename=\"timelapses.zip\"",
+        ))
+        .body(buffer.into_inner()))
+}
+
 /// Simple health check endpoint
 #[actix_web::get("/health")]
 async fn health_check() -> impl Responder {
@@ -250,6 +307,7 @@ fn main() -> std::io::Result<()> {
                 .service(upload_print)
                 .service(upload_timelapse)
                 .service(upload_notification_attachments)
+                .service(zip_timelapse)
                 .service(health_check)
 
                 .wrap(Logger::default())

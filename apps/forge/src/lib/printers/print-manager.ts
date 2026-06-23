@@ -147,6 +147,12 @@ export class PrinterManager {
     return this.require(name).uploadFile(file, filename, print);
   }
 
+  async retrieveTimelapse(name: string, printName: string): Promise<Buffer | null> {
+    const driver = this.require(name);
+    if (driver instanceof OctoprintDriver) return driver.retrieveTimelapse(printName);
+    return null;
+  }
+
   listFiles(name: string): Promise<PrinterFile[]> {
     return this.require(name).listFiles();
   }

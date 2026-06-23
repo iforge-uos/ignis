@@ -109,8 +109,8 @@ export type $PrintHistoryλShape = $.typeutil.flatten<_default.$CreatedAtλShape
   "printer": $.LinkDesc<$Printer, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
   "attempts": $.PropertyDesc<_std.$int16, $.Cardinality.One, false, false, false, true>;
   "has_timelapse": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, false>;
-  "timelapse_path": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
   "queue": $.PropertyDesc<$QueueType, $.Cardinality.One, false, true, false, false>;
+  "timelapse_path": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
   "<on[is printing::Print]": $.LinkDesc<$Print, $.Cardinality.Many, {}, false, false,  false, false>;
   "<on": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;

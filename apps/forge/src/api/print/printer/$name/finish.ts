@@ -1,6 +1,8 @@
 import e from "@packages/db/edgeql-js";
 import { print_status_FailureReasonSchema } from "@packages/db/zod/modules/printing";
+import jwt from "jsonwebtoken";
 import * as z from "zod";
+import env from "@/lib/env";
 import { printing } from "@/orpc";
 import { printers, printManager } from "@/printing";
 
@@ -16,7 +18,7 @@ export const finish = printing
       message: z.string().min(1).optional(),
     }),
   )
-  .handler(async ({ input: { name, success, requeue, review, reason, message }, context: { db }, errors }) => {
+  .handler(async ({ input: { name, success, requeue, review, reason, message }, context: { db, user }, errors }) => {
     if (!printers.has(name)) throw errors.PRINTER_NOT_FOUND({ data: { name } });
     if (!printManager.Printers.includes(name)) throw errors.PRINTER_DISCONNECTED();
 
@@ -34,7 +36,7 @@ export const finish = printing
 
     const print = await e
       .select(e.printing.Print, (p) => ({
-        history: e.assert_single(e.select(p.on, () => ({ id: true, attempts: true }))),
+        history: e.assert_single(e.select(p.on, () => ({ id: true, attempts: true, has_timelapse: true }))),
         filter_single: { id: e.uuid(job.uuid) },
       }))
       .run(db);
@@ -60,4 +62,30 @@ export const finish = printing
         set: { status: newStatus, ...(requeue ? { attempts } : {}) },
       }))
       .run(db);
+
+    if (print.history.has_timelapse) {
+      void (async () => {
+        try {
+          const timelapse = await printManager.retrieveTimelapse(name, job.name);
+          if (timelapse) {
+            const access_token = jwt.sign({ sub: user.id, roles: user.roles.map((r) => r.id) }, env.auth.jwtSecret!, {
+              expiresIn: "5m",
+            });
+            const form = new FormData();
+            form.append("timelapse", new Blob([timelapse as unknown as BlobPart]), `${history_id}.mpg`);
+            form.append("access_token", access_token);
+            const upload = await fetch(`${env.cdn.url}/upload/timelapse/${history_id}`, { method: "POST", body: form });
+            if (upload.ok) return;
+          }
+          throw new Error("Timelapse retrieval failed");
+        } catch {
+          await e
+            .update(e.printing.PrintHistory, () => ({
+              filter_single: { id: e.uuid(history_id) },
+              set: { has_timelapse: false },
+            }))
+            .run(db);
+        }
+      })();
+    }
   });

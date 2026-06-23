@@ -70,9 +70,8 @@ export const send = printing
       queue: print.history.queue,
     };
 
-    // Hard-coded no timelapse until setup
     try {
-      await printManager.sendJob(printer, job, /*print.history.has_timelapse*/ false);
+      await printManager.sendJob(printer, job, print.history.has_timelapse);
     } catch {
       throw errors.COMMAND_FAILED();
     }
@@ -82,7 +81,6 @@ export const send = printing
         filter_single: { id: e.uuid(history_id) },
         set: {
           printer: e.select(e.printing.Printer, () => ({ filter_single: { id: record.id } })),
-          has_timelapse: false, // On upload set so will influence if a timelapse starts, then set to false on send, and then true if timelapse succeeds
           status: e.insert(e.printing.print_status.Printing, {
             print: e.assert_exists(e.select(e.printing.Print, () => ({ filter_single: { id: e.uuid(id) } }))),
           }),

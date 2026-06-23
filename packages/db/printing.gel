@@ -201,7 +201,7 @@ module printing {
             constraint min_value(0);
         }
         required has_timelapse: bool;
-        timelapse_path := "\(cdn_url(.id,'timelapse')).mp4";
+        timelapse_path := "\(cdn_url(.id,'timelapse')).mpg";
 
         index on (.printer);
 

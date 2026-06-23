@@ -9,6 +9,7 @@ import {
 } from "@packages/db/zod/modules/printing";
 import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
 import { durationSchema } from "@packages/db/zod/modules/std";
+import type { Executor } from "gel";
 import * as z from "zod";
 import { printing } from "@packages/db/interfaces";
 import type { Filament, PrinterStatus } from "@/lib/printers/types";
@@ -193,6 +194,27 @@ export function toHistoryOutput(history: printHistoryRow[]) {
     print: { ...h.print, filament: toFilamentSlots(h.print.filament) },
     printer: h.printer ?? undefined,
   }));
+}
+
+export async function timelapsesInPeriod(
+  db: Executor,
+  start: Temporal.ZonedDateTime,
+  end?: Temporal.ZonedDateTime,
+): Promise<string[]> {
+  const start_at = e.cast(e.datetime, start.toInstant().toString());
+  const end_at = end ? e.cast(e.datetime, end.toInstant().toString()) : e.datetime_current();
+  const histories = await e
+    .select(e.printing.PrintHistory, (h) => ({
+      id: true,
+      filter: e.op(
+        h.has_timelapse,
+        "and",
+        e.op(e.op(h.created_at, ">=", start_at), "and", e.op(h.created_at, "<=", end_at)),
+      ),
+      order_by: { expression: h.created_at, direction: e.DESC },
+    }))
+    .run(db);
+  return histories.map((h) => h.id);
 }
 
 export function printsAhead(queue: any, created_at: any, priority: any, status: any, printer: any, pinned?: boolean) {

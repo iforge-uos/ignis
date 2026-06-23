@@ -1074,8 +1074,8 @@ export namespace printing {
     "printer"?: Printer | null;
     "attempts": number;
     "has_timelapse": boolean;
-    "timelapse_path": string;
     "queue": QueueType;
+    "timelapse_path": string;
   }
   export interface PrintStatus extends std.$Object {}
   export interface Printer extends std.$Object {

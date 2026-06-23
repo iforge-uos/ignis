@@ -20,6 +20,6 @@ export const all = printing
   });
 
 export const downtimeRoutes = printing.prefix("/downtime").router({
-  nameRoutes,
+  ...nameRoutes,
   all,
 });

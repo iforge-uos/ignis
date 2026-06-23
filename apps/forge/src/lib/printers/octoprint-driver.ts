@@ -54,6 +54,10 @@ interface OctoFilesResponse {
   }>;
 }
 
+interface OctoTimelapseResponse {
+  files: Array<{ name: string; url: string; date?: number }>;
+}
+
 const mapOctoState = (flags: OctoStateFlags, hasFinished: boolean): PrinterStatus["state"] => {
   if (flags.error) return "error";
   if (flags.paused || flags.pausing) return "paused";
@@ -74,6 +78,7 @@ export class OctoprintDriver implements PrinterDriver {
   private active_job?: PrintJob;
   private active_filename?: string;
   private finish_handled = true;
+  private timelapse_enabled = false;
 
   private poll_interval: ReturnType<typeof setInterval> | null = null;
   private status_listener = new Set<(status: PrinterStatus) => void>();
@@ -131,12 +136,13 @@ export class OctoprintDriver implements PrinterDriver {
     this.is_disabled = false;
   }
 
-  async sendJob(job: PrintJob, _timelapse?: boolean): Promise<string> {
+  async sendJob(job: PrintJob, timelapse?: boolean): Promise<string> {
     if (this.is_disabled) throw new Error(`Octoprint printer ${this.config?.name} is disabled`);
     const filename = `${job.name}.gcode`;
     const gcodeResponse = await fetch(job.gcode_url);
     if (!gcodeResponse.ok) throw new Error(`Failed to fetch gcode at ${job.gcode_url}: ${gcodeResponse.status}`);
     const buffer = Buffer.from(await gcodeResponse.arrayBuffer());
+    await this.setTimelapse(timelapse ?? false);
     await this.uploadFile(buffer, filename, true);
     await this.waitForJob(filename);
     this.finish_handled = false;
@@ -238,6 +244,30 @@ export class OctoprintDriver implements PrinterDriver {
 
   async syncSlots(): Promise<Filament[]> {
     throw new Error("Octoprint printers have no AMS to sync");
+  }
+
+  private async setTimelapse(enabled: boolean): Promise<void> {
+    this.timelapse_enabled = enabled;
+    await this.request("POST", "/timelapse", { type: enabled ? "zchange" : "off" });
+  }
+
+  async retrieveTimelapse(printName: string, attempts = 30, delayMs = 2000): Promise<Buffer | null> {
+    if (!(this.timelapse_enabled && this.config)) return null;
+    for (let i = 0; i < attempts; i++) {
+      const list = await this.request<OctoTimelapseResponse>("GET", "/timelapse");
+      const match = list.files
+        .filter((f) => f.name.startsWith(printName))
+        .sort((a, b) => (b.date ?? 0) - (a.date ?? 0))[0];
+      if (match) {
+        const res = await fetch(`http://${this.config.ip}${match.url}`, { headers: { "X-Api-Key": this.apiKey } });
+        if (res.ok) {
+          this.timelapse_enabled = false;
+          return Buffer.from(await res.arrayBuffer());
+        }
+      }
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+    return null;
   }
 
   private async waitForJob(filename: string, attempts = 5, delayMs = 500): Promise<void> {
