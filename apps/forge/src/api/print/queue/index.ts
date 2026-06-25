@@ -20,6 +20,7 @@ import {
 import { ableToQueuePrint, auth, printing, transaction } from "@/orpc";
 import { printers } from "@/printing.ts";
 import { idRouter } from "./$id.ts";
+import { length } from "./length.ts";
 import email from "@/email";
 import { PartialUserShape } from "@/lib/utils/queries";
 
@@ -317,4 +318,5 @@ export const queueRouter = auth.prefix("/queue").router({
   ...idRouter,
   add,
   get,
+  length,
 });
