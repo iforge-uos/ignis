@@ -8,7 +8,6 @@ import {
   QueueTypeSchema,
 } from "@packages/db/zod/modules/printing";
 import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
-import { durationSchema } from "@packages/db/zod/modules/std";
 import type { Executor } from "gel";
 import * as z from "zod";
 import { printing } from "@packages/db/interfaces";
@@ -16,6 +15,9 @@ import type { Filament, PrinterStatus } from "@/lib/printers/types";
 
 export const QUEUE_RETURN_ITEMS = 20;
 export const THREEDP_LAPTOP_ACCOUNT = "uuid-8438";
+
+export const durationOut = z.instanceof(Temporal.Duration);
+export const datetimeOut = z.instanceof(Temporal.ZonedDateTime);
 
 export const PRINTER_CONNECTION_ERRORS = {
   PRINTER_NOT_FOUND: {
@@ -44,6 +46,8 @@ export const downtimeError = {
 export const downtimeSchema = CreateDowntimeSchema.omit({ created_at: true }).extend({
   id: z.uuid(),
   printer: z.object({ id: z.uuid(), name: z.string() }),
+  start_time: datetimeOut,
+  end_time: datetimeOut.nullable(),
 });
 
 export const downtimeShape = e.shape(e.printing.Downtime, () => ({
@@ -80,6 +84,7 @@ export const printFilamentSlotSchema = filamentSlotSchema.extend({
 export const printerSchema = CreatePrinterSchema.omit({ ip: true, keys: true, filament: true }).extend({
   id: z.uuid(),
   location: LocationNameSchema,
+  total_print_time: durationOut,
   filament: z.array(filamentSlotSchema),
 });
 
@@ -140,7 +145,7 @@ export const historyOutput = z.array(
       id: z.uuid(),
       name: z.string(),
       mass: z.number(),
-      duration: durationSchema,
+      duration: durationOut,
       priority: PrioritySchema,
       filament: z.array(printFilamentSlotSchema),
       author: z.object({ id: z.uuid(), display_name: z.string() }),
@@ -160,7 +165,7 @@ export const historyOutput = z.array(
 export const queueHistoryOutput = z.array(
   historyOutput.element.extend({
     position: z.int().positive(),
-    lead_time: durationSchema,
+    lead_time: durationOut,
   }),
 );
 

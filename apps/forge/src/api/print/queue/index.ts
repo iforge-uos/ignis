@@ -1,12 +1,12 @@
 import e from "@packages/db/edgeql-js";
 import { CreatePrintSchema, QueueTypeSchema } from "@packages/db/zod/modules/printing";
-import { durationSchema } from "@packages/db/zod/modules/std";
 import jwt from "jsonwebtoken";
 import * as z from "zod";
 import env from "@/lib/env";
 import {
   adjustLeadTime,
   ANY_COLOUR,
+  durationOut,
   filamentMatches,
   leadTimeFields,
   printFilamentSlotSchema,
@@ -77,7 +77,7 @@ export const add = ableToQueuePrint
       id: z.uuid(),
       reset_priority: z.boolean(),
       position: z.int().positive(),
-      lead_time: durationSchema,
+      lead_time: durationOut,
       msg: z.string().optional(),
     }),
   )

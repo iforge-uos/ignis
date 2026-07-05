@@ -1,9 +1,8 @@
 import { Temporal } from "@js-temporal/polyfill";
 import e from "@packages/db/edgeql-js";
 import { QueueTypeSchema } from "@packages/db/zod/modules/printing";
-import { durationSchema } from "@packages/db/zod/modules/std";
 import * as z from "zod";
-import { adjustLeadTime, queueHostCount } from "@/lib/printers/utils";
+import { adjustLeadTime, durationOut, queueHostCount } from "@/lib/printers/utils";
 import { ableToQueuePrint } from "@/orpc";
 
 type QueueType = z.infer<typeof QueueTypeSchema>;
@@ -34,7 +33,7 @@ const queueLengthOutput = z.array(
   z.object({
     queue: QueueTypeSchema,
     items: z.int().nonnegative(),
-    lead_time: durationSchema,
+    lead_time: durationOut,
   }),
 );
 

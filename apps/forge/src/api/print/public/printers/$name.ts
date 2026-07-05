@@ -22,14 +22,14 @@ export const printer = auth
     if (!record) throw errors.PRINTER_NOT_FOUND({ data: { name } });
 
     const row = await e
-      .select(e.printing.Printer, (p) => ({
+      .select(e.printing.Printer, () => ({
         id: true,
         name: true,
         manufacturer: true,
         model: true,
         has_camera: true,
         filament: true,
-        location: p.location.name,
+        location: { name: true },
         total_print_mass: true,
         total_print_time: true,
         filter_single: { id: e.uuid(record.id) },
@@ -46,5 +46,8 @@ export const printer = auth
       }
     }
 
-    return { printer: { ...row, filament: toFilamentSlots(row.filament) }, status: toPublicStatus(status) };
+    return {
+      printer: { ...row, location: row.location.name, filament: toFilamentSlots(row.filament) },
+      status: toPublicStatus(status),
+    };
   });

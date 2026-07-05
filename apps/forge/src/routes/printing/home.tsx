@@ -11,7 +11,7 @@ import { CircleCheckBig, Info } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@packages/ui/components/card";
 
 export const Route = createFileRoute("/printing/home")({
-  component: indexComponent,
+  component: IndexComponent,
 });
 
 import boba from "@/../public/homepage/boba.webp?lqip";
@@ -94,7 +94,34 @@ const ImageCarousel = () => {
   );
 };
 
-function indexComponent() {
+function uploadButton(user: ReturnType<typeof Route.useRouteContext>["user"]) {
+  if (!user) return;
+  const in_team = user.__typename === "users::Rep" && user.teams.some((t) => t.name === "3DP");
+  const has_role = user.roles.some((r) => ["Admin", "Rep", "Printa"].includes(r.name));
+  if (!(has_role || in_team)) return;
+
+  const can_control = user.roles.some((r) => r.name === "Admin") || in_team;
+
+  return (
+    <div className="flex flex-col items-center sm:flex-row mb-4 p-4 gap-4">
+      <div className="flex-1 flex justify-center">
+        <Button asChild className="h-auto w-full px-8 py-1 text-lg">
+          <Link to="/printing/queue/upload">Upload a 3D Print Here</Link>
+        </Button>
+      </div>
+      {can_control && (
+        <div className="flex-1 flex justify-center">
+          <Button asChild className="h-auto w-full px-8 py-1 text-lg">
+            <Link to="/printing/control">3D Print Control Dashboard</Link>
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function IndexComponent() {
+  const { user } = Route.useRouteContext();
   return (
     <>
       <Title prompt="Printing" />
@@ -106,10 +133,11 @@ function indexComponent() {
           The University of Sheffield's IForge makerspace 3d printing.
         </p>
       </h2>
+      {uploadButton(user)}
       <div className="relative flex h-fit w-full flex-col items-center justify-center rounded-md mb-4">
         <ImageCarousel />
       </div>
-      <div className="relative flex gap-8 mb-8 px-8">
+      <div className="relative flex flex-col sm:flex-row gap-8 mb-8 px-8">
         <Card className="flex-1 p-6">
           <CardHeader className="flex flex-row items-left justify-left gap-2 font-bold text-left text-3xl font-futura -mb-4 -px-8">
             <CircleCheckBig />

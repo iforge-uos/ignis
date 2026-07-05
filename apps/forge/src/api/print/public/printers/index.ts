@@ -13,14 +13,14 @@ export const printers = auth
   .output(z.array(z.object({ printer: printerSchema, status: publicStatusSchema })))
   .handler(async ({ context: { db } }) => {
     const rows = await e
-      .select(e.printing.Printer, (p) => ({
+      .select(e.printing.Printer, () => ({
         id: true,
         name: true,
         manufacturer: true,
         model: true,
         has_camera: true,
         filament: true,
-        location: p.location.name,
+        location: { name: true },
         total_print_mass: true,
         total_print_time: true,
       }))
@@ -36,7 +36,10 @@ export const printers = auth
             status = { state: "disconnected" };
           }
         }
-        return { printer: { ...p, filament: toFilamentSlots(p.filament) }, status: toPublicStatus(status) };
+        return {
+          printer: { ...p, location: p.location.name, filament: toFilamentSlots(p.filament) },
+          status: toPublicStatus(status),
+        };
       }),
     );
   });

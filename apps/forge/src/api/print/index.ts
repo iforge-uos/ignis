@@ -26,7 +26,7 @@ export const list = auth
         model: true,
         has_camera: true,
         filament: true,
-        location: p.location.name,
+        location: { name: true },
         total_print_mass: true,
         total_print_time: true,
         ...(location === locationOptions.enum.ALL
@@ -34,7 +34,7 @@ export const list = auth
           : { filter: e.op(p.location.name, "=", e.cast(e.sign_in.LocationName, location)) }),
       }))
       .run(db);
-    return printers.map((p) => ({ ...p, filament: toFilamentSlots(p.filament) }));
+    return printers.map((p) => ({ ...p, location: p.location.name, filament: toFilamentSlots(p.filament) }));
   });
 
 export const printRouter = auth.prefix("/print").router({
@@ -42,7 +42,7 @@ export const printRouter = auth.prefix("/print").router({
   printer: printerRouter,
   queue: queueRouter,
   name: nameRoutes,
-  publicPrint: publicPrintRouter,
+  public: publicPrintRouter,
   list,
   admin,
 });

@@ -17,21 +17,21 @@ export const get = printing
     const uuid = printers.get(name)?.id;
     if (!uuid) throw errors.PRINTER_NOT_FOUND({ data: { name } });
     const printer = await e
-      .select(e.printing.Printer, (p) => ({
+      .select(e.printing.Printer, () => ({
         id: true,
         name: true,
         manufacturer: true,
         model: true,
         has_camera: true,
         filament: true,
-        location: p.location.name,
+        location: { name: true },
         total_print_mass: true,
         total_print_time: true,
         filter_single: { id: uuid },
       }))
       .run(db);
     if (!printer) return null;
-    return { ...printer, filament: toFilamentSlots(printer.filament) };
+    return { ...printer, location: printer.location.name, filament: toFilamentSlots(printer.filament) };
   });
 
 export const nameRoutes = threeDP.prefix("/{name}").router({
