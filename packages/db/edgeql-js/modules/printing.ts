@@ -72,12 +72,12 @@ export type $PrintλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c
   "duration": $.PropertyDesc<_std.$duration, $.Cardinality.One, false, false, false, false>;
   "mass": $.PropertyDesc<_std.$float32, $.Cardinality.One, false, false, false, false>;
   "name": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
-  "on": $.LinkDesc<$PrintHistory, $.Cardinality.Many, {}, false, false,  false, false>;
   "priority": $.PropertyDesc<$Priority, $.Cardinality.One, false, false, false, false>;
   "reason": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "filament": $.PropertyDesc<$.ArrayType<$.NamedTupleType<{material: $Material, colour: _std.$str, nozzle_temp_min: _std.$int16, nozzle_temp_max: _std.$int16, bed_temp: _std.$int16}>>, $.Cardinality.One, false, false, false, false>;
   "gcode_path": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
   "threemf_path": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
+  "history": $.LinkDesc<$PrintHistory, $.Cardinality.Many, {}, false, false,  false, false>;
   "<print[is printing::PrintAuditEntry]": $.LinkDesc<$PrintAuditEntry, $.Cardinality.Many, {}, false, false,  false, false>;
   "<print[is printing::print_status::Printing]": $.LinkDesc<_printingprint_status.$Printing, $.Cardinality.Many, {}, false, false,  false, false>;
   "<print[is printing::printer_status::Printing]": $.LinkDesc<_printingprinter_status.$Printing, $.Cardinality.Many, {}, false, false,  false, false>;
@@ -104,18 +104,20 @@ const $PrintAuditEntry = $.makeType<$PrintAuditEntry>(_.spec, "14b9afc5-328c-11f
 
 const PrintAuditEntry: $.$expr_PathNode<$.TypeSet<$PrintAuditEntry, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($PrintAuditEntry, $.Cardinality.Many), null);
 
-export type $PrintHistoryλShape = $.typeutil.flatten<_default.$CreatedAtλShape & {
+export type $PrintHistoryλShape = $.typeutil.flatten<Omit<_default.$CreatedAtλShape, "created_at"> & {
   "status": $.LinkDesc<$PrintStatus, $.Cardinality.One, {}, false, false,  false, false>;
   "printer": $.LinkDesc<$Printer, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
   "attempts": $.PropertyDesc<_std.$int16, $.Cardinality.One, false, false, false, true>;
   "has_timelapse": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, false>;
   "queue": $.PropertyDesc<$QueueType, $.Cardinality.One, false, true, false, false>;
   "timelapse_path": $.PropertyDesc<_std.$str, $.Cardinality.One, false, true, false, false>;
-  "<on[is printing::Print]": $.LinkDesc<$Print, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<on": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
+  "created_at": $.PropertyDesc<_std.$datetime, $.Cardinality.One, true, false, true, true>;
+  "<history[is printing::Print]": $.LinkDesc<$Print, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<history": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
 type $PrintHistory = $.ObjectType<"printing::PrintHistory", $PrintHistoryλShape, null, [
   ..._default.$CreatedAt['__exclusives__'],
+  {created_at: {__element__: _std.$datetime, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
 ], "printing::PrintHistory">;
 const $PrintHistory = $.makeType<$PrintHistory>(_.spec, "14bfda82-328c-11f1-9166-0b30726dd428", _.syntax.literal);
 

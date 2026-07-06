@@ -5,6 +5,7 @@ import {
   CreatePrinterSchema,
   MaterialSchema,
   PrioritySchema,
+  print_status_FailureReasonSchema,
   QueueTypeSchema,
 } from "@packages/db/zod/modules/printing";
 import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
@@ -137,10 +138,17 @@ export const historyErrors = {
   },
 } as const;
 
+export const printStatusOutput = z.object({
+  state: z.enum(["Queued", "UnderReview", "Printing", "Complete", "Cancelled", "Failed"]),
+  reason: print_status_FailureReasonSchema.optional(),
+  note: z.string().optional(),
+});
+
 export const historyOutput = z.array(
   z.object({
     id: z.uuid(),
     queue: QueueTypeSchema,
+    status: printStatusOutput,
     print: z.object({
       id: z.uuid(),
       name: z.string(),
@@ -174,10 +182,13 @@ export const printHistoryShape = e.shape(e.printing.PrintHistory, (h) => ({
   queue: true,
   attempts: true,
   has_timelapse: true,
+  status_type: h.status.__type__.name,
+  status_reason: h.status.is(e.printing.print_status.Failed).reason,
+  status_note: h.status.is(e.printing.print_status.Failed).note,
   printer: { id: true, name: true },
   print: e.assert_exists(
     e.assert_single(
-      e.select(h["<on[is printing::Print]"], () => ({
+      e.select(h["<history[is printing::Print]"], () => ({
         id: true,
         name: true,
         mass: true,
@@ -194,8 +205,13 @@ export const printHistoryShape = e.shape(e.printing.PrintHistory, (h) => ({
 type printHistoryRow = $infer<typeof printHistoryShape>[number];
 
 export function toHistoryOutput(history: printHistoryRow[]) {
-  return history.map((h) => ({
+  return history.map(({ status_type, status_reason, status_note, ...h }) => ({
     ...h,
+    status: {
+      state: status_type.split("::").pop() as z.infer<typeof printStatusOutput>["state"],
+      reason: status_reason ?? undefined,
+      note: status_note ?? undefined,
+    },
     print: { ...h.print, filament: toFilamentSlots(h.print.filament) },
     printer: h.printer ?? undefined,
   }));
@@ -224,7 +240,7 @@ export async function timelapsesInPeriod(
 
 export function printsAhead(queue: any, created_at: any, priority: any, status: any, printer: any, pinned?: boolean) {
   return e.select(e.printing.PrintHistory, (q) => {
-    const print = e.assert_exists(e.assert_single(q["<on[is printing::Print]"]));
+    const print = e.assert_exists(e.assert_single(q["<history[is printing::Print]"]));
     const sameMaterial = e.op(q.queue, "=", queue);
     const assignedLane = e.op(
       e.op(q.printer.id, "?=", printer.id),
@@ -262,8 +278,8 @@ export function leadTimeFields(
   queue: any,
 ) {
   return {
-    lead_pinned: e.sum(aheadPinned["<on[is printing::Print]"].duration),
-    lead_shared: e.sum(aheadShared["<on[is printing::Print]"].duration),
+    lead_pinned: e.sum(aheadPinned["<history[is printing::Print]"].duration),
+    lead_shared: e.sum(aheadShared["<history[is printing::Print]"].duration),
     hosts: queueHostCount(queue),
   };
 }

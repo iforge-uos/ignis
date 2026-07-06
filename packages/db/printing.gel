@@ -134,7 +134,7 @@ module printing {
         required total_print_mass: float32; #2dp like print job
         required total_print_time: duration;
         multi prints := (
-            select Print filter __source__ in .`on`.printer
+            select Print filter __source__ in .history.printer
         );
         multi downtimes := .<printer[is Downtime];
         required queue := (
@@ -181,14 +181,17 @@ module printing {
         required approved_by: users::Rep;
         required priority: Priority;
         reason: str;
-        multi `on`: PrintHistory;
+        multi history: PrintHistory;
         required gcode_path := "\(cdn_url(.id,'prints')).gcode";
         required threemf_path :=  "\(cdn_url(.id,'prints')).3mf";
     }
 
     type PrintHistory extending default::CreatedAt {
+        overloaded created_at {
+            constraint exclusive;
+        }
         required queue := (
-            with print := assert_exists(assert_single(.<`on`[is Print])),
+            with print := assert_exists(assert_single(.<history[is Print])),
             select <QueueType>(
                 "MULTI" if len(print.filament) > 1
                 else (<str>(array_get(print.filament, 0).material)) ?? "PLA"
@@ -206,7 +209,7 @@ module printing {
         index on (.printer);
 
         trigger log_insert after insert for each do (
-            with print := __new__.<`on`[is Print],
+            with print := __new__.<history[is Print],
             insert PrintAuditEntry {
                 printer := __new__.printer,
                 status := __new__.status,
@@ -215,7 +218,7 @@ module printing {
         );
 
         trigger log_update after update for each do (
-            with print := __new__.<`on`[is Print],
+            with print := __new__.<history[is Print],
             insert PrintAuditEntry {
                 printer := __new__.printer,
                 status := __new__.status,

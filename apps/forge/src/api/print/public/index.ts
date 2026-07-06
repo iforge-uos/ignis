@@ -4,5 +4,5 @@ import { usersRoute } from "./user";
 
 export const publicPrintRouter = auth.prefix("/public").router({
   ...printersRoute,
-  ...usersRoute,
+  users: usersRoute,
 });

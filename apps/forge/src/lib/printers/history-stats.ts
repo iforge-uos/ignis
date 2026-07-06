@@ -54,7 +54,7 @@ export async function getHistoryStats(start_date: Date, end_date: Date = new Dat
         created_at: true,
         attempts: true,
         status_name: h.status.__type__.name,
-        prints: e.select(h["<on[is printing::Print]"], () => ({
+        prints: e.select(h["<history[is printing::Print]"], () => ({
           duration: true,
           mass: true,
         })),
@@ -194,7 +194,7 @@ export async function getRepStats(start_date: Date, end_date: Date = new Date())
       id: true,
       first_name: true,
       last_name: true,
-      histories: e.select(rep["<approved_by[is printing::Print]"].on, (h) => ({
+      histories: e.select(rep["<approved_by[is printing::Print]"].history, (h) => ({
         created_at: true,
         status_name: h.status.__type__.name,
       })),
@@ -273,11 +273,11 @@ export async function getUserStats(
         id: true,
         first_name: true,
         last_name: true,
-        histories: e.select(user["<author[is printing::Print]"].on, (h) => ({
+        histories: e.select(user["<author[is printing::Print]"].history, (h) => ({
           created_at: true,
           attempts: true,
           status_name: h.status.__type__.name,
-          prints: e.select(h["<on[is printing::Print]"], () => ({
+          prints: e.select(h["<history[is printing::Print]"], () => ({
             duration: true,
             mass: true,
           })),

@@ -1058,12 +1058,12 @@ export namespace printing {
     "duration": gel.Duration;
     "mass": number;
     "name": string;
-    "on": PrintHistory[];
     "priority": Priority;
     "reason"?: string | null;
     "filament": {material: Material, colour: string, nozzle_temp_min: number, nozzle_temp_max: number, bed_temp: number}[];
     "gcode_path": string;
     "threemf_path": string;
+    "history": PrintHistory[];
   }
   export interface PrintAuditEntry extends AuditEntry {
     "status": PrintStatus;
@@ -1076,6 +1076,7 @@ export namespace printing {
     "has_timelapse": boolean;
     "queue": QueueType;
     "timelapse_path": string;
+    "created_at": Date;
   }
   export interface PrintStatus extends std.$Object {}
   export interface Printer extends std.$Object {

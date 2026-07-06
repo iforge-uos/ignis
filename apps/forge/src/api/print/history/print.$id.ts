@@ -26,7 +26,7 @@ export const print = auth
     const history = await e
       .select(e.printing.PrintHistory, (p) => ({
         ...printHistoryShape(p),
-        filter: e.op(p["<on[is printing::Print]"].id, "=", e.uuid(id)),
+        filter: e.op(e.assert_single(p["<history[is printing::Print]"].id), "=", e.uuid(id)),
       }))
       .run(db);
     return toHistoryOutput(history);

@@ -22,7 +22,7 @@ export const status = printing
     const print = await e
       .select(e.printing.Print, (p) => ({
         history: e.assert_single(
-          e.select(p.on, (h) => ({
+          e.select(p.history, (h) => ({
             id: true,
             status_name: h.status.__type__.name,
           })),

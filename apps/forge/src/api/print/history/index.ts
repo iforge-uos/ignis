@@ -26,5 +26,5 @@ export const historyRouter = auth.prefix("/history").router({
   stats,
   printer,
   print,
-  ...timelapseRouter,
+  timelapse: timelapseRouter,
 });

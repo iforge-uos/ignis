@@ -6,10 +6,12 @@ import { prints } from "./prints";
 export const stats = auth
   .route({ method: "GET", path: "/" })
   .input(
-    z.object({
-      start_time: z.iso.datetime().optional(),
-      end_time: z.iso.datetime().optional(),
-    }),
+    z
+      .object({
+        start_time: z.iso.datetime().optional(),
+        end_time: z.iso.datetime().optional(),
+      })
+      .default({}),
   )
   .output(userStatsSchema)
   .handler(async ({ input: { start_time, end_time }, context: { user } }) => {

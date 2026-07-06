@@ -380,6 +380,7 @@ export const CreatePrintHistorySchema = z.
   .extend({ // printing::PrintHistory
     attempts: z.int().min(-32768).max(32767).optional(), // std::int16
     has_timelapse: z.boolean(), // std::bool
+    created_at: zt.zonedDateTime().optional(), // std::datetime
   });
 
 export const UpdatePrintHistorySchema = z.

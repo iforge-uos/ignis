@@ -23,8 +23,8 @@ function queuedSet(queue: QueueType, pinned?: boolean) {
 function queueStats(queue: QueueType) {
   return e.select({
     items: e.count(queuedSet(queue)),
-    lead_pinned: e.sum(queuedSet(queue, true)["<on[is printing::Print]"].duration),
-    lead_shared: e.sum(queuedSet(queue, false)["<on[is printing::Print]"].duration),
+    lead_pinned: e.sum(queuedSet(queue, true)["<history[is printing::Print]"].duration),
+    lead_shared: e.sum(queuedSet(queue, false)["<history[is printing::Print]"].duration),
     hosts: queueHostCount(queue),
   });
 }

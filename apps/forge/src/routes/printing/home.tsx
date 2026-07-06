@@ -128,10 +128,8 @@ function IndexComponent() {
       <div className="flex justify-center my-10">
         <IForgeLogo className="w-96 pointer-events-none" />
       </div>
-      <h2>
-        <p className="mx-14 text-4xl mb-2 font-futura text-balance">
-          The University of Sheffield's IForge makerspace 3d printing.
-        </p>
+      <h2 className="mx-14 text-4xl mb-2 font-futura text-balance">
+        The University of Sheffield's IForge makerspace 3d printing.
       </h2>
       {uploadButton(user)}
       <div className="relative flex h-fit w-full flex-col items-center justify-center rounded-md mb-4">
@@ -159,6 +157,11 @@ function IndexComponent() {
                 acylic)
               </li>
             </ul>
+            <div className="flex justify-center">
+              <Button asChild className="h-auto px-8 py-1 text-lg">
+                <Link to="/printing/public/dashboard">View our Printers here</Link>
+              </Button>
+            </div>
           </CardContent>
         </Card>
         <Card className="flex-1 p-6">

@@ -41,7 +41,7 @@ export const finish = printing
         id: true,
         attempts: true,
         has_timelapse: true,
-        author: e.assert_exists(e.assert_single(e.select(h["<on[is printing::Print]"].author, PartialUserShape))),
+        author: e.assert_exists(e.assert_single(e.select(h["<history[is printing::Print]"].author, PartialUserShape))),
         filter_single: { id: e.uuid(job.uuid) },
       }))
       .run(db);

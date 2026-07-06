@@ -4,5 +4,5 @@ import { downtimeRoutes } from "./downtime";
 
 export const printerRouter = printing.prefix("/printer").router({
   ...nameRoutes,
-  ...downtimeRoutes,
+  downtime: downtimeRoutes,
 });

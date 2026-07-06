@@ -248,7 +248,7 @@ async function restoreActiveJob(name: string, printerId: string): Promise<void> 
       queue: true,
       print: e.assert_exists(
         e.assert_single(
-          e.select(h["<on[is printing::Print]"], () => ({
+          e.select(h["<history[is printing::Print]"], () => ({
             id: true,
             name: true,
             gcode_path: true,

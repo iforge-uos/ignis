@@ -15,10 +15,12 @@ import {
 export const prints = auth
   .route({ method: "GET", path: "/prints" })
   .input(
-    z.object({
-      type: z.enum(["QUEUED", "REVIEW", "HISTORY"]).default("QUEUED"),
-      offset: z.int().nonnegative().default(0),
-    }),
+    z
+      .object({
+        type: z.enum(["QUEUED", "REVIEW", "HISTORY"]).default("QUEUED"),
+        offset: z.int().nonnegative().default(0),
+      })
+      .default({ type: "QUEUED", offset: 0 }),
   )
   .output(queueHistoryOutput)
   .handler(async ({ input: { type, offset }, context: { db, user } }) => {
@@ -36,12 +38,16 @@ export const prints = auth
             )
           : e.op("exists", p.status.is(aheadStatus));
 
-        const print = e.assert_exists(e.assert_single(p["<on[is printing::Print]"]));
+        const print = e.assert_exists(e.assert_single(p["<history[is printing::Print]"]));
         const ahead = printsAhead(p.queue, p.created_at, print.priority, aheadStatus, p.printer);
         const aheadPinned = printsAhead(p.queue, p.created_at, print.priority, aheadStatus, p.printer, true);
         const aheadShared = printsAhead(p.queue, p.created_at, print.priority, aheadStatus, p.printer, false);
 
-        const scope = e.op(statusFilter, "and", e.op(p["<on[is printing::Print]"].author.id, "=", e.uuid(user.id)));
+        const scope = e.op(
+          statusFilter,
+          "and",
+          e.op(e.assert_single(p["<history[is printing::Print]"].author.id), "=", e.uuid(user.id)),
+        );
 
         return {
           ...printHistoryShape(p),
@@ -51,7 +57,7 @@ export const prints = auth
           order_by: isHistory
             ? [{ expression: p.created_at, direction: e.DESC }]
             : [
-                { expression: p["<on[is printing::Print]"].priority, direction: e.DESC },
+                { expression: e.assert_single(print.priority), direction: e.DESC },
                 { expression: p.created_at, direction: e.ASC },
               ],
           limit: QUEUE_RETURN_ITEMS,

@@ -13,7 +13,7 @@ export const get = printing
     const history = await e
       .select(e.printing.PrintHistory, (h) => ({
         has_timelapse: true,
-        print: e.assert_exists(e.assert_single(e.select(h["<on[is printing::Print]"], () => ({ name: true })))),
+        print: e.assert_exists(e.assert_single(e.select(h["<history[is printing::Print]"], () => ({ name: true })))),
         filter_single: { id: e.uuid(id) },
       }))
       .run(db);

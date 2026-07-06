@@ -30,7 +30,7 @@ export const send = printing
         duration: true,
         author: PartialUserShape,
         history: e.assert_single(
-          e.select(p.on, (h) => ({
+          e.select(p.history, (h) => ({
             id: true,
             queue: true,
             status_name: h.status.__type__.name,

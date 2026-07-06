@@ -52,7 +52,7 @@ export const update = printing
 
     const print = await e
       .select(e.printing.Print, (p) => ({
-        history_status: e.assert_single(p.on.status.__type__.name),
+        history_status: e.assert_single(p.history.status.__type__.name),
         filter_single: { id: e.uuid(id) },
       }))
       .run(db);
@@ -93,7 +93,7 @@ export const update = printing
 
       await e
         .update(e.printing.PrintHistory, (p) => ({
-          filter: e.op(p["<on[is printing::Print]"].id, "=", e.uuid(id)),
+          filter: e.op(e.assert_single(p["<history[is printing::Print]"].id), "=", e.uuid(id)),
           set: {
             attempts: 0,
           },

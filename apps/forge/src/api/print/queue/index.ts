@@ -144,7 +144,7 @@ export const add = ableToQueuePrint
         filament,
         author: e.assert_exists(e.select(e.users.User, () => ({ filter_single: { id: author } }))),
         approved_by: e.assert_exists(e.select(e.users.Rep, () => ({ filter_single: { id: approved_by } }))),
-        on: e.insert(e.printing.PrintHistory, {
+        history: e.insert(e.printing.PrintHistory, {
           status: e.insert(e.printing.print_status.Queued, {}),
           has_timelapse: timelapse,
           ...(required_printer_id
@@ -178,7 +178,7 @@ export const add = ableToQueuePrint
     const stats = await e
       .assert_exists(
         e.select(e.printing.Print, (pr) => {
-          const h = e.assert_exists(e.assert_single(pr.on));
+          const h = e.assert_exists(e.assert_single(pr.history));
           const status = e.printing.print_status.Queued;
           const ahead = printsAhead(h.queue, h.created_at, pr.priority, status, h.printer);
           const aheadPinned = printsAhead(h.queue, h.created_at, pr.priority, status, h.printer, true);
@@ -279,10 +279,10 @@ export const get = printing
           : queue
             ? e.op(queued, "and", e.op(p.queue, "=", e.cast(e.printing.QueueType, queue)))
             : user
-              ? e.op(queued, "and", e.op(p["<on[is printing::Print]"].author.id, "=", e.uuid(user)))
+              ? e.op(queued, "and", e.op(e.assert_single(p["<history[is printing::Print]"].author.id), "=", e.uuid(user)))
               : queued;
 
-        const print = e.assert_exists(e.assert_single(p["<on[is printing::Print]"]));
+        const print = e.assert_exists(e.assert_single(p["<history[is printing::Print]"]));
         const ahead = printsAhead(p.queue, p.created_at, print.priority, status, p.printer);
         const aheadPinned = printsAhead(p.queue, p.created_at, print.priority, status, p.printer, true);
         const aheadShared = printsAhead(p.queue, p.created_at, print.priority, status, p.printer, false);

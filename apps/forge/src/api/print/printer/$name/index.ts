@@ -15,5 +15,5 @@ export const nameRoutes = printing.prefix("/{name}").router({
   enable,
   disable,
   filament,
-  ...statusRouter,
+  status: statusRouter,
 });
