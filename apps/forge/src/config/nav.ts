@@ -230,6 +230,12 @@ export const appConfig: AppConfig[] = [
         isActive: true,
       },
       {
+        title: "Your stats",
+        url: "/printing/user/history",
+        icon: CircleCheckBigIcon,
+        isActive: true,
+      },
+      {
         title: "Design Tips",
         url: "/printing/tips",
         icon: InfoIcon,
