@@ -6,13 +6,13 @@ export function PrinterCard({ printer, status }) {
 
   return (
     <>
-      <CameraFeed name={printer.name} hasCamera={printer.has_camera} offline={offline} />
+      <CameraFeed name={printer.name} hasCamera={printer.has_camera} model={printer.model} offline={offline} />
 
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <div className="truncate text-lg font-bold">{printer.name}</div>
-          <div className="truncate text-sm text-muted-foreground">
-            {printer.manufacturer} - {printer.model} - {printer.location}
+          <div className="truncate text-lg font-bold capitalize">{printer.name.toLowerCase()}</div>
+          <div className="truncate text-sm text-muted-foreground capitalize">
+            {printer.manufacturer.toLowerCase()} - {printer.model.toLowerCase()} - {printer.location.toLowerCase()}
           </div>
         </div>
         <span

@@ -71,46 +71,62 @@ function RouteComponent() {
         </h2>
       </div>
       <div className="relative flex flex-col sm:flex-row gap-8 mb-8 px-8">
-        <Card className="flex-1 p-6">
-          <CardHeader className="text-left text-3xl font-bold font-futura">Your All-Time Stats:</CardHeader>
-          <CardContent>
-            <Stat label="Prints" value={data.total_prints} />
-            <Stat label="Successful" value={data.total_successful_prints} />
-            <Stat label="Failed" value={data.total_failed_prints} />
-            <Stat label="Success rate" value={`${data.total_success_rate.toFixed(1)}%`} />
-            <Stat label="Filament used" value={formatMass(data.total_print_mass)} />
-            <Stat label="Print time" value={total_print_dur} />
-          </CardContent>
+        <Card className="relative flex-1 overflow-hidden p-6">
+          <img
+            src="/machines/3d-printer.png"
+            alt=""
+            aria-hidden
+            className="pointer-events-none absolute -right-6 -bottom-6 w-48 opacity-20 select-none"
+          />
+          <div className="relative z-10">
+            <CardHeader className="text-left text-3xl font-bold font-futura">Your All-Time Stats:</CardHeader>
+            <CardContent>
+              <Stat label="Prints" value={data.total_prints} />
+              <Stat label="Successful" value={data.total_successful_prints} />
+              <Stat label="Failed" value={data.total_failed_prints} />
+              <Stat label="Success rate" value={`${data.total_success_rate.toFixed(1)}%`} />
+              <Stat label="Filament used" value={formatMass(data.total_print_mass)} />
+              <Stat label="Print time" value={total_print_dur} />
+            </CardContent>
+          </div>
         </Card>
-        <Card className="flex-1 p-6">
-          <CardHeader className="flex flex-row items-center justify-between gap-2 text-left text-3xl font-bold font-futura">
-            <span>Your Stats for {academicLabel(year)}:</span>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-1 text-base">
-                  {academicLabel(year)}
-                  <ChevronDown className="size-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuRadioGroup value={String(year)} onValueChange={(v) => setYear(Number(v))}>
-                  {YEARS.map((y) => (
-                    <DropdownMenuRadioItem key={y} value={String(y)}>
-                      {academicLabel(y)}
-                    </DropdownMenuRadioItem>
-                  ))}
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </CardHeader>
-          <CardContent>
-            <Stat label="Prints" value={data.period_prints} />
-            <Stat label="Successful" value={data.period_successful_prints} />
-            <Stat label="Failed" value={data.period_failed_prints} />
-            <Stat label="Success rate" value={`${data.period_success_rate.toFixed(1)}%`} />
-            <Stat label="Filament used" value={formatMass(data.period_print_mass)} />
-            <Stat label="Print time" value={period_print_dur} />
-          </CardContent>
+        <Card className="relative flex-1 overflow-hidden p-6">
+          <img
+            src="/printing/bambu-h2d.png"
+            alt=""
+            aria-hidden
+            className="pointer-events-none absolute -right-6 -bottom-6 w-48 opacity-20 select-none"
+          />
+          <div className="relative z-10">
+            <CardHeader className="flex flex-row items-center justify-between gap-2 text-left text-3xl font-bold font-futura">
+              <span>Your Stats for {academicLabel(year)}:</span>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-1 text-base">
+                    {academicLabel(year)}
+                    <ChevronDown className="size-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuRadioGroup value={String(year)} onValueChange={(v) => setYear(Number(v))}>
+                    {YEARS.map((y) => (
+                      <DropdownMenuRadioItem key={y} value={String(y)}>
+                        {academicLabel(y)}
+                      </DropdownMenuRadioItem>
+                    ))}
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </CardHeader>
+            <CardContent>
+              <Stat label="Prints" value={data.period_prints} />
+              <Stat label="Successful" value={data.period_successful_prints} />
+              <Stat label="Failed" value={data.period_failed_prints} />
+              <Stat label="Success rate" value={`${data.period_success_rate.toFixed(1)}%`} />
+              <Stat label="Filament used" value={formatMass(data.period_print_mass)} />
+              <Stat label="Print time" value={period_print_dur} />
+            </CardContent>
+          </div>
         </Card>
       </div>
     </div>
