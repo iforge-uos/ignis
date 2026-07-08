@@ -57,7 +57,9 @@ const uploadSchema = CreatePrintSchema.extend({
   filament: z.array(printFilamentSlotSchema.omit({ slot_id: true })),
   author: z.uuid(),
   approved_by: z.uuid(),
-  gcode: z.file().mime(["text/plain", "application/octet-stream"]),
+  gcode: z.file().refine((f) => f.name.toLowerCase().endsWith(".gcode"), {
+    message: "File must be a .gcode file",
+  }),
   threemf: z.file().mime(["model/3mf", "application/octet-stream"]),
   timelapse: z.boolean().default(false),
 });
@@ -175,23 +177,22 @@ export const add = ableToQueuePrint
     }
     if (!response.ok) throw errors.UPLOAD_FAILED();
 
-    const stats = await e
-      .assert_exists(
-        e.select(e.printing.Print, (pr) => {
-          const h = e.assert_exists(e.assert_single(pr.history));
-          const status = e.printing.print_status.Queued;
-          const ahead = printsAhead(h.queue, h.created_at, pr.priority, status, h.printer);
-          const aheadPinned = printsAhead(h.queue, h.created_at, pr.priority, status, h.printer, true);
-          const aheadShared = printsAhead(h.queue, h.created_at, pr.priority, status, h.printer, false);
-          return {
-            position: e.op(e.count(ahead), "+", e.int64(1)),
-            duration: true,
-            ...leadTimeFields(aheadPinned, aheadShared, h.queue),
-            filter_single: { id: e.uuid(id) },
-          };
-        }),
-      )
+    const [stats] = await e
+      .select(e.printing.PrintHistory, (p) => {
+        const status = e.printing.print_status.Queued;
+        const print = e.assert_exists(e.assert_single(p["<history[is printing::Print]"]));
+        const ahead = printsAhead(p.queue, p.created_at, print.priority, status, p.printer);
+        const aheadPinned = printsAhead(p.queue, p.created_at, print.priority, status, p.printer, true);
+        const aheadShared = printsAhead(p.queue, p.created_at, print.priority, status, p.printer, false);
+        return {
+          position: e.op(e.count(ahead), "+", e.int64(1)),
+          duration: print.duration,
+          ...leadTimeFields(aheadPinned, aheadShared, p.queue),
+          filter: e.op(e.assert_single(p["<history[is printing::Print]"].id), "=", e.uuid(id)),
+        };
+      })
       .run(tx);
+    if (!stats) throw errors.UPLOAD_FAILED({ message: "print history not found after insert" });
 
     const lead_time = adjustLeadTime(stats.lead_pinned, stats.lead_shared, stats.hosts, stats.duration);
 

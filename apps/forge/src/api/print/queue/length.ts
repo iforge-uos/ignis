@@ -25,7 +25,7 @@ function queueStats(queue: QueueType) {
     items: e.count(queuedSet(queue)),
     lead_pinned: e.sum(queuedSet(queue, true)["<history[is printing::Print]"].duration),
     lead_shared: e.sum(queuedSet(queue, false)["<history[is printing::Print]"].duration),
-    hosts: queueHostCount(queue),
+    hosts: queueHostCount(e.cast(e.printing.QueueType, queue)),
   });
 }
 

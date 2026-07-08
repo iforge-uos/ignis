@@ -137,8 +137,8 @@ function IndexComponent() {
       </div>
       <div className="relative flex flex-col sm:flex-row gap-8 mb-8 px-8">
         <Card className="flex-1 p-6">
-          <CardHeader className="flex flex-row items-left justify-left gap-2 font-bold text-left text-3xl font-futura -mb-4 -px-8">
-            <CircleCheckBig />
+          <CardHeader className="flex flex-row items-center justify-left gap-2 font-bold text-left text-3xl font-futura -mb-4 -px-8">
+            <CircleCheckBig className="size-7 shrink-0" />
             Capabilities and Restrictions:
           </CardHeader>
           <CardContent>
@@ -165,8 +165,8 @@ function IndexComponent() {
           </CardContent>
         </Card>
         <Card className="flex-1 p-6">
-          <CardHeader className="flex flex-row items-left justify-left gap-2 font-bold text-left text-3xl font-futura -mb-4 -px-8">
-            <Info />
+          <CardHeader className="flex flex-row items-center justify-left gap-2 font-bold text-left text-3xl font-futura -mb-4 -px-8">
+            <Info className="size-7 shrink-0" />
             Design Tips:
           </CardHeader>
           <CardContent>

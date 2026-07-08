@@ -1,6 +1,6 @@
 use actix_cors::Cors;
 use actix_files::Files;
-use actix_multipart::form::{MultipartForm, tempfile::TempFile, text::Text};
+use actix_multipart::form::{MultipartForm, MultipartFormConfig, tempfile::TempFile, text::Text};
 use actix_web::{App, HttpResponse, HttpServer, Responder, error, middleware::Logger};
 use jsonwebtoken::{DecodingKey, Validation, get_current_timestamp};
 use serde::{Deserialize, Serialize};
@@ -62,9 +62,9 @@ fn validate_jwt(access_token: Text<String>) -> Result<String, actix_web::Error> 
 
 #[derive(MultipartForm)]
 struct PrintUpload {
-    #[multipart(limit = "20 MiB")]
+    #[multipart(limit = "500 MiB")]
     threemf: TempFile,
-    #[multipart(limit = "20 MiB")]
+    #[multipart(limit = "500 MiB")]
     gcode: TempFile,
     access_token: Text<String>,
 }
@@ -295,6 +295,11 @@ fn main() -> std::io::Result<()> {
     actix_web::rt::System::new().block_on(async {
         HttpServer::new(|| {
             App::new()
+                .app_data(
+                    MultipartFormConfig::default()
+                        .total_limit(1024 * 1024 * 1024)
+                        .memory_limit(10 * 1024 * 1024),
+                )
                 .wrap(
                     sentry::integrations::actix::Sentry::builder()
                         .capture_server_errors(true) // Capture server errors

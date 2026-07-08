@@ -260,7 +260,7 @@ export function printsAhead(queue: any, created_at: any, priority: any, status: 
   });
 }
 
-export const LEAD_TIME_BUFFER = 1.5;
+export const LEAD_TIME_BUFFER = 2.5;
 
 export function queueHostCount(queue: any) {
   return e.op(
