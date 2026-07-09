@@ -42,6 +42,7 @@ export default {
   },
 
   websocket: {
+    maxPayloadLength: 256 * 1024 * 1024,
     open(ws) {
       // Store the auth token from handshake, we cannot get it any other way as its HttpOnly
       wsAuthTokens.set(ws, ws.data?.authToken);

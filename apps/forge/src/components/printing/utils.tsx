@@ -36,7 +36,7 @@ export function CameraFeed({
   offline: boolean;
 }) {
   const [failed, setFailed] = useState(false);
-  const [imgFailed, setImgFailed] = useState(false);
+  const [img_failed, setImgFailed] = useState(false);
   const show = hasCamera && !offline && !failed;
   const modelImg = modelImage(model);
   return (
@@ -50,7 +50,7 @@ export function CameraFeed({
         />
       ) : (
         <>
-          {modelImg && !imgFailed && (
+          {modelImg && !img_failed && (
             <img
               src={modelImg}
               alt={model}
@@ -74,6 +74,4 @@ export function formatRemaining(seconds: number): string {
   const m = Math.round((seconds % 3600) / 60);
   if (d > 0) return `${d}d ${h}h ${m}m`;
   return h > 0 ? `${h}h ${m}m` : `${m}m`;
-
-
 }

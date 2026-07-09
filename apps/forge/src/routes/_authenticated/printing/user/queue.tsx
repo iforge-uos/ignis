@@ -30,11 +30,11 @@ export const Route = createFileRoute("/_authenticated/printing/user/queue")({
 
 function RouteComponent() {
   const { tab } = Route.useSearch();
-  const [activeTab, setActiveTab] = useState<QueueTab>(tab);
+  const [active_tab, setActiveTab] = useState<QueueTab>(tab);
   const [offset, setOffset] = useState(0);
 
   const { data, isPending, error } = useQuery(
-    orpc.print.public.users.prints.queryOptions({ input: { type: activeTab, offset } }),
+    orpc.print.public.users.prints.queryOptions({ input: { type: active_tab, offset } }),
   );
 
   const changeTab = (value: QueueTab) => {
@@ -42,7 +42,7 @@ function RouteComponent() {
     setOffset(0);
   };
 
-  const isHistory = activeTab === "HISTORY";
+  const isHistory = active_tab === "HISTORY";
 
   return (
     <div className="flex flex-col">
@@ -55,7 +55,7 @@ function RouteComponent() {
       <div className="p-6">
         <Card className="gap-0 relative overflow-hidden p-0">
           <div>
-            <Tabs value={activeTab} onValueChange={(value) => changeTab(value as QueueTab)} className="gap-0">
+            <Tabs value={active_tab} onValueChange={(value) => changeTab(value as QueueTab)} className="gap-0">
               <TabsList className="w-full rounded-none rounded-t-xl">
                 {QUEUE_TABS.map(({ value, label }) => (
                   <TabsTrigger key={value} value={value}>

@@ -26,15 +26,17 @@ import {
   UserIcon,
   VideoIcon,
 } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { printing } from "@packages/db/interfaces";
+import { MaterialSchema, PrioritySchema } from "@packages/db/zod/modules/printing";
 
 const LEAD_GREEN_MAX_DAYS = 2;
 const LEAD_YELLOW_MAX_DAYS = 5;
 
 const ANY_COLOUR = "ANY";
-const PRIORITIES = ["LOW", "MEDIUM", "HIGH"] as const;
-const MATERIALS = ["PLA", "PETG", "TPU"] as const;
-type Material = (typeof MATERIALS)[number];
+const PRIORITIES = PrioritySchema.options;
+const MATERIALS = MaterialSchema.options;
+type Material = printing.Material;
 
 const MATERIAL_MAX_MINUTES: Record<Material, number> = {
   PLA: 7 * 60,
@@ -62,8 +64,8 @@ function parseTimeToMinutes(raw: string): number {
 }
 
 function parseGcode(text: string, filename: string): ScanResult {
-  const timeMatch = text.match(/estimated (?:printing )?time[^\n:=]*[:=]\s*([0-9hmsd \t]+)/i);
-  const massMatch =
+  const time_match = text.match(/estimated (?:printing )?time[^\n:=]*[:=]\s*([0-9hmsd \t]+)/i);
+  const mass_match =
     text.match(/filament used \[g\][^\n:=]*[:=]\s*([\d.]+)/i) ??
     text.match(/(?:total )?filament (?:used|weight)[^\n:=]*\[g\][^\n:=]*[:=]\s*([\d.]+)/i);
   const materials = [...text.matchAll(/filament_type[^\n:=]*[:=]\s*([A-Za-z0-9;, ]+)/gi)]
@@ -73,8 +75,8 @@ function parseGcode(text: string, filename: string): ScanResult {
 
   return {
     name: filename.replace(/\.(gcode|3mf)$/i, ""),
-    minutes: timeMatch ? parseTimeToMinutes(timeMatch[1]) : 0,
-    mass: massMatch ? Math.round(Number(massMatch[1])) : 0,
+    minutes: time_match ? parseTimeToMinutes(time_match[1]) : 0,
+    mass: mass_match ? Math.round(Number(mass_match[1])) : 0,
     materials: [...new Set(materials)],
   };
 }
@@ -122,9 +124,14 @@ function UserSearch({
   onSelect: (user: SelectedUser | null) => void;
 }) {
   const [query, setQuery] = useState("");
+  const [debounced, setDebounced] = useState("");
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(query), 300);
+    return () => clearTimeout(t);
+  }, [query]);
   const { data } = useQuery({
-    ...orpc.users.search.queryOptions({ input: { query, limit: 5 } }),
-    enabled: query.trim().length > 1,
+    ...orpc.users.search.queryOptions({ input: { query: debounced, limit: 5 } }),
+    enabled: debounced.trim().length > 1,
   });
 
   const results = (data ?? []).filter(
@@ -176,7 +183,7 @@ export const Route = createFileRoute("/_authenticated/_3dpuploadonly/printing/qu
 
 function RouteComponent() {
   const user = useUser();
-  const isThreeDpMember = user?.__typename === "users::Rep" && user.teams.some((t) => t.name === "3DP");
+  const is_three_dp_member = user?.__typename === "users::Rep" && user.teams.some((t) => t.name === "3DP");
 
   const { data, isPending, error } = useQuery(orpc.print.queue.length.queryOptions());
   const { data: printers } = useQuery(orpc.print.list.queryOptions({ input: { location: "ALL" } }));
@@ -186,25 +193,55 @@ function RouteComponent() {
   const [gcode, setGcode] = useState<File | null>(null);
   const [threemf, setThreemf] = useState<File | null>(null);
   const [scan, setScan] = useState<ScanResult | null>(null);
-  const [filamentColour, setFilamentColour] = useState("");
-  const [printerName, setPrinterName] = useState("");
-  const [timelapse, setTimelapse] = useState(false);
+  const [filament_colour, setFilamentColour] = useState("");
+  const [printer_name, setPrinterName] = useState("");
+  const [timelapse, setTimelapse] = useState(true);
   const [priority, setPriority] = useState<(typeof PRIORITIES)[number]>("LOW");
   const [rep, setRep] = useState<SelectedUser | null>(null);
   const [password, setPassword] = useState("");
-  const [adminPassword, setAdminPassword] = useState("");
+  const [admin_password, setAdminPassword] = useState("");
+  const [reset_key, setResetKey] = useState(0);
+  const [copy_count, setCopyCount] = useState(0);
+  const [base_name, setBaseName] = useState("");
 
-  const submit = useMutation(orpc.print.queue.add.mutationOptions());
-  const adminCheck = useMutation(orpc.print.admin.mutationOptions());
+  const admin_check = useMutation(orpc.print.admin.mutationOptions());
 
-  const isMulti = (scan?.materials.length ?? 0) > 1;
+  const clearForm = () => {
+    setAuthor(null);
+    setReason("");
+    setGcode(null);
+    setThreemf(null);
+    setScan(null);
+    setFilamentColour("");
+    setPrinterName("");
+    setTimelapse(false);
+    setPriority("LOW");
+    setRep(null);
+    setPassword("");
+    setAdminPassword("");
+    admin_check.reset();
+    setResetKey((k) => k + 1);
+  };
+
+  const submit = useMutation(
+    orpc.print.queue.add.mutationOptions({
+      retry: (failureCount, error) => failureCount < 1 && (error as { code?: string }).code === "UPLOAD_FAILED",
+      retryDelay: 1000,
+      onSuccess: () => {
+        setCopyCount((c) => c + 1);
+        clearForm();
+      },
+    }),
+  );
+
+  const is_multi = (scan?.materials.length ?? 0) > 1;
   const material = scan?.materials[0] ?? "PLA";
-  const printMaterials: Material[] = scan?.materials.length ? scan.materials : ["PLA"];
-  const limitMinutes = Math.min(...printMaterials.map((m) => MATERIAL_MAX_MINUTES[m]));
-  const overSpec = (scan?.minutes ?? 0) > limitMinutes;
-  const adminApproved = adminCheck.data?.ok === true;
+  const print_materials: Material[] = scan?.materials.length ? scan.materials : ["PLA"];
+  const limit_minutes = Math.min(...print_materials.map((m) => MATERIAL_MAX_MINUTES[m]));
+  const over_spec = (scan?.minutes ?? 0) > limit_minutes;
+  const admin_approved = admin_check.data?.ok === true;
 
-  const filamentOptions = Array.from(
+  const filament_options = Array.from(
     new Map(
       (printers ?? [])
         .flatMap((p) => p.filament)
@@ -212,37 +249,39 @@ function RouteComponent() {
         .map((f) => [f.colour, f]),
     ).values(),
   );
-  const chosenFilament = filamentOptions.find((f) => f.colour === filamentColour);
+  const chosen_filament = filament_options.find((f) => f.colour === filament_colour);
 
-  const authorDone = author !== null;
-  const reasonDone = authorDone && reason.trim() !== "";
-  const gcodeDone = reasonDone && gcode !== null;
-  const filesDone = gcodeDone && threemf !== null;
-  const scanDone = filesDone && scan !== null && scan.minutes > 0 && scan.mass > 0 && scan.name.trim() !== "";
-  const scanCleared = scanDone && (!overSpec || adminApproved);
-  const filamentDone = isMulti ? printerName !== "" : filamentColour !== "";
-  const printerDone = scanCleared && filamentDone;
-  const canSubmit = printerDone && rep !== null && password !== "" && !submit.isPending;
+  const author_done = author !== null;
+  const reason_done = author_done && reason.trim() !== "";
+  const gcode_done = reason_done && gcode !== null;
+  const files_done = gcode_done && threemf !== null;
+  const scan_done = files_done && scan !== null && scan.minutes > 0 && scan.mass > 0 && scan.name.trim() !== "";
+  const scan_cleared = scan_done && (!over_spec || admin_approved);
+  const filament_done = is_multi ? printer_name !== "" : filament_colour !== "";
+  const printer_done = scan_cleared && filament_done;
+  const can_submit = printer_done && rep !== null && password !== "" && !submit.isPending;
 
   const onGcode = async (file: File | null) => {
     setGcode(file);
     setScan(file ? parseGcode(await file.text(), file.name) : null);
     setAdminPassword("");
-    adminCheck.reset();
+    admin_check.reset();
   };
 
   const onSubmit = () => {
-    if (!author || !rep || !scan) return;
-    const temps = chosenFilament
+    if (submit.isPending || !author || !rep || !scan) return;
+    setCopyCount(0);
+    setBaseName(scan.name);
+    const temps = chosen_filament
       ? {
-          nozzle_temp_min: chosenFilament.nozzle_temp_min,
-          nozzle_temp_max: chosenFilament.nozzle_temp_max,
-          bed_temp: chosenFilament.bed_temp,
+          nozzle_temp_min: chosen_filament.nozzle_temp_min,
+          nozzle_temp_max: chosen_filament.nozzle_temp_max,
+          bed_temp: chosen_filament.bed_temp,
         }
       : MATERIAL_TEMPS[material];
-    const filament = isMulti
+    const filament = is_multi
       ? scan.materials.map((m) => ({ material: m, colour: ANY_COLOUR, ...MATERIAL_TEMPS[m] }))
-      : [{ material, colour: filamentColour, ...temps }];
+      : [{ material, colour: filament_colour, ...temps }];
 
     submit.mutate({
       print: {
@@ -258,8 +297,16 @@ function RouteComponent() {
         threemf: threemf!,
         timelapse,
       },
-      printer: isMulti ? printerName : undefined,
+      printer: is_multi ? printer_name : undefined,
       password,
+    });
+  };
+
+  const onAnotherCopy = () => {
+    if (submit.isPending || !submit.variables) return;
+    submit.mutate({
+      ...submit.variables,
+      print: { ...submit.variables.print, name: `${base_name} (${copy_count + 1})` },
     });
   };
 
@@ -342,14 +389,14 @@ function RouteComponent() {
                 accent="bg-blue-500/10 text-blue-600"
                 locked={false}
               >
-                <UserSearch placeholder="Search member" selected={author} onSelect={setAuthor} />
+                <UserSearch placeholder="Search user" selected={author} onSelect={setAuthor} />
               </Section>
 
               <Section
                 title="Reason for print"
                 icon={<MessageSquareTextIcon className="size-4" />}
                 accent="bg-violet-500/10 text-violet-600"
-                locked={!authorDone}
+                locked={!author_done}
               >
                 <Input
                   placeholder="e.g. MAC222 or Personal"
@@ -362,25 +409,35 @@ function RouteComponent() {
                 title="Upload G-code"
                 icon={<FileCodeIcon className="size-4" />}
                 accent="bg-amber-500/10 text-amber-600"
-                locked={!reasonDone}
+                locked={!reason_done}
               >
-                <Input type="file" accept=".gcode" onChange={(e) => onGcode(e.target.files?.[0] ?? null)} />
+                <Input
+                  key={reset_key}
+                  type="file"
+                  accept=".gcode"
+                  onChange={(e) => onGcode(e.target.files?.[0] ?? null)}
+                />
               </Section>
 
               <Section
                 title="Upload 3MF"
                 icon={<BoxIcon className="size-4" />}
                 accent="bg-orange-500/10 text-orange-600"
-                locked={!gcodeDone}
+                locked={!gcode_done}
               >
-                <Input type="file" accept=".3mf" onChange={(e) => setThreemf(e.target.files?.[0] ?? null)} />
+                <Input
+                  key={reset_key}
+                  type="file"
+                  accept=".3mf"
+                  onChange={(e) => setThreemf(e.target.files?.[0] ?? null)}
+                />
               </Section>
 
               <Section
                 title="Print details"
                 icon={<GaugeIcon className="size-4" />}
                 accent="bg-cyan-500/10 text-cyan-600"
-                locked={!filesDone}
+                locked={!files_done}
               >
                 <div className="grid grid-cols-2 gap-3">
                   <div className="col-span-2 flex flex-col gap-1">
@@ -399,48 +456,48 @@ function RouteComponent() {
                     <Input disabled value={scan?.mass ?? 0} />
                   </div>
                 </div>
-                {overSpec && (
+                {over_spec && (
                   <p className="text-sm text-destructive">
-                    Over the {limitMinutes / 60}h limit for {printMaterials.join("/")} — admin approval required.
+                    Over the {limit_minutes / 60}h limit for {print_materials.join("/")} — admin approval required.
                   </p>
                 )}
               </Section>
 
-              {overSpec && (
+              {over_spec && (
                 <Section
                   title="Admin approval"
                   icon={<ShieldAlertIcon className="size-4" />}
                   accent="bg-red-500/10 text-red-600"
-                  locked={!scanDone}
+                  locked={!scan_done}
                 >
                   <p className="text-sm text-muted-foreground">
-                    This print exceeds the {limitMinutes / 60}h limit for {printMaterials.join("/")}. Enter an admin
+                    This print exceeds the {limit_minutes / 60}h limit for {print_materials.join("/")}. Enter an admin
                     password to continue.
                   </p>
                   <div className="flex gap-2">
                     <Input
                       type="password"
                       placeholder="Admin password"
-                      value={adminPassword}
+                      value={admin_password}
                       onChange={(e) => {
                         setAdminPassword(e.target.value);
-                        if (adminCheck.data || adminCheck.isError) adminCheck.reset();
+                        if (admin_check.data || admin_check.isError) admin_check.reset();
                       }}
                       className="flex-1"
                     />
                     <Button
                       type="button"
                       variant="outline"
-                      disabled={adminPassword === "" || adminCheck.isPending || adminApproved}
-                      onClick={() => adminCheck.mutate({ password: adminPassword })}
+                      disabled={admin_password === "" || admin_check.isPending || admin_approved}
+                      onClick={() => admin_check.mutate({ password: admin_password })}
                     >
-                      {adminCheck.isPending ? "Checking…" : adminApproved ? "Approved" : "Verify"}
+                      {admin_check.isPending ? "Checking…" : admin_approved ? "Approved" : "Verify"}
                     </Button>
                   </div>
-                  {adminCheck.data && !adminCheck.data.ok && (
+                  {admin_check.data && !admin_check.data.ok && (
                     <p className="text-sm text-destructive">Incorrect admin password.</p>
                   )}
-                  {adminApproved && <p className="text-sm text-green-600">Admin approved.</p>}
+                  {admin_approved && <p className="text-sm text-green-600">Admin approved.</p>}
                 </Section>
               )}
 
@@ -448,14 +505,14 @@ function RouteComponent() {
                 title="Filament"
                 icon={<PaletteIcon className="size-4" />}
                 accent="bg-pink-500/10 text-pink-600"
-                locked={!scanCleared}
+                locked={!scan_cleared}
               >
-                {isMulti ? (
+                {is_multi ? (
                   <>
                     <p className="text-sm text-muted-foreground">
                       Multi-material ({scan?.materials.join(", ")}) — pick a multi-material printer.
                     </p>
-                    <Select value={printerName} onValueChange={setPrinterName}>
+                    <Select value={printer_name} onValueChange={setPrinterName}>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select printer" />
                       </SelectTrigger>
@@ -471,13 +528,13 @@ function RouteComponent() {
                 ) : (
                   <>
                     <p className="text-sm text-muted-foreground">{material} — pick a loaded filament.</p>
-                    <Select value={filamentColour} onValueChange={setFilamentColour}>
+                    <Select value={filament_colour} onValueChange={setFilamentColour}>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select filament" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value={ANY_COLOUR}>Any colour</SelectItem>
-                        {filamentOptions.map((f) => (
+                        {filament_options.map((f) => (
                           <SelectItem key={f.colour} value={f.colour}>
                             <span className="flex items-center gap-2">
                               <span
@@ -498,7 +555,7 @@ function RouteComponent() {
                 title="Timelapse"
                 icon={<VideoIcon className="size-4" />}
                 accent="bg-teal-500/10 text-teal-600"
-                locked={!printerDone}
+                locked={!printer_done}
               >
                 <div className="flex items-center gap-3">
                   <Switch id="timelapse" checked={timelapse} onCheckedChange={setTimelapse} />
@@ -506,12 +563,12 @@ function RouteComponent() {
                 </div>
               </Section>
 
-              {isThreeDpMember && (
+              {is_three_dp_member && (
                 <Section
                   title="Priority"
                   icon={<FlagIcon className="size-4" />}
                   accent="bg-yellow-500/10 text-yellow-600"
-                  locked={!printerDone}
+                  locked={!printer_done}
                 >
                   <Select value={priority} onValueChange={(v) => setPriority(v as (typeof PRIORITIES)[number])}>
                     <SelectTrigger className="w-full">
@@ -532,7 +589,7 @@ function RouteComponent() {
                 title="Rep approval"
                 icon={<KeyRoundIcon className="size-4" />}
                 accent="bg-green-500/10 text-green-600"
-                locked={!printerDone}
+                locked={!printer_done}
               >
                 <UserSearch placeholder="Rep username" requireRep selected={rep} onSelect={setRep} />
                 <Input
@@ -545,13 +602,26 @@ function RouteComponent() {
 
               {submit.error && <p className="text-sm text-destructive">{submit.error.message}</p>}
               {submit.isSuccess && (
-                <p className="text-sm text-green-600">
-                  Added to queue — position {submit.data.position}, lead time{" "}
-                  {formatRemaining(submit.data.lead_time.total("seconds"))}.
-                </p>
+                <div className="flex flex-col gap-2 rounded-lg border border-green-500/30 bg-green-500/5 p-3">
+                  <p className="text-sm text-green-600">
+                    Added to queue — position {submit.data.position}, lead time{" "}
+                    {formatRemaining(submit.data.lead_time.total("seconds"))}.
+                  </p>
+                  <p className="text-xs font-medium text-muted-foreground">
+                    {copy_count} {copy_count === 1 ? "copy" : "copies"} of this print submitted.
+                  </p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={submit.isPending || !submit.variables}
+                    onClick={onAnotherCopy}
+                  >
+                    {submit.isPending ? "Submitting…" : "Submit another copy"}
+                  </Button>
+                </div>
               )}
 
-              <Button type="submit" disabled={!canSubmit} onClick={onSubmit} className="w-full">
+              <Button type="submit" disabled={!can_submit} onClick={onSubmit} className="w-full">
                 {submit.isPending ? "Submitting…" : "Submit to queue"}
               </Button>
             </CardContent>
