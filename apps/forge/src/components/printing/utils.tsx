@@ -1,7 +1,14 @@
 import { Button } from "@packages/ui/components/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@packages/ui/components/dropdown-menu";
 import { Input } from "@packages/ui/components/input";
 import { useQuery } from "@tanstack/react-query";
-import { CheckIcon } from "lucide-react";
+import { CheckIcon, ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { orpc } from "@/lib/orpc";
 
@@ -10,6 +17,58 @@ export const ANY_COLOUR = "ANY";
 export const PAGE_SIZE = 20;
 
 const SEARCH_DEBOUNCE_MS = 300;
+
+const NOW = new Date();
+const FIRST_YEAR = 2026;
+
+export const CURRENT_ACADEMIC_YEAR = NOW.getMonth() >= 8 ? NOW.getFullYear() : NOW.getFullYear() - 1;
+
+export const ACADEMIC_YEARS = Array.from(
+  { length: CURRENT_ACADEMIC_YEAR - FIRST_YEAR + 1 },
+  (_, i) => CURRENT_ACADEMIC_YEAR - i,
+);
+
+export function academicLabel(start_year: number): string {
+  return `${start_year}/${String((start_year + 1) % 100).padStart(2, "0")}`;
+}
+
+export function academicYearRange(start_year: number): { start_time: string; end_time: string } {
+  return {
+    start_time: new Date(Date.UTC(start_year, 8, 1)).toISOString(),
+    end_time: new Date(Date.UTC(start_year + 1, 8, 1) - 1).toISOString(),
+  };
+}
+
+export function AcademicYearPicker({ year, onYearChange }: { year: number; onYearChange: (year: number) => void }) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="sm" className="gap-1 text-base">
+          {academicLabel(year)}
+          <ChevronDown className="size-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuRadioGroup value={String(year)} onValueChange={(v) => onYearChange(Number(v))}>
+          {ACADEMIC_YEARS.map((y) => (
+            <DropdownMenuRadioItem key={y} value={String(y)}>
+              {academicLabel(y)}
+            </DropdownMenuRadioItem>
+          ))}
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+export function Stat({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div className="flex justify-between border-b py-1.5 text-sm last:border-b-0">
+      <span className="text-muted-foreground">{label}</span>
+      <span className="font-medium">{value}</span>
+    </div>
+  );
+}
 
 export const PRINT_STATUS_STYLES: Record<string, string> = {
   Complete: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",

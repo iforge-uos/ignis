@@ -69,7 +69,7 @@ function RouteComponent() {
       <div className="flex">
         <h2 className="mx-14 mt-8 mb-2 flex items-center gap-2 text-4xl font-futura text-balance">
           <SlidersHorizontalIcon className="size-8" />
-          3DP print crossroad.
+          3DP print control hub.
         </h2>
       </div>
       <div className="grid gap-6 p-6 lg:grid-cols-2">

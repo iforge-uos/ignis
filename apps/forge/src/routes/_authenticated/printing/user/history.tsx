@@ -1,51 +1,27 @@
 import { Temporal } from "@js-temporal/polyfill";
+import { Card, CardContent, CardHeader } from "@packages/ui/components/card";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { Button } from "@packages/ui/components/button";
-import { Card, CardContent, CardHeader } from "@packages/ui/components/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuTrigger,
-} from "@packages/ui/components/dropdown-menu";
-import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { Hammer } from "@/components/loading";
-import { formatRemaining } from "@/components/printing/utils";
+import {
+  AcademicYearPicker,
+  academicLabel,
+  academicYearRange,
+  CURRENT_ACADEMIC_YEAR,
+  formatMass,
+  formatRemaining,
+  Stat,
+} from "@/components/printing/utils";
 import { orpc } from "@/lib/orpc";
-
-const NOW = new Date();
-const CURRENT_ACADEMIC_YEAR = NOW.getMonth() >= 8 ? NOW.getFullYear() : NOW.getFullYear() - 1;
-const FIRST_YEAR = 2026;
-const YEARS = Array.from({ length: CURRENT_ACADEMIC_YEAR - FIRST_YEAR + 1 }, (_, i) => CURRENT_ACADEMIC_YEAR - i);
 
 export const Route = createFileRoute("/_authenticated/printing/user/history")({
   component: RouteComponent,
 });
 
-function academicLabel(startYear: number): string {
-  return `${startYear}/${String((startYear + 1) % 100).padStart(2, "0")}`;
-}
-
-function formatMass(grams: number): string {
-  return grams >= 1000 ? `${(grams / 1000).toFixed(2)} kg` : `${Math.round(grams)} g`;
-}
-
-function Stat({ label, value }: { label: string; value: string | number }) {
-  return (
-    <div className="flex justify-between border-b py-1.5 text-sm last:border-b-0">
-      <span className="text-muted-foreground">{label}</span>
-      <span className="font-medium">{value}</span>
-    </div>
-  );
-}
-
 function RouteComponent() {
   const [year, setYear] = useState(CURRENT_ACADEMIC_YEAR);
-  const start_time = new Date(Date.UTC(year, 8, 1)).toISOString();
-  const end_time = new Date(Date.UTC(year + 1, 8, 1) - 1).toISOString();
+  const { start_time, end_time } = academicYearRange(year);
 
   const { data, isPending, error } = useQuery({
     ...orpc.print.public.users.stats.queryOptions({ input: { start_time, end_time } }),
@@ -100,23 +76,7 @@ function RouteComponent() {
           <div className="relative z-10">
             <CardHeader className="flex flex-row items-center justify-between gap-2 text-left text-3xl font-bold font-futura">
               <span>Your Stats for {academicLabel(year)}:</span>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-1 text-base">
-                    {academicLabel(year)}
-                    <ChevronDown className="size-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuRadioGroup value={String(year)} onValueChange={(v) => setYear(Number(v))}>
-                    {YEARS.map((y) => (
-                      <DropdownMenuRadioItem key={y} value={String(y)}>
-                        {academicLabel(y)}
-                      </DropdownMenuRadioItem>
-                    ))}
-                  </DropdownMenuRadioGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <AcademicYearPicker year={year} onYearChange={setYear} />
             </CardHeader>
             <CardContent>
               <Stat label="Prints" value={data.period_prints} />
