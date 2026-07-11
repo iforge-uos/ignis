@@ -34,6 +34,7 @@ const LEAD_GREEN_MAX_DAYS = 2;
 const LEAD_YELLOW_MAX_DAYS = 5;
 
 const ANY_COLOUR = "ANY";
+const COPY_DELAY_MS = 1000;
 const PRIORITIES = PrioritySchema.options;
 const MATERIALS = MaterialSchema.options;
 type Material = printing.Material;
@@ -203,6 +204,7 @@ function RouteComponent() {
   const [reset_key, setResetKey] = useState(0);
   const [copy_count, setCopyCount] = useState(0);
   const [base_name, setBaseName] = useState("");
+  const [copy_waiting, setCopyWaiting] = useState(false);
 
   const admin_check = useMutation(orpc.print.admin.mutationOptions());
 
@@ -303,11 +305,23 @@ function RouteComponent() {
   };
 
   const onAnotherCopy = () => {
-    if (submit.isPending || !submit.variables) return;
-    submit.mutate({
-      ...submit.variables,
-      print: { ...submit.variables.print, name: `${base_name} (${copy_count + 1})` },
-    });
+    if (submit.isPending || copy_waiting || !submit.variables) return;
+    const variables = submit.variables;
+    const prev = variables.print;
+    const next_name = `${base_name} (${copy_count + 1})`;
+    setCopyWaiting(true);
+    setTimeout(() => {
+      setCopyWaiting(false);
+      submit.mutate({
+        ...variables,
+        print: {
+          ...prev,
+          name: next_name,
+          gcode: new File([prev.gcode], prev.gcode.name, { type: prev.gcode.type }),
+          threemf: new File([prev.threemf], prev.threemf.name, { type: prev.threemf.type }),
+        },
+      });
+    }, COPY_DELAY_MS);
   };
 
   return (
@@ -613,10 +627,10 @@ function RouteComponent() {
                   <Button
                     type="button"
                     variant="outline"
-                    disabled={submit.isPending || !submit.variables}
+                    disabled={submit.isPending || copy_waiting || !submit.variables}
                     onClick={onAnotherCopy}
                   >
-                    {submit.isPending ? "Submitting…" : "Submit another copy"}
+                    {submit.isPending ? "Submitting…" : copy_waiting ? "Waiting…" : "Submit another copy"}
                   </Button>
                 </div>
               )}

@@ -6,14 +6,14 @@
 - [x] Add startup for driver manager
 - [ ] Get configs for printers
 - [ ] Request static IPs for printers
-- [ ] Incorperate timelapse and livestream <br>
+- [x] Incorperate timelapse and livestream <br>
 <t>-> potentially into a new app like forge and mine, name: smithy?<br>
 <t>-> This will be a right pain icl
 - [ ] Sort out docs/comments
 - [x] Sort out api
 - [ ] Integrate frontend with franklin
 - [x] Sort out confirmation emails on upload, send and finish
-- [ ] Merge printing-emails
+- [x] Merge printing-emails
 - [x] Sort out cdn
 - [x] fix Prusa Driver
 - [ ] Update THREEDP_LAPTOP_ACCOUNT uuid in lib/printer/utils

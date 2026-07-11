@@ -1,6 +1,7 @@
 import { Temporal } from "@js-temporal/polyfill";
 import * as z from "zod";
 import e from "@packages/db/edgeql-js";
+import { QueueTypeSchema } from "@packages/db/zod/modules/printing";
 import { auth } from "@/orpc";
 import {
   adjustLeadTime,
@@ -19,11 +20,12 @@ export const prints = auth
       .object({
         type: z.enum(["QUEUED", "REVIEW", "HISTORY"]).default("QUEUED"),
         offset: z.int().nonnegative().default(0),
+        queue: QueueTypeSchema.optional(),
       })
       .default({ type: "QUEUED", offset: 0 }),
   )
   .output(queueHistoryOutput)
-  .handler(async ({ input: { type, offset }, context: { db, user } }) => {
+  .handler(async ({ input: { type, offset, queue }, context: { db, user } }) => {
     const isReview = type === "REVIEW";
     const isHistory = type === "HISTORY";
     const aheadStatus = isReview ? e.printing.print_status.UnderReview : e.printing.print_status.Queued;
@@ -43,11 +45,14 @@ export const prints = auth
         const aheadPinned = printsAhead(p.queue, p.created_at, print.priority, aheadStatus, p.printer, true);
         const aheadShared = printsAhead(p.queue, p.created_at, print.priority, aheadStatus, p.printer, false);
 
-        const scope = e.op(
+        const ownScope = e.op(
           statusFilter,
           "and",
           e.op(e.assert_single(p["<history[is printing::Print]"].author.id), "=", e.uuid(user.id)),
         );
+        const scope = queue
+          ? e.op(ownScope, "and", e.op(p.queue, "=", e.cast(e.printing.QueueType, queue)))
+          : ownScope;
 
         return {
           ...printHistoryShape(p),
