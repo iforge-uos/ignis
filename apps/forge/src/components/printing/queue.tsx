@@ -1,21 +1,18 @@
-import { Button } from "@packages/ui/components/button";
+import { QueueTypeSchema } from "@packages/db/zod/modules/printing";
 import { Card } from "@packages/ui/components/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@packages/ui/components/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@packages/ui/components/table";
 import { Tabs, TabsList, TabsTrigger } from "@packages/ui/components/tabs";
-import { QueueTypeSchema } from "@packages/db/zod/modules/printing";
 import type { ReactNode } from "react";
 import type * as z from "zod";
 import { Hammer } from "@/components/loading";
-import { formatRemaining } from "@/components/printing/utils";
+import { formatRemaining, TableButtons } from "@/components/printing/utils";
 import type { queueHistoryOutput } from "@/lib/printers/utils";
 
 export const MATERIALS = QueueTypeSchema.options;
 export type MaterialFilter = (typeof MATERIALS)[number] | "ALL";
 
 export type QueueTabOption = { value: string; label: string };
-
-const PAGE_SIZE = 20;
 
 type QueueRow = z.infer<typeof queueHistoryOutput>[number];
 
@@ -154,26 +151,7 @@ export function PrintQueue({
                         </div>
                       )}
 
-                      {(offset > 0 || rows.length === PAGE_SIZE) && (
-                        <div className="flex items-center justify-between">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            disabled={offset === 0}
-                            onClick={() => onOffsetChange(Math.max(0, offset - PAGE_SIZE))}
-                          >
-                            Previous
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            disabled={rows.length < PAGE_SIZE}
-                            onClick={() => onOffsetChange(offset + PAGE_SIZE)}
-                          >
-                            Next
-                          </Button>
-                        </div>
-                      )}
+                      <TableButtons offset={offset} count={rows.length} onOffsetChange={onOffsetChange} />
                     </div>
                   )}
                 </div>

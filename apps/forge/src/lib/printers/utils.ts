@@ -1,5 +1,6 @@
 import { Temporal } from "@js-temporal/polyfill";
 import e, { $infer } from "@packages/db/edgeql-js";
+import { printing } from "@packages/db/interfaces";
 import {
   CreateDowntimeSchema,
   CreatePrinterSchema,
@@ -11,7 +12,6 @@ import {
 import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
 import type { Executor } from "gel";
 import * as z from "zod";
-import { printing } from "@packages/db/interfaces";
 import type { Filament, PrinterStatus } from "@/lib/printers/types";
 
 export const QUEUE_RETURN_ITEMS = 20;
@@ -201,6 +201,14 @@ export const printHistoryShape = e.shape(e.printing.PrintHistory, (h) => ({
     ),
   ),
 }));
+
+export function hasLeftQueue(status: any) {
+  return e.op(
+    e.op("not", e.op("exists", status.is(e.printing.print_status.Queued))),
+    "and",
+    e.op("not", e.op("exists", status.is(e.printing.print_status.UnderReview))),
+  );
+}
 
 type printHistoryRow = $infer<typeof printHistoryShape>[number];
 

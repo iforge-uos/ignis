@@ -1,4 +1,4 @@
-import { CameraFeed, STATE_STYLES, formatRemaining } from "@/components/printing/utils";
+import { CameraFeed, formatRemaining, STATE_STYLES } from "@/components/printing/utils";
 
 export function PrinterCard({ printer, status }) {
   const offline = status.state === "disconnected" || status.state === "disabled";

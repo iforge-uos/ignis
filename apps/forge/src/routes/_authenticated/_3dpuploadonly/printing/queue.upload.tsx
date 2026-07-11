@@ -2,7 +2,7 @@ import { Temporal } from "@js-temporal/polyfill";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Hammer } from "@/components/loading";
-import { formatRemaining } from "@/components/printing/utils";
+import { ANY_COLOUR, formatRemaining, type SelectedUser, UserSearch } from "@/components/printing/utils";
 import { orpc } from "@/lib/orpc";
 import { useUser } from "@/hooks/useUser";
 import { Button } from "@packages/ui/components/button";
@@ -13,7 +13,6 @@ import { Switch } from "@packages/ui/components/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@packages/ui/components/table";
 import {
   BoxIcon,
-  CheckIcon,
   FileCodeIcon,
   FlagIcon,
   GaugeIcon,
@@ -26,14 +25,13 @@ import {
   UserIcon,
   VideoIcon,
 } from "lucide-react";
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { printing } from "@packages/db/interfaces";
 import { MaterialSchema, PrioritySchema } from "@packages/db/zod/modules/printing";
 
 const LEAD_GREEN_MAX_DAYS = 2;
 const LEAD_YELLOW_MAX_DAYS = 5;
 
-const ANY_COLOUR = "ANY";
 const COPY_DELAY_MS = 1000;
 const PRIORITIES = PrioritySchema.options;
 const MATERIALS = MaterialSchema.options;
@@ -107,73 +105,6 @@ function Section({
         <span className="font-semibold">{title}</span>
       </div>
       <div className="flex flex-col gap-2">{children}</div>
-    </div>
-  );
-}
-
-type SelectedUser = { id: string; display_name: string };
-
-function UserSearch({
-  placeholder,
-  requireRep,
-  selected,
-  onSelect,
-}: {
-  placeholder: string;
-  requireRep?: boolean;
-  selected: SelectedUser | null;
-  onSelect: (user: SelectedUser | null) => void;
-}) {
-  const [query, setQuery] = useState("");
-  const [debounced, setDebounced] = useState("");
-  useEffect(() => {
-    const t = setTimeout(() => setDebounced(query), 300);
-    return () => clearTimeout(t);
-  }, [query]);
-  const { data } = useQuery({
-    ...orpc.users.search.queryOptions({ input: { query: debounced, limit: 5 } }),
-    enabled: debounced.trim().length > 1,
-  });
-
-  const results = (data ?? []).filter(
-    (u) => !requireRep || u.roles.some((r) => r.name === "Rep" || r.name === "Admin"),
-  );
-
-  if (selected) {
-    return (
-      <div className="flex items-center justify-between rounded-md border bg-green-500/5 px-3 py-2">
-        <span className="flex items-center gap-2">
-          <CheckIcon className="size-4 text-green-500" />
-          {selected.display_name}
-        </span>
-        <Button type="button" variant="ghost" size="sm" onClick={() => onSelect(null)}>
-          Change
-        </Button>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex flex-col gap-1">
-      <Input placeholder={placeholder} value={query} onChange={(e) => setQuery(e.target.value)} />
-      {results.length > 0 && (
-        <div className="flex flex-col rounded-md border">
-          {results.map((u) => (
-            <button
-              key={u.id}
-              type="button"
-              className="flex flex-col items-start px-3 py-2 text-left hover:bg-muted"
-              onClick={() => {
-                onSelect({ id: u.id, display_name: u.display_name });
-                setQuery("");
-              }}
-            >
-              <span className="font-medium">{u.display_name}</span>
-              <span className="text-xs text-muted-foreground">@{u.username}</span>
-            </button>
-          ))}
-        </div>
-      )}
     </div>
   );
 }

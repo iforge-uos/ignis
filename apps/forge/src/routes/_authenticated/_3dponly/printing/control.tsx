@@ -29,7 +29,10 @@ const SECTIONS: Section[] = [
     description: "Send jobs and control the live state of each printer.",
     icon: SlidersHorizontalIcon,
     accent: "bg-blue-500/10 text-blue-600",
-    links: [{ label: "Printer control", to: "/printing/status" }],
+    links: [
+      { label: "Printer control", to: "/printing/queue/send" },
+      { label: "Printer overview", to: "/printing/printers" },
+    ],
   },
   {
     title: "Admin",

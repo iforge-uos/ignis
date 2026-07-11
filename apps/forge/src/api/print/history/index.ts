@@ -2,6 +2,7 @@ import * as z from "zod";
 import { getHistoryStats, historyStatsSchema } from "@/lib/printers/history-stats";
 import { auth, printing } from "@/orpc";
 import { printer } from "./$name";
+import { all } from "./all";
 import { print } from "./print.$id";
 import { competition } from "./reps";
 import { timelapseRouter } from "./timelapse";
@@ -24,6 +25,7 @@ export const historyRouter = auth.prefix("/history").router({
   user,
   competition,
   stats,
+  all,
   printer,
   print,
   timelapse: timelapseRouter,

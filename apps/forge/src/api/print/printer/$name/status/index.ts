@@ -1,16 +1,33 @@
 import e from "@packages/db/edgeql-js";
-import { CreateDowntimeSchema } from "@packages/db/zod/modules/printing";
+import type { Executor } from "gel";
 import * as z from "zod";
+import { datetimeOut, printerStatusSchema } from "@/lib/printers/utils";
 import { printing } from "@/orpc";
 import { printers, printManager } from "@/printing";
 import { config } from "./config";
 import { connection } from "./connection";
-import { printerStatusSchema } from "@/lib/printers/utils";
 
 const statusOutput = z.object({
   status: printerStatusSchema,
-  down_until: CreateDowntimeSchema.shape.end_time,
+  down_until: datetimeOut.nullable(),
 });
+
+const DISABLED_STATUS = "printing::printer_status::Disabled";
+
+async function disabledState(db: Executor, id: string) {
+  const printer = await e
+    .select(e.printing.Printer, (p) => ({
+      status_type: p.status.__type__.name,
+      end_time: p.status.is(e.printing.printer_status.Disabled).end_time,
+      filter_single: { id },
+    }))
+    .run(db);
+
+  return {
+    disabled: printer?.status_type === DISABLED_STATUS,
+    down_until: printer?.end_time ?? null,
+  };
+}
 
 export const status = printing
   .route({ method: "GET", path: "/" })
@@ -21,29 +38,15 @@ export const status = printing
     if (!record) throw errors.PRINTER_NOT_FOUND({ data: { name } });
 
     if (!printManager.Printers.includes(name)) {
-      const printer = await e
-        .select(e.printing.Printer, () => ({
-          status: { ...e.is(e.printing.printer_status.Disabled, { end_time: true }) },
-          filter_single: { id: record.id },
-        }))
-        .run(db);
-      if (printer && "end_time" in printer.status) {
-        return { status: { state: "disabled" as const }, down_until: printer.status.end_time };
-      }
-      throw errors.PRINTER_DISCONNECTED();
+      const { disabled, down_until } = await disabledState(db, record.id);
+      if (disabled) return { status: { state: "disabled" as const }, down_until };
+      return { status: { state: "disconnected" as const }, down_until: null };
     }
 
     const status = await printManager.getStatus(name);
     if (status.state !== "disabled") return { status, down_until: null };
 
-    const printer = await e
-      .select(e.printing.Printer, () => ({
-        status: { ...e.is(e.printing.printer_status.Disabled, { end_time: true }) },
-        filter_single: { id: record.id },
-      }))
-      .run(db);
-
-    const down_until = printer && "end_time" in printer.status ? printer.status.end_time : null;
+    const { down_until } = await disabledState(db, record.id);
     return { status, down_until };
   });
 
