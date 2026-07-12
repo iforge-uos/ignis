@@ -263,7 +263,7 @@ export const appConfig: AppConfig[] = [
           },
           {
             title: "Control Printers",
-            url: "/printing/queue/send/",
+            url: "/printing/queue/send",
             icon: SlidersVerticalIcon,
           },
         ],

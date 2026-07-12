@@ -85,20 +85,22 @@ function Section({
   icon,
   accent,
   locked,
+  raised,
   children,
 }: {
   title: string;
   icon: ReactNode;
   accent: string;
   locked: boolean;
+  raised?: boolean;
   children: ReactNode;
 }) {
   return (
     <div
       aria-disabled={locked}
       className={`flex flex-col gap-3 rounded-xl border bg-card/80 p-4 shadow-sm backdrop-blur-sm transition-opacity ${
-        locked ? "pointer-events-none opacity-40 select-none" : ""
-      }`}
+        raised ? "relative z-20" : ""
+      } ${locked ? "pointer-events-none opacity-40 select-none" : ""}`}
     >
       <div className="flex items-center gap-2">
         <span className={`flex size-8 shrink-0 items-center justify-center rounded-lg ${accent}`}>{icon}</span>
@@ -333,6 +335,7 @@ function RouteComponent() {
                 icon={<UserIcon className="size-4" />}
                 accent="bg-blue-500/10 text-blue-600"
                 locked={false}
+                raised
               >
                 <UserSearch placeholder="Search user" selected={author} onSelect={setAuthor} />
               </Section>
@@ -535,6 +538,7 @@ function RouteComponent() {
                 icon={<KeyRoundIcon className="size-4" />}
                 accent="bg-green-500/10 text-green-600"
                 locked={!printer_done}
+                raised
               >
                 <UserSearch placeholder="Rep username" requireRep selected={rep} onSelect={setRep} />
                 <Input
