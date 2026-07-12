@@ -72,6 +72,7 @@ export const add = ableToQueuePrint
       print: uploadSchema,
       printer: z.string().optional(),
       password: z.string().min(1),
+      review: z.boolean().default(false),
     }),
   )
   .output(
@@ -84,7 +85,7 @@ export const add = ableToQueuePrint
     }),
   )
   .use(transaction)
-  .handler(async ({ input: { print, printer, password }, context: { db, tx, user }, errors }) => {
+  .handler(async ({ input: { print, printer, password, review }, context: { db, tx, user }, errors }) => {
     if (password !== env.printing.threeDpSubmitPassword) throw errors.INCORRECT_PASSWORD();
 
     const is_multi = print.filament.length > 1;
@@ -112,7 +113,10 @@ export const add = ableToQueuePrint
     }
 
     let { name, duration, mass, priority, reason, filament, author, approved_by, gcode, threemf, timelapse } = print;
-    name = name.trim().replace(/[^A-Za-z0-9\-_.()[\] ]/g, "").replace(/\s+/g, "_");
+    name = name
+      .trim()
+      .replace(/[^A-Za-z0-9\-_.()[\] ]/g, "")
+      .replace(/\s+/g, "_");
     let priority_decrease = false;
     // This is if 3dp laptop has specific account
     if (user.id === THREEDP_LAPTOP_ACCOUNT && priority !== "LOW") {
@@ -147,7 +151,7 @@ export const add = ableToQueuePrint
         author: e.assert_exists(e.select(e.users.User, () => ({ filter_single: { id: author } }))),
         approved_by: e.assert_exists(e.select(e.users.Rep, () => ({ filter_single: { id: approved_by } }))),
         history: e.insert(e.printing.PrintHistory, {
-          status: e.insert(e.printing.print_status.Queued, {}),
+          status: e.insert(review ? e.printing.print_status.UnderReview : e.printing.print_status.Queued, {}),
           has_timelapse: timelapse,
           ...(required_printer_id
             ? {
@@ -209,6 +213,7 @@ export const add = ableToQueuePrint
       .sendPrintUploadEmail(recipient, {
         created_at: new Date(),
         print_name: name,
+        review,
         position: stats.position,
         lead_time,
       })
@@ -280,7 +285,11 @@ export const get = printing
           : queue
             ? e.op(queued, "and", e.op(p.queue, "=", e.cast(e.printing.QueueType, queue)))
             : user
-              ? e.op(queued, "and", e.op(e.assert_single(p["<history[is printing::Print]"].author.id), "=", e.uuid(user)))
+              ? e.op(
+                  queued,
+                  "and",
+                  e.op(e.assert_single(p["<history[is printing::Print]"].author.id), "=", e.uuid(user)),
+                )
               : queued;
 
         const print = e.assert_exists(e.assert_single(p["<history[is printing::Print]"]));

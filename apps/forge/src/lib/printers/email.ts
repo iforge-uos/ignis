@@ -4,6 +4,7 @@ import { sign_in } from "@packages/db/interfaces";
 export interface EmailPrintUploadDetails {
   created_at: Date;
   print_name: string;
+  review: boolean;
   position: number;
   lead_time: Temporal.Duration;
 }

@@ -13,6 +13,7 @@ import { Switch } from "@packages/ui/components/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@packages/ui/components/table";
 import {
   BoxIcon,
+  ClipboardCheckIcon,
   FileCodeIcon,
   FlagIcon,
   GaugeIcon,
@@ -130,6 +131,7 @@ function RouteComponent() {
   const [filament_colour, setFilamentColour] = useState("");
   const [printer_name, setPrinterName] = useState("");
   const [timelapse, setTimelapse] = useState(true);
+  const [review, setReview] = useState(false);
   const [priority, setPriority] = useState<(typeof PRIORITIES)[number]>("LOW");
   const [rep, setRep] = useState<SelectedUser | null>(null);
   const [password, setPassword] = useState("");
@@ -150,6 +152,7 @@ function RouteComponent() {
     setFilamentColour("");
     setPrinterName("");
     setTimelapse(false);
+    setReview(false);
     setPriority("LOW");
     setRep(null);
     setPassword("");
@@ -175,6 +178,8 @@ function RouteComponent() {
   const limit_minutes = Math.min(...print_materials.map((m) => MATERIAL_MAX_MINUTES[m]));
   const over_spec = (scan?.minutes ?? 0) > limit_minutes;
   const admin_approved = admin_check.data?.ok === true;
+  const force_review = over_spec && !admin_approved;
+  const must_review = review || force_review;
 
   const filament_options = Array.from(
     new Map(
@@ -191,9 +196,8 @@ function RouteComponent() {
   const gcode_done = reason_done && gcode !== null;
   const files_done = gcode_done && threemf !== null;
   const scan_done = files_done && scan !== null && scan.minutes > 0 && scan.mass > 0 && scan.name.trim() !== "";
-  const scan_cleared = scan_done && (!over_spec || admin_approved);
   const filament_done = is_multi ? printer_name !== "" : filament_colour !== "";
-  const printer_done = scan_cleared && filament_done;
+  const printer_done = scan_done && filament_done;
   const can_submit = printer_done && rep !== null && password !== "" && !submit.isPending;
 
   const onGcode = async (file: File | null) => {
@@ -234,6 +238,7 @@ function RouteComponent() {
       },
       printer: is_multi ? printer_name : undefined,
       password,
+      review: must_review,
     });
   };
 
@@ -406,7 +411,8 @@ function RouteComponent() {
                 </div>
                 {over_spec && (
                   <p className="text-sm text-destructive">
-                    Over the {limit_minutes / 60}h limit for {print_materials.join("/")} — admin approval required.
+                    Over the {limit_minutes / 60}h limit for {print_materials.join("/")} — without admin approval this
+                    print goes under review.
                   </p>
                 )}
               </Section>
@@ -420,7 +426,7 @@ function RouteComponent() {
                 >
                   <p className="text-sm text-muted-foreground">
                     This print exceeds the {limit_minutes / 60}h limit for {print_materials.join("/")}. Enter an admin
-                    password to continue.
+                    password to queue it directly, or submit it without approval to send it under review.
                   </p>
                   <div className="flex gap-2">
                     <Input
@@ -453,7 +459,7 @@ function RouteComponent() {
                 title="Filament"
                 icon={<PaletteIcon className="size-4" />}
                 accent="bg-pink-500/10 text-pink-600"
-                locked={!scan_cleared}
+                locked={!scan_done}
               >
                 {is_multi ? (
                   <>
@@ -511,6 +517,30 @@ function RouteComponent() {
                 </div>
               </Section>
 
+              <Section
+                title="Review"
+                icon={<ClipboardCheckIcon className="size-4" />}
+                accent="bg-amber-500/10 text-amber-600"
+                locked={!printer_done}
+              >
+                <div className="flex items-center gap-3">
+                  <Switch
+                    id="review"
+                    checked={must_review}
+                    disabled={force_review}
+                    onCheckedChange={setReview}
+                    className="disabled:opacity-100"
+                  />
+                  <span>Submit under review</span>
+                </div>
+                {force_review && (
+                  <p className="text-sm text-muted-foreground">
+                    Over the {limit_minutes / 60}h limit for {print_materials.join("/")} without admin approval — this
+                    print must be checked by a 3DP rep before it can be sent.
+                  </p>
+                )}
+              </Section>
+
               {is_three_dp_member && (
                 <Section
                   title="Priority"
@@ -552,10 +582,16 @@ function RouteComponent() {
               {submit.error && <p className="text-sm text-destructive">{submit.error.message}</p>}
               {submit.isSuccess && (
                 <div className="flex flex-col gap-2 rounded-lg border border-green-500/30 bg-green-500/5 p-3">
-                  <p className="text-sm text-green-600">
-                    Added to queue — position {submit.data.position}, lead time{" "}
-                    {formatRemaining(submit.data.lead_time.total("seconds"))}.
-                  </p>
+                  {submit.variables?.review ? (
+                    <p className="text-sm text-amber-600">
+                      Submitted under review — a 3DP rep must approve it before it enters the queue.
+                    </p>
+                  ) : (
+                    <p className="text-sm text-green-600">
+                      Added to queue — position {submit.data.position}, lead time{" "}
+                      {formatRemaining(submit.data.lead_time.total("seconds"))}.
+                    </p>
+                  )}
                   <p className="text-xs font-medium text-muted-foreground">
                     {copy_count} {copy_count === 1 ? "copy" : "copies"} of this print submitted.
                   </p>

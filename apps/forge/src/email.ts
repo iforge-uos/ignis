@@ -262,7 +262,9 @@ class Emailer {
   async sendPrintUploadEmail({ email, display_name }: PartialUser, details: EmailPrintUploadDetails) {
     await this.sendJSX(UploadPrintTemplate({ ...details }), {
       recipients: [`${email}@sheffield.ac.uk`],
-      subject: `Your 3D print has been uploaded to the iForge print queue`,
+      subject: details.review
+        ? `Your 3D print has been uploaded to the iForge and is under review`
+        : `Your 3D print has been uploaded to the iForge print queue`,
     });
 
     logger.info(logger.fmt`PrintUpload email sent successfully to ${display_name} (${email})`);

@@ -9,6 +9,7 @@ import * as React from "react";
 export function Template({
   created_at = new Date(),
   print_name = "{print_name}",
+  review = false,
   position = 1,
   lead_time = Temporal.Duration.from({ days: 1, hours: 3, minutes: 20 }),
 }: EmailPrintUploadDetails) {
@@ -22,24 +23,36 @@ export function Template({
       .filter(Boolean)
       .join(", ") || "less than a minute";
 
-  const queuedAt = format(created_at, "p 'on' PP");
+  const uploadedAt = format(created_at, "p 'on' PP");
+  const summary = review ? "is under review" : "has been queued";
 
   return (
     <Email
-      preview={`Your print: ${print_name}, has been queued`}
-      title="Your print has been queued"
-      heading={`Your print: ${print_name}, has been queued`}
+      preview={`Your print: ${print_name}, ${summary}`}
+      title={`Your print ${summary}`}
+      heading={`Your print: ${print_name}, ${summary}`}
     >
       <Hr />
       <Container>
-        <Text>
-          Hey there! <br />
-          Your print: {print_name}, has been added to the print queue at {queuedAt}. <br />
-          Position: {position} <br />
-          Estimated lead time: {leadTime} <br />
-          Get live updates on your queued items{" "}
-          <Link href="https://iforge.sheffield.ac.uk/printing/user/queue">here</Link>
-        </Text>
+        {review ? (
+          <Text>
+            Hey there! <br />
+            Your print: {print_name}, was uploaded at {uploadedAt} and has been put under review to be checked by a 3DP
+            rep. <br />
+            It will be added to the print queue once approved. <br />
+            Get live updates on your items{" "}
+            <Link href="https://iforge.sheffield.ac.uk/printing/user/queue">here</Link>
+          </Text>
+        ) : (
+          <Text>
+            Hey there! <br />
+            Your print: {print_name}, has been added to the print queue at {uploadedAt}. <br />
+            Position: {position} <br />
+            Estimated lead time: {leadTime} <br />
+            Get live updates on your queued items{" "}
+            <Link href="https://iforge.sheffield.ac.uk/printing/user/queue">here</Link>
+          </Text>
+        )}
       </Container>
     </Email>
   );
