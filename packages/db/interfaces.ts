@@ -1062,8 +1062,8 @@ export namespace printing {
     "reason"?: string | null;
     "filament": {material: Material, colour: string, nozzle_temp_min: number, nozzle_temp_max: number, bed_temp: number}[];
     "gcode_path": string;
-    "threemf_path": string;
     "history": PrintHistory[];
+    "threemf_path": string;
   }
   export interface PrintAuditEntry extends AuditEntry {
     "status": PrintStatus;
@@ -1082,7 +1082,6 @@ export namespace printing {
   export interface Printer extends std.$Object {
     "location": sign_in.Location;
     "status": PrinterStatus;
-    "name": string;
     "prints": Print[];
     "downtimes": Downtime[];
     "has_camera": boolean;
@@ -1094,6 +1093,7 @@ export namespace printing {
     "keys": string[];
     "filament": {material: Material, colour: string, nozzle_temp_min: number, nozzle_temp_max: number, bed_temp: number}[];
     "queue": QueueType;
+    "name": string;
   }
   export interface PrinterAuditEntry extends AuditEntry {
     "status": PrinterStatus;

@@ -202,7 +202,6 @@ export const UpdatePrintAuditEntrySchema = z.
 // #region printing::Printer
 export const CreatePrinterSchema = z.
   object({
-    name: z.string(), // std::str
     has_camera: z.boolean(), // std::bool
     model: z.string(), // std::str
     manufacturer: z.string(), // std::str
@@ -217,11 +216,11 @@ export const CreatePrinterSchema = z.
       z.int().min(-32768).max(32767),
       z.int().min(-32768).max(32767),
     ]).array(), // array<tuple<material:printing::Material, colour:std::str, nozzle_temp_min:std::int16, nozzle_temp_max:std::int16, bed_temp:std::int16>>
+    name: z.string(), // std::str
   });
 
 export const UpdatePrinterSchema = z.
   object({
-    name: z.string(), // std::str
     has_camera: z.boolean(), // std::bool
     model: z.string(), // std::str
     manufacturer: z.string(), // std::str
@@ -236,6 +235,7 @@ export const UpdatePrinterSchema = z.
       z.int().min(-32768).max(32767),
       z.int().min(-32768).max(32767),
     ]).array(), // array<tuple<material:printing::Material, colour:std::str, nozzle_temp_min:std::int16, nozzle_temp_max:std::int16, bed_temp:std::int16>>
+    name: z.string(), // std::str
   });
 // #endregion
 

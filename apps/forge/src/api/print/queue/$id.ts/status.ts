@@ -21,18 +21,14 @@ export const status = printing
   .handler(async ({ input: { id, status, reason, message }, context: { db }, errors }) => {
     const print = await e
       .select(e.printing.Print, (p) => ({
-        history: e.assert_single(
-          e.select(p.history, (h) => ({
-            id: true,
-            status_name: h.status.__type__.name,
-          })),
-        ),
+        history_id: e.assert_single(p.history.id),
+        history_status: e.assert_single(p.history.status.__type__.name),
         filter_single: { id: e.uuid(id) },
       }))
       .run(db);
-    if (!print?.history) throw errors.PRINT_JOB_NOT_FOUND({ data: { id } });
-    if (print.history.status_name === "printing::print_status::Printing") throw errors.PRINT_STARTED();
-    const history_id = print.history.id;
+    if (!print?.history_id) throw errors.PRINT_JOB_NOT_FOUND({ data: { id } });
+    if (print.history_status === "printing::print_status::Printing") throw errors.PRINT_STARTED();
+    const history_id = print.history_id;
 
     const new_status = (() => {
       switch (status) {

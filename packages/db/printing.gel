@@ -116,7 +116,9 @@ module printing {
     }
 
     type Printer {
-        required name: str;
+        required name: str {
+            constraint exclusive;
+        }
         required ip: str;
         required keys: array<str>;
         required manufacturer: str;
