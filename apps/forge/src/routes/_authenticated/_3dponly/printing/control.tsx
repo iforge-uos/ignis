@@ -1,29 +1,12 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@packages/ui/components/card";
-import { Button } from "@packages/ui/components/button";
-import {
-  BarChart3Icon,
-  ChevronRightIcon,
-  ListTodoIcon,
-  LockIcon,
-  SlidersHorizontalIcon,
-  type LucideIcon,
-} from "lucide-react";
+import { createFileRoute } from "@tanstack/react-router";
+import { BarChart3Icon, ListTodoIcon, LockIcon, SlidersHorizontalIcon } from "lucide-react";
+import { HubPage, type HubSection } from "@/components/printing/hubs";
 
 export const Route = createFileRoute("/_authenticated/_3dponly/printing/control")({
   component: RouteComponent,
 });
 
-type SectionLink = { label: string; to: string };
-type Section = {
-  title: string;
-  description: string;
-  icon: LucideIcon;
-  accent: string;
-  links: SectionLink[];
-};
-
-const SECTIONS: Section[] = [
+const SECTIONS: HubSection[] = [
   {
     title: "Printer Control",
     description: "Send jobs and control the live state of each printer.",
@@ -64,39 +47,5 @@ const SECTIONS: Section[] = [
 ];
 
 function RouteComponent() {
-  return (
-    <div className="flex flex-col">
-      <div className="flex">
-        <h2 className="mx-14 mt-8 mb-2 flex items-center gap-2 text-4xl font-futura text-balance">
-          <SlidersHorizontalIcon className="size-8" />
-          3DP print control hub.
-        </h2>
-      </div>
-      <div className="grid gap-6 p-6 lg:grid-cols-2">
-        {SECTIONS.map((section) => (
-          <Card key={section.title} className="flex flex-col">
-            <CardHeader className="flex flex-row items-center gap-3">
-              <span className={`flex size-10 shrink-0 items-center justify-center rounded-lg ${section.accent}`}>
-                <section.icon className="size-5" />
-              </span>
-              <div className="flex flex-col gap-0.5">
-                <CardTitle>{section.title}</CardTitle>
-                <CardDescription>{section.description}</CardDescription>
-              </div>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-2">
-              {section.links.map((link) => (
-                <Button key={link.to} asChild variant="outline" className="justify-between">
-                  <Link to={link.to}>
-                    {link.label}
-                    <ChevronRightIcon className="size-4 text-muted-foreground" />
-                  </Link>
-                </Button>
-              ))}
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    </div>
-  );
+  return <HubPage title="3DP print control hub." icon={SlidersHorizontalIcon} sections={SECTIONS} />;
 }
