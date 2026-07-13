@@ -135,6 +135,9 @@ module printing {
         required location: sign_in::Location;
         required total_print_mass: float32; #2dp like print job
         required total_print_time: duration;
+        required old: bool {
+            default := false;
+        }
         multi prints := (
             select Print filter __source__ in .history.printer
         );

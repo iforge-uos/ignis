@@ -1,4 +1,4 @@
-import { CameraFeed, formatRemaining, STATE_STYLES } from "@/components/printing/utils";
+import { CameraFeed, formatRemaining, PrinterStateBadge } from "@/components/printing/utils";
 
 export function PrinterCard({ printer, status }) {
   const offline = status.state === "disconnected" || status.state === "disabled";
@@ -15,13 +15,7 @@ export function PrinterCard({ printer, status }) {
             {printer.manufacturer.toLowerCase()} - {printer.model.toLowerCase()} - {printer.location.toLowerCase()}
           </div>
         </div>
-        <span
-          className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${
-            STATE_STYLES[status.state] ?? STATE_STYLES.disconnected
-          }`}
-        >
-          {status.state}
-        </span>
+        <PrinterStateBadge state={status.state} />
       </div>
 
       {job && (

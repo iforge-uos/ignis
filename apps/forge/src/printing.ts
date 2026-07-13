@@ -5,7 +5,7 @@ import type { BambuConfig } from "@/lib/printers/bambu-driver";
 import type { OctoprintConfig } from "@/lib/printers/octoprint-driver";
 import { PrinterManager } from "@/lib/printers/print-manager";
 import { type PrinterConfig, type PrinterStatus, type PrintJob } from "@/lib/printers/types";
-import { toFilamentSlots } from "@/lib/printers/utils";
+import { datetimeLiteral, toFilamentSlots } from "@/lib/printers/utils";
 
 // This file just kept growing `\_(*-*)_/`
 
@@ -79,6 +79,7 @@ function buildConfig(printer: PrinterRow): OctoprintConfig | BambuConfig {
 
 function beginDTCheck(): NodeJS.Timeout {
   return setInterval(async () => {
+    await reconcilePrinters();
     for (const [name, record] of printers) {
       const uuid = record.id;
       const active = e.select(e.printing.Downtime, (d) => ({
@@ -121,7 +122,7 @@ function beginDTCheck(): NodeJS.Timeout {
           const status =
             state.open_ended || !state.latest_end
               ? e.insert(e.printing.printer_status.Disabled, {})
-              : e.insert(e.printing.printer_status.Disabled, { end_time: state.latest_end });
+              : e.insert(e.printing.printer_status.Disabled, { end_time: datetimeLiteral(state.latest_end) });
           await e
             .select({
               printer: e.update(e.printing.Printer, () => ({
@@ -277,13 +278,28 @@ async function restoreActiveJob(name: string, printerId: string): Promise<void> 
   await printManager.getStatus(name, true);
 }
 
-async function runSetup(): Promise<Map<string, PrinterRecord>> {
-  const rows = await e.select(e.printing.Printer, PrinterConfigShape).run(db);
-  for (const printer of rows) {
-    const name = await printManager.addPrinter(buildConfig(printer));
-    printers.set(name, { id: printer.id, connected: printManager.isConnected(name), queue: printer.queue });
-    await restoreActiveJob(name, printer.id);
+async function reconcilePrinters(): Promise<void> {
+  const rows = await e
+    .select(e.printing.Printer, (p) => ({ ...PrinterConfigShape(p), filter: e.op("not", p.old) }))
+    .run(db);
+  const current = new Set(rows.map((row) => row.name));
+
+  for (const name of [...printers.keys()]) {
+    if (current.has(name)) continue;
+    await printManager.removePrinter(name);
+    printers.delete(name);
   }
+
+  for (const row of rows) {
+    if (printers.has(row.name)) continue;
+    const name = await printManager.addPrinter(buildConfig(row));
+    printers.set(name, { id: row.id, connected: printManager.isConnected(name), queue: row.queue });
+    await restoreActiveJob(name, row.id);
+  }
+}
+
+async function runSetup(): Promise<Map<string, PrinterRecord>> {
+  await reconcilePrinters();
   unsubscribeStatus = syncStatusWithDb();
   checkDTInterval = beginDTCheck();
   return printers;
@@ -355,13 +371,26 @@ export async function addPrinter(config: PrinterConfig, details: PrinterDetails,
   return connectPrinter(inserted.id);
 }
 
-export async function removePrinter(name: string): Promise<void> {
-  await printManager.removePrinter(name);
-  const deleted = await e
-    .delete(e.printing.Printer, (printer) => ({
-      filter: e.op(printer.name, "=", name),
+export async function retirePrinter(name: string): Promise<void> {
+  const retired = await e
+    .update(e.printing.Printer, (printer) => ({
+      filter: e.op(e.op(printer.name, "=", name), "and", e.op("not", printer.old)),
+      set: { old: true },
     }))
     .run(db);
-  if (deleted.length === 0) throw new PrinterNotFoundError(name);
+  if (retired.length === 0) throw new PrinterNotFoundError(name);
+  await printManager.removePrinter(name);
   printers.delete(name);
+}
+
+export async function restorePrinter(name: string): Promise<boolean> {
+  const restored = await e
+    .update(e.printing.Printer, (printer) => ({
+      filter: e.op(e.op(printer.name, "=", name), "and", printer.old),
+      set: { old: false },
+    }))
+    .run(db);
+  const printer = restored[0];
+  if (!printer) throw new PrinterNotFoundError(name);
+  return connectPrinter(printer.id);
 }

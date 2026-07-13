@@ -1094,6 +1094,7 @@ export namespace printing {
     "filament": {material: Material, colour: string, nozzle_temp_min: number, nozzle_temp_max: number, bed_temp: number}[];
     "queue": QueueType;
     "name": string;
+    "old": boolean;
   }
   export interface PrinterAuditEntry extends AuditEntry {
     "status": PrinterStatus;

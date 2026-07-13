@@ -217,6 +217,7 @@ export const CreatePrinterSchema = z.
       z.int().min(-32768).max(32767),
     ]).array(), // array<tuple<material:printing::Material, colour:std::str, nozzle_temp_min:std::int16, nozzle_temp_max:std::int16, bed_temp:std::int16>>
     name: z.string(), // std::str
+    old: z.boolean().optional(), // std::bool
   });
 
 export const UpdatePrinterSchema = z.
@@ -236,6 +237,7 @@ export const UpdatePrinterSchema = z.
       z.int().min(-32768).max(32767),
     ]).array(), // array<tuple<material:printing::Material, colour:std::str, nozzle_temp_min:std::int16, nozzle_temp_max:std::int16, bed_temp:std::int16>>
     name: z.string(), // std::str
+    old: z.boolean().optional(), // std::bool
   });
 // #endregion
 

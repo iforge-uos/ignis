@@ -106,7 +106,9 @@ export const add = ableToQueuePrint
       }
       required_printer_id = record.id;
     } else if (!any_colour) {
-      const candidates = await e.select(e.printing.Printer, () => ({ id: true, filament: true })).run(db);
+      const candidates = await e
+        .select(e.printing.Printer, (p) => ({ id: true, filament: true, filter: e.op("not", p.old) }))
+        .run(db);
       const match = candidates.find((c) => filamentMatches(print.filament, c.filament));
       if (!match) throw errors.NO_MATCHING_PRINTER();
       required_printer_id = match.id;

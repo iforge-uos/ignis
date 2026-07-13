@@ -6,7 +6,15 @@ import { AlertTriangleIcon, LayersIcon, PrinterIcon } from "lucide-react";
 import * as z from "zod";
 import { Hammer } from "@/components/loading";
 import { PrinterCard } from "@/components/printing/public";
-import { FilamentChip, formatMass, formatRemaining, hex, STATE_STYLES, Swatch } from "@/components/printing/utils";
+import {
+  FilamentChip,
+  formatFailureReason,
+  formatMass,
+  formatRemaining,
+  hex,
+  PrinterStateBadge,
+  Swatch,
+} from "@/components/printing/utils";
 import { orpc } from "@/lib/orpc";
 
 export const Route = createFileRoute("/_authenticated/_3dponly/printing/printers/$name")({
@@ -41,6 +49,7 @@ function RouteComponent() {
   const detail = live.isSuccess ? live.data : undefined;
   const status = detail?.status ?? printer.data.status;
   const down_until = detail?.down_until ?? null;
+  const failure = detail?.failure ?? null;
   const job = detail?.status.current_job;
   const errors = detail?.status.errors ?? [];
   const { filament, total_print_mass, total_print_time } = printer.data.printer;
@@ -60,7 +69,7 @@ function RouteComponent() {
         </div>
 
         <div className="flex flex-col gap-6">
-          {(status.state === "disabled" || errors.length > 0) && (
+          {(status.state === "disabled" || failure || errors.length > 0) && (
             <Card>
               <CardHeader className="flex flex-row items-center gap-2">
                 <AlertTriangleIcon className="size-5 text-amber-600" />
@@ -69,6 +78,15 @@ function RouteComponent() {
               <CardContent className="flex flex-col gap-2 text-sm">
                 {status.state === "disabled" && (
                   <div>Disabled {down_until ? `until ${down_until.toLocaleString()}` : "indefinitely"}</div>
+                )}
+                {failure && (
+                  <div className="flex flex-col gap-1 text-red-600 dark:text-red-400">
+                    <span className="font-medium">Failed: {formatFailureReason(failure.reason)}</span>
+                    {failure.note && <span>{failure.note}</span>}
+                    <span className="text-muted-foreground">
+                      This printer takes no prints until it is fixed and enabled again.
+                    </span>
+                  </div>
                 )}
                 {errors.map((error) => (
                   <div key={error} className="text-red-600 dark:text-red-400">
@@ -82,13 +100,7 @@ function RouteComponent() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>Current job</CardTitle>
-              <span
-                className={`rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${
-                  STATE_STYLES[status.state] ?? STATE_STYLES.disconnected
-                }`}
-              >
-                {status.state}
-              </span>
+              <PrinterStateBadge state={status.state} />
             </CardHeader>
             <CardContent>
               {job ? (

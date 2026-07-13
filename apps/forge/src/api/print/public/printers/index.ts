@@ -13,7 +13,7 @@ export const printers = auth
   .output(z.array(z.object({ printer: printerSchema, status: publicStatusSchema })))
   .handler(async ({ context: { db } }) => {
     const rows = await e
-      .select(e.printing.Printer, () => ({
+      .select(e.printing.Printer, (p) => ({
         id: true,
         name: true,
         manufacturer: true,
@@ -23,6 +23,8 @@ export const printers = auth
         location: { name: true },
         total_print_mass: true,
         total_print_time: true,
+        old: true,
+        filter: e.op("not", p.old),
       }))
       .run(db);
 

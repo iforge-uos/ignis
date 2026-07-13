@@ -3,7 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { PrinterIcon } from "lucide-react";
 import { Hammer } from "@/components/loading";
 import { PrinterCard } from "@/components/printing/public";
-import { FilamentChip, formatMass, formatRemaining } from "@/components/printing/utils";
+import { FilamentChip, formatFailureReason, formatMass, formatRemaining } from "@/components/printing/utils";
 import { orpc } from "@/lib/orpc";
 
 export const Route = createFileRoute("/_authenticated/_3dponly/printing/printers/")({
@@ -65,7 +65,11 @@ function RouteComponent() {
               </div>
 
               <div className="truncate text-xs text-muted-foreground">
-                {job ? (
+                {detail?.failure ? (
+                  <span className="text-red-600 dark:text-red-400">
+                    Failed: {formatFailureReason(detail.failure.reason)}
+                  </span>
+                ) : job ? (
                   <>
                     <span className="font-medium text-foreground">{job.print_job.name}</span> - {job.print_job.queue}
                   </>

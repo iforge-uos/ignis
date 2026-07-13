@@ -31,7 +31,9 @@ function RouteComponent() {
   const [user, setUser] = useState<SelectedUser | null>(null);
   const [offset, setOffset] = useState(0);
 
-  const { data: printers } = useQuery(orpc.print.list.queryOptions({ input: { location: "ALL" } }));
+  const { data: printers } = useQuery(
+    orpc.print.list.queryOptions({ input: { location: "ALL", include_old: true } }),
+  );
 
   const by_user = selected === "USER";
   const all_printers = printer_name === ALL_PRINTERS;

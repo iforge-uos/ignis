@@ -32,6 +32,7 @@ export const printer = auth
         location: { name: true },
         total_print_mass: true,
         total_print_time: true,
+        old: true,
         filter_single: { id: e.uuid(record.id) },
       }))
       .run(db);

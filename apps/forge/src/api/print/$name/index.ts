@@ -8,6 +8,7 @@ import { connect } from "./connect";
 import { disconnect } from "./disconnect";
 import { reconnect } from "./reconnect";
 import { remove } from "./remove";
+import { restore } from "./restore";
 
 export const get = printing
   .route({ method: "GET", path: "/" })
@@ -27,6 +28,7 @@ export const get = printing
         location: { name: true },
         total_print_mass: true,
         total_print_time: true,
+        old: true,
         filter_single: { id: uuid },
       }))
       .run(db);
@@ -38,6 +40,7 @@ export const nameRoutes = threeDP.prefix("/{name}").router({
   get,
   add,
   remove,
+  restore,
   connect,
   disconnect,
   reconnect,

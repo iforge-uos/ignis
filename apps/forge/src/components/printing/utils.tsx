@@ -1,3 +1,4 @@
+import type { printing } from "@packages/db/interfaces";
 import { Button } from "@packages/ui/components/button";
 import {
   DropdownMenu,
@@ -15,6 +16,14 @@ import { orpc } from "@/lib/orpc";
 export const ANY_COLOUR = "ANY";
 
 export const PAGE_SIZE = 20;
+
+export type Material = printing.Material;
+
+export const MATERIAL_TEMPS: Record<Material, { nozzle_temp_min: number; nozzle_temp_max: number; bed_temp: number }> = {
+  PLA: { nozzle_temp_min: 190, nozzle_temp_max: 220, bed_temp: 60 },
+  PETG: { nozzle_temp_min: 230, nozzle_temp_max: 250, bed_temp: 80 },
+  TPU: { nozzle_temp_min: 210, nozzle_temp_max: 230, bed_temp: 40 },
+};
 
 const SEARCH_DEBOUNCE_MS = 300;
 
@@ -138,6 +147,20 @@ export const STATE_STYLES: Record<string, string> = {
   disabled: "bg-neutral-500/15 text-neutral-500",
   error: "bg-red-500/15 text-red-600 dark:text-red-400",
 };
+
+export function stateStyle(state: string): string {
+  return STATE_STYLES[state] ?? STATE_STYLES.disconnected;
+}
+
+export function PrinterStateBadge({ state, className }: { state: string; className?: string }) {
+  return (
+    <span
+      className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${stateStyle(state)} ${className ?? ""}`}
+    >
+      {state}
+    </span>
+  );
+}
 
 const MODEL_IMG_ALT: Record<string, string> = {
   H2D: "/printing/bambu-h2d.png",

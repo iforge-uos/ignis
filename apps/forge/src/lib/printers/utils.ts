@@ -20,6 +20,10 @@ export const THREEDP_LAPTOP_ACCOUNT = "uuid-8438";
 export const durationOut = z.instanceof(Temporal.Duration);
 export const datetimeOut = z.instanceof(Temporal.ZonedDateTime);
 
+export function datetimeLiteral(value: Temporal.ZonedDateTime) {
+  return e.cast(e.datetime, e.str(value.toInstant().toString()));
+}
+
 export const PRINTER_CONNECTION_ERRORS = {
   PRINTER_NOT_FOUND: {
     status: 404,
@@ -276,7 +280,11 @@ export function queueHostCount(queue: any) {
     "if",
     e.op(queue, "=", e.cast(e.printing.QueueType, "MULTI")),
     "else",
-    e.count(e.select(e.printing.Printer, (pr) => ({ filter: e.op(pr.queue, "=", queue) }))),
+    e.count(
+      e.select(e.printing.Printer, (pr) => ({
+        filter: e.op(e.op(pr.queue, "=", queue), "and", e.op("not", pr.old)),
+      })),
+    ),
   );
 }
 

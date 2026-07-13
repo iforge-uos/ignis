@@ -150,6 +150,7 @@ export type $PrinterλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f7384
   "filament": $.PropertyDesc<$.ArrayType<$.NamedTupleType<{material: $Material, colour: _std.$str, nozzle_temp_min: _std.$int16, nozzle_temp_max: _std.$int16, bed_temp: _std.$int16}>>, $.Cardinality.One, false, false, false, false>;
   "queue": $.PropertyDesc<$QueueType, $.Cardinality.One, false, true, false, false>;
   "name": $.PropertyDesc<_std.$str, $.Cardinality.One, true, false, false, false>;
+  "old": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, true>;
   "<printer[is printing::AuditEntry]": $.LinkDesc<$AuditEntry, $.Cardinality.Many, {}, false, false,  false, false>;
   "<printer[is printing::Downtime]": $.LinkDesc<$Downtime, $.Cardinality.Many, {}, false, false,  false, false>;
   "<printer[is printing::PrintHistory]": $.LinkDesc<$PrintHistory, $.Cardinality.Many, {}, false, false,  false, false>;

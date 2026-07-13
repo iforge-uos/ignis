@@ -32,7 +32,7 @@ import {
 import { type ReactNode, useState } from "react";
 import type * as z from "zod";
 import { Hammer } from "@/components/loading";
-import { formatFailureReason, formatRemaining, STATE_STYLES } from "@/components/printing/utils";
+import { formatFailureReason, formatRemaining, PrinterStateBadge, stateStyle } from "@/components/printing/utils";
 import { orpc } from "@/lib/orpc";
 
 type FailureReason = z.infer<typeof print_status_FailureReasonSchema>;
@@ -238,10 +238,6 @@ function SendPrintDialog({ name, onDone }: { name: string; onDone: () => void })
   );
 }
 
-function stateStyle(state: string): string {
-  return STATE_STYLES[state] ?? STATE_STYLES.disconnected;
-}
-
 function StateMessage({ state, icon: Icon, children }: { state: string; icon: LucideIcon; children: ReactNode }) {
   return (
     <div className={`flex items-center gap-4 rounded-lg px-4 py-3 ${stateStyle(state)}`}>
@@ -273,9 +269,7 @@ export function StateCard({
     <Card className="flex-1 gap-6 p-6">
       <div className="flex items-center gap-3">
         <span className="font-bold text-xl capitalize">{name.toLowerCase()}</span>
-        <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${stateStyle(state)}`}>
-          {state}
-        </span>
+        <PrinterStateBadge state={state} />
       </div>
       {state === "printing" && (
         <div className="flex gap-3">

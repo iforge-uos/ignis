@@ -17,7 +17,9 @@ export const printer = printing
   .input(z.object({ name: z.string().min(1), offset: z.int().nonnegative().default(0) }))
   .output(historyOutput)
   .handler(async ({ input: { name, offset }, errors, context: { db } }) => {
-    const uuid = printers.get(name)?.id;
+    const uuid =
+      printers.get(name)?.id ??
+      (await e.select(e.printing.Printer, () => ({ id: true, filter_single: { name } })).run(db))?.id;
     if (!uuid) throw errors.PRINTER_NOT_FOUND({ data: { name } });
     const history = await e
       .select(e.printing.PrintHistory, (p) => ({

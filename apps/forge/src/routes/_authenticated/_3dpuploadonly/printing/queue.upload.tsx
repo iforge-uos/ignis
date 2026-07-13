@@ -2,7 +2,14 @@ import { Temporal } from "@js-temporal/polyfill";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Hammer } from "@/components/loading";
-import { ANY_COLOUR, formatRemaining, type SelectedUser, UserSearch } from "@/components/printing/utils";
+import {
+  ANY_COLOUR,
+  formatRemaining,
+  type Material,
+  MATERIAL_TEMPS,
+  type SelectedUser,
+  UserSearch,
+} from "@/components/printing/utils";
 import { orpc } from "@/lib/orpc";
 import { useUser } from "@/hooks/useUser";
 import { Button } from "@packages/ui/components/button";
@@ -27,7 +34,6 @@ import {
   VideoIcon,
 } from "lucide-react";
 import { useState, type ReactNode } from "react";
-import { printing } from "@packages/db/interfaces";
 import { MaterialSchema, PrioritySchema } from "@packages/db/zod/modules/printing";
 
 const LEAD_GREEN_MAX_DAYS = 2;
@@ -36,18 +42,11 @@ const LEAD_YELLOW_MAX_DAYS = 5;
 const COPY_DELAY_MS = 1000;
 const PRIORITIES = PrioritySchema.options;
 const MATERIALS = MaterialSchema.options;
-type Material = printing.Material;
 
 const MATERIAL_MAX_MINUTES: Record<Material, number> = {
   PLA: 7 * 60,
   PETG: 10 * 60,
   TPU: 10 * 60,
-};
-
-const MATERIAL_TEMPS: Record<Material, { nozzle_temp_min: number; nozzle_temp_max: number; bed_temp: number }> = {
-  PLA: { nozzle_temp_min: 190, nozzle_temp_max: 220, bed_temp: 60 },
-  PETG: { nozzle_temp_min: 230, nozzle_temp_max: 250, bed_temp: 80 },
-  TPU: { nozzle_temp_min: 210, nozzle_temp_max: 230, bed_temp: 40 },
 };
 
 function leadDotColor(days: number): string {

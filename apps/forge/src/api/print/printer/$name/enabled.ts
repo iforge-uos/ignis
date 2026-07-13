@@ -1,6 +1,7 @@
 import e from "@packages/db/edgeql-js";
 import { printer_status_FailureReasonSchema } from "@packages/db/zod/modules/printing";
 import * as z from "zod";
+import { datetimeLiteral } from "@/lib/printers/utils";
 import { printing } from "@/orpc";
 import { printers, printManager } from "@/printing";
 
@@ -102,7 +103,7 @@ export const disable = printing
         })
       : state.open_ended || !state.latest_end
         ? e.insert(e.printing.printer_status.Disabled, {})
-        : e.insert(e.printing.printer_status.Disabled, { end_time: state.latest_end });
+        : e.insert(e.printing.printer_status.Disabled, { end_time: datetimeLiteral(state.latest_end) });
     await e
       .select({
         printer: e.update(e.printing.Printer, () => ({
