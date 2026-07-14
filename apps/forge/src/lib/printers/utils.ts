@@ -4,6 +4,7 @@ import { printing } from "@packages/db/interfaces";
 import {
   CreateDowntimeSchema,
   CreatePrinterSchema,
+  DriversSchema,
   MaterialSchema,
   PrioritySchema,
   print_status_FailureReasonSchema,
@@ -73,6 +74,12 @@ export function toFilamentSlots(filament: filamentDB[]): Filament[] {
 
 export const ANY_COLOUR = "ANY";
 
+export const DRIVER_KEY_COUNT: Record<printing.Drivers, number> = {
+  OCTOPRINT: 1, // X-Api-Key only
+  PRUSALINK: 2,
+  BAMBU: 2,
+};
+
 export const filamentSlotSchema = z.object({
   slot_id: z.number(),
   material: MaterialSchema,
@@ -91,6 +98,8 @@ export const printerSchema = CreatePrinterSchema.omit({ ip: true, keys: true, fi
   location: LocationNameSchema,
   total_print_time: durationOut,
   filament: z.array(filamentSlotSchema),
+  driver: DriversSchema,
+  old: z.boolean(),
 });
 
 export const printerStatusSchema = z.object({
@@ -339,6 +348,11 @@ export const queueErrors = {
   PRINT_STARTED: {
     status: 409,
     message: "Print started, cancel/finish print to change print status",
+  },
+  PRINTER_BUSY: {
+    status: 409,
+    message: "Printer is busy or its last print has not been finished",
+    data: z.object({ name: z.string() }),
   },
   PRINT_UNDER_REVIEW: {
     status: 409,

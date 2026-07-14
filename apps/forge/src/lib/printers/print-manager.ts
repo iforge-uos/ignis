@@ -1,9 +1,9 @@
 import { type BambuConfig, BambuDriver } from "@/lib/printers/bambu-driver";
 import { type OctoprintConfig, OctoprintDriver } from "@/lib/printers/octoprint-driver";
-import type { PrusaConfig } from "@/lib/printers/prusa-driver";
+import { type PrusaConfig, PrusaDriver } from "@/lib/printers/prusa-driver";
 import type { Filament, PrinterConfig, PrinterDriver, PrinterFile, PrinterStatus, PrintJob } from "./types";
 
-type ManagedConfig = PrusaConfig | BambuConfig;
+type ManagedConfig = PrusaConfig | OctoprintConfig | BambuConfig;
 
 /* 
 Singleton manager for multiple printers
@@ -25,21 +25,23 @@ export class PrinterManager {
     }
 
     let driver: PrinterDriver;
-    switch (config.manufacturer) {
-      case "PRUSA":
+    switch (config.driver) {
+      case "OCTOPRINT":
         driver = new OctoprintDriver(config as OctoprintConfig);
+        break;
+      case "PRUSALINK":
+        driver = new PrusaDriver(config as PrusaConfig);
         break;
       case "BAMBU":
         driver = new BambuDriver(config as BambuConfig);
         break;
       default:
-        throw new Error(`No matching manafacturer driver for ${config.manufacturer}`);
+        throw new Error(`No matching driver for ${config.driver}`);
     }
 
     try {
       await driver.connect();
-    } catch (error) {
-      console.error(`Printer "${name}" failed to connect:`, error);
+    } catch {
       return name;
     }
 
@@ -169,7 +171,7 @@ export class PrinterManager {
     const driver = this.require(name);
     const config = driver.Config;
     if (!config) throw new Error(`Failed to retrieve config of printer: ${name}`);
-    if (config.queue !== "MULTI") throw new Error("Can only sync slots of ams printers");
+    if (config.driver !== "BAMBU") throw new Error("Can only sync slots of AMS printers");
     return driver.syncSlots();
   }
 }

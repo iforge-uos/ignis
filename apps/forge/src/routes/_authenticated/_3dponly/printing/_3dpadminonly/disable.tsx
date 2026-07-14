@@ -1,5 +1,5 @@
 import type { Temporal } from "@js-temporal/polyfill";
-import { MaterialSchema, printer_status_FailureReasonSchema } from "@packages/db/zod/modules/printing";
+import { printer_status_FailureReasonSchema } from "@packages/db/zod/modules/printing";
 import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
 import type { LocationName } from "@packages/types/sign_in";
 import {
@@ -37,42 +37,30 @@ import { useState } from "react";
 import type * as z from "zod";
 import { Hammer } from "@/components/loading";
 import {
+  blankKeys,
+  DEFAULT_DRIVER,
+  DRIVERS,
+  type Driver,
+  FilamentSlots,
   formatFailureReason,
-  type Material,
-  MATERIAL_TEMPS,
+  KEY_LABELS,
+  KeyFields,
+  MANUFACTURERS,
+  type Manufacturer,
+  newSlot,
   PrinterStateBadge,
+  type SlotDraft,
   Swatch,
+  slotsValid,
+  toColour,
 } from "@/components/printing/utils";
 import { orpc } from "@/lib/orpc";
 
 type FailureReason = z.infer<typeof printer_status_FailureReasonSchema>;
-type Manufacturer = "PRUSA" | "BAMBU";
-
-type SlotDraft = {
-  id: string;
-  material: Material;
-  colour: string;
-  nozzle_temp_min: number;
-  nozzle_temp_max: number;
-  bed_temp: number;
-};
 
 export const Route = createFileRoute("/_authenticated/_3dponly/printing/_3dpadminonly/disable")({
   component: RouteComponent,
 });
-
-const KEY_LABELS: Record<Manufacturer, [string, string]> = {
-  PRUSA: ["Username", "Password"],
-  BAMBU: ["Serial", "Access code"],
-};
-
-function newSlot(material: Material = "PLA"): SlotDraft {
-  return { id: crypto.randomUUID(), material, colour: "#000000", ...MATERIAL_TEMPS[material] };
-}
-
-function toColour(colour: string): string {
-  return `${colour.replace("#", "").toUpperCase()}FF`;
-}
 
 function DisablePrinterDialog({ name, onDone }: { name: string; onDone: () => void }) {
   const [open, setOpen] = useState(false);
@@ -118,12 +106,7 @@ function DisablePrinterDialog({ name, onDone }: { name: string; onDone: () => vo
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
             <Label htmlFor="end_time">Back in service</Label>
-            <Input
-              id="end_time"
-              type="datetime-local"
-              value={end_time}
-              onChange={(e) => setEndTime(e.target.value)}
-            />
+            <Input id="end_time" type="datetime-local" value={end_time} onChange={(e) => setEndTime(e.target.value)} />
             <span className="text-xs text-muted-foreground">Leave empty to disable indefinitely.</span>
             {end_in_past && <span className="text-sm text-red-600">The end time must be in the future.</span>}
           </div>
@@ -189,9 +172,7 @@ function DisablePrinterDialog({ name, onDone }: { name: string; onDone: () => vo
                   end_time: end_time ? new Date(end_time).toISOString() : undefined,
                   reason: reason.trim() || undefined,
                 },
-                failed: failed
-                  ? { reason: failure_reason ?? undefined, note: note.trim() || undefined }
-                  : undefined,
+                failed: failed ? { reason: failure_reason ?? undefined, note: note.trim() || undefined } : undefined,
               })
             }
           >
@@ -235,8 +216,8 @@ function RemovePrinterDialog({ name, onDone }: { name: string; onDone: () => voi
           <AlertDialogTitle className="capitalize">Retire {name.toLowerCase()}?</AlertDialogTitle>
           <AlertDialogDescription>
             This disconnects the printer and marks it as old. Its record and print history stay in the database, but it
-            will no longer be connected on startup or appear anywhere in the app. Bringing it back needs a database
-            change.
+            will no longer be connected on startup or appear anywhere in the app. It can be brought back with the
+            restore button in the retired printers list below.
           </AlertDialogDescription>
         </AlertDialogHeader>
         {remove.error && <p className="text-sm text-red-600">{remove.error.message}</p>}
@@ -263,8 +244,9 @@ function AddPrinterDialog({ onDone }: { onDone: () => void }) {
   const [ip, setIp] = useState("");
   const [model, setModel] = useState("");
   const [manufacturer, setManufacturer] = useState<Manufacturer>("PRUSA");
+  const [driver, setDriver] = useState<Driver>(DEFAULT_DRIVER.PRUSA);
   const [location, setLocation] = useState<LocationName>("MAINSPACE");
-  const [keys, setKeys] = useState<[string, string]>(["", ""]);
+  const [keys, setKeys] = useState<string[]>(blankKeys(DEFAULT_DRIVER.PRUSA));
   const [has_camera, setHasCamera] = useState(true);
   const [connect, setConnect] = useState(true);
   const [slots, setSlots] = useState<SlotDraft[]>([newSlot()]);
@@ -278,21 +260,15 @@ function AddPrinterDialog({ onDone }: { onDone: () => void }) {
     }),
   );
 
-  const updateSlot = (index: number, slot: Partial<SlotDraft>) =>
-    setSlots((current) => current.map((s, i) => (i === index ? { ...s, ...slot } : s)));
+  const changeDriver = (next: Driver) => {
+    setDriver(next);
+    setKeys(blankKeys(next));
+  };
 
-  const temps_valid = slots.every((slot) => slot.nozzle_temp_max > slot.nozzle_temp_min);
+  const keys_done = keys.length === KEY_LABELS[driver].length && keys.every((key) => key.trim() !== "");
+
   const can_submit =
-    name.trim() !== "" &&
-    ip.trim() !== "" &&
-    model.trim() !== "" &&
-    keys[0].trim() !== "" &&
-    keys[1].trim() !== "" &&
-    slots.length > 0 &&
-    temps_valid &&
-    !add.isPending;
-
-  const [key_one, key_two] = KEY_LABELS[manufacturer];
+    name.trim() !== "" && ip.trim() !== "" && model.trim() !== "" && keys_done && slotsValid(slots) && !add.isPending;
 
   return (
     <Dialog
@@ -328,24 +304,44 @@ function AddPrinterDialog({ onDone }: { onDone: () => void }) {
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="manufacturer">Manufacturer</Label>
-              <Select value={manufacturer} onValueChange={(value) => setManufacturer(value as Manufacturer)}>
+              <Select
+                value={manufacturer}
+                onValueChange={(value) => {
+                  setManufacturer(value as Manufacturer);
+                  changeDriver(DEFAULT_DRIVER[value as Manufacturer]);
+                }}
+              >
                 <SelectTrigger id="manufacturer" className="w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="PRUSA">Prusa</SelectItem>
-                  <SelectItem value="BAMBU">Bambu</SelectItem>
+                  {MANUFACTURERS.map(({ value, label }) => (
+                    <SelectItem key={value} value={value}>
+                      {label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
             <div className="flex flex-col gap-2">
+              <Label htmlFor="driver">Driver</Label>
+              <Select value={driver} onValueChange={(value) => changeDriver(value as Driver)}>
+                <SelectTrigger id="driver" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {DRIVERS.map(({ value, label }) => (
+                    <SelectItem key={value} value={value}>
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <span className="text-xs text-muted-foreground">How the printer is talked to, not what it is.</span>
+            </div>
+            <div className="flex flex-col gap-2">
               <Label htmlFor="model">Model</Label>
-              <Input
-                id="model"
-                placeholder="e.g. CORE ONE"
-                value={model}
-                onChange={(e) => setModel(e.target.value)}
-              />
+              <Input id="model" placeholder="e.g. CORE ONE" value={model} onChange={(e) => setModel(e.target.value)} />
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="location">Location</Label>
@@ -364,103 +360,9 @@ function AddPrinterDialog({ onDone }: { onDone: () => void }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="key_one">{key_one}</Label>
-              <Input id="key_one" value={keys[0]} onChange={(e) => setKeys([e.target.value, keys[1]])} />
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="key_two">{key_two}</Label>
-              <Input
-                id="key_two"
-                type="password"
-                value={keys[1]}
-                onChange={(e) => setKeys([keys[0], e.target.value])}
-              />
-            </div>
-          </div>
+          <KeyFields driver={driver} keys={keys} onChange={setKeys} />
 
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center justify-between">
-              <Label>Filament slots</Label>
-              <Button type="button" variant="outline" size="sm" onClick={() => setSlots((s) => [...s, newSlot()])}>
-                <PlusIcon />
-                Add slot
-              </Button>
-            </div>
-            {slots.map((slot, index) => (
-              <div key={slot.id} className="flex flex-wrap items-end gap-2 rounded-lg border p-3">
-                <div className="flex flex-col gap-1">
-                  <span className="text-xs text-muted-foreground">Material</span>
-                  <Select
-                    value={slot.material}
-                    onValueChange={(value) => updateSlot(index, { material: value as Material, ...MATERIAL_TEMPS[value as Material] })}
-                  >
-                    <SelectTrigger className="w-28">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {MaterialSchema.options.map((option) => (
-                        <SelectItem key={option} value={option}>
-                          {option}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <span className="text-xs text-muted-foreground">Colour</span>
-                  <Input
-                    type="color"
-                    className="h-9 w-16 p-1"
-                    value={slot.colour}
-                    onChange={(e) => updateSlot(index, { colour: e.target.value })}
-                  />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <span className="text-xs text-muted-foreground">Nozzle min</span>
-                  <Input
-                    type="number"
-                    className="w-24"
-                    value={slot.nozzle_temp_min}
-                    onChange={(e) => updateSlot(index, { nozzle_temp_min: Number(e.target.value) })}
-                  />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <span className="text-xs text-muted-foreground">Nozzle max</span>
-                  <Input
-                    type="number"
-                    className="w-24"
-                    value={slot.nozzle_temp_max}
-                    onChange={(e) => updateSlot(index, { nozzle_temp_max: Number(e.target.value) })}
-                  />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <span className="text-xs text-muted-foreground">Bed</span>
-                  <Input
-                    type="number"
-                    className="w-20"
-                    value={slot.bed_temp}
-                    onChange={(e) => updateSlot(index, { bed_temp: Number(e.target.value) })}
-                  />
-                </div>
-                {slots.length > 1 && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="text-red-600 hover:text-red-600"
-                    onClick={() => setSlots((current) => current.filter((_, i) => i !== index))}
-                  >
-                    <Trash2Icon />
-                  </Button>
-                )}
-              </div>
-            ))}
-            {!temps_valid && (
-              <span className="text-sm text-red-600">Each slot needs a nozzle max above its nozzle min.</span>
-            )}
-          </div>
+          <FilamentSlots slots={slots} onChange={setSlots} />
 
           <div className="flex items-center justify-between">
             <Label htmlFor="has_camera">Has a camera</Label>
@@ -484,9 +386,10 @@ function AddPrinterDialog({ onDone }: { onDone: () => void }) {
                   ip: ip.trim(),
                   name: name.trim(),
                   manufacturer,
+                  driver,
                   slots: slots.map(({ id: _id, ...slot }) => ({ ...slot, colour: toColour(slot.colour) })),
                   has_camera,
-                  keys: [keys[0].trim(), keys[1].trim()],
+                  keys: keys.map((key) => key.trim()),
                 },
                 detail: { model: model.trim(), location },
                 connect,

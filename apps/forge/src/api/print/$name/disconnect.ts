@@ -1,10 +1,11 @@
 import * as z from "zod";
-import { threeDP } from "@/orpc";
+import { ensurePrinters, threeDP } from "@/orpc";
 import { printers, printManager } from "@/printing";
 import { PRINTER_CONNECTION_ERRORS } from "@/lib/printers/utils";
 
 export const disconnect = threeDP
   .errors(PRINTER_CONNECTION_ERRORS)
+  .use(ensurePrinters)
   .route({ method: "DELETE", path: "/disconnect" })
   .input(z.object({ name: z.string().min(1) }))
   .handler(async ({ input: { name }, errors }) => {

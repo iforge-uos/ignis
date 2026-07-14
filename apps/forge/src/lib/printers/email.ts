@@ -23,7 +23,7 @@ export interface EmailPrintFinishDetails {
   success: boolean;
   review: boolean;
   requeue: boolean;
-  reason: string;
+  reason?: string;
   attempt: number;
   location: sign_in.LocationName;
 }

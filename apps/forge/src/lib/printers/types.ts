@@ -47,7 +47,8 @@ export interface PrinterDriver {
 export interface PrinterConfig {
   ip: string;
   name: string;
-  manufacturer: printing.Manafacturers; // Used for driver selection
+  manufacturer: printing.Manafacturers;
+  driver: printing.Drivers; // Used for driver selection
   filament: Filament[]; // Colour and material, as AMS has various materials and colours in each slot
   queue: printing.QueueType;
   has_camera: boolean;

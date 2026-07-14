@@ -2,27 +2,28 @@ import e from "@packages/db/edgeql-js";
 import { CreatePrintSchema, QueueTypeSchema } from "@packages/db/zod/modules/printing";
 import jwt from "jsonwebtoken";
 import * as z from "zod";
+import email from "@/email";
 import env from "@/lib/env";
 import {
-  adjustLeadTime,
   ANY_COLOUR,
+  adjustLeadTime,
   durationOut,
   filamentMatches,
   leadTimeFields,
   printFilamentSlotSchema,
   printHistoryShape,
   printsAhead,
+  QUEUE_RETURN_ITEMS,
   queueHistoryOutput,
   THREEDP_LAPTOP_ACCOUNT,
   toHistoryOutput,
-  QUEUE_RETURN_ITEMS,
 } from "@/lib/printers/utils";
+import { PartialUserShape } from "@/lib/utils/queries";
 import { ableToQueuePrint, auth, printing, transaction } from "@/orpc";
 import { printers } from "@/printing.ts";
 import { idRouter } from "./$id.ts";
 import { length } from "./length.ts";
-import email from "@/email";
-import { PartialUserShape } from "@/lib/utils/queries";
+import { search } from "./search.ts";
 
 const uploadErrors = {
   UPLOAD_FAILED: {
@@ -97,13 +98,11 @@ export const add = ableToQueuePrint
     if (printer) {
       const record = printers.get(printer);
       if (!record) throw errors.PRINTER_NOT_FOUND({ data: { name: printer } });
-      if (!is_multi) {
-        const target = await e
-          .select(e.printing.Printer, () => ({ filament: true, filter_single: { id: record.id } }))
-          .run(db);
-        const matches = !!target && filamentMatches(print.filament, target.filament);
-        if (!matches) throw errors.PRINTER_FILAMENT_MISMATCH({ data: { name: printer } });
-      }
+      const target = await e
+        .select(e.printing.Printer, () => ({ filament: true, filter_single: { id: record.id } }))
+        .run(db);
+      const matches = !!target && filamentMatches(print.filament, target.filament);
+      if (!matches) throw errors.PRINTER_FILAMENT_MISMATCH({ data: { name: printer } });
       required_printer_id = record.id;
     } else if (!any_colour) {
       const candidates = await e
@@ -330,5 +329,6 @@ export const queueRouter = auth.prefix("/queue").router({
   ...idRouter,
   add,
   get,
+  search,
   length,
 });

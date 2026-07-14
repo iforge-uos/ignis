@@ -2,6 +2,10 @@ import * as z from "zod/v4";
 import * as zt from "zod-temporal";
 
 
+// #region printing::Drivers
+export const DriversSchema = z.enum(["OCTOPRINT", "PRUSALINK", "BAMBU"]);
+// #endregion
+
 // #region printing::Material
 export const MaterialSchema = z.enum(["PLA", "TPU", "PETG"]);
 // #endregion
@@ -218,6 +222,7 @@ export const CreatePrinterSchema = z.
     ]).array(), // array<tuple<material:printing::Material, colour:std::str, nozzle_temp_min:std::int16, nozzle_temp_max:std::int16, bed_temp:std::int16>>
     name: z.string(), // std::str
     old: z.boolean().optional(), // std::bool
+    driver: z.enum(["OCTOPRINT", "PRUSALINK", "BAMBU"]).optional(), // printing::Drivers
   });
 
 export const UpdatePrinterSchema = z.
@@ -238,6 +243,7 @@ export const UpdatePrinterSchema = z.
     ]).array(), // array<tuple<material:printing::Material, colour:std::str, nozzle_temp_min:std::int16, nozzle_temp_max:std::int16, bed_temp:std::int16>>
     name: z.string(), // std::str
     old: z.boolean().optional(), // std::bool
+    driver: z.enum(["OCTOPRINT", "PRUSALINK", "BAMBU"]).optional(), // printing::Drivers
   });
 // #endregion
 

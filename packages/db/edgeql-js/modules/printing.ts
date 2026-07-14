@@ -10,6 +10,13 @@ import type * as _users from "./users";
 import type * as _printingprint_status from "./printing/print_status";
 import type * as _printingprinter_status from "./printing/printer_status";
 import type * as _sign_in from "./sign_in";
+export type $Drivers = {
+  "OCTOPRINT": $.$expr_Literal<$Drivers>;
+  "PRUSALINK": $.$expr_Literal<$Drivers>;
+  "BAMBU": $.$expr_Literal<$Drivers>;
+} & $.EnumType<"printing::Drivers", ["OCTOPRINT", "PRUSALINK", "BAMBU"]>;
+const Drivers: $Drivers = $.makeType<$Drivers>(_.spec, "c69827d7-7eee-11f1-953e-e78a178ab85e", _.syntax.literal);
+
 export type $Manafacturers = {
   "PRUSA": $.$expr_Literal<$Manafacturers>;
   "BAMBU": $.$expr_Literal<$Manafacturers>;
@@ -151,6 +158,7 @@ export type $PrinterλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f7384
   "queue": $.PropertyDesc<$QueueType, $.Cardinality.One, false, true, false, false>;
   "name": $.PropertyDesc<_std.$str, $.Cardinality.One, true, false, false, false>;
   "old": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, true>;
+  "driver": $.PropertyDesc<$Drivers, $.Cardinality.One, false, false, false, true>;
   "<printer[is printing::AuditEntry]": $.LinkDesc<$AuditEntry, $.Cardinality.Many, {}, false, false,  false, false>;
   "<printer[is printing::Downtime]": $.LinkDesc<$Downtime, $.Cardinality.Many, {}, false, false,  false, false>;
   "<printer[is printing::PrintHistory]": $.LinkDesc<$PrintHistory, $.Cardinality.Many, {}, false, false,  false, false>;
@@ -218,9 +226,10 @@ function cdn_url(...args: any[]) {
 
 
 
-export { Manafacturers, Material, Priority, QueueType, $AuditEntry, AuditEntry, $Downtime, Downtime, $Print, Print, $PrintAuditEntry, PrintAuditEntry, $PrintHistory, PrintHistory, $PrintStatus, PrintStatus, $Printer, Printer, $PrinterAuditEntry, PrinterAuditEntry, $PrinterStatus, PrinterStatus };
+export { Drivers, Manafacturers, Material, Priority, QueueType, $AuditEntry, AuditEntry, $Downtime, Downtime, $Print, Print, $PrintAuditEntry, PrintAuditEntry, $PrintHistory, PrintHistory, $PrintStatus, PrintStatus, $Printer, Printer, $PrinterAuditEntry, PrinterAuditEntry, $PrinterStatus, PrinterStatus };
 
 type __defaultExports = {
+  "Drivers": typeof Drivers;
   "Manafacturers": typeof Manafacturers;
   "Material": typeof Material;
   "Priority": typeof Priority;
@@ -239,6 +248,7 @@ type __defaultExports = {
   "printer_status": typeof _module__printer_status
 };
 const __defaultExports: __defaultExports = {
+  "Drivers": Drivers,
   "Manafacturers": Manafacturers,
   "Material": Material,
   "Priority": Priority,

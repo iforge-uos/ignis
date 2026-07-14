@@ -4,6 +4,7 @@ import db from "@/db";
 import type { BambuConfig } from "@/lib/printers/bambu-driver";
 import type { OctoprintConfig } from "@/lib/printers/octoprint-driver";
 import { PrinterManager } from "@/lib/printers/print-manager";
+import type { PrusaConfig } from "@/lib/printers/prusa-driver";
 import { type PrinterConfig, type PrinterStatus, type PrintJob } from "@/lib/printers/types";
 import { datetimeLiteral, toFilamentSlots } from "@/lib/printers/utils";
 
@@ -49,6 +50,7 @@ const PrinterConfigShape = e.shape(e.printing.Printer, () => ({
   ip: true,
   keys: true,
   manufacturer: true,
+  driver: true,
   has_camera: true,
   filament: true,
   queue: true,
@@ -57,23 +59,26 @@ const PrinterConfigShape = e.shape(e.printing.Printer, () => ({
 type PrinterRow = $infer<typeof PrinterConfigShape>[number];
 
 // No nice way to convert
-function buildConfig(printer: PrinterRow): OctoprintConfig | BambuConfig {
+function buildConfig(printer: PrinterRow): OctoprintConfig | PrusaConfig | BambuConfig {
   const base = {
     name: printer.name,
     ip: printer.ip,
     manufacturer: printer.manufacturer as printing.Manafacturers,
+    driver: printer.driver,
     has_camera: printer.has_camera,
     queue: printer.queue,
     filament: printer.filament.map((f, i) => ({ ...f, slot_id: i })),
   };
 
-  switch (printer.manufacturer) {
-    case "PRUSA":
+  switch (printer.driver) {
+    case "OCTOPRINT":
+      return { ...base, api_key: printer.keys[0] };
+    case "PRUSALINK":
       return { ...base, username: printer.keys[0], password: printer.keys[1] };
     case "BAMBU":
       return { ...base, serial: printer.keys[0], password: printer.keys[1] };
     default:
-      throw new Error(`Unknown manufacturer "${printer.manufacturer}"`);
+      throw new Error(`Unknown driver "${printer.driver}"`);
   }
 }
 
@@ -82,6 +87,11 @@ function beginDTCheck(): NodeJS.Timeout {
     await reconcilePrinters();
     for (const [name, record] of printers) {
       const uuid = record.id;
+      if (!printManager.isConnected(name)) {
+        try {
+          await connectPrinter(uuid);
+        } catch {}
+      }
       const active = e.select(e.printing.Downtime, (d) => ({
         filter: e.all(e.set(e.op(d.printer.id, "=", e.uuid(uuid)), d.has_started, e.op("not", d.has_finished))),
       }));
@@ -335,18 +345,21 @@ export async function addPrinter(config: PrinterConfig, details: PrinterDetails,
   if (clash.some((printer) => printer.ip === config.ip)) {
     throw new PrinterConflictError("ip", config.ip);
   }
-  const { ip, name, manufacturer, has_camera, filament } = config;
+  const { ip, name, manufacturer, driver, has_camera, filament } = config;
 
   let keys: string[];
-  switch (config.manufacturer) {
-    case "PRUSA":
-      keys = [(config as OctoprintConfig).username, (config as OctoprintConfig).password];
+  switch (config.driver) {
+    case "OCTOPRINT":
+      keys = [(config as OctoprintConfig).api_key];
+      break;
+    case "PRUSALINK":
+      keys = [(config as PrusaConfig).username, (config as PrusaConfig).password];
       break;
     case "BAMBU":
       keys = [(config as BambuConfig).serial, (config as BambuConfig).password];
       break;
     default:
-      throw new Error(`Unknown manufacturer "${config.manufacturer}"`);
+      throw new Error(`Unknown driver "${config.driver}"`);
   }
   const inserted = await e
     .select(
@@ -354,6 +367,7 @@ export async function addPrinter(config: PrinterConfig, details: PrinterDetails,
         ip,
         name,
         manufacturer,
+        driver,
         has_camera,
         keys,
         filament: filament.map(({ slot_id, ...slot }) => slot),
@@ -369,6 +383,72 @@ export async function addPrinter(config: PrinterConfig, details: PrinterDetails,
   printers.set(config.name, { id: inserted.id, connected: false, queue: inserted.queue });
   if (!connect) return false;
   return connectPrinter(inserted.id);
+}
+
+type PrinterUpdate = {
+  name?: string;
+  ip?: string;
+  keys?: string[];
+  driver?: printing.Drivers;
+  has_camera?: boolean;
+  model?: string;
+  location?: sign_in.LocationName;
+};
+
+export async function updatePrinter(name: string, update: PrinterUpdate): Promise<boolean> {
+  const record = printers.get(name);
+  if (!record) throw new PrinterNotFoundError(name);
+
+  const next_name = update.name;
+  const next_ip = update.ip;
+  if (next_name || next_ip) {
+    const taken = e.op(
+      next_name ? e.op(e.printing.Printer.name, "=", next_name) : e.bool(false),
+      "or",
+      next_ip ? e.op(e.printing.Printer.ip, "=", next_ip) : e.bool(false),
+    );
+    const clash = await e
+      .select(e.printing.Printer, (printer) => ({
+        name: true,
+        ip: true,
+        filter: e.op(e.op(printer.id, "!=", e.uuid(record.id)), "and", taken),
+      }))
+      .run(db);
+    if (next_name && clash.some((printer) => printer.name === next_name)) {
+      throw new PrinterConflictError("name", next_name);
+    }
+    if (next_ip && clash.some((printer) => printer.ip === next_ip)) {
+      throw new PrinterConflictError("ip", next_ip);
+    }
+  }
+
+  const location = update.location;
+  await e
+    .update(e.printing.Printer, () => ({
+      filter_single: { id: record.id },
+      set: {
+        ...(update.name ? { name: update.name } : {}),
+        ...(update.ip ? { ip: update.ip } : {}),
+        ...(update.keys ? { keys: update.keys } : {}),
+        ...(update.driver ? { driver: update.driver } : {}),
+        ...(update.has_camera !== undefined ? { has_camera: update.has_camera } : {}),
+        ...(update.model ? { model: update.model } : {}),
+        ...(location ? { location: e.select(e.sign_in.Location, () => ({ filter_single: { name: location } })) } : {}),
+      },
+    }))
+    .run(db);
+
+  const reconnect =
+    update.name !== undefined ||
+    update.ip !== undefined ||
+    update.keys !== undefined ||
+    update.driver !== undefined ||
+    update.has_camera !== undefined;
+  if (!reconnect) return printManager.isConnected(name);
+
+  await printManager.removePrinter(name);
+  printers.delete(name);
+  return connectPrinter(record.id);
 }
 
 export async function retirePrinter(name: string): Promise<void> {

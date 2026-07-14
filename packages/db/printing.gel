@@ -23,6 +23,12 @@ module printing {
         BAMBU,
     >;
 
+    scalar type Drivers extending enum<
+        OCTOPRINT,
+        PRUSALINK,
+        BAMBU,
+    >;
+
     abstract type PrinterStatus;  # Discriminated union
     module printer_status {
         type Disabled extending printing::PrinterStatus {
@@ -122,6 +128,9 @@ module printing {
         required ip: str;
         required keys: array<str>;
         required manufacturer: str;
+        required driver: Drivers {
+            default := Drivers.OCTOPRINT;
+        }
         required model: str;
         required has_camera: bool;
         required status: PrinterStatus;

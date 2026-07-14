@@ -8,26 +8,20 @@ import { ClipboardCheckIcon, FileBoxIcon, FileCodeIcon, LoaderCircleIcon } from 
 import { useState } from "react";
 import { toast } from "sonner";
 import { Hammer } from "@/components/loading";
-import { formatRemaining, TableButtons } from "@/components/printing/utils";
+import {
+  formatRemaining,
+  PRINT_STATUS_OPTIONS,
+  PRINT_STATUS_VALUES,
+  type PrintStatusValue,
+  TableButtons,
+} from "@/components/printing/utils";
 import { orpc } from "@/lib/orpc";
 
 export const Route = createFileRoute("/_authenticated/_3dponly/printing/_3dpadminonly/review")({
   component: RouteComponent,
 });
 
-const STATUS_OPTIONS = [
-  { value: "UNDER_REVIEW", label: "Under review" },
-  { value: "QUEUED", label: "Queued" },
-  { value: "CANCELLED", label: "Cancelled" },
-] as const;
-
-type StatusValue = (typeof STATUS_OPTIONS)[number]["value"];
-
-const STATE_VALUES: Record<string, StatusValue> = {
-  UnderReview: "UNDER_REVIEW",
-  Queued: "QUEUED",
-  Cancelled: "CANCELLED",
-};
+const STATUS_OPTIONS = PRINT_STATUS_OPTIONS.filter((option) => option.value !== "FAILED");
 
 function FileButton({ id, name, file_type }: { id: string; name: string; file_type: "gcode" | "3mf" }) {
   const [downloading, setDownloading] = useState(false);
@@ -128,10 +122,10 @@ function RouteComponent() {
                         </TableCell>
                         <TableCell>
                           <Select
-                            value={STATE_VALUES[status.state] ?? "UNDER_REVIEW"}
+                            value={PRINT_STATUS_VALUES[status.state] ?? "UNDER_REVIEW"}
                             disabled={update.isPending}
                             onValueChange={(value) =>
-                              update.mutate({ id: print.id, status: value as StatusValue })
+                              update.mutate({ id: print.id, status: value as PrintStatusValue })
                             }
                           >
                             <SelectTrigger className="mx-auto w-40">

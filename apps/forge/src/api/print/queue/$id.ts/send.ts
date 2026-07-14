@@ -20,6 +20,9 @@ export const send = printing
     const state = await printManager.getStatus(printer);
     if (state.state === "disconnected") throw errors.PRINTER_DISCONNECTED();
     if (state.state === "disabled") throw errors.PRINTER_DISABLED();
+    if (state.state !== "idle" || printManager.getActiveJob(printer)) {
+      throw errors.PRINTER_BUSY({ data: { name: printer } });
+    }
 
     const print = await e
       .select(e.printing.Print, (p) => ({
@@ -57,13 +60,11 @@ export const send = printing
     }
     const history_id = print.history.id;
 
-    if (print.filament.length <= 1) {
-      const printer_row = await e
-        .select(e.printing.Printer, () => ({ filament: true, filter_single: { id: record.id } }))
-        .run(db);
-      const matches = !!printer_row && filamentMatches(print.filament, printer_row.filament);
-      if (!matches) throw errors.PRINTER_FILAMENT_MISMATCH({ data: { name: printer } });
-    }
+    const printer_row = await e
+      .select(e.printing.Printer, () => ({ filament: true, filter_single: { id: record.id } }))
+      .run(db);
+    const matches = !!printer_row && filamentMatches(print.filament, printer_row.filament);
+    if (!matches) throw errors.PRINTER_FILAMENT_MISMATCH({ data: { name: printer } });
 
     const job: PrintJob = {
       job_id: "0",
@@ -101,13 +102,15 @@ export const send = printing
       )
       .run(db);
 
-    await email.sendPrintSendEmail(print.author, {
-      sent_at: new Date(),
-      print_name: print.name,
-      print_time: print.duration,
-      printer,
-      location: printer_location.location.name,
-    });
+    await email
+      .sendPrintSendEmail(print.author, {
+        sent_at: new Date(),
+        print_name: print.name,
+        print_time: print.duration,
+        printer,
+        location: printer_location.location.name,
+      })
+      .catch(() => {});
 
     return { id };
   });

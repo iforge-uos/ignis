@@ -1,6 +1,6 @@
 import e from "@packages/db/edgeql-js";
 import * as z from "zod";
-import { downtimeError, downtimeSchema, downtimeShape } from "@/lib/printers/utils";
+import { downtimeError, downtimeSchema, downtimeShape, QUEUE_RETURN_ITEMS } from "@/lib/printers/utils";
 import { printing } from "@/orpc";
 import { printers } from "@/printing";
 
@@ -65,8 +65,6 @@ export const remove = printing
     return { success: true };
   });
 
-const HISTORY_LIMIT = 50;
-
 export const list = printing
   .route({ method: "GET", path: "/" })
   .input(
@@ -89,7 +87,7 @@ export const list = printing
           e.op(downtime.printer.id, "=", e.uuid(printer.id)),
         ),
         ...(history
-          ? { order_by: { expression: downtime.start_time, direction: e.DESC }, limit: HISTORY_LIMIT, offset }
+          ? { order_by: { expression: downtime.start_time, direction: e.DESC }, limit: QUEUE_RETURN_ITEMS, offset }
           : {}),
       }))
       .run(db);

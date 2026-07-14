@@ -96,11 +96,11 @@ const ImageCarousel = () => {
 
 function uploadButton(user: ReturnType<typeof Route.useRouteContext>["user"]) {
   if (!user) return;
-  const in_team = user.__typename === "users::Rep" && user.teams.some((t) => t.name === "3DP");
-  const has_role = user.roles.some((r) => ["Admin", "Rep", "Printa"].includes(r.name));
+  const in_team = user.__typename === "users::Rep" && user.teams.some((t: { name: string }) => t.name === "3DP");
+  const has_role = user.roles.some((r: { name: string }) => ["Admin", "Rep", "Printa"].includes(r.name));
   if (!(has_role || in_team)) return;
 
-  const can_control = user.roles.some((r) => r.name === "Admin") || in_team;
+  const can_control = user.roles.some((r: { name: string }) => r.name === "Admin") || in_team;
 
   return (
     <div className="flex flex-col items-center sm:flex-row mb-4 p-4 gap-4">

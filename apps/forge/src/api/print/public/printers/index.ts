@@ -17,6 +17,7 @@ export const printers = auth
         id: true,
         name: true,
         manufacturer: true,
+        driver: true,
         model: true,
         has_camera: true,
         filament: true,

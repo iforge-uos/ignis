@@ -29,26 +29,21 @@ export const finish = printing
 
     const job = printManager.getActiveJob(name);
     if (!job) throw errors.PRINT_JOB_NOT_FOUND();
-
-    try {
-      await printManager.finishJob(name);
-    } catch {
-      throw errors.COMMAND_FAILED();
-    }
+    if (!(success || reason)) throw errors.INPUT_VALIDATION_FAILED();
 
     const record = await e
-      .select(e.printing.PrintHistory, (h) => ({
-        id: true,
-        attempts: true,
-        has_timelapse: true,
-        author: e.assert_exists(e.assert_single(e.select(h["<history[is printing::Print]"].author, PartialUserShape))),
+      .select(e.printing.Print, (p) => ({
+        history_id: e.assert_single(p.history.id),
+        history_attempts: e.assert_single(p.history.attempts),
+        has_timelapse: e.assert_single(p.history.has_timelapse),
+        author: PartialUserShape,
         filter_single: { id: e.uuid(job.uuid) },
       }))
       .run(db);
-    if (!record) throw errors.PRINT_JOB_NOT_FOUND({ data: { id: job.uuid } });
+    if (!record?.history_id) throw errors.PRINT_JOB_NOT_FOUND({ data: { id: job.uuid } });
 
-    const history_id = record.id;
-    const attempts = record.attempts + 1;
+    const history_id = record.history_id;
+    const attempts = (record.history_attempts ?? 0) + 1;
     const new_status = (() => {
       if (success) return e.insert(e.printing.print_status.Complete, {});
       if (!reason) throw errors.INPUT_VALIDATION_FAILED();
@@ -60,6 +55,12 @@ export const finish = printing
       }
       return e.insert(e.printing.print_status.Failed, { reason, note: message });
     })();
+
+    try {
+      await printManager.finishJob(name);
+    } catch {
+      throw errors.COMMAND_FAILED();
+    }
 
     await e
       .update(e.printing.PrintHistory, () => ({
@@ -103,14 +104,16 @@ export const finish = printing
       )
       .run(db);
 
-    await email.sendPrintFinishEmail(record.author, {
-      finished_at: new Date(),
-      print_name: job.name,
-      review,
-      success,
-      requeue,
-      reason,
-      attempt: attempts,
-      location: printer_location.location.name,
-    });
+    await email
+      .sendPrintFinishEmail(record.author, {
+        finished_at: new Date(),
+        print_name: job.name,
+        review,
+        success,
+        requeue,
+        reason,
+        attempt: attempts,
+        location: printer_location.location.name,
+      })
+      .catch(() => {});
   });

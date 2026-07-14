@@ -1,4 +1,5 @@
 import type { printing } from "@packages/db/interfaces";
+import { MaterialSchema } from "@packages/db/zod/modules/printing";
 import { Button } from "@packages/ui/components/button";
 import {
   DropdownMenu,
@@ -8,8 +9,10 @@ import {
   DropdownMenuTrigger,
 } from "@packages/ui/components/dropdown-menu";
 import { Input } from "@packages/ui/components/input";
+import { Label } from "@packages/ui/components/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@packages/ui/components/select";
 import { useQuery } from "@tanstack/react-query";
-import { CheckIcon, ChevronDown } from "lucide-react";
+import { CheckIcon, ChevronDown, PlusIcon, Trash2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { orpc } from "@/lib/orpc";
 
@@ -19,16 +22,17 @@ export const PAGE_SIZE = 20;
 
 export type Material = printing.Material;
 
-export const MATERIAL_TEMPS: Record<Material, { nozzle_temp_min: number; nozzle_temp_max: number; bed_temp: number }> = {
-  PLA: { nozzle_temp_min: 190, nozzle_temp_max: 220, bed_temp: 60 },
-  PETG: { nozzle_temp_min: 230, nozzle_temp_max: 250, bed_temp: 80 },
-  TPU: { nozzle_temp_min: 210, nozzle_temp_max: 230, bed_temp: 40 },
-};
+export const MATERIAL_TEMPS: Record<Material, { nozzle_temp_min: number; nozzle_temp_max: number; bed_temp: number }> =
+  {
+    PLA: { nozzle_temp_min: 190, nozzle_temp_max: 220, bed_temp: 60 },
+    PETG: { nozzle_temp_min: 230, nozzle_temp_max: 250, bed_temp: 80 },
+    TPU: { nozzle_temp_min: 210, nozzle_temp_max: 230, bed_temp: 40 },
+  };
 
-const SEARCH_DEBOUNCE_MS = 300;
+export const SEARCH_DEBOUNCE_MS = 300;
 
 const NOW = new Date();
-const FIRST_YEAR = 2026;
+const FIRST_YEAR = 2025;
 
 export const CURRENT_ACADEMIC_YEAR = NOW.getMonth() >= 8 ? NOW.getFullYear() : NOW.getFullYear() - 1;
 
@@ -99,6 +103,22 @@ export function PrintStatusBadge({ state }: { state: string }) {
     </span>
   );
 }
+
+export type PrintStatusValue = "QUEUED" | "UNDER_REVIEW" | "CANCELLED" | "FAILED";
+
+export const PRINT_STATUS_OPTIONS: { value: PrintStatusValue; label: string }[] = [
+  { value: "QUEUED", label: "Queued" },
+  { value: "UNDER_REVIEW", label: "Under review" },
+  { value: "CANCELLED", label: "Cancelled" },
+  { value: "FAILED", label: "Failed" },
+];
+
+export const PRINT_STATUS_VALUES: Record<string, PrintStatusValue> = {
+  Queued: "QUEUED",
+  UnderReview: "UNDER_REVIEW",
+  Cancelled: "CANCELLED",
+  Failed: "FAILED",
+};
 
 export function formatFailureReason(reason?: string): string {
   if (!reason) return "—";
@@ -250,6 +270,243 @@ export function FilamentChip({ material, colour }: { material: string; colour: s
       <span className="font-medium">{material}</span>
       <span className="text-muted-foreground">{colour === ANY_COLOUR ? "any colour" : hex(colour)}</span>
     </span>
+  );
+}
+
+export type Manufacturer = printing.Manafacturers;
+export type Driver = printing.Drivers;
+
+export const MANUFACTURERS: { value: Manufacturer; label: string }[] = [
+  { value: "PRUSA", label: "Prusa" },
+  { value: "BAMBU", label: "Bambu" },
+];
+
+export const DRIVERS: { value: Driver; label: string }[] = [
+  { value: "OCTOPRINT", label: "OctoPrint" },
+  { value: "PRUSALINK", label: "PrusaLink" },
+  { value: "BAMBU", label: "Bambu" },
+];
+
+export const DEFAULT_DRIVER: Record<Manufacturer, Driver> = {
+  PRUSA: "OCTOPRINT",
+  BAMBU: "BAMBU",
+};
+
+export const KEY_LABELS: Record<Driver, string[]> = {
+  OCTOPRINT: ["API key"],
+  PRUSALINK: ["Username", "Password"],
+  BAMBU: ["Serial", "Access code"],
+};
+
+export function blankKeys(driver: Driver): string[] {
+  return KEY_LABELS[driver].map(() => "");
+}
+
+export function KeyFields({
+  driver,
+  keys,
+  onChange,
+  placeholder,
+}: {
+  driver: Driver;
+  keys: string[];
+  onChange: (keys: string[]) => void;
+  placeholder?: string;
+}) {
+  const labels = KEY_LABELS[driver];
+
+  return (
+    <div className="grid grid-cols-2 gap-3">
+      {labels.map((label, index) => (
+        <div key={label} className="flex flex-col gap-2">
+          <Label htmlFor={`key_${index}`}>{label}</Label>
+          <Input
+            id={`key_${index}`}
+            type={index === labels.length - 1 ? "password" : "text"}
+            placeholder={placeholder}
+            value={keys[index] ?? ""}
+            onChange={(e) => onChange(labels.map((_, i) => (i === index ? e.target.value : (keys[i] ?? ""))))}
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export type ScanResult = { name: string; minutes: number; mass: number; materials: Material[] };
+
+function parseTimeToMinutes(raw: string): number {
+  const num = (unit: string) => Number(new RegExp(`(\\d+)\\s*${unit}`, "i").exec(raw)?.[1] ?? 0);
+  return num("d") * 1440 + num("h") * 60 + num("m") + Math.round(num("s") / 60);
+}
+
+export function parseGcode(text: string, filename: string): ScanResult {
+  const time_match = text.match(/estimated (?:printing )?time[^\n:=]*[:=]\s*([0-9hmsd \t]+)/i);
+  const mass_match =
+    text.match(/filament used \[g\][^\n:=]*[:=]\s*([\d.]+)/i) ??
+    text.match(/(?:total )?filament (?:used|weight)[^\n:=]*\[g\][^\n:=]*[:=]\s*([\d.]+)/i);
+  const type_match = text.match(/filament_type[^\n:=]*[:=]\s*([A-Za-z0-9;, ]+)/i);
+  const materials = (type_match?.[1] ?? "")
+    .split(/[;,\s]+/)
+    .map((s) => s.trim().toUpperCase())
+    .filter((s): s is Material => (MaterialSchema.options as readonly string[]).includes(s));
+
+  return {
+    name: filename.replace(/\.(gcode|3mf)$/i, ""),
+    minutes: time_match ? parseTimeToMinutes(time_match[1]) : 0,
+    mass: mass_match ? Math.round(Number(mass_match[1])) : 0,
+    materials,
+  };
+}
+
+export type SlotDraft = {
+  id: string;
+  material: Material;
+  colour: string;
+  nozzle_temp_min: number;
+  nozzle_temp_max: number;
+  bed_temp: number;
+};
+
+export function newSlot(material: Material = "PLA"): SlotDraft {
+  return { id: crypto.randomUUID(), material, colour: "#000000", ...MATERIAL_TEMPS[material] };
+}
+
+export function toColour(colour: string): string {
+  return colour === ANY_COLOUR ? ANY_COLOUR : `${colour.replace("#", "").toUpperCase()}FF`;
+}
+
+export function fromColour(colour: string): string {
+  return colour === ANY_COLOUR ? ANY_COLOUR : hex(colour);
+}
+
+export function slotsValid(slots: SlotDraft[]): boolean {
+  return slots.length > 0 && slots.every((slot) => slot.nozzle_temp_max > slot.nozzle_temp_min);
+}
+
+export function FilamentSlots({
+  slots,
+  onChange,
+  allowAny,
+  single,
+}: {
+  slots: SlotDraft[];
+  onChange: (slots: SlotDraft[]) => void;
+  allowAny?: boolean;
+  single?: boolean;
+}) {
+  const update = (index: number, slot: Partial<SlotDraft>) =>
+    onChange(slots.map((s, i) => (i === index ? { ...s, ...slot } : s)));
+
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center justify-between">
+        <Label>{single ? "Filament" : "Filament slots"}</Label>
+        {!single && (
+          <Button type="button" variant="outline" size="sm" onClick={() => onChange([...slots, newSlot()])}>
+            <PlusIcon />
+            Add slot
+          </Button>
+        )}
+      </div>
+
+      {slots.map((slot, index) => (
+        <div key={slot.id} className="flex flex-wrap items-end gap-2 rounded-lg border p-3">
+          <div className="flex flex-col gap-1">
+            <span className="text-xs text-muted-foreground">Material</span>
+            <Select
+              value={slot.material}
+              onValueChange={(value) =>
+                update(index, { material: value as Material, ...MATERIAL_TEMPS[value as Material] })
+              }
+            >
+              <SelectTrigger className="w-28">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {MaterialSchema.options.map((option) => (
+                  <SelectItem key={option} value={option}>
+                    {option}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <span className="text-xs text-muted-foreground">Colour</span>
+            <div className="flex items-center gap-2">
+              {slot.colour === ANY_COLOUR ? (
+                <span className="flex h-9 w-16 items-center justify-center rounded-md border border-dashed text-xs text-muted-foreground">
+                  Any
+                </span>
+              ) : (
+                <Input
+                  type="color"
+                  className="h-9 w-16 p-1"
+                  value={slot.colour}
+                  onChange={(e) => update(index, { colour: e.target.value })}
+                />
+              )}
+              {allowAny && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => update(index, { colour: slot.colour === ANY_COLOUR ? "#000000" : ANY_COLOUR })}
+                >
+                  {slot.colour === ANY_COLOUR ? "Pick" : "Any"}
+                </Button>
+              )}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <span className="text-xs text-muted-foreground">Nozzle min</span>
+            <Input
+              type="number"
+              className="w-24"
+              value={slot.nozzle_temp_min}
+              onChange={(e) => update(index, { nozzle_temp_min: Number(e.target.value) })}
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-xs text-muted-foreground">Nozzle max</span>
+            <Input
+              type="number"
+              className="w-24"
+              value={slot.nozzle_temp_max}
+              onChange={(e) => update(index, { nozzle_temp_max: Number(e.target.value) })}
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-xs text-muted-foreground">Bed</span>
+            <Input
+              type="number"
+              className="w-20"
+              value={slot.bed_temp}
+              onChange={(e) => update(index, { bed_temp: Number(e.target.value) })}
+            />
+          </div>
+
+          {!single && slots.length > 1 && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="text-red-600 hover:text-red-600"
+              onClick={() => onChange(slots.filter((_, i) => i !== index))}
+            >
+              <Trash2Icon />
+            </Button>
+          )}
+        </div>
+      ))}
+
+      {!slotsValid(slots) && (
+        <span className="text-sm text-red-600">Each slot needs a nozzle max above its nozzle min.</span>
+      )}
+    </div>
   );
 }
 

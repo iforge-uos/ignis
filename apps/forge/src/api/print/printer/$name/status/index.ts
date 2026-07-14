@@ -17,6 +17,7 @@ const statusOutput = z.object({
   status: printerStatusSchema,
   down_until: datetimeOut.nullable(),
   failure: failureOutput.nullable(),
+  unresolved_job: z.boolean(),
 });
 
 const DISABLED_STATUS = "printing::printer_status::Disabled";
@@ -51,24 +52,27 @@ export const status = printing
     if (!record) throw errors.PRINTER_NOT_FOUND({ data: { name } });
 
     const stored = await storedState(db, record.id);
+    const connected = printManager.Printers.includes(name);
+    const unresolved_job = connected && printManager.getActiveJob(name) !== null;
     if (stored.failed) {
       return {
         status: { state: "error" as const },
         down_until: null,
         failure: { reason: stored.reason ?? "OTHER", note: stored.note ?? "" },
+        unresolved_job,
       };
     }
 
-    if (!printManager.Printers.includes(name)) {
+    if (!connected) {
       if (stored.disabled)
-        return { status: { state: "disabled" as const }, down_until: stored.down_until, failure: null };
-      return { status: { state: "disconnected" as const }, down_until: null, failure: null };
+        return { status: { state: "disabled" as const }, down_until: stored.down_until, failure: null, unresolved_job };
+      return { status: { state: "disconnected" as const }, down_until: null, failure: null, unresolved_job };
     }
 
     const status = await printManager.getStatus(name);
-    if (status.state !== "disabled") return { status, down_until: null, failure: null };
+    if (status.state !== "disabled") return { status, down_until: null, failure: null, unresolved_job };
 
-    return { status, down_until: stored.down_until, failure: null };
+    return { status, down_until: stored.down_until, failure: null, unresolved_job };
   });
 
 export const statusRouter = printing.prefix("/status").router({

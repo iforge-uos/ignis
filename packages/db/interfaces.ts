@@ -1050,6 +1050,7 @@ export namespace printing {
     "has_finished": boolean;
     "has_started": boolean;
   }
+  export type Drivers = "OCTOPRINT" | "PRUSALINK" | "BAMBU";
   export type Manafacturers = "PRUSA" | "BAMBU";
   export type Material = "PLA" | "TPU" | "PETG";
   export interface Print extends std.$Object {
@@ -1095,6 +1096,7 @@ export namespace printing {
     "queue": QueueType;
     "name": string;
     "old": boolean;
+    "driver": Drivers;
   }
   export interface PrinterAuditEntry extends AuditEntry {
     "status": PrinterStatus;
@@ -1453,6 +1455,7 @@ export interface types {
   "printing": {
     "AuditEntry": printing.AuditEntry;
     "Downtime": printing.Downtime;
+    "Drivers": printing.Drivers;
     "Manafacturers": printing.Manafacturers;
     "Material": printing.Material;
     "Print": printing.Print;

@@ -1,6 +1,23 @@
 import { CameraFeed, formatRemaining, PrinterStateBadge } from "@/components/printing/utils";
 
-export function PrinterCard({ printer, status }) {
+type CardPrinter = {
+  name: string;
+  manufacturer: string;
+  model: string;
+  location: string;
+  has_camera: boolean;
+};
+
+type CardStatus = {
+  state: string;
+  current_job?: { progress: number; time_remaining: number };
+  temperature?: {
+    nozzle: { current: number; target: number };
+    bed: { current: number; target: number };
+  };
+};
+
+export function PrinterCard({ printer, status }: { printer: CardPrinter; status: CardStatus }) {
   const offline = status.state === "disconnected" || status.state === "disabled";
   const job = status.current_job;
 

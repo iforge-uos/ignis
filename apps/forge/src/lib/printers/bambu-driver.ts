@@ -178,7 +178,6 @@ export class BambuDriver implements PrinterDriver {
     if (this.is_disabled) throw new Error(`Bambu printer ${this.config?.name} is disabled`);
     let record_timelapse = timelapse ?? false;
     if (record_timelapse && !this.config?.has_camera) {
-      console.warn(`Bambu printer ${this.config?.name} has no camera, skipping timelapse`);
       record_timelapse = false;
     }
     // Later implement
@@ -280,12 +279,12 @@ export class BambuDriver implements PrinterDriver {
 
   async syncSlots(): Promise<Filament[]> {
     if (!this.config) throw new Error("Printer config required to change slot");
-    if (this.config.queue !== "MULTI")
-      throw new Error("syncSlots is only for AMS printers; the external spool is set with updateSlot");
     if (this.client?.connected) {
       this.requestFullStatus();
       await new Promise((resolve) => setTimeout(resolve, 500));
     }
+    if (!this.latest_report.ams?.ams?.length)
+      throw new Error("Printer reported no AMS; the external spool is set with updateSlot");
     const slots: Filament[] = [];
     for (const unit of this.latest_report.ams?.ams ?? []) {
       for (const tray of unit.tray ?? []) {
@@ -386,7 +385,7 @@ export class BambuDriver implements PrinterDriver {
         param: filename,
         url: `file:///sdcard/${filename}`,
         subtask_name: name,
-        use_ams: this.config.queue === "MULTI",
+        use_ams: (this.latest_report.ams?.ams?.length ?? 0) > 0,
         timelapse,
         bed_leveling: true,
         flow_cali: false,

@@ -4,11 +4,11 @@ import * as z from "zod";
 import { printerSchema, toFilamentSlots } from "@/lib/printers/utils";
 import { auth, ensurePrinters } from "@/orpc";
 import { nameRoutes } from "./$name";
+import { admin } from "./admin";
 import { historyRouter } from "./history";
 import { printerRouter } from "./printer";
-import { queueRouter } from "./queue";
 import { publicPrintRouter } from "./public";
-import { admin } from "./admin";
+import { queueRouter } from "./queue";
 
 const locationOptions = z.enum([...LocationNameSchema.options, "ALL"]);
 
@@ -28,6 +28,7 @@ export const list = auth
           id: true,
           name: true,
           manufacturer: true,
+          driver: true,
           model: true,
           has_camera: true,
           filament: true,

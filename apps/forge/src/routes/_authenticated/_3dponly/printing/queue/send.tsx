@@ -119,7 +119,7 @@ function FinishPrintDialog({ name, onDone }: { name: string; onDone: () => void 
 
         <DialogFooter>
           <Button
-            disabled={finish.isPending}
+            disabled={finish.isPending || (!success && !reason)}
             onClick={() =>
               finish.mutate({
                 name,
@@ -251,11 +251,13 @@ export function StateCard({
   name,
   state,
   down_end,
+  unresolved_job,
   onAction,
 }: {
   name: string;
   state: string;
   down_end: Temporal.ZonedDateTime | null;
+  unresolved_job: boolean;
   onAction: () => void;
 }) {
   const options = { onSuccess: () => onAction() };
@@ -296,7 +298,17 @@ export function StateCard({
         </div>
       )}
       {state === "finished" && <FinishPrintDialog name={name} onDone={onAction} />}
-      {state === "idle" && <SendPrintDialog name={name} onDone={onAction} />}
+      {state === "idle" &&
+        (unresolved_job ? (
+          <div className="flex flex-col items-start gap-2">
+            <p className="text-sm text-muted-foreground">
+              The last print was stopped without being recorded — finish it before sending another.
+            </p>
+            <FinishPrintDialog name={name} onDone={onAction} />
+          </div>
+        ) : (
+          <SendPrintDialog name={name} onDone={onAction} />
+        ))}
       {state === "disconnected" && (
         <StateMessage state={state} icon={PrinterXIcon}>
           Printer is disconnected - no actions available
@@ -415,6 +427,7 @@ function RouteComponent() {
             name={selected}
             state={state ?? "disconnected"}
             down_end={status.data?.down_until ?? null}
+            unresolved_job={status.data?.unresolved_job ?? false}
             onAction={() => status.refetch()}
           />
         </div>

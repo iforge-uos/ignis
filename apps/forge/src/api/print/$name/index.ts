@@ -9,6 +9,7 @@ import { disconnect } from "./disconnect";
 import { reconnect } from "./reconnect";
 import { remove } from "./remove";
 import { restore } from "./restore";
+import { update } from "./update";
 
 export const get = printing
   .route({ method: "GET", path: "/" })
@@ -22,6 +23,7 @@ export const get = printing
         id: true,
         name: true,
         manufacturer: true,
+        driver: true,
         model: true,
         has_camera: true,
         filament: true,
@@ -39,6 +41,7 @@ export const get = printing
 export const nameRoutes = threeDP.prefix("/{name}").router({
   get,
   add,
+  update,
   remove,
   restore,
   connect,

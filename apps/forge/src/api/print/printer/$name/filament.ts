@@ -18,6 +18,10 @@ const filamentErrors = {
     status: 400,
     message: "A slot payload is required when uploading a single-filament change",
   },
+  EMPTY_SYNC: {
+    status: 502,
+    message: "Printer reported no loaded filament to sync",
+  },
 } as const;
 
 export const filament = printing
@@ -49,7 +53,7 @@ export const filament = printing
     }
     if (!config) throw errors.PRINTER_NOT_FOUND({ data: { name } });
 
-    const isAms = config.queue === "MULTI" || config.filament.length > 1;
+    const isAms = config.driver === "BAMBU";
 
     let slots: Filament[];
     if (upload) {
@@ -64,6 +68,7 @@ export const filament = printing
     } else {
       if (!isAms) throw errors.NOT_AN_AMS_PRINTER();
       slots = await printManager.syncSlots(name);
+      if (slots.length === 0) throw errors.EMPTY_SYNC();
     }
 
     const filament = slots.map(({ slot_id, ...f }) => f);
@@ -73,6 +78,8 @@ export const filament = printing
         set: { filament },
       }))
       .run(db);
+
+    printers.set(name, { ...record, queue: slots.length > 1 ? "MULTI" : slots[0].material });
 
     return { slots };
   });

@@ -1,23 +1,13 @@
 import { Temporal } from "@js-temporal/polyfill";
-import { createFileRoute } from "@tanstack/react-router";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { Hammer } from "@/components/loading";
-import {
-  ANY_COLOUR,
-  formatRemaining,
-  type Material,
-  MATERIAL_TEMPS,
-  type SelectedUser,
-  UserSearch,
-} from "@/components/printing/utils";
-import { orpc } from "@/lib/orpc";
-import { useUser } from "@/hooks/useUser";
+import { MaterialSchema, PrioritySchema } from "@packages/db/zod/modules/printing";
 import { Button } from "@packages/ui/components/button";
 import { Card, CardContent, CardHeader } from "@packages/ui/components/card";
 import { Input } from "@packages/ui/components/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@packages/ui/components/select";
 import { Switch } from "@packages/ui/components/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@packages/ui/components/table";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
 import {
   BoxIcon,
   ClipboardCheckIcon,
@@ -33,8 +23,20 @@ import {
   UserIcon,
   VideoIcon,
 } from "lucide-react";
-import { useState, type ReactNode } from "react";
-import { MaterialSchema, PrioritySchema } from "@packages/db/zod/modules/printing";
+import { type ReactNode, useState } from "react";
+import { Hammer } from "@/components/loading";
+import {
+  ANY_COLOUR,
+  formatRemaining,
+  MATERIAL_TEMPS,
+  type Material,
+  parseGcode,
+  type ScanResult,
+  type SelectedUser,
+  UserSearch,
+} from "@/components/printing/utils";
+import { useUser } from "@/hooks/useUser";
+import { orpc } from "@/lib/orpc";
 
 const LEAD_GREEN_MAX_DAYS = 2;
 const LEAD_YELLOW_MAX_DAYS = 5;
@@ -53,31 +55,6 @@ function leadDotColor(days: number): string {
   if (days < LEAD_GREEN_MAX_DAYS) return "bg-green-500";
   if (days < LEAD_YELLOW_MAX_DAYS) return "bg-yellow-500";
   return "bg-red-500";
-}
-
-type ScanResult = { name: string; minutes: number; mass: number; materials: Material[] };
-
-function parseTimeToMinutes(raw: string): number {
-  const num = (unit: string) => Number(new RegExp(`(\\d+)\\s*${unit}`, "i").exec(raw)?.[1] ?? 0);
-  return num("d") * 1440 + num("h") * 60 + num("m") + Math.round(num("s") / 60);
-}
-
-function parseGcode(text: string, filename: string): ScanResult {
-  const time_match = text.match(/estimated (?:printing )?time[^\n:=]*[:=]\s*([0-9hmsd \t]+)/i);
-  const mass_match =
-    text.match(/filament used \[g\][^\n:=]*[:=]\s*([\d.]+)/i) ??
-    text.match(/(?:total )?filament (?:used|weight)[^\n:=]*\[g\][^\n:=]*[:=]\s*([\d.]+)/i);
-  const materials = [...text.matchAll(/filament_type[^\n:=]*[:=]\s*([A-Za-z0-9;, ]+)/gi)]
-    .flatMap((m) => m[1].split(/[;,\s]+/))
-    .map((s) => s.trim().toUpperCase())
-    .filter((s): s is Material => (MATERIALS as readonly string[]).includes(s));
-
-  return {
-    name: filename.replace(/\.(gcode|3mf)$/i, ""),
-    minutes: time_match ? parseTimeToMinutes(time_match[1]) : 0,
-    mass: mass_match ? Math.round(Number(mass_match[1])) : 0,
-    materials: [...new Set(materials)],
-  };
 }
 
 function Section({
@@ -150,7 +127,7 @@ function RouteComponent() {
     setScan(null);
     setFilamentColour("");
     setPrinterName("");
-    setTimelapse(false);
+    setTimelapse(true);
     setReview(false);
     setPriority("LOW");
     setRep(null);
@@ -470,11 +447,13 @@ function RouteComponent() {
                         <SelectValue placeholder="Select printer" />
                       </SelectTrigger>
                       <SelectContent>
-                        {(printers ?? []).map((p) => (
-                          <SelectItem key={p.id} value={p.name}>
-                            {p.name}
-                          </SelectItem>
-                        ))}
+                        {(printers ?? [])
+                          .filter((p) => p.driver === "BAMBU")
+                          .map((p) => (
+                            <SelectItem key={p.id} value={p.name}>
+                              {p.name}
+                            </SelectItem>
+                          ))}
                       </SelectContent>
                     </Select>
                   </>

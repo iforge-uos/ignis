@@ -8,8 +8,7 @@ import type {
 } from "@/lib/printers/types";
 
 export interface OctoprintConfig extends PrinterConfig {
-  username: string;
-  password: string;
+  api_key: string;
 }
 
 interface OctoStateFlags {
@@ -90,7 +89,7 @@ export class OctoprintDriver implements PrinterDriver {
 
   private get apiKey(): string {
     if (!this.config) throw new Error("Octoprint printer config not set");
-    return this.config.password;
+    return this.config.api_key;
   }
 
   private async request<T>(method: string, path: string, body?: unknown): Promise<T> {
