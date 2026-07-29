@@ -37,13 +37,17 @@ function createWebSocketClient(): RouterClient<typeof router> {
     interceptors: [
       onError((error) => {
         console.error(error);
-        toast.error(error.message);
+        if (error?.message && error.message.trim().length > 0) {
+          toast.error(error.message);
+        }
       }),
     ],
     clientInterceptors: [
       async ({ next, request }) => {
         const response = await next();
-        if (response.status === 401) {
+        // Ignore 401 auto-redirects on session check endpoints
+        const isSessionCheck = request?.url?.includes("/@me") || request?.url?.includes("/users/me");
+        if (response.status === 401 && !isSessionCheck) {
           throw redirect({ to: "/auth/login", search: { redirect: window.location.pathname } });
         }
         return response;

@@ -1,8 +1,8 @@
 import { InfractionShape, RepShape, UserShape } from "@/lib/utils/queries";
-import { auth } from "@/orpc";
+import { pub } from "@/orpc";
 import e from "@packages/db/edgeql-js";
 
-export const me = auth.route({ method: "GET", path: "/@me" }).handler(async ({ context: { db, $user } }) =>
+export const me = pub.route({ method: "GET", path: "/@me" }).handler(async ({ context: { db, user, $user } }) =>
   e
     .select($user, (user) => ({
       ...UserShape(user),
