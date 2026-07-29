@@ -76,9 +76,9 @@ export const interact = auth
               training: {
                 "+=": e.select(e.training.Training, () => ({
                   "@created_at": e.datetime_of_statement(),
-                  "@in_person_created_at": e.assert_single(pre_existing["@in_person_created_at"]),
-                  "@in_person_signed_off_by": e.assert_single(pre_existing["@in_person_signed_off_by"]),
-                  "@infraction": e.assert_single(pre_existing["@infraction"]),
+                  "@in_person_created_at": e.optional(pre_existing["@in_person_created_at"]),
+                  "@in_person_signed_off_by": e.optional(pre_existing["@in_person_signed_off_by"]),
+                  "@infraction": e.optional(pre_existing["@infraction"]),
                   filter_single: {
                     id: session.training.id,
                   },
