@@ -1,0 +1,24 @@
+name: Repository safety
+
+on:
+  pull_request:
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+  sensitive-files:
+    name: Reject sensitive and oversized files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check changed files
+        env:
+          BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+          HEAD_SHA: ${{ github.sha }}
+        run: .github/scripts/check-sensitive-files.sh "$BASE_SHA" "$HEAD_SHA"

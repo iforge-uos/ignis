@@ -11,6 +11,7 @@
   ],
   "scripts": {
     "check": "biome check --write .",
+    "hooks:install": "git config core.hooksPath .githooks",
     "dev": "turbo dev",
     "build": "turbo build",
     "check-types": "turbo check-types",

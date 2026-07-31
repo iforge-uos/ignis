@@ -10,7 +10,27 @@ Thumbs.db
 deploy/container-images/**
 **/secret/**
 .env
+.env.*
+!.env.example
+!.env.*.example
+!.env.sample
+!.env.*.sample
+!.env.template
+!.env.*.template
+!.env.tpl
+!.env.*.tpl
 *.rdb
+
+# Database exports and local database files
+**/dump.*
+**/*-dump.*
+**/*_dump.*
+**/backup.sql
+**/backup.sql.*
+**/*.dump
+**/*.dump.*
+**/*.sqlite
+**/*.sqlite3
 
 **/dist/**
 *.tsbuildinfo
