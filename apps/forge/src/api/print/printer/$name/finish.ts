@@ -7,6 +7,7 @@ import { printing } from "@/orpc";
 import { printers, printManager } from "@/printing";
 import { PartialUserShape } from "@/lib/utils/queries";
 import email from "@/email";
+import { PartialUser } from "@packages/types/users";
 
 export const finish = printing
   .route({ method: "DELETE", path: "/finish" })
@@ -105,7 +106,7 @@ export const finish = printing
       .run(db);
 
     await email
-      .sendPrintFinishEmail(record.author, {
+      .sendPrintFinishEmail(record.author as PartialUser, {
         finished_at: new Date(),
         print_name: job.name,
         review,

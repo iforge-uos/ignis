@@ -208,6 +208,7 @@ export const appConfig: AppConfig[] = [
     ],
     navSub: [{ name: "iDocs", url: "https://docs.iforge.sheffield.ac.uk", icon: BookOpenIcon }],
   },
+  /*
   {
     name: "Printing",
     url: "/printing/home",
@@ -277,6 +278,7 @@ export const appConfig: AppConfig[] = [
     ],
     navSub: [{ name: "iDocs", url: "https://docs.iforge.sheffield.ac.uk", icon: BookOpenIcon }],
   },
+  */
   {
     name: "Shop",
     url: "/shop",

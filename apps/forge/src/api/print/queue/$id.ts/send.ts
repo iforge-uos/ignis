@@ -6,6 +6,7 @@ import { printing } from "@/orpc";
 import { printers, printManager } from "@/printing";
 import { PartialUserShape } from "@/lib/utils/queries";
 import email from "@/email";
+import { PartialUser } from "@packages/types/users";
 
 export const send = printing
   .errors(queueErrors)
@@ -92,7 +93,7 @@ export const send = printing
         },
       }))
       .run(db);
-
+    /*
     const printer_location = await e
       .assert_exists(
         e.select(e.printing.Printer, () => ({
@@ -102,8 +103,9 @@ export const send = printing
       )
       .run(db);
 
+
     await email
-      .sendPrintSendEmail(print.author, {
+      .sendPrintSendEmail(print.author as PartialUser, {
         sent_at: new Date(),
         print_name: print.name,
         print_time: print.duration,
@@ -111,6 +113,7 @@ export const send = printing
         location: printer_location.location.name,
       })
       .catch(() => {});
+    */
 
     return { id };
   });

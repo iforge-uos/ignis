@@ -24,6 +24,7 @@ import { printers } from "@/printing.ts";
 import { idRouter } from "./$id.ts";
 import { length } from "./length.ts";
 import { search } from "./search.ts";
+import { PartialUser } from "@packages/types/users.ts";
 
 const uploadErrors = {
   UPLOAD_FAILED: {
@@ -211,7 +212,7 @@ export const add = ableToQueuePrint
       .run(tx);
 
     await email
-      .sendPrintUploadEmail(recipient, {
+      .sendPrintUploadEmail(recipient as PartialUser, {
         created_at: new Date(),
         print_name: name,
         review,
