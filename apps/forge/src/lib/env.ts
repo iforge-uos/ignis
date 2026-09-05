@@ -93,6 +93,10 @@ export default createEnv({
     // Pharos
     PHAROS_URL: z.url(),
     PHAROS_AUTH: z.string(),
+
+    // Printing
+    THREEDP_ADMIN_PASSWORD: z.string().min(1),
+    THREEDP_SUBMIT_PASSWORD: z.string().min(1),
   },
   clientPrefix: "VITE_",
   client: {
@@ -104,99 +108,107 @@ export default createEnv({
   },
   runtimeEnv: process.env,
   createFinalSchema: (shape) =>
-    z.object(shape).partial().transform((env) => ({
-      auth: {
-        // csrfSecret: env.CSRF_SECRET,
-        // csrfExcludeRoutes: env.CSRF_EXCLUDE_ROUTES,
-        adminRole: env.ADMIN_ROLE,
-        repRole: [], // This was hardcoded as empty array in the original
-        jwtSecret: env.JWT_SECRET,
-      },
-      oauth: {
-        google: {
-          clientId: env.GOOGLE_CLIENT_ID,
-          clientSecret: env.GOOGLE_CLIENT_SECRET,
-          callbackUrl: env.GOOGLE_CLIENT_CALLBACK_URL,
-          serviceAccount: {
-            email: env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-            privateKey: env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY,
+    z
+      .object(shape)
+      .partial()
+      .transform((env) => ({
+        auth: {
+          // csrfSecret: env.CSRF_SECRET,
+          // csrfExcludeRoutes: env.CSRF_EXCLUDE_ROUTES,
+          adminRole: env.ADMIN_ROLE,
+          repRole: [], // This was hardcoded as empty array in the original
+          jwtSecret: env.JWT_SECRET,
+        },
+        oauth: {
+          google: {
+            clientId: env.GOOGLE_CLIENT_ID,
+            clientSecret: env.GOOGLE_CLIENT_SECRET,
+            callbackUrl: env.GOOGLE_CLIENT_CALLBACK_URL,
+            serviceAccount: {
+              email: env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+              privateKey: env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY,
+            },
+          },
+          discord: {
+            token: env.DISCORD_TOKEN,
+            clientId: env.DISCORD_CLIENT_ID,
+            clientSecret: env.DISCORD_CLIENT_SECRET,
+            callbackUrl: env.DISCORD_CLIENT_CALLBACK_URL,
+          },
+          github: {
+            token: env.GITHUB_TOKEN,
           },
         },
-        discord: {
-          token: env.DISCORD_TOKEN,
-          clientId: env.DISCORD_CLIENT_ID,
-          clientSecret: env.DISCORD_CLIENT_SECRET,
-          callbackUrl: env.DISCORD_CLIENT_CALLBACK_URL,
+        redis: {
+          host: env.REDIS_HOST,
+          port: env.REDIS_PORT,
+          db: env.REDIS_DB,
+          password: env.REDIS_PASSWORD,
         },
-        github: {
-          token: env.GITHUB_TOKEN,
+        google: {
+          calendarIds: env.GOOGLE_CALENDARS,
+          privateKey: env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY,
+          clientEmail: env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
         },
-      },
-      redis: {
-        host: env.REDIS_HOST,
-        port: env.REDIS_PORT,
-        db: env.REDIS_DB,
-        password: env.REDIS_PASSWORD,
-      },
-      google: {
-        calendarIds: env.GOOGLE_CALENDARS,
-        privateKey: env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY,
-        clientEmail: env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-      },
-      ldap: {
-        host: env.LDAP_HOST,
-        port: env.LDAP_PORT,
-        base: env.LDAP_BASE,
-        user: env.LDAP_USER,
-        pass: env.LDAP_PASS,
-        defaultAttributes: env.LDAP_DEFAULT_ATTRIBUTES,
-        ssl: env.LDAP_SSL,
-      },
-      email: {
-        host: env.EMAIL_HOST,
-        port: env.EMAIL_PORT,
-        auth: {
-          user: env.EMAIL_USER,
-          pass: env.EMAIL_PASS,
+        ldap: {
+          host: env.LDAP_HOST,
+          port: env.LDAP_PORT,
+          base: env.LDAP_BASE,
+          user: env.LDAP_USER,
+          pass: env.LDAP_PASS,
+          defaultAttributes: env.LDAP_DEFAULT_ATTRIBUTES,
+          ssl: env.LDAP_SSL,
         },
-        from: env.EMAIL_FROM,
-        localDomain: env.EMAIL_LOCAL_DOMAIN,
-        smtpRequireTls: env.EMAIL_SMTP_REQUIRE_TLS,
-        rateMax: env.EMAIL_RATE_MAX,
-        rateDuration: env.EMAIL_RATE_DURATION,
-      },
-      cdn: {
-        url: env.CDN_URL,
-      },
-      frontend: {
-        url: env.FRONT_END_URL,
-      },
-      logging: {
-        level: env.LOG_LEVEL,
-        sentry: {
-          authToken: env.SENTRY_AUTH_TOKEN,
+        email: {
+          host: env.EMAIL_HOST,
+          port: env.EMAIL_PORT,
+          auth: {
+            user: env.EMAIL_USER,
+            pass: env.EMAIL_PASS,
+          },
+          from: env.EMAIL_FROM,
+          localDomain: env.EMAIL_LOCAL_DOMAIN,
+          smtpRequireTls: env.EMAIL_SMTP_REQUIRE_TLS,
+          rateMax: env.EMAIL_RATE_MAX,
+          rateDuration: env.EMAIL_RATE_DURATION,
         },
-      },
-      db: {
-        host: env.GEL_HOST,
-        port: env.GEL_PORT,
-        user: env.GEL_USERNAME,
-        password: env.GEL_PASSWORD,
-        globals: {
-          INFRACTIONS_WEBHOOK_URL: env.INFRACTIONS_WEBHOOK_URL,
-          PUB_SUB_SECRET: env.JWT_SECRET,
+        cdn: {
+          url: env.CDN_URL,
         },
-      },
-      pharos: {
-        url: env.PHAROS_URL,
-        auth: env.PHAROS_AUTH,
-      },
-      //   client: {
-      //     apiUrl: env.VITE_API_URL,
-      //     cdnUrl: env.VITE_CDN_URL,
-      //     sentryDsn: env.VITE_SENTRY_DSN,
-      //     sentryOrg: env.VITE_SENTRY_ORG,
-      //     sentryProject: env.VITE_SENTRY_PROJECT,
-      //   },
-    })),
+        frontend: {
+          url: env.FRONT_END_URL,
+        },
+        logging: {
+          level: env.LOG_LEVEL,
+          sentry: {
+            authToken: env.SENTRY_AUTH_TOKEN,
+          },
+        },
+        db: {
+          host: env.GEL_HOST,
+          port: env.GEL_PORT,
+          user: env.GEL_USERNAME,
+          password: env.GEL_PASSWORD,
+          globals: {
+            INFRACTIONS_WEBHOOK_URL: env.INFRACTIONS_WEBHOOK_URL,
+            PUB_SUB_SECRET: env.JWT_SECRET,
+            CDN_URL: env.CDN_URL,
+          },
+        },
+        pharos: {
+          url: env.PHAROS_URL,
+          auth: env.PHAROS_AUTH,
+        },
+        //   client: {
+        //     apiUrl: env.VITE_API_URL,
+        //     cdnUrl: env.VITE_CDN_URL,
+        //     sentryDsn: env.VITE_SENTRY_DSN,
+        //     sentryOrg: env.VITE_SENTRY_ORG,
+        //     sentryProject: env.VITE_SENTRY_PROJECT,
+        //   },
+        printing: {
+          threeDpAdminPassword: env.THREEDP_ADMIN_PASSWORD,
+          threeDpSubmitPassword: env.THREEDP_SUBMIT_PASSWORD,
+        },
+      })),
 });

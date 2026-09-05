@@ -14,8 +14,8 @@ RUN apk add --no-cache ca-certificates tzdata
 COPY --from=build /app/apps/mine/target/release/mine ./mine
 
 # Create directories for files, icons, logos, and fonts
-RUN mkdir -p /app/files /app/icons /app/logos /app/fonts
-RUN chmod 755 /app/files /app/icons /app/logos /app/fonts
+RUN mkdir -p /app/files /app/icons /app/logos /app/fonts /app/prints /app/timelapse /app/tmp
+RUN chmod 755 /app/files /app/icons /app/logos /app/fonts /app/prints /app/timelapse /app/tmp
 
 # Create iforge user and set ownership
 RUN adduser -D iforge
@@ -29,6 +29,7 @@ COPY --from=op /usr/local/bin/op /usr/local/bin/op
 ENV CONTENT_BASE_DIR=/app
 ENV RUST_BACKTRACE=1
 ENV RUST_LOG=info
+ENV TMPDIR=/app/tmp
 
 USER iforge
 

@@ -103,7 +103,10 @@ export type scalarAssignableBy<T extends $.ScalarType> =
   T extends _schema.$AccessKind ? _schema.$AccessKind : 
   T extends _printingprinter_status.$FailureReason ? _printingprinter_status.$FailureReason : 
   T extends _printingprint_status.$FailureReason ? _printingprint_status.$FailureReason : 
-  T extends _printing.$Type ? _printing.$Type : 
+  T extends _printing.$QueueType ? _printing.$QueueType : 
+  T extends _printing.$Priority ? _printing.$Priority : 
+  T extends _printing.$Material ? _printing.$Material : 
+  T extends _printing.$Manafacturers ? _printing.$Manafacturers : 
   T extends _notification.$Type ? _notification.$Type : 
   T extends _notification.$Status ? _notification.$Status : 
   T extends _notification.$DeliveryMethod ? _notification.$DeliveryMethod : 
@@ -207,7 +210,10 @@ export type scalarCastableFrom<T extends $.ScalarType> =
   T extends _schema.$AccessKind ? _schema.$AccessKind : 
   T extends _printingprinter_status.$FailureReason ? _printingprinter_status.$FailureReason : 
   T extends _printingprint_status.$FailureReason ? _printingprint_status.$FailureReason : 
-  T extends _printing.$Type ? _printing.$Type : 
+  T extends _printing.$QueueType ? _printing.$QueueType : 
+  T extends _printing.$Priority ? _printing.$Priority : 
+  T extends _printing.$Material ? _printing.$Material : 
+  T extends _printing.$Manafacturers ? _printing.$Manafacturers : 
   T extends _notification.$Type ? _notification.$Type : 
   T extends _notification.$Status ? _notification.$Status : 
   T extends _notification.$DeliveryMethod ? _notification.$DeliveryMethod : 
@@ -704,8 +710,26 @@ type getSharedParentScalar<A, B> =
     :
     never
   :
-  A extends _printing.$Type ?
-    B extends _printing.$Type ?
+  A extends _printing.$QueueType ?
+    B extends _printing.$QueueType ?
+    B
+    :
+    never
+  :
+  A extends _printing.$Priority ?
+    B extends _printing.$Priority ?
+    B
+    :
+    never
+  :
+  A extends _printing.$Material ?
+    B extends _printing.$Material ?
+    B
+    :
+    never
+  :
+  A extends _printing.$Manafacturers ?
+    B extends _printing.$Manafacturers ?
     B
     :
     never
@@ -1339,8 +1363,26 @@ function getSharedParentScalar<A extends $.ScalarType, B extends $.ScalarType>(a
     }
     throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
     }
-  if (a.__name__ === "printing::Type") {
-    if(b.__name__ === "printing::Type") {
+  if (a.__name__ === "printing::QueueType") {
+    if(b.__name__ === "printing::QueueType") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
+  if (a.__name__ === "printing::Priority") {
+    if(b.__name__ === "printing::Priority") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
+  if (a.__name__ === "printing::Material") {
+    if(b.__name__ === "printing::Material") {
+      return b;
+    }
+    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
+    }
+  if (a.__name__ === "printing::Manafacturers") {
+    if(b.__name__ === "printing::Manafacturers") {
       return b;
     }
     throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);

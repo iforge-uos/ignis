@@ -55,7 +55,10 @@ const faqItems: FAQItem[] = [
         <Link to="/sign-in" className="link-underline">
           Sign in page
         </Link>{" "}
-        or the <a href="#opening-hours" className="link-underline">bottom of any page on this website.</a>
+        or the{" "}
+        <a href="#opening-hours" className="link-underline">
+          bottom of any page on this website.
+        </a>
         {/* TODO IFO-247 */}
       </>
     ),

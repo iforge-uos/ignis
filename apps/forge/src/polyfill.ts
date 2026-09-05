@@ -11,5 +11,6 @@ declare global {
   }
 }
 
+(globalThis as unknown as { Temporal?: typeof Temporal }).Temporal ??= Temporal;
 Date.prototype.toTemporalInstant = toTemporalInstant;
 RegExp.prototype.escape = implementation;

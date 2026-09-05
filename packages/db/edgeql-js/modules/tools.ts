@@ -23,7 +23,7 @@ export type $Selectability = {
   "TOOL_BROKEN": $.$expr_Literal<$Selectability>;
   "NONE": $.$expr_Literal<$Selectability>;
 } & $.EnumType<"tools::Selectability", ["DO_ONLINE", "REVOKED", "EXPIRED", "DO_IN_PERSON", "NONE_REMAINING", "DO_IN_PERSON_OR_REP_ONLINE", "DO_REP_ONLINE", "DO_IN_PERSON_OR_REP_IN_PERSON", "DO_REP_IN_PERSON", "REPS_UNTRAINED", "TOOL_BROKEN", "NONE"]>;
-const Selectability: $Selectability = $.makeType<$Selectability>(_.spec, "3e6fe1d6-28b0-11f1-8ec6-f1dfd3b23e43", _.syntax.literal);
+const Selectability: $Selectability = $.makeType<$Selectability>(_.spec, "d2f277b8-328b-11f1-95c1-1308b9ec1852", _.syntax.literal);
 
 export type $Status = {
   "NOMINAL": $.$expr_Literal<$Status>;
@@ -31,68 +31,68 @@ export type $Status = {
   "PARTIALLY_FUNCTIONAL": $.$expr_Literal<$Status>;
   "OUT_OF_ORDER": $.$expr_Literal<$Status>;
 } & $.EnumType<"tools::Status", ["NOMINAL", "IN_USE", "PARTIALLY_FUNCTIONAL", "OUT_OF_ORDER"]>;
-const Status: $Status = $.makeType<$Status>(_.spec, "3e6fedb6-28b0-11f1-abef-5511d5fd2f5d", _.syntax.literal);
+const Status: $Status = $.makeType<$Status>(_.spec, "d2f29869-328b-11f1-95dc-a1542d81fcf8", _.syntax.literal);
 
 export type $BookingλShape = $.typeutil.flatten<_default.$AuditableλShape & {
   "user": $.LinkDesc<_users.$User, $.Cardinality.One, {}, false, false,  false, false>;
+  "tool": $.LinkDesc<$Tool, $.Cardinality.One, {}, false, false,  false, false>;
   "ends_at": $.PropertyDesc<_std.$datetime, $.Cardinality.One, false, false, false, false>;
   "starts_at": $.PropertyDesc<_std.$datetime, $.Cardinality.One, false, false, false, false>;
   "duration": $.PropertyDesc<_std.$duration, $.Cardinality.One, false, true, false, false>;
   "cancelled": $.PropertyDesc<_std.$bool, $.Cardinality.AtMostOne, false, false, false, false>;
-  "tool": $.LinkDesc<$Tool, $.Cardinality.One, {}, false, false,  false, false>;
-  "<bookings[is user]": $.LinkDesc<_default.$user, $.Cardinality.Many, {}, false, false,  false, false>;
   "<bookings[is users::User]": $.LinkDesc<_users.$User, $.Cardinality.Many, {}, false, false,  false, false>;
   "<bookings[is users::Rep]": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<bookings[is user]": $.LinkDesc<_default.$user, $.Cardinality.Many, {}, false, false,  false, false>;
   "<bookings[is tools::Tool]": $.LinkDesc<$Tool, $.Cardinality.Many, {}, false, false,  false, false>;
   "<bookings": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
 type $Booking = $.ObjectType<"tools::Booking", $BookingλShape, null, [
   ..._default.$Auditable['__exclusives__'],
 ], "tools::Booking">;
-const $Booking = $.makeType<$Booking>(_.spec, "6194bf9c-28b0-11f1-8761-cf2c0783637b", _.syntax.literal);
+const $Booking = $.makeType<$Booking>(_.spec, "11debd07-328c-11f1-b830-f3399c1cfda9", _.syntax.literal);
 
 const Booking: $.$expr_PathNode<$.TypeSet<$Booking, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Booking, $.Cardinality.Many), null);
 
 export type $GroupedToolλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
   "location": $.LinkDesc<_sign_in.$Location, $.Cardinality.One, {}, false, false,  false, false>;
-  "tools": $.LinkDesc<$Tool, $.Cardinality.AtLeastOne, {}, false, false,  false, false>;
   "training": $.LinkDesc<_training.$Training, $.Cardinality.AtLeastOne, {}, false, false,  false, false>;
   "name": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
+  "tools": $.LinkDesc<$Tool, $.Cardinality.AtLeastOne, {}, false, false,  false, false>;
 }>;
 type $GroupedTool = $.ObjectType<"tools::GroupedTool", $GroupedToolλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
 ], "tools::GroupedTool">;
-const $GroupedTool = $.makeType<$GroupedTool>(_.spec, "6717fe84-28b0-11f1-94f7-c3ecf88bfcb4", _.syntax.literal);
+const $GroupedTool = $.makeType<$GroupedTool>(_.spec, "1df157f3-328c-11f1-96d0-23ff22b148e8", _.syntax.literal);
 
 const GroupedTool: $.$expr_PathNode<$.TypeSet<$GroupedTool, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($GroupedTool, $.Cardinality.Many), null);
 
 export type $ToolλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
+  "location": $.LinkDesc<_sign_in.$Location, $.Cardinality.One, {}, false, false,  false, false>;
+  "rep": $.LinkDesc<_training.$Training, $.Cardinality.AtLeastOne, {}, false, false,  false, false>;
+  "training": $.LinkDesc<_training.$Training, $.Cardinality.AtLeastOne, {}, false, false,  false, false>;
+  "name": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "is_bookable": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, false>;
   "status": $.PropertyDesc<$.NamedTupleType<{code: $Status, reason: _std.$str}>, $.Cardinality.One, false, false, false, false>;
   "min_booking_time": $.PropertyDesc<_std.$duration, $.Cardinality.AtMostOne, false, false, false, true>;
-  "grouped": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, true>;
-  "location": $.LinkDesc<_sign_in.$Location, $.Cardinality.One, {}, false, false,  false, false>;
-  "training": $.LinkDesc<_training.$Training, $.Cardinality.AtLeastOne, {}, false, false,  false, false>;
-  "rep": $.LinkDesc<_training.$Training, $.Cardinality.AtLeastOne, {}, false, false,  false, false>;
   "responsible_reps": $.LinkDesc<_users.$Rep, $.Cardinality.Many, {}, false, false,  false, false>;
-  "bookable_hours": $.PropertyDesc<_stdcal.$local_time, $.Cardinality.Many, false, false, false, false>;
   "borrowable": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, false>;
   "description": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "max_booking_daily": $.PropertyDesc<_std.$duration, $.Cardinality.AtMostOne, false, false, false, false>;
   "max_booking_weekly": $.PropertyDesc<_std.$duration, $.Cardinality.AtMostOne, false, false, false, false>;
-  "name": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "quantity": $.PropertyDesc<_std.$int16, $.Cardinality.One, false, false, false, false>;
   "bookings": $.LinkDesc<$Booking, $.Cardinality.Many, {}, false, true,  false, false>;
-  "<tools[is shop::Item]": $.LinkDesc<_shop.$Item, $.Cardinality.Many, {}, false, false,  false, false>;
+  "bookable_hours": $.PropertyDesc<_stdcal.$local_time, $.Cardinality.Many, false, false, false, false>;
+  "grouped": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, true>;
   "<tool[is tools::Booking]": $.LinkDesc<$Booking, $.Cardinality.Many, {}, false, false,  false, false>;
   "<tools[is tools::GroupedTool]": $.LinkDesc<$GroupedTool, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<tools[is shop::Item]": $.LinkDesc<_shop.$Item, $.Cardinality.Many, {}, false, false,  false, false>;
   "<tool": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<tools": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
 type $Tool = $.ObjectType<"tools::Tool", $ToolλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
 ], "tools::Tool">;
-const $Tool = $.makeType<$Tool>(_.spec, "62df5740-28b0-11f1-8780-851e8e828145", _.syntax.literal);
+const $Tool = $.makeType<$Tool>(_.spec, "150ab591-328c-11f1-805c-87e88f51edd2", _.syntax.literal);
 
 const Tool: $.$expr_PathNode<$.TypeSet<$Tool, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Tool, $.Cardinality.Many), null);
 

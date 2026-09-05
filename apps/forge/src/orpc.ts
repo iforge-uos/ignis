@@ -4,8 +4,9 @@ import { team } from "@packages/db/interfaces";
 import { Client, Executor } from "gel";
 import z from "zod";
 import dbClient from "@/db";
-import sentryMiddleware from "@/lib/sentry/server"
+import sentryMiddleware from "@/lib/sentry/server";
 import { RepShape, UserShape } from "@/lib/utils/queries";
+import { setupPrinters } from "@/printing";
 import { InitialContext } from "@/routes/api/$";
 
 export type Context = Awaited<ReturnType<typeof createContext>>;
@@ -81,6 +82,16 @@ const ROLE_GATED_ERRORS = {
     status: 403,
     data: GatedError.extend({ required: z.array(z.object({ name: z.string() })) }),
   },
+  MIX_GATED: {
+    message: "You are not able to use this method based on your team or role",
+    status: 403,
+    data: GatedError.extend({
+      required: z.object({
+        teams: z.array(z.object({ name: z.string() })),
+        roles: z.array(z.object({ name: z.string() })),
+      }),
+    }),
+  },
 } as const satisfies ErrorMap;
 
 const roleGated = (name: string) => {
@@ -135,7 +146,72 @@ const teamGated = (...names: team.Name[]) => {
 };
 
 export const events = auth.use(teamGated("Events"));
-export const eventsOrDeskOrAdmin = auth.use(teamGated("Events"));
+
+const mixGated = (teams: team.Name[], roles: string[]) => {
+  return os
+    .$context<{ user: NonNullable<Context["user"]> }>()
+    .errors(ROLE_GATED_ERRORS)
+    .middleware(async ({ context, next, errors }) => {
+      const { user } = context;
+      const inTeam = user.__typename === "users::Rep" && user.teams.some((t) => teams.includes(t.name as team.Name));
+      const hasRole = user.roles.some((r) => roles.includes(r.name));
+      if (!(inTeam || hasRole)) {
+        throw errors.MIX_GATED({
+          data: {
+            current: [...(user.__typename === "users::Rep" ? user.teams : []), ...user.roles],
+            required: {
+              teams: teams.map((name) => ({ name })),
+              roles: roles.map((name) => ({ name })),
+            },
+          },
+        });
+      }
+
+      return next({ context });
+    });
+};
+
+export const eventsOrDeskOrAdmin = auth.use(mixGated(["Events"], ["Desk", "Admin"]));
+export const threeDP = auth.use(mixGated(["3DP"], ["Admin"]));
+
+const PRINTING_ERRORS = {
+  PRINTER_NOT_FOUND: {
+    status: 404,
+    message: "Printer not found",
+    data: z.object({ name: z.string() }),
+  },
+  PRINTER_DISCONNECTED: {
+    status: 409,
+    message: "Printer is not connected",
+  },
+  PRINTER_DISABLED: {
+    status: 409,
+    message: "Printer is disabled",
+  },
+  PRINT_JOB_NOT_FOUND: {
+    status: 404,
+    message: "Print job not found",
+    data: z.object({ id: z.string() }).optional(),
+  },
+  COMMAND_FAILED: {
+    status: 409,
+    message: "Failed to execute command",
+  },
+} as const satisfies ErrorMap;
+
+export const ensurePrinters = os
+  .$context<{ user: NonNullable<Context["user"]> }>()
+  .errors(PRINTING_ERRORS)
+  .middleware(async ({ next }) => {
+    await setupPrinters();
+    return next();
+  });
+
+export const printing = auth
+  .errors(PRINTING_ERRORS)
+  .use(mixGated(["3DP"], ["Admin"]))
+  .use(ensurePrinters);
+export const ableToQueuePrint = auth.use(orRoleGated("Rep", "Admin", "Printa")).use(ensurePrinters);
 
 export class RollbackTransaction extends Error {
   readonly data: any;
