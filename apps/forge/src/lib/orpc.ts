@@ -2,7 +2,7 @@ import { createORPCClient, onError } from "@orpc/client";
 import { RPCLink } from "@orpc/client/websocket";
 import { createRouterClient, type RouterClient } from "@orpc/server";
 import { createTanstackQueryUtils, type RouterUtils } from "@orpc/tanstack-query";
-import { redirect, useLocation } from "@tanstack/react-router";
+import { redirect } from "@tanstack/react-router";
 import { createIsomorphicFn } from "@tanstack/react-start";
 import { getCookie } from "@tanstack/react-start/server";
 import { WebSocket } from "partysocket";
@@ -43,10 +43,10 @@ function createWebSocketClient(): RouterClient<typeof router> {
       }),
     ],
     clientInterceptors: [
-      async ({ next, request }) => {
+      async ({ next, path }) => {
         const response = await next();
         // Ignore 401 auto-redirects on session check endpoints
-        const isSessionCheck = request?.url?.includes("/@me") || request?.url?.includes("/users/me");
+        const isSessionCheck = path.join("/") === "users/me";
         if (response.status === 401 && !isSessionCheck) {
           throw redirect({ to: "/auth/login", search: { redirect: window.location.pathname } });
         }
