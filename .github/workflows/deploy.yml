@@ -4,15 +4,36 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Branch, tag or commit SHA to deploy"
+        required: false
+        default: main
 
 jobs:
   build-and-restart:
     runs-on: self-hosted
 
     steps:
-      - name: Pull the latest changes
+      - name: Check out the ref to deploy
         working-directory: /home/iforge/ignis/
-        run: git pull
+        env:
+          DEPLOY_REF: ${{ inputs.ref || 'main' }}
+        run: |
+          set -euo pipefail
+
+          git fetch origin --prune --tags --force
+
+          if git rev-parse --verify --quiet "refs/remotes/origin/$DEPLOY_REF" >/dev/null; then
+            # A branch: track it and discard any local drift.
+            git checkout --force -B "$DEPLOY_REF" "origin/$DEPLOY_REF"
+          else
+            # A tag or commit SHA.
+            git checkout --force --detach "$DEPLOY_REF"
+          fi
+
+          echo "Deploying $DEPLOY_REF ($(git rev-parse --short HEAD))"
 
       - name: Notify Discord Maintenance Start
         uses: tsickert/discord-webhook@v6.0.0
