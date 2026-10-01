@@ -11,7 +11,7 @@ import {
 } from "@packages/ui/components/alert-dialog";
 import { CardContent, CardDescription, CardHeader, CardTitle } from "@packages/ui/components/card";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@packages/ui/components/input-group";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import Fuse from "fuse.js";
 import { useAtom } from "jotai";
 import { Search } from "lucide-react";
@@ -33,7 +33,7 @@ type AgreementToSign = {
   updated_at?: { epochMilliseconds: number };
 };
 
-export const ReasonInput: FlowStepComponent<"REASON"> = ({ data: { common_reasons }, user }) => {
+export const ReasonInput: FlowStepComponent<"REASON"> = ({ data: { common_reasons } }) => {
   console.log("In ReasonInput")
   const [inputValue, setInputValue] = useState("");
   const [signInReason, setSignInReason] = useAtom(sessionSignInReasonAtom);
@@ -47,12 +47,12 @@ export const ReasonInput: FlowStepComponent<"REASON"> = ({ data: { common_reason
   } = usePromiseDialog<AgreementToSign>(false);
 
   console.log("Prior to scary hooks")
-  const { mutateAsync: signAgreement } = useMutation(orpc.users.signAgreement.mutationOptions());
   const [reasonName, setReasonName] = useState<string>("");
 
   const { finalise, setCanContinue, canContinue, focusNextStep } = useSignIn<"REASON">(async (transmit) => {
+    let agreement_id: string | undefined;
     while (true) {
-      const { error } = await transmit({ reason: signInReason! });
+      const { error } = await transmit({ reason: signInReason!, agreement_id });
 
       if (!error) {
         return;
@@ -78,7 +78,7 @@ export const ReasonInput: FlowStepComponent<"REASON"> = ({ data: { common_reason
         throw error;
       }
 
-      await signAgreement({ id: user.id, agreement_id: agreement.id });
+      agreement_id = agreement.id; // the server signs it in the sign-in transaction and re-checks
       continue;
     }
   });

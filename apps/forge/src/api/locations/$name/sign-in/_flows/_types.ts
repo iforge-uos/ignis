@@ -101,7 +101,7 @@ const _Errors = [
   ToolsErrors,
   SignOutErrors,
 ] as const;
-export const Errors = _Errors.map((errors) => errors.map) as unknown as UnionToIntersection<typeof _Errors[number]["map"]>; // for server side orpc
+export const Errors = Object.assign({}, ..._Errors.map((errors) => errors.map)) as unknown as UnionToIntersection<typeof _Errors[number]["map"]>; // for server side orpc
 export type ErrorMap = { [KeyT in (typeof _Errors)[number] as KeyT["type"]]: ORPCErrorFromErrorMap<KeyT["map"]> }; // for client side error handling
 
 export const Initialise = z.discriminatedUnion("type", [
@@ -180,11 +180,17 @@ export type Params<T extends z.infer<typeof Initialise>> = Omit<
   context: Omit<_SignInParams["context"], "tx"> & { tx: Awaited<ReturnType<typeof createTransaction>> };
 };
 
+/**
+ * Yielded by a step (after its first transmit) to report a recoverable error. The flow forwards it to the client and
+ * feeds the client's next receive back into the step, instead of throwing which would close the whole stream.
+ */
+export type StepRetry = { error: { code: string; message: string; data?: unknown } };
+
 export type Return<
   Tx extends z.infer<typeof Transmit>,
   Fin extends z.infer<typeof Finalise>,
   Rx extends z.infer<typeof Receive>,
-> = AsyncGenerator<Omit<Tx, "type">, Omit<Fin, "type">, Rx>;
+> = AsyncGenerator<Omit<Tx, "type"> | StepRetry, Omit<Fin, "type">, Rx>;
 
 /**
  * The adjacency "list" (object) for sign in. This has to be constructed on the frontend manually sadly

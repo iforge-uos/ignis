@@ -2,13 +2,21 @@ import { EventPublisher, eventIterator } from "@orpc/server";
 import e from "@packages/db/edgeql-js";
 import { sign_in } from "@packages/db/interfaces";
 import { logger } from "@sentry/tanstackstart-react";
-import { Client, Duration, Executor } from "gel";
+import { Client, Duration } from "gel";
 import * as z from "zod";
-import { exhaustiveGuard } from "@/lib/utils";
 import { createTransaction, ensureUser } from "@/lib/utils/queries";
-import { deskOrAdmin, transaction } from "@/orpc";
+import { deskOrAdmin } from "@/orpc";
 import { InitialiseStep, SIGN_INS, StepType } from "./_flows/_steps";
-import { _SignInParams, Errors, Finalise, Initialise, Receive, Return, Transmit } from "./_flows/_types";
+import {
+  _SignInParams,
+  Errors,
+  Finalise,
+  Initialise,
+  Receive,
+  Return,
+  StepRetry,
+  Transmit,
+} from "./_flows/_types";
 
 type UCardNumber = z.infer<typeof Initialise>["ucard_number"];
 export type BaseKey = `${sign_in.LocationName}-${UCardNumber}`;
@@ -21,7 +29,6 @@ export const PUBLISHER = new EventPublisher<{
 
 type FnReturn = Return<z.infer<typeof Transmit>, z.infer<typeof Finalise>, z.infer<typeof Receive>>;
 
-import { Transaction } from "gel/dist/transaction";
 import agreements from "./_flows/agreements";
 import cancel from "./_flows/cancel";
 import finalise from "./_flows/finalise";
@@ -58,7 +65,7 @@ export const flow = deskOrAdmin
   .input(InitialiseStep)
   .errors(Errors)
   .handler(async function* (arg): AsyncGenerator<
-    z.infer<typeof Transmit> | z.infer<typeof Finalise>,
+    z.infer<typeof Transmit> | z.infer<typeof Finalise> | (StepRetry & { type: z.infer<typeof StepType> }),
     { id: string } | undefined
   > {
     console.log("Flow API called!!!");
@@ -107,9 +114,16 @@ export const flow = deskOrAdmin
       const { value: receive } = await rx.next();
       store.RECEIVE = receive; // cache for the same reason
 
-      const { value: fin, done } = (await tx.next(receive)) as { value: z.infer<typeof Finalise>; done: true };
+      let result = await tx.next(receive);
+      // a step yielding again is a recoverable error, forward it and give the step the client's retry
+      while (!result.done) {
+        yield { type: message.type, ...(result.value as StepRetry) };
+        const { value: retry } = await rx.next();
+        store.RECEIVE = retry;
+        result = await tx.next(retry);
+      }
+      const fin = result.value as z.infer<typeof Finalise>;
       // fin.type = message.type;  // probably won't ever be used but oh well
-      if (!done) exhaustiveGuard(message.type as never);
       if (fin.next === undefined) {
         delete SIGN_INS[key]; // avoid leaking memory :)
         if (fin.type === "FINALISE") {

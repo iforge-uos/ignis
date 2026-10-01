@@ -12,12 +12,13 @@ import { useUser } from "@/hooks/useUser";
 
 const loginSearchSchema = z.object({
   redirect: z.string().default("/"),
+  error: z.string().optional(),
 });
 
 
 function LoginPage() {
 const navigate = useNavigate();
-  const { redirect } = Route.useSearch();
+  const { redirect, error } = Route.useSearch();
   const user = useUser();
 
   const [previousPathname, setPreviousPathname] = useAtom(previousPathnameAtom);
@@ -54,6 +55,7 @@ const navigate = useNavigate();
             <CardDescription>Choose a social provider to login.</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4">
+            {error && <p className="text-sm text-destructive text-balance">{error}</p>}
             <Button
               variant="default"
               className="w-full"

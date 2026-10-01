@@ -137,8 +137,13 @@ const flowQuery = ({ location: name, ucard_number }: z.infer<typeof Params>) =>
         PUBLISHER.publish(recvKey, { ...receive, ...commonData, type } as Receive);
         await receiveTx.next(); // send it
         try {
+          const { value } = await fn.next();
+          if (value && "error" in value) {
+            // a recoverable step error (StepRetry), the stream is still open for another receive
+            return { data: undefined, error: value.error as ErrorMap[StepT] };
+          }
           return {
-            data: (await fn.next()).value,
+            data: value,
             error: undefined,
           } as Extract<ReceiveReturn<StepT>, { error: undefined }>;
         } catch (error) {
@@ -212,7 +217,8 @@ export const Route = createFileRoute("/_authenticated/_reponly/sign-in/$location
       !receive ||
       !user || // everything is still pending
       LOADER_STEPS.has(currentStep) || // don't show the initialising state
-      transmit === undefined // don't show until the data is ready
+      transmit === undefined || // don't show until the data is ready
+      transmit.type !== currentStep // stale data from another step (e.g. after going back)
     ) {
       return (
         <>
