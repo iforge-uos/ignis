@@ -35,7 +35,11 @@ function createWebSocketClient(): RouterClient<typeof router> {
     websocket: websocketInstance as any,
     customJsonSerializers: serialisers,
     interceptors: [
-      onError((error) => {
+      onError((error, { signal }) => {
+        // TanStack Query aborts the signal when a query is cancelled (unmount, key change, live query restart), not a real failure
+        if (signal?.aborted || (error instanceof DOMException && error.name === "AbortError")) {
+          return;
+        }
         console.error(error);
         if (error?.message && error.message.trim().length > 0) {
           toast.error(error.message);
