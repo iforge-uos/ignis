@@ -7,4 +7,5 @@ until curl -sfk https://localhost:10705/server/status/ready >/dev/null; do sleep
 gel instance link ignis --host localhost --port 10705 --user admin --branch main \
   --trust-tls-cert --non-interactive --overwrite
 gel project init --link --server-instance ignis --non-interactive
+sh .devcontainer/seed.sh
 bun install

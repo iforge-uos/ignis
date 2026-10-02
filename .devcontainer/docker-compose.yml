@@ -12,6 +12,8 @@ services:
     environment:
       # Default instance for `gel` CLI commands; the generators use `-I ignis` explicitly
       GEL_INSTANCE: ignis
+      # Marks the devcontainer; seed.sh refuses to run without it
+      IGNIS_DEVCONTAINER: "1"
       # Optional: a 1Password service account token from the host, so `op run` works without `op signin`
       OP_SERVICE_ACCOUNT_TOKEN: ${OP_SERVICE_ACCOUNT_TOKEN:-}
       # Published ports arrive on the container's interface, not its loopback (see apps/forge/vite.config.ts)

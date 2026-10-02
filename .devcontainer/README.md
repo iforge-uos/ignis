@@ -27,6 +27,16 @@ Gel and Valkey share the workspace container's network, so the `localhost` addre
 the `admin` user is accepted with any password. Valkey has no password; ioredis warns that one was
 supplied and carries on.
 
+## Seed data
+
+`post-create.sh` runs `seed.sh` after the migrations: the roles, a team per `team::Name` (the only names
+the frontend accepts), both locations (with prod's ids), the agreements and reasons the kiosk sign-in
+flow looks up, and the real tools from `packages/db/queries/insertTools.edgeql` with a placeholder user
+and rep training for each training they require. It's the minimum to run the app; everything but the
+tools is made up, so edit `seed.sh` to change it. It skips a database that already has locations, and
+can't touch a real one: it needs the devcontainer's `IGNIS_DEVCONTAINER` marker and a Gel server that
+accepts a made-up password, and writes in a transaction that first checks there are no locations.
+
 ## Google sign-in
 
 The container's Gel starts with its auth extension unconfigured. Once 1Password is signed in, run
@@ -39,6 +49,23 @@ It sets a signing key, allows redirects back to `http://localhost:3000` (and `12
 the Google provider using the client ID and secret from `apps/forge/.env.dev`. The config lives in the
 `gel_data` volume, so it only needs rerunning if that volume is removed. Each run sets a new signing key,
 which signs everyone out. Google redirects to Gel at `http://localhost:10705/db/main/ext/auth/callback`.
+
+## Making yourself an admin
+
+Sign-up normally creates your user from LDAP, which isn't reachable from here. Instead, create the user
+directly (what the kiosk does, with the details typed in):
+
+```sh
+sh .devcontainer/create-admin-user.sh
+```
+
+It creates you as a rep (`users::Rep`, in one of the seeded teams) with the `User`, `Rep` and `Admin`
+roles and the user and rep agreements signed, creating the roles if needed (`Admin` gets the id of
+`ADMIN_ROLE` in `apps/forge/.env.dev`). For an existing rep it just adds the roles. An existing plain
+user is recreated as a rep, keeping their identity, details and roles, after you confirm; it refuses if
+they have training, sign-ins or other data attached. Then sign in with Google: sign-in finds the user by
+email and links your Google account. If it's the first time this database has seen your Google account,
+that attempt goes down the sign-up path and fails with "Cannot get user info"; sign in again.
 
 ## Ports
 
