@@ -78,6 +78,8 @@ const config = defineConfig({
       org: "iforge-uos",
       project: "forge",
       authToken: process.env.SENTRY_AUTH_TOKEN,
+      // Usage data about the plugin itself, sent to Sentry's own project; source map uploads are unaffected
+      telemetry: false,
     }),
     visualizer({
       open: true,
