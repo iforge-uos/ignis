@@ -1,42 +1,51 @@
 services:
-  gel:
-    image: geldata/gel:7.0-rc.3
-    container_name: ignis_gel
-    ports:
-      - "5656:5656"
+  workspace:
+    build:
+      context: .
+      dockerfile: Dockerfile
     volumes:
-      - "../packages/db:/dbschema"
-      - "./volumes/gel/data:/var/lib/gel"
-      - "../config/docker/ignis_cert.pem:/ignis_cert.pem"
-      - "../config/docker/ignis_key.pem:/ignis_key.pem"
-    restart: unless-stopped
-    env_file:
-      - ../config/docker/.gel.env
+      - "..:/workspaces/ignis:cached"
+      # Read the Gel server's JWS key for the admin UI (GEL_JWS_KEY_FILE)
+      - "gel_data:/gel-data:ro"
+      # Keeps `op account add` across container rebuilds
+      - "op_config:/root/.config/op"
+    environment:
+      # Default instance for `gel` CLI commands; the generators use `-I ignis` explicitly
+      GEL_INSTANCE: ignis
+      # Optional: a 1Password service account token from the host, so `op run` works without `op signin`
+      OP_SERVICE_ACCOUNT_TOKEN: ${OP_SERVICE_ACCOUNT_TOKEN:-}
+      # Published ports arrive on the container's interface, not its loopback (see apps/forge/vite.config.ts)
+      DEV_HOST: 0.0.0.0
+    # Published by Docker rather than VS Code, so they also work when started with the devcontainers CLI.
+    # Host loopback only; gel and valkey share this network namespace, so Gel's port lives here too
+    ports:
+      - "127.0.0.1:3000:3000" # forge
+      - "127.0.0.1:3001:3001" # forge websocket
+      - "127.0.0.1:4000:4000" # mine
+      - "127.0.0.1:10705:10705" # gel (admin UI at /ui)
+    command: sleep infinity
 
-  op-connect-api:
-    image: 1password/connect-api:latest
-    ports:
-      - "8080:8080"
+  # gel and valkey share the workspace's network namespace, so the localhost addresses in
+  # apps/forge/.env.dev reach them unchanged, and Gel can reach forge's webhook on localhost:3000
+  gel:
+    image: geldata/gel:nightly_8-dev9812_cv202511030000
+    network_mode: service:workspace
+    depends_on:
+      - workspace
+    environment:
+      # Local dev only: no password, self-signed TLS
+      GEL_SERVER_SECURITY: insecure_dev_mode
+      GEL_SERVER_ADMIN_UI: enabled
+      GEL_SERVER_PORT: 10705
     volumes:
-      - "../config/docker/1password-credentials.json:/home/opuser/.op/1password-credentials.json"
-      - "1p_data:/home/opuser/.op/data"
-  op-connect-sync:
-    image: 1password/connect-sync:latest
-    volumes:
-      - "../config/docker/1password-credentials.json:/home/opuser/.op/1password-credentials.json"
-      - "1p_data:/home/opuser/.op/data"
+      - "gel_data:/var/lib/gel/data"
 
   valkey:
-    image: valkey/valkey:latest
-    container_name: ignis-keyval
-    restart: unless-stopped
-    entrypoint: "valkey-server /usr/local/etc/valkey/valkey.conf"
-    ports:
-      - "6379:6379"
-    volumes:
-      - ../config/docker/valkey.conf:/usr/local/etc/valkey/valkey.conf
+    image: valkey/valkey:8
+    network_mode: service:workspace
+    depends_on:
+      - workspace
 
 volumes:
-  db_data:
-  valkey_data:
-  1p_data:
+  gel_data:
+  op_config:

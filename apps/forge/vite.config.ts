@@ -28,6 +28,10 @@ const config = defineConfig({
   ssr: {
     external: ["bun"],
   },
+  server: {
+    // The devcontainer sets 0.0.0.0 so Docker's published port can reach the dev server
+    host: process.env.DEV_HOST,
+  },
   oxc: {
     target: "es2024",
   },

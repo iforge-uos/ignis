@@ -1,22 +1,19 @@
 {
   "name": "Ignis",
+  "dockerComposeFile": ["./docker-compose.yml"],
+  "service": "workspace",
+  "workspaceFolder": "/workspaces/ignis",
+  "postCreateCommand": "sh .devcontainer/post-create.sh",
+  // Ports are published by docker-compose.yml, so VS Code mustn't forward them as well
   "portsAttributes": {
-    "3000": {
-      "label": "forge",
-      "onAutoForward": "openBrowser",
-      "requireLocalPort": true
-    },
-    "4000": {
-      "label": "mine",
-      "onAutoForward": "silent",
-      "requireLocalPort": true
-    }
+    "3000": { "label": "forge", "onAutoForward": "ignore" },
+    "3001": { "label": "forge websocket", "onAutoForward": "ignore" },
+    "4000": { "label": "mine", "onAutoForward": "ignore" },
+    "10705": { "label": "gel", "onAutoForward": "ignore" }
   },
-  "dockerComposeFile": [
-    "./docker-compose.yml"
-    ],
-  "mounts": [
-    "source=${localWorkspaceFolderBasename}-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
-    "source=${localWorkspaceFolder} ,target=/code,type=bind,consistency=cached"
-  ]
+  "customizations": {
+    "vscode": {
+      "extensions": ["biomejs.biome", "geldata.edgedb"]
+    }
+  }
 }
