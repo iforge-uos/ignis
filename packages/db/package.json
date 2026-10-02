@@ -7,7 +7,7 @@
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "@faker-js/faker": "^10.2.0",
-    "@gel/generate": "0.6.2",
+    "@gel/generate": "0.7.1",
     "@js-temporal/polyfill": "^0.5.1",
     "gel": "^2.2.0",
     "gel-zod": "github:iforge-uos/edgedb-zod#73b2a90af1e62c631b4d1f2af18d7a49e652026b",

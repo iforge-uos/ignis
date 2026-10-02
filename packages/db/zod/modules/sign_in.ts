@@ -101,12 +101,20 @@ export const CreateQueuePlaceSchema = z.
   object({ // default::CreatedAt
     created_at: zt.zonedDateTime().optional(), // std::datetime
   })
+  .extend({ // default::Listenable
+  })
+  .extend({ // default::_BaseListenable
+  })
   .extend({ // sign_in::QueuePlace
     notified_at: zt.zonedDateTime().nullable(), // std::datetime
   });
 
 export const UpdateQueuePlaceSchema = z.
   object({ // default::CreatedAt
+  })
+  .extend({ // default::Listenable
+  })
+  .extend({ // default::_BaseListenable
   })
   .extend({ // sign_in::QueuePlace
     notified_at: zt.zonedDateTime().nullable(), // std::datetime
