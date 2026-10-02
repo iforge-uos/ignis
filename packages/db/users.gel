@@ -140,16 +140,20 @@ module users {
         TRAINING_ISSUE,
     >;
 
-    function send_infraction(body: json) -> net::http::ScheduledRequest {
+    # No-op while INFRACTIONS_WEBHOOK_URL is unset. The webhook is currently disabled; set the
+    # global to re-enable it.
+    function send_infraction(body: json) -> optional net::http::ScheduledRequest {
         using (
             select net::http::schedule_request(
-                assert_exists(global default::INFRACTIONS_WEBHOOK_URL, message := "INFRACTIONS_WEBHOOK_URL is not set"),
+                assert_exists(global default::INFRACTIONS_WEBHOOK_URL),
                 method := net::http::Method.POST,
                 headers := [
                     ('Content-Type', 'application/json'),
                 ],
                 body := to_bytes(body)
             )
+            if exists global default::INFRACTIONS_WEBHOOK_URL
+            else <net::http::ScheduledRequest>{}
         )
     }
 
@@ -245,7 +249,6 @@ module users {
     }
 
     scalar type Platform extending enum<
-        DISCORD,
         GITHUB,
     >;
 
