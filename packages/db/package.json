@@ -16,8 +16,8 @@
     "zod-temporal": "^1.1.0"
   },
   "scripts": {
-    "dev": "gel watch --migrate",
-    "test": "gel branch switch test -ce && bun test  --concurrent --max-concurrency --timeout 10000 --randomize && gel branch switch main",
+    "dev": "cd ../.. && gel watch --migrate",
+    "test": "gel branch create test --empty; gel migrate --branch test && bun test --concurrent --timeout 10000 --randomize",
     "interfaces": "bunx @gel/generate interfaces -I ignis",
     "edgeql": "bunx @gel/generate edgeql-js --future --target=ts -I ignis",
     "queries": "bunx @gel/generate queries --future --target=ts -I ignis",
