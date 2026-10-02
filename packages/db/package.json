@@ -21,8 +21,8 @@
     "interfaces": "bunx @gel/generate interfaces -I ignis",
     "edgeql": "bunx @gel/generate edgeql-js --future --target=ts -I ignis",
     "queries": "bunx @gel/generate queries --future --target=ts -I ignis",
-    "temporal": "uv run -p 3.14 update_temporal.py",
+    "patch-edgeql": "uv run -p 3.14 patch_edgeql_js.py",
     "zod": "bunx gel-zod --target=ts",
-    "regen": "bun run --parallel interfaces edgeql queries zod && bun run temporal"
+    "regen": "bun run --parallel interfaces edgeql queries zod && bun run patch-edgeql"
   }
 }
