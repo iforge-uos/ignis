@@ -28,6 +28,10 @@ const config = defineConfig({
   ssr: {
     external: ["bun"],
   },
+  server: {
+    // The devcontainer sets 0.0.0.0 so Docker's published port can reach the dev server
+    host: process.env.DEV_HOST,
+  },
   oxc: {
     target: "es2024",
   },
@@ -74,6 +78,8 @@ const config = defineConfig({
       org: "iforge-uos",
       project: "forge",
       authToken: process.env.SENTRY_AUTH_TOKEN,
+      // Usage data about the plugin itself, sent to Sentry's own project; source map uploads are unaffected
+      telemetry: false,
     }),
     visualizer({
       open: true,

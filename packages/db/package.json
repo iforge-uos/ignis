@@ -7,7 +7,7 @@
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "@faker-js/faker": "^10.2.0",
-    "@gel/generate": "0.6.2",
+    "@gel/generate": "0.7.1",
     "@js-temporal/polyfill": "^0.5.1",
     "gel": "^2.2.0",
     "gel-zod": "github:iforge-uos/edgedb-zod#73b2a90af1e62c631b4d1f2af18d7a49e652026b",
@@ -16,13 +16,13 @@
     "zod-temporal": "^1.1.0"
   },
   "scripts": {
-    "dev": "gel watch --migrate",
-    "test": "gel branch switch test -ce && bun test  --concurrent --max-concurrency --timeout 10000 --randomize && gel branch switch main",
+    "dev": "cd ../.. && gel watch --migrate",
+    "test": "gel branch create test --empty; gel migrate --branch test && bun test --concurrent --timeout 10000 --randomize",
     "interfaces": "bunx @gel/generate interfaces -I ignis",
     "edgeql": "bunx @gel/generate edgeql-js --future --target=ts -I ignis",
     "queries": "bunx @gel/generate queries --future --target=ts -I ignis",
-    "temporal": "uv run -p 3.14 update_temporal.py",
+    "patch-edgeql": "uv run -p 3.14 patch_edgeql_js.py",
     "zod": "bunx gel-zod --target=ts",
-    "regen": "bun run --parallel interfaces edgeql queries zod && bun run temporal"
+    "regen": "bun run --parallel interfaces edgeql queries zod && bun run patch-edgeql"
   }
 }

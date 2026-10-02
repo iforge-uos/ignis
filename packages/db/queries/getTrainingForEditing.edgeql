@@ -4,8 +4,8 @@ select training {
     sections: {
         *,
         type_name := .__type__.name,
-        [is training::Page].name,
-        [is training::Page].duration,
+        [is training::TrainingPage].name,
+        [is training::TrainingPage].duration,
         [is training::Question].answers: {
             id,
             content,

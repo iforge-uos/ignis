@@ -30,7 +30,7 @@ module shop {
         `module`: `Module`;
     }
 
-    scalar type DimensionType extending json;  # helps to add type info to the Skew.dimensions field (update_temporal)
+    scalar type DimensionType extending json;  # helps to add type info to the Skew.dimensions field (patch_edgeql_js.py)
 
     type Skew extending default::Auditable {
         required till_id: int16 {

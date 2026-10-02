@@ -113,6 +113,8 @@ export const getRouter = () => {
       dsn: "https://893631a88ccccc18a9b65d8b5c3e1395@o4507082090414080.ingest.de.sentry.io/4508127275122768",
       // dsn: config.client.sentryDsn,
       tunnel: "/api/sentry-tunnel",
+      // Don't report errors from local dev
+      enabled: !import.meta.env.DEV,
       environment: import.meta.env.DEV ? "development" : "production",
       // integrations: [Sentry.tanstackRouterBrowserTracingIntegration(router), Sentry.replayIntegration()],
       tracesSampleRate: import.meta.env.DEV ? 1.0 : 0.1,

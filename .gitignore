@@ -45,3 +45,5 @@ config/**/*.conf
 !config/**/*.json.tpl
 !config/**/*.pem.tpl
 !config/**/*.conf.tpl
+
+__pycache__
