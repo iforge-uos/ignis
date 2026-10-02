@@ -34,12 +34,6 @@ export default createEnv({
         .filter(Boolean),
     ),
 
-    // Discord OAuth Configuration
-    DISCORD_TOKEN: z.string().min(1),
-    DISCORD_CLIENT_ID: z.string().min(1),
-    DISCORD_CLIENT_SECRET: z.string().min(1),
-    DISCORD_CLIENT_CALLBACK_URL: z.url(),
-
     // GitHub
     GITHUB_TOKEN: z.string().min(1),
 
@@ -88,7 +82,7 @@ export default createEnv({
     SENTRY_AUTH_TOKEN: z.string().min(1),
 
     // Database Configuration
-    INFRACTIONS_WEBHOOK_URL: z.url(),
+    INFRACTIONS_WEBHOOK_URL: z.url().optional(),
 
     // Pharos
     PHAROS_URL: z.url(),
@@ -121,12 +115,6 @@ export default createEnv({
             email: env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
             privateKey: env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY,
           },
-        },
-        discord: {
-          token: env.DISCORD_TOKEN,
-          clientId: env.DISCORD_CLIENT_ID,
-          clientSecret: env.DISCORD_CLIENT_SECRET,
-          callbackUrl: env.DISCORD_CLIENT_CALLBACK_URL,
         },
         github: {
           token: env.GITHUB_TOKEN,
@@ -183,8 +171,9 @@ export default createEnv({
         user: env.GEL_USERNAME,
         password: env.GEL_PASSWORD,
         globals: {
-          INFRACTIONS_WEBHOOK_URL: env.INFRACTIONS_WEBHOOK_URL,
           PUB_SUB_SECRET: env.JWT_SECRET,
+          // Omitted entirely when unset so the client doesn't set the global to undefined.
+          ...(env.INFRACTIONS_WEBHOOK_URL ? { INFRACTIONS_WEBHOOK_URL: env.INFRACTIONS_WEBHOOK_URL } : {}),
         },
       },
       pharos: {

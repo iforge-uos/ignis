@@ -16,7 +16,7 @@ export const INFRACTION_TYPES = ["WARNING", "TEMP_BAN", "PERM_BAN", "RESTRICTION
 
 export const NOTIFICATION_TYPES = ["ADMIN", "ADVERT", "ANNOUNCEMENT", "EVENT", "HEALTH_AND_SAFETY", "INFRACTION", "PRINTING", "QUEUE_SLOT_ACTIVE", "RECRUITMENT", "REFERRAL", "REMINDER", "TRAINING"] satisfies typeof e.notification.Type.__values__;
 export const NOTIFICATION_STATUS_OPTIONS = ["DRAFT", "REVIEW", "QUEUED", "SENDING", "SENT", "ERRORED"] satisfies typeof e.notification.Status.__values__;
-export const DELIVERY_METHOD_OPTIONS = ["BANNER", "EMAIL", "TRAY", "POPUP", "DISCORD"] satisfies typeof e.notification.DeliveryMethod.__values__;
+export const DELIVERY_METHOD_OPTIONS = ["BANNER", "EMAIL", "TRAY", "POPUP"] satisfies typeof e.notification.DeliveryMethod.__values__;
 
 export const USER_EMAIL_DOMAIN = "sheffield.ac.uk";
 

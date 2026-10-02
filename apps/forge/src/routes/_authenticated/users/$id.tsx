@@ -13,7 +13,6 @@ import { Activity, Calendar, Clock, Flame, ListStart, School, TrendingUp, Users 
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import z from "zod";
-import DiscordIcon from "@/../public/icons/discord.svg?react";
 import GitHubIcon from "@/../public/icons/github.svg?react";
 import { UserAvatar } from "@/components/avatar";
 import Title from "@/components/title";
@@ -223,23 +222,10 @@ function Component() {
                       </TooltipContent>
                     </Tooltip>
                     {user.integrations.map((integration) => (
-                      <a
-                        key={integration.platform}
-                        href={
-                          integration.platform === "DISCORD"
-                            ? `https://discord.com/users/${integration.external_id}`
-                            : integration.data.html_url
-                        }
-                      >
+                      <a key={integration.platform} href={integration.data.html_url}>
                         <Button variant="secondary" className="h-fit py-1">
-                          {integration.platform === "GITHUB" ? (
-                            <GitHubIcon className="!size-4 -ml-2 mr-1 dark:fill-white" />
-                          ) : (
-                            <DiscordIcon className="!size-4 -ml-2 mr-1 dark:fill-white" />
-                          )}
-                          {integration.platform === "DISCORD"
-                            ? `Discord: ${integration.data.global_name}`
-                            : `GitHub: ${integration.data.login}`}
+                          <GitHubIcon className="!size-4 -ml-2 mr-1 dark:fill-white" />
+                          {`GitHub: ${integration.data.login}`}
                         </Button>
                       </a>
                     ))}

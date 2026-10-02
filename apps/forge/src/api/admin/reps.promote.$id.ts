@@ -43,5 +43,4 @@ export const promote = admin
           })),
         )
         .run(db),
-    // TODO RPC into discord bot
   );

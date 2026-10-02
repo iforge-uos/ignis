@@ -16,7 +16,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { AlertTriangle, Trash2, Unlink } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
-import DiscordIcon from "@/../public/icons/discord.svg?react";
 import GitHubIcon from "@/../public/icons/github.svg?react";
 import Title from "@/components/title";
 import { client, orpc } from "@/lib/orpc";
@@ -26,26 +25,15 @@ const UserSettingsPageComponent = () => {
   const integrations = Route.useLoaderData();
 
   const githubIntegration = integrations.find((i) => i.platform === "GITHUB");
-  const discordIntegration = integrations.find((i) => i.platform === "DISCORD");
 
   const handleConnectGitHub = useCallback(() => {
     // Redirect to OAuth flow for GitHub
     window.location.href = `${import.meta.env.VITE_API_URL}/auth/oauth/?provider=builtin::oauth_github`;
   }, []);
 
-  const handleConnectDiscord = useCallback(() => {
-    // Redirect to OAuth flow for Discord
-    window.location.href = `${import.meta.env.VITE_API_URL}/auth/oauth/?provider=builtin::oauth_discord`;
-  }, []);
-
   const handleUnlinkGitHub = useCallback(() => {
     // TODO: Implement unlink functionality
     console.log("Unlinking GitHub account");
-  }, []);
-
-  const handleUnlinkDiscord = useCallback(() => {
-    // TODO: Implement unlink functionality
-    console.log("Unlinking Discord account");
   }, []);
 
   const handleDeleteAccount = () => {
@@ -151,68 +139,6 @@ const UserSettingsPageComponent = () => {
                   )}
                 </CardContent>
               </Card>
-
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-2">
-                    <DiscordIcon className="h-5 w-5 fill-current" />
-                    Discord Integration
-                  </CardTitle>
-                  <CardDescription>
-                    Connect your Discord account for notifications and community features
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  {discordIntegration ? (
-                    <div className="bg-muted/50 rounded-lg p-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <Avatar className="h-10 w-10">
-                            <AvatarImage
-                              src={`https://cdn.discordapp.com/avatars/${discordIntegration.external_id}/${discordIntegration.data.avatar}.png`}
-                              alt={`${discordIntegration.data?.global_name || discordIntegration.data?.username}'s Discord avatar`}
-                            />
-                            <AvatarFallback>
-                              <div className="h-10 w-10 bg-[#5865F2] rounded-full flex items-center justify-center">
-                                <DiscordIcon className="h-5 w-5 fill-white" />
-                              </div>
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <a
-                              href={`https://discord.com/users/${discordIntegration.external_id}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="font-medium text-lg link-underline"
-                            >
-                              {discordIntegration.data?.global_name || discordIntegration.data?.username}
-                            </a>
-                            <p className="text-xs text-muted-foreground">Connected to Discord</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Button variant="destructive" size="sm" onClick={handleUnlinkDiscord}>
-                            <Unlink className="size-4 mr-1" />
-                            Unlink
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-1">
-                        <h4 className="text-sm font-medium">Discord Connection</h4>
-                        <p className="text-sm text-muted-foreground">
-                          Connect your Discord account for real-time updates
-                        </p>
-                      </div>
-                      <Button onClick={handleConnectDiscord} size="sm">
-                        Connect Discord
-                      </Button>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
             </div>
 
             <Card className="border-destructive-foreground/20">
@@ -286,9 +212,7 @@ const UserSettingsPageComponent = () => {
 };
 
 export const Route = createFileRoute("/_authenticated/user/settings")({
-  loader: async ({ context }) => await ensureQueryData(
-    context.queryClient,
-    orpc.users.integrations.queryOptions({ input: context.user }),
-  ),
+  loader: async ({ context }) =>
+    await ensureQueryData(context.queryClient, orpc.users.integrations.queryOptions({ input: context.user })),
   component: UserSettingsPageComponent,
 });

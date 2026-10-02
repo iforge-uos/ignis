@@ -35,13 +35,6 @@ jobs:
 
           echo "Deploying $DEPLOY_REF ($(git rev-parse --short HEAD))"
 
-      - name: Notify Discord Maintenance Start
-        uses: tsickert/discord-webhook@v6.0.0
-        with:
-          webhook-url: ${{ secrets.DISCORD_CICD_WEBHOOK_NOTI_URL}}
-          embed-title: "Ignis Entering Maintenance Mode"
-          embed-color: 15548997
-          embed-description: "Ignis is going down for maintenance and will be back up shortly"
       - name: Throw up the maintenance page
         run: touch /home/iforge/ignis-config/file_flags/maintenance_mode/enabled
 
@@ -112,11 +105,3 @@ jobs:
 
       - name: Remove maintenance page
         run: rm /home/iforge/ignis-config/file_flags/maintenance_mode/enabled
-
-      - name: Notify Discord Maintenance End
-        uses: tsickert/discord-webhook@v6.0.0
-        with:
-          webhook-url: ${{ secrets.DISCORD_CICD_WEBHOOK_NOTI_URL}}
-          embed-title: "Ignis Exiting Maintenance Mode"
-          embed-color: 5763719
-          embed-description: "Ignis is back online!"
