@@ -1,20 +1,51 @@
 module printing {
-    scalar type Type extending enum<
+    scalar type Material extending enum<
         PLA,
         TPU,
         PETG,
-        RESIN,
     >;
 
-    abstract type PrinterStatus;  # discriminated union
+    scalar type QueueType extending enum<
+        PLA,
+        PETG,
+        TPU,
+        `MULTI`
+    >;
+
+    scalar type Priority extending enum<
+        LOW,
+        MEDIUM,
+        HIGH,
+    >;
+
+    scalar type Manafacturers extending enum<
+        PRUSA,
+        BAMBU,
+    >;
+
+    scalar type Drivers extending enum<
+        OCTOPRINT,
+        PRUSALINK,
+        BAMBU,
+    >;
+
+    abstract type PrinterStatus;  # Discriminated union
     module printer_status {
-        type Disabled extending printing::PrinterStatus;
+        type Disabled extending printing::PrinterStatus {
+            end_time: datetime;
+        }
 
         type Disconnected extending printing::PrinterStatus;
 
         type Idle extending printing::PrinterStatus;
 
+        type Paused extending printing::PrinterStatus;
+
         type Printing extending printing::PrinterStatus {
+            required print: printing::Print;
+        }
+
+        type Finished extending printing::PrinterStatus {
             required print: printing::Print;
         }
 
@@ -80,6 +111,8 @@ module printing {
             SMOOTH_RODS,
             ENCLOSURE_PANELS,
             FILAMENT_FEEDING,
+
+            OTHER,
         >;
 
         type Failed extending printing::PrinterStatus {
@@ -88,46 +121,109 @@ module printing {
         }
     }
 
-
     type Printer {
-        required name: str;
-        required remote_ip: str;
+        required name: str {
+            constraint exclusive;
+        }
+        required ip: str;
+        required keys: array<str>;
+        required manufacturer: str;
+        required driver: Drivers {
+            default := Drivers.OCTOPRINT;
+        }
+        required model: str;
+        required has_camera: bool;
         required status: PrinterStatus;
-        required multi type: Type;  # multi as printers print exotics (TPU and PETG and this is the easiest way to represent this)
+        required filament: array<tuple<
+            material: Material,
+            colour: str,
+            nozzle_temp_min: int16,
+            nozzle_temp_max: int16,
+            bed_temp: int16,
+        >>;
         required location: sign_in::Location;
+        required total_print_mass: float32; #2dp like print job
+        required total_print_time: duration;
+        required old: bool {
+            default := false;
+        }
         multi prints := (
-            select Print filter __source__ in .`on`.printer
-        )
+            select Print filter __source__ in .history.printer
+        );
+        multi downtimes := .<printer[is Downtime];
+        required queue := (
+            <QueueType>(
+                "MULTI" if len(.filament) > 1
+                else (<str>(array_get(.filament, 0).material)) ?? "PLA"
+            )
+        );
     }
 
-    function cdn_url(id: uuid) -> str {
+    type Downtime extending default::CreatedAt {
+        required printer: Printer {
+            on target delete delete source;
+        }
+        required start_time: datetime;
+        end_time: datetime;
+        required has_started := datetime_of_statement() >= .start_time;
+        required has_finished := (datetime_of_statement() >= .end_time) ?? false;
+        reason: str;
+
+        constraint expression on (.end_time > .start_time);
+    }
+
+    function cdn_url(id: uuid, path: str) -> str {
         using (
             with
                 root := assert_exists(global default::CDN_URL, message := "CDN_URL is not set"),
-            select "\(root)/prints/\(id)/"
+            select "\(root)/\(path)/\(id)"
         )
     }
 
     type Print {
         required name: str;
-        required type: Type;
+        required filament: array<tuple<
+            material: Material,
+            colour: str,
+            nozzle_temp_min: int16,
+            nozzle_temp_max: int16,
+            bed_temp: int16,
+        >>;
         required duration: duration;
         required mass: float32;  # only 2dps
         required author: users::User;
         required approved_by: users::Rep;
-        multi `on`: PrintHistory;
-        required gcode_path := "\(cdn_url(.id))/.gcode";
-        required stl_path :=  "\(cdn_url(.id))/.stl";
+        required priority: Priority;
+        reason: str;
+        multi history: PrintHistory;
+        required gcode_path := "\(cdn_url(.id,'prints')).gcode";
+        required threemf_path :=  "\(cdn_url(.id,'prints')).3mf";
     }
 
     type PrintHistory extending default::CreatedAt {
-        required printer: Printer;
+        overloaded created_at {
+            constraint exclusive;
+        }
+        required queue := (
+            with print := assert_exists(assert_single(.<history[is Print])),
+            select <QueueType>(
+                "MULTI" if len(print.filament) > 1
+                else (<str>(array_get(print.filament, 0).material)) ?? "PLA"
+            )
+        );
+        printer: Printer; # Not required as it may be on the general queue for any colour, define when sent to printer
         required status: PrintStatus;
+        required attempts: int16 {
+            default := 0;
+            constraint min_value(0);
+        }
+        required has_timelapse: bool;
+        timelapse_path := "\(cdn_url(.id,'timelapse')).mpg";
 
         index on (.printer);
 
         trigger log_insert after insert for each do (
-            with print := __new__.<`on`[is Print],
+            with print := __new__.<history[is Print],
             insert PrintAuditEntry {
                 printer := __new__.printer,
                 status := __new__.status,
@@ -136,7 +232,7 @@ module printing {
         );
 
         trigger log_update after update for each do (
-            with print := __new__.<`on`[is Print],
+            with print := __new__.<history[is Print],
             insert PrintAuditEntry {
                 printer := __new__.printer,
                 status := __new__.status,
@@ -145,9 +241,11 @@ module printing {
         );
     }
 
-    abstract type PrintStatus;  # another discriminated union
+    abstract type PrintStatus;  # Another discriminated union
     module print_status {
         type Queued extending printing::PrintStatus;
+
+        type UnderReview extending printing::PrintStatus;
 
         type Printing extending printing::PrintStatus {
             required print: printing::Print;
@@ -188,6 +286,7 @@ module printing {
             FILAMENT_FEEDING,
             FILAMENT_RAN_OUT,
             NOT_A_CLUE,
+            OTHER,
         >;
 
         type Failed extending printing::PrintStatus {
@@ -197,13 +296,14 @@ module printing {
     }
 
     abstract type AuditEntry extending default::CreatedAt {
-        required printer: Printer;
+        printer: Printer;
         required status: PrinterStatus | PrintStatus;
 
-        index on ((.printer, .status))
+        index on ((.printer, .status));
     }
 
     type PrinterAuditEntry extending AuditEntry {
+        overloaded required printer: Printer;
         overloaded required status: PrinterStatus;
     }
 

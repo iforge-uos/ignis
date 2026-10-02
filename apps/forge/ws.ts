@@ -4,6 +4,7 @@ import { getCookie } from "@orpc/server/helpers";
 import { Serve } from "bun";
 
 // use relative for this as path aliases don't work at this stage
+import "./src/polyfill";
 import { DEFAULT_AUTH_COOKIE } from "./src/lib/constants";
 import db from "./src/db";
 import serialisers from "./src/lib/serialisers";
@@ -41,6 +42,7 @@ export default {
   },
 
   websocket: {
+    maxPayloadLength: 256 * 1024 * 1024,
     open(ws) {
       // Store the auth token from handshake, we cannot get it any other way as its HttpOnly
       wsAuthTokens.set(ws, ws.data?.authToken);

@@ -3,8 +3,8 @@
 import * as $ from "../reflection";
 import * as _ from "../imports";
 import type * as _default from "./default";
-import type * as _std from "./std";
 import type * as _users from "./users";
+import type * as _std from "./std";
 import type * as _sign_in from "./sign_in";
 import type * as _training from "./training";
 export type $Type = {
@@ -18,20 +18,20 @@ export type $Type = {
 const Type: $Type = $.makeType<$Type>(_.spec, "2a1b71a4-f86c-11ee-a7c6-8fd6344eb0e6", _.syntax.literal);
 
 export type $EventλShape = $.typeutil.flatten<_default.$CreatedAtλShape & {
-  "ends_at": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne, false, false, false, false>;
-  "starts_at": $.PropertyDesc<_std.$datetime, $.Cardinality.One, false, false, false, false>;
-  "type": $.PropertyDesc<$Type, $.Cardinality.One, false, false, false, false>;
-  "description": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
-  "name": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "attendees": $.LinkDesc<_users.$User, $.Cardinality.Many, {
     "@created_at": $.PropertyDesc<_std.$datetime, $.Cardinality.One>;
   }, false, false, false, false>;
   "interested": $.LinkDesc<_users.$User, $.Cardinality.Many, {
     "@created_at": $.PropertyDesc<_std.$datetime, $.Cardinality.One>;
   }, false, false, false, false>;
+  "description": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
+  "name": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "location": $.LinkDesc<_sign_in.$Location, $.Cardinality.One, {}, false, false,  false, false>;
   "organiser": $.LinkDesc<_users.$User, $.Cardinality.AtLeastOne, {}, false, false,  false, false>;
   "required_training": $.LinkDesc<_training.$Training, $.Cardinality.AtLeastOne, {}, false, false,  false, false>;
+  "ends_at": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne, false, false, false, false>;
+  "starts_at": $.PropertyDesc<_std.$datetime, $.Cardinality.One, false, false, false, false>;
+  "type": $.PropertyDesc<$Type, $.Cardinality.One, false, false, false, false>;
 }>;
 type $Event = $.ObjectType<"event::Event", $EventλShape, null, [
   ..._default.$CreatedAt['__exclusives__'],

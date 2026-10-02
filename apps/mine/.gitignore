@@ -19,3 +19,11 @@ Thumbs.db
 !.vscode/launch.json
 !.vscode/extensions.json
 *.env
+
+# Uploaded content — keep the directories, ignore their contents
+/prints/*
+/timelapse/*
+/files/*
+!/prints/.gitkeep
+!/timelapse/.gitkeep
+!/files/.gitkeep

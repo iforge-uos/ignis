@@ -35,15 +35,16 @@ export type $FailureReason = {
   "FILAMENT_FEEDING": $.$expr_Literal<$FailureReason>;
   "FILAMENT_RAN_OUT": $.$expr_Literal<$FailureReason>;
   "NOT_A_CLUE": $.$expr_Literal<$FailureReason>;
-} & $.EnumType<"printing::print_status::FailureReason", ["NO_EXTRUSION_AT_PRINT_START", "POOR_BED_ADHESION", "UNDER_EXTRUSION", "OVER_EXTRUSION", "GAPS_IN_TOP_LAYERS", "STRINGING_AND_OOZING", "OVERHEATING", "LAYER_SHIFTING", "LAYER_SEPARATION_AND_SPLITTING", "FILAMENT_GRINDING", "EXTRUDER_CLOG", "EXTRUSION_STOPS_MID_PRINT", "WEAK_INFILL", "BLOBS_AND_ZITS", "GAPS_BETWEEN_INFILL_AND_PERIMETER", "CORNER_CURLING_AND_ROUGHNESS", "TOP_SURFACE_SCARRING", "CORNER_GAPS_IN_BOTTOM_LAYER", "LAYER_LINES_ON_SIDES", "VIBRATION_AND_RINGING", "THIN_WALL_GAPS", "SMALL_FEATURE_LOSS", "INCONSISTENT_EXTRUSION", "WARPING", "POOR_OVERHANG_QUALITY", "DIMENSIONAL_INACCURACY", "POOR_BRIDGING", "FILAMENT_FEEDING", "FILAMENT_RAN_OUT", "NOT_A_CLUE"]>;
-const FailureReason: $FailureReason = $.makeType<$FailureReason>(_.spec, "3e6f932a-28b0-11f1-8b88-adcdd366b6a9", _.syntax.literal);
+  "OTHER": $.$expr_Literal<$FailureReason>;
+} & $.EnumType<"printing::print_status::FailureReason", ["NO_EXTRUSION_AT_PRINT_START", "POOR_BED_ADHESION", "UNDER_EXTRUSION", "OVER_EXTRUSION", "GAPS_IN_TOP_LAYERS", "STRINGING_AND_OOZING", "OVERHEATING", "LAYER_SHIFTING", "LAYER_SEPARATION_AND_SPLITTING", "FILAMENT_GRINDING", "EXTRUDER_CLOG", "EXTRUSION_STOPS_MID_PRINT", "WEAK_INFILL", "BLOBS_AND_ZITS", "GAPS_BETWEEN_INFILL_AND_PERIMETER", "CORNER_CURLING_AND_ROUGHNESS", "TOP_SURFACE_SCARRING", "CORNER_GAPS_IN_BOTTOM_LAYER", "LAYER_LINES_ON_SIDES", "VIBRATION_AND_RINGING", "THIN_WALL_GAPS", "SMALL_FEATURE_LOSS", "INCONSISTENT_EXTRUSION", "WARPING", "POOR_OVERHANG_QUALITY", "DIMENSIONAL_INACCURACY", "POOR_BRIDGING", "FILAMENT_FEEDING", "FILAMENT_RAN_OUT", "NOT_A_CLUE", "OTHER"]>;
+const FailureReason: $FailureReason = $.makeType<$FailureReason>(_.spec, "d2f204c5-328b-11f1-aa42-e33fcad8b3bd", _.syntax.literal);
 
 export type $CancelledλShape = $.typeutil.flatten<_printing.$PrintStatusλShape & {
 }>;
 type $Cancelled = $.ObjectType<"printing::print_status::Cancelled", $CancelledλShape, null, [
   ..._printing.$PrintStatus['__exclusives__'],
 ], "printing::print_status::Cancelled">;
-const $Cancelled = $.makeType<$Cancelled>(_.spec, "62d84680-28b0-11f1-a619-7fe119246129", _.syntax.literal);
+const $Cancelled = $.makeType<$Cancelled>(_.spec, "14fa594f-328c-11f1-88fd-f9ea550fb1ab", _.syntax.literal);
 
 const Cancelled: $.$expr_PathNode<$.TypeSet<$Cancelled, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Cancelled, $.Cardinality.Many), null);
 
@@ -52,7 +53,7 @@ export type $CompleteλShape = $.typeutil.flatten<_printing.$PrintStatusλShape 
 type $Complete = $.ObjectType<"printing::print_status::Complete", $CompleteλShape, null, [
   ..._printing.$PrintStatus['__exclusives__'],
 ], "printing::print_status::Complete">;
-const $Complete = $.makeType<$Complete>(_.spec, "62d91f42-28b0-11f1-8eb0-cb0776f40a26", _.syntax.literal);
+const $Complete = $.makeType<$Complete>(_.spec, "14fc6c68-328c-11f1-82cc-1d7725a07357", _.syntax.literal);
 
 const Complete: $.$expr_PathNode<$.TypeSet<$Complete, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Complete, $.Cardinality.Many), null);
 
@@ -63,7 +64,7 @@ export type $FailedλShape = $.typeutil.flatten<_printing.$PrintStatusλShape & 
 type $Failed = $.ObjectType<"printing::print_status::Failed", $FailedλShape, null, [
   ..._printing.$PrintStatus['__exclusives__'],
 ], "printing::print_status::Failed">;
-const $Failed = $.makeType<$Failed>(_.spec, "62d9f9b2-28b0-11f1-892d-9db11294185b", _.syntax.literal);
+const $Failed = $.makeType<$Failed>(_.spec, "14fe416b-328c-11f1-9b02-53a5d1eddca5", _.syntax.literal);
 
 const Failed: $.$expr_PathNode<$.TypeSet<$Failed, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Failed, $.Cardinality.Many), null);
 
@@ -73,7 +74,7 @@ export type $PrintingλShape = $.typeutil.flatten<_printing.$PrintStatusλShape 
 type $Printing = $.ObjectType<"printing::print_status::Printing", $PrintingλShape, null, [
   ..._printing.$PrintStatus['__exclusives__'],
 ], "printing::print_status::Printing">;
-const $Printing = $.makeType<$Printing>(_.spec, "62dafc54-28b0-11f1-bf5b-85d7938b740c", _.syntax.literal);
+const $Printing = $.makeType<$Printing>(_.spec, "15006394-328c-11f1-a1bf-2798152d9a05", _.syntax.literal);
 
 const Printing: $.$expr_PathNode<$.TypeSet<$Printing, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Printing, $.Cardinality.Many), null);
 
@@ -82,13 +83,22 @@ export type $QueuedλShape = $.typeutil.flatten<_printing.$PrintStatusλShape & 
 type $Queued = $.ObjectType<"printing::print_status::Queued", $QueuedλShape, null, [
   ..._printing.$PrintStatus['__exclusives__'],
 ], "printing::print_status::Queued">;
-const $Queued = $.makeType<$Queued>(_.spec, "62dc03ec-28b0-11f1-a53f-55177b65cfd6", _.syntax.literal);
+const $Queued = $.makeType<$Queued>(_.spec, "1502d7a3-328c-11f1-a8e9-878e96a9b511", _.syntax.literal);
 
 const Queued: $.$expr_PathNode<$.TypeSet<$Queued, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Queued, $.Cardinality.Many), null);
 
+export type $UnderReviewλShape = $.typeutil.flatten<_printing.$PrintStatusλShape & {
+}>;
+type $UnderReview = $.ObjectType<"printing::print_status::UnderReview", $UnderReviewλShape, null, [
+  ..._printing.$PrintStatus['__exclusives__'],
+], "printing::print_status::UnderReview">;
+const $UnderReview = $.makeType<$UnderReview>(_.spec, "93cd0453-640b-11f1-ae24-8f9818488e1f", _.syntax.literal);
+
+const UnderReview: $.$expr_PathNode<$.TypeSet<$UnderReview, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($UnderReview, $.Cardinality.Many), null);
 
 
-export { FailureReason, $Cancelled, Cancelled, $Complete, Complete, $Failed, Failed, $Printing, Printing, $Queued, Queued };
+
+export { FailureReason, $Cancelled, Cancelled, $Complete, Complete, $Failed, Failed, $Printing, Printing, $Queued, Queued, $UnderReview, UnderReview };
 
 type __defaultExports = {
   "FailureReason": typeof FailureReason;
@@ -96,7 +106,8 @@ type __defaultExports = {
   "Complete": typeof Complete;
   "Failed": typeof Failed;
   "Printing": typeof Printing;
-  "Queued": typeof Queued
+  "Queued": typeof Queued;
+  "UnderReview": typeof UnderReview
 };
 const __defaultExports: __defaultExports = {
   "FailureReason": FailureReason,
@@ -104,6 +115,7 @@ const __defaultExports: __defaultExports = {
   "Complete": Complete,
   "Failed": Failed,
   "Printing": Printing,
-  "Queued": Queued
+  "Queued": Queued,
+  "UnderReview": UnderReview
 };
 export default __defaultExports;

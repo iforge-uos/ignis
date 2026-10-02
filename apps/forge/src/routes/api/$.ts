@@ -19,6 +19,7 @@ import { teamsRouter } from "@/api/teams";
 import { toolsRouter } from "@/api/tools";
 import { trainingRouter } from "@/api/training";
 import { usersRouter } from "@/api/users";
+import { printRouter } from "@/api/print";
 import serialisers from "@/lib/serialisers";
 import { withSession } from "@/lib/utils/auth";
 import { pub } from "@/orpc";
@@ -37,6 +38,7 @@ export const router = pub.router({
   tools: toolsRouter,
   training: trainingRouter,
   users: usersRouter,
+  print: printRouter,
 });
 
 export type Router = typeof router;

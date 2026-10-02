@@ -22,7 +22,7 @@
     "edgeql": "bunx @gel/generate edgeql-js --future --target=ts -I ignis",
     "queries": "bunx @gel/generate queries --future --target=ts -I ignis",
     "temporal": "uv run -p 3.14 update_temporal.py",
-    "zod": "bunx gel-zod --target=ts",
+    "zod": "GEL_INSTANCE=ignis bunx gel-zod --target=ts",
     "regen": "bun run --parallel interfaces edgeql queries zod && bun run temporal"
   }
 }

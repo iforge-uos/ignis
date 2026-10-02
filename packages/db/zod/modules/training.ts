@@ -126,13 +126,13 @@ export const CreateTrainingSchema = z.
   .extend({ // training::Training
     in_person: z.boolean(), // std::bool
     locations: z.enum(["MAINSPACE", "HEARTSPACE", "GEORGE_PORTER"]), // training::LocationName
-    name: z.string(), // std::str
     compulsory: z.boolean().optional(), // std::bool
     description: z.string(), // std::str
     enabled: z.boolean().optional(), // std::bool
-    icon_url: z.string().nullable(), // std::str
-    training_lockout: zt.duration().nullable(), // std::duration
     expires_after: z.never().optional(), // std::cal::relative_duration
+    icon_url: z.string().nullable(), // std::str
+    name: z.string(), // std::str
+    training_lockout: zt.duration().nullable(), // std::duration
   });
 
 export const UpdateTrainingSchema = z.
@@ -144,13 +144,13 @@ export const UpdateTrainingSchema = z.
   .extend({ // training::Training
     in_person: z.boolean(), // std::bool
     locations: z.enum(["MAINSPACE", "HEARTSPACE", "GEORGE_PORTER"]), // training::LocationName
-    name: z.string(), // std::str
     compulsory: z.boolean().optional(), // std::bool
     description: z.string(), // std::str
     enabled: z.boolean().optional(), // std::bool
-    icon_url: z.string().nullable(), // std::str
-    training_lockout: zt.duration().nullable(), // std::duration
     expires_after: z.never().optional(), // std::cal::relative_duration
+    icon_url: z.string().nullable(), // std::str
+    name: z.string(), // std::str
+    training_lockout: zt.duration().nullable(), // std::duration
   });
 // #endregion
 
