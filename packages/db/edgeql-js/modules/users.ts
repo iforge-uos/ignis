@@ -23,13 +23,13 @@ export type $InfractionType = {
   "RESTRICTION": $.$expr_Literal<$InfractionType>;
   "TRAINING_ISSUE": $.$expr_Literal<$InfractionType>;
 } & $.EnumType<"users::InfractionType", ["WARNING", "TEMP_BAN", "PERM_BAN", "RESTRICTION", "TRAINING_ISSUE"]>;
-const InfractionType: $InfractionType = $.makeType<$InfractionType>(_.spec, "78cfa800-be5c-11f1-a159-793a8d01f3b9", _.syntax.literal);
+const InfractionType: $InfractionType = $.makeType<$InfractionType>(_.spec, "2a301ced-f86c-11ee-aef8-8dcd5e85a618", _.syntax.literal);
 
 export type $Platform = {
   "DISCORD": $.$expr_Literal<$Platform>;
   "GITHUB": $.$expr_Literal<$Platform>;
 } & $.EnumType<"users::Platform", ["DISCORD", "GITHUB"]>;
-const Platform: $Platform = $.makeType<$Platform>(_.spec, "78cfc164-be5c-11f1-b11c-638276ca10ec", _.syntax.literal);
+const Platform: $Platform = $.makeType<$Platform>(_.spec, "2a0664ba-f86c-11ee-8052-656b7f1c7222", _.syntax.literal);
 
 export type $RepStatus = {
   "ACTIVE": $.$expr_Literal<$RepStatus>;
@@ -38,7 +38,7 @@ export type $RepStatus = {
   "FUTURE": $.$expr_Literal<$RepStatus>;
   "REMOVED": $.$expr_Literal<$RepStatus>;
 } & $.EnumType<"users::RepStatus", ["ACTIVE", "BREAK", "ALUMNI", "FUTURE", "REMOVED"]>;
-const RepStatus: $RepStatus = $.makeType<$RepStatus>(_.spec, "78b55bb3-be5c-11f1-926f-338532a97567", _.syntax.literal);
+const RepStatus: $RepStatus = $.makeType<$RepStatus>(_.spec, "29c150a2-f86c-11ee-a02a-87f37d7ee1fb", _.syntax.literal);
 
 export type $UserλShape = $.typeutil.flatten<_$default.$AuditableλShape & _$default.$ListenableλShape & {
   "identity": $.LinkDesc<_extauth.$Identity, $.Cardinality.One, {}, false, false,  false, false>;
@@ -105,7 +105,7 @@ type $User = $.ObjectType<"users::User", $UserλShape, null, [
   {ucard_number: {__element__: _std.$int32, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
   {username: {__element__: _std.$str, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
 ], "users::User" | "default::user" | "users::Rep">;
-const $User = $.makeType<$User>(_.spec, "7890cb83-be5c-11f1-8649-95fe64c2e859", _.syntax.literal);
+const $User = $.makeType<$User>(_.spec, "29c43a34-f86c-11ee-a6b1-c1a89f83e7fe", _.syntax.literal);
 
 const User: $.$expr_PathNode<$.TypeSet<$User, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($User, $.Cardinality.Many), null);
 
@@ -124,7 +124,7 @@ export type $InfractionλShape = $.typeutil.flatten<_$default.$CreatedAtλShape 
 type $Infraction = $.ObjectType<"users::Infraction", $InfractionλShape, null, [
   ..._$default.$CreatedAt['__exclusives__'],
 ], "users::Infraction">;
-const $Infraction = $.makeType<$Infraction>(_.spec, "7e8afc29-be5c-11f1-b90d-63776b704745", _.syntax.literal);
+const $Infraction = $.makeType<$Infraction>(_.spec, "2a303486-f86c-11ee-bf41-731b357611bc", _.syntax.literal);
 
 const Infraction: $.$expr_PathNode<$.TypeSet<$Infraction, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Infraction, $.Cardinality.Many), null);
 
@@ -143,7 +143,7 @@ type $Integration = $.ObjectType<"users::Integration", $IntegrationλShape, null
   {platform: {__element__: $Platform, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },external_id: {__element__: _std.$str, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
   {platform: {__element__: $Platform, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },user: {__element__: $User, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
 ], "users::Integration">;
-const $Integration = $.makeType<$Integration>(_.spec, "861d2845-be5c-11f1-ba50-83db0c1e1b6f", _.syntax.literal);
+const $Integration = $.makeType<$Integration>(_.spec, "2a067f60-f86c-11ee-a027-6391c76425ef", _.syntax.literal);
 
 const Integration: $.$expr_PathNode<$.TypeSet<$Integration, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Integration, $.Cardinality.Many), null);
 
@@ -174,7 +174,7 @@ export type $RepλShape = $.typeutil.flatten<$UserλShape & {
 type $Rep = $.ObjectType<"users::Rep", $RepλShape, null, [
   ...$User['__exclusives__'],
 ], "users::Rep">;
-const $Rep = $.makeType<$Rep>(_.spec, "78c18cd7-be5c-11f1-bdce-efa9729c49dd", _.syntax.literal);
+const $Rep = $.makeType<$Rep>(_.spec, "29d3a9e9-f86c-11ee-a74e-5775b41138aa", _.syntax.literal);
 
 const Rep: $.$expr_PathNode<$.TypeSet<$Rep, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Rep, $.Cardinality.Many), null);
 
@@ -189,7 +189,7 @@ type $Role = $.ObjectType<"users::Role", $RoleλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
   {name: {__element__: _std.$str, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
 ], "users::Role">;
-const $Role = $.makeType<$Role>(_.spec, "788e86c2-be5c-11f1-9a93-e769e6528254", _.syntax.literal);
+const $Role = $.makeType<$Role>(_.spec, "29b7f421-f86c-11ee-bd33-39358707aaac", _.syntax.literal);
 
 const Role: $.$expr_PathNode<$.TypeSet<$Role, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Role, $.Cardinality.Many), null);
 
@@ -203,7 +203,7 @@ type $SettingTemplate = $.ObjectType<"users::SettingTemplate", $SettingTemplate�
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
   {key: {__element__: _std.$str, __cardinality__: $.Cardinality.One | $.Cardinality.AtMostOne },},
 ], "users::SettingTemplate">;
-const $SettingTemplate = $.makeType<$SettingTemplate>(_.spec, "86aad6da-be5c-11f1-80db-f7f867e281c3", _.syntax.literal);
+const $SettingTemplate = $.makeType<$SettingTemplate>(_.spec, "2a739c5f-f86c-11ee-a677-71387b179dd5", _.syntax.literal);
 
 const SettingTemplate: $.$expr_PathNode<$.TypeSet<$SettingTemplate, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($SettingTemplate, $.Cardinality.Many), null);
 
@@ -215,7 +215,7 @@ export type $UserSettingValueλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee
 type $UserSettingValue = $.ObjectType<"users::UserSettingValue", $UserSettingValueλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
 ], "users::UserSettingValue">;
-const $UserSettingValue = $.makeType<$UserSettingValue>(_.spec, "86ae8ac7-be5c-11f1-b3d7-590e7bf4a57b", _.syntax.literal);
+const $UserSettingValue = $.makeType<$UserSettingValue>(_.spec, "2a76c6dc-f86c-11ee-9ee4-71b05cf6817c", _.syntax.literal);
 
 const UserSettingValue: $.$expr_PathNode<$.TypeSet<$UserSettingValue, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($UserSettingValue, $.Cardinality.Many), null);
 

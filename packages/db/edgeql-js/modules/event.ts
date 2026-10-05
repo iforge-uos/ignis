@@ -17,7 +17,7 @@ export type $Type = {
   "EXHIBITION": $.$expr_Literal<$Type>;
   "WEBINAR": $.$expr_Literal<$Type>;
 } & $.EnumType<"event::Type", ["WORKSHOP", "LECTURE", "MEETUP", "HACKATHON", "EXHIBITION", "WEBINAR"]>;
-const Type: $Type = $.makeType<$Type>(_.spec, "78bbf049-be5c-11f1-821e-6df14d0709b6", _.syntax.literal);
+const Type: $Type = $.makeType<$Type>(_.spec, "2a1b71a4-f86c-11ee-a7c6-8fd6344eb0e6", _.syntax.literal);
 
 export type $EventλShape = $.typeutil.flatten<_$default.$CreatedAtλShape & {
   "ends_at": $.PropertyDesc<_std.$datetime, $.Cardinality.AtMostOne, false, false, false, false>;
@@ -38,7 +38,7 @@ export type $EventλShape = $.typeutil.flatten<_$default.$CreatedAtλShape & {
 type $Event = $.ObjectType<"event::Event", $EventλShape, null, [
   ..._$default.$CreatedAt['__exclusives__'],
 ], "event::Event">;
-const $Event = $.makeType<$Event>(_.spec, "78bc0c44-be5c-11f1-9c30-41db73241045", _.syntax.literal);
+const $Event = $.makeType<$Event>(_.spec, "2a1b87a3-f86c-11ee-a18c-118b431adf11", _.syntax.literal);
 
 const Event: $.$expr_PathNode<$.TypeSet<$Event, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Event, $.Cardinality.Many), null);
 

@@ -22,7 +22,7 @@ export type $Name = {
   "Future Reps": $.$expr_Literal<$Name>;
   "Staff": $.$expr_Literal<$Name>;
 } & $.EnumType<"team::Name", ["IT", "3DP", "Hardware", "Publicity", "Events", "Relations", "Operations", "Recruitment & Development", "Health & Safety", "Inclusions", "Sustainability", "Unsorted Reps", "Future Reps", "Staff"]>;
-const Name: $Name = $.makeType<$Name>(_.spec, "ca7f46fc-be5c-11f1-bd05-e10f0d9c4cf4", _.syntax.literal);
+const Name: $Name = $.makeType<$Name>(_.spec, "3e6fd344-28b0-11f1-bdec-8311c6b11787", _.syntax.literal);
 
 export type $TeamλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
   "name": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
@@ -35,7 +35,7 @@ export type $TeamλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c2
 type $Team = $.ObjectType<"team::Team", $TeamλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
 ], "team::Team">;
-const $Team = $.makeType<$Team>(_.spec, "78b57b2b-be5c-11f1-990e-e9fcd173a6ce", _.syntax.literal);
+const $Team = $.makeType<$Team>(_.spec, "29c16766-f86c-11ee-b513-f5418205b180", _.syntax.literal);
 
 const Team: $.$expr_PathNode<$.TypeSet<$Team, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Team, $.Cardinality.Many), null);
 
