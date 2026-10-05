@@ -14,11 +14,6 @@ GOOGLE_CLIENT_CALLBACK_URL="https://iforge.sheffield.ac.uk/api/v1/authentication
 GOOGLE_SERVICE_ACCOUNT_EMAIL="op://IT/Google Cloud/email"
 GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY="op://IT/Google Cloud/private key"
 
-# Discord
-DISCORD_CLIENT_ID="op://IT/Anvil OAuth2 Discord/client id"
-DISCORD_CLIENT_SECRET="op://IT/Anvil OAuth2 Discord/client secret"
-DISCORD_CLIENT_CALLBACK_URL="http://127.0.0.1:3000/api/v1/authentication/discord/redirect"
-
 # AUTH
 JWT_SECRET="op://IT/Anvil JWT Signing Key/credential"
 CSRF_SECRET="op://IT/Anvil CSRF Secret Key/credential"

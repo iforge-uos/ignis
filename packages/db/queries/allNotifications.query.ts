@@ -12,7 +12,7 @@ export type AllNotificationsReturns = Array<{
   "title": string;
   "type": ("ADMIN" | "ADVERT" | "ANNOUNCEMENT" | "EVENT" | "HEALTH_AND_SAFETY" | "INFRACTION" | "PRINTING" | "QUEUE_SLOT_ACTIVE" | "RECRUITMENT" | "REFERRAL" | "REMINDER" | "TRAINING");
   "updated_at": Date;
-  "delivery_methods": [(("BANNER" | "EMAIL" | "TRAY" | "POPUP" | "DISCORD")), ...(("BANNER" | "EMAIL" | "TRAY" | "POPUP" | "DISCORD"))[]];
+  "delivery_methods": [(("BANNER" | "EMAIL" | "TRAY" | "POPUP")), ...(("BANNER" | "EMAIL" | "TRAY" | "POPUP"))[]];
   "targets": [({
     "__typename": string;
     "id": string;
