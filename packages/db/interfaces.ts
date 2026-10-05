@@ -269,7 +269,7 @@ export namespace users {
     "user": User;
     "external_email": string;
   }
-  export type Platform = "DISCORD" | "GITHUB";
+  export type Platform = "GITHUB";
   export interface Rep extends User {
     "status": RepStatus;
     "supervisable_training": training.Training[];
@@ -566,7 +566,7 @@ export namespace notification {
     "author": users.User;
     "approved_on"?: Date | null;
   }
-  export type DeliveryMethod = "BANNER" | "EMAIL" | "TRAY" | "POPUP" | "DISCORD";
+  export type DeliveryMethod = "BANNER" | "EMAIL" | "TRAY" | "POPUP";
   export interface MailingList extends $default.Auditable {
     "description": string;
     "name": string;

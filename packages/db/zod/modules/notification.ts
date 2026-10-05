@@ -3,7 +3,7 @@ import * as zt from "zod-temporal";
 
 
 // #region notification::DeliveryMethod
-export const DeliveryMethodSchema = z.enum(["BANNER", "EMAIL", "TRAY", "POPUP", "DISCORD"]);
+export const DeliveryMethodSchema = z.enum(["BANNER", "EMAIL", "TRAY", "POPUP"]);
 // #endregion
 
 // #region notification::Status
@@ -44,7 +44,7 @@ export const CreateAuthoredNotificationSchema = z.
     title: z.string(), // std::str
     type: z.enum(["ADMIN", "ADVERT", "ANNOUNCEMENT", "EVENT", "HEALTH_AND_SAFETY", "INFRACTION", "PRINTING", "QUEUE_SLOT_ACTIVE", "RECRUITMENT", "REFERRAL", "REMINDER", "TRAINING"]), // notification::Type
     attachments: z.string(), // std::str
-    delivery_methods: z.enum(["BANNER", "EMAIL", "TRAY", "POPUP", "DISCORD"]), // notification::DeliveryMethod
+    delivery_methods: z.enum(["BANNER", "EMAIL", "TRAY", "POPUP"]), // notification::DeliveryMethod
     dispatched_at: zt.zonedDateTime().nullable(), // std::datetime
     priority: z.int().min(-32768).max(32767).optional(), // std::int16
   })
@@ -65,7 +65,7 @@ export const UpdateAuthoredNotificationSchema = z.
     title: z.string(), // std::str
     type: z.enum(["ADMIN", "ADVERT", "ANNOUNCEMENT", "EVENT", "HEALTH_AND_SAFETY", "INFRACTION", "PRINTING", "QUEUE_SLOT_ACTIVE", "RECRUITMENT", "REFERRAL", "REMINDER", "TRAINING"]), // notification::Type
     attachments: z.string(), // std::str
-    delivery_methods: z.enum(["BANNER", "EMAIL", "TRAY", "POPUP", "DISCORD"]), // notification::DeliveryMethod
+    delivery_methods: z.enum(["BANNER", "EMAIL", "TRAY", "POPUP"]), // notification::DeliveryMethod
     dispatched_at: zt.zonedDateTime().nullable(), // std::datetime
     priority: z.int().min(-32768).max(32767).optional(), // std::int16
   })
@@ -118,7 +118,7 @@ export const CreateNotificationSchema = z.
     title: z.string(), // std::str
     type: z.enum(["ADMIN", "ADVERT", "ANNOUNCEMENT", "EVENT", "HEALTH_AND_SAFETY", "INFRACTION", "PRINTING", "QUEUE_SLOT_ACTIVE", "RECRUITMENT", "REFERRAL", "REMINDER", "TRAINING"]), // notification::Type
     attachments: z.string(), // std::str
-    delivery_methods: z.enum(["BANNER", "EMAIL", "TRAY", "POPUP", "DISCORD"]), // notification::DeliveryMethod
+    delivery_methods: z.enum(["BANNER", "EMAIL", "TRAY", "POPUP"]), // notification::DeliveryMethod
     dispatched_at: zt.zonedDateTime().nullable(), // std::datetime
     priority: z.int().min(-32768).max(32767).optional(), // std::int16
   });
@@ -135,7 +135,7 @@ export const UpdateNotificationSchema = z.
     title: z.string(), // std::str
     type: z.enum(["ADMIN", "ADVERT", "ANNOUNCEMENT", "EVENT", "HEALTH_AND_SAFETY", "INFRACTION", "PRINTING", "QUEUE_SLOT_ACTIVE", "RECRUITMENT", "REFERRAL", "REMINDER", "TRAINING"]), // notification::Type
     attachments: z.string(), // std::str
-    delivery_methods: z.enum(["BANNER", "EMAIL", "TRAY", "POPUP", "DISCORD"]), // notification::DeliveryMethod
+    delivery_methods: z.enum(["BANNER", "EMAIL", "TRAY", "POPUP"]), // notification::DeliveryMethod
     dispatched_at: zt.zonedDateTime().nullable(), // std::datetime
     priority: z.int().min(-32768).max(32767).optional(), // std::int16
   });
@@ -149,7 +149,7 @@ export const CreateSystemNotificationSchema = z.
     title: z.string(), // std::str
     type: z.enum(["ADMIN", "ADVERT", "ANNOUNCEMENT", "EVENT", "HEALTH_AND_SAFETY", "INFRACTION", "PRINTING", "QUEUE_SLOT_ACTIVE", "RECRUITMENT", "REFERRAL", "REMINDER", "TRAINING"]), // notification::Type
     attachments: z.string(), // std::str
-    delivery_methods: z.enum(["BANNER", "EMAIL", "TRAY", "POPUP", "DISCORD"]), // notification::DeliveryMethod
+    delivery_methods: z.enum(["BANNER", "EMAIL", "TRAY", "POPUP"]), // notification::DeliveryMethod
     dispatched_at: zt.zonedDateTime().nullable(), // std::datetime
     priority: z.int().min(-32768).max(32767).optional(), // std::int16
   })
@@ -170,7 +170,7 @@ export const UpdateSystemNotificationSchema = z.
     title: z.string(), // std::str
     type: z.enum(["ADMIN", "ADVERT", "ANNOUNCEMENT", "EVENT", "HEALTH_AND_SAFETY", "INFRACTION", "PRINTING", "QUEUE_SLOT_ACTIVE", "RECRUITMENT", "REFERRAL", "REMINDER", "TRAINING"]), // notification::Type
     attachments: z.string(), // std::str
-    delivery_methods: z.enum(["BANNER", "EMAIL", "TRAY", "POPUP", "DISCORD"]), // notification::DeliveryMethod
+    delivery_methods: z.enum(["BANNER", "EMAIL", "TRAY", "POPUP"]), // notification::DeliveryMethod
     dispatched_at: zt.zonedDateTime().nullable(), // std::datetime
     priority: z.int().min(-32768).max(32767).optional(), // std::int16
   })
