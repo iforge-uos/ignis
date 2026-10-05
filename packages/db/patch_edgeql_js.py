@@ -7,6 +7,7 @@ the generator output changed and the patch needs updating.
 """
 
 import re
+import subprocess
 import sys
 import time
 from collections.abc import Callable
@@ -396,6 +397,48 @@ def add_temporal_import(content: str) -> str:
     return "\n".join(lines) + ("\n" if content.endswith("\n") else "")
 
 
+SPEC_ENTRY = re.compile(r'^spec\.set\("([0-9a-f-]{36})", \{"id":"[0-9a-f-]{36}","name":"([^"]*)"', re.MULTILINE)
+
+
+def spec_ids(spec: str) -> dict[str, str]:
+    return {name: id for id, name in SPEC_ENTRY.findall(spec)}
+
+
+def restore_committed_type_ids():
+    # Gel gives user-defined types time-based ids when their DDL runs, so a fresh instance (e.g. a new devcontainer)
+    # generates different ids for the same schema. The builder only uses them as lookup keys within the generated
+    # code (queries are sent by name), so map them back to the committed ones to keep the diff to real changes.
+    spec_path = EDGEQL_JS / "__spec__.ts"
+    try:
+        committed = subprocess.run(
+            ["git", "show", f"HEAD:./{spec_path.relative_to(ROOT).as_posix()}"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout
+    except (OSError, subprocess.CalledProcessError):
+        print("No committed __spec__.ts to take type ids from, keeping the generated ones")
+        return
+
+    old_ids = spec_ids(committed)
+    remap = {
+        new_id: old_ids[name]
+        for name, new_id in spec_ids(spec_path.read_text()).items()
+        if name in old_ids and old_ids[name] != new_id
+    }
+    if not remap:
+        return
+
+    pattern = re.compile("|".join(map(re.escape, remap)))
+    for path in EDGEQL_JS.rglob("*.ts"):
+        content = path.read_text()
+        updated = pattern.sub(lambda m: remap[m.group(0)], content)
+        if updated != content:
+            path.write_text(updated, encoding="utf-8")
+    print(f"Restored {len(remap)} committed type ids")
+
+
 def apply_patches(path: Path, patches: list[Patch]) -> list[str]:
     content = orig = path.read_text()
     failures = []
@@ -426,6 +469,7 @@ def main():
     """Main function to run the script."""
     time.sleep(10)  # let schema generation finish
     print("Patching generated edgeql-js...")
+    restore_committed_type_ids()
 
     failures = [failure for file, patches in PATCHES.items() for failure in apply_patches(EDGEQL_JS / file, patches)]
     if failures:
