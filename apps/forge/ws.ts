@@ -3,9 +3,9 @@ import { RPCHandler } from "@orpc/server/bun-ws";
 import { getCookie } from "@orpc/server/helpers";
 import { Serve } from "bun";
 
-// use relative for this as path aliases don't work at this stage
-import { DEFAULT_AUTH_COOKIE } from "./src/lib/constants";
+// use relative paths below, path aliases don't work at this stage
 import db from "./src/db";
+import { DEFAULT_AUTH_COOKIE } from "./src/lib/constants";
 import serialisers from "./src/lib/serialisers";
 import { router } from "./src/routes/api/$";
 
@@ -15,6 +15,13 @@ const rpcHandler = new RPCHandler(router, {
 });
 
 type WSContext = { authToken?: string };
+
+/** True for the normal "client went away mid-stream" rejection, at any depth of the cause chain. */
+function isAbort(error: unknown, depth = 0): boolean {
+  if (!(error instanceof Error) || depth > 10) return false;
+  if (error.name === "AbortError" || error.message.includes("closed or aborted")) return true;
+  return isAbort(error.cause, depth + 1);
+}
 
 // Store the auth token from the WebSocket handshake
 const wsAuthTokens = new WeakMap<Bun.ServerWebSocket<WSContext>, string | undefined>();
@@ -47,11 +54,19 @@ export default {
     },
     message(ws, message) {
       const authToken = wsAuthTokens.get(ws);
-      rpcHandler.message(ws, message, {
-        context: {
-          session: { client: db.withGlobals({ "ext::auth::client_token": authToken }) },
-        },
-      });
+      // `message` is async and Bun kills the process on an unhandled rejection, so own the failure
+      // here. A disconnect mid-stream aborts the peer's queues, which rejects this promise with an
+      // ErrorEvent wrapping an AbortError — expected, not worth logging.
+      rpcHandler
+        .message(ws, message, {
+          context: {
+            session: { client: db.withGlobals({ "ext::auth::client_token": authToken }) },
+          },
+        })
+        .catch((error: unknown) => {
+          if (isAbort(error)) return;
+          console.error("oRPC websocket message failed", error);
+        });
     },
     close(ws) {
       wsAuthTokens.delete(ws);
