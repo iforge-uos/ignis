@@ -218,7 +218,15 @@ export const handleCallback = authedServerFn()
     if (!verifier) {
       throw new PKCEError("no pkce verifier cookie found");
     }
-    const tokenData = await (await auth.core).getToken(code, verifier);
+    let tokenData: Awaited<ReturnType<Auth["getToken"]>>;
+    try {
+      tokenData = await (await auth.core).getToken(code, verifier);
+    } catch (error) {
+      // The code is single use, so bin the verifier
+      // without this the cookie outlives the failure and a doom loop starts
+      deleteVerifier(auth);
+      throw error;
+    }
     createAuthCookie(auth, tokenData.auth_token);
     deleteVerifier(auth);
 
