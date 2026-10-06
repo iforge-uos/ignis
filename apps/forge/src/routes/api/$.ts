@@ -1,4 +1,4 @@
-import { SmartCoercionPlugin } from '@orpc/json-schema'
+import { SmartCoercionPlugin } from "@orpc/json-schema";
 import { OpenAPIGenerator } from "@orpc/openapi";
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { onError } from "@orpc/server";
@@ -19,6 +19,7 @@ import { teamsRouter } from "@/api/teams";
 import { toolsRouter } from "@/api/tools";
 import { trainingRouter } from "@/api/training";
 import { usersRouter } from "@/api/users";
+import { logUnexpectedError } from "@/lib/orpc-errors";
 import serialisers from "@/lib/serialisers";
 import { withSession } from "@/lib/utils/auth";
 import { pub } from "@/orpc";
@@ -62,13 +63,11 @@ const handler = new OpenAPIHandler(router, {
   plugins: [
     new CompressionPlugin(),
     new SmartCoercionPlugin({
-      schemaConverters: [
-        new ZodToJsonSchemaConverter(),
-      ],
-    })
+      schemaConverters: [new ZodToJsonSchemaConverter()],
+    }),
   ],
   customJsonSerializers: serialisers,
-  interceptors: [onError(console.error)],
+  interceptors: [onError(logUnexpectedError)],
 });
 
 export const Route = createFileRoute("/api/$")({
@@ -76,7 +75,7 @@ export const Route = createFileRoute("/api/$")({
     middleware: [withSession],
     handlers: {
       ANY: async ({ request, context }) => {
-        const url = new URL(request.url)
+        const url = new URL(request.url);
         const { pathname } = url;
 
         switch (pathname) {

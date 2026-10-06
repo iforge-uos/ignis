@@ -6,11 +6,12 @@ import { Serve } from "bun";
 // use relative paths below, path aliases don't work at this stage
 import db from "./src/db";
 import { DEFAULT_AUTH_COOKIE } from "./src/lib/constants";
+import { logUnexpectedError } from "./src/lib/orpc-errors";
 import serialisers from "./src/lib/serialisers";
 import { router } from "./src/routes/api/$";
 
 const rpcHandler = new RPCHandler(router, {
-  interceptors: [onError(console.error)],
+  interceptors: [onError(logUnexpectedError)],
   customJsonSerializers: serialisers,
 });
 

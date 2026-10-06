@@ -8,11 +8,10 @@ import {
 } from "@gel/auth-core";
 import { createMiddleware, createServerFn, createServerOnlyFn } from "@tanstack/react-start";
 import { deleteCookie, getCookie, getRequestUrl, setCookie } from "@tanstack/react-start/server";
-import { Client } from "gel";
+import { Client, GelError } from "gel";
 // import jwt from "jsonwebtoken";
 import client from "@/db";
 import { DEFAULT_AUTH_COOKIE, DEFAULT_PKCE_COOKIE } from "@/lib/constants";
-
 
 interface GoogleUser {
   family_name: string;
@@ -34,7 +33,6 @@ export async function getUserProfile(providerToken: string): Promise<GoogleUser>
   return response.json();
 }
 
-
 // export function verifyJWT(token: string) {
 //   try {
 //     return jwt.verify(
@@ -46,6 +44,23 @@ export async function getUserProfile(providerToken: string): Promise<GoogleUser>
 //     return undefined;
 //   }
 // }
+
+/**
+ * Gel verifies `ext::auth::client_token` lazily, when a query evaluates
+ * `global ext::auth::ClientTokenIdentity` (which `global default::user` does). So a cookie we can no
+ * longer vouch for - most often because the auth signing secret has been rotated, but equally an
+ * expired or hand-mangled token - fails the query itself with e.g. "JWT signature mismatch" rather
+ * than at the point we read the cookie.
+ *
+ * None of those are our fault and none of them are retryable, so they want treating as "this client
+ * has to sign in again" instead of being allowed to surface as a 500. Match on the message because
+ * Gel reports the whole family of them with the same error class.
+ */
+export function isInvalidAuthToken(error: unknown, depth = 0): boolean {
+  if (depth > 5) return false;
+  if (error instanceof GelError && /\bJWT\b/.test(error.message)) return true;
+  return error instanceof Error && isInvalidAuthToken(error.cause, depth + 1);
+}
 
 export interface TanStackAuthOptions {
   baseUrl: string;
@@ -170,7 +185,7 @@ export const startOAuth = authedServerFn()
     const pkceSession = await auth.core.then((core: Auth) => core.createPKCESession());
     createVerifierCookie(auth, pkceSession.verifier);
     const url = getUrl(auth);
-    return pkceSession.getOAuthUrl(providerName, url, `${url}?isSignUp=true`).replace(":5656", "") // the port needs to be removed
+    return pkceSession.getOAuthUrl(providerName, url, `${url}?isSignUp=true`).replace(":5656", ""); // the port needs to be removed
     // return Response.redirect(ret);  // doesn't work here cause of CORS
   });
 
