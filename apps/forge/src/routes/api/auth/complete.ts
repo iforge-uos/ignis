@@ -10,6 +10,8 @@ import { removeDomain } from "@/lib/utils/sign-in";
 
 const SIGN_IN_AGAIN = "That sign in attempt has expired or was already used. Please try again.";
 const CONTACT_US = "Cannot get user info. Please get in contact with us to resolve this it.iforge@sheffield.ac.uk";
+const DIRECTORY_UNREACHABLE =
+  "We can't reach the university directory at the moment, so we can't finish setting up your account. Please try again shortly.";
 
 /**
  * Send the browser back to the login page with something readable instead of letting the failure
@@ -166,7 +168,23 @@ export const Route = createFileRoute("/api/auth/complete")({
                   e.update(e.users.User, () => ({ filter_single: { id: existing.id }, set: googleFields })).run(client),
               );
             } else {
-              const ldapUser = await ldap.lookupByEmail(profile.email);
+              let ldapUser: LdapUser | null;
+              try {
+                ldapUser = await ldap.lookupByEmail(profile.email);
+              } catch (error) {
+                // LDAP being unreachable mustn't take the request with it. An error escaping here
+                // closes the connection without a response, the browser quietly retries the GET,
+                // and the retry replays an OAuth code we've already spent
+                logger.error(
+                  logger.fmt`LDAP lookup for ${profile.email} (identity ${identityId}) failed, so we cannot create a user: ${describe(error)}`,
+                );
+                Sentry.captureException(error, {
+                  tags: { flow: "oauth-complete" },
+                  extra: { identityId, email: profile.email },
+                });
+                backToLogin(DIRECTORY_UNREACHABLE);
+              }
+
               if (!ldapUser) {
                 // They have a university Google account but no LDAP record, so we have no ucard
                 // number, username or school to create them with.
