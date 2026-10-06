@@ -14,11 +14,6 @@ GOOGLE_CLIENT_CALLBACK_URL="http://127.0.0.1:3000/v1/authentication/google/callb
 GOOGLE_SERVICE_ACCOUNT_EMAIL="op://IT/Google Cloud/email"
 GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY="op://IT/Google Cloud/private key"
 
-# Discord
-DISCORD_CLIENT_ID="op://IT/Anvil OAuth2 Discord/client id"
-DISCORD_CLIENT_SECRET="op://IT/Anvil OAuth2 Discord/client secret"
-DISCORD_CLIENT_CALLBACK_URL="http://127.0.0.1:3000/v1/authentication/discord/callback"
-
 # AUTH
 JWT_SECRET="op://Ignis/JWT Secret Key/password"
 # CSRF_SECRET="op://Employee/CSRF Secret Key/password"
@@ -53,4 +48,3 @@ FRONT_END_URL="http://127.0.0.1:8000"
 # Logging
 LOG_LEVEL=debug
 
-INFRACTIONS_WEBHOOK_URL="op://IT/Infractions Webhook/url"

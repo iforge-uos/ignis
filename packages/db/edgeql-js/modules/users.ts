@@ -26,9 +26,8 @@ export type $InfractionType = {
 const InfractionType: $InfractionType = $.makeType<$InfractionType>(_.spec, "2a301ced-f86c-11ee-aef8-8dcd5e85a618", _.syntax.literal);
 
 export type $Platform = {
-  "DISCORD": $.$expr_Literal<$Platform>;
   "GITHUB": $.$expr_Literal<$Platform>;
-} & $.EnumType<"users::Platform", ["DISCORD", "GITHUB"]>;
+} & $.EnumType<"users::Platform", ["GITHUB"]>;
 const Platform: $Platform = $.makeType<$Platform>(_.spec, "2a0664ba-f86c-11ee-8052-656b7f1c7222", _.syntax.literal);
 
 export type $RepStatus = {
@@ -222,7 +221,7 @@ const UserSettingValue: $.$expr_PathNode<$.TypeSet<$UserSettingValue, $.Cardinal
 type send_infractionλFuncExpr<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$json>>,
 > = $.$expr_Function<
-  _stdnethttp.$ScheduledRequest, $.cardutil.paramCardinality<P1>
+  _stdnethttp.$ScheduledRequest, $.cardutil.overrideLowerBound<$.cardutil.paramCardinality<P1>, "Zero">
 >;
 function send_infraction<
   P1 extends _.castMaps.orScalarLiteral<$.TypeSet<_std.$json>>,
@@ -231,7 +230,7 @@ function send_infraction<
 ): send_infractionλFuncExpr<P1>;
 function send_infraction(...args: any[]) {
   const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('users::send_infraction', args, _.spec, [
-    {args: [{typeId: "00000000-0000-0000-0000-00000000010f", optional: false, setoftype: false, variadic: false}], returnTypeId: "e6bf05a7-60c7-51dd-b30d-c8fce5bcadfd"},
+    {args: [{typeId: "00000000-0000-0000-0000-00000000010f", optional: false, setoftype: false, variadic: false}], returnTypeId: "e6bf05a7-60c7-51dd-b30d-c8fce5bcadfd", returnTypemod: "OptionalType"},
   ]);
   return _.syntax.$expressionify({
     __kind__: $.ExpressionKind.Function,

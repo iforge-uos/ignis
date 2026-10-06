@@ -7,7 +7,7 @@ export const InfractionTypeSchema = z.enum(["WARNING", "TEMP_BAN", "PERM_BAN", "
 // #endregion
 
 // #region users::Platform
-export const PlatformSchema = z.enum(["DISCORD", "GITHUB"]);
+export const PlatformSchema = z.enum(["GITHUB"]);
 // #endregion
 
 // #region users::RepStatus
@@ -47,7 +47,7 @@ export const CreateIntegrationSchema = z.
   })
   .extend({ // users::Integration
     external_id: z.string(), // std::str
-    platform: z.enum(["DISCORD", "GITHUB"]), // users::Platform
+    platform: z.enum(["GITHUB"]), // users::Platform
     external_email: z.string(), // std::str
   });
 
@@ -59,7 +59,7 @@ export const UpdateIntegrationSchema = z.
   })
   .extend({ // users::Integration
     external_id: z.string(), // std::str
-    platform: z.enum(["DISCORD", "GITHUB"]), // users::Platform
+    platform: z.enum(["GITHUB"]), // users::Platform
     external_email: z.string(), // std::str
   });
 // #endregion

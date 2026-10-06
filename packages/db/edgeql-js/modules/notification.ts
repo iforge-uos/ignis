@@ -14,8 +14,7 @@ export type $DeliveryMethod = {
   "EMAIL": $.$expr_Literal<$DeliveryMethod>;
   "TRAY": $.$expr_Literal<$DeliveryMethod>;
   "POPUP": $.$expr_Literal<$DeliveryMethod>;
-  "DISCORD": $.$expr_Literal<$DeliveryMethod>;
-} & $.EnumType<"notification::DeliveryMethod", ["BANNER", "EMAIL", "TRAY", "POPUP", "DISCORD"]>;
+} & $.EnumType<"notification::DeliveryMethod", ["BANNER", "EMAIL", "TRAY", "POPUP"]>;
 const DeliveryMethod: $DeliveryMethod = $.makeType<$DeliveryMethod>(_.spec, "2a7a7de5-f86c-11ee-826a-1b9d731735e7", _.syntax.literal);
 
 export type $Status = {
