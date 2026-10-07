@@ -30,19 +30,11 @@ export const get = rep
 
     yield await getter();
 
-    for await (const ev of mergeAsyncIterators(
+    for await (const _ of mergeAsyncIterators(
       subscribeToDbListener("sign_in::SignIn"),
       subscribeToDbListener("sign_in::QueuePlace"),
     )) {
-      console.log("[dbg] locations.get event", name, ev);
-      try {
-        const data = await getter(); // TODO would be nice to half the number of requests going out by checking loc but that's effort
-        console.log("[dbg] locations.get yielding", name, data?.sign_ins.length);
-        yield data;
-      } catch (err) {
-        console.error("[dbg] locations.get getter failed", name, err);
-        throw err;
-      }
+      yield await getter();  // TODO would be nice to half the number of requests going out by checking loc but that's effort
     }
   });
 

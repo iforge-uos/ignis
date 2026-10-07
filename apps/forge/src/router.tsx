@@ -56,13 +56,17 @@ export const getRouter = () => {
             },
           },
         });
-        console.error(error)
-        Sentry.captureException(error)
+        console.error(error);
+        Sentry.captureException(error);
       },
     }),
     defaultOptions: {
       queries: {
         staleTime: 60_000, // > 0 to prevent immediate refetching on mount
+        // A live query's stream is aborted when its last observer unmounts, so its cached data stops updating.
+        // Always restart it on mount, otherwise navigating back within staleTime leaves the page frozen.
+        refetchOnMount: (query) =>
+          (query.queryKey[1] as { type?: string } | undefined)?.type === "live" ? "always" : true,
       },
 
       dehydrate: {

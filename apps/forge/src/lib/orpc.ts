@@ -63,6 +63,8 @@ function createWebSocketClient(): RouterClient<typeof router> {
         try {
           return await next();
         } catch (error) {
+          // Navigating away aborts the page's streams (e.g. the sign-in flow finishing), that's not an error
+          if (error instanceof Error && error.name === "AbortError") throw error;
           if (error instanceof ORPCError && error.code === "SESSION_EXPIRED") {
             await endStaleSession();
             throw error;
