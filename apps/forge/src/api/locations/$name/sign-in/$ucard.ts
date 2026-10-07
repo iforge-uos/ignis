@@ -7,16 +7,7 @@ import * as z from "zod";
 import { createTransaction, ensureUser } from "@/lib/utils/queries";
 import { deskOrAdmin } from "@/orpc";
 import { InitialiseStep, SIGN_INS, StepType } from "./_flows/_steps";
-import {
-  _SignInParams,
-  Errors,
-  Finalise,
-  Initialise,
-  Receive,
-  Return,
-  StepRetry,
-  Transmit,
-} from "./_flows/_types";
+import { _SignInParams, Errors, Finalise, Initialise, Receive, Return, StepRetry, Transmit } from "./_flows/_types";
 
 type UCardNumber = z.infer<typeof Initialise>["ucard_number"];
 export type BaseKey = `${sign_in.LocationName}-${UCardNumber}`;
@@ -90,8 +81,11 @@ export const flow = deskOrAdmin
     const $user = e.assert_exists(e.select(e.users.User, () => ({ filter_single: { id: user.id } })));
     const $location = e.assert_exists(e.select(e.sign_in.Location, () => ({ filter_single: { name: input.name } })));
 
-    signal?.addEventListener("abort", async () => {
-      await cancel({ ...(arg as _SignInParams), user, input: { ...input, type: "CANCEL" }, $user, $location }).next();
+    signal?.addEventListener("abort", () => {
+      // an async listener's rejection is unhandled and would take the process down with it
+      cancel({ ...(arg as _SignInParams), user, input: { ...input, type: "CANCEL" }, $user, $location })
+        .next()
+        .catch((error: unknown) => console.error("Failed to cancel sign in flow on abort", error));
     });
 
     for await (const message of initialise) {

@@ -1,4 +1,4 @@
-import { os, ORPCError, ValidationError } from "@orpc/server";
+import { ORPCError, os, ValidationError } from "@orpc/server";
 import * as Sentry from "@sentry/core";
 import { AccessError, CardinalityViolationError, InvalidArgumentError } from "gel";
 import * as z from "zod";
@@ -37,8 +37,8 @@ export default (options: Options = {}) =>
               cause: error.cause,
             });
           }
-          if (error instanceof ORPCError && error.code === "UNAUTHORIZED") {
-            throw error  // don't log this at all it's also way too noisy
+          if (error instanceof ORPCError && (error.code === "UNAUTHORIZED" || error.code === "SESSION_EXPIRED")) {
+            throw error; // don't log this at all it's also way too noisy
           }
           if (error instanceof InvalidArgumentError) {
             throw new ORPCError("NOT_FOUND", {

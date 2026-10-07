@@ -1,13 +1,13 @@
 import e from "@packages/db/edgeql-js";
 import { logger } from "@sentry/tanstackstart-react";
+import { sleep } from "bun";
 import { Client, Entry } from "ldapts";
 import * as z from "zod";
 import env from "@/lib/env";
-import { sleep } from "bun";
 import { ldapLibraryToUcardNumber, removeDomain } from "@/lib/utils/sign-in";
 
 function escapeLDAPFilterCharacters(str: string): string {
-  return str.replace(/([\\*\(\)\!\&\|\=><~])/g, "\\$1");
+  return str.replace(/([\\*()!&|=><~])/g, "\\$1");
 }
 
 export const LdapUserSchema = z.object({
@@ -33,7 +33,6 @@ type Lookup = <FieldsT extends (keyof LdapUser)[]>(
 
 class UoSClient extends Client {
   private defaultAttributes = Object.keys(LdapUserSchema.def.shape) as (keyof LdapUser)[];
-  private retryCount = 0;
   private readonly maxRetries = 3;
   private readonly retryDelay = 2000; // 2 seconds
 
@@ -49,24 +48,24 @@ class UoSClient extends Client {
     await this.bind(env.ldap.user, env.ldap.pass);
   }
 
+  /**
+   * Retries are counted per lookup rather than per process. A process wide counter never got reset
+   * on success, so three failures spread over however long the app had been up left every
+   * subsequent lookup throwing "Maximum retry count reached" until someone restarted it.
+   */
   private async reconnect(): Promise<void> {
-    if (this.retryCount < this.maxRetries) {
-      this.retryCount++;
-      logger.trace(`Attempting to reconnect to LDAP server (retry ${this.retryCount})`);
-      await sleep(this.retryDelay);
-      await this.connect();
-    } else {
-      logger.error("Maximum retry count reached. Unable to connect to LDAP server.");
-      throw new Error("Maximum retry count reached. Unable to connect to LDAP server.");
-    }
+    logger.trace("Attempting to reconnect to the LDAP server");
+    await sleep(this.retryDelay);
+    await this.connect();
   }
 
   async lookup<FieldsT extends (keyof LdapUser)[]>(
     searchFilter: string,
     attributes = this.defaultAttributes as any,
+    attempt = 0,
   ): Promise<Pick<LdapUser, FieldsT[number]>[]> {
     if (!this.isConnected) {
-      this.connect();
+      await this.connect();
     }
     let searchEntries: Entry[];
     // let searchReferences: any;
@@ -78,9 +77,13 @@ class UoSClient extends Client {
         attributes,
       });
       searchEntries = searchResult.searchEntries;
-    } catch {
+    } catch (error) {
+      logger.warn(
+        logger.fmt`LDAP search failed (attempt ${attempt + 1} of ${this.maxRetries + 1}) for ${searchFilter}: ${error instanceof Error ? `${error.name}: ${error.message}` : String(error)}`,
+      );
+      if (attempt >= this.maxRetries) throw error;
       await this.reconnect();
-      return await this.lookup(searchFilter, attributes);
+      return await this.lookup(searchFilter, attributes, attempt + 1);
     }
     return z.array(LdapUserSchema.partial()).parse(searchEntries) as any;
   }
@@ -130,7 +133,7 @@ try {
   client = new UoSClient();
 } catch (error) {
   console.error("Failed to setup the LDAP client", error);
-  // @ts-ignore
+  // @ts-expect-error
   client = {};
 }
 export default client;

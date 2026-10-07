@@ -5,8 +5,44 @@ import * as Sentry from "@sentry/tanstackstart-react";
 import { CronJob } from "cron";
 import ws, { handleWebSocketUpgrade } from "./ws";
 
+/**
+ * Bun treats an unhandled rejection as fatal, so a single dropped promise anywhere (an aborted
+ * event-iterator, an async event listener) took the whole server down and pm2 restarted it.
+ * Log the full `cause` chain instead — oRPC wraps the real error several levels deep.
+ */
+function formatCauseChain(error: unknown): string {
+  const lines: string[] = [];
+  let current: unknown = error;
+  let depth = 0;
+  while (current && depth < 10) {
+    if (current instanceof Error) {
+      lines.push(`${depth === 0 ? "" : "caused by: "}${current.name}: ${current.message}\n${current.stack ?? ""}`);
+      const data = (current as { data?: unknown }).data;
+      if (data !== undefined) {
+        lines.push(`  data: ${Bun.inspect(data, { depth: 6 })}`);
+      }
+      current = current.cause;
+    } else {
+      lines.push(`${depth === 0 ? "" : "caused by: "}${Bun.inspect(current, { depth: 6 })}`);
+      current = undefined;
+    }
+    depth++;
+  }
+  return lines.join("\n");
+}
+
+process.on("unhandledRejection", (reason) => {
+  log.error(`Unhandled rejection (not exiting):\n${formatCauseChain(reason)}`);
+  Sentry.captureException(reason, { tags: { source: "unhandledRejection" } });
+});
+
+process.on("uncaughtException", (error) => {
+  log.error(`Uncaught exception (not exiting):\n${formatCauseChain(error)}`);
+  Sentry.captureException(error, { tags: { source: "uncaughtException" } });
+});
+
 async function toNativeResponse(response: Response): Promise<Response> {
-  if (!response || typeof response._toNodeResponse !== 'function') {
+  if (!response || typeof response._toNodeResponse !== "function") {
     return response;
   }
   const body = response.body ? await response.arrayBuffer() : null;
@@ -442,7 +478,7 @@ async function initializeServer() {
 
       // Handle websocket upgrades before any HTTP route fallback.
       if (url.pathname === "/ws") {
-        return handleWebSocketUpgrade(req, server);  // FIXME self signed certs on https redirect to db
+        return handleWebSocketUpgrade(req, server); // FIXME self signed certs on https redirect to db
       }
 
       // Fallback to TanStack Start handler for all other routes

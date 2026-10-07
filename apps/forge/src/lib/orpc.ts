@@ -1,4 +1,4 @@
-import { createORPCClient, onError } from "@orpc/client";
+import { createORPCClient, ORPCError } from "@orpc/client";
 import { RPCLink } from "@orpc/client/websocket";
 import { createRouterClient, type RouterClient } from "@orpc/server";
 import { createTanstackQueryUtils, type RouterUtils } from "@orpc/tanstack-query";
@@ -6,16 +6,38 @@ import { redirect } from "@tanstack/react-router";
 import { createIsomorphicFn } from "@tanstack/react-start";
 import { getCookie } from "@tanstack/react-start/server";
 import { WebSocket } from "partysocket";
+import { toast } from "sonner";
 import dbClient from "@/db";
 import { DEFAULT_AUTH_COOKIE } from "@/lib/constants";
 import serialisers from "@/lib/serialisers";
+import { handleSignout } from "@/lib/utils/auth";
 import { type Router, router } from "@/routes/api/$";
-import { toast } from "sonner";
 
 export type ORPCReactUtils = RouterUtils<RouterClient<Router>>;
 
 let websocketInstance: WebSocket | null = null;
 let clientInstance: RouterClient<typeof router> | null = null;
+
+let endingStaleSession: Promise<void> | null = null;
+
+/**
+ * The server has told us our cookie can't be verified any more
+ */
+function endStaleSession(): Promise<void> {
+  endingStaleSession ??= (async () => {
+    toast.error("Your session has expired, please sign in again.");
+    try {
+      await handleSignout();
+    } catch (error) {
+      console.error("Failed to clear the stale session cookie", error);
+    }
+    if (window.location.pathname.startsWith("/auth/")) return;
+    // A full navigation rather than a router one: both the router context and the websocket's
+    // handshake were built around the session that just died.
+    window.location.href = `/auth/login?redirect=${encodeURIComponent(window.location.pathname)}`;
+  })();
+  return endingStaleSession;
+}
 
 function createWebSocketClient(): RouterClient<typeof router> {
   const secure = window.location.protocol === "https:";
@@ -34,27 +56,28 @@ function createWebSocketClient(): RouterClient<typeof router> {
   const link = new RPCLink({
     websocket: websocketInstance as any,
     customJsonSerializers: serialisers,
+    // Outermost, so the response has already been decoded into an ORPCError and we can tell the
+    // kinds of 401 apart — a client interceptor only ever sees the raw status.
     interceptors: [
-      onError((error, { signal }) => {
-        // TanStack Query aborts the signal when a query is cancelled (unmount, key change, live query restart), not a real failure
-        if (signal?.aborted || (error instanceof DOMException && error.name === "AbortError")) {
-          return;
-        }
-        console.error(error);
-        if (error?.message && error.message.trim().length > 0) {
-          toast.error(error.message);
-        }
-      }),
-    ],
-    clientInterceptors: [
       async ({ next, path }) => {
-        const response = await next();
-        // Ignore 401 auto-redirects on session check endpoints
-        const isSessionCheck = path.join("/") === "users/me";
-        if (response.status === 401 && !isSessionCheck) {
-          throw redirect({ to: "/auth/login", search: { redirect: window.location.pathname } });
+        try {
+          return await next();
+        } catch (error) {
+          if (error instanceof ORPCError && error.code === "SESSION_EXPIRED") {
+            await endStaleSession();
+            throw error;
+          }
+          if (error instanceof ORPCError && error.status === 401 && path.join("/") !== "users/me") {
+            // Ignore 401 auto-redirects on session check endpoints
+            throw redirect({ to: "/auth/login", search: { redirect: window.location.pathname } });
+          }
+          console.error(error);
+          const message = error instanceof Error ? error.message.trim() : "";
+          if (message) {
+            toast.error(message);
+          }
+          throw error;
         }
-        return response;
       },
     ],
   });

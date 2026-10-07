@@ -4,23 +4,54 @@ import { team } from "@packages/db/interfaces";
 import { Client, Executor } from "gel";
 import z from "zod";
 import dbClient from "@/db";
-import sentryMiddleware from "@/lib/sentry/server"
+import sentryMiddleware from "@/lib/sentry/server";
+import { isInvalidAuthToken } from "@/lib/utils/auth";
 import { RepShape, UserShape } from "@/lib/utils/queries";
 import { InitialContext } from "@/routes/api/$";
 
 export type Context = Awaited<ReturnType<typeof createContext>>;
 
+/**
+ * Rotating the auth signing secret invalidates every cookie out there at once, so without this the
+ * warning would be one stack trace per request from every logged-in client until they all gave up.
+ * Say it once a minute instead, with the damage report.
+ */
+const REJECTED_TOKEN_LOG_INTERVAL = 60_000;
+let rejectedTokens = 0;
+let rejectedTokensLoggedAt = 0;
+
+function noteRejectedAuthToken(error: unknown) {
+  rejectedTokens++;
+  const now = Date.now();
+  if (now - rejectedTokensLoggedAt < REJECTED_TOKEN_LOG_INTERVAL) return;
+  rejectedTokensLoggedAt = now;
+  console.warn(
+    `Rejected ${rejectedTokens} auth token(s) we can't verify (${(error as Error).message}). If the signing secret was just rotated this is expected — those clients are being asked to sign in again.`,
+  );
+  rejectedTokens = 0;
+}
+
 export const createContext = async ({ session: { client } }: InitialContext) => {
   const db = client ?? dbClient;
-  return {
-    user: await e
-      .select(e.global.user, (u) => ({
-        ...UserShape(u),
-        ...e.is(e.users.Rep, RepShape(u)),
-      }))
-      .run(db),
-    db: db as Executor,
-  };
+  try {
+    return {
+      user: await e
+        .select(e.global.user, (u) => ({
+          ...UserShape(u),
+          ...e.is(e.users.Rep, RepShape(u)),
+        }))
+        .run(db),
+      db: db as Executor,
+      authTokenRejected: false,
+    };
+  } catch (error) {
+    if (!isInvalidAuthToken(error)) throw error;
+    noteRejectedAuthToken(error);
+    // Nothing on this request can be authenticated, and every query carrying the token would fail
+    // the same way, so drop it and carry on anonymously: public procedures keep working, and `auth`
+    // turns the rejection into a 401 telling the client to sign in again rather than a 500.
+    return { user: null, db: dbClient as Executor, authTokenRejected: true };
+  }
 };
 
 const _user = e.assert_exists(e.global.user);
@@ -50,13 +81,19 @@ export const auth = pub
     UNAUTHORIZED: {
       message: "You are not logged in",
     },
+    SESSION_EXPIRED: {
+      status: 401,
+      message: "Your session is no longer valid. Please sign in again.",
+    },
   })
-  .use(async ({ next, context: { user, ...props }, errors }) => {
+  .use(async ({ next, context: { user, authTokenRejected, ...props }, errors }) => {
     if (!user) {
-      throw errors.UNAUTHORIZED();
+      // Distinct from UNAUTHORIZED so the client knows to bin the dead cookie rather than just
+      // bounce to the login page with it still set.
+      throw authTokenRejected ? errors.SESSION_EXPIRED() : errors.UNAUTHORIZED();
     }
     return next({
-      context: { user, $user: e.assert_exists(e.global.user), ...props } as AuthContext,
+      context: { user, $user: e.assert_exists(e.global.user), authTokenRejected, ...props } as AuthContext,
     });
   });
 
