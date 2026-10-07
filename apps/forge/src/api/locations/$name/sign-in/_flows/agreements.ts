@@ -23,7 +23,12 @@ export const Receive = createReceiveStep(StepType.enum.AGREEMENTS);
 export const Finalise = createFinaliseStep(StepType.enum.AGREEMENTS, StepType.enum.MAILING_LISTS);
 
 export const Errors = createErrorMap(StepType.enum.AGREEMENTS, {
-  NEW_USER_BUT_WERE_SLAMMED: {},
+  // the kiosk has no UI for this step (or MAILING_LISTS) yet, so send them to their own device instead
+  AGREEMENTS_NOT_SIGNED: {
+    message:
+      "User needs to sign the User Agreement first. Ask them to sign it at iforge.sheffield.ac.uk/user/agreements on their own device, then scan again",
+    status: 412,
+  },
 } as const);
 
 export default async function* ({
@@ -35,7 +40,7 @@ export default async function* ({
   z.infer<typeof Finalise>,
   z.infer<typeof Receive>
 > {
-  throw errors.NEW_USER_BUT_WERE_SLAMMED();
+  throw errors.AGREEMENTS_NOT_SIGNED();
   const data = {
     // FIXME only get expired ones, remember to dedupe the logic between init and this
     agreements: await e
