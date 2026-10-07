@@ -33,7 +33,9 @@ export const UserShape = e.shape(e.users.User, () => ({
   },
   roles: { id: true, name: true },
   mailing_list_subscriptions: true,
-  notifications: {
+  // Only unacknowledged ones are shown (banner + unread count); users can have a lot of old notifications
+  notifications: (notification) => ({
+    filter: e.op("not", e.op("exists", notification["@acknowledged_at"])),
     id: true,
     title: true,
     content: true,
@@ -41,7 +43,7 @@ export const UserShape = e.shape(e.users.User, () => ({
     created_at: true,
     type: true,
     "@acknowledged_at": true,
-  },
+  }),
   // TODO figure out how to get RepShape inside of here
 }));
 
