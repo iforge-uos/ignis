@@ -42,6 +42,11 @@ select {
         organisational_unit := "IPE",
         ucard_number := <int32>$user_ucard_number,
         username := <str>$user_username,
+        identity := (insert ext::auth::Identity {
+            issuer := "ignis",
+            subject := <str>$user_username,
+            modified_at := datetime_of_statement(),
+        }),
         training := assert_distinct((
             with training_items := {
                 training,
@@ -60,6 +65,11 @@ select {
         organisational_unit := "IPE",
         ucard_number := <int32>$rep_ucard_number,
         username := <str>$rep_username,
+        identity := (insert ext::auth::Identity {
+            issuer := "ignis",
+            subject := <str>$rep_username,
+            modified_at := datetime_of_statement(),
+        }),
         teams := assert_distinct((
             for team in (insert team::Team { name := "Test", description := "" }) union (
                 select team { @created_at := datetime_of_statement() }

@@ -178,20 +178,27 @@ export const Route = createFileRoute("/_authenticated/_reponly/sign-in/$location
     const currentStep = steps.at(-1)!;
 
     const nextStepRef = useRef<HTMLButtonElement | undefined>(undefined);
+    // The step last requested from this flow, keyed by its position so going back still re-requests it
+    const requestedStepRef = useRef<{ initialise: unknown; stepKey: string } | undefined>(undefined);
 
     const focusNextStep = () => {
       if (canContinue) nextStepRef.current!.focus();
     };
 
     useEffect(() => {
-      (async () => {
-        if (!initialise || !receive) return;
+      if (!initialise || !receive) return;
+      // The flow is one ordered stream, so requesting the same step twice (StrictMode runs effects twice in
+      // dev) makes each request read the other's reply and the flow stalls
+      const stepKey = `${steps.length}:${currentStep}`;
+      if (requestedStepRef.current?.initialise === initialise && requestedStepRef.current.stepKey === stepKey) return;
+      requestedStepRef.current = { initialise, stepKey };
 
+      (async () => {
         const transmit = await initialise({ type: currentStep }).catch((err) => {
           console.log("Got err", err);
           toast.error(err.message);
           console.error(err.message)
-          return navigate({ to: "/sign-in/$location", params: params });
+          return navigate({ to: "/sign-in/$location", params: { location: params.location } });
 
         }); // fire off the request for the data when the step changes
         if (!transmit) return;
@@ -201,7 +208,7 @@ export const Route = createFileRoute("/_authenticated/_reponly/sign-in/$location
           console.log(finalise, isDefinedError(error));
           if (error) {
             toast.error(error.message); // kinda shit UX but I just need something temporary (famous last words)
-            return await navigate({ to: "/sign-in/$location", params: params });
+            return await navigate({ to: "/sign-in/$location", params: { location: params.location } });
           }
 
           return setSteps((steps) => [...steps, finalise!.next]);
@@ -210,7 +217,7 @@ export const Route = createFileRoute("/_authenticated/_reponly/sign-in/$location
         setTransmit(transmit);
         console.log("Got transmit", currentStep, transmit);
       })();
-    }, [initialise, receive, params, currentStep]);
+    }, [initialise, receive, params.location, currentStep, steps.length]);
 
     if (
       !initialise ||
