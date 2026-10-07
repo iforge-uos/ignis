@@ -5,8 +5,7 @@ import { logger } from "@sentry/tanstackstart-react";
 import { Client, Executor, SimpleConfig } from "gel";
 import { Transaction } from "gel/dist/transaction";
 import ldap from "@/ldap";
-import { ldapLibraryToUcardNumber } from "./sign-in";
-import { truncateByDomain } from "recharts/types/util/ChartUtils";
+import { ldapLibraryToUcardNumber, removeDomain } from "./sign-in";
 
 export const PartialUserShape = e.shape(e.users.User, () => ({
   // Fairly minimal, useful for templating
@@ -266,7 +265,7 @@ export const ensureUser = async ({
   }
 
   const user_by_email = e.select(e.users.User, () => ({
-    filter_single: { email: ldap_user.mail },
+    filter_single: { email: removeDomain(ldap_user.mail).toLowerCase() },
   }));
   const u = await user_by_email.run(tx);
 
@@ -298,7 +297,8 @@ export const ensureUser = async ({
               ...ldap.toInsert(ldap_user),
               identity: e.insert(e.ext.auth.Identity, {
                 issuer: "ignis",
-                subject: "",
+                // (issuer, subject) is exclusive, so each placeholder needs its own subject
+                subject: crypto.randomUUID(),
                 modified_at: e.datetime_of_statement(),
               }),
             }),
