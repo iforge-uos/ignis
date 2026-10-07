@@ -110,6 +110,13 @@ const subscriptions = new Map<string, SubscriptionHandler>();
 
 // Setup message handler once
 redisSubscriber.on("message", (channel: string, message: string) => {
+  console.log(
+    "[dbg] redis",
+    channel,
+    message,
+    "matching handlers:",
+    [...subscriptions.values()].filter((h) => h.channel === channel).length,
+  );
   try {
     const listenable = Listenable.parse(JSON.parse(message));
     for (const [, handler] of subscriptions) {
