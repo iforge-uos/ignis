@@ -134,6 +134,10 @@ const $default__globals: {  CDN_URL: _.syntax.$expr_Global<
               // "default::PUB_SUB_SECRET",
               _std.$str,
               $.Cardinality.AtMostOne
+              >,  PUB_SUB_WEBHOOK_URL: _.syntax.$expr_Global<
+              // "default::PUB_SUB_WEBHOOK_URL",
+              _std.$str,
+              $.Cardinality.AtMostOne
               >,  user: _.syntax.$expr_Global<
               // "default::user",
               $user,
@@ -146,6 +150,9 @@ const $default__globals: {  CDN_URL: _.syntax.$expr_Global<
               $.makeType(_.spec, "00000000-0000-0000-0000-000000000101", _.syntax.literal),
               $.Cardinality.AtMostOne) as any,  PUB_SUB_SECRET: _.syntax.makeGlobal(
               "default::PUB_SUB_SECRET",
+              $.makeType(_.spec, "00000000-0000-0000-0000-000000000101", _.syntax.literal),
+              $.Cardinality.AtMostOne) as any,  PUB_SUB_WEBHOOK_URL: _.syntax.makeGlobal(
+              "default::PUB_SUB_WEBHOOK_URL",
               $.makeType(_.spec, "00000000-0000-0000-0000-000000000101", _.syntax.literal),
               $.Cardinality.AtMostOne) as any,  user: _.syntax.makeGlobal(
               "default::user",

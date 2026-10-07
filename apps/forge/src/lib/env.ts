@@ -83,6 +83,8 @@ export default createEnv({
 
     // Database Configuration
     INFRACTIONS_WEBHOOK_URL: z.url().optional(),
+    // Where Gel triggers send DB change notifications (/api/db/webhook), as seen from the Gel server
+    PUB_SUB_WEBHOOK_URL: z.url().default("http://localhost:3000/api/db/webhook"),
 
     // Pharos
     PHAROS_URL: z.url(),
@@ -174,6 +176,7 @@ export default createEnv({
           PUB_SUB_SECRET: env.JWT_SECRET,
           // Omitted entirely when unset so the client doesn't set the global to undefined.
           ...(env.INFRACTIONS_WEBHOOK_URL ? { INFRACTIONS_WEBHOOK_URL: env.INFRACTIONS_WEBHOOK_URL } : {}),
+          PUB_SUB_WEBHOOK_URL: env.PUB_SUB_WEBHOOK_URL,
         },
       },
       pharos: {

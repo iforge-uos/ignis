@@ -13,6 +13,8 @@ module default {
     global INFRACTIONS_WEBHOOK_URL: str;
     global CDN_URL: str;
     global PUB_SUB_SECRET: str;
+    # where triggers POST change notifications, must be reachable from the Gel server (not necessarily localhost)
+    global PUB_SUB_WEBHOOK_URL: str;
 
     abstract type CreatedAt {
         required created_at: datetime {
@@ -67,7 +69,7 @@ module default {
     function notify_webhook(body: json) -> net::http::ScheduledRequest {
         using (
             select net::http::schedule_request(
-                "http://localhost:3000/api/db/webhook",  # replace with global default::INFRACTIONS_WEBHOOK_URL when testing is done
+                assert_exists(global default::PUB_SUB_WEBHOOK_URL, message := "PUB_SUB_WEBHOOK_URL is not set"),
                 method := net::http::Method.POST,
                 headers := [
                     ('Content-Type', 'application/json'),
