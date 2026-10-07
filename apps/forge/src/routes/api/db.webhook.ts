@@ -9,7 +9,6 @@ export const Route = createFileRoute("/api/db/webhook")({
       POST: async ({ request }) => {
         if (request.headers.get("Authorization") === env.db.globals.PUB_SUB_SECRET) {
           const listenable = Listenable.parse(await request.json());
-          logger.info(`DB webhook reached; ${listenable.type} ${listenable.action}`);
           await publishDbListenable(listenable);
           return Response.json({ success: true }, { status: 200 });
         }

@@ -15,8 +15,8 @@ select (tools union groups) {
       with
         # inlined copy of training::get_status (training.gel), keep the two in sync
         collapse := <optional bool>$collapse,
-        training := .training,
-        next_step := select (
+        # get_status takes a single Training but .training is multi, so evaluate it once per training
+        next_step := (for training in .training union (
             with
                 module training,
                 is_rep := user is users::Rep,
@@ -73,7 +73,7 @@ select (tools union groups) {
                     else
                         {}
                 )
-        ).next_step
+        )).next_step
       select {
         # TODO in future not booked
         tools::Selectability.NONE_REMAINING if [is tools::Tool].quantity = 0 else <tools::Selectability>{},  # inventoried tools cannot be grouped
