@@ -53,7 +53,6 @@ export const Errors = createErrorMap(StepType.enum.REASON, {
 } as const);
 
 export default async function* ({
-  $user,
   user,
   context: { tx },
   errors,
@@ -63,12 +62,16 @@ export default async function* ({
   z.infer<typeof Finalise>,
   z.infer<typeof Receive>
 > {
-  console.log("In Reason step!!!");
-  const userAgreement = e.assert_exists(
-    e.select(e.sign_in.Reason, (reason) => ({
-      filter_single: e.op(reason.category, "=", e.sign_in.ReasonCategory.PERSONAL_PROJECT),
-    })).agreement,
-  );
+  const userAgreementData = await e
+    .select(
+      e.assert_exists(
+        e.select(e.sign_in.Reason, (reason) => ({
+          filter_single: e.op(reason.category, "=", e.sign_in.ReasonCategory.PERSONAL_PROJECT),
+        })).agreement,
+      ),
+      AgreementShape,
+    )
+    .run(tx);
 
   let rx = yield {
     common_reasons: await getCommonReasons(tx, input.name, user.__typename === "users::Rep"),
@@ -111,41 +114,34 @@ export default async function* ({
     }
 
     const { signed_user_agreement, signed_reasons_agreement } = await e
-      .select($user, () => ({
-        // check for the user agreement
-        signed_user_agreement: e.op(
-          "exists",
-          e.select($user.agreements_signed, (a) => ({
-            filter_single:
-              // path factoring to a["@version_signed"] breaks
-              e.op(
-                e.op(a.id, "=", userAgreement.id),
-                "and",
-                e.op($user.agreements_signed["@version_signed"], "=", userAgreement.version),
-              ),
-          })),
-        ),
-        // check for the rest of their agreements
-        signed_reasons_agreement: agreement
-          ? e.op(
+      .assert_exists(
+        e.select(e.users.User, (u) => {
+          const hasSigned = ({ id, version }: { id: string; version: number }) =>
+            e.op(
               "exists",
-              e.select($user.agreements_signed, (a) => ({
-                filter_single: e.op(
-                  e.op(a.id, "=", e.uuid(agreement.id)),
-                  "and",
-                  e.op($user.agreements_signed["@version_signed"], "=", agreement.version),
-                ),
+              e.select(u.agreements_signed, (a) => ({
+                filter: e.op(e.op(a.id, "=", e.uuid(id)), "and", e.op(a["@version_signed"], "=", version)),
               })),
-            )
-          : e.bool(true),
-      }))
+            );
+          return {
+            filter_single: { id: user.id },
+            signed_user_agreement: hasSigned(userAgreementData),
+            signed_reasons_agreement: agreement ? hasSigned(agreement) : e.bool(true),
+          };
+        }),
+      )
       .run(tx);
 
     let retry: StepRetry | undefined;
     if (!signed_user_agreement) {
-      const data = await e.select(userAgreement, AgreementShape).run(tx);
-      requestedAgreementId = data.id;
-      retry = { error: { code: "USER_AGREEMENT_NOT_SIGNED", message: Errors.map.USER_AGREEMENT_NOT_SIGNED.message, data } };
+      requestedAgreementId = userAgreementData.id;
+      retry = {
+        error: {
+          code: "USER_AGREEMENT_NOT_SIGNED",
+          message: Errors.map.USER_AGREEMENT_NOT_SIGNED.message,
+          data: userAgreementData,
+        },
+      };
     } else if (!signed_reasons_agreement) {
       requestedAgreementId = agreement!.id;
       retry = {
