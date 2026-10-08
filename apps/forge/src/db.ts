@@ -1,14 +1,26 @@
 import { Temporal } from "@js-temporal/polyfill";
-import { createClient } from "@packages/db/edgeql-js";
+import e, { createClient } from "@packages/db/edgeql-js";
 import { $Listenable, $ListenableWithChanges } from "@packages/db/edgeql-js/modules/default";
 import { $expr_PathNode, ObjectType, pointerToTsType, TypeSet } from "@packages/db/edgeql-js/reflection";
+import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
 import Redis from "ioredis";
 import z from "zod";
 import env from "./lib/env";
 
 const MICROSECONDS_SINCE_2000 = 946684800000000n;
 
-const client = createClient({ branch: "main", tlsSecurity: "insecure", host: env.db.host, port: env.db.port, user: env.db.user, password: env.db.password })
+const client = createClient({
+  branch: "main",
+  tlsSecurity: "insecure",
+  host: env.db.host,
+  port: env.db.port,
+  user: env.db.user,
+  password: env.db.password,
+  // Every backend that plans our larger queries retains a few hundred MB of planner scratch, so the
+  // pool size is effectively the memory budget. A small pool also means more calls per backend,
+  // which is what gets Postgres to reuse a cached plan instead of replanning on every call.
+  concurrency: 4,
+})
   .withGlobals(env.db.globals)
   .withConfig({ apply_access_policies: false })
   .withCodecs({
@@ -32,7 +44,9 @@ const client = createClient({ branch: "main", tlsSecurity: "insecure", host: env
     "cal::local_time": {
       toDatabase(data: Temporal.PlainTime): bigint {
         const { hour, minute, second, millisecond, microsecond } = data;
-        return BigInt(hour * 3600_000_000 + minute * 60_000_000 + second * 1_000_000 + millisecond * 1_000 + microsecond);
+        return BigInt(
+          hour * 3600_000_000 + minute * 60_000_000 + second * 1_000_000 + millisecond * 1_000 + microsecond,
+        );
       },
       fromDatabase(data: bigint): Temporal.PlainTime {
         const hour = Number(data / 3600_000_000n);
@@ -68,7 +82,6 @@ const client = createClient({ branch: "main", tlsSecurity: "insecure", host: env
     },
   });
 
-
 // listeners
 type Listenable = $Listenable["__polyTypenames__"];
 type ListenableWithChangesNames = $ListenableWithChanges["__polyTypenames__"];
@@ -77,17 +90,17 @@ export type UpdatedFields<
   T extends {
     __name__: ListenableWithChangesNames;
   },
-> = T extends ObjectType<string, infer PointersT>
-  ? {
-      [K in keyof PointersT]: K extends
-        | "__type__" // __type__ and link properties are not returned by {**}
-        | `<${string}`
-        | "id" // id is known readonly, could probably exclude more here but this is good enough for me
-        ? never
-        : { new: pointerToTsType<PointersT[K]>; old: pointerToTsType<PointersT[K]> } | undefined;
-    }
-  : never;
-
+> =
+  T extends ObjectType<string, infer PointersT>
+    ? {
+        [K in keyof PointersT]: K extends
+          | "__type__" // __type__ and link properties are not returned by {**}
+          | `<${string}`
+          | "id" // id is known readonly, could probably exclude more here but this is good enough for me
+          ? never
+          : { new: pointerToTsType<PointersT[K]>; old: pointerToTsType<PointersT[K]> } | undefined;
+      }
+    : never;
 
 type SubscriptionHandler = {
   channel: string;
@@ -124,8 +137,39 @@ redisSubscriber.on("message", (channel: string, message: string) => {
   }
 });
 
+const SignInLocationQuery = e.params({ id: e.uuid }, ({ id }) =>
+  e.select(e.sign_in.SignIn, () => ({ location: { name: true }, filter_single: { id } })),
+);
+
+const QueuePlaceLocationQuery = e.params({ id: e.uuid }, ({ id }) =>
+  e.select(e.sign_in.QueuePlace, () => ({ location: { name: true }, filter_single: { id } })),
+);
+
+/**
+ * Which location an event belongs to, so a subscriber watching one space can ignore the other's
+ * traffic. Resolved once here rather than once per subscriber. Deletes can't be resolved — the row
+ * is already gone — so they publish unlabelled and everyone refetches, which is the safe default.
+ */
+async function locationOf(listenable: z.infer<typeof Listenable>) {
+  if (listenable.action === "delete") return undefined;
+  const query =
+    listenable.type === "sign_in::SignIn"
+      ? SignInLocationQuery
+      : listenable.type === "sign_in::QueuePlace"
+        ? QueuePlaceLocationQuery
+        : undefined;
+  if (!query) return undefined;
+  try {
+    return (await query.run(client, { id: listenable.id }))?.location.name;
+  } catch (error) {
+    // An unlabelled event only costs us the filtering, so this is never worth failing the publish for
+    console.error("Failed to resolve location for DB listener message", error);
+    return undefined;
+  }
+}
+
 export async function publishDbListenable(listenable: z.infer<typeof Listenable>) {
-  const message = JSON.stringify(listenable);
+  const message = JSON.stringify({ ...listenable, location: await locationOf(listenable) });
   await Promise.all([
     redisPublisher.publish(listenable.type, message),
     redisPublisher.publish(`${listenable.type}$${listenable.action}`, message),
@@ -199,6 +243,8 @@ export async function onDelete<U extends ObjectType<Listenable | ListenableWithC
 const _Base = z.object({
   type: z.string(),
   id: z.uuid(),
+  /** Attached by {@link publishDbListenable}, not by the DB trigger. Absent on deletes. */
+  location: LocationNameSchema.optional(),
 });
 
 export const Listenable = _Base.and(
@@ -214,6 +260,4 @@ export const Listenable = _Base.and(
     ),
 );
 
-
 export default client;
-

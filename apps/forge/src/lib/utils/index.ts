@@ -110,3 +110,73 @@ export async function* mergeAsyncIterators<T>(...sources: AsyncIterable<T>[]) {
     await Promise.allSettled(states.map((state) => state.iterator.return?.()));
   }
 }
+
+/**
+ * Yield only the values a predicate accepts, closing the source when the consumer stops.
+ */
+export async function* filterAsyncIterator<T>(source: AsyncIterable<T>, predicate: (value: T) => boolean) {
+  const iterator = source[Symbol.asyncIterator]();
+  try {
+    while (true) {
+      const { done, value } = await iterator.next();
+      if (done) return;
+      if (predicate(value)) yield value;
+    }
+  } finally {
+    await iterator.return?.();
+  }
+}
+
+/**
+ * Collapse a burst of events into a single tick and drop anything that arrives while the consumer is
+ * still busy. Consumers that refetch everything on each tick only need to know that *something*
+ * changed, so handling events individually multiplies load for nothing: one sign in emits several
+ * events, and every connected client was running the full refetch for each of them.
+ */
+export async function* coalesce(source: AsyncIterable<unknown>, delay = 250): AsyncGenerator<void> {
+  const iterator = source[Symbol.asyncIterator]();
+  let dirty = false;
+  let finished = false;
+  let wake: (() => void) | null = null;
+
+  const notify = () => {
+    const resolve = wake;
+    wake = null;
+    resolve?.();
+  };
+
+  void (async () => {
+    try {
+      while (true) {
+        const { done } = await iterator.next();
+        if (done) break;
+        dirty = true;
+        notify();
+      }
+    } finally {
+      finished = true;
+      notify();
+    }
+  })().catch(() => {}); // the only sources here are Redis subscriptions, which log their own failures
+
+  try {
+    while (!finished || dirty) {
+      if (!dirty) {
+        await new Promise<void>((resolve) => {
+          wake = resolve;
+        });
+        continue;
+      }
+      // trailing edge, so the rest of the burst lands before we do the work
+      await new Promise((resolve) => setTimeout(resolve, delay));
+      dirty = false;
+      yield;
+    }
+  } finally {
+    // Fire and forget: calling return() on a generator that is suspended mid-await only queues the
+    // return until that await settles, so awaiting it here would block until the next event arrives
+    // — which, for a subscription that has gone quiet, may be never. Same reason we don't await the
+    // pump: it unwinds on its own once the source produces or closes.
+    void iterator.return?.();
+  }
+}
