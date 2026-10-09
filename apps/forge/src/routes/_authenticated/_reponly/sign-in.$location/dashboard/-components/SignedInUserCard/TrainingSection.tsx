@@ -22,18 +22,18 @@ import { activeLocationAtom } from "@/atoms/signInAppAtoms";
 import { iForgeEpoch } from "@/lib/constants";
 import { orpc } from "@/lib/orpc";
 import { cn } from "@/lib/utils/cn";
-import { ManageUserWidgetProps } from "./ManageUserWidget";
 import { getToolCardInfo } from "../../../$ucard_number/-components/ToolLegend";
+import { ManageUserWidgetProps } from "./ManageUserWidget";
 
 export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locationName: location }) => {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [repSigningOff, setRepSigningOff] = React.useState<string>();
-  const [training, setTraining] = React.useState<string>();
+  const [trainingId, setTrainingId] = React.useState<string>();
   const activeLocation = useAtomValue(activeLocationAtom);
-  const { data: remainingTrainings } = useQuery(
+  const { data: inPersonTools } = useQuery(
     orpc.users.training.inPersonRemaining.queryOptions({ input: { id: user.id, location: activeLocation } }),
   );
-  const { data: onShiftReps } = useQuery(
+  const { data: supervisingReps } = useQuery(
     orpc.locations.supervisingReps.queryOptions({ input: { name: activeLocation } }),
   );
   const queryClient = useQueryClient();
@@ -42,26 +42,33 @@ export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locatio
     <>
       <div className="m-2">
         <Label>Training</Label>
-        <Select required onValueChange={setTraining}>
+        <Select required onValueChange={setTrainingId}>
           <SelectTrigger className="w-full mt-2">
             <SelectValue placeholder="Choose in person training" />
           </SelectTrigger>
           <SelectContent className="w-full">
             <SelectGroup>
-              {remainingTrainings?.length ? (
-                remainingTrainings
+              {inPersonTools?.length ? (
+                inPersonTools
                   .sort((a, b) => a.name.localeCompare(b.name))
-                  .map((training) => {
-                    const info = getToolCardInfo(training);
+                  .map((tool) => {
+                    const info = getToolCardInfo(tool);
                     return (
                       <SelectItem
-                        key={training.id}
-                        value={training.id}
-                        disabled={!(training.selectable.length === 1 && training.selectable.includes("DO_IN_PERSON"))}
+                        key={tool.id}
+                        // disabled rows have no training_id and are never selected
+                        value={tool.training_id ?? tool.id}
+                        disabled={
+                          !(
+                            tool.training_id &&
+                            tool.selectable.length === 1 &&
+                            tool.selectable.includes("DO_IN_PERSON")
+                          )
+                        }
                         className="w-full"
                       >
                         <div className="flex items-center justify-between w-full gap-4">
-                          <p className="min-w-[175px] flex-1">{training.name}</p>
+                          <p className="min-w-[175px] flex-1">{tool.name}</p>
                           <div className="flex shrink-0 space-x-2 ml-auto">
                             {info.map((entry) =>
                               entry.name !== "DO_IN_PERSON" ? (
@@ -110,7 +117,7 @@ export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locatio
               mode="single"
               selected={date}
               onSelect={setDate}
-              disabled={(date) => date > new Date() || date < new Date(iForgeEpoch.epochMilliseconds)}
+              disabled={(day) => day > new Date() || day < new Date(iForgeEpoch.epochMilliseconds)}
               initialFocus
             />
           </PopoverContent>
@@ -118,16 +125,16 @@ export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locatio
       </div>
       <div className="m-2">
         <Label>Verified by</Label>
-        <Select required onValueChange={setRepSigningOff} disabled={!training}>
+        <Select required onValueChange={setRepSigningOff} disabled={!trainingId}>
           <SelectTrigger className="mt-2">
             <SelectValue placeholder="Choose an on shift Rep" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              {onShiftReps && onShiftReps.length > 0 ? (
-                onShiftReps.map(
+              {supervisingReps && supervisingReps.length > 0 ? (
+                supervisingReps.map(
                   (rep) =>
-                    rep.supervisable_training.some((t) => t.id === training) && (
+                    rep.supervisable_training.some((t) => t.id === trainingId) && (
                       <SelectItem value={rep.id} key={rep.id}>
                         {rep.display_name}
                       </SelectItem>
@@ -153,17 +160,21 @@ export const TrainingSection: React.FC<ManageUserWidgetProps> = ({ user, locatio
             try {
               await orpc.users.training.createInPerson.call({
                 id: user.id,
-                training_id: training!,
+                training_id: trainingId!,
                 rep_id: repSigningOff!,
                 created_at: date!,
               });
             } catch (e) {
               return toast.error(`Failed to submit contact the IT Team ${e}`);
             }
-            await queryClient.invalidateQueries({ queryKey: ["userTrainingRemaining", user.id, activeLocation] });
+            await queryClient.invalidateQueries({
+              queryKey: orpc.users.training.inPersonRemaining.queryKey({
+                input: { id: user.id, location: activeLocation },
+              }),
+            });
             toast.success("Successfully submitted");
           }}
-          disabled={!(training && date && repSigningOff)}
+          disabled={!(trainingId && date && repSigningOff)}
         >
           Add
         </Button>

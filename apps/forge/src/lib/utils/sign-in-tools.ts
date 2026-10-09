@@ -131,6 +131,11 @@ type ContextRow = {
 
 type StatusRow = { id: string; next_step: string | null };
 
+export type SignInToolWithTraining = GetSignInToolsReturns[number] & {
+  /** The tool's trainings, each with the next step this user has left on it (null when there is none). */
+  training: { id: string; next_step: Selectability | null }[];
+};
+
 /**
  * Drop-in replacement for the generated `getSignInTools`, which fused both of the above into one
  * statement. The outer set of {@link Selectability} values is assembled here in the same order the
@@ -138,6 +143,17 @@ type StatusRow = { id: string; next_step: string | null };
  * tool's trainings produces it.
  */
 export async function getSignInTools(client: Executor, args: GetSignInToolsArgs): Promise<GetSignInToolsReturns> {
+  return (await getSignInToolsWithTraining(client, args)).map(({ training: _, ...tool }) => tool);
+}
+
+/**
+ * {@link getSignInTools}, but each tool also says which of its trainings produced which next step, for
+ * callers that need to act on a specific training (e.g. signing off in-person training).
+ */
+export async function getSignInToolsWithTraining(
+  client: Executor,
+  args: GetSignInToolsArgs,
+): Promise<SignInToolWithTraining[]> {
   // Sequential, not Promise.all: `client` is an Executor, and half the callers hand us the sign-in
   // flow's Transaction, which refuses to run two queries at once.
   const tools = await client.query<ToolRow>(TOOLS_QUERY, { name: args.name });
@@ -168,6 +184,10 @@ export async function getSignInTools(client: Executor, args: GetSignInToolsArgs)
         if (!supervisable.has(training)) selectable.push("REPS_UNTRAINED");
       }
     }
-    return { ...tool, selectable };
+    return {
+      ...tool,
+      selectable,
+      training: training_ids.map((id) => ({ id, next_step: (nextSteps.get(id) as Selectability) ?? null })),
+    };
   });
 }

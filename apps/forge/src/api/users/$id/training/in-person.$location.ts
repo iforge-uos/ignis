@@ -1,6 +1,6 @@
 import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
 import * as z from "zod";
-import { GetSignInToolsReturns, getSignInTools } from "@/lib/utils/sign-in-tools";
+import { GetSignInToolsReturns, getSignInToolsWithTraining } from "@/lib/utils/sign-in-tools";
 import { auth } from "@/orpc";
 
 const IN_PERSON = new Set([
@@ -18,10 +18,17 @@ export const inPersonRemaining = auth
       location: LocationNameSchema,
     }),
   )
-  .handler(async ({ input: { id, location }, context: { db } }) =>
-    getSignInTools(db, {
+  .handler(async ({ input: { id, location }, context: { db } }) => {
+    const tools = await getSignInToolsWithTraining(db, {
       id,
       name: location,
       collapse: true,
-    }).then((tools) => tools.filter((t) => t.selectable.length && new Set(t.selectable).isSubsetOf(IN_PERSON))),
-  );
+    });
+    return tools
+      .filter((t) => t.selectable.length && new Set(t.selectable).isSubsetOf(IN_PERSON))
+      .map(({ training, ...tool }) => ({
+        ...tool,
+        // the row's own id is the tool's, but sign-off and rep supervision work on training ids
+        training_id: training.find((t) => t.next_step === "DO_IN_PERSON")?.id ?? null,
+      }));
+  });
