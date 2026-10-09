@@ -79,52 +79,108 @@ export async function sleep(durationMillis: number) {
   });
 }
 
-export async function* mergeAsyncIterators<T>(...sources: AsyncIterable<T>[]) {
+/**
+ * Interleave several async iterables, yielding whichever produces a value first.
+ *
+ * Hand-written rather than an async generator, for the same reason as the subscription registry in
+ * lib/utils/subscriptions.ts: a generator parked on an `await` cannot be unwound, because `return()`
+ * on it is only queued until that await settles. As a generator this sat on the race below, so a
+ * consumer that stopped early left every source open until the next event arrived.
+ */
+export function mergeAsyncIterators<T>(...sources: AsyncIterable<T>[]): AsyncIterableIterator<T> {
   type State = {
     iterator: AsyncIterator<T>;
     next: Promise<{ state: State; result: IteratorResult<T> }>;
   };
 
+  const advance = (state: State) => {
+    state.next = state.iterator.next().then((result) => ({ state, result }));
+    // settled by whoever races it; this only stops a rejection going unhandled in the meantime
+    void state.next.catch(() => {});
+  };
+
   const states: State[] = sources.map((source) => {
-    const iterator = source[Symbol.asyncIterator]();
-    const state = {} as State;
-    state.iterator = iterator;
-    state.next = iterator.next().then((result) => ({ state, result }));
+    const state = { iterator: source[Symbol.asyncIterator]() } as State;
+    advance(state);
     return state;
   });
 
-  try {
-    while (states.length > 0) {
-      const { state, result } = await Promise.race(states.map((s) => s.next));
+  let done = false;
 
-      if (result.done) {
-        const index = states.indexOf(state);
-        if (index !== -1) states.splice(index, 1);
-        continue;
+  const close = () => {
+    done = true;
+    // fire and forget: a source may itself be a generator whose return() is queued, and we must not
+    // make our own return() wait on that
+    for (const state of states) void state.iterator.return?.();
+    states.length = 0;
+  };
+
+  return {
+    [Symbol.asyncIterator]() {
+      return this;
+    },
+    async next(): Promise<IteratorResult<T>> {
+      while (!done && states.length > 0) {
+        const { state, result } = await Promise.race(states.map((s) => s.next));
+        if (done) break;
+        if (result.done) {
+          const index = states.indexOf(state);
+          if (index !== -1) states.splice(index, 1);
+          continue;
+        }
+        advance(state);
+        return { done: false, value: result.value };
       }
-
-      state.next = state.iterator.next().then((nextResult) => ({ state, result: nextResult }));
-      yield result.value;
-    }
-  } finally {
-    await Promise.allSettled(states.map((state) => state.iterator.return?.()));
-  }
+      return { done: true, value: undefined };
+    },
+    async return(): Promise<IteratorResult<T>> {
+      close();
+      return { done: true, value: undefined };
+    },
+    async throw(error?: unknown): Promise<IteratorResult<T>> {
+      close();
+      throw error;
+    },
+  };
 }
 
 /**
- * Yield only the values a predicate accepts, closing the source when the consumer stops.
+ * Yield only the values a predicate accepts. Hand-written for the same reason as
+ * {@link mergeAsyncIterators}: so that stopping promptly closes the source.
  */
-export async function* filterAsyncIterator<T>(source: AsyncIterable<T>, predicate: (value: T) => boolean) {
+export function filterAsyncIterator<T>(
+  source: AsyncIterable<T>,
+  predicate: (value: T) => boolean,
+): AsyncIterableIterator<T> {
   const iterator = source[Symbol.asyncIterator]();
-  try {
-    while (true) {
-      const { done, value } = await iterator.next();
-      if (done) return;
-      if (predicate(value)) yield value;
-    }
-  } finally {
-    await iterator.return?.();
-  }
+  let done = false;
+
+  const close = () => {
+    done = true;
+    void iterator.return?.();
+  };
+
+  return {
+    [Symbol.asyncIterator]() {
+      return this;
+    },
+    async next(): Promise<IteratorResult<T>> {
+      while (!done) {
+        const result = await iterator.next();
+        if (done || result.done) break;
+        if (predicate(result.value)) return { done: false, value: result.value };
+      }
+      return { done: true, value: undefined };
+    },
+    async return(): Promise<IteratorResult<T>> {
+      close();
+      return { done: true, value: undefined };
+    },
+    async throw(error?: unknown): Promise<IteratorResult<T>> {
+      close();
+      throw error;
+    },
+  };
 }
 
 /**

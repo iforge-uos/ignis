@@ -1,6 +1,8 @@
 #!/bin/sh
 set -e
 
+git config --global --add safe.directory /workspaces/ignis
+
 echo "Waiting for Gel..."
 until curl -sfk https://localhost:10705/server/status/ready >/dev/null; do sleep 2; done
 

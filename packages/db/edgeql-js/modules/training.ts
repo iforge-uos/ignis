@@ -169,6 +169,30 @@ const $Training = $.makeType<$Training>(_.spec, "29f7181e-f86c-11ee-b1f9-2f77f7e
 
 const Training: $.$expr_PathNode<$.TypeSet<$Training, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Training, $.Cardinality.Many), null);
 
+type get_expiry_datesλFuncExpr<
+  P1 extends $.TypeSet<_users.$User>,
+> = $.$expr_Function<
+  $ExpiresReturn, $.cardutil.paramCardinality<P1>
+>;
+function get_expiry_dates<
+  P1 extends $.TypeSet<_users.$User>,
+>(
+  user: P1,
+): get_expiry_datesλFuncExpr<P1>;
+function get_expiry_dates(...args: any[]) {
+  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('training::get_expiry_dates', args, _.spec, [
+    {args: [{typeId: "29c43a34-f86c-11ee-a6b1-c1a89f83e7fe", optional: false, setoftype: false, variadic: false}], returnTypeId: "3e6ff96e-28b0-11f1-9560-63c86ad3464a"},
+  ]);
+  return _.syntax.$expressionify({
+    __kind__: $.ExpressionKind.Function,
+    __element__: returnType,
+    __cardinality__: cardinality,
+    __name__: "training::get_expiry_dates",
+    __args__: positionalArgs,
+    __namedargs__: namedArgs,
+  }) as any;
+};
+
 type get_statusλFuncExpr<
   NamedArgs extends {
     "collapse"?: _.castMaps.orScalarLiteral<$.TypeSet<_std.$bool>>,
@@ -216,30 +240,6 @@ function get_status(...args: any[]) {
   }) as any;
 };
 
-type get_expiry_datesλFuncExpr<
-  P1 extends $.TypeSet<_users.$User>,
-> = $.$expr_Function<
-  $ExpiresReturn, $.cardutil.paramCardinality<P1>
->;
-function get_expiry_dates<
-  P1 extends $.TypeSet<_users.$User>,
->(
-  user: P1,
-): get_expiry_datesλFuncExpr<P1>;
-function get_expiry_dates(...args: any[]) {
-  const {returnType, cardinality, args: positionalArgs, namedArgs} = _.syntax.$resolveOverload('training::get_expiry_dates', args, _.spec, [
-    {args: [{typeId: "29c43a34-f86c-11ee-a6b1-c1a89f83e7fe", optional: false, setoftype: false, variadic: false}], returnTypeId: "3e6ff96e-28b0-11f1-9560-63c86ad3464a"},
-  ]);
-  return _.syntax.$expressionify({
-    __kind__: $.ExpressionKind.Function,
-    __element__: returnType,
-    __cardinality__: cardinality,
-    __name__: "training::get_expiry_dates",
-    __args__: positionalArgs,
-    __namedargs__: namedArgs,
-  }) as any;
-};
-
 const $training__globals: {  COLLAPSED_LOOKUPS: _.syntax.$expr_Global<
               // "training::COLLAPSED_LOOKUPS",
               $.NamedTupleType<{care: _std.$int64, value: _std.$int64, status: $Status, next_step: $NextStep}>,
@@ -273,8 +273,8 @@ type __defaultExports = {
   "Question": typeof Question;
   "Session": typeof Session;
   "Training": typeof Training;
-  "get_status": typeof get_status;
   "get_expiry_dates": typeof get_expiry_dates;
+  "get_status": typeof get_status;
   "global": typeof $training__globals
 };
 const __defaultExports: __defaultExports = {
@@ -290,8 +290,8 @@ const __defaultExports: __defaultExports = {
   "Question": Question,
   "Session": Session,
   "Training": Training,
-  "get_status": get_status,
   "get_expiry_dates": get_expiry_dates,
+  "get_status": get_status,
   "global": $training__globals
 };
 export default __defaultExports;

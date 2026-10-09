@@ -6,6 +6,7 @@ import { LocationNameSchema } from "@packages/db/zod/modules/sign_in";
 import Redis from "ioredis";
 import z from "zod";
 import env from "./lib/env";
+import { createSubscriptions } from "./lib/utils/subscriptions";
 
 const MICROSECONDS_SINCE_2000 = 946684800000000n;
 
@@ -102,12 +103,6 @@ export type UpdatedFields<
       }
     : never;
 
-type SubscriptionHandler = {
-  channel: string;
-  queue: z.infer<typeof Listenable>[];
-  resolve: ((value?: unknown) => void) | null;
-};
-
 const redisConfig = {
   host: env.redis.host,
   port: env.redis.port,
@@ -119,19 +114,17 @@ const redisConfig = {
 const redisPublisher = new Redis(redisConfig);
 const redisSubscriber = new Redis(redisConfig);
 
-const subscriptions = new Map<string, SubscriptionHandler>();
+const subscriptions = createSubscriptions<z.infer<typeof Listenable>>({
+  onSubscribe: (channel) => redisSubscriber.subscribe(channel),
+});
+
+/** How many DB listener subscriptions are open. A number that only ever climbs is a leak. */
+export const dbListenerCount = () => subscriptions.size;
 
 // Setup message handler once
 redisSubscriber.on("message", (channel: string, message: string) => {
   try {
-    const listenable = Listenable.parse(JSON.parse(message));
-    for (const [, handler] of subscriptions) {
-      if (handler.channel === channel) {
-        handler.queue.push(listenable);
-        handler.resolve?.();
-        handler.resolve = null;
-      }
-    }
+    subscriptions.dispatch(channel, Listenable.parse(JSON.parse(message)));
   } catch (error) {
     console.error("Failed to process DB listener message", error);
   }
@@ -176,27 +169,8 @@ export async function publishDbListenable(listenable: z.infer<typeof Listenable>
   ]);
 }
 
-export async function* subscribeToDbListener(channel: Listenable | `${Listenable}$${"insert" | "update" | "delete"}`) {
-  const subscriptionId = `${channel}-${Math.random()}`;
-  const handler: SubscriptionHandler = {
-    channel,
-    queue: [],
-    resolve: null,
-  };
-
-  subscriptions.set(subscriptionId, handler);
-  await redisSubscriber.subscribe(channel);
-  try {
-    while (true) {
-      if (handler.queue.length > 0) {
-        yield handler.queue.shift()!;
-      } else {
-        await new Promise((r) => (handler.resolve = r));
-      }
-    }
-  } finally {
-    subscriptions.delete(subscriptionId);
-  }
+export function subscribeToDbListener(channel: Listenable | `${Listenable}$${"insert" | "update" | "delete"}`) {
+  return subscriptions.subscribe(channel);
 }
 
 export async function onInsert<U extends ObjectType<Listenable | ListenableWithChangesNames>>(

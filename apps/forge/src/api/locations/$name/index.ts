@@ -36,11 +36,12 @@ export const get = rep
   .route({ path: "/" })
   .handler(async function* ({ input: { name }, context: { db } }) {
     const getter = async () => {
-      const [location, historic_sign_ins, historic_queue] = await Promise.all([
-        LocationQuery.run(db, { name }),
-        HistoricSignInsQuery.run(db, { name }),
-        HistoricQueueQuery.run(db, { name }),
-      ]);
+      // Sequential rather than concurrent: `db` is an Executor, so it may be a transaction (which
+      // rejects concurrent queries), and three queries at once would occupy three pooled backends
+      // and the fused query's planning was too expensive.
+      const location = await LocationQuery.run(db, { name });
+      const historic_sign_ins = await HistoricSignInsQuery.run(db, { name });
+      const historic_queue = await HistoricQueueQuery.run(db, { name });
       return { ...location, historic_sign_ins, historic_queue };
     };
 

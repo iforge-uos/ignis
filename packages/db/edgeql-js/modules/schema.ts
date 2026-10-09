@@ -817,7 +817,7 @@ export type $ObjectTypeλShape = $.typeutil.flatten<$SourceλShape & Omit<$Consi
   "<__type__[is ext::ai::MistralNemo]": $.LinkDesc<_extai.$MistralNemo, $.Cardinality.Many, {}, false, false,  false, false>;
   "<__type__[is ext::ai::CodestralMamba]": $.LinkDesc<_extai.$CodestralMamba, $.Cardinality.Many, {}, false, false,  false, false>;
   "<__type__[is ext::ai::AnthropicClaude_3_5_SonnetModel]": $.LinkDesc<_extai.$AnthropicClaude_3_5_SonnetModel, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<__type__[is _BaseListenable]": $.LinkDesc<_$default.$BaseListenable_cab5fcdfbe5c11f19d7ddd9279ee7be4, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<__type__[is _BaseListenable]": $.LinkDesc<_$default.$BaseListenable_05378411c35b11f19271890f1e83349f, $.Cardinality.Many, {}, false, false,  false, false>;
   "<__type__[is ext::ai::AnthropicClaude_3_5_HaikuModel]": $.LinkDesc<_extai.$AnthropicClaude_3_5_HaikuModel, $.Cardinality.Many, {}, false, false,  false, false>;
   "<__type__[is ext::ai::AnthropicClaude3HaikuModel]": $.LinkDesc<_extai.$AnthropicClaude3HaikuModel, $.Cardinality.Many, {}, false, false,  false, false>;
   "<__type__[is ext::ai::AnthropicClaude3SonnetModel]": $.LinkDesc<_extai.$AnthropicClaude3SonnetModel, $.Cardinality.Many, {}, false, false,  false, false>;

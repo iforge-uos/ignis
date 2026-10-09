@@ -6,7 +6,7 @@ set -e
 cd "$(dirname "$0")/.."
 
 if [ -z "$GOOGLE_CLIENT_ID" ]; then
-  exec env OP_ACCOUNT=iforge.1password.com op run --env-file=apps/forge/.env.dev -- sh "$0"
+  exec env OP_ACCOUNT=iforge.1password.com op run --env-file=apps/forge/.env.dev -- sh .devcontainer/configure-gel-auth.sh
 fi
 
 # .env.dev's connection settings are forge's; they clash with the CLI's GEL_INSTANCE link

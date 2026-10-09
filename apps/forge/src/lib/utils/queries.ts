@@ -66,22 +66,44 @@ export const AgreementShape = e.shape(e.sign_in.Agreement, () => ({
   _content_hash: false, // no one cares about this implementation detail
 }));
 
+/**
+ * Deliberately avoids `max_count` and the old `user_count` subquery. Both were aggregates over the
+ * sign-in and rep sets, recomputed from scratch even though this shape already counts those sets.
+ */
 export const LocationStatusShape = e.shape(e.sign_in.Location, (location) => ({
   on_shift_rep_count: e.count(location.on_shift_reps),
   off_shift_rep_count: e.count(location.off_shift_reps),
-  user_count: e.count(e.select(location.sign_ins.user, (u) => ({ filter: e.op(u.__type__.name, "=", "users::User") }))),
-  max_count: true,
-  queued_count: e.count(location.queued),
+  sign_in_count: e.count(location.sign_ins),
   out_of_hours: true,
   name: true,
   status: true,
   opening_time: true,
   closing_time: true,
   queue_in_use: true,
+  // plain columns, needed to derive max_count
+  max_users: true,
+  in_hours_rep_multiplier: true,
+  out_of_hours_rep_multiplier: true,
 }));
 
+/**
+ * Every plain column on Location, plus the two links the sign-in pages read. Notably *not*
+ * `Location["*"]`: that pulls in six computed pointers (available_capacity, can_sign_in, max_count,
+ * status, out_of_hours, queue_in_use) which each re-derive `sign_ins` and the on/off-shift rep sets
+ * independently.
+ */
 export const FullLocation = e.shape(e.sign_in.Location, () => ({
-  ...e.sign_in.Location["*"],
+  id: true,
+  name: true,
+  opening_days: true,
+  opening_time: true,
+  closing_time: true,
+  in_hours_rep_multiplier: true,
+  out_of_hours_rep_multiplier: true,
+  max_users: true,
+  queue_enabled: true,
+  created_at: true,
+  updated_at: true,
   sign_ins: {
     ...e.sign_in.SignIn["*"],
     reason: e.sign_in.Reason["*"],
