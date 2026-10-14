@@ -42,13 +42,13 @@ export default (options: Options = {}) =>
           }
           if (error instanceof InvalidArgumentError) {
             throw new ORPCError("NOT_FOUND", {
-              message: `${path} with id ${path[-1]} not found`,
+              message: `${path.join(".")} not found`,
               cause: error,
             });
           }
           if (error instanceof CardinalityViolationError) {
             throw new ORPCError("NOT_FOUND", {
-              message: `${path} with id ${path[-1]} not found`,
+              message: `${path.join(".")} not found`,
               cause: error,
             });
           }

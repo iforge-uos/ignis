@@ -28,7 +28,7 @@ const client = createClient({
     // if you're ever wondering why data seems truncated blame the discrepancy below
     "std::datetime": {
       toDatabase(data: Temporal.ZonedDateTime) {
-        return data.epochNanoseconds * 1000n;
+        return data.epochNanoseconds / 1000n;
       },
       fromDatabase(data: bigint) {
         return new Temporal.ZonedDateTime(data * 1000n, "UTC");

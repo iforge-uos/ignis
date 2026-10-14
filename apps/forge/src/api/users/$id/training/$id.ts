@@ -1,7 +1,8 @@
-import { rep, transaction } from "@/orpc";
+import { Temporal } from "@js-temporal/polyfill";
 import e from "@packages/db/edgeql-js";
 import { addInPersonTraining } from "@packages/db/queries/addInPersonTraining.query";
 import * as z from "zod";
+import { rep, transaction } from "@/orpc";
 
 export const createInPerson = rep
   .route({ method: "POST", path: "/{training_id}" })
@@ -13,11 +14,15 @@ export const createInPerson = rep
       rep_id: z.uuid(),
     }),
   )
-  .handler(async ({ input: { id, training_id, ...data }, context: { db } }) =>
+  .handler(async ({ input: { id, training_id, created_at, rep_id }, context: { db } }) =>
     addInPersonTraining(db, {
       id,
       training_id,
-      ...data,
+      rep_id,
+      // the generated query types still say Date, but our datetime codec (see db.ts) only accepts Temporal
+      created_at: Temporal.Instant.fromEpochMilliseconds(created_at.getTime()).toZonedDateTimeISO(
+        "UTC",
+      ) as unknown as Date,
     }),
   );
 
