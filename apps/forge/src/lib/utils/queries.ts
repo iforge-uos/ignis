@@ -60,6 +60,12 @@ export const InfractionShape = e.shape(e.users.Infraction, () => ({
   resolved: true,
 }));
 
+export const AccessibilityNoteShape = e.shape(e.users.AccessibilityNote, () => ({
+  id: true,
+  created_at: true,
+  content: true,
+}));
+
 export const AgreementShape = e.shape(e.sign_in.Agreement, () => ({
   ...e.sign_in.Agreement["*"],
   reasons: e.sign_in.Reason["*"],
@@ -207,6 +213,8 @@ export const TeamShape = e.shape(e.team.Team, () => ({
 export const SignInUserShape = e.shape(e.users.User, (user) => ({
   ...UserShape(user),
   infractions: InfractionShape(user.infractions),
+  // Only selected for the sign-in flow so reps see them while signing the user in, never on persistent pages
+  accessibility_notes: AccessibilityNoteShape(user.accessibility_notes),
 }));
 
 export type SignInUser = Omit<NonNullable<Awaited<ReturnType<typeof getSignInUser>>>, "location"> & {

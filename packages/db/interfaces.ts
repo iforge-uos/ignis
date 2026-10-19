@@ -255,6 +255,11 @@ export namespace users {
     "training": training.Training[];
     "funds": number;
     "ucard_number": number;
+    "accessibility_notes": AccessibilityNote[];
+  }
+  export interface AccessibilityNote extends $default.CreatedAt {
+    "user": User;
+    "content": string;
   }
   export interface Infraction extends $default.CreatedAt {
     "user": User;
@@ -1185,6 +1190,7 @@ export interface types {
   };
   "users": {
     "User": users.User;
+    "AccessibilityNote": users.AccessibilityNote;
     "Infraction": users.Infraction;
     "InfractionType": users.InfractionType;
     "Integration": users.Integration;

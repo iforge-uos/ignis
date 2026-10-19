@@ -32,6 +32,7 @@ export type User = helper.Props<users.User> &
   Omit<
     Record<NonNullable<helper.linkKeys<users.User>>, std.BaseObject[]>,
     | "infractions"
+    | "accessibility_notes"
     | "roles"
     | "agreements_signed"
     | "training"

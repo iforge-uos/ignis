@@ -37,6 +37,18 @@ Please avoid putting them on abstract types.
 
 Update policies on fields are a good idea.
 
+## Accessibility notes
+
+`users::AccessibilityNote`s are free-text notes shown to reps while they sign a user in. There is no UI to manage them yet, so add them from `gel` (from the repo root). This is a manual admin edit, so it bypasses access policies like any other:
+
+```edgeql
+configure session set apply_access_policies := false;
+insert users::AccessibilityNote {
+    user := (select users::User filter .ucard_number = <int32>123456789),
+    content := "...",
+};
+```
+
 ## Testing
 
 Tests are located in the `tests/` folder, performed on a separate test branch to the main database in isolated transactions. We use [Vitest](https://vitest.dev/) / [bun's test runner](https://bun.sh/docs/cli/test) for testing.

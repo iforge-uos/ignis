@@ -71,6 +71,7 @@ export type $UserλShape = $.typeutil.flatten<_$default.$AuditableλShape & _$de
   }, false, false, false, false>;
   "funds": $.PropertyDesc<_std.$int32, $.Cardinality.One, false, false, false, true>;
   "ucard_number": $.PropertyDesc<_std.$int32, $.Cardinality.One, true, false, false, false>;
+  "accessibility_notes": $.LinkDesc<$AccessibilityNote, $.Cardinality.Many, {}, false, true,  false, false>;
   "<user[is users::Infraction]": $.LinkDesc<$Infraction, $.Cardinality.Many, {}, false, false,  false, false>;
   "<author[is notification::AuthoredNotification]": $.LinkDesc<_notification.$AuthoredNotification, $.Cardinality.Many, {}, false, false,  false, false>;
   "<user[is users::Integration]": $.LinkDesc<$Integration, $.Cardinality.Many, {}, false, false,  false, false>;
@@ -88,6 +89,7 @@ export type $UserλShape = $.typeutil.flatten<_$default.$AuditableλShape & _$de
   "<user[is sign_in::UserRegistration]": $.LinkDesc<_sign_in.$UserRegistration, $.Cardinality.AtMostOne, {}, true, false,  false, false>;
   "<user[is training::Session]": $.LinkDesc<_training.$Session, $.Cardinality.Many, {}, false, false,  false, false>;
   "<queued_users_that_can_sign_in[is sign_in::Location]": $.LinkDesc<_sign_in.$Location, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<user[is users::AccessibilityNote]": $.LinkDesc<$AccessibilityNote, $.Cardinality.Many, {}, false, false,  false, false>;
   "<attendees": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<author": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<interested": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
@@ -107,6 +109,21 @@ type $User = $.ObjectType<"users::User", $UserλShape, null, [
 const $User = $.makeType<$User>(_.spec, "29c43a34-f86c-11ee-a6b1-c1a89f83e7fe", _.syntax.literal);
 
 const User: $.$expr_PathNode<$.TypeSet<$User, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($User, $.Cardinality.Many), null);
+
+export type $AccessibilityNoteλShape = $.typeutil.flatten<_$default.$CreatedAtλShape & {
+  "user": $.LinkDesc<$User, $.Cardinality.One, {}, false, false,  false, false>;
+  "content": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
+  "<accessibility_notes[is users::User]": $.LinkDesc<$User, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<accessibility_notes[is users::Rep]": $.LinkDesc<$Rep, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<accessibility_notes[is user]": $.LinkDesc<_$default.$user, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<accessibility_notes": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
+}>;
+type $AccessibilityNote = $.ObjectType<"users::AccessibilityNote", $AccessibilityNoteλShape, null, [
+  ..._$default.$CreatedAt['__exclusives__'],
+], "users::AccessibilityNote">;
+const $AccessibilityNote = $.makeType<$AccessibilityNote>(_.spec, "b4cc148e-cbaa-11f1-8ab1-f553979f66b8", _.syntax.literal);
+
+const AccessibilityNote: $.$expr_PathNode<$.TypeSet<$AccessibilityNote, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($AccessibilityNote, $.Cardinality.Many), null);
 
 export type $InfractionλShape = $.typeutil.flatten<_$default.$CreatedAtλShape & {
   "user": $.LinkDesc<$User, $.Cardinality.One, {}, false, false,  false, false>;
@@ -244,13 +261,14 @@ function send_infraction(...args: any[]) {
 
 
 
-export { InfractionType, Platform, RepStatus, $User, User, $Infraction, Infraction, $Integration, Integration, $Rep, Rep, $Role, Role, $SettingTemplate, SettingTemplate, $UserSettingValue, UserSettingValue };
+export { InfractionType, Platform, RepStatus, $User, User, $AccessibilityNote, AccessibilityNote, $Infraction, Infraction, $Integration, Integration, $Rep, Rep, $Role, Role, $SettingTemplate, SettingTemplate, $UserSettingValue, UserSettingValue };
 
 type __defaultExports = {
   "InfractionType": typeof InfractionType;
   "Platform": typeof Platform;
   "RepStatus": typeof RepStatus;
   "User": typeof User;
+  "AccessibilityNote": typeof AccessibilityNote;
   "Infraction": typeof Infraction;
   "Integration": typeof Integration;
   "Rep": typeof Rep;
@@ -264,6 +282,7 @@ const __defaultExports: __defaultExports = {
   "Platform": Platform,
   "RepStatus": RepStatus,
   "User": User,
+  "AccessibilityNote": AccessibilityNote,
   "Infraction": Infraction,
   "Integration": Integration,
   "Rep": Rep,

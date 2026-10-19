@@ -1,6 +1,8 @@
+import { Alert, AlertDescription, AlertTitle } from "@packages/ui/components/alert";
 import { Badge } from "@packages/ui/components/badge";
 import { Card } from "@packages/ui/components/card";
 import { Link } from "@tanstack/react-router";
+import { Accessibility } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { UserAvatar } from "/src/components/avatar";
 import { TeamIcon } from "/src/icons/Team";
@@ -9,10 +11,11 @@ import { SignInUser } from "/src/lib/utils/queries";
 
 interface SigningInUserCardProps {
   user: SignInUser;
+  showAccessibilityNotes?: boolean; 
   className?: string; // Define optional className prop
 }
 
-export default function SigningInUserCard({ user, className }: SigningInUserCardProps) {
+export default function SigningInUserCard({ user, showAccessibilityNotes = false, className }: SigningInUserCardProps) {
   return (
     <Card className={cn("bg-card p-4 rounded-sm flex flex-col justify-between text-black dark:text-white", className)}>
       <div className="m-5">
@@ -39,6 +42,19 @@ export default function SigningInUserCard({ user, className }: SigningInUserCard
           <UserAvatar user={user} className="size-25 aspect-square" />
         </div>
       </div>
+      {showAccessibilityNotes && user.accessibility_notes.length > 0 && (
+        <Alert variant="info" className="mx-5 mb-5 w-auto">
+          <Accessibility />
+          <AlertTitle className="font-bold">Accessibility needs</AlertTitle>
+          <AlertDescription className="text-current">
+            {user.accessibility_notes.map((note) => (
+              <p key={note.id} className="whitespace-pre-wrap">
+                {note.content}
+              </p>
+            ))}
+          </AlertDescription>
+        </Alert>
+      )}
       </Card>
   );
 }

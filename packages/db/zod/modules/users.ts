@@ -14,6 +14,23 @@ export const PlatformSchema = z.enum(["GITHUB"]);
 export const RepStatusSchema = z.enum(["ACTIVE", "BREAK", "ALUMNI", "FUTURE", "REMOVED"]);
 // #endregion
 
+// #region users::AccessibilityNote
+export const CreateAccessibilityNoteSchema = z.
+  object({ // default::CreatedAt
+    created_at: zt.zonedDateTime().optional(), // std::datetime
+  })
+  .extend({ // users::AccessibilityNote
+    content: z.string(), // std::str
+  });
+
+export const UpdateAccessibilityNoteSchema = z.
+  object({ // default::CreatedAt
+  })
+  .extend({ // users::AccessibilityNote
+    content: z.string(), // std::str
+  });
+// #endregion
+
 // #region users::Infraction
 export const CreateInfractionSchema = z.
   object({ // default::CreatedAt

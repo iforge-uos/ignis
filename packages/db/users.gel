@@ -61,6 +61,7 @@ module users {
         multi integrations := .<user[is Integration];
 
         multi infractions := .<user[is Infraction];
+        multi accessibility_notes := .<user[is AccessibilityNote];
 
         multi mailing_list_subscriptions: notification::MailingList;
         multi notifications: notification::Notification {
@@ -228,6 +229,25 @@ module users {
                 }
             )
         );
+    }
+
+    type AccessibilityNote extending default::CreatedAt {
+        annotation description := "Free-text accessibility needs shown to reps when the user signs in.";
+        required user: User;
+        required content: str;
+
+        # Reps need to read these to support the user while signing them in; the user themselves deliberately has no access
+        access policy rep_or_higher_read
+            allow select
+            using (exists ({"Rep", "Desk", "Admin"} intersect global default::user.roles.name)) {
+                errmessage := "Only reps can view accessibility notes"
+            };
+        # Unlike infractions, reps/desk must not be able to remove or edit these
+        access policy admin_only_write
+            allow insert, update, delete
+            using (exists ({"Admin"} intersect global default::user.roles.name)) {
+                errmessage := "Only admins can manage accessibility notes"
+            };
     }
 
     type SettingTemplate {

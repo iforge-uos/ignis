@@ -250,7 +250,7 @@ export const Route = createFileRoute("/_authenticated/_reponly/sign-in/$location
         <Title prompt="Sign In Flow" />
         <div className="m-4 space-y-5 mb-10">
           <ActiveLocationSelector disabled />
-          <SigningInUserCard user={user} className="w-full " />
+          <SigningInUserCard user={user} showAccessibilityNotes={currentStep !== "SIGN_OUT"} className="w-full " />
 
           <Card className="rounded-sm">
             <SignInStepsProvider
