@@ -5,10 +5,8 @@ import { orpc } from "@/lib/orpc";
 import { ensureQueryData } from "@/lib/query-utils";
 
 function Component() {
-  const authToken = Route.useLoaderData();
+  const url = Route.useLoaderData();
   const { setOpen, setOpenMobile } = useSidebar();
-
-  const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
 
   useEffect(() => {
     // auto-collapse the sidebar
@@ -17,12 +15,12 @@ function Component() {
   }, [setOpen, setOpenMobile]);
 
   return (
-      <iframe
-        title="iForge Database UI"
-        src={isLocalhost ? `http://localhost:10705/ui?authToken=${authToken}` : `https://db.iforge.sheffield.ac.uk/ui?authToken=${authToken}`}
-        className="w-full h-full border-0"
-        referrerPolicy="no-referrer"
-      />
+    <iframe
+      title="iForge Database UI"
+      src={url}
+      className="w-full h-full border-0"
+      referrerPolicy="no-referrer"
+    />
   );
 }
 
