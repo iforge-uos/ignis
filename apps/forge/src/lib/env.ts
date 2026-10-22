@@ -85,6 +85,10 @@ export default createEnv({
     INFRACTIONS_WEBHOOK_URL: z.url().optional(),
     // Where Gel triggers send DB change notifications (/api/db/webhook), as seen from the Gel server
     PUB_SUB_WEBHOOK_URL: z.url().default("http://localhost:3000/api/db/webhook"),
+    // The Gel server's edbjwskeys.pem, used to mint admin UI tokens; optional so only /admin/db breaks without it
+    GEL_JWS_KEY_FILE: z.string().min(1).optional(),
+    // Base URL of the Gel admin UI as seen from the browser
+    GEL_UI_URL: z.url(),
 
     // Pharos
     PHAROS_URL: z.url(),
@@ -177,6 +181,10 @@ export default createEnv({
           // Omitted entirely when unset so the client doesn't set the global to undefined.
           ...(env.INFRACTIONS_WEBHOOK_URL ? { INFRACTIONS_WEBHOOK_URL: env.INFRACTIONS_WEBHOOK_URL } : {}),
           PUB_SUB_WEBHOOK_URL: env.PUB_SUB_WEBHOOK_URL,
+        },
+        ui: {
+          keyFile: env.GEL_JWS_KEY_FILE,
+          url: env.GEL_UI_URL,
         },
       },
       pharos: {
